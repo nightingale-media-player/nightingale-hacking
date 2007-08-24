@@ -1,37 +1,37 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_local_database_smart_media_list_8idl" kind="file">
     <compoundname>sbILocalDatabaseSmartMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
-      <node id="269">
-        <label>C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+      <node id="278">
+        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sbILocalDatabaseSmartMediaList.idl"/>
-        <childnode refid="270" relation="include">
+        <childnode refid="279" relation="include">
         </childnode>
-        <childnode refid="271" relation="include">
-        </childnode>
-      </node>
-      <node id="273">
-        <label>sbILibraryResource.idl</label>
-        <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="270" relation="include">
+        <childnode refid="280" relation="include">
         </childnode>
       </node>
-      <node id="271">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="272" relation="include">
-        </childnode>
-      </node>
-      <node id="272">
+      <node id="281">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="273" relation="include">
+        <childnode refid="282" relation="include">
         </childnode>
       </node>
-      <node id="270">
+      <node id="280">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="281" relation="include">
+        </childnode>
+      </node>
+      <node id="282">
+        <label>sbILibraryResource.idl</label>
+        <link refid="sb_i_library_resource_8idl"/>
+        <childnode refid="279" relation="include">
+        </childnode>
+      </node>
+      <node id="279">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -70,16 +70,16 @@
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_media_list_8idl" kindref="compound">sbIMediaList.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_media_list_8idl" kindref="compound" tooltip="Definition of the sbIMediaList interface.">sbIMediaList.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_local_database_smart_media_list_condition" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="43" refid="interfacesb_i_local_database_smart_media_list_condition" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_local_database_smart_media_list_condition_1352f3b74293cff65edbc28ce46589c32" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>propertyName;</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54" refid="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="60" refid="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>leftValue;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
@@ -89,7 +89,7 @@
 <codeline lineno="76"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="77"><highlight class="normal"></highlight></codeline>
 <codeline lineno="87"><highlight class="normal">[scriptable,<sp/>uuid(50443d21-eae9-4563-a72d-c6f6b1ea499c)]</highlight></codeline>
-<codeline lineno="88" refid="interfacesb_i_local_database_smart_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound">sbILocalDatabaseSmartMediaList</ref><sp/>:<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_local_database_smart_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaList</ref><sp/>:<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref></highlight></codeline>
 <codeline lineno="89"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="90" refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MATCH_TYPE_ANY<sp/><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="91" refid="interfacesb_i_local_database_smart_media_list_182b5d711c021b3667bc0b6be7d096822" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MATCH_TYPE_ALL<sp/><sp/>=<sp/>1;</highlight></codeline>
@@ -116,16 +116,16 @@
 <codeline lineno="134"><highlight class="normal"></highlight></codeline>
 <codeline lineno="139" refid="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>liveUpdate;</highlight></codeline>
 <codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</ref></highlight></codeline>
 <codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>appendCondition(in<sp/>AString<sp/>aPropertyName,</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref><sp/>aOperator,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref><sp/>aOperator,</highlight></codeline>
 <codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aLeftValue,</highlight></codeline>
 <codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aRightValue,</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>limit);</highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight></codeline>
 <codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeConditionAt(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aConditionIndex);</highlight></codeline>
 <codeline lineno="155"><highlight class="normal"></highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</ref></highlight></codeline>
 <codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>getConditionAt(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aConditionIndex);</highlight></codeline>
 <codeline lineno="162"><highlight class="normal"></highlight></codeline>
 <codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearConditions();</highlight></codeline>
@@ -133,6 +133,6 @@
 <codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>rebuild();</highlight></codeline>
 <codeline lineno="173"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl"/>
   </compounddef>
 </doxygen>

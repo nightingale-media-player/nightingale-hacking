@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_state_object_8idl" kind="file">
     <compoundname>sbIStateObject.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="404">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="403">
-        <label>C:/projects/songbird/components/state/public/sbIStateObject.idl</label>
+      <node id="420">
+        <label>trunk/components/state/public/sbIStateObject.idl</label>
         <link refid="sbIStateObject.idl"/>
-        <childnode refid="404" relation="include">
+        <childnode refid="421" relation="include">
         </childnode>
+      </node>
+      <node id="421">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_state_object" prot="public">sbIStateObject</innerclass>
@@ -54,7 +54,7 @@
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIWritableVariant;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="50"><highlight class="normal">[uuid(50CDB3BD-60E7-44e6-BF4B-081573809035)]</highlight></codeline>
-<codeline lineno="51" refid="interfacesb_i_state_object" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_state_object" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="52"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_state_object_1db3e9bd5f5af57bfc0493014e810f92d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATEOBJECT_CREATION_FAILED<sp/>=<sp/>0x800000001;</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_state_object_158bf8bed69f785e53c97e6d86524b94d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATEOBJECT_LOADING_FAILED<sp/>=<sp/>0x800000002;</highlight></codeline>
@@ -65,7 +65,7 @@
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
 <codeline lineno="79" refid="interfacesb_i_state_object_1ccdac5b6c31079813e7d1d0590ba4531" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIWritableVariant<sp/>value;</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"><sp/></highlight></codeline>
-<codeline lineno="84" refid="interfacesb_i_state_object_129c75154f03ec8f0dd27d0a333eed7a3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref><sp/>parent;</highlight></codeline>
+<codeline lineno="84" refid="interfacesb_i_state_object_129c75154f03ec8f0dd27d0a333eed7a3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref><sp/>parent;</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89" refid="interfacesb_i_state_object_1523fa55a4c23710db21491556540f290" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIWritablePropertyBag2<sp/>children;</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
@@ -78,6 +78,6 @@
 <codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeObserver(in<sp/>nsIObserver<sp/>aObserver);</highlight></codeline>
 <codeline lineno="137"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl"/>
   </compounddef>
 </doxygen>

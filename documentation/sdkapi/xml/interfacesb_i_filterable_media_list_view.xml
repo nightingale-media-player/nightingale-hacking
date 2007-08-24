@@ -1,8 +1,36 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_filterable_media_list_view" kind="interface" prot="public">
     <compoundname>sbIFilterableMediaListView</compoundname>
     <includes refid="sb_i_filterable_media_list_view_8idl" local="no">sbIFilterableMediaListView.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_filterable_media_list_view_1a9fbb56baedc4984085c58a1a38116d5" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIFilterableMediaListView::filterableProperties</definition>
+        <argsstring></argsstring>
+        <name>filterableProperties</name>
+        <briefdescription>
+<para>A string enumerator of all the property names that can be used in the filter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="54" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>readonly attribute sbIPropertyArray sbIFilterableMediaListView::currentFilter</definition>
+        <argsstring></argsstring>
+        <name>currentFilter</name>
+        <briefdescription>
+<para>Get the current filter configuration. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="68" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_1ba4cd541b2103ac751d9e741c350ff8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -28,7 +56,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="63"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_192e5c9cb2901adedb0466442d399e06f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +81,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="77"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_1169715190bfec71b715d78658c98978d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -78,7 +106,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="86"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="86"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_19330e445792fd2bf2005ccabfa3ea729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -103,7 +131,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="94"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_15233089e4c7a557240bd1ed350696426" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -116,35 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="99"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_filterable_media_list_view_1a9fbb56baedc4984085c58a1a38116d5" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIStringEnumerator</type>
-        <definition>readonly attribute nsIStringEnumerator sbIFilterableMediaListView::filterableProperties</definition>
-        <argsstring></argsstring>
-        <name>filterableProperties</name>
-        <briefdescription>
-<para>A string enumerator of all the property names that can be used in the filter. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="54" bodyfile="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="54" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
-        <definition>readonly attribute sbIPropertyArray sbIFilterableMediaListView::currentFilter</definition>
-        <argsstring></argsstring>
-        <name>currentFilter</name>
-        <briefdescription>
-<para>Get the current filter configuration. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="68" bodyfile="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="68" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -153,19 +153,19 @@
 <para>Media lists that implement this interface declare themselves as filterable. The filter is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="126">
+      <node id="130">
         <label>sbIFilterableMediaListView</label>
         <link refid="interfacesb_i_filterable_media_list_view"/>
-        <childnode refid="127" relation="usage">
+        <childnode refid="131" relation="usage">
           <edgelabel>currentFilter</edgelabel>
         </childnode>
       </node>
-      <node id="127">
+      <node id="131">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="49" bodyfile="C:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="48" bodyend="100"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="48" bodyend="100"/>
     <listofallmembers>
       <member refid="interfacesb_i_filterable_media_list_view_15233089e4c7a557240bd1ed350696426" prot="public" virt="non-virtual"><scope>sbIFilterableMediaListView</scope><name>clearFilters</name></member>
       <member refid="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" prot="public" virt="non-virtual"><scope>sbIFilterableMediaListView</scope><name>currentFilter</name></member>

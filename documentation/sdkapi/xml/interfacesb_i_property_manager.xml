@@ -1,8 +1,23 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_property_manager" kind="interface" prot="public">
     <compoundname>sbIPropertyManager</compoundname>
     <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_property_manager_107a2c7265ae2b02266029dae09c0f32c" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIPropertyManager::propertyNames</definition>
+        <argsstring></argsstring>
+        <name>propertyNames</name>
+        <briefdescription>
+<para>An enumerator containing the names of all registered properties. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_property_manager_19994860f9f02d997475e41e91733cb07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></type>
@@ -28,7 +43,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="65"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="65"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_manager_1506da9bb013ab0be504af681c6604c61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +68,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="72"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="72"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_manager_1919d83e10f525fa675f2e5cd815d86a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -79,7 +94,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="80"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="80"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_manager_1536235a285fb4f1d7ca35f7ee80691f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringBundle</type>
@@ -96,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="85"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_manager_1b2fe14aa7edc7b1e9c11cd2ee882de43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -117,22 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="90"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_property_manager_107a2c7265ae2b02266029dae09c0f32c" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIStringEnumerator</type>
-        <definition>readonly attribute nsIStringEnumerator sbIPropertyManager::propertyNames</definition>
-        <argsstring></argsstring>
-        <name>propertyNames</name>
-        <briefdescription>
-<para>An enumerator containing the names of all registered properties. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="58" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="58" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="90"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -140,7 +140,7 @@
     <detaileddescription>
 <para>Components should register properties with this service at startup.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="53" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="52" bodyend="92"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="52" bodyend="92"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_manager_1506da9bb013ab0be504af681c6604c61" prot="public" virt="non-virtual"><scope>sbIPropertyManager</scope><name>addPropertyInfo</name></member>
       <member refid="interfacesb_i_property_manager_1536235a285fb4f1d7ca35f7ee80691f6" prot="public" virt="non-virtual"><scope>sbIPropertyManager</scope><name>createBundle</name></member>

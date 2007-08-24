@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_property_manager_8idl" kind="file">
     <compoundname>sbIPropertyManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="360">
-        <label>C:/projects/songbird/components/property/public/sbIPropertyManager.idl</label>
+      <node id="377">
+        <label>trunk/components/property/public/sbIPropertyManager.idl</label>
         <link refid="sbIPropertyManager.idl"/>
-        <childnode refid="361" relation="include">
+        <childnode refid="378" relation="include">
         </childnode>
       </node>
-      <node id="361">
+      <node id="378">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -22,6 +22,8 @@
     <innerclass refid="interfacesb_i_u_r_i_property_info" prot="public">sbIURIPropertyInfo</innerclass>
     <innerclass refid="interfacesb_i_datetime_property_info" prot="public">sbIDatetimePropertyInfo</innerclass>
     <innerclass refid="interfacesb_i_progress_property_info" prot="public">sbIProgressPropertyInfo</innerclass>
+    <innerclass refid="interfacesb_i_clickable_property_info" prot="public">sbIClickablePropertyInfo</innerclass>
+    <innerclass refid="interfacesb_i_button_property_info" prot="public">sbIButtonPropertyInfo</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -59,29 +61,29 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIStringBundle;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref>;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(280006ad-3069-4d1b-9684-a647672ff856)]</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_property_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_manager" kindref="compound">sbIPropertyManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_property_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_manager" kindref="compound" tooltip="Manager for system wide metadata properties.">sbIPropertyManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_property_manager_107a2c7265ae2b02266029dae09c0f32c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>propertyNames;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref><sp/>getPropertyInfo(in<sp/>AString<sp/>aName);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>getPropertyInfo(in<sp/>AString<sp/>aName);</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addPropertyInfo(in<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref><sp/>aPropertyInfo);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addPropertyInfo(in<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>aPropertyInfo);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
 <codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasProperty(in<sp/>AString<sp/>aName);</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/>nsIStringBundle<sp/>createBundle(in<sp/>string<sp/>aURLSpec);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>nsIStringBundle<sp/>createBundle(in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aURLSpec);</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
 <codeline lineno="90"><highlight class="normal"><sp/><sp/>AString<sp/>getStringFromName(in<sp/>nsIStringBundle<sp/>aBundle,<sp/>in<sp/>AString<sp/>aName);</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
 <codeline lineno="92"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal">[scriptable,<sp/>uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]</highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_property_operator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="99" refid="interfacesb_i_property_operator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="100"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="104" refid="interfacesb_i_property_operator_1655cf614c5ada820482e2286943267ff" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>
@@ -91,7 +93,7 @@
 <codeline lineno="117"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight></codeline>
 <codeline lineno="124"><highlight class="normal">[scriptable,<sp/>uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]</highlight></codeline>
-<codeline lineno="125" refid="interfacesb_i_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="125" refid="interfacesb_i_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="126"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="127" refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>OPERATOR_EQUALS;</highlight></codeline>
 <codeline lineno="128" refid="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>OPERATOR_NOTEQUALS;</highlight></codeline>
@@ -114,7 +116,7 @@
 <codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="161" refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort;</highlight></codeline>
 <codeline lineno="162"><highlight class="normal"></highlight></codeline>
-<codeline lineno="170" refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref><sp/>sortProfile;</highlight></codeline>
+<codeline lineno="170" refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>sortProfile;</highlight></codeline>
 <codeline lineno="171"><highlight class="normal"></highlight></codeline>
 <codeline lineno="175" refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
 <codeline lineno="176"><highlight class="normal"></highlight></codeline>
@@ -138,7 +140,7 @@
 <codeline lineno="228"><highlight class="normal"></highlight></codeline>
 <codeline lineno="232" refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsISimpleEnumerator<sp/>operators;</highlight></codeline>
 <codeline lineno="233"><highlight class="normal"></highlight></codeline>
-<codeline lineno="240"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref><sp/>getOperator(in<sp/>AString<sp/>aOperator);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref><sp/>getOperator(in<sp/>AString<sp/>aOperator);</highlight></codeline>
 <codeline lineno="241"><highlight class="normal"></highlight></codeline>
 <codeline lineno="247"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>validate(in<sp/>AString<sp/>aValue);</highlight></codeline>
 <codeline lineno="248"><highlight class="normal"></highlight></codeline>
@@ -152,7 +154,7 @@
 <codeline lineno="281"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="282"><highlight class="normal"></highlight></codeline>
 <codeline lineno="288"><highlight class="normal">[scriptable,<sp/>uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]</highlight></codeline>
-<codeline lineno="289" refid="interfacesb_i_text_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_text_property_info" kindref="compound">sbITextPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></highlight></codeline>
+<codeline lineno="289" refid="interfacesb_i_text_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_text_property_info" kindref="compound" tooltip="The property information specific to text fields.">sbITextPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref></highlight></codeline>
 <codeline lineno="290"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="294" refid="interfacesb_i_text_property_info_12486d1062478616860e797aa705863e9" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>minLength;</highlight></codeline>
 <codeline lineno="295"><highlight class="normal"></highlight></codeline>
@@ -162,7 +164,7 @@
 <codeline lineno="305"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="306"><highlight class="normal"></highlight></codeline>
 <codeline lineno="312"><highlight class="normal">[scriptable,<sp/>uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]</highlight></codeline>
-<codeline lineno="313" refid="interfacesb_i_number_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_number_property_info" kindref="compound">sbINumberPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></highlight></codeline>
+<codeline lineno="313" refid="interfacesb_i_number_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_number_property_info" kindref="compound" tooltip="The property information specific to numeric fields.">sbINumberPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref></highlight></codeline>
 <codeline lineno="314"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="318" refid="interfacesb_i_number_property_info_1e7ace5e86b1a21e70f5fc2b0d68c77f8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>RADIX_8<sp/><sp/>=<sp/>8;</highlight></codeline>
 <codeline lineno="319"><highlight class="normal"></highlight></codeline>
@@ -178,13 +180,13 @@
 <codeline lineno="344"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="345"><highlight class="normal"></highlight></codeline>
 <codeline lineno="351"><highlight class="normal">[scriptable,<sp/>uuid(b8d0b930-8aab-4afa-969d-3a5dca7ea536)]</highlight></codeline>
-<codeline lineno="352" refid="interfacesb_i_u_r_i_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_u_r_i_property_info" kindref="compound">sbIURIPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></highlight></codeline>
+<codeline lineno="352" refid="interfacesb_i_u_r_i_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_u_r_i_property_info" kindref="compound" tooltip="The property information specific to URL/URI fields.">sbIURIPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref></highlight></codeline>
 <codeline lineno="353"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="358" refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>constrainScheme;</highlight></codeline>
 <codeline lineno="359"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="360"><highlight class="normal"></highlight></codeline>
 <codeline lineno="366"><highlight class="normal">[scriptable,<sp/>uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]</highlight></codeline>
-<codeline lineno="367" refid="interfacesb_i_datetime_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_datetime_property_info" kindref="compound">sbIDatetimePropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></highlight></codeline>
+<codeline lineno="367" refid="interfacesb_i_datetime_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_datetime_property_info" kindref="compound" tooltip="The property information specific to date/time fields.">sbIDatetimePropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref></highlight></codeline>
 <codeline lineno="368"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="369" refid="interfacesb_i_datetime_property_info_13c03cfc66ea09935fc4441d335ebfb74" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TIMETYPE_UNINITIALIZED<sp/>=<sp/>-1;</highlight></codeline>
 <codeline lineno="370"><highlight class="normal"></highlight></codeline>
@@ -210,11 +212,28 @@
 <codeline lineno="436"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="437"><highlight class="normal"></highlight></codeline>
 <codeline lineno="444"><highlight class="normal">[scriptable,<sp/>uuid(154e77d3-6750-4f4c-a070-473bb7645381)]</highlight></codeline>
-<codeline lineno="445" refid="interfacesb_i_progress_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_progress_property_info" kindref="compound">sbIProgressPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_text_property_info" kindref="compound">sbITextPropertyInfo</ref></highlight></codeline>
+<codeline lineno="445" refid="interfacesb_i_progress_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_progress_property_info" kindref="compound" tooltip="The property information specific to progressmeters.">sbIProgressPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_text_property_info" kindref="compound" tooltip="The property information specific to text fields.">sbITextPropertyInfo</ref></highlight></codeline>
 <codeline lineno="446"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="450" refid="interfacesb_i_progress_property_info_197dae25ee82d9f86bb210e4459612c50" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>modePropertyName;</highlight></codeline>
 <codeline lineno="451"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462"><highlight class="normal">[scriptable,<sp/>uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]</highlight></codeline>
+<codeline lineno="463" refid="interfacesb_i_clickable_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_clickable_property_info" kindref="compound" tooltip="The property information specific to clickable properties.">sbIClickablePropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="464"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="474"><highlight class="normal"><sp/><sp/>AString<sp/>getValueForClick(in<sp/>AString<sp/>aCurrentValue,</highlight></codeline>
+<codeline lineno="475"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aBoxWidth,</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aBoxHeight,</highlight></codeline>
+<codeline lineno="477"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMouseX,</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMouseY);</highlight></codeline>
+<codeline lineno="479"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="480"><highlight class="normal"></highlight></codeline>
+<codeline lineno="486"><highlight class="normal">[scriptable,<sp/>uuid(797f47d2-f71d-409c-993c-4c5bd5ddaf02)]</highlight></codeline>
+<codeline lineno="487" refid="interfacesb_i_button_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_button_property_info" kindref="compound" tooltip="The property information specific to button properties.">sbIButtonPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="488"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="492" refid="interfacesb_i_button_property_info_100b8abfdf045141fbe8e50ef797254fa" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>label;</highlight></codeline>
+<codeline lineno="493"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl"/>
   </compounddef>
 </doxygen>

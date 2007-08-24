@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="bsolete_2manager_2public_2sb_i_device_manager_8idl" kind="file">
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsIObserver.idl</includes>
     <incdepgraph>
-      <node id="85">
-        <label>C:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl</label>
+      <node id="94">
+        <label>trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl</label>
         <link refid="bsolete/manager/public/sbIDeviceManager.idl"/>
-        <childnode refid="86" relation="include">
+        <childnode refid="95" relation="include">
         </childnode>
       </node>
-      <node id="86">
+      <node id="95">
         <label>nsIObserver.idl</label>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="80"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="80"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -61,20 +61,20 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIObserver.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(d0b017c4-f388-4e78-abf3-5f48ca616a94)]</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager" kindref="compound">sbIDeviceManager</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceManager</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_device_manager_12c0f42d75db8a848b3f5352cc0901531" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>PRUint32<sp/>deviceCount;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>AString<sp/>getCategoryByIndex(in<sp/>PRUint32<sp/>aIndex);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref><sp/>getDeviceByIndex(in<sp/>PRUint32<sp/>aIndex);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref><sp/>getDeviceByIndex(in<sp/>PRUint32<sp/>aIndex);</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/>PRBool<sp/>hasDeviceForCategory(in<sp/>AString<sp/>aCategory);</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref><sp/>getDeviceByCategory(in<sp/>AString<sp/>aCategory);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref><sp/>getDeviceByCategory(in<sp/>AString<sp/>aCategory);</highlight></codeline>
 <codeline lineno="74"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
 <codeline lineno="76"><highlight class="normal">%{C++</highlight></codeline>
@@ -85,6 +85,6 @@
 <codeline lineno="81"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="82"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl"/>
   </compounddef>
 </doxygen>

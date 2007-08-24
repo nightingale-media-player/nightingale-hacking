@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_playlist_writer_8idl" kind="file">
     <compoundname>sbIPlaylistWriter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
@@ -7,28 +7,28 @@
     <includes local="yes">nsIPrompt.idl</includes>
     <includes local="yes">nsIAuthPrompt.idl</includes>
     <incdepgraph>
-      <node id="349">
+      <node id="366">
         <label>nsIProgressEventSink.idl</label>
       </node>
-      <node id="351">
+      <node id="368">
         <label>nsIAuthPrompt.idl</label>
       </node>
-      <node id="347">
-        <label>C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl</label>
+      <node id="364">
+        <label>trunk/components/playlistreader/public/sbIPlaylistWriter.idl</label>
         <link refid="sbIPlaylistWriter.idl"/>
-        <childnode refid="348" relation="include">
+        <childnode refid="365" relation="include">
         </childnode>
-        <childnode refid="349" relation="include">
+        <childnode refid="366" relation="include">
         </childnode>
-        <childnode refid="350" relation="include">
+        <childnode refid="367" relation="include">
         </childnode>
-        <childnode refid="351" relation="include">
+        <childnode refid="368" relation="include">
         </childnode>
       </node>
-      <node id="348">
+      <node id="365">
         <label>nsISupports.idl</label>
       </node>
-      <node id="350">
+      <node id="367">
         <label>nsIPrompt.idl</label>
       </node>
     </incdepgraph>
@@ -73,14 +73,14 @@
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIAuthPrompt.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(3FE9E285-F0F8-4154-9C21-8B6E4B8EFA93)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_playlist_writer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref><sp/>:<sp/>nsIProgressEventSink</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_playlist_writer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>:<sp/>nsIProgressEventSink</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(27B68B9B-E471-4367-B159-63B65C581847)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_playlist_writer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer" kindref="compound">sbIPlaylistWriter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_playlist_writer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref><sp/>writerListener;</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>writerListener;</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/>PRBool<sp/>write(in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aSourcePlaylist,</highlight></codeline>
@@ -102,13 +102,13 @@
 <codeline lineno="104"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>
 <codeline lineno="110"><highlight class="normal">[scriptable,<sp/>uuid(CB6A505E-D8CB-4711-A50F-38439561C6D0)]</highlight></codeline>
-<codeline lineno="111" refid="interfacesb_i_playlist_writer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_manager" kindref="compound">sbIPlaylistWriterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="111" refid="interfacesb_i_playlist_writer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_manager" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="112"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="119"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write(in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
 <codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aName,</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputURL,</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputContentType,</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref><sp/>aWriterListener);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>aWriterListener);</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"></highlight></codeline>
 <codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,<sp/></highlight></codeline>
 <codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
@@ -117,6 +117,6 @@
 <codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl"/>
   </compounddef>
 </doxygen>

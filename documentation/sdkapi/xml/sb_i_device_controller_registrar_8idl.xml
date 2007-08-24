@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_controller_registrar_8idl" kind="file">
     <compoundname>sbIDeviceControllerRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="52">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl</label>
+      <node id="61">
+        <label>trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl</label>
         <link refid="sbIDeviceControllerRegistrar.idl"/>
-        <childnode refid="53" relation="include">
+        <childnode refid="62" relation="include">
         </childnode>
       </node>
-      <node id="53">
+      <node id="62">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,22 +50,22 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(d4db083c-3d1f-494a-9740-e1ba3851790d)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_controller_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound">sbIDeviceControllerRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_device_controller_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceControllerRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerController(in<sp/><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref><sp/>aController);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerController(in<sp/><ref refid="interfacesb_i_device_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</ref><sp/>aController);</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterController(in<sp/><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref><sp/>aController);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterController(in<sp/><ref refid="interfacesb_i_device_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</ref><sp/>aController);</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_device_controller_registrar_12fc9ba94b9593a2ae83f899ccec15e0d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>controllers;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_device_controller_registrar_1c22aa71d3dd874707497c6f39fb9c747" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>controllerCount;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref><sp/>getController(in<sp/>nsIDPtr<sp/>aControllerId);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</ref><sp/>getController(in<sp/>nsIDPtr<sp/>aControllerId);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl"/>
   </compounddef>
 </doxygen>

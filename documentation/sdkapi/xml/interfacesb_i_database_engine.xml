@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_database_engine" kind="interface" prot="public">
     <compoundname>sbIDatabaseEngine</compoundname>
     <includes refid="sb_i_database_engine_8idl" local="no">sbIDatabaseEngine.idl</includes>
@@ -18,20 +18,20 @@
           <declname>aTableName</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="55"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="55"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_engine_159ee7f8f26b7e7c62419cdbb51b65332" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -43,20 +43,20 @@
           <declname>aDBQuery</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="63"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_engine_12f9b566a7505cff7691aec08fc524b96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -68,20 +68,20 @@
           <declname>aDBQuery</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="71"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -89,7 +89,7 @@
     <detaileddescription>
 <para>You should use the <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> object to submit SQL queries to the database.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref>, <ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="48" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" bodystart="47" bodyend="72"/>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" bodystart="47" bodyend="72"/>
     <listofallmembers>
       <member refid="interfacesb_i_database_engine_1c95c8dd1229ad944c6c71bce292667c7" prot="public" virt="non-virtual"><scope>sbIDatabaseEngine</scope><name>AddPersistentQuery</name></member>
       <member refid="interfacesb_i_database_engine_159ee7f8f26b7e7c62419cdbb51b65332" prot="public" virt="non-virtual"><scope>sbIDatabaseEngine</scope><name>RemovePersistentQuery</name></member>

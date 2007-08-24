@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_core_wrapper_8idl" kind="file">
     <compoundname>sbICoreWrapper.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="335">
-        <label>C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl</label>
+      <node id="352">
+        <label>trunk/components/playlistplayback/public/sbICoreWrapper.idl</label>
         <link refid="sbICoreWrapper.idl"/>
-        <childnode refid="336" relation="include">
+        <childnode refid="353" relation="include">
         </childnode>
       </node>
-      <node id="336">
+      <node id="353">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -29,7 +29,7 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(ea5d3666-c790-4bf8-8d2f-780bb90e5579)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_core_wrapper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_core_wrapper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getPaused();</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
@@ -86,6 +86,6 @@
 <codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getSupportForFileExtension(in<sp/>AString<sp/>aFileExtension);</highlight></codeline>
 <codeline lineno="249"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistplayback/public/sbICoreWrapper.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_list_view_tree_view_8idl" kind="file">
     <compoundname>sbIMediaListViewTreeView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="230">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaListViewTreeView.idl</label>
+      <node id="239">
+        <label>trunk/components/library/base/public/sbIMediaListViewTreeView.idl</label>
         <link refid="sbIMediaListViewTreeView.idl"/>
-        <childnode refid="231" relation="include">
+        <childnode refid="240" relation="include">
         </childnode>
       </node>
-      <node id="231">
+      <node id="240">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,10 +50,10 @@
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]</highlight></codeline>
-<codeline lineno="42" refid="interfacesb_i_media_list_view_tree_view_observer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view_observer" kindref="compound">sbIMediaListViewTreeViewObserver</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="42" refid="interfacesb_i_media_list_view_tree_view_observer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view_observer" kindref="compound" tooltip="Observer to implement the nsITreeView methods that a sbIMediaListViewTreeView does...">sbIMediaListViewTreeViewObserver</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_media_list_view_tree_view_observer_1bd177db3a4cf9b97cff746533f3d386e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DROP_BEFORE<sp/>=<sp/>-1;</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_media_list_view_tree_view_observer_107033886644fcce4a5600e0430feab5f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DROP_ON<sp/>=<sp/>0;</highlight></codeline>
@@ -64,16 +64,16 @@
 <codeline lineno="50"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(53b15ff3-e26c-43ce-9edd-120ac083edad)]</highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_media_list_view_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view" kindref="compound">sbIMediaListViewTreeView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_media_list_view_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view" kindref="compound" tooltip="A tree view that views a media list view.">sbIMediaListViewTreeView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getNextRowIndexForKeyNavigation(in<sp/>AString<sp/>aKeyString,</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartFrom);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79" refid="interfacesb_i_media_list_view_tree_view_1b316c18c48998564603a239d58719553" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view_tree_view_observer" kindref="compound">sbIMediaListViewTreeViewObserver</ref><sp/>observer;</highlight></codeline>
+<codeline lineno="79" refid="interfacesb_i_media_list_view_tree_view_1b316c18c48998564603a239d58719553" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view_tree_view_observer" kindref="compound" tooltip="Observer to implement the nsITreeView methods that a sbIMediaListViewTreeView does...">sbIMediaListViewTreeViewObserver</ref><sp/>observer;</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
 <codeline lineno="86" refid="interfacesb_i_media_list_view_tree_view_1a5939198d6a78523714bea805f48da74" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>selectedMediaItems;</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92" refid="interfacesb_i_media_list_view_tree_view_1a0debbdf204bf921e80550acf9d7e693" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>currentMediaItem;</highlight></codeline>
+<codeline lineno="92" refid="interfacesb_i_media_list_view_tree_view_1a0debbdf204bf921e80550acf9d7e693" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>currentMediaItem;</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97" refid="interfacesb_i_media_list_view_tree_view_13d98a05d65b9f645ff67b3de9e2f56a6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>selectionCount;</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
@@ -81,6 +81,6 @@
 <codeline lineno="103"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListViewTreeView.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl"/>
   </compounddef>
 </doxygen>

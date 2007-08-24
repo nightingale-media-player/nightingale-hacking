@@ -1,8 +1,207 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_remote_player" kind="interface" prot="public">
     <compoundname>sbIRemotePlayer</compoundname>
     <includes refid="sb_i_remote_player_8idl" local="no">sbIRemotePlayer.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_player_11364062121dbd69124c41146506beb08" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemotePlayer::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>The name of the player. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="114" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_18076bb11fe8b51db9aec8823531677f6" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemotePlayer::currentArtist</definition>
+        <argsstring></argsstring>
+        <name>currentArtist</name>
+        <briefdescription>
+<para>The name of the artist for the currently playing media item. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="128" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_18c2f87ff4c285ffe551e184c83d56999" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemotePlayer::currentAlbum</definition>
+        <argsstring></argsstring>
+        <name>currentAlbum</name>
+        <briefdescription>
+<para>The name of the album for the currently playing track. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="142" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_103b3d78103d3cb016a9094f2f87d5a75" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemotePlayer::currentTrack</definition>
+        <argsstring></argsstring>
+        <name>currentTrack</name>
+        <briefdescription>
+<para>The name of the currently playing track. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="156" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_1291faf4a5b517b45abf8b1a1f212e669" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIRemotePlayer::playing</definition>
+        <argsstring></argsstring>
+        <name>playing</name>
+        <briefdescription>
+<para>The playing state of the application. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>false if the application is stopped </para><para>true if the application is playing or paused </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="175" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="175" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_121d48ba0c9ac4258a5ad0fe0594df654" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIRemotePlayer::paused</definition>
+        <argsstring></argsstring>
+        <name>paused</name>
+        <briefdescription>
+<para>The paused state of the application. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>false if the application is not paused </para><para>true if the application is paused </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="194" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_1581a8e8eabd70467d0c503dded4ec1d9" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbIRemotePlayer::repeat</definition>
+        <argsstring></argsstring>
+        <name>repeat</name>
+        <briefdescription>
+<para>The repeat state for playback. </para>        </briefdescription>
+        <detaileddescription>
+<para>The repeat state for playback. This can be one of three values: 0 - no repeat 1 - repeat the current track forever 2 - repeat the current playlist forever </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="216" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_18a3d81802e3d46206eca1bbfef1725fb" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIRemotePlayer::shuffle</definition>
+        <argsstring></argsstring>
+        <name>shuffle</name>
+        <briefdescription>
+<para>Shuffle state for playback. </para>        </briefdescription>
+        <detaileddescription>
+<para>This will be true if shuffle is enabled, false if not. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="233" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_13ea631886d985e69c8717214e2ff5ec0" prot="public" static="no" mutable="no">
+        <type>attribute long long</type>
+        <definition>attribute long long sbIRemotePlayer::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+<para>The location of playback within the current media, in milliseconds. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="247" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_127e5928c56cc78f22b39ccdf05211aa9" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbIRemotePlayer::volume</definition>
+        <argsstring></argsstring>
+        <name>volume</name>
+        <briefdescription>
+<para>The volume on a range from 0 to 255. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="261" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_1ae2a154e0eed0c23dc850c002a397fcd" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIRemotePlayer::mute</definition>
+        <argsstring></argsstring>
+        <name>mute</name>
+        <briefdescription>
+<para>The mute state. </para>        </briefdescription>
+        <detaileddescription>
+<para>True if muted or the volume is set to 0, false otherwise </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="277" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_18770671b2f3151a1ee8eb6f5728fff31" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_remote_commands" kindref="compound">sbIRemoteCommands</ref></type>
+        <definition>readonly attribute sbIRemoteCommands sbIRemotePlayer::commands</definition>
+        <argsstring></argsstring>
+        <name>commands</name>
+        <briefdescription>
+<para>The collection of commands associated with the current page. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="291" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_1b59bdd4d0f2f6368a3f6eb905058bf83" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_remote_web_playlist" kindref="compound">sbIRemoteWebPlaylist</ref></type>
+        <definition>readonly attribute sbIRemoteWebPlaylist sbIRemotePlayer::webPlaylist</definition>
+        <argsstring></argsstring>
+        <name>webPlaylist</name>
+        <briefdescription>
+<para>The current web playlist. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="305" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="305" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_122def0e35e5c89b9c5841ee5b97331a8" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_remote_library" kindref="compound">sbIRemoteLibrary</ref></type>
+        <definition>readonly attribute sbIRemoteLibrary sbIRemotePlayer::mainLibrary</definition>
+        <argsstring></argsstring>
+        <name>mainLibrary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="742" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="742" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_player_193af9fadef3eac3ca4335c5664874b2d" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_remote_library" kindref="compound">sbIRemoteLibrary</ref></type>
+        <definition>readonly attribute sbIRemoteLibrary sbIRemotePlayer::webLibrary</definition>
+        <argsstring></argsstring>
+        <name>webLibrary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="743" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="743" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_remote_player_1bd522fc6038ff7711fd69341104e1690" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -23,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="82"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="353"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_16468a05a52df347ec61c1e9a1b172873" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -44,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="88"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="388"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1c2e5e455db8388de96978e32a8988d85" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -56,12 +255,12 @@
           <declname>aItem</declname>
         </param>
         <briefdescription>
-<para>Download the items passed in. </para>        </briefdescription>
+<para>Download the item passed in. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="93"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="420"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1f6e5207f9c725a1f7039ef60b1aea189" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -73,12 +272,12 @@
           <declname>aList</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Download all items in a MediaList. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="94"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="460"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_173d9e14529c70c873b915e8836687887" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -90,12 +289,12 @@
           <declname>aWebPlaylist</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Download only the selected elements from a WebPlaylist. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="95"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="489"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1daeeec63d686c7cd659da7df965c50c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -103,12 +302,12 @@
         <argsstring>()</argsstring>
         <name>play</name>
         <briefdescription>
-<para>Being playback at the current location. </para>        </briefdescription>
+<para>Begin playback at the current location. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="100"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="516"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1e3bdaea5673f434e00a19e169e43c1ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -129,7 +328,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="102"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="547"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1da4a6af76d37c2199ba8a45faf0ab457" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -146,7 +345,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="107"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="577"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_15af91bd5074e382b717241d955223473" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -159,7 +358,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="112"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="604"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_16165252eda6dd4d329419f357e94077f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -172,7 +371,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="117"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="631"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_197bf001f488b18ededdcd36f3a59e71e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -185,7 +384,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="122"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="661"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_16b2fc642d2633e81693895ec2f40a2eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -198,19 +397,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="127"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="691"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_1893610f224e5ea88ffc0dc8318a033d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_1ac69640f1e9220c3fea1ed02b9a1f040" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_library" kindref="compound">sbIRemoteLibrary</ref></type>
         <definition>sbIRemoteLibrary sbIRemotePlayer::siteLibrary</definition>
-        <argsstring>(in AString aDomain, in AString aPath)</argsstring>
+        <argsstring>(in AUTF8String aDomain, in AUTF8String aPath)</argsstring>
         <name>siteLibrary</name>
         <param>
-          <type>in AString</type>
+          <type>in AUTF8String</type>
           <declname>aDomain</declname>
         </param>
         <param>
-          <type>in AString</type>
+          <type>in AUTF8String</type>
           <declname>aPath</declname>
         </param>
         <briefdescription>
@@ -219,7 +418,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="143"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="718"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1ae78604f44c7a50b11b6441758ec81bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_library" kindref="compound">sbIRemoteLibrary</ref></type>
@@ -236,7 +435,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="146"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="740"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_1d07ad92b9624b860ab2d5c522d61f35e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -257,7 +456,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="151"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="748"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_player_12696499c3a08b3353c6f9773a3eeaf8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -265,92 +464,12 @@
         <argsstring>()</argsstring>
         <name>onCommandsChanged</name>
         <briefdescription>
-        </briefdescription>
+<para>Forces the webplaylist to rescan it&apos;s commands. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="152"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_remote_player_11364062121dbd69124c41146506beb08" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIRemotePlayer::name</definition>
-        <argsstring></argsstring>
-        <name>name</name>
-        <briefdescription>
-<para>The name of the player. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="56" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="56" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_remote_player_1b59bdd4d0f2f6368a3f6eb905058bf83" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_remote_web_playlist" kindref="compound">sbIRemoteWebPlaylist</ref></type>
-        <definition>readonly attribute sbIRemoteWebPlaylist sbIRemotePlayer::webPlaylist</definition>
-        <argsstring></argsstring>
-        <name>webPlaylist</name>
-        <briefdescription>
-<para>The current web playlist. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="61" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="61" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_remote_player_18076bb11fe8b51db9aec8823531677f6" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIRemotePlayer::currentArtist</definition>
-        <argsstring></argsstring>
-        <name>currentArtist</name>
-        <briefdescription>
-<para>The name of the artist for the currently playing track. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="66" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="66" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_remote_player_18c2f87ff4c285ffe551e184c83d56999" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIRemotePlayer::currentAlbum</definition>
-        <argsstring></argsstring>
-        <name>currentAlbum</name>
-        <briefdescription>
-<para>The name of the album for the currently playing track. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="71" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="71" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_remote_player_103b3d78103d3cb016a9094f2f87d5a75" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIRemotePlayer::currentTrack</definition>
-        <argsstring></argsstring>
-        <name>currentTrack</name>
-        <briefdescription>
-<para>The name of the currently playing track. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="76" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="76" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_remote_player_18770671b2f3151a1ee8eb6f5728fff31" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_remote_commands" kindref="compound">sbIRemoteCommands</ref></type>
-        <definition>readonly attribute sbIRemoteCommands sbIRemotePlayer::commands</definition>
-        <argsstring></argsstring>
-        <name>commands</name>
-        <briefdescription>
-<para>The collection of commands associated with the current page. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="136" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="136" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="753"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -358,36 +477,44 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="439">
+      <node id="484">
+        <label>sbIRemoteLibrary</label>
+        <link refid="interfacesb_i_remote_library"/>
+      </node>
+      <node id="483">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="438" relation="usage">
+        <childnode refid="482" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="441">
+      <node id="486">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="438">
+      <node id="482">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="439" relation="usage">
+        <childnode refid="483" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="440" relation="usage">
+        <childnode refid="484" relation="usage">
+          <edgelabel>webLibrary
+mainLibrary</edgelabel>
+        </childnode>
+        <childnode refid="485" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
       </node>
-      <node id="440">
+      <node id="485">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="441" relation="usage">
+        <childnode refid="486" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="52" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="51" bodyend="154"/>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="101" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="100" bodyend="755"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_player_1bd522fc6038ff7711fd69341104e1690" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>addListener</name></member>
       <member refid="interfacesb_i_remote_player_18770671b2f3151a1ee8eb6f5728fff31" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>commands</name></member>
@@ -399,17 +526,26 @@
       <member refid="interfacesb_i_remote_player_173d9e14529c70c873b915e8836687887" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>downloadSelected</name></member>
       <member refid="interfacesb_i_remote_player_1d07ad92b9624b860ab2d5c522d61f35e" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>fireEventToContent</name></member>
       <member refid="interfacesb_i_remote_player_1ae78604f44c7a50b11b6441758ec81bd" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>libraries</name></member>
+      <member refid="interfacesb_i_remote_player_122def0e35e5c89b9c5841ee5b97331a8" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>mainLibrary</name></member>
+      <member refid="interfacesb_i_remote_player_1ae2a154e0eed0c23dc850c002a397fcd" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>mute</name></member>
       <member refid="interfacesb_i_remote_player_11364062121dbd69124c41146506beb08" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>name</name></member>
       <member refid="interfacesb_i_remote_player_197bf001f488b18ededdcd36f3a59e71e" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>next</name></member>
       <member refid="interfacesb_i_remote_player_12696499c3a08b3353c6f9773a3eeaf8a" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>onCommandsChanged</name></member>
       <member refid="interfacesb_i_remote_player_16165252eda6dd4d329419f357e94077f" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>pause</name></member>
+      <member refid="interfacesb_i_remote_player_121d48ba0c9ac4258a5ad0fe0594df654" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>paused</name></member>
       <member refid="interfacesb_i_remote_player_1daeeec63d686c7cd659da7df965c50c9" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>play</name></member>
+      <member refid="interfacesb_i_remote_player_1291faf4a5b517b45abf8b1a1f212e669" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>playing</name></member>
       <member refid="interfacesb_i_remote_player_1e3bdaea5673f434e00a19e169e43c1ea" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>playMediaList</name></member>
       <member refid="interfacesb_i_remote_player_1da4a6af76d37c2199ba8a45faf0ab457" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>playURL</name></member>
+      <member refid="interfacesb_i_remote_player_13ea631886d985e69c8717214e2ff5ec0" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>position</name></member>
       <member refid="interfacesb_i_remote_player_16b2fc642d2633e81693895ec2f40a2eb" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>previous</name></member>
       <member refid="interfacesb_i_remote_player_16468a05a52df347ec61c1e9a1b172873" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>removeListener</name></member>
-      <member refid="interfacesb_i_remote_player_1893610f224e5ea88ffc0dc8318a033d3" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>siteLibrary</name></member>
+      <member refid="interfacesb_i_remote_player_1581a8e8eabd70467d0c503dded4ec1d9" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>repeat</name></member>
+      <member refid="interfacesb_i_remote_player_18a3d81802e3d46206eca1bbfef1725fb" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>shuffle</name></member>
+      <member refid="interfacesb_i_remote_player_1ac69640f1e9220c3fea1ed02b9a1f040" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>siteLibrary</name></member>
       <member refid="interfacesb_i_remote_player_15af91bd5074e382b717241d955223473" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>stop</name></member>
+      <member refid="interfacesb_i_remote_player_127e5928c56cc78f22b39ccdf05211aa9" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>volume</name></member>
+      <member refid="interfacesb_i_remote_player_193af9fadef3eac3ca4335c5664874b2d" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>webLibrary</name></member>
       <member refid="interfacesb_i_remote_player_1b59bdd4d0f2f6368a3f6eb905058bf83" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>webPlaylist</name></member>
     </listofallmembers>
   </compounddef>

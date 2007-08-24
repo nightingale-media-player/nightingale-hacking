@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_p_i_bundle_8idl" kind="file">
     <compoundname>sbPIBundle.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="9">
-        <label>C:/projects/songbird/components/bundle/public/sbPIBundle.idl</label>
+      <node id="18">
+        <label>trunk/components/bundle/public/sbPIBundle.idl</label>
         <link refid="sbPIBundle.idl"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="10">
+      <node id="19">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>sbIBundleDownloadListener;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(849391df-aeff-11db-96e1-005056c00008)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_p_i_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_bundle" kindref="compound">sbPIBundle</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_p_i_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_bundle" kindref="compound" tooltip="Songbird Private Bundle Interface This is a private interface for bundle management...">sbPIBundle</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setInstallResult(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aResult);</highlight></codeline>
@@ -63,6 +63,6 @@
 <codeline lineno="65"><highlight class="normal"><sp/>sbIBundleDownloadListener<sp/>getInstallListener(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="66"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbPIBundle.idl"/>
   </compounddef>
 </doxygen>

@@ -1,8 +1,36 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_searchable_media_list_view" kind="interface" prot="public">
     <compoundname>sbISearchableMediaListView</compoundname>
     <includes refid="sb_i_searchable_media_list_view_8idl" local="no">sbISearchableMediaListView.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_searchable_media_list_view_1b380c0f60b0a44eb188274a92c7d5e95" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbISearchableMediaListView::searchableProperties</definition>
+        <argsstring></argsstring>
+        <name>searchableProperties</name>
+        <briefdescription>
+<para>Get a list of all the properties that can be searched. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_searchable_media_list_view_10015e6280bb9bf9efdc3dca3a08832fc" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>readonly attribute sbIPropertyArray sbISearchableMediaListView::currentSearch</definition>
+        <argsstring></argsstring>
+        <name>currentSearch</name>
+        <briefdescription>
+<para>The current search. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_searchable_media_list_view_15bf486c16522b1a0e39aac64eed6e82a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -27,7 +55,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="66"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_searchable_media_list_view_1918ef33d7c7a26daa0d2a97ebe1b7132" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -40,35 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="71"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_searchable_media_list_view_1b380c0f60b0a44eb188274a92c7d5e95" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIStringEnumerator</type>
-        <definition>readonly attribute nsIStringEnumerator sbISearchableMediaListView::searchableProperties</definition>
-        <argsstring></argsstring>
-        <name>searchableProperties</name>
-        <briefdescription>
-<para>Get a list of all the properties that can be searched. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="53" bodyfile="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" bodystart="53" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_searchable_media_list_view_10015e6280bb9bf9efdc3dca3a08832fc" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
-        <definition>readonly attribute sbIPropertyArray sbISearchableMediaListView::currentSearch</definition>
-        <argsstring></argsstring>
-        <name>currentSearch</name>
-        <briefdescription>
-<para>The current search. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="58" bodyfile="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" bodystart="58" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -77,19 +77,19 @@
 <para>Media lists that implement this interface declare themselves as searchable. The search is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="446">
+      <node id="495">
         <label>sbISearchableMediaListView</label>
         <link refid="interfacesb_i_searchable_media_list_view"/>
-        <childnode refid="447" relation="usage">
+        <childnode refid="496" relation="usage">
           <edgelabel>currentSearch</edgelabel>
         </childnode>
       </node>
-      <node id="447">
+      <node id="496">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="49" bodyfile="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" bodystart="48" bodyend="72"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" bodystart="48" bodyend="72"/>
     <listofallmembers>
       <member refid="interfacesb_i_searchable_media_list_view_1918ef33d7c7a26daa0d2a97ebe1b7132" prot="public" virt="non-virtual"><scope>sbISearchableMediaListView</scope><name>clearSearch</name></member>
       <member refid="interfacesb_i_searchable_media_list_view_10015e6280bb9bf9efdc3dca3a08832fc" prot="public" virt="non-virtual"><scope>sbISearchableMediaListView</scope><name>currentSearch</name></member>

@@ -1,11 +1,262 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_device_base" kind="interface" prot="public">
     <compoundname>sbIDeviceBase</compoundname>
     <derivedcompoundref refid="interfacesb_i_c_d_device" prot="public" virt="non-virtual">sbICDDevice</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_download_device" prot="public" virt="non-virtual">sbIDownloadDevice</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_w_m_device" prot="public" virt="non-virtual">sbIWMDevice</derivedcompoundref>
     <includes refid="sb_i_device_base_8idl" local="no">sbIDeviceBase.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_UNDEFINED</definition>
+        <argsstring></argsstring>
+        <name>FILE_FORMAT_UNDEFINED</name>
+        <initializer> 9999</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>File format constants</para><para>XXXben We have an explicit -1 here but later we have PRUint32 as a param for get/set Upload and Download FileType. Also, should these be renamed to FILE_TYPE_XXX or should we change the other funcs to use FileFormat? </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="131" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_13286b4156bc7451864e06484ab9d6600" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_WAV</definition>
+        <argsstring></argsstring>
+        <name>FILE_FORMAT_WAV</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="132" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1a4c7914066a37e1c8fb771d24d93896b" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_MP3</definition>
+        <argsstring></argsstring>
+        <name>FILE_FORMAT_MP3</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="133" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1094f8d16b220839a90bfd6ab4c53d6c8" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_WMA</definition>
+        <argsstring></argsstring>
+        <name>FILE_FORMAT_WMA</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="134" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1e9feaccdd1f099e418ef48879e761d72" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_IDLE</definition>
+        <argsstring></argsstring>
+        <name>STATE_IDLE</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Device State constants</para><para>Generally speaking I/O commands can be issued to a device if device state is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies to STATE_UPLOADING and STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.</para><para>XXXben STATE_TRANSFERRING_PAUSED no longer exists </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="146" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_19563aa24bd30658cdd2f1d339619fd7d" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_BUSY</definition>
+        <argsstring></argsstring>
+        <name>STATE_BUSY</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="147" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_134a17329aa4a0a8e888507c9fc4f30c3" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_DOWNLOADING</definition>
+        <argsstring></argsstring>
+        <name>STATE_DOWNLOADING</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="148" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1a6969d443210062597ade048e9e69d7f" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_UPLOADING</definition>
+        <argsstring></argsstring>
+        <name>STATE_UPLOADING</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="149" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_19eff91237d93732d42842125c4a32f6a" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_DOWNLOAD_PAUSED</definition>
+        <argsstring></argsstring>
+        <name>STATE_DOWNLOAD_PAUSED</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="150" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_18952d8d70d804a5354b95957b8fe3de4" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_UPLOAD_PAUSED</definition>
+        <argsstring></argsstring>
+        <name>STATE_UPLOAD_PAUSED</name>
+        <initializer> 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="151" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1cef379b0fd2bef8df90b67989b53f5be" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIDeviceBase::STATE_DELETING</definition>
+        <argsstring></argsstring>
+        <name>STATE_DELETING</name>
+        <initializer> 6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="152" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1e26cd7e75266b587e32c6b8942d269bc" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceBase::OP_UPLOAD</definition>
+        <argsstring></argsstring>
+        <name>OP_UPLOAD</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>Device Operation Constants. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_device_base_17b2be1b7de63836b2d53bc0df1594a8f" kindref="member">transferItems</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="158" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1e67faa584ca5efb87b9e88cb8ecba30d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceBase::OP_DOWNLOAD</definition>
+        <argsstring></argsstring>
+        <name>OP_DOWNLOAD</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="159" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_15068f6c42f4055969b6ccd5f4dc0bd1c" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceBase::OP_MOVE</definition>
+        <argsstring></argsstring>
+        <name>OP_MOVE</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="160" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_18dba3d8a4a2f5556a4881bfee0e43029" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIDeviceBase::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>The name of the device category handler. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="165" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_10822a294b0931fcc6decf3dfce99eb18" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDeviceBase::deviceCategory</definition>
+        <argsstring></argsstring>
+        <name>deviceCategory</name>
+        <briefdescription>
+<para>Device category name for this class of devices. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="200" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_1a0b2aa200a8ba41a6b59aa4dc266d533" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIDeviceBase::deviceIdentifiers</definition>
+        <argsstring></argsstring>
+        <name>deviceIdentifiers</name>
+        <briefdescription>
+<para>Contains nsISupportsStrings representing the device unique identifiers for all connected devices of this category. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="206" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_base_184f2266170fa22c6978b003964d3419a" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIDeviceBase::deviceCount</definition>
+        <argsstring></argsstring>
+        <name>deviceCount</name>
+        <briefdescription>
+<para>Get the number of devices currently connected. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="211" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_device_base_1adfa4f4ae8746b7e3d295c0acfe2b822" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -18,7 +269,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="169"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="170"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1514a91bf363e2ab6d61e04c40a2485ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -31,7 +282,7 @@
 <para>This effectively prepares the device category handler for application shutdown. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="177"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="178"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -56,7 +307,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="187"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="188"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_125a80634ada6eaa6ecc58e3143f5bfe0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -81,7 +332,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="194"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="195"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1570024ce2b052a8c3d2536ce5da98361" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
@@ -107,7 +358,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="219"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="220"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_19d41f079c94b757860636a38408b9909" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -133,7 +384,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="228"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="229"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1622a6a6f90ff1dfe690fe04249bcdd0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIURI</type>
@@ -170,7 +421,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="242"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="243"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_17b2be1b7de63836b2d53bc0df1594a8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -251,7 +502,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="271"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="272"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_15b434096c9b70120af63aeb00aee2374" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -272,7 +523,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="277"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="278"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1aa8050e1024971f8cc26cdec4d52ef6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -309,7 +560,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="288"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="289"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_111b0adc4e4c646e0291b94a5bafadbc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -326,7 +577,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="290"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="291"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -344,7 +595,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="296"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="297"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_17fc41840352e7d1c1f388fb4ebf72f3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -381,7 +632,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="309"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="310"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_15afd4dd515f205fd8abe0fde40e150ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -407,7 +658,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="320"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="321"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1556564d3d4546bd5b3a63b0703d2ea76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -433,7 +684,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="331"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="332"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_11e949343262063d4c6731e38aa8610fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long long</type>
@@ -459,7 +710,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="340"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="341"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_148819296d8e791ab61d6a54b45c293ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long long</type>
@@ -485,7 +736,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="349"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="350"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_19fffb9990dbcaa7dc687dbb478585958" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
@@ -511,7 +762,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="360"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="361"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1f65b9db563722e61d44b8ef4f8119513" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -537,7 +788,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="369"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="370"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_16d87cf08ceda1c7dd2b0908cb572ef2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -563,7 +814,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="380"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="381"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1c62a422eb02a3e2899996e8fd1021d01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -589,7 +840,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="389"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="390"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1df3697344df11bf6b2fcf7d30bb48b9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -615,7 +866,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="401"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="402"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1f26ede9ddef51ee99e0a7e841dc7bbfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -641,7 +892,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="410"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="411"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_1ddf45a09e5de5494f4b7234aa7653122" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -667,258 +918,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="419"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_UNDEFINED</definition>
-        <argsstring></argsstring>
-        <name>FILE_FORMAT_UNDEFINED</name>
-        <initializer> 9999</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>File format constants</para><para>XXXben We have an explicit -1 here but later we have PRUint32 as a param for get/set Upload and Download FileType. Also, should these be renamed to FILE_TYPE_XXX or should we change the other funcs to use FileFormat? </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="130" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="130" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_13286b4156bc7451864e06484ab9d6600" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_WAV</definition>
-        <argsstring></argsstring>
-        <name>FILE_FORMAT_WAV</name>
-        <initializer> 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="131" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="131" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1a4c7914066a37e1c8fb771d24d93896b" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_MP3</definition>
-        <argsstring></argsstring>
-        <name>FILE_FORMAT_MP3</name>
-        <initializer> 1</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="132" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="132" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1094f8d16b220839a90bfd6ab4c53d6c8" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::FILE_FORMAT_WMA</definition>
-        <argsstring></argsstring>
-        <name>FILE_FORMAT_WMA</name>
-        <initializer> 2</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="133" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="133" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1e9feaccdd1f099e418ef48879e761d72" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_IDLE</definition>
-        <argsstring></argsstring>
-        <name>STATE_IDLE</name>
-        <initializer> 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Device State constants</para><para>Generally speaking I/O commands can be issued to a device if device state is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies to STATE_UPLOADING and STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.</para><para>XXXben STATE_TRANSFERRING_PAUSED no longer exists </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="145" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="145" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_19563aa24bd30658cdd2f1d339619fd7d" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_BUSY</definition>
-        <argsstring></argsstring>
-        <name>STATE_BUSY</name>
-        <initializer> 1</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="146" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="146" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_134a17329aa4a0a8e888507c9fc4f30c3" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_DOWNLOADING</definition>
-        <argsstring></argsstring>
-        <name>STATE_DOWNLOADING</name>
-        <initializer> 2</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="147" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="147" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1a6969d443210062597ade048e9e69d7f" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_UPLOADING</definition>
-        <argsstring></argsstring>
-        <name>STATE_UPLOADING</name>
-        <initializer> 3</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="148" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="148" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_19eff91237d93732d42842125c4a32f6a" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_DOWNLOAD_PAUSED</definition>
-        <argsstring></argsstring>
-        <name>STATE_DOWNLOAD_PAUSED</name>
-        <initializer> 4</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="149" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="149" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_18952d8d70d804a5354b95957b8fe3de4" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_UPLOAD_PAUSED</definition>
-        <argsstring></argsstring>
-        <name>STATE_UPLOAD_PAUSED</name>
-        <initializer> 5</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="150" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="150" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1cef379b0fd2bef8df90b67989b53f5be" prot="public" static="no" mutable="no">
-        <type>const PRUint32</type>
-        <definition>const PRUint32 sbIDeviceBase::STATE_DELETING</definition>
-        <argsstring></argsstring>
-        <name>STATE_DELETING</name>
-        <initializer> 6</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="151" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="151" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1e26cd7e75266b587e32c6b8942d269bc" prot="public" static="no" mutable="no">
-        <type>const unsigned long</type>
-        <definition>const unsigned long sbIDeviceBase::OP_UPLOAD</definition>
-        <argsstring></argsstring>
-        <name>OP_UPLOAD</name>
-        <initializer> 1</initializer>
-        <briefdescription>
-<para>Device Operation Constants. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="see"><para><ref refid="interfacesb_i_device_base_17b2be1b7de63836b2d53bc0df1594a8f" kindref="member">transferItems</ref> </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="157" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="157" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_1e67faa584ca5efb87b9e88cb8ecba30d" prot="public" static="no" mutable="no">
-        <type>const unsigned long</type>
-        <definition>const unsigned long sbIDeviceBase::OP_DOWNLOAD</definition>
-        <argsstring></argsstring>
-        <name>OP_DOWNLOAD</name>
-        <initializer> 2</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="158" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="158" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_15068f6c42f4055969b6ccd5f4dc0bd1c" prot="public" static="no" mutable="no">
-        <type>const unsigned long</type>
-        <definition>const unsigned long sbIDeviceBase::OP_MOVE</definition>
-        <argsstring></argsstring>
-        <name>OP_MOVE</name>
-        <initializer> 3</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="159" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="159" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_18dba3d8a4a2f5556a4881bfee0e43029" prot="public" static="no" mutable="no">
-        <type>attribute AString</type>
-        <definition>attribute AString sbIDeviceBase::name</definition>
-        <argsstring></argsstring>
-        <name>name</name>
-        <briefdescription>
-<para>The name of the device category handler. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="164" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="164" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_10822a294b0931fcc6decf3dfce99eb18" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIDeviceBase::deviceCategory</definition>
-        <argsstring></argsstring>
-        <name>deviceCategory</name>
-        <briefdescription>
-<para>Device category name for this class of devices. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="199" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="199" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_14e635fedf1cc12b7ca821b84916855ce" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIArray</type>
-        <definition>readonly attribute nsIArray sbIDeviceBase::deviceIdentifiers</definition>
-        <argsstring></argsstring>
-        <name>deviceIdentifiers</name>
-        <briefdescription>
-<para>Contains nsISupportsStrings representing the device unique identifiers for all connected devices of this category. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="205" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="205" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_base_184f2266170fa22c6978b003964d3419a" prot="public" static="no" mutable="no">
-        <type>readonly attribute unsigned long</type>
-        <definition>readonly attribute unsigned long sbIDeviceBase::deviceCount</definition>
-        <argsstring></argsstring>
-        <name>deviceCount</name>
-        <briefdescription>
-<para>Get the number of devices currently connected. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="210" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="210" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="420"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -926,30 +926,30 @@
     <detaileddescription>
 <para>Base interface for all supported devices. The supported devices can be CD, Windows Media Device, iPod, etc., and even a download device for downloading and uploading files.</para><para>All devices implement this base interface to perform the basic operations such as enumerating tracks (media files) and perform supported I/O operations.</para><para>In addition, a device class instance, not to be confused with a device instance, can provide extended information about a device, for example recording speed for a CD drive.</para><para>&quot;Device Category&quot; is used in identifying device class instances (using <ref refid="interfacesb_i_device_manager" kindref="compound">sbIDeviceManager</ref>) and &quot;Device String&quot; is for identifying a device. For instance &quot;Songbird CD Device&quot; is the Device Category and &quot;D:\&quot; is the Device String. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="73">
+      <node id="77">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="70" relation="public-inheritance">
+        <childnode refid="74" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="72">
+      <node id="76">
         <label>sbIDownloadDevice</label>
         <link refid="interfacesb_i_download_device"/>
-        <childnode refid="70" relation="public-inheritance">
+        <childnode refid="74" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="71">
+      <node id="75">
         <label>sbICDDevice</label>
         <link refid="interfacesb_i_c_d_device"/>
-        <childnode refid="70" relation="public-inheritance">
+        <childnode refid="74" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="70">
+      <node id="74">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
-    <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="121" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="120" bodyend="420"/>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="122" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="121" bodyend="421"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>beginTransfer</name></member>
@@ -958,7 +958,7 @@
       <member refid="interfacesb_i_device_base_1aa8050e1024971f8cc26cdec4d52ef6e" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>deleteItems</name></member>
       <member refid="interfacesb_i_device_base_10822a294b0931fcc6decf3dfce99eb18" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>deviceCategory</name></member>
       <member refid="interfacesb_i_device_base_184f2266170fa22c6978b003964d3419a" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>deviceCount</name></member>
-      <member refid="interfacesb_i_device_base_14e635fedf1cc12b7ca821b84916855ce" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>deviceIdentifiers</name></member>
+      <member refid="interfacesb_i_device_base_1a0b2aa200a8ba41a6b59aa4dc266d533" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>deviceIdentifiers</name></member>
       <member refid="interfacesb_i_device_base_1ddf45a09e5de5494f4b7234aa7653122" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>ejectDevice</name></member>
       <member refid="interfacesb_i_device_base_1a4c7914066a37e1c8fb771d24d93896b" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>FILE_FORMAT_MP3</name></member>
       <member refid="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" prot="public" virt="non-virtual"><scope>sbIDeviceBase</scope><name>FILE_FORMAT_UNDEFINED</name></member>

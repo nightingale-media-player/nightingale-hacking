@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_bundle_install_listener_8idl" kind="file">
     <compoundname>sbIBundleInstallListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="6">
-        <label>C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl</label>
+      <node id="15">
+        <label>trunk/components/bundle/public/sbIBundleInstallListener.idl</label>
         <link refid="sbIBundleInstallListener.idl"/>
-        <childnode refid="7" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
       </node>
-      <node id="7">
+      <node id="16">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,24 +49,24 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(849391de-aeff-11db-96e1-005056c00008)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_bundle_install_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_bundle_install_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onExtensionDownloadProgress(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aCurrentProgress,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMaxProgress);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onExtensionDownloadProgress(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aCurrentProgress,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMaxProgress);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);<sp/></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);<sp/></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onInstallComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);<sp/><sp/></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onInstallComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);<sp/><sp/></highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onInstallError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onInstallError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onBundleInstallComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onBundleInstallComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl"/>
   </compounddef>
 </doxygen>

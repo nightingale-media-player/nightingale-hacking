@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_faceplate_manager_listener_8idl" kind="file">
     <compoundname>sbIFaceplateManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="121">
-        <label>C:/projects/songbird/components/faceplate/public/sbIFaceplateManagerListener.idl</label>
-        <link refid="sbIFaceplateManagerListener.idl"/>
-        <childnode refid="122" relation="include">
-        </childnode>
-      </node>
-      <node id="122">
+      <node id="131">
         <label>nsISupports.idl</label>
+      </node>
+      <node id="130">
+        <label>trunk/components/faceplate/public/sbIFaceplateManagerListener.idl</label>
+        <link refid="sbIFaceplateManagerListener.idl"/>
+        <childnode refid="131" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_faceplate_manager_listener" prot="public">sbIFaceplateManagerListener</innerclass>
@@ -49,19 +49,19 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(0fdd0108-ff78-11db-8314-0800200c9a66)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_faceplate_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound">sbIFaceplateManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_faceplate_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCreatePane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCreatePane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onShowPane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onShowPane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDestroyPane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDestroyPane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/faceplate/public/sbIFaceplateManagerListener.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManagerListener.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_application_controller_8idl" kind="file">
     <compoundname>sbIApplicationController.idl</compoundname>
     <includes local="yes">nsIControllers.idl</includes>
     <incdepgraph>
-      <node id="21">
-        <label>C:/projects/songbird/components/controller/public/sbIApplicationController.idl</label>
+      <node id="30">
+        <label>trunk/components/controller/public/sbIApplicationController.idl</label>
         <link refid="sbIApplicationController.idl"/>
-        <childnode refid="22" relation="include">
+        <childnode refid="31" relation="include">
         </childnode>
       </node>
-      <node id="22">
+      <node id="31">
         <label>nsIControllers.idl</label>
       </node>
     </incdepgraph>
@@ -49,14 +49,14 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsIControllers.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMNode;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[uuid(5FD7CE4D-45DA-4e43-A08B-D97443E11AC6)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_application_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_application_controller" kindref="compound">sbIApplicationController</ref><sp/>:<sp/>nsIControllers</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_application_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_application_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIApplicationController</ref><sp/>:<sp/>nsIControllers</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_application_controller_1d205fc0eae80f54524792349aec4f83b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>activeMediaList;</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_application_controller_1d205fc0eae80f54524792349aec4f83b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>activeMediaList;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_application_controller_1fe8e352ee959d7199c6565059852e300" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIDOMNode<sp/>activeBrowser;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
@@ -68,9 +68,9 @@
 <codeline lineno="77"><highlight class="normal"></highlight></codeline>
 <codeline lineno="83"><highlight class="normal"><sp/><sp/>nsIDOMWindow<sp/>getActiveWindowOfType(in<sp/>AString<sp/>aWindowType);</highlight></codeline>
 <codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>getActiveMediaListInWindow(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>getActiveMediaListInWindow(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
 <codeline lineno="92"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl"/>
   </compounddef>
 </doxygen>

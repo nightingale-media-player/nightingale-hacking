@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_dragger_8idl" kind="file">
     <compoundname>IWindowDragger.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="148">
-        <label>C:/projects/songbird/components/integration/public/IWindowDragger.idl</label>
+      <node id="157">
+        <label>trunk/components/integration/public/IWindowDragger.idl</label>
         <link refid="IWindowDragger.idl"/>
-        <childnode refid="149" relation="include">
+        <childnode refid="158" relation="include">
         </childnode>
       </node>
-      <node id="149">
+      <node id="158">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,19 +49,19 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(55bc09ea-6ded-11db-968c-00e08161165f)]</highlight></codeline>
-<codeline lineno="42" refid="interfacesb_i_window_dragger_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_dragger_callback" kindref="compound">sbIWindowDraggerCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="42" refid="interfacesb_i_window_dragger_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_dragger_callback" kindref="compound" tooltip="Window dragging callback interface This is an interface to a callback method used...">sbIWindowDraggerCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWindowDragComplete();</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59"><highlight class="normal">[scriptable,<sp/>uuid(47fcfb00-6ded-11db-968c-00e08161165f)]</highlight></codeline>
-<codeline lineno="60" refid="interfacesb_i_window_dragger" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_dragger" kindref="compound">sbIWindowDragger</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_window_dragger" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_dragger" kindref="compound" tooltip="Window dragging service interface This is an interface to the window dragging service...">sbIWindowDragger</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginWindowDrag(<sp/>in<sp/>PRInt32<sp/>dockDistance,<sp/>in<sp/><ref refid="interfacesb_i_window_dragger_callback" kindref="compound">sbIWindowDraggerCallback</ref><sp/>cb<sp/>);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginWindowDrag(<sp/>in<sp/>PRInt32<sp/>dockDistance,<sp/>in<sp/><ref refid="interfacesb_i_window_dragger_callback" kindref="compound" tooltip="Window dragging callback interface This is an interface to a callback method used...">sbIWindowDraggerCallback</ref><sp/>cb<sp/>);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowDragger.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl"/>
   </compounddef>
 </doxygen>

@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_event_8idl" kind="file">
     <compoundname>sbIDeviceEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="55">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl</label>
-        <link refid="sbIDeviceEvent.idl"/>
-        <childnode refid="56" relation="include">
-        </childnode>
-      </node>
-      <node id="56">
+      <node id="65">
         <label>nsISupports.idl</label>
+      </node>
+      <node id="64">
+        <label>trunk/components/devices/base/public/sbIDeviceEvent.idl</label>
+        <link refid="sbIDeviceEvent.idl"/>
+        <childnode refid="65" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_event" prot="public">sbIDeviceEvent</innerclass>
@@ -50,10 +50,10 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_target" kindref="compound">sbIDeviceEventTarget</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_target" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventTarget</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(54a5ba3c-d409-458f-9cab-60f499c603e7)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_event" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_device_event" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_device_event_1a3e6c8fb430675ca5f3aa4ae51642836" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>COMMAND_DEVICE_BASE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00000000;</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_device_event_1d11856dc4d6638758b7aae18261006d6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>COMMAND_DEVICE_RESET<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00000001;</highlight></codeline>
@@ -97,9 +97,9 @@
 <codeline lineno="112"><highlight class="normal"></highlight></codeline>
 <codeline lineno="116" refid="interfacesb_i_device_event_199e5f65469f988f927910b9e939ee910" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>data;</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="121" refid="interfacesb_i_device_event_1d3ba0c0de389b9d6a0a47f59cab1320b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_event_target" kindref="compound">sbIDeviceEventTarget</ref><sp/>source;</highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_device_event_1d3ba0c0de389b9d6a0a47f59cab1320b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_event_target" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventTarget</ref><sp/>source;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEvent.idl"/>
   </compounddef>
 </doxygen>

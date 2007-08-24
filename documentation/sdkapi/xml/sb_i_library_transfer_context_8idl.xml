@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_library_transfer_context_8idl" kind="file">
     <compoundname>sbILibraryTransferContext.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="203">
-        <label>C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl</label>
+      <node id="212">
+        <label>trunk/components/library/base/public/sbILibraryTransferContext.idl</label>
         <link refid="sbILibraryTransferContext.idl"/>
-        <childnode refid="204" relation="include">
+        <childnode refid="213" relation="include">
         </childnode>
       </node>
-      <node id="204">
+      <node id="213">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,37 +51,37 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">[scriptable,<sp/>uuid(9a3da84e-209c-4d49-9294-c156080486bc)]</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_library_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound">sbILibraryTransferContext</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_library_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="47"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="51" refid="interfacesb_i_library_transfer_context_1b1d4eaa3e8801a81998da228b7355acf" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>source;</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_library_transfer_context_1b1d4eaa3e8801a81998da228b7355acf" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>source;</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_library_transfer_context_13ba7b2274e30a6feeec766f190649be8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal">[scriptable,<sp/>uuid(4295e550-8222-43bb-a735-dc6ba7116ab6)]</highlight></codeline>
-<codeline lineno="71" refid="interfacesb_i_single_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_single_item_transfer_context" kindref="compound">sbISingleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound">sbILibraryTransferContext</ref></highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_single_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_single_item_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a single media item.">sbISingleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
 <codeline lineno="72"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="76" refid="interfacesb_i_single_item_transfer_context_1e60254bf00ad6d2062561296f147963c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>item;</highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_single_item_transfer_context_1e60254bf00ad6d2062561296f147963c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>item;</highlight></codeline>
 <codeline lineno="77"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"></highlight></codeline>
 <codeline lineno="86"><highlight class="normal">[scriptable,<sp/>uuid(91cb2cf8-f769-4793-a8e7-3b3e91696863)]</highlight></codeline>
-<codeline lineno="87" refid="interfacesb_i_single_list_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_single_list_transfer_context" kindref="compound">sbISingleListTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound">sbILibraryTransferContext</ref></highlight></codeline>
+<codeline lineno="87" refid="interfacesb_i_single_list_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_single_list_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a single media list.">sbISingleListTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
 <codeline lineno="88"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="92" refid="interfacesb_i_single_list_transfer_context_1a94cd19e291a40d19a76e0845dae2d41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>list;</highlight></codeline>
+<codeline lineno="92" refid="interfacesb_i_single_list_transfer_context_1a94cd19e291a40d19a76e0845dae2d41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>list;</highlight></codeline>
 <codeline lineno="93"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight></codeline>
 <codeline lineno="109"><highlight class="normal">[scriptable,<sp/>uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]</highlight></codeline>
-<codeline lineno="110" refid="interfacesb_i_multiple_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_multiple_item_transfer_context" kindref="compound">sbIMultipleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound">sbILibraryTransferContext</ref></highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_multiple_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_multiple_item_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a collection of media items and/or media...">sbIMultipleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
 <codeline lineno="111"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="116" refid="interfacesb_i_multiple_item_transfer_context_1c62397ab39e4531e7a3c80c0193819d2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>items;</highlight></codeline>
 <codeline lineno="117"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl"/>
   </compounddef>
 </doxygen>

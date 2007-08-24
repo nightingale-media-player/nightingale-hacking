@@ -1,8 +1,38 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_local_database_async_g_u_i_d_array_listener" kind="interface" prot="public">
     <compoundname>sbILocalDatabaseAsyncGUIDArrayListener</compoundname>
     <includes refid="sb_i_local_database_async_g_u_i_d_array_8idl" local="no">sbILocalDatabaseAsyncGUIDArray.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_13133cacdb9e632871ea594b5d93682f6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseAsyncGUIDArrayListener::STATE_BUSY</definition>
+        <argsstring></argsstring>
+        <name>STATE_BUSY</name>
+        <initializer> 0x00000001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="56" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_15fec18a5021a8747196cf36854a56fd6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseAsyncGUIDArrayListener::STATE_IDLE</definition>
+        <argsstring></argsstring>
+        <name>STATE_IDLE</name>
+        <initializer> 0x00000002</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_122e701105c9bbd00806a0726131048cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -23,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="42"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="42"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_11722c3af7012b6a0fbf770d94b615711" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -48,12 +78,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="46"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="46"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_1cf1b8718ffb771802c2504e2d3162af1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_1ebf6498e56d3a1dd23ce0eea2c481417" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbILocalDatabaseAsyncGUIDArrayListener::onGetSortPropertyValueByIndex</definition>
-        <argsstring>(in unsigned long aIndex, in AString aGUID, in nsresult aResult)</argsstring>
+        <argsstring>(in unsigned long aIndex, in AString aPropertySortValue, in nsresult aResult)</argsstring>
         <name>onGetSortPropertyValueByIndex</name>
         <param>
           <type>in unsigned long</type>
@@ -61,7 +91,7 @@
         </param>
         <param>
           <type>in AString</type>
-          <declname>aGUID</declname>
+          <declname>aPropertySortValue</declname>
         </param>
         <param>
           <type>in nsresult</type>
@@ -73,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="50"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_13b16b583a8ebade4268fc5ceaf9f1a13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -98,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="54"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_19b667fa665a26d86ad69eb04d8794904" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -115,49 +145,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="59"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_13133cacdb9e632871ea594b5d93682f6" prot="public" static="no" mutable="no">
-        <type>const unsigned long</type>
-        <definition>const unsigned long sbILocalDatabaseAsyncGUIDArrayListener::STATE_BUSY</definition>
-        <argsstring></argsstring>
-        <name>STATE_BUSY</name>
-        <initializer> 0x00000001</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="56" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="56" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_listener_15fec18a5021a8747196cf36854a56fd6" prot="public" static="no" mutable="no">
-        <type>const unsigned long</type>
-        <definition>const unsigned long sbILocalDatabaseAsyncGUIDArrayListener::STATE_IDLE</definition>
-        <argsstring></argsstring>
-        <name>STATE_IDLE</name>
-        <initializer> 0x00000002</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="57" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="57" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="59"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="40" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="39" bodyend="60"/>
+    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="40" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="39" bodyend="60"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_11722c3af7012b6a0fbf770d94b615711" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onGetGuidByIndex</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_122e701105c9bbd00806a0726131048cb" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onGetLength</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_13b16b583a8ebade4268fc5ceaf9f1a13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onGetMediaItemIdByIndex</name></member>
-      <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_1cf1b8718ffb771802c2504e2d3162af1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onGetSortPropertyValueByIndex</name></member>
+      <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_1ebf6498e56d3a1dd23ce0eea2c481417" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onGetSortPropertyValueByIndex</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_19b667fa665a26d86ad69eb04d8794904" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>onStateChange</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_13133cacdb9e632871ea594b5d93682f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>STATE_BUSY</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_15fec18a5021a8747196cf36854a56fd6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArrayListener</scope><name>STATE_IDLE</name></member>

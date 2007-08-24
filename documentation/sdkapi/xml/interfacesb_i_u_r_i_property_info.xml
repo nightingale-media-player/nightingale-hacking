@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_u_r_i_property_info" kind="interface" prot="public">
     <compoundname>sbIURIPropertyInfo</compoundname>
     <basecompoundref refid="interfacesb_i_property_info" prot="public" virt="non-virtual">sbIPropertyInfo</basecompoundref>
@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="358" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="358" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="358" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="358" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,37 +25,37 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="557">
+      <node id="612">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="556">
+      <node id="611">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="557" relation="public-inheritance">
+        <childnode refid="612" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="559">
+      <node id="614">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="560" relation="usage">
+        <childnode refid="615" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="560">
+      <node id="615">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="558">
+      <node id="613">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="559" relation="public-inheritance">
+        <childnode refid="614" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="353" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="352" bodyend="359"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="353" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="352" bodyend="359"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>constrainScheme</name></member>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayName</name></member>

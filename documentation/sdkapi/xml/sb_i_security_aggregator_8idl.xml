@@ -1,29 +1,29 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_security_aggregator_8idl" kind="file">
     <compoundname>sbISecurityAggregator.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_security_mixin_8idl" local="yes">C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl</includedby>
+    <includedby refid="sb_i_security_mixin_8idl" local="yes">trunk/components/remoteapi/public/sbISecurityMixin.idl</includedby>
     <incdepgraph>
-      <node id="380">
-        <label>C:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl</label>
+      <node id="397">
+        <label>trunk/components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="381" relation="include">
+        <childnode refid="398" relation="include">
         </childnode>
       </node>
-      <node id="381">
+      <node id="398">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="382">
-        <label>C:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl</label>
+      <node id="399">
+        <label>trunk/components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="383" relation="include">
+        <childnode refid="400" relation="include">
         </childnode>
       </node>
-      <node id="383">
-        <label>C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl</label>
+      <node id="400">
+        <label>trunk/components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sb_i_security_mixin_8idl"/>
       </node>
     </invincdepgraph>
@@ -63,11 +63,11 @@
 <codeline lineno="40"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(5a8b35b1-0625-4a2b-98c0-f1714a6675e1)]</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_security_aggregator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound">sbISecurityAggregator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_security_aggregator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl"/>
   </compounddef>
 </doxygen>

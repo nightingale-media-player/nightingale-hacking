@@ -1,8 +1,23 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_hotkey_actions" kind="interface" prot="public">
     <compoundname>sbIHotkeyActions</compoundname>
     <includes refid="sb_i_hotkey_actions_8idl" local="no">sbIHotkeyActions.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_hotkey_actions_1746f9d9c8a08989ce8efe0f47b9546fe" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbIHotkeyActions::bundleCount</definition>
+        <argsstring></argsstring>
+        <name>bundleCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="51" bodyfile="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_hotkey_actions_169a9400722d00440a1766f8228d6329b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -20,7 +35,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="44"/>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="44"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_hotkey_actions_1d980b1716606ac021408f9833d3913f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -38,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="50"/>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_hotkey_actions_1dfc253dbf78688327870cc1b44ed0bfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref></type>
@@ -55,22 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="52"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_hotkey_actions_1746f9d9c8a08989ce8efe0f47b9546fe" prot="public" static="no" mutable="no">
-        <type>readonly attribute long</type>
-        <definition>readonly attribute long sbIHotkeyActions::bundleCount</definition>
-        <argsstring></argsstring>
-        <name>bundleCount</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="51" bodyfile="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" bodystart="51" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="52"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -78,7 +78,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="38" bodyfile="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" bodystart="37" bodyend="53"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="38" bodyfile="E:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" bodystart="37" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_hotkey_actions_1746f9d9c8a08989ce8efe0f47b9546fe" prot="public" virt="non-virtual"><scope>sbIHotkeyActions</scope><name>bundleCount</name></member>
       <member refid="interfacesb_i_hotkey_actions_1dfc253dbf78688327870cc1b44ed0bfb" prot="public" virt="non-virtual"><scope>sbIHotkeyActions</scope><name>enumBundle</name></member>

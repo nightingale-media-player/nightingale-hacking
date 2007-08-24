@@ -1,25 +1,25 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_w_m_device_8idl" kind="file">
     <compoundname>sbIWMDevice.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_base_8idl" local="yes">sbIDeviceBase.idl</includes>
     <incdepgraph>
-      <node id="111">
-        <label>C:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
+      <node id="120">
+        <label>trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
         <link refid="sbIWMDevice.idl"/>
-        <childnode refid="112" relation="include">
+        <childnode refid="121" relation="include">
         </childnode>
-        <childnode refid="113" relation="include">
+        <childnode refid="122" relation="include">
         </childnode>
       </node>
-      <node id="113">
+      <node id="122">
         <label>sbIDeviceBase.idl</label>
         <link refid="sb_i_device_base_8idl"/>
-        <childnode refid="112" relation="include">
+        <childnode refid="121" relation="include">
         </childnode>
       </node>
-      <node id="112">
+      <node id="121">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,13 +56,13 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_base_8idl" kindref="compound" tooltip="The IDL for sbIDeviceBase.">sbIDeviceBase.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">[scriptable,<sp/>uuid(58061a82-8ae7-4d6b-95e4-50c2a31def97)]</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_w_m_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_w_m_device" kindref="compound">sbIWMDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref></highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_w_m_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_w_m_device" kindref="compound" tooltip="Songbird WMDevice Interface.">sbIWMDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref></highlight></codeline>
 <codeline lineno="47"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl"/>
   </compounddef>
 </doxygen>

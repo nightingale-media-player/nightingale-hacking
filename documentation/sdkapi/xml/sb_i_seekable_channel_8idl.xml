@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_seekable_channel_8idl" kind="file">
     <compoundname>sbISeekableChannel.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="278">
-        <label>C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
+      <node id="287">
+        <label>trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
         <link refid="sbISeekableChannel.idl"/>
-        <childnode refid="279" relation="include">
+        <childnode refid="288" relation="include">
         </childnode>
       </node>
-      <node id="279">
+      <node id="288">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,24 +50,24 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound" tooltip="A seekable wrapper for an nsIChannel.">sbISeekableChannel</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[uuid(873ABEF5-AEE5-468E-8896-7768A13DC9A7)]</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_seekable_channel_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound">sbISeekableChannelListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_seekable_channel_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound" tooltip="A listener interface for sbISeekableChannel.">sbISeekableChannelListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="47"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelDataAvailable(<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref><sp/>aChannel<sp/>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelDataAvailable(<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound" tooltip="A seekable wrapper for an nsIChannel.">sbISeekableChannel</ref><sp/>aChannel<sp/>);</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
 <codeline lineno="68"><highlight class="normal">[uuid(873E0403-B0B1-4E6D-BD32-E4ED51492109)]</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70" refid="interfacesb_i_seekable_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_seekable_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound" tooltip="A seekable wrapper for an nsIChannel.">sbISeekableChannel</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="71"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="75" refid="interfacesb_i_seekable_channel_1e2359e2a29ec5e49b846a008216a607f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUInt64<sp/>pos;</highlight></codeline>
 <codeline lineno="79" refid="interfacesb_i_seekable_channel_15982378f8763c6d10d831f7e5a98acb1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRUInt64<sp/>size;</highlight></codeline>
 <codeline lineno="83" refid="interfacesb_i_seekable_channel_1cbf96345ee8179991a8327693f723900" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>open(<sp/>in<sp/>nsIChannel<sp/>aChannel,<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound">sbISeekableChannelListener</ref><sp/>aListener<sp/>);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>open(<sp/>in<sp/>nsIChannel<sp/>aChannel,<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound" tooltip="A listener interface for sbISeekableChannel.">sbISeekableChannelListener</ref><sp/>aListener<sp/>);</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>skip(<sp/>in<sp/>PRUint64<sp/>aDistance<sp/>);</highlight></codeline>
 <codeline lineno="106"><highlight class="normal"><sp/><sp/>PRUint32<sp/>read(<sp/>in<sp/>charPtr<sp/>aBuffer,<sp/>in<sp/>PRUint32<sp/>aSize<sp/>);</highlight></codeline>
@@ -76,6 +76,6 @@
 <codeline lineno="121"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
   </compounddef>
 </doxygen>

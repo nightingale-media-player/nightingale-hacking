@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_transcoder_8idl" kind="file">
     <compoundname>sbIMediaTranscoder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="325">
-        <label>C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl</label>
+      <node id="337">
+        <label>trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl</label>
         <link refid="sbIMediaTranscoder.idl"/>
-        <childnode refid="326" relation="include">
+        <childnode refid="338" relation="include">
         </childnode>
       </node>
-      <node id="326">
+      <node id="338">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_media_type" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="43" refid="interfacesb_i_media_type" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_media_type_10d05e1aff78771f0f1298d887278d602" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
@@ -68,9 +68,9 @@
 <codeline lineno="84"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal">[scriptable,<sp/>uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]</highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_media_transcoder_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="99" refid="interfacesb_i_media_transcoder_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] A callback to inform upon the status of a transcode...">sbIMediaTranscoderCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="100"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onTranscodeBegin(in<sp/>AString<sp/>aInputURL,<sp/>in<sp/>AString<sp/>aOutputURL,<sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aOutputType);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onTranscodeBegin(in<sp/>AString<sp/>aInputURL,<sp/>in<sp/>AString<sp/>aOutputURL,<sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputType);</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"></highlight></codeline>
 <codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onTranscodeProgress(in<sp/>AString<sp/>aInputURL,<sp/>in<sp/>AString<sp/>aOutputURL,<sp/>in<sp/>PRInt32<sp/>aPercent);</highlight></codeline>
 <codeline lineno="116"><highlight class="normal"></highlight></codeline>
@@ -82,7 +82,7 @@
 <codeline lineno="138"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="139"><highlight class="normal"></highlight></codeline>
 <codeline lineno="154"><highlight class="normal">[scriptable,<sp/>uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]</highlight></codeline>
-<codeline lineno="155" refid="interfacesb_i_media_transcoder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="155" refid="interfacesb_i_media_transcoder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object that performs a transcode operation">sbIMediaTranscoder</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="156"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight></codeline>
 <codeline lineno="161" refid="interfacesb_i_media_transcoder_163aa89d79dfb4e4ec29ab31438b935e9" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
@@ -92,40 +92,40 @@
 <codeline lineno="171" refid="interfacesb_i_media_transcoder_17c02237ff9f50633e4957dbc03d325cb" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
 <codeline lineno="172"><highlight class="normal"></highlight></codeline>
 <codeline lineno="187"><highlight class="normal"><sp/><sp/>PRInt32<sp/>transcode(in<sp/>AString<sp/>aInputURL,<sp/></highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aInputMIMEType,<sp/></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aInputMIMEType,<sp/></highlight></codeline>
 <codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputURL,<sp/></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aOutputMIMEType,<sp/></highlight></codeline>
-<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref><sp/>aCallback);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputMIMEType,<sp/></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] A callback to inform upon the status of a transcode...">sbIMediaTranscoderCallback</ref><sp/>aCallback);</highlight></codeline>
 <codeline lineno="192"><highlight class="normal"></highlight></codeline>
 <codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedMajorInputTypes(out<sp/>PRUint32<sp/>nMajorCount,<sp/></highlight></codeline>
 <codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nMajorCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMajorInputs);</highlight></codeline>
 <codeline lineno="204"><highlight class="normal"></highlight></codeline>
 <codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedInputMediaTypes(out<sp/>PRUint32<sp/>nInputCount,<sp/></highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nInputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aInputTypes);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nInputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aInputTypes);</highlight></codeline>
 <codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedMajorOutputTypes(out<sp/>PRUint32<sp/>nMajorCount,<sp/></highlight></codeline>
 <codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nMajorCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMajorOutputs);</highlight></codeline>
 <codeline lineno="227"><highlight class="normal"></highlight></codeline>
 <codeline lineno="236"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedOutputMediaTypes(out<sp/>PRUint32<sp/>nOutputCount,<sp/></highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nOutputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aOutputTypes);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nOutputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputTypes);</highlight></codeline>
 <codeline lineno="238"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="239"><highlight class="normal"></highlight></codeline>
 <codeline lineno="254"><highlight class="normal">[scriptable,<sp/>uuid()]</highlight></codeline>
-<codeline lineno="255" refid="interfacesb_i_media_transcoder_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder_manager" kindref="compound">sbIMediaTranscoderManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="255" refid="interfacesb_i_media_transcoder_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_transcoder_manager" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object that receives all requests for transcode...">sbIMediaTranscoderManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="256"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="272"><highlight class="normal"><sp/><sp/>PRInt32<sp/>transcode(in<sp/>AString<sp/>aInputURL,<sp/></highlight></codeline>
-<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aInputMIMEType,<sp/></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aInputMIMEType,<sp/></highlight></codeline>
 <codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputURL,<sp/></highlight></codeline>
-<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aOutputMIMEType,<sp/></highlight></codeline>
-<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref><sp/>aCallback);</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputMIMEType,<sp/></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_transcoder_callback" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] A callback to inform upon the status of a transcode...">sbIMediaTranscoderCallback</ref><sp/>aCallback);</highlight></codeline>
 <codeline lineno="277"><highlight class="normal"></highlight></codeline>
 <codeline lineno="286"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedInputMediaTypes(out<sp/>PRUint32<sp/>nInputCount,<sp/></highlight></codeline>
-<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nInputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aInputTypes);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nInputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aInputTypes);</highlight></codeline>
 <codeline lineno="288"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedOutputMediaTypes(out<sp/>PRUint32<sp/>nOutputCount,<sp/></highlight></codeline>
-<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nOutputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref><sp/>aOutputTypes);</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nOutputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputTypes);</highlight></codeline>
 <codeline lineno="299"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl"/>
   </compounddef>
 </doxygen>

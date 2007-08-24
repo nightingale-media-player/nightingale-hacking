@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_g_streamer_simple_8idl" kind="file">
     <compoundname>sbIGStreamerSimple.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="322">
-        <label>C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl</label>
+      <node id="334">
+        <label>trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl</label>
         <link refid="sbIGStreamerSimple.idl"/>
-        <childnode refid="323" relation="include">
+        <childnode refid="335" relation="include">
         </childnode>
       </node>
-      <node id="323">
+      <node id="335">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="70"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="70"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_174463472d39b3b4fc1fd3964930beef8" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CONTRACTID</name>
@@ -37,7 +37,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="72"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="72"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_1e2c7988e42fbcd7bd14caf2d5373888a" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CLASSNAME</name>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="73"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="73"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -86,7 +86,7 @@
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsIDOMXULElement;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(7067ba5f-fce9-4d4e-9d79-c08c343ed4dd)]</highlight></codeline>
-<codeline lineno="40" refid="interfacesb_i_g_streamer_simple" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_simple" kindref="compound">sbIGStreamerSimple</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="40" refid="interfacesb_i_g_streamer_simple" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_simple" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIGStreamerSimple</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_g_streamer_simple_11fe52d51245c60324c0a4fb408282bbb" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>uri;</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_g_streamer_simple_1aac9d2048adde299b654a1c82736aa63" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>volume;</highlight></codeline>
@@ -122,6 +122,6 @@
 <codeline lineno="73"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>&quot;GStreamerSimple&quot;</highlight></codeline>
 <codeline lineno="74"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl"/>
   </compounddef>
 </doxygen>

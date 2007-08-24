@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_bundle_data_listener_8idl" kind="file">
     <compoundname>sbIBundleDataListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="3">
-        <label>C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl</label>
+      <node id="12">
+        <label>trunk/components/bundle/public/sbIBundleDataListener.idl</label>
         <link refid="sbIBundleDataListener.idl"/>
-        <childnode refid="4" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
       </node>
-      <node id="4">
+      <node id="13">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,15 +49,15 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(7449a0fc-aeff-11db-96e1-005056c00008)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_bundle_data_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_bundle_data_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle);<sp/></highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl"/>
   </compounddef>
 </doxygen>

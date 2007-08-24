@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_library_manager_listener_8idl" kind="file">
     <compoundname>sbILibraryManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="192">
-        <label>C:/projects/songbird/components/library/base/public/sbILibraryManagerListener.idl</label>
+      <node id="201">
+        <label>trunk/components/library/base/public/sbILibraryManagerListener.idl</label>
         <link refid="sbILibraryManagerListener.idl"/>
-        <childnode refid="193" relation="include">
+        <childnode refid="202" relation="include">
         </childnode>
       </node>
-      <node id="193">
+      <node id="202">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,17 +49,17 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound">sbILibraryFactory</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(4188241a-6ec6-4f21-bc1d-01bc5d9dd114)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_library_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound">sbILibraryManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_library_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryRegistered(in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryRegistered(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryUnregistered(in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryUnregistered(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibraryManagerListener.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryManagerListener.idl"/>
   </compounddef>
 </doxygen>

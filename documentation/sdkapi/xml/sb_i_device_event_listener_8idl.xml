@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_event_listener_8idl" kind="file">
     <compoundname>sbIDeviceEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="58">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl</label>
+      <node id="67">
+        <label>trunk/components/devices/base/public/sbIDeviceEventListener.idl</label>
         <link refid="sbIDeviceEventListener.idl"/>
-        <childnode refid="59" relation="include">
+        <childnode refid="68" relation="include">
         </childnode>
       </node>
-      <node id="59">
+      <node id="68">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,14 +48,14 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_device_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl"/>
   </compounddef>
 </doxygen>

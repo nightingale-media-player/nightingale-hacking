@@ -1,19 +1,32 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_playlist_commands_8idl" kind="file">
     <compoundname>sbIPlaylistCommands.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
+    <includedby refid="sb_i_playlist_commands_builder_8idl" local="yes">trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</includedby>
     <incdepgraph>
-      <node id="332">
-        <label>C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl</label>
+      <node id="344">
+        <label>trunk/components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
-        <childnode refid="333" relation="include">
+        <childnode refid="345" relation="include">
         </childnode>
       </node>
-      <node id="333">
+      <node id="345">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="346">
+        <label>trunk/components/playlistcommands/public/sbIPlaylistCommands.idl</label>
+        <link refid="sbIPlaylistCommands.idl"/>
+        <childnode refid="347" relation="include">
+        </childnode>
+      </node>
+      <node id="347">
+        <label>trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
+        <link refid="sb_i_playlist_commands_builder_8idl-source"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="interfacesb_i_playlist_commands" prot="public">sbIPlaylistCommands</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_manager" prot="public">sbIPlaylistCommandsManager</innerclass>
@@ -53,84 +66,96 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIDOMNode;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref>;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound" tooltip="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal">[scriptable,<sp/>uuid(c61ab765-cff1-481b-8c6c-73388c173407)]</highlight></codeline>
-<codeline lineno="67" refid="interfacesb_i_playlist_commands" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>:<sp/>nsISupports<sp/></highlight></codeline>
+<codeline lineno="66"><highlight class="normal">[scriptable,<sp/>uuid(fdb73942-56e8-406e-a587-e7e1715d921f)]</highlight></codeline>
+<codeline lineno="67" refid="interfacesb_i_playlist_commands" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>:<sp/>nsISupports<sp/></highlight></codeline>
 <codeline lineno="68"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setContext(<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref><sp/>aContext<sp/>);</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getNumCommands(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandType(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandId(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandText(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getCommandFlex(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"></highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandToolTipText(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"></highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandEnabled(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandVisible(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="191"><highlight class="normal"></highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandFlag(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"></highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandValue(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"></highlight></codeline>
-<codeline lineno="226"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandChoiceItem(<sp/>in<sp/>AString<sp/>aChoiceMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="227"><highlight class="normal"></highlight></codeline>
-<codeline lineno="236"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutModifiers(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="237"><highlight class="normal"></highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutKey(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="247"><highlight class="normal"></highlight></codeline>
-<codeline lineno="256"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutKeycode(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="257"><highlight class="normal"></highlight></codeline>
-<codeline lineno="266"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandShortcutLocal(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="267"><highlight class="normal"></highlight></codeline>
-<codeline lineno="275"><highlight class="normal"><sp/><sp/>nsIDOMNode<sp/>instantiateCustomCommand(<sp/>in<sp/>nsIDOMDocument<sp/>aDocument,<sp/>in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="276"><highlight class="normal"></highlight></codeline>
-<codeline lineno="283"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>refreshCustomCommand(<sp/>in<sp/>nsIDOMNode<sp/>aCustomCommandElement,<sp/>in<sp/>AString<sp/>aId,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="284"><highlight class="normal"></highlight></codeline>
-<codeline lineno="294"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommand(<sp/>in<sp/>AString<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>in<sp/>AString<sp/>value,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="295"><highlight class="normal"></highlight></codeline>
-<codeline lineno="316"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>duplicate(<sp/>);</highlight></codeline>
-<codeline lineno="317"><highlight class="normal"></highlight></codeline>
-<codeline lineno="326"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initCommands(<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
-<codeline lineno="327"><highlight class="normal"></highlight></codeline>
-<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shutdownCommands(<sp/>);</highlight></codeline>
-<codeline lineno="335"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="336"><highlight class="normal"></highlight></codeline>
-<codeline lineno="341"><highlight class="normal">[scriptable,<sp/>uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]</highlight></codeline>
-<codeline lineno="342" refid="interfacesb_i_playlist_commands_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="343"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="347" refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMNode<sp/>playlist;<sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="348"><highlight class="normal"></highlight></codeline>
-<codeline lineno="352" refid="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>medialist;</highlight></codeline>
-<codeline lineno="353"><highlight class="normal"></highlight></codeline>
-<codeline lineno="357" refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMWindow<sp/>window;<sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="358"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="359"><highlight class="normal"></highlight></codeline>
-<codeline lineno="365"><highlight class="normal">[scriptable,<sp/>uuid(ab22536e-2bea-40ef-aa8f-ad2a2f6382c4)]</highlight></codeline>
-<codeline lineno="366" refid="interfacesb_i_playlist_commands_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>PRBool<sp/>getVisible(<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setContext(<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound" tooltip="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</ref><sp/>aContext<sp/>);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getNumCommands(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandType(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandId(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandText(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getCommandFlex(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandToolTipText(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandEnabled(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandVisible(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandFlag(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandValue(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandChoiceItem(<sp/>in<sp/>AString<sp/>aChoiceMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutModifiers(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutKey(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandShortcutKeycode(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandShortcutLocal(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>getCommandSubObject(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/>nsIDOMNode<sp/>instantiateCustomCommand(<sp/>in<sp/>nsIDOMDocument<sp/>aDocument,<sp/>in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>refreshCustomCommand(<sp/>in<sp/>nsIDOMNode<sp/>aCustomCommandElement,<sp/>in<sp/>AString<sp/>aId,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommand(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost,<sp/>in<sp/>AString<sp/>aId,<sp/>in<sp/>AString<sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>duplicate(<sp/>);</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initCommands(<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shutdownCommands(<sp/>);</highlight></codeline>
+<codeline lineno="359"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365"><highlight class="normal">[scriptable,<sp/>uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]</highlight></codeline>
+<codeline lineno="366" refid="interfacesb_i_playlist_commands_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound" tooltip="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="367"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="383"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
-<codeline lineno="384"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
-<codeline lineno="394"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="410"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType<sp/>);</highlight></codeline>
-<codeline lineno="411"><highlight class="normal"></highlight></codeline>
-<codeline lineno="427"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
-<codeline lineno="428"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="437"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
-<codeline lineno="438"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="454"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType<sp/>);</highlight></codeline>
-<codeline lineno="455"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="371" refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMNode<sp/>playlist;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="376" refid="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>medialist;</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381" refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMWindow<sp/>window;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight></codeline>
+<codeline lineno="386" refid="interfacesb_i_playlist_commands_context_11d8e53e9b4ad2510701628472a36643f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>commands;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="387"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="394"><highlight class="normal">[scriptable,<sp/>uuid(2ca0eb0c-ab36-4a5a-b63e-dd34ca54f9da)]</highlight></codeline>
+<codeline lineno="395" refid="interfacesb_i_playlist_commands_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_manager" kindref="compound" tooltip="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="396"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylistCommandsMediaItem(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType<sp/>);</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"></highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="466"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="483"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylistCommandsMediaList(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType<sp/>);</highlight></codeline>
+<codeline lineno="484"><highlight class="normal"></highlight></codeline>
+<codeline lineno="485"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>publish(<sp/>in<sp/>AString<sp/>aCommandGUID,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="486"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>withdraw(<sp/>in<sp/>AString<sp/>aCommandGUID,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="487"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>request(<sp/>in<sp/>AString<sp/>aContextGUID<sp/>);</highlight></codeline>
+<codeline lineno="488"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="489"><highlight class="normal"></highlight></codeline>
+<codeline lineno="490"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
   </compounddef>
 </doxygen>

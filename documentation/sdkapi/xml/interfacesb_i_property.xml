@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_property" kind="interface" prot="public">
     <compoundname>sbIProperty</compoundname>
       <sectiondef kind="public-attrib">
@@ -14,7 +14,7 @@
 <para>Get the name of the property. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="41" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="41" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="41" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_16244ef0be78fbca9d912d8beaaf4dd6f" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -27,14 +27,14 @@
 <para>Get the value of the property. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="46" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="46" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="37" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="36" bodyend="47"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="37" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="36" bodyend="47"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_1ce45aa72959786c6f68718a71a777d56" prot="public" virt="non-virtual"><scope>sbIProperty</scope><name>name</name></member>
       <member refid="interfacesb_i_property_16244ef0be78fbca9d912d8beaaf4dd6f" prot="public" virt="non-virtual"><scope>sbIProperty</scope><name>value</name></member>

@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_registrar_8idl" kind="file">
     <compoundname>sbIDeviceRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="68">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="67">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl</label>
+      <node id="76">
+        <label>trunk/components/devices/base/public/sbIDeviceRegistrar.idl</label>
         <link refid="sbIDeviceRegistrar.idl"/>
-        <childnode refid="68" relation="include">
+        <childnode refid="77" relation="include">
         </childnode>
+      </node>
+      <node id="77">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_registrar" prot="public">sbIDeviceRegistrar</innerclass>
@@ -50,22 +50,22 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_registrar" kindref="compound">sbIDeviceRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_device_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_device_registrar_1f944cd3b938fdf3792224ba6e4e1aaf3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>devices;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_device_registrar_1e9e14727604f19829039a6d87c0bd4ef" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>deviceCount;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>getDevice(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDeviceId);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>getDevice(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDeviceId);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl"/>
   </compounddef>
 </doxygen>

@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_mutable_property_array" kind="interface" prot="public">
     <compoundname>sbIMutablePropertyArray</compoundname>
     <basecompoundref refid="interfacesb_i_property_array" prot="public" virt="non-virtual">sbIPropertyArray</basecompoundref>
@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="94"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="94"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -46,30 +46,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="345">
+      <node id="350">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="344">
+      <node id="349">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="345" relation="public-inheritance">
+        <childnode refid="350" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="347">
+      <node id="352">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="346">
+      <node id="351">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="347" relation="public-inheritance">
+        <childnode refid="352" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="86" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="85" bodyend="95"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="86" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="85" bodyend="95"/>
     <listofallmembers>
       <member refid="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyAt</name></member>

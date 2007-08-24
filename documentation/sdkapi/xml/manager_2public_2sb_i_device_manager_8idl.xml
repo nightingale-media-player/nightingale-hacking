@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="manager_2public_2sb_i_device_manager_8idl" kind="file">
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="82">
-        <label>C:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl</label>
+      <node id="91">
+        <label>trunk/components/devices/manager/public/sbIDeviceManager.idl</label>
         <link refid="manager/public/sbIDeviceManager.idl"/>
-        <childnode refid="83" relation="include">
+        <childnode refid="92" relation="include">
         </childnode>
       </node>
-      <node id="83">
+      <node id="92">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,11 +51,11 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(82102e1c-e620-4c9e-9a3f-059eee1355b5)]</highlight></codeline>
-<codeline lineno="39" refid="interfacesb_i_device_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager" kindref="compound">sbIDeviceManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="39" refid="interfacesb_i_device_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateDevices();</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl"/>
   </compounddef>
 </doxygen>

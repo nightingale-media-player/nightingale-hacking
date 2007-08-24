@@ -1,8 +1,23 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_remote_commands" kind="interface" prot="public">
     <compoundname>sbIRemoteCommands</compoundname>
     <includes refid="sb_i_remote_commands_8idl" local="no">sbIRemoteCommands.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_remote_player" kindref="compound">sbIRemotePlayer</ref></type>
+        <definition>attribute sbIRemotePlayer sbIRemoteCommands::owner</definition>
+        <argsstring></argsstring>
+        <name>owner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="85" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_remote_commands_14ad1d3e78b44bd0e3f2f451f340fef8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -31,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="46"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_commands_15972f94e1b63ea2240d81c5ffed006d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -48,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="48"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_commands_10d6362e7ef00167c3f34bb3dfefd5ea4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -85,22 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="55"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" prot="public" static="no" mutable="no">
-        <type>attribute <ref refid="interfacesb_i_remote_player" kindref="compound">sbIRemotePlayer</ref></type>
-        <definition>attribute sbIRemotePlayer sbIRemoteCommands::owner</definition>
-        <argsstring></argsstring>
-        <name>owner</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="58" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="58" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="82"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -108,36 +108,44 @@
     <detaileddescription>
 <para>TODO: Write this documentation </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="429">
+      <node id="473">
+        <label>sbIRemoteLibrary</label>
+        <link refid="interfacesb_i_remote_library"/>
+      </node>
+      <node id="471">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="430" relation="usage">
+        <childnode refid="472" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="432">
+      <node id="475">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="430">
+      <node id="472">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="429" relation="usage">
+        <childnode refid="471" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="431" relation="usage">
+        <childnode refid="473" relation="usage">
+          <edgelabel>webLibrary
+mainLibrary</edgelabel>
+        </childnode>
+        <childnode refid="474" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
       </node>
-      <node id="431">
+      <node id="474">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="432" relation="usage">
+        <childnode refid="475" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="45" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="44" bodyend="59"/>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="51" bodyend="86"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_commands_14ad1d3e78b44bd0e3f2f451f340fef8b" prot="public" virt="non-virtual"><scope>sbIRemoteCommands</scope><name>addCommand</name></member>
       <member refid="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" prot="public" virt="non-virtual"><scope>sbIRemoteCommands</scope><name>owner</name></member>

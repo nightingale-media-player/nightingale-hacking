@@ -1,11 +1,65 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_library_resource" kind="interface" prot="public">
     <compoundname>sbILibraryResource</compoundname>
     <derivedcompoundref refid="interfacesb_i_library" prot="public" virt="non-virtual">sbILibrary</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_local_database_resource_property" prot="public" virt="non-virtual">sbILocalDatabaseResourceProperty</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_media_item" prot="public" virt="non-virtual">sbIMediaItem</derivedcompoundref>
     <includes refid="sb_i_library_resource_8idl" local="no">sbILibraryResource.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibraryResource::guid</definition>
+        <argsstring></argsstring>
+        <name>guid</name>
+        <briefdescription>
+<para>The guid of this resource. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="65" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbILibraryResource::created</definition>
+        <argsstring></argsstring>
+        <name>created</name>
+        <briefdescription>
+<para>The creation time of this resource as a unix timestamp. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="82" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbILibraryResource::updated</definition>
+        <argsstring></argsstring>
+        <name>updated</name>
+        <briefdescription>
+<para>The last update time of this resource as a unix timestamp. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="100" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbILibraryResource::propertyNames</definition>
+        <argsstring></argsstring>
+        <name>propertyNames</name>
+        <briefdescription>
+<para>Returns a string enumerator of the names of all the properties set on this resource. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="106" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -31,7 +85,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="81"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="144"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -67,7 +121,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="88"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="174"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -94,7 +148,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="98"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="184"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -116,10 +170,11 @@
 <para>Properties to set to this resource</para></parameterdescription>
 </parameteritem>
 </parameterlist>
-NOTE: Until bug 3694 is fixed, it is possible for this method to throw NS_ERROR_INVALID_ARG if one of the property values in the array is not valid. This will have no side effects -- if an error is thrown, the resource will not be modified. This will go away when the bug is fixed as it will then be impossible to have invalid properties in the array </para>        </detaileddescription>
+<simplesect kind="note"><para>Until bug 3694 is fixed, it is possible for this method to throw NS_ERROR_INVALID_ARG if one of the property values in the array is not valid. This will have no side effects -- if an error is thrown, the resource will not be modified. This will go away when the bug is fixed as it will then be impossible to have invalid properties in the array </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="112"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="198"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -136,61 +191,7 @@ NOTE: Until bug 3694 is fixed, it is possible for this method to throw NS_ERROR_
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="117"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbILibraryResource::guid</definition>
-        <argsstring></argsstring>
-        <name>guid</name>
-        <briefdescription>
-<para>The guid of this resource. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="53" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="53" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" static="no" mutable="no">
-        <type>readonly attribute long long</type>
-        <definition>readonly attribute long long sbILibraryResource::created</definition>
-        <argsstring></argsstring>
-        <name>created</name>
-        <briefdescription>
-<para>The creation time of this resource as a unix timestamp. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="58" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="58" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" static="no" mutable="no">
-        <type>readonly attribute long long</type>
-        <definition>readonly attribute long long sbILibraryResource::updated</definition>
-        <argsstring></argsstring>
-        <name>updated</name>
-        <briefdescription>
-<para>The last update time of this resource as a unix timestamp. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="63" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="63" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIStringEnumerator</type>
-        <definition>readonly attribute nsIStringEnumerator sbILibraryResource::propertyNames</definition>
-        <argsstring></argsstring>
-        <name>propertyNames</name>
-        <briefdescription>
-<para>Returns a string enumerator of the names of all the properties set on this resource. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="69" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="69" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="203"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -199,42 +200,42 @@ NOTE: Until bug 3694 is fixed, it is possible for this method to throw NS_ERROR_
 <para>This interface should be implemented by each object of the data model, including libraries, media items, and media lists.</para><para><simplesect kind="see"><para>sbILibraryPropertiesManager </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="179">
+      <node id="183">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="178" relation="public-inheritance">
+        <childnode refid="182" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="177">
+      <node id="181">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="175" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="176">
-        <label>sbILibrary</label>
-        <link refid="interfacesb_i_library"/>
-        <childnode refid="175" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="175">
-        <label>sbILibraryResource</label>
-        <link refid="interfacesb_i_library_resource"/>
-      </node>
-      <node id="178">
-        <label>sbIMediaItem</label>
-        <link refid="interfacesb_i_media_item"/>
-        <childnode refid="175" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="180">
-        <label>sbILocalDatabaseSmartMediaList</label>
-        <link refid="interfacesb_i_local_database_smart_media_list"/>
         <childnode refid="179" relation="public-inheritance">
         </childnode>
       </node>
+      <node id="180">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="179" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="179">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="182">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="179" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="184">
+        <label>sbILocalDatabaseSmartMediaList</label>
+        <link refid="interfacesb_i_local_database_smart_media_list"/>
+        <childnode refid="183" relation="public-inheritance">
+        </childnode>
+      </node>
     </inheritancegraph>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="49" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="48" bodyend="118"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="48" bodyend="204"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>created</name></member>
       <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>equals</name></member>

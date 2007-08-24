@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_resize_hook_8idl" kind="file">
     <compoundname>IWindowResizeHook.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="160">
-        <label>C:/projects/songbird/components/integration/public/IWindowResizeHook.idl</label>
+      <node id="169">
+        <label>trunk/components/integration/public/IWindowResizeHook.idl</label>
         <link refid="IWindowResizeHook.idl"/>
-        <childnode refid="161" relation="include">
+        <childnode refid="170" relation="include">
         </childnode>
       </node>
-      <node id="161">
+      <node id="170">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,20 +49,20 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(4D11C61E-8623-4b1b-B7CB-094B5E774609)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_window_resize_hook_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound">sbIWindowResizeHookCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="43" refid="interfacesb_i_window_resize_hook_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound" tooltip="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onResize(<sp/>in<sp/>PRInt32<sp/>x,<sp/>in<sp/>PRInt32<sp/>y,<sp/>in<sp/>PRInt32<sp/>w,<sp/>in<sp/>PRInt32<sp/>h);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal">[scriptable,<sp/>uuid(D44A410E-70A1-4932-8F5A-B1D644356401)]</highlight></codeline>
-<codeline lineno="65" refid="interfacesb_i_window_resize_hook" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_resize_hook" kindref="compound">sbIWindowResizeHook</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="65" refid="interfacesb_i_window_resize_hook" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_resize_hook" kindref="compound" tooltip="WindowResizeHook service interface This is an interface to the WindowResizeHook service...">sbIWindowResizeHook</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="66"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCallback(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound">sbIWindowResizeHookCallback</ref><sp/>cb<sp/>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCallback(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound" tooltip="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</ref><sp/>cb<sp/>);</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetCallback(<sp/>in<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound">sbIWindowResizeHookCallback</ref><sp/>cb);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetCallback(<sp/>in<sp/><ref refid="interfacesb_i_window_resize_hook_callback" kindref="compound" tooltip="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</ref><sp/>cb);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowResizeHook.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl"/>
   </compounddef>
 </doxygen>

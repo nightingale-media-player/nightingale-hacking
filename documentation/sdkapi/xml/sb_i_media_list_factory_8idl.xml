@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_list_factory_8idl" kind="file">
     <compoundname>sbIMediaListFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="218">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl</label>
+      <node id="227">
+        <label>trunk/components/library/base/public/sbIMediaListFactory.idl</label>
         <link refid="sbIMediaListFactory.idl"/>
-        <childnode refid="219" relation="include">
+        <childnode refid="228" relation="include">
         </childnode>
       </node>
-      <node id="219">
+      <node id="228">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,20 +49,20 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(c3e4bb1e-1051-4027-913b-f57c31039b97)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_media_list_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound">sbIMediaListFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_media_list_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_media_list_factory_162954d41e48bc47cd362da6e0813dc52" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>type;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59" refid="interfacesb_i_media_list_factory_18170ef5344f4a22d92f33428880c0f41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>contractID;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>createMediaList(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>aInner);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>createMediaList(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aInner);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListFactory.idl"/>
   </compounddef>
 </doxygen>

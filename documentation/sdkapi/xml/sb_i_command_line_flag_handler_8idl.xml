@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_command_line_flag_handler_8idl" kind="file">
     <compoundname>sbICommandLineFlagHandler.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="12">
-        <label>C:/projects/songbird/components/commandline/public/sbICommandLineFlagHandler.idl</label>
+      <node id="21">
+        <label>trunk/components/commandline/public/sbICommandLineFlagHandler.idl</label>
         <link refid="sbICommandLineFlagHandler.idl"/>
-        <childnode refid="13" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
       </node>
-      <node id="13">
+      <node id="22">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,11 +50,11 @@
 <codeline lineno="37"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(c17916d1-c2a1-47cb-ae87-2eb03c0760db)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_command_line_flag_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound">sbICommandLineFlagHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_command_line_flag_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound" tooltip="Songbird Command line flag handler Interface.">sbICommandLineFlagHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>handleFlag(in<sp/>AString<sp/>aFlag,<sp/>in<sp/>AString<sp/>aParam);</highlight></codeline>
 <codeline lineno="56"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/commandline/public/sbICommandLineFlagHandler.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl"/>
   </compounddef>
 </doxygen>

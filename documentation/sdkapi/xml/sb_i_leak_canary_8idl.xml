@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_leak_canary_8idl" kind="file">
     <compoundname>sbILeakCanary.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="413">
-        <label>C:/projects/songbird/components/testharness/public/sbILeakCanary.idl</label>
+      <node id="430">
+        <label>trunk/components/testharness/public/sbILeakCanary.idl</label>
         <link refid="sbILeakCanary.idl"/>
-        <childnode refid="414" relation="include">
+        <childnode refid="431" relation="include">
         </childnode>
       </node>
-      <node id="414">
+      <node id="431">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,6 +53,6 @@
 <codeline lineno="31"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/testharness/public/sbILeakCanary.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/testharness/public/sbILeakCanary.idl"/>
   </compounddef>
 </doxygen>

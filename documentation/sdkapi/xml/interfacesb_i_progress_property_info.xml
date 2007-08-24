@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_progress_property_info" kind="interface" prot="public">
     <compoundname>sbIProgressPropertyInfo</compoundname>
     <basecompoundref refid="interfacesb_i_text_property_info" prot="public" virt="non-virtual">sbITextPropertyInfo</basecompoundref>
@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="450" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="450" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="450" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="450" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,49 +25,49 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="404">
+      <node id="446">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="402">
+      <node id="444">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="403" relation="public-inheritance">
+        <childnode refid="445" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="403">
+      <node id="445">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="404" relation="public-inheritance">
+        <childnode refid="446" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="407">
+      <node id="449">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="408" relation="usage">
+        <childnode refid="450" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="408">
+      <node id="450">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="405">
+      <node id="447">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="406" relation="public-inheritance">
+        <childnode refid="448" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="406">
+      <node id="448">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="407" relation="public-inheritance">
+        <childnode refid="449" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="446" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="445" bodyend="451"/>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="446" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="445" bodyend="451"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>displayUsingSimpleType</name></member>

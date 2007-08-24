@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_playlist_writer_listener" kind="interface" prot="public">
     <compoundname>sbIPlaylistWriterListener</compoundname>
     <includes refid="sb_i_playlist_writer_8idl" local="no">sbIPlaylistWriter.idl</includes>
@@ -7,7 +7,7 @@
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="39" bodyfile="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="39" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

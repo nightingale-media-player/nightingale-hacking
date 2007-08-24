@@ -1,41 +1,41 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_item_8idl" kind="file">
     <compoundname>sbIMediaItem.idl</compoundname>
     <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
-    <includedby refid="sb_i_media_list_8idl" local="yes">C:/projects/songbird/components/library/base/public/sbIMediaList.idl</includedby>
+    <includedby refid="sb_i_media_list_8idl" local="yes">trunk/components/library/base/public/sbIMediaList.idl</includedby>
     <incdepgraph>
-      <node id="207">
+      <node id="215">
+        <label>trunk/components/library/base/public/sbIMediaItem.idl</label>
+        <link refid="sbIMediaItem.idl"/>
+        <childnode refid="216" relation="include">
+        </childnode>
+      </node>
+      <node id="216">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="208" relation="include">
+        <childnode refid="217" relation="include">
         </childnode>
       </node>
-      <node id="206">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaItem.idl</label>
-        <link refid="sbIMediaItem.idl"/>
-        <childnode refid="207" relation="include">
-        </childnode>
-      </node>
-      <node id="208">
+      <node id="217">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="211">
-        <label>C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+      <node id="220">
+        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="210">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="211" relation="include">
+      <node id="218">
+        <label>trunk/components/library/base/public/sbIMediaItem.idl</label>
+        <link refid="sbIMediaItem.idl"/>
+        <childnode refid="219" relation="include">
         </childnode>
       </node>
-      <node id="209">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaItem.idl</label>
-        <link refid="sbIMediaItem.idl"/>
-        <childnode refid="210" relation="include">
+      <node id="219">
+        <label>trunk/components/library/base/public/sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="220" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -73,7 +73,7 @@
 <codeline lineno="24"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_library_resource_8idl" kindref="compound">sbILibraryResource.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_library_resource_8idl" kindref="compound" tooltip="Definition of the sbILibraryResource interface.">sbILibraryResource.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
@@ -81,12 +81,12 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIStreamListener;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/>nsIInputStream;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">interface<sp/>nsIOutputStream;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
 <codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]</highlight></codeline>
-<codeline lineno="54" refid="interfacesb_i_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>:<sp/><ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>:<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref></highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>library;</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>library;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\brief<sp/>The<sp/>library<sp/>that<sp/>this<sp/>media<sp/>item<sp/>is<sp/>linked<sp/>from.<sp/><sp/>This<sp/>is<sp/>to<sp/>aid</highlight></codeline>
@@ -99,38 +99,84 @@
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Convenience<sp/>Attributes<sp/>(these<sp/>should<sp/>thunk<sp/>directly<sp/>to<sp/>the<sp/>sbILibraryResource::G/SetProperty<sp/>calls)</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81" refid="interfacesb_i_media_item_109426f490e2fde8aecf02c2bfada0a7a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mediaCreated;</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89" refid="interfacesb_i_media_item_1d8fc55899ebe6d777619b12e2ccec9e2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mediaUpdated;</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94" refid="interfacesb_i_media_item_1574db3949d138422afdbd6ecffd88aa2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>contentSrc;</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_media_item_149d00fe6e35d8d24dc468b97d43d8075" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>contentLength;</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105" refid="interfacesb_i_media_item_11df3ae03b08948558b1a311e3705db07" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>contentType;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Useful<sp/>Functions</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>testIsAvailable(in<sp/>nsIObserver<sp/>aObserver);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/>nsIChannel<sp/>openInputStreamAsync(in<sp/>nsIStreamListener<sp/>aListener,<sp/>in<sp/>nsISupports<sp/>aContext);</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/>nsIInputStream<sp/>openInputStream();</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/>nsIOutputStream<sp/>openOutputStream();</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
-<codeline lineno="144"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"></highlight></codeline>
-<codeline lineno="150"><highlight class="normal">[scriptable,<sp/>uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]</highlight></codeline>
-<codeline lineno="151" refid="interfacesb_i_indexed_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_indexed_media_item" kindref="compound">sbIIndexedMediaItem</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="152"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="153" refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>index;</highlight></codeline>
-<codeline lineno="154" refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>mediaItem;</highlight></codeline>
-<codeline lineno="155"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/>Prop:<sp/>mediaCreated</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"></highlight></codeline>
+<codeline lineno="85"><highlight class="comment"><sp/><sp/>A<sp/>timestamp<sp/>representing<sp/>the<sp/>date<sp/>and<sp/>time<sp/>at<sp/>which<sp/>this<sp/>&lt;MediaItem&gt;<sp/>was<sp/>created.</highlight></codeline>
+<codeline lineno="86"><highlight class="comment"></highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/><sp/>Number</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_media_item_109426f490e2fde8aecf02c2bfada0a7a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mediaCreated;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"><sp/><sp/>Prop:<sp/>mediaUpdated</highlight></codeline>
+<codeline lineno="101"><highlight class="comment"></highlight></codeline>
+<codeline lineno="102"><highlight class="comment"><sp/><sp/>A<sp/>timestamp<sp/>representing<sp/>the<sp/>date<sp/>and<sp/>time<sp/>at<sp/>which<sp/>this<sp/>&lt;MediaItem&gt;<sp/>was<sp/>last<sp/>updated.</highlight></codeline>
+<codeline lineno="103"><highlight class="comment"></highlight></codeline>
+<codeline lineno="104"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="105"><highlight class="comment"><sp/><sp/><sp/><sp/>Number</highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="interfacesb_i_media_item_1d8fc55899ebe6d777619b12e2ccec9e2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mediaUpdated;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="114"><highlight class="comment"><sp/><sp/>Prop:<sp/>contentSrc</highlight></codeline>
+<codeline lineno="115"><highlight class="comment"></highlight></codeline>
+<codeline lineno="116"><highlight class="comment"><sp/><sp/>The<sp/>URI<sp/>representing<sp/>the<sp/>location<sp/>of<sp/>the<sp/>&lt;MediaItem&gt;.</highlight></codeline>
+<codeline lineno="117"><highlight class="comment"></highlight></codeline>
+<codeline lineno="118"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="119"><highlight class="comment"><sp/><sp/><sp/><sp/>Number,<sp/>in<sp/>bytes.</highlight></codeline>
+<codeline lineno="120"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_media_item_1574db3949d138422afdbd6ecffd88aa2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>contentSrc;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/>Prop:<sp/>contentLength</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"></highlight></codeline>
+<codeline lineno="130"><highlight class="comment"><sp/><sp/>The<sp/>size<sp/>(in<sp/>bytes)<sp/>of<sp/>the<sp/>content<sp/>of<sp/>the<sp/>&lt;MediaItem&gt;.<sp/>If<sp/>this<sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="131"><highlight class="comment"><sp/><sp/>is<sp/>also<sp/>a<sp/>&lt;MediaList&gt;,<sp/>the<sp/>contentLength<sp/>will<sp/>always<sp/>be<sp/>0.<sp/></highlight></codeline>
+<codeline lineno="132"><highlight class="comment"></highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/>The<sp/>contentLength<sp/>may<sp/>not<sp/>be<sp/>available<sp/>for<sp/>streams</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"></highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/>Number,<sp/>in<sp/>bytes.</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="interfacesb_i_media_item_149d00fe6e35d8d24dc468b97d43d8075" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>contentLength;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="146"><highlight class="comment"><sp/><sp/>Prop:<sp/>contentType</highlight></codeline>
+<codeline lineno="147"><highlight class="comment"></highlight></codeline>
+<codeline lineno="148"><highlight class="comment"><sp/><sp/>The<sp/>content<sp/>type,<sp/>also<sp/>called<sp/>mime<sp/>type,<sp/>of<sp/>the<sp/>&lt;MediaItem&gt;.</highlight></codeline>
+<codeline lineno="149"><highlight class="comment"></highlight></codeline>
+<codeline lineno="150"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="151"><highlight class="comment"><sp/><sp/><sp/><sp/>String</highlight></codeline>
+<codeline lineno="152"><highlight class="comment"></highlight></codeline>
+<codeline lineno="153"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
+<codeline lineno="154"><highlight class="comment"><sp/><sp/><sp/><sp/>This<sp/>property<sp/>is<sp/>never<sp/>filled<sp/>currently.</highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="interfacesb_i_media_item_11df3ae03b08948558b1a311e3705db07" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>contentType;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Useful<sp/>Functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>testIsAvailable(in<sp/>nsIObserver<sp/>aObserver);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>nsIChannel<sp/>openInputStreamAsync(in<sp/>nsIStreamListener<sp/>aListener,<sp/>in<sp/>nsISupports<sp/>aContext);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/>nsIInputStream<sp/>openInputStream();</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>nsIOutputStream<sp/>openOutputStream();</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal">[scriptable,<sp/>uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]</highlight></codeline>
+<codeline lineno="202" refid="interfacesb_i_indexed_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_indexed_media_item" kindref="compound" tooltip="A container for a media item and its index.">sbIIndexedMediaItem</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="204" refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>index;</highlight></codeline>
+<codeline lineno="205" refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>mediaItem;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl"/>
   </compounddef>
 </doxygen>

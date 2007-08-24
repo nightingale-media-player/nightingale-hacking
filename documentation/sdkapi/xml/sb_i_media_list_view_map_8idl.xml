@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_list_view_map_8idl" kind="file">
     <compoundname>sbIMediaListViewMap.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="227">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaListViewMap.idl</label>
+      <node id="236">
+        <label>trunk/components/library/base/public/sbIMediaListViewMap.idl</label>
         <link refid="sbIMediaListViewMap.idl"/>
-        <childnode refid="228" relation="include">
+        <childnode refid="237" relation="include">
         </childnode>
       </node>
-      <node id="228">
+      <node id="237">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,21 +49,21 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(16ea057c-d4c2-4921-9984-13ac421a5f8d)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_media_list_view_map" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_map" kindref="compound">sbIMediaListViewMap</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_media_list_view_map" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_map" kindref="compound" tooltip="A mapping from nsISupports objects to save sbIMediaListView states.">sbIMediaListViewMap</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>getView(<sp/>in<sp/>nsISupports<sp/>aParentKey,<sp/>in<sp/>nsISupports<sp/>aPageKey<sp/>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>getView(<sp/>in<sp/>nsISupports<sp/>aParentKey,<sp/>in<sp/>nsISupports<sp/>aPageKey<sp/>);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setView(<sp/>in<sp/>nsISupports<sp/>aParentKey,<sp/>in<sp/>nsISupports<sp/>aPageKey,<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>aView<sp/>);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setView(<sp/>in<sp/>nsISupports<sp/>aParentKey,<sp/>in<sp/>nsISupports<sp/>aPageKey,<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aView<sp/>);</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getContext(<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>aView,<sp/>out<sp/>nsISupports<sp/>aParentKey,<sp/>out<sp/>nsISupports<sp/>aPageKey<sp/>);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getContext(<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aView,<sp/>out<sp/>nsISupports<sp/>aParentKey,<sp/>out<sp/>nsISupports<sp/>aPageKey<sp/>);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>releaseViews(<sp/>in<sp/>nsISupports<sp/>aParentKey<sp/>);</highlight></codeline>
 <codeline lineno="80"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListViewMap.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl"/>
   </compounddef>
 </doxygen>

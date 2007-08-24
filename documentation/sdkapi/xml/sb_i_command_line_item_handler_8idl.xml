@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_command_line_item_handler_8idl" kind="file">
     <compoundname>sbICommandLineItemHandler.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="15">
-        <label>C:/projects/songbird/components/commandline/public/sbICommandLineItemHandler.idl</label>
+      <node id="24">
+        <label>trunk/components/commandline/public/sbICommandLineItemHandler.idl</label>
         <link refid="sbICommandLineItemHandler.idl"/>
-        <childnode refid="16" relation="include">
+        <childnode refid="25" relation="include">
         </childnode>
       </node>
-      <node id="16">
+      <node id="25">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,13 +50,13 @@
 <codeline lineno="37"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(5bd75f41-b392-11db-96e7-005056c00008)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_command_line_item_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound">sbICommandLineItemHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_command_line_item_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound" tooltip="Songbird Command line item handler Interface.">sbICommandLineItemHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>handleItem(in<sp/>AString<sp/>aUriSpec,<sp/>in<sp/>PRInt32<sp/>aCount,<sp/>in<sp/>PRInt32<sp/>aTotal);<sp/></highlight><highlight class="comment">//<sp/>return<sp/>true<sp/>if<sp/>you<sp/>handle<sp/>the<sp/>item.<sp/>items<sp/>that<sp/>haven&apos;t<sp/>been<sp/>handled<sp/>are<sp/>passed<sp/>on<sp/>to<sp/>the<sp/>next<sp/>handler</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/commandline/public/sbICommandLineItemHandler.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_bundle_8idl" kind="file">
     <compoundname>sbIBundle.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="0">
-        <label>C:/projects/songbird/components/bundle/public/sbIBundle.idl</label>
+      <node id="9">
+        <label>trunk/components/bundle/public/sbIBundle.idl</label>
         <link refid="sbIBundle.idl"/>
-        <childnode refid="1" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
       </node>
-      <node id="1">
+      <node id="10">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,20 +49,20 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref>;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref>;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(656eda3e-aeff-11db-96e1-005056c00008)]</highlight></codeline>
-<codeline lineno="50" refid="interfacesb_i_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>bundleId;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
 <codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>retrieveBundleData(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTimeout);</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
 <codeline lineno="93" refid="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleDataStatus;</highlight></codeline>
 <codeline lineno="94" refid="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>-1;</highlight></codeline>
@@ -83,9 +83,9 @@
 <codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setExtensionInstallFlag(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aInstallFlag);</highlight></codeline>
 <codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="166"><highlight class="normal"></highlight></codeline>
 <codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>installFlaggedExtensions(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
 <codeline lineno="180" refid="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_INSTALL_ERROR<sp/>=<sp/>0;</highlight></codeline>
@@ -96,6 +96,6 @@
 <codeline lineno="191"><highlight class="normal"></highlight></codeline>
 <codeline lineno="192"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_database_query_8idl" kind="file">
     <compoundname>sbIDatabaseQuery.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="34">
-        <label>C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl</label>
+      <node id="43">
+        <label>trunk/components/dbengine/public/sbIDatabaseQuery.idl</label>
         <link refid="sbIDatabaseQuery.idl"/>
-        <childnode refid="35" relation="include">
+        <childnode refid="44" relation="include">
         </childnode>
       </node>
-      <node id="35">
+      <node id="44">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,29 +52,29 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(918745AE-0F40-4d08-BA4E-27A739459952)]</highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_database_simple_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_database_simple_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
 <codeline lineno="90"><highlight class="normal">[scriptable,<sp/>uuid(A901158A-3735-44fd-9AD2-1753F1407284)]</highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_database_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="91" refid="interfacesb_i_database_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="92"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryError(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbError,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
 <codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryStart(in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
 <codeline lineno="115"><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryRow(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowResult,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowTotal);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryRow(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowResult,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowTotal);</highlight></codeline>
 <codeline lineno="127"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);<sp/></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);<sp/></highlight></codeline>
 <codeline lineno="139"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="140"><highlight class="normal"></highlight></codeline>
 <codeline lineno="173"><highlight class="normal">[scriptable,<sp/>uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]</highlight></codeline>
-<codeline lineno="174" refid="interfacesb_i_database_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="174" refid="interfacesb_i_database_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query" kindref="compound" tooltip="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="175"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="186" refid="interfacesb_i_database_query_186068054c1ebacd1a3e532224e0e0ee7" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>databaseLocation;</highlight></codeline>
 <codeline lineno="187"><highlight class="normal"></highlight></codeline>
@@ -94,9 +94,9 @@
 <codeline lineno="259"><highlight class="normal"></highlight></codeline>
 <codeline lineno="266"><highlight class="normal"><sp/><sp/>PRBool<sp/>isPersistentQuery();</highlight></codeline>
 <codeline lineno="267"><highlight class="normal"></highlight></codeline>
-<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
 <codeline lineno="274"><highlight class="normal"></highlight></codeline>
-<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
 <codeline lineno="281"><highlight class="normal"></highlight></codeline>
 <codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDatabaseGUID(in<sp/>AString<sp/>dbGUID);</highlight></codeline>
 <codeline lineno="296"><highlight class="normal"></highlight></codeline>
@@ -110,9 +110,9 @@
 <codeline lineno="328"><highlight class="normal"></highlight></codeline>
 <codeline lineno="338"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetQuery();</highlight></codeline>
 <codeline lineno="339"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="347"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>getResultObject();</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>getResultObject();</highlight></codeline>
 <codeline lineno="348"><highlight class="normal"></highlight></codeline>
-<codeline lineno="352"><highlight class="normal"><sp/><sp/>[noscript]<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>getResultObjectOrphan();</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/>[noscript]<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>getResultObjectOrphan();</highlight></codeline>
 <codeline lineno="353"><highlight class="normal"></highlight></codeline>
 <codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getLastError();</highlight></codeline>
 <codeline lineno="362"><highlight class="normal"></highlight></codeline>
@@ -122,9 +122,9 @@
 <codeline lineno="378"><highlight class="normal"></highlight></codeline>
 <codeline lineno="386"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>waitForCompletion();</highlight></codeline>
 <codeline lineno="387"><highlight class="normal"></highlight></codeline>
-<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
 <codeline lineno="394"><highlight class="normal"></highlight></codeline>
-<codeline lineno="400"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
 <codeline lineno="401"><highlight class="normal"></highlight></codeline>
 <codeline lineno="407"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isExecuting();</highlight></codeline>
 <codeline lineno="408"><highlight class="normal"></highlight></codeline>
@@ -156,6 +156,6 @@
 <codeline lineno="493"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindNullParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex);</highlight></codeline>
 <codeline lineno="494"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl"/>
   </compounddef>
 </doxygen>

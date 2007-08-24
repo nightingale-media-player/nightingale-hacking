@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_job_manager_8idl" kind="file">
     <compoundname>sbIMetadataJobManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="301">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</label>
+      <node id="313">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</label>
         <link refid="sbIMetadataJobManager.idl"/>
-        <childnode refid="302" relation="include">
+        <childnode refid="314" relation="include">
         </childnode>
       </node>
-      <node id="302">
+      <node id="314">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,16 +49,16 @@
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(883C63A5-8195-4294-8D41-A21FE16A0D7C)]</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_metadata_job_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job_manager" kindref="compound">sbIMetadataJobManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_metadata_job_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job_manager" kindref="compound" tooltip="Metadata Job Manager scans local and remote tracks for metadata in own-thread and...">sbIMetadataJobManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref><sp/>newJob(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref><sp/>newJob(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
 <codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
 <codeline lineno="88"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
   </compounddef>
 </doxygen>

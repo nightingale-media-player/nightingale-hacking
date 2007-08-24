@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_g_streamer_service_8idl" kind="file">
     <compoundname>sbIGStreamerService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="319">
-        <label>C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl</label>
+      <node id="331">
+        <label>trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl</label>
         <link refid="sbIGStreamerService.idl"/>
-        <childnode refid="320" relation="include">
+        <childnode refid="332" relation="include">
         </childnode>
       </node>
-      <node id="320">
+      <node id="332">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="48"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="48"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_13bb23ef4af1ef9ea6c4452beb0abd40e" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CONTRACTID</name>
@@ -37,7 +37,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="50"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="50"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_1fddc0abf67ebf94b0b5a89df319cf818" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CLASSNAME</name>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="51"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="51"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -84,7 +84,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]</highlight></codeline>
-<codeline lineno="39" refid="interfacesb_i_g_streamer_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_service" kindref="compound">sbIGStreamerService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="39" refid="interfacesb_i_g_streamer_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_service" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIGStreamerService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init();</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">};</highlight></codeline>
@@ -100,6 +100,6 @@
 <codeline lineno="52"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl"/>
   </compounddef>
 </doxygen>

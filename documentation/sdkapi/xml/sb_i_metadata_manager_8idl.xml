@@ -1,38 +1,38 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_manager_8idl" kind="file">
     <compoundname>sbIMetadataManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="304">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
-        <link refid="sbIMetadataManager.idl"/>
-        <childnode refid="305" relation="include">
-        </childnode>
-        <childnode refid="306" relation="include">
-        </childnode>
-      </node>
-      <node id="306">
+      <node id="318">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="305" relation="include">
+        <childnode refid="317" relation="include">
         </childnode>
-        <childnode refid="307" relation="include">
+        <childnode refid="319" relation="include">
         </childnode>
-        <childnode refid="308" relation="include">
+        <childnode refid="320" relation="include">
         </childnode>
       </node>
-      <node id="308">
+      <node id="316">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+        <link refid="sbIMetadataManager.idl"/>
+        <childnode refid="317" relation="include">
+        </childnode>
+        <childnode refid="318" relation="include">
+        </childnode>
+      </node>
+      <node id="320">
         <label>sbIMetadataValues.idl</label>
         <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="305" relation="include">
+        <childnode refid="317" relation="include">
         </childnode>
       </node>
-      <node id="305">
+      <node id="317">
         <label>nsISupports.idl</label>
       </node>
-      <node id="307">
+      <node id="319">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
@@ -70,14 +70,14 @@
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_handler_8idl" kindref="compound">sbIMetadataHandler.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_handler_8idl" kindref="compound" tooltip="A wrapper for an nsIChannel that buffers the incoming data.">sbIMetadataHandler.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(3EBC067F-E52D-4041-A5E4-5C217D4A5FBE)]</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_metadata_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_metadata_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_manager" kindref="compound" tooltip="The manager from which to request a metadata handler.">sbIMetadataManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref><sp/>getHandlerForMediaURL(in<sp/>AString<sp/>aUrl);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of returning the metadata from the url to a file.">sbIMetadataHandler</ref><sp/>getHandlerForMediaURL(in<sp/>AString<sp/>aUrl);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_region_8idl" kind="file">
     <compoundname>IWindowRegion.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="157">
-        <label>C:/projects/songbird/components/integration/public/IWindowRegion.idl</label>
+      <node id="166">
+        <label>trunk/components/integration/public/IWindowRegion.idl</label>
         <link refid="IWindowRegion.idl"/>
-        <childnode refid="158" relation="include">
+        <childnode refid="167" relation="include">
         </childnode>
       </node>
-      <node id="158">
+      <node id="167">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,11 +48,11 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(02C17B60-FE25-4082-BD2A-A8E720428433)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_window_region" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_region" kindref="compound">sbIWindowRegion</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="43" refid="interfacesb_i_window_region" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_region" kindref="compound" tooltip="Window region service interface This is an interface to the window region service...">sbIWindowRegion</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setWindowRegion(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/>nsISupports<sp/>region<sp/>);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowRegion.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl"/>
   </compounddef>
 </doxygen>

@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_database_engine_8idl" kind="file">
     <compoundname>sbIDatabaseEngine.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="31">
-        <label>C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl</label>
+      <node id="40">
+        <label>trunk/components/dbengine/public/sbIDatabaseEngine.idl</label>
         <link refid="sbIDatabaseEngine.idl"/>
-        <childnode refid="32" relation="include">
+        <childnode refid="41" relation="include">
         </childnode>
       </node>
-      <node id="32">
+      <node id="41">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="35"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="35"/>
       </memberdef>
       <memberdef kind="function" id="sb_i_database_engine_8idl_15f70f38416be16bf454016cc431af791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>native</type>
@@ -46,14 +46,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="36"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="36"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
-    <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="sb_i_database_query_8idl" kindref="compound">sbIDatabaseQuery.idl</ref>, <ref refid="sb_i_database_result_8idl" kindref="compound">sbIDatabaseResult.idl</ref> </para></simplesect>
-</para>    </detaileddescription>
+</para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
     <programlisting>
 <codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="2"><highlight class="comment"><sp/>//</highlight></codeline>
@@ -87,7 +87,7 @@
 <codeline lineno="36"><highlight class="normal">[ref]<sp/>native<sp/>stlCStringRef(std::string);</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>AddPersistentQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery,<sp/>in<sp/>ACString<sp/>aTableName);</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
@@ -96,6 +96,6 @@
 <codeline lineno="71"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
 <codeline lineno="72"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl"/>
   </compounddef>
 </doxygen>

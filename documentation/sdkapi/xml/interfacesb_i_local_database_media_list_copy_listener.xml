@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_local_database_media_list_copy_listener" kind="interface" prot="public">
     <compoundname>sbILocalDatabaseMediaListCopyListener</compoundname>
     <includes refid="sb_i_local_database_simple_media_list_8idl" local="no">sbILocalDatabaseSimpleMediaList.idl</includes>
@@ -23,14 +23,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="48"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="48"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="46" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="45" bodyend="49"/>
+    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="45" bodyend="49"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_media_list_copy_listener_19304713ea96b76bb96b08f13fd89b773" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaListCopyListener</scope><name>onItemCopied</name></member>
     </listofallmembers>

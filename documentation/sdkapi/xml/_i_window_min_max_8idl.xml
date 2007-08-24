@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_min_max_8idl" kind="file">
     <compoundname>IWindowMinMax.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="155">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="154">
-        <label>C:/projects/songbird/components/integration/public/IWindowMinMax.idl</label>
+      <node id="163">
+        <label>trunk/components/integration/public/IWindowMinMax.idl</label>
         <link refid="IWindowMinMax.idl"/>
-        <childnode refid="155" relation="include">
+        <childnode refid="164" relation="include">
         </childnode>
+      </node>
+      <node id="164">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_window_min_max_callback" prot="public">sbIWindowMinMaxCallback</innerclass>
@@ -49,7 +49,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(10EB215D-D70A-4eee-B5CE-39990B16706C)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_window_min_max_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_min_max_callback" kindref="compound">sbIWindowMinMaxCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_window_min_max_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_min_max_callback" kindref="compound" tooltip="WindowMinMax callback interface This interface describes a callback for the WindowMinMax...">sbIWindowMinMaxCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/>PRInt32<sp/>GetMinWidth(<sp/>);</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
@@ -63,14 +63,14 @@
 <codeline lineno="89"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal">[scriptable,<sp/>uuid(5F4ABE1E-76D2-43b5-8D5E-E6E272A49C50)]</highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_window_min_max" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_min_max" kindref="compound">sbIWindowMinMax</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="99" refid="interfacesb_i_window_min_max" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_min_max" kindref="compound" tooltip="WindowMinMax service interface This is an interface to the WindowMinMax service,...">sbIWindowMinMax</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="100"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCallback(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/><ref refid="interfacesb_i_window_min_max_callback" kindref="compound">sbIWindowMinMaxCallback</ref><sp/>cb<sp/>);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCallback(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/><ref refid="interfacesb_i_window_min_max_callback" kindref="compound" tooltip="WindowMinMax callback interface This interface describes a callback for the WindowMinMax...">sbIWindowMinMaxCallback</ref><sp/>cb<sp/>);</highlight></codeline>
 <codeline lineno="111"><highlight class="normal"></highlight></codeline>
 <codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetCallback(<sp/>in<sp/>nsISupports<sp/>window<sp/>);</highlight></codeline>
 <codeline lineno="120"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowMinMax.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl"/>
   </compounddef>
 </doxygen>

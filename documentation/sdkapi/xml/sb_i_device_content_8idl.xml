@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_content_8idl" kind="file">
     <compoundname>sbIDeviceContent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="49">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl</label>
+      <node id="58">
+        <label>trunk/components/devices/base/public/sbIDeviceContent.idl</label>
         <link refid="sbIDeviceContent.idl"/>
-        <childnode refid="50" relation="include">
+        <childnode refid="59" relation="include">
         </childnode>
       </node>
-      <node id="50">
+      <node id="59">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,24 +51,24 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIFactory;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound">sbILibraryFactory</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(13dbf4ca-6473-4f1b-abd9-eb7e2dfe1e56)]</highlight></codeline>
-<codeline lineno="41" refid="interfacesb_i_device_content" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_content" kindref="compound">sbIDeviceContent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="41" refid="interfacesb_i_device_content" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addLibrary(in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addLibrary(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeLibrary(in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeLibrary(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_device_content_14e150e0b6e296e4fa01ec286d78b735a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>libraries;</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="61" refid="interfacesb_i_device_content_13b2f6ac099d2002ffcf1873026cbcbb7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRUint32<sp/>libraryCount;</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66" refid="interfacesb_i_device_content_18c21ed6447e772a6d8da1b36e4c811a7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_factory" kindref="compound">sbILibraryFactory</ref><sp/>libraryFactory;</highlight></codeline>
+<codeline lineno="66" refid="interfacesb_i_device_content_18c21ed6447e772a6d8da1b36e4c811a7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref><sp/>libraryFactory;</highlight></codeline>
 <codeline lineno="67"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceContent.idl"/>
   </compounddef>
 </doxygen>

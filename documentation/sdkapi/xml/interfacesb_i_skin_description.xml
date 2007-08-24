@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_skin_description" kind="interface" prot="public">
     <compoundname>sbISkinDescription</compoundname>
     <includes refid="sb_i_skin_description_8idl" local="no">sbISkinDescription.idl</includes>
@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" line="48" bodyfile="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" bodystart="48" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_skin_description_1342a6bdb4302958ae43c43bb708b3f16" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" line="53" bodyfile="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" bodystart="53" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -36,7 +36,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_feathers_manager" kindref="compound">sbIFeathersManager</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" line="42" bodyfile="C:/projects/songbird/components/feathers/public/sbISkinDescription.idl" bodystart="41" bodyend="58"/>
+    <location file="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" line="42" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl" bodystart="41" bodyend="58"/>
     <listofallmembers>
       <member refid="interfacesb_i_skin_description_1f99fa913f81579db6da6584d2c545e57" prot="public" virt="non-virtual"><scope>sbISkinDescription</scope><name>internalName</name></member>
       <member refid="interfacesb_i_skin_description_1342a6bdb4302958ae43c43bb708b3f16" prot="public" virt="non-virtual"><scope>sbISkinDescription</scope><name>name</name></member>

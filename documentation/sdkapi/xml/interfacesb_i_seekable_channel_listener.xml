@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_seekable_channel_listener" kind="interface" prot="public">
     <compoundname>sbISeekableChannelListener</compoundname>
       <sectiondef kind="public-func">
@@ -26,7 +26,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="57"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="57"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -34,7 +34,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="47" bodyfile="C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="46" bodyend="58"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="47" bodyfile="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="46" bodyend="58"/>
     <listofallmembers>
       <member refid="interfacesb_i_seekable_channel_listener_19da820b57b65a0853c5adefccb9a2cf5" prot="public" virt="non-virtual"><scope>sbISeekableChannelListener</scope><name>onChannelDataAvailable</name></member>
     </listofallmembers>

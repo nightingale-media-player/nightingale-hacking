@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_backscanner_8idl" kind="file">
     <compoundname>sbIMetadataBackscanner.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="281">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl</label>
+      <node id="293">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl</label>
         <link refid="sbIMetadataBackscanner.idl"/>
-        <childnode refid="282" relation="include">
+        <childnode refid="294" relation="include">
         </childnode>
       </node>
-      <node id="282">
+      <node id="294">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight></codeline>
 <codeline lineno="52"><highlight class="normal">[scriptable,<sp/>uuid(6FE563F3-A217-4e16-A6C5-52BA0F3C09DF)]</highlight></codeline>
-<codeline lineno="53" refid="interfacesb_i_metadata_backscanner" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_backscanner" kindref="compound">sbIMetadataBackscanner</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_metadata_backscanner" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_backscanner" kindref="compound" tooltip="[DEPRECATED]">sbIMetadataBackscanner</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="54"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="60" refid="interfacesb_i_metadata_backscanner_1ad3fa9d93ab649e0853b9874ef0f9c3a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUint32<sp/>scanInterval;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
@@ -63,6 +63,6 @@
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
   </compounddef>
 </doxygen>

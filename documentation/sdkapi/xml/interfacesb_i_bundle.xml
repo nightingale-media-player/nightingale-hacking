@@ -1,7 +1,173 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_bundle" kind="interface" prot="public">
     <compoundname>sbIBundle</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIBundle::bundleId</definition>
+        <argsstring></argsstring>
+        <name>bundleId</name>
+        <briefdescription>
+<para>Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use sbIBundleDataListenerto monitor progress. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" kindref="member">addBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_12ff42a66ab5ead61e3e786dd0e964351" kindref="member">removeBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbIBundle::bundleDataStatus</definition>
+        <argsstring></argsstring>
+        <name>bundleDataStatus</name>
+        <briefdescription>
+<para>Status of the bundle download. </para>        </briefdescription>
+        <detaileddescription>
+<para>const long BUNDLE_DATA_STATUS_ERROR = -1; const long BUNDLE_DATA_STATUS_DOWNLOADING = 0; const long BUNDLE_DATA_STATUS_SUCCESS = 1; </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="93" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_ERROR</definition>
+        <argsstring></argsstring>
+        <name>BUNDLE_DATA_STATUS_ERROR</name>
+        <initializer> -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="94" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_127021decdb394e85da728f8a1731d2f9" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_DOWNLOADING</definition>
+        <argsstring></argsstring>
+        <name>BUNDLE_DATA_STATUS_DOWNLOADING</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="95" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_13cdfdc33967a7055cc28e6cae651cbfc" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_SUCCESS</definition>
+        <argsstring></argsstring>
+        <name>BUNDLE_DATA_STATUS_SUCCESS</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="96" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMDocument</type>
+        <definition>readonly attribute nsIDOMDocument sbIBundle::bundleDataDocument</definition>
+        <argsstring></argsstring>
+        <name>bundleDataDocument</name>
+        <briefdescription>
+<para>DOM document for the bundle data. The interface to the bundle DOM document describing the bundled extensions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="102" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_1872dfb6bfbaf33819d607488ce02bde2" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIBundle::bundleDataText</definition>
+        <argsstring></argsstring>
+        <name>bundleDataText</name>
+        <briefdescription>
+<para>Bundle document xml in text format. The XML for the bundle document describing the bundled extension, in raw text format. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="108" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_16f6788aa816aade7879cf249ba2dacd8" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIBundle::bundleDataVersion</definition>
+        <argsstring></argsstring>
+        <name>bundleDataVersion</name>
+        <briefdescription>
+<para>Version of the downloaded bundle data. The Version of the downloaded bundle, as extracted from the document&apos;s data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="114" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_18c78474d2172a000df84fc2436df7ed7" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbIBundle::bundleExtensionCount</definition>
+        <argsstring></argsstring>
+        <name>bundleExtensionCount</name>
+        <briefdescription>
+<para>Number of extensions in the bundle document. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" kindref="member">bundleDataDocument</ref>, <ref refid="interfacesb_i_bundle_1dc0e9ae859f0cf22393ac28e59dacef1" kindref="member">getExtensionAttribute</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="120" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIBundle::BUNDLE_INSTALL_ERROR</definition>
+        <argsstring></argsstring>
+        <name>BUNDLE_INSTALL_ERROR</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="180" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_1937bb7e919cc05a6b151af54d1911b56" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIBundle::BUNDLE_INSTALL_SUCCESS</definition>
+        <argsstring></argsstring>
+        <name>BUNDLE_INSTALL_SUCCESS</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="181" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_bundle_141fc07c93014d9c2baf82f95f9763d6a" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIBundle::restartRequired</definition>
+        <argsstring></argsstring>
+        <name>restartRequired</name>
+        <briefdescription>
+<para>Gets the flag indicating that a restart is needed This method gets the flag indicating whether a restart of the application is needed or not, in order for installed extensions to take effect. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Value of the flag </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="189" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_bundle_12f7fc9fb8fd5130e1e040dfbda0876e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -27,7 +193,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="67"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="67"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +219,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="76"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_12ff42a66ab5ead61e3e786dd0e964351" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -79,7 +245,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="84"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1dc0e9ae859f0cf22393ac28e59dacef1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -117,7 +283,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="130"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="130"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1cf73fa57ee5be53462e6b9a7f77ac082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -144,7 +310,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="141"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="141"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1ca4f669e27f6d3cc67fca45c99208682" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -174,7 +340,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="149"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="149"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1d15dffad2590fffa1b38b27488384ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -200,7 +366,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="157"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="157"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_11af1c032b87327cccaaf3c2eb2fb40e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -226,7 +392,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="165"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="165"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_11ca5c30b43ebafc1a221d8d9bbab74a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -253,173 +419,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="179"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" prot="public" static="no" mutable="no">
-        <type>attribute AString</type>
-        <definition>attribute AString sbIBundle::bundleId</definition>
-        <argsstring></argsstring>
-        <name>bundleId</name>
-        <briefdescription>
-<para>Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use sbIBundleDataListenerto monitor progress. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" kindref="member">addBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_12ff42a66ab5ead61e3e786dd0e964351" kindref="member">removeBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref> </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="58" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="58" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" prot="public" static="no" mutable="no">
-        <type>readonly attribute long</type>
-        <definition>readonly attribute long sbIBundle::bundleDataStatus</definition>
-        <argsstring></argsstring>
-        <name>bundleDataStatus</name>
-        <briefdescription>
-<para>Status of the bundle download. </para>        </briefdescription>
-        <detaileddescription>
-<para>const long BUNDLE_DATA_STATUS_ERROR = -1; const long BUNDLE_DATA_STATUS_DOWNLOADING = 0; const long BUNDLE_DATA_STATUS_SUCCESS = 1; </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="93" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="93" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" prot="public" static="no" mutable="no">
-        <type>const long</type>
-        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_ERROR</definition>
-        <argsstring></argsstring>
-        <name>BUNDLE_DATA_STATUS_ERROR</name>
-        <initializer> -1</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="94" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="94" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_127021decdb394e85da728f8a1731d2f9" prot="public" static="no" mutable="no">
-        <type>const long</type>
-        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_DOWNLOADING</definition>
-        <argsstring></argsstring>
-        <name>BUNDLE_DATA_STATUS_DOWNLOADING</name>
-        <initializer> 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="95" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="95" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_13cdfdc33967a7055cc28e6cae651cbfc" prot="public" static="no" mutable="no">
-        <type>const long</type>
-        <definition>const long sbIBundle::BUNDLE_DATA_STATUS_SUCCESS</definition>
-        <argsstring></argsstring>
-        <name>BUNDLE_DATA_STATUS_SUCCESS</name>
-        <initializer> 1</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="96" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="96" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIDOMDocument</type>
-        <definition>readonly attribute nsIDOMDocument sbIBundle::bundleDataDocument</definition>
-        <argsstring></argsstring>
-        <name>bundleDataDocument</name>
-        <briefdescription>
-<para>DOM document for the bundle data. The interface to the bundle DOM document describing the bundled extensions. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="102" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="102" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_1872dfb6bfbaf33819d607488ce02bde2" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIBundle::bundleDataText</definition>
-        <argsstring></argsstring>
-        <name>bundleDataText</name>
-        <briefdescription>
-<para>Bundle document xml in text format. The XML for the bundle document describing the bundled extension, in raw text format. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="108" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="108" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_16f6788aa816aade7879cf249ba2dacd8" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIBundle::bundleDataVersion</definition>
-        <argsstring></argsstring>
-        <name>bundleDataVersion</name>
-        <briefdescription>
-<para>Version of the downloaded bundle data. The Version of the downloaded bundle, as extracted from the document&apos;s data. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="114" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="114" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_18c78474d2172a000df84fc2436df7ed7" prot="public" static="no" mutable="no">
-        <type>readonly attribute long</type>
-        <definition>readonly attribute long sbIBundle::bundleExtensionCount</definition>
-        <argsstring></argsstring>
-        <name>bundleExtensionCount</name>
-        <briefdescription>
-<para>Number of extensions in the bundle document. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" kindref="member">bundleDataDocument</ref>, <ref refid="interfacesb_i_bundle_1dc0e9ae859f0cf22393ac28e59dacef1" kindref="member">getExtensionAttribute</ref> </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="120" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="120" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" prot="public" static="no" mutable="no">
-        <type>const long</type>
-        <definition>const long sbIBundle::BUNDLE_INSTALL_ERROR</definition>
-        <argsstring></argsstring>
-        <name>BUNDLE_INSTALL_ERROR</name>
-        <initializer> 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="180" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="180" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_1937bb7e919cc05a6b151af54d1911b56" prot="public" static="no" mutable="no">
-        <type>const long</type>
-        <definition>const long sbIBundle::BUNDLE_INSTALL_SUCCESS</definition>
-        <argsstring></argsstring>
-        <name>BUNDLE_INSTALL_SUCCESS</name>
-        <initializer> 1</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="181" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="181" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_bundle_141fc07c93014d9c2baf82f95f9763d6a" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIBundle::restartRequired</definition>
-        <argsstring></argsstring>
-        <name>restartRequired</name>
-        <briefdescription>
-<para>Gets the flag indicating that a restart is needed This method gets the flag indicating whether a restart of the application is needed or not, in order for installed extensions to take effect. </para>        </briefdescription>
-        <detaileddescription>
-<para><simplesect kind="return"><para>Value of the flag </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="189" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="189" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="179"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -427,7 +427,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="51" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="50" bodyend="190"/>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="51" bodyfile="E:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="50" bodyend="190"/>
     <listofallmembers>
       <member refid="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>addBundleDataListener</name></member>
       <member refid="interfacesb_i_bundle_1d15dffad2590fffa1b38b27488384ba2" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>addBundleInstallListener</name></member>

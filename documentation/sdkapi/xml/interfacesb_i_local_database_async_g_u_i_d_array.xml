@@ -1,9 +1,24 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_local_database_async_g_u_i_d_array" kind="interface" prot="public">
     <compoundname>sbILocalDatabaseAsyncGUIDArray</compoundname>
     <basecompoundref refid="interfacesb_i_local_database_g_u_i_d_array" prot="public" virt="non-virtual">sbILocalDatabaseGUIDArray</basecompoundref>
     <includes refid="sb_i_local_database_async_g_u_i_d_array_8idl" local="no">sbILocalDatabaseAsyncGUIDArray.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_161cbd59fde56dbaa17ebd787176670b5" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_local_database_async_g_u_i_d_array_listener" kindref="compound">sbILocalDatabaseAsyncGUIDArrayListener</ref></type>
+        <definition>attribute sbILocalDatabaseAsyncGUIDArrayListener sbILocalDatabaseAsyncGUIDArray::asyncListener</definition>
+        <argsstring></argsstring>
+        <name>asyncListener</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="71" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_181f117c581b6f0ff5556784e9b64d025" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -16,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="73"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="73"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_189dbedd8f3e7380c0eecf203274f3e04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -33,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="75"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_16e2bf2d5e6a165928f379a91e221ae5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -50,7 +65,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="77"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_1ed581bfc563a793740e6ff62a5998e6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -67,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="79"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="79"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_async_g_u_i_d_array_1519d4329aeee0e715b489936195306eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_local_database_async_g_u_i_d_array" kindref="compound">sbILocalDatabaseAsyncGUIDArray</ref></type>
@@ -80,22 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="81"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_local_database_async_g_u_i_d_array_161cbd59fde56dbaa17ebd787176670b5" prot="public" static="no" mutable="no">
-        <type>attribute <ref refid="interfacesb_i_local_database_async_g_u_i_d_array_listener" kindref="compound">sbILocalDatabaseAsyncGUIDArrayListener</ref></type>
-        <definition>attribute sbILocalDatabaseAsyncGUIDArrayListener sbILocalDatabaseAsyncGUIDArray::asyncListener</definition>
-        <argsstring></argsstring>
-        <name>asyncListener</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="71" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="71" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="81"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -103,58 +103,58 @@
     <detaileddescription>
 <para>An asynchronous wrapper around an existing GUID array. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="198">
+      <node id="202">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="197">
+      <node id="201">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="198" relation="public-inheritance">
+        <childnode refid="202" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="200">
+      <node id="204">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="201" relation="usage">
+        <childnode refid="205" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="202" relation="usage">
+        <childnode refid="206" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="203" relation="usage">
+        <childnode refid="207" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="203">
+      <node id="207">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="202">
+      <node id="206">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="204">
+      <node id="208">
         <label>sbILocalDatabaseAsyncGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array_listener"/>
       </node>
-      <node id="201">
+      <node id="205">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="199">
+      <node id="203">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="200" relation="public-inheritance">
+        <childnode refid="204" relation="public-inheritance">
         </childnode>
-        <childnode refid="204" relation="usage">
+        <childnode refid="208" relation="usage">
           <edgelabel>asyncListener</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="70" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="69" bodyend="82"/>
+    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" line="70" bodyfile="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl" bodystart="69" bodyend="82"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1ed00f10128aa5e5c312e414abb7f9c8a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>addFilter</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bfb91fa9a24952b3d1b0ff58427cb747" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>addSort</name></member>

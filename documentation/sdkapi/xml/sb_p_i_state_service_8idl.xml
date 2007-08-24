@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_p_i_state_service_8idl" kind="file">
     <compoundname>sbPIStateService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="406">
-        <label>C:/projects/songbird/components/state/public/sbPIStateService.idl</label>
+      <node id="423">
+        <label>trunk/components/state/public/sbPIStateService.idl</label>
         <link refid="sbPIStateService.idl"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="424" relation="include">
         </childnode>
       </node>
-      <node id="407">
+      <node id="424">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,19 +49,19 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">[uuid(A2CB5117-40AE-441f-9F8A-CDC6327CA74E)]</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_p_i_state_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_state_service" kindref="compound">sbPIStateService</ref>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_p_i_state_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_state_service" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbPIStateService</ref>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_p_i_state_service_1c9bec0da23d7fc8dc35006710a3857b7" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsISimpleEnumerator<sp/>stateDatastores;</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addStateObject(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref><sp/>aStateObject,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aPersistentObject);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addStateObject(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref><sp/>aStateObject,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aPersistentObject);</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeStateObject(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref><sp/>aStateObject);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeStateObject(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref><sp/>aStateObject);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/state/public/sbPIStateService.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl"/>
   </compounddef>
 </doxygen>

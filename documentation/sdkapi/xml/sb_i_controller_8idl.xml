@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_controller_8idl" kind="file">
     <compoundname>sbIController.idl</compoundname>
     <includes local="yes">nsIController.idl</includes>
     <incdepgraph>
-      <node id="25">
+      <node id="34">
         <label>nsIController.idl</label>
       </node>
-      <node id="24">
-        <label>C:/projects/songbird/components/controller/public/sbIController.idl</label>
+      <node id="33">
+        <label>trunk/components/controller/public/sbIController.idl</label>
         <link refid="sbIController.idl"/>
-        <childnode refid="25" relation="include">
+        <childnode refid="34" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -50,10 +50,10 @@
 <codeline lineno="36"><highlight class="preprocessor">#include<sp/>&quot;nsIController.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[uuid(A780AD2E-8655-4d4d-8B9B-C25C69051026)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_controller" kindref="compound">sbIController</ref><sp/>:<sp/>nsIController</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIController</ref><sp/>:<sp/>nsIController</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/controller/public/sbIController.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/controller/public/sbIController.idl"/>
   </compounddef>
 </doxygen>

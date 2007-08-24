@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_metadata_job_manager" kind="interface" prot="public">
     <compoundname>sbIMetadataJobManager</compoundname>
       <sectiondef kind="public-func">
@@ -19,7 +19,8 @@
         <briefdescription>
 <para>Start a new task scanning the given array of media items. </para>        </briefdescription>
         <detaileddescription>
-<para>This task will launch a new metadata task and return the task object for monitoring.</para><para>You can construct the required array like so: <verbatim>      var toScan = Components.classes[&quot;@mozilla.org/array;1&quot;]
+<para>This task will launch a new metadata task and return the task object for monitoring.</para><para>You can construct the required array like so: <verbatim>
+      var toScan = Components.classes[&quot;@mozilla.org/array;1&quot;]
         .createInstance(Components.interfaces.nsIMutableArray);
 
       for (var i = 0; i &lt; 100; i++)
@@ -44,7 +45,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="81"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -57,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="87"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="87"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -67,7 +68,7 @@
 <listitem><para><ulink url="file://.">file://.</ulink></para></listitem></itemizedlist>
 </para><para>Remote media is scanned from the main thread using timer based workers.</para><para>An nsIArray of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> are passed to this interface to begin a metadata scan task. An <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> element will be returned to the calling interface.</para><para>The Metadata Job Manager is a service and should be called via do_GetService. Because it relies upon starting timers into the main thread, <ref refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" kindref="member">newJob()</ref> may only be called from the main thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>, <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>, <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="60" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="59" bodyend="88"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="60" bodyfile="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="59" bodyend="88"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>newJob</name></member>
       <member refid="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>stop</name></member>

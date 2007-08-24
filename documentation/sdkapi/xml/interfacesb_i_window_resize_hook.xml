@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_window_resize_hook" kind="interface" prot="public">
     <compoundname>sbIWindowResizeHook</compoundname>
       <sectiondef kind="public-func">
@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/IWindowResizeHook.idl" line="75"/>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_resize_hook_1cd10e2b76a8e26cd3d2738be19f1db76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,7 +64,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/integration/public/IWindowResizeHook.idl" line="84"/>
+        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="84"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -72,7 +72,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_window_resize_hook" kindref="compound">sbIWindowResizeHook</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/integration/public/IWindowResizeHook.idl" line="66" bodyfile="C:/projects/songbird/components/integration/public/IWindowResizeHook.idl" bodystart="65" bodyend="85"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="66" bodyfile="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" bodystart="65" bodyend="85"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_resize_hook_1cd10e2b76a8e26cd3d2738be19f1db76" prot="public" virt="non-virtual"><scope>sbIWindowResizeHook</scope><name>resetCallback</name></member>
       <member refid="interfacesb_i_window_resize_hook_1d6befbf38011b5c6547ef389d9364146" prot="public" virt="non-virtual"><scope>sbIWindowResizeHook</scope><name>setCallback</name></member>

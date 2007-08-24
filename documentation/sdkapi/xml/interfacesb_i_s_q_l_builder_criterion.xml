@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_s_q_l_builder_criterion" kind="interface" prot="public">
     <compoundname>sbISQLBuilderCriterion</compoundname>
     <derivedcompoundref refid="interfacesb_i_s_q_l_builder_criterion_in" prot="public" virt="non-virtual">sbISQLBuilderCriterionIn</derivedcompoundref>
@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="417"/>
+        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="417"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,18 +24,18 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="504">
+      <node id="553">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="505">
+      <node id="554">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="504" relation="public-inheritance">
+        <childnode refid="553" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="416" bodyfile="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="415" bodyend="418"/>
+    <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="416" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="415" bodyend="418"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_builder_criterion_13eb2adc99f95c605f1932630f9f1d608" prot="public" virt="non-virtual"><scope>sbISQLBuilderCriterion</scope><name>toString</name></member>
     </listofallmembers>

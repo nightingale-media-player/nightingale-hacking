@@ -1,44 +1,44 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_channel_8idl" kind="file">
     <compoundname>sbIMetadataChannel.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIStreamListener.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="287">
-        <label>sbIMetadataHandler.idl</label>
-        <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="285" relation="include">
+      <node id="296">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sbIMetadataChannel.idl"/>
+        <childnode refid="297" relation="include">
         </childnode>
-        <childnode refid="288" relation="include">
+        <childnode refid="298" relation="include">
         </childnode>
-        <childnode refid="289" relation="include">
+        <childnode refid="299" relation="include">
         </childnode>
       </node>
-      <node id="286">
+      <node id="298">
         <label>nsIStreamListener.idl</label>
       </node>
-      <node id="289">
+      <node id="299">
+        <label>sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="297" relation="include">
+        </childnode>
+        <childnode refid="300" relation="include">
+        </childnode>
+        <childnode refid="301" relation="include">
+        </childnode>
+      </node>
+      <node id="301">
         <label>sbIMetadataValues.idl</label>
         <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="285" relation="include">
+        <childnode refid="297" relation="include">
         </childnode>
       </node>
-      <node id="284">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sbIMetadataChannel.idl"/>
-        <childnode refid="285" relation="include">
-        </childnode>
-        <childnode refid="286" relation="include">
-        </childnode>
-        <childnode refid="287" relation="include">
-        </childnode>
-      </node>
-      <node id="285">
+      <node id="297">
         <label>nsISupports.idl</label>
       </node>
-      <node id="288">
+      <node id="300">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
@@ -76,19 +76,19 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIStreamListener.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_handler_8idl" kindref="compound">sbIMetadataHandler.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_handler_8idl" kindref="compound" tooltip="A wrapper for an nsIChannel that buffers the incoming data.">sbIMetadataHandler.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">[uuid(6CB7F8A0-29ED-424b-AEF6-B491A8784AF4)]</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_metadata_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref><sp/>:<sp/>nsIStreamListener</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_metadata_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_channel" kindref="compound" tooltip="A wrapper for an nsIChannel that buffers the incoming data.">sbIMetadataChannel</ref><sp/>:<sp/>nsIStreamListener</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55" refid="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUInt64<sp/>pos;</highlight></codeline>
 <codeline lineno="59" refid="interfacesb_i_metadata_channel_1eb31ddf794d8dd7f24e8e1deb9ac9a1e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRUInt64<sp/>buf;</highlight></codeline>
 <codeline lineno="63" refid="interfacesb_i_metadata_channel_113b0bde43d528e8ae0c12c56aa6e1b1c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRUInt64<sp/>size;</highlight></codeline>
 <codeline lineno="68" refid="interfacesb_i_metadata_channel_131900ec93b36e8097b1165b6ebe5cde1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>seekable;</highlight></codeline>
 <codeline lineno="72" refid="interfacesb_i_metadata_channel_1dc3708c7b505097379eda3f07b3595b2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>open(<sp/>in<sp/>nsIChannel<sp/>aChannel,<sp/>in<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref><sp/>aHandler<sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>open(<sp/>in<sp/>nsIChannel<sp/>aChannel,<sp/>in<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of returning the metadata from the url to a file.">sbIMetadataHandler</ref><sp/>aHandler<sp/>);</highlight></codeline>
 <codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>skip(<sp/>in<sp/>PRUint64<sp/>aDistance<sp/>);</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"><sp/><sp/>PRUint32<sp/>read(<sp/>in<sp/>charPtr<sp/>aBuffer,<sp/>in<sp/>PRUint32<sp/>aSize<sp/>);</highlight></codeline>
@@ -97,6 +97,6 @@
 <codeline lineno="116"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
 <codeline lineno="117"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl"/>
   </compounddef>
 </doxygen>

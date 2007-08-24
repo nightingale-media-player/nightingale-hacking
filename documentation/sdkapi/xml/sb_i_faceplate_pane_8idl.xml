@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_faceplate_pane_8idl" kind="file">
     <compoundname>sbIFaceplatePane.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="125">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="124">
-        <label>C:/projects/songbird/components/faceplate/public/sbIFaceplatePane.idl</label>
+      <node id="133">
+        <label>trunk/components/faceplate/public/sbIFaceplatePane.idl</label>
         <link refid="sbIFaceplatePane.idl"/>
-        <childnode refid="125" relation="include">
+        <childnode refid="134" relation="include">
         </childnode>
+      </node>
+      <node id="134">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_faceplate_pane" prot="public">sbIFaceplatePane</innerclass>
@@ -53,7 +53,7 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(2133d54e-ff78-11db-8314-0800200c9a46)]</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_faceplate_pane" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_faceplate_pane" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="64" refid="interfacesb_i_faceplate_pane_1c1675e51741bc525fde69a1f94cb172e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
@@ -74,6 +74,6 @@
 <codeline lineno="116"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/faceplate/public/sbIFaceplatePane.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplatePane.idl"/>
   </compounddef>
 </doxygen>

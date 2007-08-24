@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_global_hotkeys_8idl" kind="file">
     <compoundname>IGlobalHotkeys.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="142">
-        <label>C:/projects/songbird/components/integration/public/IGlobalHotkeys.idl</label>
+      <node id="151">
+        <label>trunk/components/integration/public/IGlobalHotkeys.idl</label>
         <link refid="IGlobalHotkeys.idl"/>
-        <childnode refid="143" relation="include">
+        <childnode refid="152" relation="include">
         </childnode>
       </node>
-      <node id="143">
+      <node id="152">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,15 +49,15 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(6AFCACC5-9D63-499d-B8D0-B40C66859818)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_global_hotkey_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_global_hotkey_callback" kindref="compound">sbIGlobalHotkeyCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_global_hotkey_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_global_hotkey_callback" kindref="compound" tooltip="Global hotkeys callback interface This interface is used by callback objects to receive...">sbIGlobalHotkeyCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onHotkey(<sp/>in<sp/>AString<sp/>key_id<sp/>);</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="65"><highlight class="normal">[scriptable,<sp/>uuid(284E14BF-5CE4-4434-A733-4379D27D799E)]</highlight></codeline>
-<codeline lineno="66" refid="interfacesb_i_global_hotkeys" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_global_hotkeys" kindref="compound">sbIGlobalHotkeys</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="66" refid="interfacesb_i_global_hotkeys" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_global_hotkeys" kindref="compound" tooltip="Global hotkey registration/unregistration interface This interface is used to register...">sbIGlobalHotkeys</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="67"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addHotkey(<sp/>in<sp/>PRInt32<sp/>keyCode,<sp/>in<sp/>PRBool<sp/>altKey,<sp/>in<sp/>PRBool<sp/>ctrlKey,<sp/>in<sp/>PRBool<sp/>shiftKey,<sp/>in<sp/>PRBool<sp/>metaKey,<sp/>in<sp/>AString<sp/>key_id,<sp/>in<sp/><ref refid="interfacesb_i_global_hotkey_callback" kindref="compound">sbIGlobalHotkeyCallback</ref><sp/>cb<sp/>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addHotkey(<sp/>in<sp/>PRInt32<sp/>keyCode,<sp/>in<sp/>PRBool<sp/>altKey,<sp/>in<sp/>PRBool<sp/>ctrlKey,<sp/>in<sp/>PRBool<sp/>shiftKey,<sp/>in<sp/>PRBool<sp/>metaKey,<sp/>in<sp/>AString<sp/>key_id,<sp/>in<sp/><ref refid="interfacesb_i_global_hotkey_callback" kindref="compound" tooltip="Global hotkeys callback interface This interface is used by callback objects to receive...">sbIGlobalHotkeyCallback</ref><sp/>cb<sp/>);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
 <codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeHotkey(<sp/>in<sp/>AString<sp/>key_id<sp/>);</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
@@ -65,6 +65,6 @@
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IGlobalHotkeys.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl"/>
   </compounddef>
 </doxygen>

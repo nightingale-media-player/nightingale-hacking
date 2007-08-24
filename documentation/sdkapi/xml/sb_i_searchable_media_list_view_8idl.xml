@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_searchable_media_list_view_8idl" kind="file">
     <compoundname>sbISearchableMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="236">
-        <label>C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl</label>
+      <node id="245">
+        <label>trunk/components/library/base/public/sbISearchableMediaListView.idl</label>
         <link refid="sbISearchableMediaListView.idl"/>
-        <childnode refid="237" relation="include">
+        <childnode refid="246" relation="include">
         </childnode>
       </node>
-      <node id="237">
+      <node id="246">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,21 +50,21 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_searchable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_searchable_media_list_view" kindref="compound">sbISearchableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_searchable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_searchable_media_list_view" kindref="compound" tooltip="Control the search settings on a media list.">sbISearchableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_searchable_media_list_view_1b380c0f60b0a44eb188274a92c7d5e95" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>searchableProperties;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58" refid="interfacesb_i_searchable_media_list_view_10015e6280bb9bf9efdc3dca3a08832fc" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref><sp/>currentSearch;</highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_searchable_media_list_view_10015e6280bb9bf9efdc3dca3a08832fc" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>currentSearch;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSearch(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref><sp/>aSearch);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSearch(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aSearch);</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearSearch();</highlight></codeline>
 <codeline lineno="72"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl"/>
   </compounddef>
 </doxygen>

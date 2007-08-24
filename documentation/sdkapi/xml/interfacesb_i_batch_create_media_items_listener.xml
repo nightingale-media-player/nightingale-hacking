@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_batch_create_media_items_listener" kind="interface" prot="public">
     <compoundname>sbIBatchCreateMediaItemsListener</compoundname>
     <includes refid="sb_i_library_8idl" local="no">sbILibrary.idl</includes>
@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibrary.idl" line="59"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="59"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_batch_create_media_items_listener_1e5a123aeebaadfc11bd7b7b0409a3af7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -52,14 +52,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibrary.idl" line="65"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="65"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Callback for batch media create items. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibrary.idl" line="52" bodyfile="C:/projects/songbird/components/library/base/public/sbILibrary.idl" bodystart="51" bodyend="66"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" bodystart="51" bodyend="66"/>
     <listofallmembers>
       <member refid="interfacesb_i_batch_create_media_items_listener_1e5a123aeebaadfc11bd7b7b0409a3af7" prot="public" virt="non-virtual"><scope>sbIBatchCreateMediaItemsListener</scope><name>onComplete</name></member>
       <member refid="interfacesb_i_batch_create_media_items_listener_1e6a39209454f28ac776ac583cee5eac5" prot="public" virt="non-virtual"><scope>sbIBatchCreateMediaItemsListener</scope><name>onProgress</name></member>

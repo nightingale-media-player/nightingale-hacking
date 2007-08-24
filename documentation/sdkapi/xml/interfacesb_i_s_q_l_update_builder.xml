@@ -1,9 +1,24 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_s_q_l_update_builder" kind="interface" prot="public">
     <compoundname>sbISQLUpdateBuilder</compoundname>
     <basecompoundref refid="interfacesb_i_s_q_l_where_builder" prot="public" virt="non-virtual">sbISQLWhereBuilder</basecompoundref>
     <includes refid="sb_i_s_q_l_builder_8idl" local="no">sbISQLBuilder.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_s_q_l_update_builder_1abf442311b40980eb698e57f99eec68c" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbISQLUpdateBuilder::tableName</definition>
+        <argsstring></argsstring>
+        <name>tableName</name>
+        <briefdescription>
+<para>Table to update. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="379" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="379" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_s_q_l_update_builder_10dbe767b393898296fe48f972a47244c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -39,7 +54,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="387"/>
+        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="387"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_update_builder_18ead12debaf1f1111b3ece86917b8511" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,22 +79,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="393"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_s_q_l_update_builder_1abf442311b40980eb698e57f99eec68c" prot="public" static="no" mutable="no">
-        <type>attribute AString</type>
-        <definition>attribute AString sbISQLUpdateBuilder::tableName</definition>
-        <argsstring></argsstring>
-        <name>tableName</name>
-        <briefdescription>
-<para>Table to update. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="379" bodyfile="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="379" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="393"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -87,42 +87,42 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="530">
+      <node id="579">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="531" relation="public-inheritance">
+        <childnode refid="580" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="529">
+      <node id="578">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="530" relation="public-inheritance">
+        <childnode refid="579" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="531">
+      <node id="580">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="533">
+      <node id="582">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="534" relation="public-inheritance">
+        <childnode refid="583" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="532">
+      <node id="581">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="533" relation="public-inheritance">
+        <childnode refid="582" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="534">
+      <node id="583">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="375" bodyfile="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="374" bodyend="394"/>
+    <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="375" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="374" bodyend="394"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_update_builder_18ead12debaf1f1111b3ece86917b8511" prot="public" virt="non-virtual"><scope>sbISQLUpdateBuilder</scope><name>addAssignmentParameter</name></member>
       <member refid="interfacesb_i_s_q_l_update_builder_10dbe767b393898296fe48f972a47244c" prot="public" virt="non-virtual"><scope>sbISQLUpdateBuilder</scope><name>addAssignmentString</name></member>

@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_remote_media_list" kind="interface" prot="public">
     <compoundname>sbIRemoteMediaList</compoundname>
     <includes refid="sb_i_remote_media_list_8idl" local="no">sbIRemoteMediaList.idl</includes>
@@ -15,14 +15,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="47"/>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="53"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to control a media list from remote web pages. </para>    </briefdescription>
     <detaileddescription>
-<para>TODO: Write this documentation </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="46" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" bodystart="45" bodyend="48"/>
+<para><xrefsect id="todo_1_todo000021"><xreftitle>Todo</xreftitle><xrefdescription><para>Write this documentation</para></xrefdescription></xrefsect></para>    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" bodystart="51" bodyend="54"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_media_list_10f5264220052ca13380b741670a2a055" prot="public" virt="non-virtual"><scope>sbIRemoteMediaList</scope><name>getView</name></member>
     </listofallmembers>

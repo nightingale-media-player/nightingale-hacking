@@ -1,8 +1,23 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_playlist_writer" kind="interface" prot="public">
     <compoundname>sbIPlaylistWriter</compoundname>
     <includes refid="sb_i_playlist_writer_8idl" local="no">sbIPlaylistWriter.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref></type>
+        <definition>attribute sbIPlaylistWriterListener sbIPlaylistWriter::writerListener</definition>
+        <argsstring></argsstring>
+        <name>writerListener</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_playlist_writer_16c5c2916d3d3808bf0c3f8fe3f298d07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -30,20 +45,20 @@
           <declname>aErrorCode</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="61"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_193bdf5a267467fb9b3ef581339612de9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -55,20 +70,20 @@
           <declname>aURL</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="69"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_1dd16799af17404cf1f53b3bd4d603846" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -76,20 +91,20 @@
         <argsstring>()</argsstring>
         <name>name</name>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="77"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_154fb8fabdd3d3dd98b3f6aaf207ad3b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -97,20 +112,20 @@
         <argsstring>()</argsstring>
         <name>description</name>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="85"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_10a3790bd97bf000be6d8f8661bdf7ab7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -127,20 +142,20 @@
           <declname>aMIMETypes</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="94"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_19fa8fada5cae500f460f7a6e9db7e850" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -157,35 +172,20 @@
           <declname>aExts</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>\sa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="103"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" prot="public" static="no" mutable="no">
-        <type>attribute <ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref></type>
-        <definition>attribute sbIPlaylistWriterListener sbIPlaylistWriter::writerListener</definition>
-        <argsstring></argsstring>
-        <name>writerListener</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="49" bodyfile="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="49" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="103"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -193,19 +193,19 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="396">
+      <node id="438">
         <label>sbIPlaylistWriter</label>
         <link refid="interfacesb_i_playlist_writer"/>
-        <childnode refid="397" relation="usage">
+        <childnode refid="439" relation="usage">
           <edgelabel>writerListener</edgelabel>
         </childnode>
       </node>
-      <node id="397">
+      <node id="439">
         <label>sbIPlaylistWriterListener</label>
         <link refid="interfacesb_i_playlist_writer_listener"/>
       </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="48" bodyfile="C:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="47" bodyend="104"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="47" bodyend="104"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_writer_154fb8fabdd3d3dd98b3f6aaf207ad3b3" prot="public" virt="non-virtual"><scope>sbIPlaylistWriter</scope><name>description</name></member>
       <member refid="interfacesb_i_playlist_writer_1dd16799af17404cf1f53b3bd4d603846" prot="public" virt="non-virtual"><scope>sbIPlaylistWriter</scope><name>name</name></member>

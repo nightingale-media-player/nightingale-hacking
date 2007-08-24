@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_cloak_8idl" kind="file">
     <compoundname>IWindowCloak.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="145">
-        <label>C:/projects/songbird/components/integration/public/IWindowCloak.idl</label>
+      <node id="154">
+        <label>trunk/components/integration/public/IWindowCloak.idl</label>
         <link refid="IWindowCloak.idl"/>
-        <childnode refid="146" relation="include">
+        <childnode refid="155" relation="include">
         </childnode>
       </node>
-      <node id="146">
+      <node id="155">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(749e0809-e4a7-4c88-abb2-39c1440f1a2d)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_window_cloak" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_cloak" kindref="compound">sbIWindowCloak</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_window_cloak" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_cloak" kindref="compound" tooltip="Window cloaking service interface This is an interface to the window cloaking service...">sbIWindowCloak</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cloak(in<sp/>nsIDOMWindow<sp/>aDOMWindow);</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
@@ -60,6 +60,6 @@
 <codeline lineno="69"><highlight class="normal"><sp/><sp/>PRBool<sp/>isCloaked(in<sp/>nsIDOMWindow<sp/>aDOMWindow);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowCloak.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowCloak.idl"/>
   </compounddef>
 </doxygen>

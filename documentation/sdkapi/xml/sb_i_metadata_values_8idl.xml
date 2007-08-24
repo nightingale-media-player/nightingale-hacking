@@ -1,42 +1,42 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_values_8idl" kind="file">
     <compoundname>sbIMetadataValues.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_metadata_handler_8idl" local="yes">C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
+    <includedby refid="sb_i_metadata_handler_8idl" local="yes">trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
     <incdepgraph>
-      <node id="313">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
+      <node id="325">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
         <link refid="sbIMetadataValues.idl"/>
-        <childnode refid="314" relation="include">
+        <childnode refid="326" relation="include">
         </childnode>
       </node>
-      <node id="314">
+      <node id="326">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="318">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+      <node id="329">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sb_i_metadata_channel_8idl"/>
+      </node>
+      <node id="328">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="329" relation="include">
+        </childnode>
+        <childnode refid="330" relation="include">
+        </childnode>
+      </node>
+      <node id="330">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sb_i_metadata_manager_8idl"/>
       </node>
-      <node id="316">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
-        <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="317" relation="include">
-        </childnode>
-        <childnode refid="318" relation="include">
-        </childnode>
-      </node>
-      <node id="315">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
+      <node id="327">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
         <link refid="sbIMetadataValues.idl"/>
-        <childnode refid="316" relation="include">
+        <childnode refid="328" relation="include">
         </childnode>
-      </node>
-      <node id="317">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sb_i_metadata_channel_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_metadata_values" prot="public">sbIMetadataValues</innerclass>
@@ -74,7 +74,7 @@
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(EC39DE03-8918-4369-951E-0A04BD9CF663)]</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_metadata_values" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_metadata_values" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_values" kindref="compound" tooltip="A map of value+type pairs, keyed by string.">sbIMetadataValues</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_metadata_values_17c670a3cec94e58dcadd63d01cbc9b59" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRInt32<sp/>numValues;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
@@ -89,6 +89,6 @@
 <codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clear();</highlight></codeline>
 <codeline lineno="86"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataValues.idl"/>
   </compounddef>
 </doxygen>

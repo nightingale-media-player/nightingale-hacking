@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_cascade_filter_set_8idl" kind="file">
     <compoundname>sbICascadeFilterSet.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="166">
-        <label>C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl</label>
+      <node id="175">
+        <label>trunk/components/library/base/public/sbICascadeFilterSet.idl</label>
         <link refid="sbICascadeFilterSet.idl"/>
-        <childnode refid="167" relation="include">
+        <childnode refid="176" relation="include">
         </childnode>
       </node>
-      <node id="167">
+      <node id="176">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,10 +51,10 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsITreeView;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_cascade_filter_set_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_cascade_filter_set_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound" tooltip="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChange();</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
@@ -62,7 +62,7 @@
 <codeline lineno="50"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_cascade_filter_set" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_cascade_filter_set" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound" tooltip="Cascade filter management for a media list.">sbICascadeFilterSet</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="64" refid="interfacesb_i_cascade_filter_set_15c6a7e2239bf4aab77d400eb8771cc70" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>length;</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
@@ -71,11 +71,11 @@
 <codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>appendSearch([array,<sp/>size_is(aPropertyArrayCount)]<sp/>in<sp/>wstring<sp/>aPropertyArray,</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aPropertyArrayCount);</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>remove(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">remove</highlight><highlight class="normal">(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
 <codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>changeFilter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/>AString<sp/>aProperty);</highlight></codeline>
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>set(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">set</highlight><highlight class="normal">(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex,</highlight></codeline>
 <codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aValueArrayCount)]<sp/>in<sp/>wstring<sp/>aValueArray,</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValueArrayCount);</highlight></codeline>
 <codeline lineno="109"><highlight class="normal"></highlight></codeline>
@@ -93,12 +93,12 @@
 <codeline lineno="150"><highlight class="normal"></highlight></codeline>
 <codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isSearch(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound" tooltip="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="163"><highlight class="normal"></highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound" tooltip="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="169"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="170"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl"/>
   </compounddef>
 </doxygen>

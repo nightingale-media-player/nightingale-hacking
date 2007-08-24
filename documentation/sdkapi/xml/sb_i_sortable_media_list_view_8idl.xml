@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_sortable_media_list_view_8idl" kind="file">
     <compoundname>sbISortableMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="239">
-        <label>C:/projects/songbird/components/library/base/public/sbISortableMediaListView.idl</label>
+      <node id="248">
+        <label>trunk/components/library/base/public/sbISortableMediaListView.idl</label>
         <link refid="sbISortableMediaListView.idl"/>
-        <childnode refid="240" relation="include">
+        <childnode refid="249" relation="include">
         </childnode>
       </node>
-      <node id="240">
+      <node id="249">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,22 +50,22 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(a3579817-5ba7-49e6-98ad-5ab8270d1848)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_sortable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_sortable_media_list_view" kindref="compound">sbISortableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_sortable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_sortable_media_list_view" kindref="compound" tooltip="Control the sort settings on a media list.">sbISortableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_sortable_media_list_view_14781515f679eecec2fcccf746a0df488" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>sortableProperties;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_sortable_media_list_view_100745a53e42c88307150b27ed2d8feb3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref><sp/>currentSort;</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_sortable_media_list_view_100745a53e42c88307150b27ed2d8feb3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>currentSort;</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSort(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref><sp/>aSort);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSort(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aSort);</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearSort();</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
 <codeline lineno="72"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaListView.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl"/>
   </compounddef>
 </doxygen>

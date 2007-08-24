@@ -341,6 +341,7 @@ HR { height: 1px;
 .paramname {
   color: #602020;
   font-style: italic;
+  white-space: nowrap;
 }
 /* End Styling for detailed member documentation */
 
@@ -355,4 +356,3 @@ HR { height: 1px;
 .directory p { margin: 0px; white-space: nowrap; }
 .directory div { display: none; margin: 0px; }
 .directory img { vertical-align: -30%; }
-

@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_c_d_device" kind="interface" prot="public">
     <compoundname>sbICDDevice</compoundname>
     <basecompoundref refid="interfacesb_i_device_base" prot="public" virt="non-virtual">sbIDeviceBase</basecompoundref>
@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl" line="57"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_c_d_device_1e369421af23b21668af036cd9d2e5cd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -54,7 +54,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl" line="72"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="72"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_c_d_device_1f9db005823c6104f527f7997ce1684f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -91,7 +91,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl" line="85"/>
+        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="85"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -100,18 +100,6 @@
 <para>&lt;TODO: Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="32">
-        <label>sbICDDevice</label>
-        <link refid="interfacesb_i_c_d_device"/>
-        <childnode refid="33" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="33">
-        <label>sbIDeviceBase</label>
-        <link refid="interfacesb_i_device_base"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="34">
         <label>sbICDDevice</label>
         <link refid="interfacesb_i_c_d_device"/>
@@ -122,8 +110,20 @@
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="36">
+        <label>sbICDDevice</label>
+        <link refid="interfacesb_i_c_d_device"/>
+        <childnode refid="37" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>sbIDeviceBase</label>
+        <link refid="interfacesb_i_device_base"/>
+      </node>
     </collaborationgraph>
-    <location file="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl" line="46" bodyfile="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl" bodystart="45" bodyend="86"/>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" bodystart="45" bodyend="86"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>beginTransfer</name></member>
@@ -132,7 +132,7 @@
       <member refid="interfacesb_i_device_base_1aa8050e1024971f8cc26cdec4d52ef6e" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>deleteItems</name></member>
       <member refid="interfacesb_i_device_base_10822a294b0931fcc6decf3dfce99eb18" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>deviceCategory</name></member>
       <member refid="interfacesb_i_device_base_184f2266170fa22c6978b003964d3419a" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>deviceCount</name></member>
-      <member refid="interfacesb_i_device_base_14e635fedf1cc12b7ca821b84916855ce" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>deviceIdentifiers</name></member>
+      <member refid="interfacesb_i_device_base_1a0b2aa200a8ba41a6b59aa4dc266d533" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>deviceIdentifiers</name></member>
       <member refid="interfacesb_i_device_base_1ddf45a09e5de5494f4b7234aa7653122" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>ejectDevice</name></member>
       <member refid="interfacesb_i_device_base_1a4c7914066a37e1c8fb771d24d93896b" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>FILE_FORMAT_MP3</name></member>
       <member refid="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>FILE_FORMAT_UNDEFINED</name></member>

@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_command_line_manager_8idl" kind="file">
     <compoundname>sbICommandLineManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="18">
-        <label>C:/projects/songbird/components/commandline/public/sbICommandLineManager.idl</label>
-        <link refid="sbICommandLineManager.idl"/>
-        <childnode refid="19" relation="include">
-        </childnode>
-      </node>
-      <node id="19">
+      <node id="28">
         <label>nsISupports.idl</label>
+      </node>
+      <node id="27">
+        <label>trunk/components/commandline/public/sbICommandLineManager.idl</label>
+        <link refid="sbICommandLineManager.idl"/>
+        <childnode refid="28" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_command_line_manager" prot="public">sbICommandLineManager</innerclass>
@@ -49,25 +49,25 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound">sbICommandLineItemHandler</ref>;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound">sbICommandLineFlagHandler</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound" tooltip="Songbird Command line item handler Interface.">sbICommandLineItemHandler</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound" tooltip="Songbird Command line flag handler Interface.">sbICommandLineFlagHandler</ref>;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">[scriptable,<sp/>uuid(d54a8a7a-b390-11db-96e7-005056c00008)]</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_command_line_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_manager" kindref="compound">sbICommandLineManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_command_line_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_manager" kindref="compound" tooltip="Songbird Command line manager interface.">sbICommandLineManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addItemHandler(in<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound">sbICommandLineItemHandler</ref><sp/>aHandler);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addItemHandler(in<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound" tooltip="Songbird Command line item handler Interface.">sbICommandLineItemHandler</ref><sp/>aHandler);</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeItemHandler(in<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound">sbICommandLineItemHandler</ref><sp/>aHandler);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeItemHandler(in<sp/><ref refid="interfacesb_i_command_line_item_handler" kindref="compound" tooltip="Songbird Command line item handler Interface.">sbICommandLineItemHandler</ref><sp/>aHandler);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handleURL(in<sp/>AString<sp/>aURL);</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addFlagHandler(in<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound">sbICommandLineFlagHandler</ref><sp/>aHandler,<sp/>in<sp/>AString<sp/>aFlag);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addFlagHandler(in<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound" tooltip="Songbird Command line flag handler Interface.">sbICommandLineFlagHandler</ref><sp/>aHandler,<sp/>in<sp/>AString<sp/>aFlag);</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeFlagHandler(in<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound">sbICommandLineFlagHandler</ref><sp/>aHandler,<sp/>in<sp/>AString<sp/>aFlag);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeFlagHandler(in<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound" tooltip="Songbird Command line flag handler Interface.">sbICommandLineFlagHandler</ref><sp/>aHandler,<sp/>in<sp/>AString<sp/>aFlag);</highlight></codeline>
 <codeline lineno="87"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/commandline/public/sbICommandLineManager.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl"/>
   </compounddef>
 </doxygen>

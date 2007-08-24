@@ -1,8 +1,30 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_playlist_reader_manager" kind="interface" prot="public">
     <compoundname>sbIPlaylistReaderManager</compoundname>
     <includes refid="sb_i_playlist_reader_8idl" local="no">sbIPlaylistReader.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_reader_manager_1eb430ecd664df3f04fab6b6e9033230f" prot="public" static="no" mutable="no">
+        <type>attribute nsIURI</type>
+        <definition>attribute nsIURI sbIPlaylistReaderManager::originalURI</definition>
+        <argsstring></argsstring>
+        <name>originalURI</name>
+        <briefdescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+</parameternamelist>
+<parameterdescription>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="180" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_15c9ead20cd1b64a9598263954a58ca17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -30,8 +52,6 @@
           <declname>aPlaylistReaderListener</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 </parameternamelist>
@@ -39,10 +59,12 @@
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-</para>        </detaileddescription>
+</para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="191"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="191"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_16acca395c9315e16bc807460579eddfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -66,8 +88,6 @@
           <declname>aAddDistinctOnly</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 </parameternamelist>
@@ -75,10 +95,12 @@
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-</para>        </detaileddescription>
+</para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="201"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="201"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_1021cb1b89f0fda35a5afd3fadfe4fca6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -95,8 +117,6 @@
           <declname>aMIMETypes</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 </parameternamelist>
@@ -104,10 +124,12 @@
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-</para>        </detaileddescription>
+</para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="209"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="209"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_1ac0de28c6fa58a44f8cb7949789d85e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -124,8 +146,6 @@
           <declname>aExts</declname>
         </param>
         <briefdescription>
-        </briefdescription>
-        <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 </parameternamelist>
@@ -133,32 +153,12 @@
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="217"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_playlist_reader_manager_1eb430ecd664df3f04fab6b6e9033230f" prot="public" static="no" mutable="no">
-        <type>attribute nsIURI</type>
-        <definition>attribute nsIURI sbIPlaylistReaderManager::originalURI</definition>
-        <argsstring></argsstring>
-        <name>originalURI</name>
-        <briefdescription>
-        </briefdescription>
+</para>        </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-</parameternamelist>
-<parameterdescription>
-</parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="180" bodyfile="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="180" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="217"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -166,7 +166,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_reader" kindref="compound">sbIPlaylistReader</ref>, <ref refid="interfacesb_i_playlist_reader_listener" kindref="compound">sbIPlaylistReaderListener</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="174" bodyfile="C:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="173" bodyend="218"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="174" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="173" bodyend="218"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_reader_manager_15c9ead20cd1b64a9598263954a58ca17" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderManager</scope><name>loadPlaylist</name></member>
       <member refid="interfacesb_i_playlist_reader_manager_1eb430ecd664df3f04fab6b6e9033230f" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderManager</scope><name>originalURI</name></member>

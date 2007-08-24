@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_library_loader" kind="interface" prot="public">
     <compoundname>sbILibraryLoader</compoundname>
     <includes refid="sb_i_library_loader_8idl" local="no">sbILibraryLoader.idl</includes>
@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="52"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="64"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -79,7 +79,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref>, <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="45" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" bodystart="44" bodyend="65"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="45" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" bodystart="44" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onLibraryStartupModified</name></member>
       <member refid="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onRegisterStartupLibraries</name></member>

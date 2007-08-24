@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_bookmarks_8idl" kind="file">
     <compoundname>sbIBookmarks.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="388">
-        <label>C:/projects/songbird/components/servicepane/public/sbIBookmarks.idl</label>
+      <node id="405">
+        <label>trunk/components/servicepane/public/sbIBookmarks.idl</label>
         <link refid="sbIBookmarks.idl"/>
-        <childnode refid="389" relation="include">
+        <childnode refid="406" relation="include">
         </childnode>
       </node>
-      <node id="389">
+      <node id="406">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,10 +48,10 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(0e3c0208-72d8-4676-86e1-138db0801586)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_bookmarks" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bookmarks" kindref="compound">sbIBookmarks</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_bookmarks" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bookmarks" kindref="compound" tooltip="Definition of the sbIBookmarks interface.">sbIBookmarks</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>bookmark</highlight></codeline>
 <codeline lineno="46"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Add<sp/>a<sp/>bookmark<sp/>to<sp/>the<sp/>service<sp/>pane.<sp/>It<sp/>will<sp/>be<sp/>added<sp/>in<sp/>the<sp/>default</highlight></codeline>
 <codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/>*<sp/>folder.<sp/>The<sp/>bookmark&apos;s<sp/>node<sp/>object<sp/>will<sp/>be<sp/>returned.</highlight></codeline>
@@ -62,7 +62,7 @@
 <codeline lineno="52"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aIconURL<sp/>The<sp/>url<sp/>of<sp/>the<sp/>icon<sp/>to<sp/>associate<sp/>with<sp/>the<sp/>bookmark</highlight></codeline>
 <codeline lineno="53"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>bookmark<sp/>node<sp/>or<sp/>null<sp/>if<sp/>the<sp/>bookmark<sp/>already<sp/>exists</highlight></codeline>
 <codeline lineno="54"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>addBookmark<sp/>(in<sp/>AString<sp/>aURL,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addBookmark<sp/>(in<sp/>AString<sp/>aURL,</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aTitle,</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aIconURL);</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>folder</highlight></codeline>
@@ -70,7 +70,7 @@
 <codeline lineno="60"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>folder</highlight></codeline>
 <codeline lineno="61"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>folder<sp/>node</highlight></codeline>
 <codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>addFolder<sp/>(in<sp/>AString<sp/>aTitle);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addFolder<sp/>(in<sp/>AString<sp/>aTitle);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Test<sp/>if<sp/>a<sp/>bookmark<sp/>exists<sp/>for<sp/>the<sp/>given<sp/>URL</highlight></codeline>
 <codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>the<sp/>URL<sp/>to<sp/>test</highlight></codeline>
@@ -79,6 +79,6 @@
 <codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>bookmarkExists<sp/>(in<sp/>AString<sp/>aURL);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/servicepane/public/sbIBookmarks.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbIBookmarks.idl"/>
   </compounddef>
 </doxygen>

@@ -1,28 +1,28 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_playlist_playback_8idl" kind="file">
     <compoundname>sbIPlaylistPlayback.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIObserver.idl</includes>
     <includes local="yes">nsIStringEnumerator.idl</includes>
     <incdepgraph>
-      <node id="341">
+      <node id="358">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="338">
-        <label>C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
+      <node id="355">
+        <label>trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
         <link refid="sbIPlaylistPlayback.idl"/>
-        <childnode refid="339" relation="include">
+        <childnode refid="356" relation="include">
         </childnode>
-        <childnode refid="340" relation="include">
+        <childnode refid="357" relation="include">
         </childnode>
-        <childnode refid="341" relation="include">
+        <childnode refid="358" relation="include">
         </childnode>
       </node>
-      <node id="340">
+      <node id="357">
         <label>nsIObserver.idl</label>
       </node>
-      <node id="339">
+      <node id="356">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -37,12 +37,12 @@
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIObserver.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIStringEnumerator.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref>;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref>;</highlight></codeline>
-<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(9b4b18eb-8b76-4e16-a0a3-a1f41bf1df76)]</highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_playlist_playback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_playback" kindref="compound">sbIPlaylistPlayback</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_playlist_playback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_playback" kindref="compound" tooltip="Defines standard media player playback functionality. This interface defines the...">sbIPlaylistPlayback</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Constants<sp/>for<sp/>repeat<sp/>state<sp/>-<sp/>this<sp/>must<sp/>match<sp/>the<sp/>implementation&apos;s</highlight><highlight class="normal"></highlight></codeline>
@@ -59,7 +59,7 @@
 <codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Attributes<sp/>reflecting<sp/>state<sp/>of<sp/>the<sp/>playback<sp/>core:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="87" refid="interfacesb_i_playlist_playback_1dbe1ce37c7027bb61b79948da98acb17" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref><sp/>core;</highlight></codeline>
+<codeline lineno="87" refid="interfacesb_i_playlist_playback_1dbe1ce37c7027bb61b79948da98acb17" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref><sp/>core;</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="93" refid="interfacesb_i_playlist_playback_198953fa2afb7e2fd9cf9703cd7e7a7e3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>volume;</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight></codeline>
@@ -92,17 +92,17 @@
 <codeline lineno="171"><highlight class="normal"></highlight></codeline>
 <codeline lineno="178" refid="interfacesb_i_playlist_playback_1b474c491f7e8e4633843372338f65b98" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>started;</highlight></codeline>
 <codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="183" refid="interfacesb_i_playlist_playback_1af7e06e34078f49a755cf2305ce46f76" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>playingView;</highlight></codeline>
+<codeline lineno="183" refid="interfacesb_i_playlist_playback_1af7e06e34078f49a755cf2305ce46f76" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>playingView;</highlight></codeline>
 <codeline lineno="184"><highlight class="normal"></highlight></codeline>
 <codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Methods<sp/>for<sp/>Mutli-core<sp/>manipulation</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="188"><highlight class="normal"></highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref><sp/>aCore,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aSelect);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref><sp/>aCore,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aSelect);</highlight></codeline>
 <codeline lineno="201"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref><sp/>aCore);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref><sp/>aCore);</highlight></codeline>
 <codeline lineno="209"><highlight class="normal"></highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref><sp/>aCore);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectCore(in<sp/><ref refid="interfacesb_i_core_wrapper" kindref="compound" tooltip="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</ref><sp/>aCore);</highlight></codeline>
 <codeline lineno="219"><highlight class="normal"></highlight></codeline>
 <codeline lineno="220"><highlight class="normal"></highlight></codeline>
 <codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
@@ -125,7 +125,7 @@
 <codeline lineno="287"><highlight class="normal"></highlight></codeline>
 <codeline lineno="296"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>playURL(in<sp/>AString<sp/>aURL);</highlight></codeline>
 <codeline lineno="297"><highlight class="normal"></highlight></codeline>
-<codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>playView(in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>aView,<sp/>in<sp/>PRInt32<sp/>aIndex);</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>playView(in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aView,<sp/>in<sp/>PRInt32<sp/>aIndex);</highlight></codeline>
 <codeline lineno="308"><highlight class="normal"></highlight></codeline>
 <codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="310"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Metadata<sp/>methods</highlight><highlight class="normal"></highlight></codeline>
@@ -177,6 +177,6 @@
 <codeline lineno="462"><highlight class="normal"></highlight></codeline>
 <codeline lineno="463"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
   </compounddef>
 </doxygen>

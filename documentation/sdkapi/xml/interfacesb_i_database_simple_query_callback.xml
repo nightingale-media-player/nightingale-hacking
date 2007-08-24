@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_database_simple_query_callback" kind="interface" prot="public">
     <compoundname>sbIDatabaseSimpleQueryCallback</compoundname>
     <includes refid="sb_i_database_query_8idl" local="no">sbIDatabaseQuery.idl</includes>
@@ -50,7 +50,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="69"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="69"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -58,7 +58,7 @@
     <detaileddescription>
 <para>This interface is meant to be implemented as a callback by client code.</para><para>Clients that simply need to be informed when a query has completed may implement this interface and pass it to <ref refid="interfacesb_i_database_query_1e0bb05525bf143e2bf8e726e5780092f" kindref="member">sbIDatabaseQuery::addSimpleQueryCallback()</ref>.</para><para>For persistent queries, the callback will be called every time the system detects that the queried table has been changed and has executed the query again.</para><para>NOTE: The <ref refid="interfacesb_i_database_simple_query_callback_1b189200c332bf5593bc2b614dae290f1" kindref="member">onQueryEnd()</ref> method is called from a database thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref>, <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref>, <ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="58" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="57" bodyend="70"/>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="57" bodyend="70"/>
     <listofallmembers>
       <member refid="interfacesb_i_database_simple_query_callback_1b189200c332bf5593bc2b614dae290f1" prot="public" virt="non-virtual"><scope>sbIDatabaseSimpleQueryCallback</scope><name>onQueryEnd</name></member>
     </listofallmembers>

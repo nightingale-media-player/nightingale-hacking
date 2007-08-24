@@ -1,7 +1,35 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_metadata_job" kind="interface" prot="public">
     <compoundname>sbIMetadataJob</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_metadata_job_1385cf138c88c4975a783b295527f103f" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIMetadataJob::tableName</definition>
+        <argsstring></argsstring>
+        <name>tableName</name>
+        <briefdescription>
+<para>The tableName for this task, used by the manager. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="50" bodyfile="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIMetadataJob::completed</definition>
+        <argsstring></argsstring>
+        <name>completed</name>
+        <briefdescription>
+<para>True if it has shutdown its timer and thread. </para>        </briefdescription>
+        <detaileddescription>
+<para>Appending to a completed job will throw an error. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_metadata_job_196d6a31af86f6a96f0b14b55bea9cead" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -23,7 +51,7 @@
         <briefdescription>
 <para>Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems. </para>        </briefdescription>
         <detaileddescription>
-<para>The metadata task will track its progress through a database table so it can depend on its information always available upon app restart.</para><para><parameterlist kind="param"><parameteritem>
+<para>The metadata task will track its progress through a database table so it can depend on its information always available upon app restart.</para><para>There is a window of time while it is copying the given array into the database that a crash or shutdown will lose the enqueueing of the task.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aTableName</parametername>
 </parameternamelist>
@@ -48,7 +76,32 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="67"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="72"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_job_132e0e57e1a8e1bfc0c389a382b363e6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataJob::append</definition>
+        <argsstring>(in nsIArray aMediaItemsArray)</argsstring>
+        <name>append</name>
+        <param>
+          <type>in nsIArray</type>
+          <declname>aMediaItemsArray</declname>
+        </param>
+        <briefdescription>
+<para>Add some more media items to the job&apos;s queue. </para>        </briefdescription>
+        <detaileddescription>
+<para>Appending to a completed job will throw an error.</para><para>THIS METHOD APPENDS ALL THE ITEMS TO THE DATABASE QUEUE, BLOCKING UNTIL COMPLETE. Try to only give it small (&lt; 500 items) arrays in batches.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItemsArray</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An array filled with media items to be scanned. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_job_18ea06c4295473139b4f09e467d2b800a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -61,7 +114,7 @@
 <para>Stop all metadata processing. Thread shuts down gently. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="74"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="91"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_job_128d18f789eb3baa205f72f546806db5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -86,7 +139,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="84"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="101"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_job_137aaffdaa5935d2bb295d25255b7ec94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -99,35 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="85"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_metadata_job_1385cf138c88c4975a783b295527f103f" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIMetadataJob::tableName</definition>
-        <argsstring></argsstring>
-        <name>tableName</name>
-        <briefdescription>
-<para>The tableName for this task, used by the manager. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="50" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="50" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIMetadataJob::completed</definition>
-        <argsstring></argsstring>
-        <name>completed</name>
-        <briefdescription>
-<para>Total number of items to be scanned. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="55" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="55" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="102"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -135,8 +160,9 @@
     <detaileddescription>
 <para>You get an <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> by calling <ref refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" kindref="member">sbIMetadataJobManager::newJob()</ref> with an nsIArray of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>, <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>, <ref refid="interfacesb_i_metadata_job_manager" kindref="compound">sbIMetadataJobManager</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="46" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="45" bodyend="86"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl" bodystart="45" bodyend="103"/>
     <listofallmembers>
+      <member refid="interfacesb_i_metadata_job_132e0e57e1a8e1bfc0c389a382b363e6a" prot="public" virt="non-virtual"><scope>sbIMetadataJob</scope><name>append</name></member>
       <member refid="interfacesb_i_metadata_job_18ea06c4295473139b4f09e467d2b800a" prot="public" virt="non-virtual"><scope>sbIMetadataJob</scope><name>cancel</name></member>
       <member refid="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" prot="public" virt="non-virtual"><scope>sbIMetadataJob</scope><name>completed</name></member>
       <member refid="interfacesb_i_metadata_job_196d6a31af86f6a96f0b14b55bea9cead" prot="public" virt="non-virtual"><scope>sbIMetadataJob</scope><name>init</name></member>

@@ -1,33 +1,34 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_security_mixin_8idl" kind="file">
     <compoundname>sbISecurityMixin.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_security_aggregator_8idl" local="yes">sbISecurityAggregator.idl</includes>
     <incdepgraph>
-      <node id="386">
+      <node id="403">
         <label>sbISecurityAggregator.idl</label>
         <link refid="sb_i_security_aggregator_8idl"/>
-        <childnode refid="385" relation="include">
+        <childnode refid="402" relation="include">
         </childnode>
       </node>
-      <node id="385">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="384">
-        <label>C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl</label>
+      <node id="401">
+        <label>trunk/components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sbISecurityMixin.idl"/>
-        <childnode refid="385" relation="include">
+        <childnode refid="402" relation="include">
         </childnode>
-        <childnode refid="386" relation="include">
+        <childnode refid="403" relation="include">
         </childnode>
+      </node>
+      <node id="402">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_security_mixin" prot="public">sbISecurityMixin</innerclass>
     <briefdescription>
-    </briefdescription>
+<para><simplesect kind="see"><para>nsISecurityCheckedComponent.idl </para></simplesect>
+</para>    </briefdescription>
     <detaileddescription>
-<para><simplesect kind="see"><para>nsISecurityCheckedComponent.idl </para><para><ref refid="sb_i_security_aggregator_8idl" kindref="compound">sbISecurityAggregator.idl</ref> </para><para>sbSecurityMixin.cpp </para><para>sbSecurityMixin.h </para></simplesect>
+<para><simplesect kind="see"><para><ref refid="sb_i_security_aggregator_8idl" kindref="compound">sbISecurityAggregator.idl</ref> </para><para>sbSecurityMixin.cpp </para><para>sbSecurityMixin.h </para></simplesect>
 </para>    </detaileddescription>
     <programlisting>
 <codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
@@ -57,23 +58,26 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_security_aggregator_8idl" kindref="compound">sbISecurityAggregator.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_security_aggregator_8idl" kindref="compound" tooltip="Defines a marker interface for objects that aggregate the security mixin.">sbISecurityAggregator.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(5cec48db-adc8-477f-b919-120b4d378378)]</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_security_mixin" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_mixin" kindref="compound">sbISecurityMixin</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound">sbISecurityAggregator</ref><sp/>aOuter,</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aInterfacesLength)]<sp/>in<sp/>nsIIDPtr<sp/>aInterfacesArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aInterfacesLength,</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aMethodsLength)]<sp/>in<sp/>string<sp/>aMethodsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMethodsLength,</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aRPropsLength)]<sp/>in<sp/>string<sp/>aRPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRPropsLength,</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aWPropsLength)]<sp/>in<sp/>string<sp/>aWPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWPropsLength);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/>[noscript]<sp/>nsIURI<sp/>getCodebase();</highlight></codeline>
-<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">[scriptable,<sp/>uuid(5cec48db-adc8-477f-b919-120b4d378378)]</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_security_mixin" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_mixin" kindref="compound" tooltip="An interface for setting up nsISecurityCheckedComponent security checks.">sbISecurityMixin</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>aOuter,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aInterfacesLength)]<sp/>in<sp/>nsIIDPtr<sp/>aInterfacesArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aInterfacesLength,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aMethodsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aMethodsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMethodsLength,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aRPropsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aRPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRPropsLength,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aWPropsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aWPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWPropsLength);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>[noscript]<sp/>nsIURI<sp/>getCodebase();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="82" refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>attribute<sp/>nsIDOMDocument<sp/>notificationDocument;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl"/>
   </compounddef>
 </doxygen>

@@ -1,8 +1,36 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_device_marshall" kind="interface" prot="public">
     <compoundname>sbIDeviceMarshall</compoundname>
     <includes refid="sb_i_device_marshall_8idl" local="no">sbIDeviceMarshall.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_marshall_132c4bf166e25f130824aa191d824726f" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDPtr</type>
+        <definition>readonly attribute nsIDPtr sbIDeviceMarshall::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gets the unique id associated with this marshall. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="41" bodyfile="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_marshall_12290672628976f05e437019f16d73845" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDeviceMarshall::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A human-readable name for the marshall. Optional. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_device_marshall_12fcb40179dfe31a3f033d1cd4f8b7a62" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -19,42 +47,14 @@
 <para>Loads all controllers registered with this marshall&apos;s category. Registers each one with the registrar given. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="52"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_device_marshall_132c4bf166e25f130824aa191d824726f" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIDPtr</type>
-        <definition>readonly attribute nsIDPtr sbIDeviceMarshall::id</definition>
-        <argsstring></argsstring>
-        <name>id</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Gets the unique id associated with this marshall. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="41" bodyfile="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="41" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_marshall_12290672628976f05e437019f16d73845" prot="public" static="no" mutable="no">
-        <type>readonly attribute AString</type>
-        <definition>readonly attribute AString sbIDeviceMarshall::name</definition>
-        <argsstring></argsstring>
-        <name>name</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A human-readable name for the marshall. Optional. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="46" bodyfile="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="46" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="52"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="37" bodyfile="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="36" bodyend="57"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="37" bodyfile="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="36" bodyend="57"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_marshall_132c4bf166e25f130824aa191d824726f" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>id</name></member>
       <member refid="interfacesb_i_device_marshall_12fcb40179dfe31a3f033d1cd4f8b7a62" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>loadControllers</name></member>

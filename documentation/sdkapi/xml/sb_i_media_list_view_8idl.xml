@@ -1,17 +1,17 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_media_list_view_8idl" kind="file">
     <compoundname>sbIMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="225">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="224">
-        <label>C:/projects/songbird/components/library/base/public/sbIMediaListView.idl</label>
+      <node id="233">
+        <label>trunk/components/library/base/public/sbIMediaListView.idl</label>
         <link refid="sbIMediaListView.idl"/>
-        <childnode refid="225" relation="include">
+        <childnode refid="234" relation="include">
         </childnode>
+      </node>
+      <node id="234">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_media_list_view" prot="public">sbIMediaListView</innerclass>
@@ -50,31 +50,31 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsITreeView;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound" tooltip="Cascade filter management for a media list.">sbICascadeFilterSet</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(8e28e517-9518-49aa-98d5-7f994872f87b)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_media_list_view_10c728825b5bc85265d000a68d22d56a9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>mediaList;</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_media_list_view_10c728825b5bc85265d000a68d22d56a9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>mediaList;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_media_list_view_1667647b9de49e09c0ff49680a1167811" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>length;</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62" refid="interfacesb_i_media_list_view_1ff6a1e3d67d58ff5a00dfe486efb5305" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsITreeView<sp/>treeView;</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67" refid="interfacesb_i_media_list_view_1c8b1eafe724ee791059510c9fdeb8b24" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref><sp/>cascadeFilterSet;</highlight></codeline>
+<codeline lineno="67" refid="interfacesb_i_media_list_view_1c8b1eafe724ee791059510c9fdeb8b24" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound" tooltip="Cascade filter management for a media list.">sbICascadeFilterSet</ref><sp/>cascadeFilterSet;</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>getItemByIndex(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>getItemByIndex(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getIndexForItem(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getIndexForItem(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
 <codeline lineno="84"><highlight class="normal"></highlight></codeline>
 <codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getUnfilteredIndex(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref><sp/>clone();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>clone();</highlight></codeline>
 <codeline lineno="99"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListView.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListView.idl"/>
   </compounddef>
 </doxygen>

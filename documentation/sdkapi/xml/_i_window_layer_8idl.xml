@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="_i_window_layer_8idl" kind="file">
     <compoundname>IWindowLayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="151">
-        <label>C:/projects/songbird/components/integration/public/IWindowLayer.idl</label>
+      <node id="160">
+        <label>trunk/components/integration/public/IWindowLayer.idl</label>
         <link refid="IWindowLayer.idl"/>
-        <childnode refid="152" relation="include">
+        <childnode refid="161" relation="include">
         </childnode>
       </node>
-      <node id="152">
+      <node id="161">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,13 +51,13 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(4243fe6c-741d-11db-9694-00e08161165f)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_window_layer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_layer" kindref="compound">sbIWindowLayer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_window_layer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_layer" kindref="compound" tooltip="Window layering service interface This is an interface to the window layering service...">sbIWindowLayer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOpacity(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>PRUInt32<sp/>alpha);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62"><highlight class="normal"><sp/><sp/>PRUInt32<sp/>getOpacity(in<sp/>nsISupports<sp/>aWindow);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/integration/public/IWindowLayer.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowLayer.idl"/>
   </compounddef>
 </doxygen>

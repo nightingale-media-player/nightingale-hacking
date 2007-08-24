@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_capabilities_8idl" kind="file">
     <compoundname>sbIDeviceCapabilities.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="43">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl</label>
+      <node id="52">
+        <label>trunk/components/devices/base/public/sbIDeviceCapabilities.idl</label>
         <link refid="sbIDeviceCapabilities.idl"/>
-        <childnode refid="44" relation="include">
+        <childnode refid="53" relation="include">
         </childnode>
       </node>
-      <node id="44">
+      <node id="53">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(193121e6-51a6-40ea-b63d-701ed240a953)]</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_device_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound">sbIDeviceCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="36" refid="interfacesb_i_device_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_device_capabilities_190169ce9a7d625939d042e4f3e80931a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_DEVICE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
@@ -84,6 +84,6 @@
 <codeline lineno="90"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedEvents();</highlight></codeline>
 <codeline lineno="91"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl"/>
   </compounddef>
 </doxygen>

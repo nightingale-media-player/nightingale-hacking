@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_marshall_8idl" kind="file">
     <compoundname>sbIDeviceMarshall.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
@@ -10,43 +10,43 @@
     <includes local="yes">nsStringGlue.h</includes>
     <includes local="yes">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="94">
+      <node id="103">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="92">
+      <node id="101">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="93">
+      <node id="102">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="88">
-        <label>C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl</label>
+      <node id="97">
+        <label>trunk/components/devices/marshall/public/sbIDeviceMarshall.idl</label>
         <link refid="sbIDeviceMarshall.idl"/>
-        <childnode refid="89" relation="include">
+        <childnode refid="98" relation="include">
         </childnode>
-        <childnode refid="90" relation="include">
+        <childnode refid="99" relation="include">
         </childnode>
-        <childnode refid="91" relation="include">
+        <childnode refid="100" relation="include">
         </childnode>
-        <childnode refid="92" relation="include">
+        <childnode refid="101" relation="include">
         </childnode>
-        <childnode refid="93" relation="include">
+        <childnode refid="102" relation="include">
         </childnode>
-        <childnode refid="94" relation="include">
+        <childnode refid="103" relation="include">
         </childnode>
-        <childnode refid="95" relation="include">
+        <childnode refid="104" relation="include">
         </childnode>
       </node>
-      <node id="90">
+      <node id="99">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="91">
+      <node id="100">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="89">
+      <node id="98">
         <label>nsISupports.idl</label>
       </node>
-      <node id="95">
+      <node id="104">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="70"/>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="70"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_marshall_8idl_1cda9bdf097eaae0d4a3a074569429d2b" prot="public" static="no">
         <name>SB_DEVICE_MARSHALL_REGISTERSELF</name>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="104"/>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="104"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_marshall_8idl_1ced4ac49c995d91c3545d7e9ea84088a" prot="public" static="no">
         <name>SB_DEVICE_MARSHALL_REGISTERSELF_IMPL</name>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="159"/>
+        <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="159"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -130,16 +130,16 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound">sbIDeviceControllerRegistrar</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceControllerRegistrar</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(8e7daa39-f4d2-4366-8841-a76de3cff7be)]</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_device_marshall" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_marshall" kindref="compound">sbIDeviceMarshall</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="36" refid="interfacesb_i_device_marshall" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_marshall" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceMarshall</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_device_marshall_132c4bf166e25f130824aa191d824726f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDPtr<sp/>id;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
 <codeline lineno="46" refid="interfacesb_i_device_marshall_12290672628976f05e437019f16d73845" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>loadControllers(in<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound">sbIDeviceControllerRegistrar</ref><sp/>aRegistrar);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>loadControllers(in<sp/><ref refid="interfacesb_i_device_controller_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceControllerRegistrar</ref><sp/>aRegistrar);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
 <codeline lineno="57"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
@@ -222,6 +222,6 @@
 <codeline lineno="159"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="160"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl"/>
   </compounddef>
 </doxygen>

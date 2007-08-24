@@ -1,25 +1,25 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_c_d_device_8idl" kind="file">
     <compoundname>sbICDDevice.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_base_8idl" local="yes">sbIDeviceBase.idl</includes>
     <incdepgraph>
-      <node id="105">
+      <node id="112">
+        <label>trunk/components/devicesobsolete/cd/public/sbICDDevice.idl</label>
+        <link refid="sbICDDevice.idl"/>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+      </node>
+      <node id="114">
         <label>sbIDeviceBase.idl</label>
         <link refid="sb_i_device_base_8idl"/>
-        <childnode refid="104" relation="include">
+        <childnode refid="113" relation="include">
         </childnode>
       </node>
-      <node id="103">
-        <label>C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl</label>
-        <link refid="sbICDDevice.idl"/>
-        <childnode refid="104" relation="include">
-        </childnode>
-        <childnode refid="105" relation="include">
-        </childnode>
-      </node>
-      <node id="104">
+      <node id="113">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,10 +56,10 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_base_8idl" kindref="compound" tooltip="The IDL for sbIDeviceBase.">sbIDeviceBase.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(35da06df-eb59-4590-be5a-0329abc40965)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_c_d_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_device" kindref="compound">sbICDDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref></highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_c_d_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_device" kindref="compound" tooltip="Songbird CDDevice Interface.">sbICDDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref></highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/>PRBool<sp/>getWritableCDDrive(out<sp/>AString<sp/>aDeviceString);</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
@@ -69,6 +69,6 @@
 <codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRUint32<sp/>aNumSeconds);</highlight></codeline>
 <codeline lineno="86"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl"/>
   </compounddef>
 </doxygen>

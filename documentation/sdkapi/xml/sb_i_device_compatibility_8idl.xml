@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_device_compatibility_8idl" kind="file">
     <compoundname>sbIDeviceCompatibility.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="46">
-        <label>C:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl</label>
+      <node id="55">
+        <label>trunk/components/devices/base/public/sbIDeviceCompatibility.idl</label>
         <link refid="sbIDeviceCompatibility.idl"/>
-        <childnode refid="47" relation="include">
+        <childnode refid="56" relation="include">
         </childnode>
       </node>
-      <node id="47">
+      <node id="56">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(374fb2c4-387f-4d17-be67-b5a0353c1fea)]</highlight></codeline>
-<codeline lineno="34" refid="interfacesb_i_device_compatibility" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_compatibility" kindref="compound">sbIDeviceCompatibility</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="34" refid="interfacesb_i_device_compatibility" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_compatibility" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCompatibility</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_device_compatibility_17fc87a6e6673e6cc0b91aaa7568d65a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>INCOMPATIBLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_device_compatibility_17c74d001e0f17dbba4497da0b7993f5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>COMPATIBLE_BASIC_SUPPORT<sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
@@ -65,6 +65,6 @@
 <codeline lineno="59" refid="interfacesb_i_device_compatibility_1cb7c8a31e751e62262ea348c4563f0c0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>userPreference;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl"/>
   </compounddef>
 </doxygen>

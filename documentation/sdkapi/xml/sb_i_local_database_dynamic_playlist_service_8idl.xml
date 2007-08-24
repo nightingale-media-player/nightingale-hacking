@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_local_database_dynamic_playlist_service_8idl" kind="file">
     <compoundname>sbILocalDatabaseDynamicPlaylistService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="246">
-        <label>C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl</label>
+      <node id="255">
+        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl</label>
         <link refid="sbILocalDatabaseDynamicPlaylistService.idl"/>
-        <childnode refid="247" relation="include">
+        <childnode refid="256" relation="include">
         </childnode>
       </node>
-      <node id="247">
+      <node id="256">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,31 +51,31 @@
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsILocalFile;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound">sbILocalDatabaseLibrary</ref>;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_simple_media_list" kindref="compound">sbILocalDatabaseSimpleMediaList</ref>;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_simple_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSimpleMediaList</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(8907dc15-7a57-441a-a35c-6b00d64d78bb)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_local_database_dynamic_playlist_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_dynamic_playlist_service" kindref="compound">sbILocalDatabaseDynamicPlaylistService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>createList(in<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound">sbILocalDatabaseLibrary</ref><sp/>aLibrary,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>createList(in<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</ref><sp/>aLibrary,</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIURI<sp/>aUri,</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIntervalSeconds,</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsILocalFile<sp/>aDestinationDirectory);</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateList(in<sp/><ref refid="interfacesb_i_local_database_simple_media_list" kindref="compound">sbILocalDatabaseSimpleMediaList</ref><sp/>aMediaList,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateList(in<sp/><ref refid="interfacesb_i_local_database_simple_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSimpleMediaList</ref><sp/>aMediaList,</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIURI<sp/>aUri,</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIntervalSeconds,</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsILocalFile<sp/>aDestinationDirectory);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateAllNow();</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateNow(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateNow(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
 <codeline lineno="90" refid="interfacesb_i_local_database_dynamic_playlist_service_1e0f955411e1597efa081ec2341f32ea6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>scheduledLists;</highlight></codeline>
 <codeline lineno="91"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl"/>
   </compounddef>
 </doxygen>

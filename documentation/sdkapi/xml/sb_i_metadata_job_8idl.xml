@@ -1,16 +1,16 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_metadata_job_8idl" kind="file">
     <compoundname>sbIMetadataJob.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="298">
-        <label>C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl</label>
+      <node id="310">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl</label>
         <link refid="sbIMetadataJob.idl"/>
-        <childnode refid="299" relation="include">
+        <childnode refid="311" relation="include">
         </childnode>
       </node>
-      <node id="299">
+      <node id="311">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,21 +51,23 @@
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_metadata_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_metadata_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_metadata_job_1385cf138c88c4975a783b295527f103f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>tableName;</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55" refid="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>completed;</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(<sp/>in<sp/>AString<sp/>aTableName,<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancel();</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setObserver(<sp/>in<sp/>nsIObserver<sp/>aObserver<sp/>);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeObserver();</highlight></codeline>
-<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>completed;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(<sp/>in<sp/>AString<sp/>aTableName,<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>append(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray<sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancel();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setObserver(<sp/>in<sp/>nsIObserver<sp/>aObserver<sp/>);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeObserver();</highlight></codeline>
+<codeline lineno="103"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
   </compounddef>
 </doxygen>

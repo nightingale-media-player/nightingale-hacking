@@ -1,8 +1,114 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_database_query" kind="interface" prot="public">
     <compoundname>sbIDatabaseQuery</compoundname>
     <includes refid="sb_i_database_query_8idl" local="no">sbIDatabaseQuery.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_database_query_186068054c1ebacd1a3e532224e0e0ee7" prot="public" static="no" mutable="no">
+        <type>attribute nsIURI</type>
+        <definition>attribute nsIURI sbIDatabaseQuery::databaseLocation</definition>
+        <argsstring></argsstring>
+        <name>databaseLocation</name>
+        <briefdescription>
+<para>Set a specific folder/directory URI for the database. </para>        </briefdescription>
+        <detaileddescription>
+<para>Set a specific folder URI where you wish your database to reside. For example, you could set the location to be the following: &apos;file:///C:/MyDB/&apos;</para><para>Note that the directory is not created for you and must exist by the time <ref refid="interfacesb_i_database_query_15af54f347459563a8f1cf694672e71d4" kindref="member">execute()</ref> is called on the query. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="186" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_12ea3b53b842081a9e84d495d532cb54b" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatabaseQuery::persistExecSelectiveMode</definition>
+        <argsstring></argsstring>
+        <name>persistExecSelectiveMode</name>
+        <briefdescription>
+<para>Use selective persistent query update scheme. </para>        </briefdescription>
+        <detaileddescription>
+<para>If this is enabled, a persistent query will only get re-executed when data is inserted, deleted or updated in such a way that it affects the result of the persistent query.</para><para>This disabled by default. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="198" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_13291481d514718d64ec158206328e609" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatabaseQuery::persistExecOnInsert</definition>
+        <argsstring></argsstring>
+        <name>persistExecOnInsert</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A persistent query would use persistExecOnInsert to dictate whether it wishes to be re-executed when data is inserted.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="208" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_1d874df9d902cb41fadb5d5bb4e1dc1d1" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatabaseQuery::persistExecOnUpdate</definition>
+        <argsstring></argsstring>
+        <name>persistExecOnUpdate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A persistent query would use persistExecOnUpdate to dictate whether it wishes to be re-executed when data in it&apos;s selection set is updated.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="218" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_1e37d515cd20494347bc897bdcb936d68" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatabaseQuery::persistExecOnDelete</definition>
+        <argsstring></argsstring>
+        <name>persistExecOnDelete</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A persistent query would use persistExecOnDelete to dictate whether it wishes to be re-executed when data is deleted.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="228" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_173c479ffe53dd7fb140c6cfcd5351237" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long long</type>
+        <definition>attribute unsigned long long sbIDatabaseQuery::rollingLimit</definition>
+        <argsstring></argsstring>
+        <name>rollingLimit</name>
+        <briefdescription>
+<para>Set the rolling limit for this query. </para>        </briefdescription>
+        <detaileddescription>
+<para>If set, this query will be a rolling limit query. Rather than return the full result of the query, a rolling limit query will add up the values of the column specified in rollingLimitColumnIndex and stop running once the limit set in rollingLimit is reached. The query result will be a single row containing the row that met or exceeded the limit. The row number of this row will be set in rollingLimitResult. If the limit is not reach, no rows are returned. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="436" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_1237b7d8b7caaaa64457419fb9a44e566" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbIDatabaseQuery::rollingLimitColumnIndex</definition>
+        <argsstring></argsstring>
+        <name>rollingLimitColumnIndex</name>
+        <briefdescription>
+<para>The index of the column used to add to the limit total. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="441" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="441" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_database_query_1b55d514783349b725d3a4e2d21b4eaab" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbIDatabaseQuery::rollingLimitResult</definition>
+        <argsstring></argsstring>
+        <name>rollingLimitResult</name>
+        <briefdescription>
+<para>The number of the row (1 is the first row) that met or exceeded the limit. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="447" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="447" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -27,7 +133,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="237"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="237"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_130afe6784335377610ccbe854343c7f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -42,7 +148,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="245"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="245"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_14add8374cd522178d054499cc9f8a3f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -67,7 +173,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="258"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="258"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1e11f1da815ae55701dfd3f0431b37d0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -82,7 +188,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="266"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="266"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1e0bb05525bf143e2bf8e726e5780092f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -107,7 +213,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="273"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="273"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1a36913599717e4c903126dac94eb2e10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -132,7 +238,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="280"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="280"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1e23fc826898b53ffb1912491072f0657" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -157,7 +263,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="295"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="295"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1f9fe2f4c5732ec9906ebbcacabf83a30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -171,7 +277,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="302"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="302"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1188d8ac26b0b452e3b58a6fb3d20b4fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -196,7 +302,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="313"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="313"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1cd63a57f3e027734db2025cd51111a97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -210,7 +316,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="320"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="320"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1999a5c52c25d36c04a5af5573f87fff2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -235,7 +341,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="327"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="327"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1919882c633a1ac5da38942d05470f334" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -248,7 +354,7 @@
 <para>You *must* call this method if you want to reuse a query object with new query strings.</para><para>Otherwise, you may simply call execute again on a query object to reissue the last set of queries. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="338"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="338"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref></type>
@@ -262,7 +368,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="347"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="347"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1b5c58c1d9fcd54edbb64b8b65d07b76a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref></type>
@@ -275,7 +381,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="352"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="352"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_19ee200a65834b2c64baa1e21a497149b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -289,7 +395,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="361"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="361"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_136058f166fca83d1cee90a2653091ff4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -314,7 +420,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="370"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="370"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_15af54f347459563a8f1cf694672e71d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -328,7 +434,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="377"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="377"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1ac0eabdbdbe51f8ee09e6e4955358e2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -342,7 +448,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="386"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="386"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_10be34c86138def567ec7d89002b9c037" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -367,7 +473,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="393"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="393"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_138f90315055dc28f3549479159792633" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -392,7 +498,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="400"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="400"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_169399789adc126e183f7c77b845b3cc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -406,7 +512,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="407"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="407"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_140a19b8185edcdc4cc5a257d62569b33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -420,7 +526,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="414"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="414"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1fcef076c893dbc0654411784c5823aca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -434,7 +540,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="423"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="423"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1a7893ecfc414469f81624b9dc26ad28e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -470,7 +576,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="455"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="455"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_11bfb5c45d071cb599c8aadcc753e79da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -506,7 +612,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="463"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="463"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1f0ad2445f0b04d0f983ca61409fa019c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -542,7 +648,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="471"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="471"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_17a6697ac05c17b33aafadf70a43d8ecd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -578,7 +684,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="479"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="479"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1bbc39ba40771b72caf06f2dc5445e932" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -614,7 +720,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="487"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="487"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_1f1038e9cbb80db62db4171ca47971830" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -639,113 +745,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="493"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_database_query_186068054c1ebacd1a3e532224e0e0ee7" prot="public" static="no" mutable="no">
-        <type>attribute nsIURI</type>
-        <definition>attribute nsIURI sbIDatabaseQuery::databaseLocation</definition>
-        <argsstring></argsstring>
-        <name>databaseLocation</name>
-        <briefdescription>
-<para>Set a specific folder/directory URI for the database. </para>        </briefdescription>
-        <detaileddescription>
-<para>Set a specific folder URI where you wish your database to reside. For example, you could set the location to be the following: &apos;file:///C:/MyDB/&apos;</para><para>Note that the directory is not created for you and must exist by the time <ref refid="interfacesb_i_database_query_15af54f347459563a8f1cf694672e71d4" kindref="member">execute()</ref> is called on the query. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="186" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="186" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_12ea3b53b842081a9e84d495d532cb54b" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbIDatabaseQuery::persistExecSelectiveMode</definition>
-        <argsstring></argsstring>
-        <name>persistExecSelectiveMode</name>
-        <briefdescription>
-<para>Use selective persistent query update scheme. </para>        </briefdescription>
-        <detaileddescription>
-<para>If this is enabled, a persistent query will only get re-executed when data is inserted, deleted or updated in such a way that it affects the result of the persistent query.</para><para>This disabled by default. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="198" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="198" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_13291481d514718d64ec158206328e609" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbIDatabaseQuery::persistExecOnInsert</definition>
-        <argsstring></argsstring>
-        <name>persistExecOnInsert</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A persistent query would use persistExecOnInsert to dictate whether it wishes to be re-executed when data is inserted.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="208" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="208" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_1d874df9d902cb41fadb5d5bb4e1dc1d1" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbIDatabaseQuery::persistExecOnUpdate</definition>
-        <argsstring></argsstring>
-        <name>persistExecOnUpdate</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A persistent query would use persistExecOnUpdate to dictate whether it wishes to be re-executed when data in it&apos;s selection set is updated.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="218" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="218" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_1e37d515cd20494347bc897bdcb936d68" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbIDatabaseQuery::persistExecOnDelete</definition>
-        <argsstring></argsstring>
-        <name>persistExecOnDelete</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A persistent query would use persistExecOnDelete to dictate whether it wishes to be re-executed when data is deleted.</para><para>This is enabled by default but requires that persistExecSelectiveMode be enabled for it to be taken into account. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="228" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="228" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_173c479ffe53dd7fb140c6cfcd5351237" prot="public" static="no" mutable="no">
-        <type>attribute unsigned long long</type>
-        <definition>attribute unsigned long long sbIDatabaseQuery::rollingLimit</definition>
-        <argsstring></argsstring>
-        <name>rollingLimit</name>
-        <briefdescription>
-<para>Set the rolling limit for this query. </para>        </briefdescription>
-        <detaileddescription>
-<para>If set, this query will be a rolling limit query. Rather than return the full result of the query, a rolling limit query will add up the values of the column specified in rollingLimitColumnIndex and stop running once the limit set in rollingLimit is reached. The query result will be a single row containing the row that met or exceeded the limit. The row number of this row will be set in rollingLimitResult. If the limit is not reach, no rows are returned. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="436" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="436" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_1237b7d8b7caaaa64457419fb9a44e566" prot="public" static="no" mutable="no">
-        <type>attribute unsigned long</type>
-        <definition>attribute unsigned long sbIDatabaseQuery::rollingLimitColumnIndex</definition>
-        <argsstring></argsstring>
-        <name>rollingLimitColumnIndex</name>
-        <briefdescription>
-<para>The index of the column used to add to the limit total. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="441" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="441" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_database_query_1b55d514783349b725d3a4e2d21b4eaab" prot="public" static="no" mutable="no">
-        <type>attribute unsigned long</type>
-        <definition>attribute unsigned long sbIDatabaseQuery::rollingLimitResult</definition>
-        <argsstring></argsstring>
-        <name>rollingLimitResult</name>
-        <briefdescription>
-<para>The number of the row (1 is the first row) that met or exceeded the limit. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="447" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="447" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="493"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -753,7 +753,7 @@
     <detaileddescription>
 <para>The <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> object is used to execute queries on the underlying databases that store library and playlist data.</para><para>While client code running from chrome is free to query the databases directly, this object is more commonly passed to the database helper objects that translate their methods into SQL queries placed into the passed <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> instance.</para><para>The basic loop for using a query is as follows:</para><para>1) Object Initialization - <ref refid="interfacesb_i_database_query_1e23fc826898b53ffb1912491072f0657" kindref="member">setDatabaseGUID()</ref>, optionally <ref refid="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" kindref="member">setAsyncQuery()</ref>, <ref refid="interfacesb_i_database_query_14add8374cd522178d054499cc9f8a3f7" kindref="member">setPersistentQuery()</ref>, set callbacks, etc</para><para>2) Query Construction - <ref refid="interfacesb_i_database_query_1188d8ac26b0b452e3b58a6fb3d20b4fa" kindref="member">addQuery()</ref>, or calls to the helper objects</para><para>3) Execution - <ref refid="interfacesb_i_database_query_15af54f347459563a8f1cf694672e71d4" kindref="member">execute()</ref>, optionally <ref refid="interfacesb_i_database_query_1ac0eabdbdbe51f8ee09e6e4955358e2d" kindref="member">waitForCompletion()</ref></para><para>4) Get Results - <ref refid="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" kindref="member">getResultObject()</ref></para><para>5) Reset - optionally <ref refid="interfacesb_i_database_query_1919882c633a1ac5da38942d05470f334" kindref="member">resetQuery()</ref>, if you&apos;re going to reuse the object with a new set of query strings</para><para>Multiple queries may be added to the object via multiple calls to addQuery, or multiple calls to the helper interfaces. The queries will execute sequentially and the result object will be for the last query executed.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref>, <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="175" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="174" bodyend="494"/>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="175" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="174" bodyend="494"/>
     <listofallmembers>
       <member refid="interfacesb_i_database_query_1fcef076c893dbc0654411784c5823aca" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>abort</name></member>
       <member refid="interfacesb_i_database_query_10be34c86138def567ec7d89002b9c037" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>addCallback</name></member>

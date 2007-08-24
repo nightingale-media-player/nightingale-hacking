@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_library_loader_8idl" kind="file">
     <compoundname>sbILibraryLoader.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
@@ -11,48 +11,48 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="185">
+      <node id="194">
         <label>nsServiceManagerUtils.h</label>
       </node>
-      <node id="186">
+      <node id="195">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="181">
+      <node id="190">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="183">
+      <node id="192">
         <label>nsIFile.h</label>
       </node>
-      <node id="179">
-        <label>C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl</label>
-        <link refid="sbILibraryLoader.idl"/>
-        <childnode refid="180" relation="include">
-        </childnode>
-        <childnode refid="181" relation="include">
-        </childnode>
-        <childnode refid="182" relation="include">
-        </childnode>
-        <childnode refid="183" relation="include">
-        </childnode>
-        <childnode refid="184" relation="include">
-        </childnode>
-        <childnode refid="185" relation="include">
-        </childnode>
-        <childnode refid="186" relation="include">
-        </childnode>
-        <childnode refid="187" relation="include">
-        </childnode>
-      </node>
-      <node id="184">
+      <node id="193">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="182">
+      <node id="191">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="180">
+      <node id="188">
+        <label>trunk/components/library/base/public/sbILibraryLoader.idl</label>
+        <link refid="sbILibraryLoader.idl"/>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="195" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+      </node>
+      <node id="189">
         <label>nsISupports.idl</label>
       </node>
-      <node id="187">
+      <node id="196">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="78"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="78"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_loader_8idl_11adc5a90e3e680cca3d9fb039668da40" prot="public" static="no">
         <name>SB_LIBRARY_LOADER_REGISTRATION</name>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="144"/>
+        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="144"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -116,15 +116,15 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManager</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(816e9cbe-e635-4abc-944f-aa4fa5ec918a)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_library_loader" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_loader" kindref="compound">sbILibraryLoader</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_library_loader" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_loader" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILibraryLoader</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterStartupLibraries(in<sp/><ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref><sp/>aLibraryManager);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterStartupLibraries(in<sp/><ref refid="interfacesb_i_library_manager" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManager</ref><sp/>aLibraryManager);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryStartupModified(in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aLibrary,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryStartupModified(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary,</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aLoadAtStartup);</highlight></codeline>
 <codeline lineno="65"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
@@ -185,6 +185,6 @@
 <codeline lineno="144"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="145"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl"/>
+    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl"/>
   </compounddef>
 </doxygen>
