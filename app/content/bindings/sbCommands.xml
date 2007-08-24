@@ -630,14 +630,18 @@
               if (!stateonly)
               {
                 this.toolbarbuttons.push( toolbarbutton );
-                if (!before) parentnode.appendChild(topelement);
-                else parentnode.insertBefore( topelement, before);
                 if (obj_type == "submenu" || obj_type == "choice") {
                   var parent = toolbarbutton;
                   var menupopup = document.createElement("menupopup");
+                  menupopup.setAttribute("sbtype", "command");
                   toolbarbutton.appendChild(menupopup);
+                  if (!before) parentnode.appendChild(topelement);
+                  else parentnode.insertBefore( topelement, before);
                   parent = menupopup;
                   this.refreshCommandItems(cmdobject, stateonly, cmdobject.getCommandId(menu, i, this.hoststring), parent, null, depth+1, (obj_type == "choice"));
+                } else {
+                  if (!before) parentnode.appendChild(topelement);
+                  else parentnode.insertBefore( topelement, before);
                 }
               }
               
@@ -968,6 +972,7 @@
               else
               {
                 menuitem = this.menuitems[i];
+                menu = menuitem.commandmenu;
                 obj_type = menuitem.commandtype;
                 cmdobject = menuitem.commandobject;
               }
@@ -988,15 +993,19 @@
               if (!stateonly)
               {
                 this.menuitems.push( menuitem );
-                if (!before) parentnode.appendChild(menuitem);
-                else parentnode.insertBefore( menuitem, before);
                 if (obj_type == "submenu" || obj_type == "choice") {
                   var menupopup = document.createElement("menupopup");
+                  menupopup.setAttribute("sbtype", "command");
                   menuitem.appendChild(menupopup);
+                  if (!before) parentnode.appendChild(menuitem);
+                  else parentnode.insertBefore( menuitem, before);
                   if (cmdobject.getCommandId(menu, i, this.hoststring) == null) {
                     alert("null submenu: menu = " + menu + ", index = " + i);
                   }
                   this.refreshCommandItems(cmdobject, stateonly, cmdobject.getCommandId(menu, i, this.hoststring), menupopup, null, depth+1, (obj_type == "choice"));
+                } else {
+                  if (!before) parentnode.appendChild(menuitem);
+                  else parentnode.insertBefore( menuitem, before);
                 }
               }
             }
