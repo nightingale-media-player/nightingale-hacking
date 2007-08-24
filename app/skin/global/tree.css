@@ -303,16 +303,14 @@ treechildren::-moz-tree-column(insertafter) {
 /* ::::: twisty :::::  */
 
 treechildren::-moz-tree-twisty {
-  -moz-appearance: treetwisty;
   padding-right: 2px;
   width: 10px; /* The image's width is 10 pixels */
-  list-style-image: url("chrome://global/skin/tree/twisty-clsd.gif");
+  list-style-image: url("chrome://global/skin/tree/twisty_closed.png");
 }
 
 treechildren::-moz-tree-twisty(open) {
-  -moz-appearance: treetwistyopen;
   width: 10px; /* The image's width is 10 pixels */
-  list-style-image: url("chrome://global/skin/tree/twisty-open.gif");
+  list-style-image: url("chrome://global/skin/tree/twisty_open.png");
 }
 
 treechildren::-moz-tree-twisty(Name, separator) {
