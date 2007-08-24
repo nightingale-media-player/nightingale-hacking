@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_playlist_commands_builder_host_callback" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommandsBuilderHostCallback</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_host_callback_11143bef0cdc62eb968291a4a0d132b30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIPlaylistCommandsBuilderHostCallback::handleCallback</definition>
+        <argsstring>(in sbIPlaylistCommandsContext aContext, in AString aHost)</argsstring>
+        <name>handleCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref></type>
+          <declname>aContext</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aHost</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="82" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="81" bodyend="85"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_builder_host_callback_11143bef0cdc62eb968291a4a0d132b30" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderHostCallback</scope><name>handleCallback</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_21010eee1037c29c6fe7fb536b40488a" kind="dir">
+    <compoundname>trunk/components/devices/base/public/</compoundname>
+    <innerfile refid="sb_i_content_type_format_8idl">sbIContentTypeFormat.idl</innerfile>
+    <innerfile refid="sb_i_device_capabilities_8idl">sbIDeviceCapabilities.idl</innerfile>
+    <innerfile refid="sb_i_device_compatibility_8idl">sbIDeviceCompatibility.idl</innerfile>
+    <innerfile refid="sb_i_device_content_8idl">sbIDeviceContent.idl</innerfile>
+    <innerfile refid="sb_i_device_controller_registrar_8idl">sbIDeviceControllerRegistrar.idl</innerfile>
+    <innerfile refid="sb_i_device_event_8idl">sbIDeviceEvent.idl</innerfile>
+    <innerfile refid="sb_i_device_event_listener_8idl">sbIDeviceEventListener.idl</innerfile>
+    <innerfile refid="sb_i_device_event_target_8idl">sbIDeviceEventTarget.idl</innerfile>
+    <innerfile refid="sb_i_device_identification_8idl">sbIDeviceIdentification.idl</innerfile>
+    <innerfile refid="sb_i_device_registrar_8idl">sbIDeviceRegistrar.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devices/base/public/"/>
+  </compounddef>
+</doxygen>

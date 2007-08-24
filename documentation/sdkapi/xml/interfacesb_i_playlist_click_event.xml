@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_playlist_click_event" kind="interface" prot="public">
+    <compoundname>sbIPlaylistClickEvent</compoundname>
+    <includes refid="sb_i_playlist_click_event_8idl" local="no">sbIPlaylistClickEvent.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPlaylistClickEvent::property</definition>
+        <argsstring></argsstring>
+        <name>property</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="85" bodyfile="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>readonly attribute sbIMediaItem sbIPlaylistClickEvent::item</definition>
+        <argsstring></argsstring>
+        <name>item</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="94" bodyfile="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>an interface to maintain information about the last event that occurred </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_widget" kindref="compound">sbIPlaylistWidget</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="376">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="373" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="380">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="377">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="378" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="380" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="375">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="376" relation="public-inheritance">
+        </childnode>
+        <childnode refid="377" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="379" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="374">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="373">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="374" relation="public-inheritance">
+        </childnode>
+        <childnode refid="375" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="378">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="379" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="379">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+      <node id="372">
+        <label>sbIPlaylistClickEvent</label>
+        <link refid="interfacesb_i_playlist_click_event"/>
+        <childnode refid="373" relation="usage">
+          <edgelabel>item</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="74" bodyfile="E:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="73" bodyend="95"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" prot="public" virt="non-virtual"><scope>sbIPlaylistClickEvent</scope><name>item</name></member>
+      <member refid="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" prot="public" virt="non-virtual"><scope>sbIPlaylistClickEvent</scope><name>property</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

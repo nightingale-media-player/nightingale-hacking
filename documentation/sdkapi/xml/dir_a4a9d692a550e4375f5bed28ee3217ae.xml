@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_a4a9d692a550e4375f5bed28ee3217ae" kind="dir">
+    <compoundname>trunk/components/bundle/public/</compoundname>
+    <innerfile refid="sb_i_bundle_8idl">sbIBundle.idl</innerfile>
+    <innerfile refid="sb_i_bundle_data_listener_8idl">sbIBundleDataListener.idl</innerfile>
+    <innerfile refid="sb_i_bundle_install_listener_8idl">sbIBundleInstallListener.idl</innerfile>
+    <innerfile refid="sb_p_i_bundle_8idl">sbPIBundle.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/bundle/public/"/>
+  </compounddef>
+</doxygen>

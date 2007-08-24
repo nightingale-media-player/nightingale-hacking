@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_5f7b54363ea04b0d9e928deb3501d8af" kind="dir">
+    <compoundname>trunk/components/devices/manager/</compoundname>
+    <innerdir refid="dir_be80d522b6fb6012085bf22a13179a37">trunk/components/devices/manager/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devices/manager/"/>
+  </compounddef>
+</doxygen>

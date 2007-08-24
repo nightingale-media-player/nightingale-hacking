@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_dfa08987ee38b8a25b0590d75fa3deb8" kind="dir">
+    <compoundname>trunk/components/devicesobsolete/manager/public/</compoundname>
+    <innerfile refid="bsolete_2manager_2public_2sb_i_device_manager_8idl">sbIDeviceManager.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/"/>
+  </compounddef>
+</doxygen>

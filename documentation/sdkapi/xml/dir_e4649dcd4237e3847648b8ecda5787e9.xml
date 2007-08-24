@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_e4649dcd4237e3847648b8ecda5787e9" kind="dir">
+    <compoundname>trunk/components/draganddrop/public/</compoundname>
+    <innerfile refid="sb_i_dnd_source_tracker_8idl">sbIDndSourceTracker.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/draganddrop/public/"/>
+  </compounddef>
+</doxygen>

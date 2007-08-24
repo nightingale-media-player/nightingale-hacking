@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_01e515a962b6bd09b36f2b2a5fe03f33" kind="dir">
+    <compoundname>trunk/components/servicepane/</compoundname>
+    <innerdir refid="dir_f8599771b1e00003bdc540be429a06c5">trunk/components/servicepane/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/servicepane/"/>
+  </compounddef>
+</doxygen>

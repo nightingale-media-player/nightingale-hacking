@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_554d9e29904cada84e6fac036ec938ee" kind="dir">
+    <compoundname>trunk/components/</compoundname>
+    <innerdir refid="dir_8cb2b2b7d963694f0db6e29b968bef08">trunk/components/bundle/</innerdir>
+    <innerdir refid="dir_47750ffa7c4bf021105b15aee8933e49">trunk/components/commandline/</innerdir>
+    <innerdir refid="dir_c581476f6e5b8b984892432668a7dbc8">trunk/components/controller/</innerdir>
+    <innerdir refid="dir_d3abf2ed316b6d38d8909fa6f5c857a8">trunk/components/dataremote/</innerdir>
+    <innerdir refid="dir_5a3ad581320e2eea9f177f57b0226b8b">trunk/components/dbengine/</innerdir>
+    <innerdir refid="dir_e18fd99fff203273abd91b1ec0160db0">trunk/components/devices/</innerdir>
+    <innerdir refid="dir_6836a79df3fea536a146939b3c3793a9">trunk/components/devicesobsolete/</innerdir>
+    <innerdir refid="dir_76feddd1cf3fde1d5b48e6fa07166a20">trunk/components/draganddrop/</innerdir>
+    <innerdir refid="dir_4bbfeb36613198861bf4a3f1f2069a95">trunk/components/faceplate/</innerdir>
+    <innerdir refid="dir_f2aab8db83e53369509832d1f6be80a5">trunk/components/feathers/</innerdir>
+    <innerdir refid="dir_8a4627e8ae01c3a48b711d61ecad158d">trunk/components/filescan/</innerdir>
+    <innerdir refid="dir_65897f653652f449f0b14099188dd6fc">trunk/components/integration/</innerdir>
+    <innerdir refid="dir_db09d20760fc83c5943588dde0691337">trunk/components/library/</innerdir>
+    <innerdir refid="dir_a594ac90a794805cd57a8cdb6a6d72d9">trunk/components/mediacore/</innerdir>
+    <innerdir refid="dir_0ffb6a72c8ec358a4a588f09845c1fd2">trunk/components/metrics/</innerdir>
+    <innerdir refid="dir_705098b0dcbdb90cb88bf186116ea2cd">trunk/components/playlistcommands/</innerdir>
+    <innerdir refid="dir_a4c51cfdb63349312b2145fb7923fa34">trunk/components/playlistplayback/</innerdir>
+    <innerdir refid="dir_98e55903f08fa8f37781e50c7474e559">trunk/components/playlistreader/</innerdir>
+    <innerdir refid="dir_c9e11d24c6df406469100bd7dfbd549f">trunk/components/property/</innerdir>
+    <innerdir refid="dir_f40618d1021d2bc20b8a5e81ad4683b1">trunk/components/remoteapi/</innerdir>
+    <innerdir refid="dir_01e515a962b6bd09b36f2b2a5fe03f33">trunk/components/servicepane/</innerdir>
+    <innerdir refid="dir_e8d1761911d1476ddc45c076eb824188">trunk/components/sqlbuilder/</innerdir>
+    <innerdir refid="dir_0b931deec1d355a75694af755f2ef979">trunk/components/state/</innerdir>
+    <innerdir refid="dir_156642a94f654ec97f1230291fb70f92">trunk/components/testharness/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/"/>
+  </compounddef>
+</doxygen>

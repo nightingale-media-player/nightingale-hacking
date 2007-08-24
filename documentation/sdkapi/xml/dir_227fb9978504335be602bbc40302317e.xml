@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_227fb9978504335be602bbc40302317e" kind="dir">
+    <compoundname>trunk/components/devicesobsolete/download/</compoundname>
+    <innerdir refid="dir_dae203fdec8f7883723c6de9d9415eff">trunk/components/devicesobsolete/download/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/download/"/>
+  </compounddef>
+</doxygen>

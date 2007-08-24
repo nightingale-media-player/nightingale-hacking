@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_remote_site_library" kind="interface" prot="public">
+    <compoundname>sbIRemoteSiteLibrary</compoundname>
+    <basecompoundref refid="interfacesb_i_remote_library" prot="public" virt="non-virtual">sbIRemoteLibrary</basecompoundref>
+    <includes refid="sb_i_remote_library_8idl" local="no">sbIRemoteLibrary.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemoteSiteLibrary::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+<para>The filename of the library file Set only in debug builds. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="355" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_site_library_101c31dbb438cc8eda58b14e787c65c7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteSiteLibrary::connectToSiteLibrary</definition>
+        <argsstring>(in AUTF8String aDomain, in AUTF8String aPath)</argsstring>
+        <name>connectToSiteLibrary</name>
+        <param>
+          <type>in AUTF8String</type>
+          <declname>aDomain</declname>
+        </param>
+        <param>
+          <type>in AUTF8String</type>
+          <declname>aPath</declname>
+        </param>
+        <briefdescription>
+<para>Connects the remote library to a library from the internal data model. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is used to create or load the data model library for a specific site&apos;s library. The strings passed in follow the format for cookies, in that the domain and path must meet the requirements for RFC 2109. In the case of a bad match, the method fails and no library is hooked up. Any further attempt to access the library will fail.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDomain</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The domain, or subdomain for the site library. The requesting website must be on this domain. A site on foo.bar.com may pass in bar.com, but not the other way around. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The path or subpath for the site library. The requesting site must be on this patch. A site at foo.com/my/path/index.html can pass in &apos;/my/path/&apos;, &apos;/my&apos;, &apos;/&apos;, or &apos;&apos;. In the case of the &apos;/&apos; a root level library is created, accessibel by ALL paths in the domain. In the case of &apos;&apos; the deepest path is used, which would match &apos;my/path/&apos;. The leading slash MUST be there, except when not passing any path (&apos;&apos;). Currently the trailing slash is important, while this will succeed with or without the slash you will get different libraries as a result. This will be fixed -- bug 4176 </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="383"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface for a sandbox library created by the website. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface is used by the player to connect a library to a specific library for a website. The library serves as an area a website can use to create the media items and lists needed to populate web playlists and to transfer into the user&apos;s main library. The restrictions on the site library are lighter allowing a website to do more with the limited scope of the site library. </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="501">
+        <label>sbIRemoteSiteLibrary</label>
+        <link refid="interfacesb_i_remote_site_library"/>
+        <childnode refid="502" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="502">
+        <label>sbIRemoteLibrary</label>
+        <link refid="interfacesb_i_remote_library"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="503">
+        <label>sbIRemoteSiteLibrary</label>
+        <link refid="interfacesb_i_remote_site_library"/>
+        <childnode refid="504" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="504">
+        <label>sbIRemoteLibrary</label>
+        <link refid="interfacesb_i_remote_library"/>
+      </node>
+    </collaborationgraph>
+    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="350" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="349" bodyend="384"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToDefaultLibrary</name></member>
+      <member refid="interfacesb_i_remote_site_library_101c31dbb438cc8eda58b14e787c65c7c" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToSiteLibrary</name></member>
+      <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaItem</name></member>
+      <member refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaList</name></member>
+      <member refid="interfacesb_i_remote_library_174246b1e632b24b99ae6e7802f78311e" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaListFromURL</name></member>
+      <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>filename</name></member>
+      <member refid="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getAlbums</name></member>
+      <member refid="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getArtists</name></member>
+      <member refid="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getGenres</name></member>
+      <member refid="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getMediaListByName</name></member>
+      <member refid="interfacesb_i_remote_library_13062b2b86e74ad3251b43cf707b8ab29" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getPlaylists</name></member>
+      <member refid="interfacesb_i_remote_library_101044d10e08f514db0ce7bbac52ef472" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getYears</name></member>
+      <member refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>scanMediaOnCreation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

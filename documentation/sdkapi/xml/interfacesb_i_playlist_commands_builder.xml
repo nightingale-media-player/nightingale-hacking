@@ -1,0 +1,2280 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_playlist_commands_builder" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommandsBuilder</compoundname>
+    <basecompoundref refid="interfacesb_i_playlist_commands" prot="public" virt="non-virtual">sbIPlaylistCommands</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_194fd8f5e8dc4d0dc10b8251fcbef0365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendSubmenu</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aSubMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>appendSubmenu</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Append a submenu to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the submenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" kindref="member">insertSubmenuBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" kindref="member">insertSubmenuAfter</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L140">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L140</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertSubmenuBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aSubMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>insertSubmenuBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Insert a submenu into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this submenu is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the submenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_194fd8f5e8dc4d0dc10b8251fcbef0365" kindref="member">appendSubmenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" kindref="member">insertSubmenuAfter</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="144"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertSubmenuAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aSubMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>insertSubmenuAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Insert a submenu into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this submenu is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the submenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the submenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_194fd8f5e8dc4d0dc10b8251fcbef0365" kindref="member">appendSubmenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" kindref="member">insertSubmenuBefore</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="160"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendAction</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aActionId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>appendAction</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aActionId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Append an action to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aActionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this action is triggered </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" kindref="member">insertActionBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" kindref="member">insertActionAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L113">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L113</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L153">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L153</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="180"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertActionBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aActionId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>insertActionBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aActionId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert an action into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this action is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aActionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this action is triggered </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" kindref="member">appendAction</ref>, <ref refid="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" kindref="member">insertActionAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="198"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertActionAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aActionId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>insertActionAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aActionId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert an action into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this action is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aActionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the action to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this action is triggered </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" kindref="member">appendAction</ref>, <ref refid="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" kindref="member">insertActionBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="216"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendSeparator</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aSeparatorId)</argsstring>
+        <name>appendSeparator</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSeparatorId</declname>
+        </param>
+        <briefdescription>
+<para>Append a separator to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSeparatorId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the separator to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" kindref="member">insertSeparatorBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" kindref="member">insertSeparatorAfter</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L136">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L136</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L612">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L612</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="230"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertSeparatorBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aSeparatorId)</argsstring>
+        <name>insertSeparatorBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSeparatorId</declname>
+        </param>
+        <briefdescription>
+<para>Insert a separator into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this separator is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSeparatorId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the separator to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" kindref="member">appendSeparator</ref>, <ref refid="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" kindref="member">insertSeparatorAfter</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="242"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertSeparatorAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aSeparatorId)</argsstring>
+        <name>insertSeparatorAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSeparatorId</declname>
+        </param>
+        <briefdescription>
+<para>Insert a separator into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this separator is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSeparatorId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the separator to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" kindref="member">appendSeparator</ref>, <ref refid="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" kindref="member">insertSeparatorBefore</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="254"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendFlag</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aFlagId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback, in sbIPlaylistCommandsBuilderGetBoolCallback aValueCallback)</argsstring>
+        <name>appendFlag</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aFlagId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref></type>
+          <declname>aValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Append a flag to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFlagId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this flag is flipped </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the flag&apos;s value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" kindref="member">insertFlagBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" kindref="member">insertFlagAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="274"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertFlagBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCommandId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback, in sbIPlaylistCommandsBuilderGetBoolCallback aGetValueCallback)</argsstring>
+        <name>insertFlagBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref></type>
+          <declname>aGetValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a flag into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this flag is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFlagId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this flag is flipped </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the flag&apos;s value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" kindref="member">appendFlag</ref>, <ref refid="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" kindref="member">insertFlagAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="294"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertFlagAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCommandId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback, in sbIPlaylistCommandsBuilderGetBoolCallback aGetValueCallback)</argsstring>
+        <name>insertFlagAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref></type>
+          <declname>aGetValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a flag into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this flag is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFlagId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the flag to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this flag is flipped </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the flag&apos;s value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" kindref="member">appendFlag</ref>, <ref refid="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" kindref="member">insertFlagBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="314"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendValue</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aValueId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback, in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback)</argsstring>
+        <name>appendValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValueId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref></type>
+          <declname>aSetValueCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aGetValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Append a value to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSetValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this value is changed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" kindref="member">insertValueBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" kindref="member">insertValueAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="334"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertValueBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aValueId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback, in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback)</argsstring>
+        <name>insertValueBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValueId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref></type>
+          <declname>aSetValueCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aGetValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a value into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this value is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSetValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this value is changed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" kindref="member">appendValue</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" kindref="member">insertValueAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="354"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertValueAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aValueId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback, in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback)</argsstring>
+        <name>insertValueAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValueId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref></type>
+          <declname>aSetValueCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aGetValueCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a value into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this value is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the value to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSetValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this value is changed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" kindref="member">appendValue</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" kindref="member">insertValueBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound">sbIPlaylistCommandsBuilderSetValueCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="374"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendChoiceMenu</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>appendChoiceMenu</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aChoiceMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Append a choicemenu to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" kindref="member">insertChoiceMenuBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="390"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>insertChoiceMenuBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aChoiceMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Insert a choicemenu into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this choicemenu is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="406"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <name>insertChoiceMenuAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aChoiceMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <briefdescription>
+<para>Insert a choicemenu into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this choicemenu is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenu to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" kindref="member">insertChoiceMenuBefore</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="422"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendChoiceMenuItem</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aChoiceMenuItemId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>appendChoiceMenuItem</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aChoiceMenuItemId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Append a choicemenuitem to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this choicemenuitem is selected </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" kindref="member">insertChoiceMenuItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" kindref="member">insertChoiceMenuItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="440"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuItemBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCommandId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>insertChoiceMenuItemBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a choicemenuitem into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this choicemenuitem is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this choicemenuitem is selected </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" kindref="member">appendChoiceMenuItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" kindref="member">insertChoiceMenuItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="458"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuItemAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCommandId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback)</argsstring>
+        <name>insertChoiceMenuItemAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLabel</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aTriggerCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a choicemenuitem into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this choicemenuitem is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aChoiceMenuItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLabel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTooltipText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tooltip text for the choicemenuitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTriggerCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this choicemenuitem is selected </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" kindref="member">appendChoiceMenuItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" kindref="member">insertChoiceMenuItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="476"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendCustomItem</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <name>appendCustomItem</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCustomItemId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref></type>
+          <declname>aInstantiationCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aRefreshCallback</declname>
+        </param>
+        <briefdescription>
+<para>Append a customitem to the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCustomItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the customitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInstantiationCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call in order to instantiate this customitem </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRefreshCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="492"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertCustomItemBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <name>insertCustomItemBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCustomItemId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref></type>
+          <declname>aInstantiationCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aRefreshCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a customitem into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this customitem is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCustomItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the customitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInstantiationCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call in order to instantiate this customitem </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRefreshCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="508"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertCustomItemAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <name>insertCustomItemAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCustomItemId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref></type>
+          <declname>aInstantiationCallback</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <declname>aRefreshCallback</declname>
+        </param>
+        <briefdescription>
+<para>Insert a customitem into the set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this customitem is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCustomItemId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the customitem to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInstantiationCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call in order to instantiate this customitem </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRefreshCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="524"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::appendPlaylistCommands</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCommandsId, in sbIPlaylistCommands aPlaylistCommands)</argsstring>
+        <name>appendPlaylistCommands</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandsId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+          <declname>aPlaylistCommands</declname>
+        </param>
+        <briefdescription>
+<para>Append an existing set of commands to this set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandsId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the playlistcommands item to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPlaylistCommands</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" kindref="member">insertPlaylistCommandsBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" kindref="member">insertPlaylistCommandsAfter</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L562">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L562</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="540"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertPlaylistCommandsBefore</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCommandsId, in sbIPlaylistCommands aPlaylistCommands)</argsstring>
+        <name>insertPlaylistCommandsBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandsId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+          <declname>aPlaylistCommands</declname>
+        </param>
+        <briefdescription>
+<para>Insert an existing set of commands into this set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command before which this playlistcommands item is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandsId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the playlistcommands item to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPlaylistCommands</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" kindref="member">appendPlaylistCommands</ref>, <ref refid="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" kindref="member">insertPlaylistCommandsAfter</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="554"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::insertPlaylistCommandsAfter</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCommandsId, in sbIPlaylistCommands aPlaylistCommands)</argsstring>
+        <name>insertPlaylistCommandsAfter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aAfterId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandsId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+          <declname>aPlaylistCommands</declname>
+        </param>
+        <briefdescription>
+<para>Insert an existing set of commands into this set of commands. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAfterId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command after which this playlistcommands item is to be added </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandsId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the playlistcommands item to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPlaylistCommands</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" kindref="member">appendPlaylistCommands</ref>, <ref refid="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" kindref="member">insertPlaylistCommandsBefore</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="568"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::setCommandShortcut</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCommandId, in AString aShortcutKey, in AString aShortcutKeyCode, in AString aShortcutModifiers, in PRBool aShortcutIsLocal)</argsstring>
+        <name>setCommandShortcut</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aShortcutKey</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aShortcutKeyCode</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aShortcutModifiers</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>aShortcutIsLocal</declname>
+        </param>
+        <briefdescription>
+<para>Assign a keyboard shortcut to a command item. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command item for which to set a keyboard shortcut </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aShortcutKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The keyboard shortcut key </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aShortcutKeyCode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The keyboard shortcut keycode </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aShortcutModifiers</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The keyboard shortcut modifiers </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aShortcutIsLocal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether this keyboard shortcut acts at the level of the command object only, rather than at the level of the entire window </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L159">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L159</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="588"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::setCommandEnabledCallback</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCommandId, in sbIPlaylistCommandsBuilderGetBoolCallback aEnabledCallback)</argsstring>
+        <name>setCommandEnabledCallback</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref></type>
+          <declname>aEnabledCallback</declname>
+        </param>
+        <briefdescription>
+<para>Assign a callback to a command item to dynamically determine its enabled status. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command item for which to set the callback </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnabledCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface or function to call to determine the command item&apos;s enabled status </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" kindref="member">setCommandVisibleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L166">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L166</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L121">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L121</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="602"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::setCommandVisibleCallback</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCommandId, in sbIPlaylistCommandsBuilderGetBoolCallback aVisibleCallback)</argsstring>
+        <name>setCommandVisibleCallback</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref></type>
+          <declname>aVisibleCallback</declname>
+        </param>
+        <briefdescription>
+<para>Assign a callback to a command item to dynamically determine its visible status. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command item for which to set the callback </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aVisibleCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface or function to call to determine the command item&apos;s visible status </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" kindref="member">setCommandEnabledCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" kindref="member">setVisibleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound">sbIPlaylistCommandsBuilderGetBoolCallback</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L184">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L184</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="615"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::setVisibleCallback</definition>
+        <argsstring>(in sbIPlaylistCommandsBuilderPCCallback aVisibleCallback)</argsstring>
+        <name>setVisibleCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_p_c_callback" kindref="compound">sbIPlaylistCommandsBuilderPCCallback</ref></type>
+          <declname>aVisibleCallback</declname>
+        </param>
+        <briefdescription>
+<para>Assign a callback to the entire command set to dynamically determine its visible status (affects all commands). </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aVisibleCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface or function to call to determine the command set&apos;s visible status </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" kindref="member">setCommandVisibleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_p_c_callback" kindref="compound">sbIPlaylistCommandsBuilderPCCallback</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L581">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L581</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="624"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::removeCommand</definition>
+        <argsstring>(in AString aParentSubMenuId, in AString aCommandId)</argsstring>
+        <name>removeCommand</name>
+        <param>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCommandId</declname>
+        </param>
+        <briefdescription>
+<para>Remove a command from the set. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the parent submenu </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Id of the command item to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" kindref="member">removeAllCommands</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="634"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::removeAllCommands</definition>
+        <argsstring>()</argsstring>
+        <name>removeAllCommands</name>
+        <briefdescription>
+<para>Remove all commands from the set. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" kindref="member">removeCommand</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="640"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommandsBuilder::shutdown</definition>
+        <argsstring>()</argsstring>
+        <name>shutdown</name>
+        <briefdescription>
+<para>Shutdown the builder object, ensure that no external reference remains in its internal arrays. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L200">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L200</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="647"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A helper used to construct <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interfaces. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface is meant to be instantiated by user code, ie: <programlisting><codeline><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PlaylistCommandsBuilder<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>Components.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Constructor(</highlight><highlight class="stringliteral">&quot;@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1&quot;</highlight><highlight class="normal">,<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;sbIPlaylistCommandsBuilder&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">var<sp/>builder<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>PlaylistCommandsBuilder();</highlight></codeline>
+</programlisting></para><para>The instance may then be used to create a set of commands, which it exposes to playlist objects, and to service pane nodes. Each of its command may be of several different kinds :</para><para><itemizedlist>
+<listitem><para>Actions are the simplest form of commands, they correspond to toolbar buttons and context menu items, which may be triggered by the user to perform some sort of action, possibly on selected items or playlists.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Submenus are meant to hold more commands in a hierarchical manner, they correspond to dropdown buttons (and subsequently submenus) in toolbars, and submenus in context menus.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Separators are used to separate commands into visually distinct groups, this translates to flexible spacers in toolbars, and in menu separators in context menus.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Flags are user-togglable commands, they can be true or false and otherwise act as actions, they correspond to pushed/popped buttons in toolbars and checked menuitems in context menus.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Values are user-changeable string values, they are only applicable to toolbars and appear as edit boxes.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Choicemenus act as submenus but are meant to hold choicemenuitems (see below).</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Choicemenuitems act as flags but are meant to live alongside several other items of their kind, acting as radio items (only one choicemenuitem may be active at a time).</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Customitems are only applicable to toolbars, they are generic DOM elements which are inserted as is inside the command host.</para></listitem></itemizedlist>
+</para><para><itemizedlist>
+<listitem><para>Playlistcommands are fully fledged <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interfaces, which may have been requested from the repository of publicly available published commands from the playlistcommandsmanager service, or they may be interfaces that you have constructed yourself. Inserting <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface A into <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> B does not create a submenu in B, all commands in A are displayed at the root of B (unless A itself has submenus, in which case these also appear as submenus in B). Since <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> implements <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, you may insert an <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> into another. This is used for instance to expose many single commands to the playlistcommandsmanager and then tie all of these into a single <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> grouping without having to duplicate code.</para></listitem></itemizedlist>
+</para><para>Commands registered to the PlaylistCommandsManager using the registerPlaylistCommandsMedia[List|Item]() functions should be unregistered using the corresponding unregisterPlaylistCommandsMedia[List|Item]() function before application shutdown. Commands published using the publish() function should be withdrawn using the withdraw() function before application shutdown.</para><para>All instantiated <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> should have their <ref refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" kindref="member">shutdown()</ref> method called before application shutdown to ensure that no external reference remains in their internal arrays.</para><para>Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut strings (key, keycode, modifiers) may take values such as &quot;&amp;value&quot;, which will cause the appropriate localized string to be fetched from the active locale.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="385">
+        <label>sbIPlaylistCommands</label>
+        <link refid="interfacesb_i_playlist_commands"/>
+      </node>
+      <node id="384">
+        <label>sbIPlaylistCommandsBuilder</label>
+        <link refid="interfacesb_i_playlist_commands_builder"/>
+        <childnode refid="385" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="387">
+        <label>sbIPlaylistCommands</label>
+        <link refid="interfacesb_i_playlist_commands"/>
+      </node>
+      <node id="386">
+        <label>sbIPlaylistCommandsBuilder</label>
+        <link refid="interfacesb_i_playlist_commands_builder"/>
+        <childnode refid="387" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="114" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="113" bodyend="648"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendAction</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenu</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenuItem</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendCustomItem</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendFlag</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendPlaylistCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendSeparator</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_194fd8f5e8dc4d0dc10b8251fcbef0365" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendSubmenu</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendValue</name></member>
+      <member refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>duplicate</name></member>
+      <member refid="interfacesb_i_playlist_commands_12eb43c97ac5d08c097849cb3e83a1ff6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandChoiceItem</name></member>
+      <member refid="interfacesb_i_playlist_commands_17c6d9630fce924796bc1ca7996bf1ed8" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandEnabled</name></member>
+      <member refid="interfacesb_i_playlist_commands_17f792b58876f0f45f99292826242d9ae" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandFlag</name></member>
+      <member refid="interfacesb_i_playlist_commands_1d1d5bc85681507c610d77e725feaf79a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandFlex</name></member>
+      <member refid="interfacesb_i_playlist_commands_1f36bdd44bf20bb36e8708187b084694d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandId</name></member>
+      <member refid="interfacesb_i_playlist_commands_15a3b4dbef7a86dee2d1d75cd703e1834" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandShortcutKey</name></member>
+      <member refid="interfacesb_i_playlist_commands_1d0ab8facdce22215e53f4f023bf92027" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandShortcutKeycode</name></member>
+      <member refid="interfacesb_i_playlist_commands_172394c0b9c268172e96433b8514a1256" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandShortcutLocal</name></member>
+      <member refid="interfacesb_i_playlist_commands_1ed637cfcad45059107bf302b9efd2cdd" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandShortcutModifiers</name></member>
+      <member refid="interfacesb_i_playlist_commands_122b327106b0ac35f0324bbbfab64760e" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandSubObject</name></member>
+      <member refid="interfacesb_i_playlist_commands_156c211b094da00ce66821aec7dcdfe06" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandText</name></member>
+      <member refid="interfacesb_i_playlist_commands_17a3b47a7fcc4b5669e2afce8971140b6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandToolTipText</name></member>
+      <member refid="interfacesb_i_playlist_commands_1778c89393b0ffa9d983ef2b4c9992e98" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandType</name></member>
+      <member refid="interfacesb_i_playlist_commands_1a8d829ed7469cc76243d708986b10ed7" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandValue</name></member>
+      <member refid="interfacesb_i_playlist_commands_17fff72cb877c78f1b33a93a499ba7645" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getCommandVisible</name></member>
+      <member refid="interfacesb_i_playlist_commands_156c2884682507bd539b8791abb121ce9" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getNumCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_1dbb2388f97739fc8ff69c802b48abcb6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>getVisible</name></member>
+      <member refid="interfacesb_i_playlist_commands_18cc0de0e54c8d55d497d60a900b1dd3d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>initCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertActionAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertActionBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuItemAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuItemBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertFlagAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertFlagBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertPlaylistCommandsAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertPlaylistCommandsBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertSeparatorAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertSeparatorBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertSubmenuAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertSubmenuBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertValueAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertValueBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_1e0ff460cfa7a50a45713bb1829cac06c" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>instantiateCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_11c89ee75cc35a28bb10ea6fd50878132" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>onCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_10aa9ac74d13817c51effb3ad295d5a80" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>refreshCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>removeAllCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>removeCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setCommandEnabledCallback</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setCommandShortcut</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setCommandVisibleCallback</name></member>
+      <member refid="interfacesb_i_playlist_commands_1929b6337af7bb3e1c9d4756983614185" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setContext</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setVisibleCallback</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>shutdown</name></member>
+      <member refid="interfacesb_i_playlist_commands_1272c3e0eb8d5d4f17dadc180b05df3f5" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>shutdownCommands</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

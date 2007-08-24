@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_f2aab8db83e53369509832d1f6be80a5" kind="dir">
+    <compoundname>trunk/components/feathers/</compoundname>
+    <innerdir refid="dir_d62ab06a383fafaa691e343c4832f17a">trunk/components/feathers/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/feathers/"/>
+  </compounddef>
+</doxygen>

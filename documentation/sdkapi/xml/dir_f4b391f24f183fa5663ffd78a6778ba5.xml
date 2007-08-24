@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_f4b391f24f183fa5663ffd78a6778ba5" kind="dir">
+    <compoundname>trunk/components/faceplate/public/</compoundname>
+    <innerfile refid="sb_i_faceplate_manager_8idl">sbIFaceplateManager.idl</innerfile>
+    <innerfile refid="sb_i_faceplate_manager_listener_8idl">sbIFaceplateManagerListener.idl</innerfile>
+    <innerfile refid="sb_i_faceplate_pane_8idl">sbIFaceplatePane.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/faceplate/public/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_990ea653c7973a2faed246599241b0a5" kind="dir">
+    <compoundname>trunk/components/mediacore/metadata/handler/taglib/</compoundname>
+    <innerdir refid="dir_d46e5aa02fdee875b6870d1fe80d5873">trunk/components/mediacore/metadata/handler/taglib/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/"/>
+  </compounddef>
+</doxygen>

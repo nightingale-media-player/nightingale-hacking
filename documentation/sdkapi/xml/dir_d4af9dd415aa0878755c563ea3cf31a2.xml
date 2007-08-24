@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_d4af9dd415aa0878755c563ea3cf31a2" kind="dir">
+    <compoundname>trunk/components/commandline/public/</compoundname>
+    <innerfile refid="sb_i_command_line_flag_handler_8idl">sbICommandLineFlagHandler.idl</innerfile>
+    <innerfile refid="sb_i_command_line_item_handler_8idl">sbICommandLineItemHandler.idl</innerfile>
+    <innerfile refid="sb_i_command_line_manager_8idl">sbICommandLineManager.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/commandline/public/"/>
+  </compounddef>
+</doxygen>

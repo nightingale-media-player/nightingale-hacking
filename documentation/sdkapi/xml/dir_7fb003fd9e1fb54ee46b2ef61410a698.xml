@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_7fb003fd9e1fb54ee46b2ef61410a698" kind="dir">
+    <compoundname>trunk/components/devicesobsolete/cd/public/</compoundname>
+    <innerfile refid="sb_i_c_d_device_8idl">sbICDDevice.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/"/>
+  </compounddef>
+</doxygen>

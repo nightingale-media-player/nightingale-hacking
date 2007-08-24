@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_6836a79df3fea536a146939b3c3793a9" kind="dir">
+    <compoundname>trunk/components/devicesobsolete/</compoundname>
+    <innerdir refid="dir_0b30fc7af6577cf394ffd029ed7ccbca">trunk/components/devicesobsolete/base/</innerdir>
+    <innerdir refid="dir_a5b0a56992e92bce84d2ae82e88f87a5">trunk/components/devicesobsolete/cd/</innerdir>
+    <innerdir refid="dir_227fb9978504335be602bbc40302317e">trunk/components/devicesobsolete/download/</innerdir>
+    <innerdir refid="dir_3a762d2c40bd19043532d0589a381ef8">trunk/components/devicesobsolete/manager/</innerdir>
+    <innerdir refid="dir_9e2f06cce3e351ae870d769f9c1b269f">trunk/components/devicesobsolete/wm/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/"/>
+  </compounddef>
+</doxygen>

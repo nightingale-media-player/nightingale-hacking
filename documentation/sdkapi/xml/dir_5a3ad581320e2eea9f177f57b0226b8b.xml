@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_5a3ad581320e2eea9f177f57b0226b8b" kind="dir">
+    <compoundname>trunk/components/dbengine/</compoundname>
+    <innerdir refid="dir_26cd784bac652f1a4ae71b3458e54bf4">trunk/components/dbengine/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/dbengine/"/>
+  </compounddef>
+</doxygen>

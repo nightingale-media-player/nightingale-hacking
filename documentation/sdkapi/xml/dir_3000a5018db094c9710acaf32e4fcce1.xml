@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_3000a5018db094c9710acaf32e4fcce1" kind="dir">
+    <compoundname>trunk/components/devices/marshall/public/</compoundname>
+    <innerfile refid="sb_i_device_marshall_8idl">sbIDeviceMarshall.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/devices/marshall/public/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_clickable_property_info" kind="interface" prot="public">
+    <compoundname>sbIClickablePropertyInfo</compoundname>
+    <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIClickablePropertyInfo::getValueForClick</definition>
+        <argsstring>(in AString aCurrentValue, in unsigned long aBoxWidth, in unsigned long aBoxHeight, in unsigned long aMouseX, in unsigned long aMouseY)</argsstring>
+        <name>getValueForClick</name>
+        <param>
+          <type>in AString</type>
+          <declname>aCurrentValue</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aBoxWidth</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aBoxHeight</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMouseX</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMouseY</declname>
+        </param>
+        <briefdescription>
+<para>Convert a mouse click to a value for this property. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCurrentValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current value of this property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBoxWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the clickable area </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBoxHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Height of the clickable area </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMouseX</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The X coordinate of the click location </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMouseY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Y coordinate of the click location </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value that should be given to this property for the click </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="478"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The property information specific to clickable properties. </para>    </briefdescription>
+    <detaileddescription>
+<para>A property that implements this interface indicates that it can convert a mouse click into a value for the property.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="464" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="463" bodyend="479"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>getValueForClick</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

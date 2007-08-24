@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_156642a94f654ec97f1230291fb70f92" kind="dir">
+    <compoundname>trunk/components/testharness/</compoundname>
+    <innerdir refid="dir_d895d4d0348bb7a4542ce1873140b7ef">trunk/components/testharness/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/testharness/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_3c80320f4093fa8ed56c80161d4ad518" kind="dir">
+    <compoundname>trunk/components/dataremote/public/</compoundname>
+    <innerfile refid="sb_i_data_remote_8idl">sbIDataRemote.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/dataremote/public/"/>
+  </compounddef>
+</doxygen>

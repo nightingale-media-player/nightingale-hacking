@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_ea5d5fe8c4f4c3ffcf8a73871685e16a" kind="dir">
+    <compoundname>trunk/components/mediacore/playback/</compoundname>
+    <innerdir refid="dir_2b6861bb571591220332a3f448484769">trunk/components/mediacore/playback/gstreamer/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="E:/Projects/songbird/trunk/components/mediacore/playback/"/>
+  </compounddef>
+</doxygen>
