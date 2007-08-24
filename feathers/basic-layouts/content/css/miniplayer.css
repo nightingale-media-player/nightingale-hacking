@@ -42,8 +42,8 @@ window#mini
   min-width: 390px ! important;
   
   /** HACK! Force height to get around Bug 2851 (Mini grows by 1px on every load) **/
-  min-height: 24px;
-  max-height: 24px;
+  min-height: 23px;
+  max-height: 23px;
   
   /** Get rid of the gradient that is applied to all windows */
   background-image:none;
@@ -56,7 +56,7 @@ window#mini
 {
   -moz-border-radius: 10px !important;
   background-color: #313131 !important;  /** Match the Main Window */
-  padding: 2px 3px 2px 3px !important;
+  padding: 0px 0px 0px 0px !important;
   height: 22px;
   
   /** HACK! Without this line the desktop will show through around all text.
@@ -75,21 +75,25 @@ window#mini
 
 
 /* Restore */
-.miniplayer > .sb-feathers-toggle-button
+.miniplayer > hbox > .sb-feathers-toggle-button > .clickhold-button
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.max.png);
+  list-style-image: url(chrome://songbird/skin/icons/feather-switcher-icon.png);
+  -moz-image-region: auto;
+  margin: 0px 0px 0px 5px;
 }
 
 /*  Close Window */
 sb-sys-close-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) !important;
-  -moz-image-region: rect(0px 8px 8px 0px);
+  -moz-image-region: auto;
+   margin: 0px 3px 0px 3px;
 }
 
                         
 sb-player-jumpto-button.miniplayer
 {
+  display: none;
   margin: 0px 0px 0px 5px;  
 }
 

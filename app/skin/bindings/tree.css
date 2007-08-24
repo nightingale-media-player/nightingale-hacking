@@ -37,7 +37,7 @@ Extra tree styles
 /* column picker **/
 .tree-columnpicker-icon
 {
-  list-style-image: url(chrome://songbird/skin/tree/column_picker.png) ;
+  list-style-image: url(chrome://songbird/skin/tree/column_picker.png);
 }
 treecolpicker:hover .tree-columnpicker-icon
 {

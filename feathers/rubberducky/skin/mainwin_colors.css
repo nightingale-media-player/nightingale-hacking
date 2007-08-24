@@ -961,19 +961,19 @@ progressmeter.sb-player-seek-slider > .progress-remainder,
 
 
 /** MINI FACEPLATE SEEKBAR **/
+.mini-dash-text
+{
+  color: #313131;
+}
+progressmeter.sb-player-seek-slider.miniplayer > .progress-bar
+{
+  background-color: #313131;
+  -moz-border-radius: 1px;
+}
 progressmeter.sb-player-seek-slider.miniplayer,
-progressmeter.sb-player-seek-slider.miniplayer > .progress-bar,
 progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder
 {
   background-color: Transparent !important;
-}
-
-.sb-mini-player-controls-dash-groove
-{
-  height: 4px;
-  width: auto;
-  margin-top: 12px !important;
-  background-color: #474948 !important;  
 }
 
 /** 

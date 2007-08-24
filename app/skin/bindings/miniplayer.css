@@ -44,25 +44,25 @@ Player Controls (Back, Play, Pause, Forward Buttons)
 sb-player-back-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(0px 50px 18px 0px);
+  -moz-image-region: rect(46px 45px 68px 0px);
   background-color: transparent;
 }
 sb-player-back-button.miniplayer:hover
 {
-  -moz-image-region: rect(18px 50px 36px 0px);
+  -moz-image-region: rect(23px 45px 45px 0px);
 }
 sb-player-back-button.miniplayer:active
 {
-  -moz-image-region: rect(36px 50px 54px 0px);
+  -moz-image-region: rect(0px 45px 22px 0px);
 }
 sb-player-back-button.miniplayer[disabled="true"]
 {
-  -moz-image-region: rect(54px 50px 72px 0px);
+  -moz-image-region: rect(69px 45px 91px 0px);
 }
 
 sb-player-playpause-button.miniplayer {
-  min-width: 25px !important;
-  max-width: 70px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
   -moz-box-flex: 1 !important;
   -moz-box-pack: center !important;
   -moz-box-align: center !important;  
@@ -73,23 +73,23 @@ sb-player-playpause-button.miniplayer {
 .miniplayer > .sb-player-playpause-button-play > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(0px 190px 18px 120px);
+  -moz-image-region: rect(46px 135px 68px 91px);
   background-color: transparent;
 }
 .miniplayer > .sb-player-play-button-play > button:hover,
 .miniplayer > .sb-player-playpause-button-play > button:hover
 {
-  -moz-image-region: rect(18px 190px 36px 120px);
+  -moz-image-region: rect(23px 135px 45px 91px);
 }
 .miniplayer > .sb-player-play-button-play > button:active,
 .miniplayer > .sb-player-playpause-button-play > button:active
 {
-  -moz-image-region: rect(36px 190px 54px 120px);
+  -moz-image-region: rect(0px 135px 22px 91px);
 }
 .miniplayer > .sb-player-play-button-play > button[disabled="true"],
 .miniplayer > .sb-player-playpause-button-play > button[disabled="true"]
 {
-  -moz-image-region: rect(54px 190px 72px 120px);
+  -moz-image-region: rect(69px 135px 91px 91px);
 }
 
 
@@ -98,63 +98,63 @@ sb-player-playpause-button.miniplayer {
 .miniplayer > .sb-player-playpause-button-pause > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(0px 120px 18px 50px);
+  -moz-image-region: rect(46px 90px 68px 46px);
   background-color: transparent;
 }
 .miniplayer > .sb-player-pause-button-pause > button:hover,
 .miniplayer > .sb-player-playpause-button-pause > button:hover
 {
-  -moz-image-region: rect(18px 120px 36px 50px);
+  -moz-image-region: rect(23px 90px 45px 46px);
 }
 .miniplayer > .sb-player-pause-button-pause > button:active,
 .miniplayer > .sb-player-playpause-button-pause > button:active
 {
-  -moz-image-region: rect(36px 120px 54px 50px);
+  -moz-image-region: rect(0px 90px 22px 46px);
 }
 .miniplayer > .sb-player-pause-button-pause > button[disabled="true"],
 .miniplayer > .sb-player-playpause-button-pause > button[disabled="true"]
 {
-  -moz-image-region: rect(54px 120px 72px 50px);
+  -moz-image-region: rect(69px 90px 91px 46px);
 }
 
 /* the resume state */
 .miniplayer > .sb-player-pause-button-resume > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(36px 120px 54px 50px);
+    -moz-image-region: rect(46px 135px 68px 91px);
   background-color: transparent;
 }
 .miniplayer > .sb-player-pause-button-resume > button:hover
 {
-  -moz-image-region: rect(36px 120px 54px 50px);
+  -moz-image-region: rect(23px 135px 45px 91px);
 }
 .miniplayer > .sb-player-pause-button-resume > button:active
 {
-  -moz-image-region: rect(36px 120px 54px 50px);
+  -moz-image-region: rect(0px 135px 22px 91px);
 }
 .miniplayer > .sb-player-pause-button-resume > button[disabled="true"]
 {
-  -moz-image-region: rect(36px 120px 54px 50px);
+  -moz-image-region: rect(69px 135px 91px 91px);
 }
 
 /* the stop button */
 .miniplayer > .sb-player-stop-button-stop > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(0px 260px 18px 190px);
+  -moz-image-region: rect(46px 180px 68px 136px);
   background-color: transparent;
 }
 .miniplayer > .sb-player-stop-button-stop > button:hover
 {
-  -moz-image-region: rect(18px 260px 36px 190px);
+  -moz-image-region: rect(23px 180px 45px 136px);
 }
 .miniplayer > .sb-player-stop-button-stop > button:active
 {
-  -moz-image-region: rect(36px 260px 54px 190px);
+  -moz-image-region: rect(0px 180px 22px 136px);
 }
 .miniplayer > .sb-player-stop-button-stop > button[disabled="true"]
 {
-  -moz-image-region: rect(54px 260px 72px 190px);
+  -moz-image-region: rect(69px 180px 91px 136px);
 }
 
 
@@ -162,21 +162,97 @@ sb-player-playpause-button.miniplayer {
 sb-player-forward-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
-  -moz-image-region: rect(0px 310px 18px 260px);
+  -moz-image-region: rect(46px 225px 68px 181px);
   background-color: transparent;
 }
 sb-player-forward-button.miniplayer:hover
 {
-  -moz-image-region: rect(18px 310px 36px 260px);
+  -moz-image-region: rect(23px 225px 45px 181px);
 }
 sb-player-forward-button.miniplayer:active
 {
-  -moz-image-region: rect(36px 310px 54px 260px);
+  -moz-image-region: rect(0px 225px 22px 181px);
 }
 sb-player-forward-button.miniplayer[disabled="true"]
 {
-  -moz-image-region: rect(54px 310px 72px 260px);
+  -moz-image-region: rect(69px 225px 91px 181px);
 }
+
+
+
+/** 
+***************************************************************************************************
+VOLUME
+Mute and Slider
+***************************************************************************************************
+*/
+
+
+progressmeter.sb-player-volume-slider.miniplayer {
+  min-width: 40px;
+  max-width: 80px;
+  margin: 0px 0px 0px 6px;
+}
+
+
+sb-player-volume-slider.miniplayer
+{
+  margin-top: 2px !important;
+  margin-bottom: 1px !important; 
+}
+
+/** The thumb does not respond to list-style-image, so we are forced to 
+    use a background. We put both states in one image and then change
+    the background-position in order to prevent flickering when changing
+    states. **/
+thumb.sb-player-volume-slider.miniplayer
+{
+  width: 11px;
+  height: 11px;
+  background-image: url(chrome://songbird/skin/miniplayer/volume_thumb.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: none;
+}
+thumb.sb-player-volume-slider.miniplayer:active
+{
+  background-image: url(chrome://songbird/skin/miniplayer/volume_thumb_active.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+
+progressmeter.sb-player-volume-slider.miniplayer > .progress-bar
+{
+  -moz-appearance: none !important;
+  background-image: none;
+}
+progressmeter.sb-player-volume-slider.miniplayer > .progress-remainder
+{
+  background-image: none;
+}
+    
+    
+slider.sb-player-volume-slider.miniplayer
+{
+  background-image: url(chrome://songbird/skin/miniplayer/volume_progress-slider-bkgd.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  height: 13px !important;
+  border: none;
+  margin-right: 2px;  
+  padding-left: 2px;  
+}
+
+
+progressmeter.sb-player-volume-slider.miniplayer
+{
+  background-image: url(chrome://songbird/skin/miniplayer/volume_progressmeter-bkgd.png);
+  background-position: right center;
+  height: 13px !important;
+  border: none;
+}
+
 
 
 /** 
@@ -188,46 +264,37 @@ MINI DASHBOARD
 /* Dashboard background box */
 .sb-mini-player-controls-dash-box
 {
-  height: 18px;
-  background-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard.png);
+  height: 22px;
+  background-image: url(chrome://songbird/skin/miniplayer/dashboard-background.png); 
   background-repeat: repeat-x;
   padding: 0px 0px 0px 0px;
 }
 
 /* Dashboard edges (rounded corners) */
-.sb-mini-player-controls-dash-image-e
+.sb-mini-player-controls-dash-left-image
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_e.png) !important;
+  list-style-image: url(chrome://songbird/skin/miniplayer/dashboard.png) !important;
+  -moz-image-region: rect(0px 9px 22px 0px);
 }
-.sb-mini-player-controls-dash-image-w
+.sb-mini-player-controls-dash-right-image
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_w.png) !important;
+  list-style-image: url(chrome://songbird/skin/miniplayer/dashboard.png) !important;
+  -moz-image-region: rect(0px 20px 22px 11px);
 }
 
 /* Artist and title, etc. */
-.mini_dash_text
+.mini-dash-text label
 {
   -moz-box-align: baseline;
+  font-family: Arial, Helvetica, Sans-serif !important;
+  font-weight: bold;
   width: auto;
   height: 16px;
   margin: 0px;
   padding: 0px;
-  color: #E4EADF;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
-
-
-/** Make a fake slider groove underneath the dash text.
-    This is to allow the text to hang over the slider
-    without messing with click handling **/
-.sb-mini-player-controls-dash-groove
-{
-  height: 4px;
-  width: auto;
-  margin-top: 12px !important;
-  background-color: #5aFc5c !important;  
-}
 
 /* the seekbar slider */
 sb-player-seek-slider.miniplayer
@@ -235,13 +302,13 @@ sb-player-seek-slider.miniplayer
   height: 4px !important;
   width: auto !important;
   border: 0px !important;
-  margin-top: 12px !important;
+  margin: 14px 0px 0px 0px !important;
 }
 thumb.sb-player-seek-slider.miniplayer
 {
   width: 11px !important;
   height: 4px !important;
-  background-image: url(chrome://songbird/skin/miniplayer/seekbar_thumb.png) !important;
+  background-image: none;
   background-color: transparent !important;
   background-repeat: no-repeat !important;
   border: 0px !important;
@@ -266,12 +333,12 @@ SPACING
 */
 
 sb-player-playpause-button.miniplayer {
-  margin: 0px 1px 0px 1px !important;
+  margin: 0px 0px 0px 0px !important;
 }
 
 sb-player-mute-button.miniplayer 
 {
-  margin: 0px 5px 0px 5px;
+  margin: 0px 7px 1px 0px;
 }
 
 sb-player-mute-button.miniplayer > .sb-player-mute-button-muteoff > .clickhold-button,
@@ -282,8 +349,8 @@ sb-player-mute-button.miniplayer > .sb-player-mute-button-muteon > .clickhold-bu
 
 .sb-mini-player-controls-volume-box
 {
-  max-width: 130px;
-  margin: 0px 10px 0px 5px;
+  max-width: 106px;
+  margin: 0px 12px 0px 14px;
 }
 
 .sb-mini-player-controls-dash-autoscroll-box 
