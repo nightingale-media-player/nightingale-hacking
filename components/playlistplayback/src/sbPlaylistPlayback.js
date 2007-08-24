@@ -1379,7 +1379,7 @@ PlaylistPlayback.prototype = {
     // taking advantage of that, if we weren't, we'd need to have a _set_metadata_once var or equivalent, to make it so that
     // the first time the metadata needs to be updated, it's done as soon as possible. as is, it always does it the first time
     // the loop is hit, and that suits us, but it's really not clear)
-    
+
     // Wait a bit, and then only ask infrequently
     if ( 
       ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
@@ -1414,28 +1414,39 @@ PlaylistPlayback.prototype = {
         return;
       }
 
-      // If the current title is part of the url, it is okay to overwrite the title.
-      if ( title.length && ( 
+      // If the current title is the default title string (filename), 
+      // it is okay to overwrite the title.
+      var defaultTitle = unescape(this._playURL.stringValue);
+      var lastSlash = defaultTitle.lastIndexOf("/");
+      if (lastSlash >= 0)
+        defaultTitle = defaultTitle.substr(lastSlash + 1);
+      if (( title.length > 0 ) && 
           ( this._metadataTitle.stringValue != title ) &&
-          ( unescape(this._playURL.stringValue).toLowerCase().indexOf( this._metadataTitle.stringValue.toLowerCase() ) != -1 )
-         ) )
+          ( ( this._metadataTitle.stringValue == "" ) ||
+            ( this._metadataTitle.stringValue == defaultTitle )
+          ))
         this._set_metadata = true; 
       else
         title = "";
-      // Only if we have no known artist.
-      if ( artist.length && ((!this._metadataArtist.stringValue) ||
-                              (( this._metadataArtist.stringValue != artist ) &&
-                               (this._playURL.stringValue.toLowerCase().indexOf("http:") == 0))))
+        
+      // Only if we have no known artist (or it is a Stream updating artist)
+      if (( artist.length > 0 ) && 
+          ( this._metadataArtist.stringValue != artist ) &&
+          ( ( this._metadataArtist.stringValue == "" ) ||
+            ( this._playURL.stringValue.toLowerCase().indexOf("http:") == 0 )
+         ))
         this._set_metadata = true; 
       else
         artist = "";
+        
       // Only if we have no known album.
-      if ( album.length && ( this._metadataAlbum.stringValue == "" ) )
+      if ( album.length > 0 && this._metadataAlbum.stringValue == "" )
         this._set_metadata = true; 
       else
         album = "";
+        
       // Only if we have no known genre.
-      if ( genre.length && ( this._metadataGenre.stringValue == "" ) )
+      if ( genre.length > 0 && this._metadataGenre.stringValue == "" )
         this._set_metadata = true; 
       else
         genre = "";
