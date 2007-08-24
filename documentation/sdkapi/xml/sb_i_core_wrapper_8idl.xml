@@ -4,13 +4,13 @@
     <compoundname>sbICoreWrapper.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="352">
+      <node id="356">
         <label>trunk/components/playlistplayback/public/sbICoreWrapper.idl</label>
         <link refid="sbICoreWrapper.idl"/>
-        <childnode refid="353" relation="include">
+        <childnode refid="357" relation="include">
         </childnode>
       </node>
-      <node id="353">
+      <node id="357">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -5,25 +5,25 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_remote_library_8idl" local="yes">trunk/components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <incdepgraph>
-      <node id="387">
+      <node id="391">
         <label>trunk/components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="388" relation="include">
+        <childnode refid="392" relation="include">
         </childnode>
       </node>
-      <node id="388">
+      <node id="392">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="390">
+      <node id="394">
         <label>trunk/components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
       </node>
-      <node id="389">
+      <node id="393">
         <label>trunk/components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="390" relation="include">
+        <childnode refid="394" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

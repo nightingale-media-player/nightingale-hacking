@@ -160,7 +160,7 @@
       <node id="13">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="12" relation="public-inheritance">
+        <childnode refid="10" relation="public-inheritance">
         </childnode>
         <childnode refid="14" relation="usage">
           <edgelabel>device</edgelabel>

@@ -606,15 +606,15 @@
     <member refid="interfacesb_i_library_1106f95a78294350f4def9d57d4c6df4a" kind="variable"><name>factory</name></member>
     <member refid="interfacesb_i_library_17554ccb1c5ea11775ce4d38160492041" kind="variable"><name>mediaListTypes</name></member>
     <member refid="interfacesb_i_library_1bc37a369815fbf2f1174658ce0ec5f98" kind="function"><name>resolve</name></member>
-    <member refid="interfacesb_i_library_16ad2439567765a4d9c2e6d6b4c858c3f" kind="function"><name>createMediaItem</name></member>
+    <member refid="interfacesb_i_library_1a9fe98d3fedb5e8dd8ed597829b8ce56" kind="function"><name>createMediaItem</name></member>
     <member refid="interfacesb_i_library_162f2e88db6d62e1778ee96fbffc7dd1c" kind="function"><name>createMediaList</name></member>
     <member refid="interfacesb_i_library_12d06325f48acd0eb7bd1d3da8d51dda5" kind="function"><name>copyMediaList</name></member>
     <member refid="interfacesb_i_library_18618c5edb57160383e123241856a181d" kind="function"><name>getMediaItem</name></member>
     <member refid="interfacesb_i_library_1f87abee5d36302272e3d842af0bc9125" kind="function"><name>registerMediaListFactory</name></member>
     <member refid="interfacesb_i_library_1103b68674687a92cdb798c8e481aa2f7" kind="function"><name>optimize</name></member>
     <member refid="interfacesb_i_library_1ec308d5681d1e7a38b0783f2fd0730cb" kind="function"><name>sync</name></member>
-    <member refid="interfacesb_i_library_1515ef7c7f287fccc7973ffe21b65d81a" kind="function"><name>batchCreateMediaItems</name></member>
-    <member refid="interfacesb_i_library_14124ed1c2b58237e8584fa19ad67b0c2" kind="function"><name>batchCreateMediaItemsAsync</name></member>
+    <member refid="interfacesb_i_library_15d4add99176f0b5a9d03948d2f0eee3b" kind="function"><name>batchCreateMediaItems</name></member>
+    <member refid="interfacesb_i_library_15236e2cf65e133dff8618b6196817a39" kind="function"><name>batchCreateMediaItemsAsync</name></member>
   </compound>
   <compound refid="interfacesb_i_library_factory" kind="interface"><name>sbILibraryFactory</name>
     <member refid="interfacesb_i_library_factory_143059ced1a47dc3348362f961879bb71" kind="variable"><name>type</name></member>
@@ -1048,39 +1048,40 @@
     <member refid="interfacesb_i_playlist_commands_1272c3e0eb8d5d4f17dadc180b05df3f5" kind="function"><name>shutdownCommands</name></member>
   </compound>
   <compound refid="interfacesb_i_playlist_commands_builder" kind="interface"><name>sbIPlaylistCommandsBuilder</name>
-    <member refid="interfacesb_i_playlist_commands_builder_169f517714f7c3ce7ceb77f632b20d206" kind="function"><name>appendSubmenu</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1616cb58c5a103bc9c0a45a484a3d9595" kind="function"><name>insertSubmenuBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1c459c6abb96d205b96d652785a035d8e" kind="function"><name>insertSubmenuAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1b29c7fbcd92d940738497263b327f301" kind="function"><name>appendAction</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_17f2dc54d979204cce735ef6c1c8bf527" kind="function"><name>insertActionBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_103635eeb5abc7049e9dc689cc6a83b2d" kind="function"><name>insertActionAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1462cc17c4e27a957a11313c00aeee969" kind="function"><name>appendSeparator</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1f6438465c8f5cd33f96c565416d9e2e4" kind="function"><name>insertSeparatorBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_142babe474ec3090d5a0705eb26f54e72" kind="function"><name>insertSeparatorAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_177932db6f0e5c60748748264b11a5539" kind="function"><name>appendFlag</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1113aaf0f8ced0cef5dc4b1a49b9bce14" kind="function"><name>insertFlagBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1f0398e2ab9005259262c529d90abaa28" kind="function"><name>insertFlagAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_15ec5c293317ac413c38bab4a59a5ab79" kind="function"><name>appendValue</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1851536ad39c262f697461dc93f0d8947" kind="function"><name>insertValueBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1b9b2b8b0794ecab1a73e59e4cbf31647" kind="function"><name>insertValueAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1744c8ae32d7f364e44b76dbf589bded3" kind="function"><name>appendChoiceMenu</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_11a91f231b86eabd0c48628699bb716d9" kind="function"><name>insertChoiceMenuBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1a1772a739bd96e53a9fed2ab3560b1a5" kind="function"><name>insertChoiceMenuAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_131f5e85b28bbae2741b50fe62797b73d" kind="function"><name>appendChoiceMenuItem</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_15c10ef066a643dc7546b37141184c092" kind="function"><name>insertChoiceMenuItemBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1507be4a5a8c64c681fa5a560f7df4177" kind="function"><name>insertChoiceMenuItemAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_196022c04a02df60c8cada29d2a26fbba" kind="function"><name>appendCustomItem</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1f344edfd712a1db3f616800f514129ca" kind="function"><name>insertCustomItemBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_10526f7befe7135a216d24910e44d587a" kind="function"><name>insertCustomItemAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1b3b104f58d2660de5daf8e21388b0696" kind="function"><name>appendPlaylistCommands</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_136698d2e4b11803b127ed918a17136c7" kind="function"><name>insertPlaylistCommandsBefore</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1199c84632f12cc8e8d5648dbd4605c70" kind="function"><name>insertPlaylistCommandsAfter</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_183076cbbf256c0ef23c73f408ae7350a" kind="function"><name>setCommandShortcut</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_14eec80d937e2b3116346539c6d15b070" kind="function"><name>setCommandEnabledCallback</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1d89f9931bf35c4798f1bcdbe34e42282" kind="function"><name>setCommandVisibleCallback</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1200fb9b23655a781f2b503aa382a5434" kind="function"><name>setVisibleCallback</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_1b47b0a34e081d1b5165a79c1f6f5fc3e" kind="function"><name>removeCommand</name></member>
-    <member refid="interfacesb_i_playlist_commands_builder_16fb3b2865313477f6d63f08a7fb45576" kind="function"><name>removeAllCommands</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_194fd8f5e8dc4d0dc10b8251fcbef0365" kind="function"><name>appendSubmenu</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" kind="function"><name>insertSubmenuBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" kind="function"><name>insertSubmenuAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" kind="function"><name>appendAction</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" kind="function"><name>insertActionBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" kind="function"><name>insertActionAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" kind="function"><name>appendSeparator</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" kind="function"><name>insertSeparatorBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" kind="function"><name>insertSeparatorAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" kind="function"><name>appendFlag</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" kind="function"><name>insertFlagBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" kind="function"><name>insertFlagAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" kind="function"><name>appendValue</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" kind="function"><name>insertValueBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" kind="function"><name>insertValueAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kind="function"><name>appendChoiceMenu</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" kind="function"><name>insertChoiceMenuBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" kind="function"><name>insertChoiceMenuAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" kind="function"><name>appendChoiceMenuItem</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" kind="function"><name>insertChoiceMenuItemBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" kind="function"><name>insertChoiceMenuItemAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" kind="function"><name>appendCustomItem</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" kind="function"><name>insertCustomItemBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" kind="function"><name>insertCustomItemAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" kind="function"><name>appendPlaylistCommands</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" kind="function"><name>insertPlaylistCommandsBefore</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" kind="function"><name>insertPlaylistCommandsAfter</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" kind="function"><name>setCommandShortcut</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" kind="function"><name>setCommandEnabledCallback</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" kind="function"><name>setCommandVisibleCallback</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" kind="function"><name>setVisibleCallback</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" kind="function"><name>removeCommand</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" kind="function"><name>removeAllCommands</name></member>
+    <member refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" kind="function"><name>shutdown</name></member>
   </compound>
   <compound refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kind="interface"><name>sbIPlaylistCommandsBuilderGetBoolCallback</name>
     <member refid="interfacesb_i_playlist_commands_builder_get_bool_callback_1dd28221117df34d9f67323b019d4198e" kind="function"><name>handleCallback</name></member>
@@ -1088,11 +1089,11 @@
   <compound refid="interfacesb_i_playlist_commands_builder_get_string_callback" kind="interface"><name>sbIPlaylistCommandsBuilderGetStringCallback</name>
     <member refid="interfacesb_i_playlist_commands_builder_get_string_callback_1ab7c43f770940a9adc386eb4cf4b88f3" kind="function"><name>handleCallback</name></member>
   </compound>
-  <compound refid="interfacesb_i_playlist_commands_builder_host_callback" kind="interface"><name>sbIPlaylistCommandsBuilderHostCallback</name>
-    <member refid="interfacesb_i_playlist_commands_builder_host_callback_11143bef0cdc62eb968291a4a0d132b30" kind="function"><name>handleCallback</name></member>
-  </compound>
   <compound refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kind="interface"><name>sbIPlaylistCommandsBuilderInstantiationCallback</name>
     <member refid="interfacesb_i_playlist_commands_builder_instantiation_callback_17276257ac40b7bb907a7875b6e4ab60c" kind="function"><name>handleCallback</name></member>
+  </compound>
+  <compound refid="interfacesb_i_playlist_commands_builder_p_c_callback" kind="interface"><name>sbIPlaylistCommandsBuilderPCCallback</name>
+    <member refid="interfacesb_i_playlist_commands_builder_p_c_callback_1c06159f308076cd636dc7b946e2d5a2f" kind="function"><name>handleCallback</name></member>
   </compound>
   <compound refid="interfacesb_i_playlist_commands_builder_set_value_callback" kind="interface"><name>sbIPlaylistCommandsBuilderSetValueCallback</name>
     <member refid="interfacesb_i_playlist_commands_builder_set_value_callback_11c2b5843c29ccc3f8bb429c748d6f8fc" kind="function"><name>handleCallback</name></member>
@@ -1900,6 +1901,8 @@
   <compound refid="sb_i_leak_canary_8idl" kind="file"><name>sbILeakCanary.idl</name>
   </compound>
   <compound refid="sb_i_test_harness_8idl" kind="file"><name>sbITestHarness.idl</name>
+  </compound>
+  <compound refid="group__playlistcommands" kind="group"><name>playlistcommands</name>
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>

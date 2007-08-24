@@ -45,11 +45,11 @@
 <para>The command object instance to be used for these playlists </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, unregisterPlaylistCommands, playlist.xml </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, unregisterPlaylistCommands, playlist.xml </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627</ulink> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="412"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="418"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_14d7b3bd7eafd494e724aea3dc3d37909" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -93,11 +93,11 @@
 <para>The command object that was registered </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, registerPlaylistCommands, playlist.xml </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, registerPlaylistCommands, playlist.xml </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194</ulink> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736</ulink> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="422"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="430"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1e0955c51878fae0a49d5f65ad3a5356d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -135,7 +135,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="439"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="447"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1c4861ebbacc2d3690b01ba3c245a9e0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -179,11 +179,11 @@
 <para>The command object instance to be used for these playlists </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, unregisterPlaylistCommands, playlist.xml </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, unregisterPlaylistCommands, playlist.xml </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681</ulink> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="456"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="465"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1f4f55b9bca19a4838b0243e8712d4453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -227,11 +227,11 @@
 <para>The command object that was registered </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, registerPlaylistCommands, playlist.xml </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, registerPlaylistCommands, playlist.xml </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741</ulink> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="466"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="476"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1add075eaf8e161fa5dee7b37123a0eb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -269,7 +269,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="483"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="493"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_16d09e15101aba3e2f8e6a5d17c73c9be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -285,12 +285,28 @@
           <declname>aCommandObj</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Publish an <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface for public consumption. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>An <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface may be published so that third party code may reuse them in their own command sets.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCommandGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The GUID identifying this command interface </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandObj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface to publish </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_manager_177c7b69bd536005897ab613fc6a913a6" kindref="member">request</ref>, <ref refid="interfacesb_i_playlist_commands_manager_122398c9895ed02233d68a829ddade0ac" kindref="member">withdraw</ref>, kPlaylistCommands.jsm, <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L539">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L539</ulink> </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="485"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="506"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_122398c9895ed02233d68a829ddade0ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -306,12 +322,28 @@
           <declname>aCommandObj</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Withdraw a previously published <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Note that the original interface must be passed to this function for the call to succeed. Since calling <ref refid="interfacesb_i_playlist_commands_manager_177c7b69bd536005897ab613fc6a913a6" kindref="member">request()</ref> returns a copy of the interface rather than the original interface itself, it means that you cannot withdraw someone else&apos;s interface unless you have access to it directly.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCommandGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The GUID identifying this command interface </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandObj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface to withdraw </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_manager_16d09e15101aba3e2f8e6a5d17c73c9be" kindref="member">publish</ref>, <ref refid="interfacesb_i_playlist_commands_manager_177c7b69bd536005897ab613fc6a913a6" kindref="member">request</ref>, kPlaylistCommands.jsm, <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L694">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L694</ulink> </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="486"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="521"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_177c7b69bd536005897ab613fc6a913a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
@@ -323,19 +355,29 @@
           <declname>aContextGUID</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Request a copy of a published <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCommandGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The GUID identifying this command interface </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A copy of the requested interface, or null if that interface is not in the manager&apos;s repository. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_manager_16d09e15101aba3e2f8e6a5d17c73c9be" kindref="member">publish</ref>, <ref refid="interfacesb_i_playlist_commands_manager_122398c9895ed02233d68a829ddade0ac" kindref="member">withdraw</ref>, kPlaylistCommands.jsm, <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> </para><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130</ulink> </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="487"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="532"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The service used to register, unregister, and list playlist commands for a particular playlist guid or type. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="396" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="395" bodyend="488"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="400" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="399" bodyend="533"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_manager_1e0955c51878fae0a49d5f65ad3a5356d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsManager</scope><name>getPlaylistCommandsMediaItem</name></member>
       <member refid="interfacesb_i_playlist_commands_manager_1add075eaf8e161fa5dee7b37123a0eb6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsManager</scope><name>getPlaylistCommandsMediaList</name></member>

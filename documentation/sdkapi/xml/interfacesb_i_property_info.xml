@@ -495,50 +495,50 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_manager" kindref="compound">sbIPropertyManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="459">
+      <node id="473">
         <label>sbIDatetimePropertyInfo</label>
         <link refid="interfacesb_i_datetime_property_info"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="472" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="458">
+      <node id="472">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="460">
+      <node id="474">
         <label>sbINumberPropertyInfo</label>
         <link refid="interfacesb_i_number_property_info"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="472" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="462">
+      <node id="476">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="461" relation="public-inheritance">
+        <childnode refid="475" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="463">
+      <node id="477">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="472" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="461">
+      <node id="475">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="472" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="464">
+      <node id="478">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="465" relation="usage">
+        <childnode refid="479" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="465">
+      <node id="479">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>

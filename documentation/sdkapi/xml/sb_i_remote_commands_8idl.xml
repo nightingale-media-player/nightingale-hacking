@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteCommands.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="380">
+      <node id="384">
         <label>trunk/components/remoteapi/public/sbIRemoteCommands.idl</label>
         <link refid="sbIRemoteCommands.idl"/>
-        <childnode refid="381" relation="include">
+        <childnode refid="385" relation="include">
         </childnode>
       </node>
-      <node id="381">
+      <node id="385">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

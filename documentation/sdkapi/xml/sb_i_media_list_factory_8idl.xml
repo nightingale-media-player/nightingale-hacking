@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="227">
+      <node id="231">
         <label>trunk/components/library/base/public/sbIMediaListFactory.idl</label>
         <link refid="sbIMediaListFactory.idl"/>
-        <childnode refid="228" relation="include">
+        <childnode refid="232" relation="include">
         </childnode>
       </node>
-      <node id="228">
+      <node id="232">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

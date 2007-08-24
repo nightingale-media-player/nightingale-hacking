@@ -2,7 +2,6 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_library_resource" kind="interface" prot="public">
     <compoundname>sbILibraryResource</compoundname>
-    <derivedcompoundref refid="interfacesb_i_library" prot="public" virt="non-virtual">sbILibrary</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_local_database_resource_property" prot="public" virt="non-virtual">sbILocalDatabaseResourceProperty</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_media_item" prot="public" virt="non-virtual">sbIMediaItem</derivedcompoundref>
     <includes refid="sb_i_library_resource_8idl" local="no">sbILibraryResource.idl</includes>
@@ -200,38 +199,38 @@
 <para>This interface should be implemented by each object of the data model, including libraries, media items, and media lists.</para><para><simplesect kind="see"><para>sbILibraryPropertiesManager </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="183">
+      <node id="189">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="182" relation="public-inheritance">
+        <childnode refid="188" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="181">
+      <node id="187">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="179" relation="public-inheritance">
+        <childnode refid="186" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="180">
+      <node id="190">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="179" relation="public-inheritance">
+        <childnode refid="189" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="179">
+      <node id="186">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="182">
+      <node id="188">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="179" relation="public-inheritance">
+        <childnode refid="186" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="184">
+      <node id="191">
         <label>sbILocalDatabaseSmartMediaList</label>
         <link refid="interfacesb_i_local_database_smart_media_list"/>
-        <childnode refid="183" relation="public-inheritance">
+        <childnode refid="189" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

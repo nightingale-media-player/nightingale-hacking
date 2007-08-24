@@ -2,12 +2,24 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="sb_i_library_8idl" kind="file">
     <compoundname>sbILibrary.idl</compoundname>
-    <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
+    <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
+      <node id="183">
+        <label>sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="184" relation="include">
+        </childnode>
+      </node>
       <node id="182">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="183" relation="include">
+        </childnode>
+      </node>
+      <node id="184">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="183" relation="include">
+        <childnode refid="185" relation="include">
         </childnode>
       </node>
       <node id="181">
@@ -16,7 +28,7 @@
         <childnode refid="182" relation="include">
         </childnode>
       </node>
-      <node id="183">
+      <node id="185">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,7 +66,7 @@
 <codeline lineno="24"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_library_resource_8idl" kindref="compound" tooltip="Definition of the sbILibraryResource interface.">sbILibraryResource.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_media_list_8idl" kindref="compound" tooltip="Definition of the sbIMediaList interface.">sbIMediaList.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
@@ -64,62 +76,63 @@
 <codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref>;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
-<codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref>;</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal">[scriptable,<sp/>uuid(fcdbb044-4214-425e-9103-bce219cb171d)]</highlight></codeline>
-<codeline lineno="51" refid="interfacesb_i_batch_create_media_items_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_batch_create_media_items_listener" kindref="compound" tooltip="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onProgress(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onComplete(in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal">[scriptable,<sp/>uuid(3e6f268a-0eb7-4c3a-bcfa-075058141ca5)]</highlight></codeline>
-<codeline lineno="79" refid="interfacesb_i_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref></highlight></codeline>
-<codeline lineno="80"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="84" refid="interfacesb_i_library_1219c7f4ce3a62c36c374df24cb267d61" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>device;</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89" refid="interfacesb_i_library_124498844eb5629b212440b0b1db0cd17" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsForeignMediaItems;</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94" refid="interfacesb_i_library_1283d3a82ec0021cfc02928330bd99cac" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>creationParameters;</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_library_1106f95a78294350f4def9d57d4c6df4a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref><sp/>factory;</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/>nsIChannel<sp/>resolve(in<sp/>nsIURI<sp/>aUri);</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>createMediaItem(in<sp/>nsIURI<sp/>aContentUri,</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>createMediaList(in<sp/>AString<sp/>aType,</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>copyMediaList(in<sp/>AString<sp/>aType,</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aSource);</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"></highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>getMediaItem(in<sp/>AString<sp/>aGuid);</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"></highlight></codeline>
-<codeline lineno="150" refid="interfacesb_i_library_17554ccb1c5ea11775ce4d38160492041" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>mediaListTypes;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(fcdbb044-4214-425e-9103-bce219cb171d)]</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_batch_create_media_items_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_batch_create_media_items_listener" kindref="compound" tooltip="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onProgress(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onComplete(in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">[scriptable,<sp/>uuid(a1ae0a35-b86a-42e8-b1ba-e4807ac745c2)]</highlight></codeline>
+<codeline lineno="78" refid="interfacesb_i_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="83" refid="interfacesb_i_library_1219c7f4ce3a62c36c374df24cb267d61" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>device;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_library_124498844eb5629b212440b0b1db0cd17" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsForeignMediaItems;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_library_1283d3a82ec0021cfc02928330bd99cac" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>creationParameters;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_library_1106f95a78294350f4def9d57d4c6df4a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref><sp/>factory;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>nsIChannel<sp/>resolve(in<sp/>nsIURI<sp/>aUri);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>createMediaItem(in<sp/>nsIURI<sp/>aContentUri,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aAllowDuplicates);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>createMediaList(in<sp/>AString<sp/>aType,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>copyMediaList(in<sp/>AString<sp/>aType,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aSource);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>getMediaItem(in<sp/>AString<sp/>aGuid);</highlight></codeline>
 <codeline lineno="151"><highlight class="normal"></highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerMediaListFactory(in<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref><sp/>aFactory);</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="162"><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="163"><highlight class="comment"><sp/><sp/>AString<sp/>getPreferedAudioMimeType();</highlight></codeline>
-<codeline lineno="164"><highlight class="comment"><sp/><sp/>AString<sp/>getPreferedVideoMimeType();</highlight></codeline>
-<codeline lineno="165"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="166"><highlight class="normal"></highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>optimize();</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"></highlight></codeline>
-<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>sync();</highlight></codeline>
+<codeline lineno="155" refid="interfacesb_i_library_17554ccb1c5ea11775ce4d38160492041" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>mediaListTypes;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerMediaListFactory(in<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref><sp/>aFactory);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/><sp/>AString<sp/>getPreferedAudioMimeType();</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/><sp/>AString<sp/>getPreferedVideoMimeType();</highlight></codeline>
+<codeline lineno="170"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>optimize();</highlight></codeline>
 <codeline lineno="178"><highlight class="normal"></highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/>nsIArray<sp/>batchCreateMediaItems(in<sp/>nsIArray<sp/>aURIArray,</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsIArray<sp/>aPropertyArrayArray);</highlight></codeline>
-<codeline lineno="190"><highlight class="normal"></highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>batchCreateMediaItemsAsync(in<sp/><ref refid="interfacesb_i_batch_create_media_items_listener" kindref="compound" tooltip="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</ref><sp/>aListener,</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aURIArray,</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsIArray<sp/>aPropertyArrayArray);</highlight></codeline>
-<codeline lineno="202"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>sync();</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/>nsIArray<sp/>batchCreateMediaItems(in<sp/>nsIArray<sp/>aURIArray,</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsIArray<sp/>aPropertyArrayArray,</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aAllowDuplicates);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>batchCreateMediaItemsAsync(in<sp/><ref refid="interfacesb_i_batch_create_media_items_listener" kindref="compound" tooltip="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</ref><sp/>aListener,</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aURIArray,</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsIArray<sp/>aPropertyArrayArray,</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aAllowDuplicates);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl"/>
   </compounddef>

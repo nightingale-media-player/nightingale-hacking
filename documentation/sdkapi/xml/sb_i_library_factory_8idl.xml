@@ -4,13 +4,13 @@
     <compoundname>sbILibraryFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="185">
+      <node id="187">
         <label>trunk/components/library/base/public/sbILibraryFactory.idl</label>
         <link refid="sbILibraryFactory.idl"/>
-        <childnode refid="186" relation="include">
+        <childnode refid="188" relation="include">
         </childnode>
       </node>
-      <node id="186">
+      <node id="188">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

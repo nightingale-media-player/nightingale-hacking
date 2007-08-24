@@ -5,34 +5,34 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="318">
+      <node id="322">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="317" relation="include">
+        <childnode refid="321" relation="include">
         </childnode>
-        <childnode refid="319" relation="include">
+        <childnode refid="323" relation="include">
         </childnode>
-        <childnode refid="320" relation="include">
-        </childnode>
-      </node>
-      <node id="316">
-        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
-        <link refid="sbIMetadataManager.idl"/>
-        <childnode refid="317" relation="include">
-        </childnode>
-        <childnode refid="318" relation="include">
+        <childnode refid="324" relation="include">
         </childnode>
       </node>
       <node id="320">
-        <label>sbIMetadataValues.idl</label>
-        <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="317" relation="include">
+        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+        <link refid="sbIMetadataManager.idl"/>
+        <childnode refid="321" relation="include">
+        </childnode>
+        <childnode refid="322" relation="include">
         </childnode>
       </node>
-      <node id="317">
+      <node id="324">
+        <label>sbIMetadataValues.idl</label>
+        <link refid="sb_i_metadata_values_8idl"/>
+        <childnode refid="321" relation="include">
+        </childnode>
+      </node>
+      <node id="321">
         <label>nsISupports.idl</label>
       </node>
-      <node id="319">
+      <node id="323">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>

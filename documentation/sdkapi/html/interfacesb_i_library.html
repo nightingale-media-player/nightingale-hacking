@@ -8,6 +8,7 @@
 <div class="tabs">
   <ul>
     <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+    <li><a href="modules.html"><span>Modules</span></a></li>
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
@@ -20,7 +21,7 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbILibrary Interface Reference</h1><!-- doxytag: class="sbILibrary" --><!-- doxytag: inherits="sbILibraryResource" -->Media library abstraction.  
+<h1>sbILibrary Interface Reference</h1><!-- doxytag: class="sbILibrary" --><!-- doxytag: inherits="sbIMediaList" -->Media library abstraction.  
 <a href="#_details">More...</a>
 <p>
 <code>import &quot;<a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a>&quot;;</code>
@@ -28,6 +29,8 @@
 <p>Inheritance diagram for sbILibrary:
 <p><center><img src="interfacesb_i_library.png" usemap="#sbILibrary_map" border="0" alt=""></center>
 <map name="sbILibrary_map">
+<area href="interfacesb_i_media_list.html" alt="sbIMediaList" shape="rect" coords="0,112,123,136">
+<area href="interfacesb_i_media_item.html" alt="sbIMediaItem" shape="rect" coords="0,56,123,80">
 <area href="interfacesb_i_library_resource.html" alt="sbILibraryResource" shape="rect" coords="0,0,123,24">
 </map>
 <a href="interfacesb_i_library-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
@@ -36,9 +39,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsIChannel&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#bc37a369815fbf2f1174658ce0ec5f98">resolve</a> (in nsIURI aUri)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Resolves a songbird schemed URL to a channel. Throws an exception if the item referenced in the URL is not found.  <a href="#bc37a369815fbf2f1174658ce0ec5f98"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#6ad2439567765a4d9c2e6d6b4c858c3f">createMediaItem</a> (in nsIURI aContentUri,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#a9fe98d3fedb5e8dd8ed597829b8ce56">createMediaItem</a> (in nsIURI aContentUri,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties,[optional] in boolean aAllowDuplicates)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new media item  aContentUri The URI pointing to the content of the new media item.  <a href="#6ad2439567765a4d9c2e6d6b4c858c3f"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new media item  aContentUri The URI pointing to the content of the new media item.  <a href="#a9fe98d3fedb5e8dd8ed597829b8ce56"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#62f2e88db6d62e1778ee96fbffc7dd1c">createMediaList</a> (in AString aType,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new media list.  <a href="#62f2e88db6d62e1778ee96fbffc7dd1c"></a><br></td></tr>
@@ -59,12 +62,12 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#ec308d5681d1e7a38b0783f2fd0730cb">sync</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the library should save any cached data to disk. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#515ef7c7f287fccc7973ffe21b65d81a">batchCreateMediaItems</a> (in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#5d4add99176f0b5a9d03948d2f0eee3b">batchCreateMediaItems</a> (in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create many media items from a list of URIs, and notify their addition.  <a href="#515ef7c7f287fccc7973ffe21b65d81a"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#4124ed1c2b58237e8584fa19ad67b0c2">batchCreateMediaItemsAsync</a> (in <a class="el" href="interfacesb_i_batch_create_media_items_listener.html">sbIBatchCreateMediaItemsListener</a> aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create many media items from a list of URIs, and notify their addition.  <a href="#5d4add99176f0b5a9d03948d2f0eee3b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#5236e2cf65e133dff8618b6196817a39">batchCreateMediaItemsAsync</a> (in <a class="el" href="interfacesb_i_batch_create_media_items_listener.html">sbIBatchCreateMediaItemsListener</a> aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Asychronously create many media items from a list of URIs.  <a href="#4124ed1c2b58237e8584fa19ad67b0c2"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Asychronously create many media items from a list of URIs.  <a href="#5236e2cf65e133dff8618b6196817a39"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="219c7f4ce3a62c36c374df24cb267d61"></a><!-- doxytag: member="sbILibrary::device" ref="219c7f4ce3a62c36c374df24cb267d61" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_device.html">sbIDevice</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#219c7f4ce3a62c36c374df24cb267d61">device</a></td></tr>
@@ -96,7 +99,7 @@ The library interface is the primary means of exposing media library data to Son
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_library_8idl-source.html#l00079">79</a> of file <a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_library_8idl-source.html#l00078">78</a> of file <a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="bc37a369815fbf2f1174658ce0ec5f98"></a><!-- doxytag: member="sbILibrary::resolve" ref="bc37a369815fbf2f1174658ce0ec5f98" args="(in nsIURI aUri)" -->
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +128,7 @@ Resolves a songbird schemed URL to a channel. Throws an exception if the item re
 
 </div>
 </div><p>
-<a class="anchor" name="6ad2439567765a4d9c2e6d6b4c858c3f"></a><!-- doxytag: member="sbILibrary::createMediaItem" ref="6ad2439567765a4d9c2e6d6b4c858c3f" args="(in nsIURI aContentUri,[optional] in sbIPropertyArray aProperties)" -->
+<a class="anchor" name="a9fe98d3fedb5e8dd8ed597829b8ce56"></a><!-- doxytag: member="sbILibrary::createMediaItem" ref="a9fe98d3fedb5e8dd8ed597829b8ce56" args="(in nsIURI aContentUri,[optional] in sbIPropertyArray aProperties,[optional] in boolean aAllowDuplicates)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -139,7 +142,13 @@ Resolves a songbird schemed URL to a channel. Throws an exception if the item re
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td>
-          <td class="paramname"> <em>aProperties</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aProperties</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aAllowDuplicates</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -156,6 +165,7 @@ Creates a new media item  aContentUri The URI pointing to the content of the new
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aProperties</em>&nbsp;</td><td>Optional initial properties for this new item </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aAllowDuplicates</em>&nbsp;</td><td>If false, an attempt to create a new media item with a content URI that already exists in the library will simply return the existing item rather than creating a new one. If true, a new media item will be created with the specified content URI regardless if it is a duplicate. The default is false. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>A new, persisted media item </dd></dl>
@@ -293,7 +303,7 @@ Register a new media list type at run time.
 
 </div>
 </div><p>
-<a class="anchor" name="515ef7c7f287fccc7973ffe21b65d81a"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItems" ref="515ef7c7f287fccc7973ffe21b65d81a" args="(in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray)" -->
+<a class="anchor" name="5d4add99176f0b5a9d03948d2f0eee3b"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItems" ref="5d4add99176f0b5a9d03948d2f0eee3b" args="(in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -307,7 +317,13 @@ Register a new media list type at run time.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">[optional] in nsIArray&nbsp;</td>
-          <td class="paramname"> <em>aPropertyArrayArray</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aPropertyArrayArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aAllowDuplicates</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -325,13 +341,14 @@ Create many media items from a list of URIs, and notify their addition.
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aURIArray</em>&nbsp;</td><td>nsIArray of nsIURI objects </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aPropertyArrayArray</em>&nbsp;</td><td>Optional array of <a class="el" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>. If specified, the properties specified at each array index will be used in the creation of the new media item at the same array index. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aAllowDuplicates</em>&nbsp;</td><td>If false, URIs specified in aURIArray that already exist in the library will not be created and not returned. If true, media items will be created for all of the URIs specified regardless if they already exist. The default is false. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>nsIArray of the new <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> objects </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="4124ed1c2b58237e8584fa19ad67b0c2"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItemsAsync" ref="4124ed1c2b58237e8584fa19ad67b0c2" args="(in sbIBatchCreateMediaItemsListener aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray)" -->
+<a class="anchor" name="5236e2cf65e133dff8618b6196817a39"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItemsAsync" ref="5236e2cf65e133dff8618b6196817a39" args="(in sbIBatchCreateMediaItemsListener aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -351,7 +368,13 @@ Create many media items from a list of URIs, and notify their addition.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">[optional] in nsIArray&nbsp;</td>
-          <td class="paramname"> <em>aPropertyArrayArray</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aPropertyArrayArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aAllowDuplicates</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -370,6 +393,7 @@ Asychronously create many media items from a list of URIs.
     <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>Listener to receive progress and complete notifications </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aURIArray</em>&nbsp;</td><td>nsIArray of nsIURI objects </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aPropertyArrayArray</em>&nbsp;</td><td>Optional array of <a class="el" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>. If specified, the properties specified at each array index will be used in the creation of the new media item at the same array index. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aAllowDuplicates</em>&nbsp;</td><td>If false, URIs specified in aURIArray that already exist in the library will not be created and not returned. If true, media items will be created for all of the URIs specified regardless if they already exist. The default is false. </td></tr>
   </table>
 </dl>
 
@@ -377,7 +401,7 @@ Asychronously create many media items from a list of URIs.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>trunk/components/library/base/public/<a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:42:57 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:46:29 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

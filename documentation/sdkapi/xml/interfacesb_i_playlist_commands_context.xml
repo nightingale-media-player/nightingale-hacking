@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="371" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="371" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="375" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="375" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="376" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="376" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="380" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="380" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIDOMWindow</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="381" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="381" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="385" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="385" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_11d8e53e9b4ad2510701628472a36643f" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="386" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="386" bodyend="-1"/>
+        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="390" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="390" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -61,72 +61,78 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="397">
+      <node id="410">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="396">
+      <node id="405">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="402" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="409">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="389">
+      <node id="401">
         <label>sbIPlaylistCommandsContext</label>
         <link refid="interfacesb_i_playlist_commands_context"/>
-        <childnode refid="390" relation="usage">
+        <childnode refid="402" relation="usage">
           <edgelabel>medialist</edgelabel>
         </childnode>
-        <childnode refid="397" relation="usage">
+        <childnode refid="410" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
       </node>
-      <node id="393">
+      <node id="406">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="394" relation="usage">
+        <childnode refid="407" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="396" relation="usage">
+        <childnode refid="409" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="392">
+      <node id="404">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="391" relation="public-inheritance">
+        <childnode refid="405" relation="public-inheritance">
         </childnode>
-        <childnode refid="393" relation="usage">
+        <childnode refid="406" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="395" relation="usage">
+        <childnode refid="408" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="391">
+      <node id="403">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="390">
+      <node id="402">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="391" relation="public-inheritance">
+        <childnode refid="403" relation="public-inheritance">
         </childnode>
-        <childnode refid="392" relation="usage">
+        <childnode refid="404" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="394">
+      <node id="407">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="395" relation="usage">
+        <childnode refid="408" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="395">
+      <node id="408">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="367" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="366" bodyend="387"/>
+    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="371" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="370" bodyend="391"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_context_11d8e53e9b4ad2510701628472a36643f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>commands</name></member>
       <member refid="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>medialist</name></member>

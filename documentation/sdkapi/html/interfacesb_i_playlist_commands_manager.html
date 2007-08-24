@@ -8,6 +8,7 @@
 <div class="tabs">
   <ul>
     <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+    <li><a href="modules.html"><span>Modules</span></a></li>
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
@@ -44,13 +45,22 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands_manager.html#add075eaf8e161fa5dee7b37123a0eb6">getPlaylistCommandsMediaList</a> (in AString aContextGUID, in AString aPlaylistType)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Retrieve the list of <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> objects to be used for a specific playlist.  <a href="#add075eaf8e161fa5dee7b37123a0eb6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands_manager.html#6d09e15101aba3e2f8e6a5d17c73c9be">publish</a> (in AString aCommandGUID, in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> aCommandObj)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Publish an <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface for public consumption.  <a href="#6d09e15101aba3e2f8e6a5d17c73c9be"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands_manager.html#22398c9895ed02233d68a829ddade0ac">withdraw</a> (in AString aCommandGUID, in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> aCommandObj)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Withdraw a previously published <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface.  <a href="#22398c9895ed02233d68a829ddade0ac"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands_manager.html#77c7b69bd536005897ab613fc6a913a6">request</a> (in AString aContextGUID)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request a copy of a published <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface.  <a href="#77c7b69bd536005897ab613fc6a913a6"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The service used to register, unregister, and list playlist commands for a particular playlist guid or type. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_commands_8idl-source.html#l00395">395</a> of file <a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_playlist_commands_8idl-source.html#l00399">399</a> of file <a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="d43255300ff79bffb9d103d4647de36d"></a><!-- doxytag: member="sbIPlaylistCommandsManager::registerPlaylistCommandsMediaItem" ref="d43255300ff79bffb9d103d4647de36d" args="(in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj)" -->
 <div class="memitem">
 <div class="memproto">
@@ -94,7 +104,9 @@ Commands can be registered for a spcific playlist, or for any "type" characteris
     <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The command object instance to be used for these playlists </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, unregisterPlaylistCommands, playlist.xml </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, unregisterPlaylistCommands, playlist.xml <p>
+<a href="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154</a> <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627</a> </dd></dl>
 
 </div>
 </div><p>
@@ -139,7 +151,9 @@ Unregister a <a class="el" href="interfacesb_i_playlist_commands.html" title="An
     <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The command object that was registered </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, registerPlaylistCommands, playlist.xml </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, registerPlaylistCommands, playlist.xml <p>
+<a href="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194</a> <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736</a> </dd></dl>
 
 </div>
 </div><p>
@@ -228,7 +242,8 @@ Commands can be registered for a spcific playlist, or for any "type" characteris
     <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The command object instance to be used for these playlists </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, unregisterPlaylistCommands, playlist.xml </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, unregisterPlaylistCommands, playlist.xml <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681</a> </dd></dl>
 
 </div>
 </div><p>
@@ -273,7 +288,8 @@ Unregister a <a class="el" href="interfacesb_i_playlist_commands.html" title="An
     <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The command object that was registered </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, registerPlaylistCommands, playlist.xml </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a>, registerPlaylistCommands, playlist.xml <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741</a> </dd></dl>
 
 </div>
 </div><p>
@@ -319,9 +335,119 @@ This method is only called by the playlist UI object, in playlist.xml<p>
 
 </div>
 </div><p>
+<a class="anchor" name="6d09e15101aba3e2f8e6a5d17c73c9be"></a><!-- doxytag: member="sbIPlaylistCommandsManager::publish" ref="6d09e15101aba3e2f8e6a5d17c73c9be" args="(in AString aCommandGUID, in sbIPlaylistCommands aCommandObj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistCommandsManager::publish           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aCommandGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td>
+          <td class="paramname"> <em>aCommandObj</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Publish an <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface for public consumption. 
+<p>
+An <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface may be published so that third party code may reuse them in their own command sets.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCommandGUID</em>&nbsp;</td><td>The GUID identifying this command interface </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The interface to publish </td></tr>
+  </table>
+</dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands_manager.html#77c7b69bd536005897ab613fc6a913a6" title="Request a copy of a published sbIPlaylistCommands interface.">request</a>, <a class="el" href="interfacesb_i_playlist_commands_manager.html#22398c9895ed02233d68a829ddade0ac" title="Withdraw a previously published sbIPlaylistCommands interface.">withdraw</a>, kPlaylistCommands.jsm, <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L539">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L539</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="22398c9895ed02233d68a829ddade0ac"></a><!-- doxytag: member="sbIPlaylistCommandsManager::withdraw" ref="22398c9895ed02233d68a829ddade0ac" args="(in AString aCommandGUID, in sbIPlaylistCommands aCommandObj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistCommandsManager::withdraw           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aCommandGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td>
+          <td class="paramname"> <em>aCommandObj</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Withdraw a previously published <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface. 
+<p>
+Note that the original interface must be passed to this function for the call to succeed. Since calling <a class="el" href="interfacesb_i_playlist_commands_manager.html#77c7b69bd536005897ab613fc6a913a6" title="Request a copy of a published sbIPlaylistCommands interface.">request()</a> returns a copy of the interface rather than the original interface itself, it means that you cannot withdraw someone else's interface unless you have access to it directly.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCommandGUID</em>&nbsp;</td><td>The GUID identifying this command interface </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCommandObj</em>&nbsp;</td><td>The interface to withdraw </td></tr>
+  </table>
+</dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands_manager.html#6d09e15101aba3e2f8e6a5d17c73c9be" title="Publish an sbIPlaylistCommands interface for public consumption.">publish</a>, <a class="el" href="interfacesb_i_playlist_commands_manager.html#77c7b69bd536005897ab613fc6a913a6" title="Request a copy of a published sbIPlaylistCommands interface.">request</a>, kPlaylistCommands.jsm, <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> <p>
+<a href="http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L694">http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L694</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="77c7b69bd536005897ab613fc6a913a6"></a><!-- doxytag: member="sbIPlaylistCommandsManager::request" ref="77c7b69bd536005897ab613fc6a913a6" args="(in AString aContextGUID)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> sbIPlaylistCommandsManager::request           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aContextGUID</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Request a copy of a published <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> interface. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCommandGUID</em>&nbsp;</td><td>The GUID identifying this command interface </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A copy of the requested interface, or null if that interface is not in the manager's repository. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands_manager.html#6d09e15101aba3e2f8e6a5d17c73c9be" title="Publish an sbIPlaylistCommands interface for public consumption.">publish</a>, <a class="el" href="interfacesb_i_playlist_commands_manager.html#22398c9895ed02233d68a829ddade0ac" title="Withdraw a previously published sbIPlaylistCommands interface.">withdraw</a>, kPlaylistCommands.jsm, <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> <p>
+<a href="http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130">http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130</a> </dd></dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>trunk/components/playlistcommands/public/<a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:42:58 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:46:31 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

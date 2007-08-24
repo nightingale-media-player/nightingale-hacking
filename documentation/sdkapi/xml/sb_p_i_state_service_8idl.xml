@@ -4,13 +4,13 @@
     <compoundname>sbPIStateService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="423">
+      <node id="427">
         <label>trunk/components/state/public/sbPIStateService.idl</label>
         <link refid="sbPIStateService.idl"/>
-        <childnode refid="424" relation="include">
+        <childnode refid="428" relation="include">
         </childnode>
       </node>
-      <node id="424">
+      <node id="428">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

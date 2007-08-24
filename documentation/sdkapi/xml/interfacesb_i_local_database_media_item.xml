@@ -36,14 +36,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="225">
+      <node id="232">
         <label>sbILocalDatabaseMediaItem</label>
         <link refid="interfacesb_i_local_database_media_item"/>
-        <childnode refid="226" relation="usage">
+        <childnode refid="233" relation="usage">
           <edgelabel>propertyBag</edgelabel>
         </childnode>
       </node>
-      <node id="226">
+      <node id="233">
         <label>sbILocalDatabaseResourcePropertyBag</label>
         <link refid="interfacesb_i_local_database_resource_property_bag"/>
       </node>

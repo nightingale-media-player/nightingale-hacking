@@ -1025,87 +1025,87 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref> An interface that describes the PlaylistPlayback Service </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="404">
+      <node id="417">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="405" relation="public-inheritance">
+        <childnode refid="418" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="401">
+      <node id="414">
         <label>sbIPlaylistPlayback</label>
         <link refid="interfacesb_i_playlist_playback"/>
-        <childnode refid="402" relation="usage">
+        <childnode refid="415" relation="usage">
           <edgelabel>core</edgelabel>
         </childnode>
-        <childnode refid="403" relation="usage">
+        <childnode refid="416" relation="usage">
           <edgelabel>playingView</edgelabel>
         </childnode>
       </node>
-      <node id="403">
+      <node id="416">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="404" relation="usage">
+        <childnode refid="417" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="412" relation="usage">
+        <childnode refid="425" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="402">
+      <node id="415">
         <label>sbICoreWrapper</label>
         <link refid="interfacesb_i_core_wrapper"/>
       </node>
-      <node id="411">
+      <node id="424">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="408">
+      <node id="421">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="409" relation="usage">
+        <childnode refid="422" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="411" relation="usage">
+        <childnode refid="424" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="407">
+      <node id="420">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="406" relation="public-inheritance">
+        <childnode refid="417" relation="public-inheritance">
         </childnode>
-        <childnode refid="408" relation="usage">
+        <childnode refid="421" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="410" relation="usage">
+        <childnode refid="423" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="412">
+      <node id="425">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="406">
+      <node id="419">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="405">
+      <node id="418">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="406" relation="public-inheritance">
+        <childnode refid="419" relation="public-inheritance">
         </childnode>
-        <childnode refid="407" relation="usage">
+        <childnode refid="420" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="409">
+      <node id="422">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="410" relation="usage">
+        <childnode refid="423" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="410">
+      <node id="423">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>

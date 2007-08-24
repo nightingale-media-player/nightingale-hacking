@@ -114,67 +114,73 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="308">
+      <node id="315">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="312" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="319">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="305">
+      <node id="316">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="306" relation="usage">
+        <childnode refid="317" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="308" relation="usage">
+        <childnode refid="319" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="304">
+      <node id="314">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="303" relation="public-inheritance">
+        <childnode refid="315" relation="public-inheritance">
         </childnode>
-        <childnode refid="305" relation="usage">
+        <childnode refid="316" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="307" relation="usage">
+        <childnode refid="318" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="303">
+      <node id="313">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="302">
+      <node id="312">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="303" relation="public-inheritance">
+        <childnode refid="313" relation="public-inheritance">
         </childnode>
-        <childnode refid="304" relation="usage">
+        <childnode refid="314" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="306">
+      <node id="317">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="307" relation="usage">
+        <childnode refid="318" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="307">
+      <node id="318">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="301">
+      <node id="311">
         <label>sbIMediaListViewTreeView</label>
         <link refid="interfacesb_i_media_list_view_tree_view"/>
-        <childnode refid="302" relation="usage">
+        <childnode refid="312" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
-        <childnode refid="309" relation="usage">
+        <childnode refid="320" relation="usage">
           <edgelabel>observer</edgelabel>
         </childnode>
       </node>
-      <node id="309">
+      <node id="320">
         <label>sbIMediaListViewTreeViewObserver</label>
         <link refid="interfacesb_i_media_list_view_tree_view_observer"/>
       </node>

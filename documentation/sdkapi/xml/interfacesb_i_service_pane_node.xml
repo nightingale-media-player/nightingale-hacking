@@ -421,22 +421,22 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="508">
+      <node id="522">
         <label>sbIServicePaneNodeInternal</label>
         <link refid="interfacesb_i_service_pane_node_internal"/>
-        <childnode refid="507" relation="public-inheritance">
+        <childnode refid="521" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="507">
+      <node id="521">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="509">
+      <node id="523">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
-        <childnode refid="509" relation="usage">
+        <childnode refid="523" relation="usage">
           <edgelabel>previousSibling
 parentNode
 firstChild
