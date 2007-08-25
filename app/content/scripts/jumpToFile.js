@@ -222,6 +222,7 @@ try
   var string_searchedby = "Searched by";
   var string_filteredby = "Filtered by";
   var string_library = "Library";
+  var string_unknown = "Unknown Playlist";
 
   //var playingRef_remote;
   var showWebPlaylist_remote;
@@ -250,6 +251,7 @@ try
       string_searchedby = songbirdStrings.GetStringFromName("jumptofile.searchedby");
       string_filteredby = songbirdStrings.GetStringFromName("jumptofile.filteredby");
       string_library = songbirdStrings.GetStringFromName("jumptofile.library");
+      string_unknown = songbirdStrings.GetStringFromName("jumptofile.unknown");
     } catch (err) { /* ignore error, we have default strings */ }
 
     playingUrl_remote = SB_NewDataRemote( "faceplate.play.url", null );
@@ -410,6 +412,11 @@ try
 
   function _selectPlaylist( guid, libraryguid ) {
     var menulist = document.getElementById("playable_list");
+    var item = document.getElementById("current_play_queue");
+    // set default, if we don't find the list, we'll use that item to display
+    // the unknown playlist
+    menulist.selectedItem = item;
+    // look for the playlist and select it
     menulist.menupopup.builder.addListener( JumpToPlaylistListListener );
     JumpToPlaylistListListener.didRebuild();
   }
@@ -586,55 +593,89 @@ try
   
   function _updateSubSearchItem(search, filters) {
     var item = document.getElementById("current_play_queue");
+    var menulist = document.getElementById("playable_list");
     // show or hide and customize the "Current Play Queue" item according to the presence or absence of a search string and filters
     var no_search = (!search || search == "");
     var no_filter = !_hasFilters(filters);
-    if (no_search && no_filter) {
+    if (no_search && no_filter && menulist.selectedItem != item) {
+      // We do not need the extra item, what we're showing was found in the
+      // datasource, and has no extra filter or search. Hide the extra item.
       item.setAttribute("hidden", "true");
     } else {
-      item.setAttribute("hidden", "false");
+      // We need the extra item, show it.
       var label = ""
-      if (!(no_search && no_filter)) {
-        var cat = "";
-        if (!no_search) cat = string_searchedby + ' "' + search + '"';
-        if (_hasFilters(filters)) { // test the actual content of each filter entry
-          if (cat != "") cat += ", ";
-          cat += string_filteredby + ' ';
-          var nactualfilters = 0;
-          for (var i=0;i<filters.length;i++) {
-            if (nactualfilters > 0) cat += ", ";
-            cat += _mixedCase(filters[i][2]);
-            nactualfilters++;
+      item.setAttribute("hidden", "false");
+      // Did we find the playlist we were looking for in the datasource ?
+      if (menulist.selectedItem == item) {
+        // No, we didn't ! To summarize,
+        // The selected playlist is the current play queue, however it was not
+        // found in the list of playlists. This means one of several possible scenarios:
+        // 1) This is a normal playlist that is just not part of the datasource on
+        // purpose, maybe an extension manages it ? It's not in the servicetree 
+        // but it may still have a name, so try to grab it.
+        label = this.getPlaylistLabel(source_guid, source_libraryguid);
+        // 2) If no name was found, this may be because the playlist in question
+        // is a webplaylist, these have no assigned name, so try to grab the
+        // originPage property.
+        if (!label) label = this.getPlaylistOriginPage(source_guid, source_libraryguid);
+        // 3) If that's still not it, we are showing a playlist that has no name,
+        // no originPage property, no nothing that we can show to describe it
+        // in any meaningful way to the user, so use a default string.
+        if (!label) label = string_unknown;
+      } else {
+        // We did find the playlist we want to show, but it has filters and/or
+        // search terms, cook up a string that describes these.
+        if (!(no_search && no_filter)) {
+          var cat = "";
+          if (!no_search) cat = string_searchedby + ' "' + search + '"';
+          if (_hasFilters(filters)) { // test the actual content of each filter entry
+            if (cat != "") cat += ", ";
+            cat += string_filteredby + ' ';
+            var nactualfilters = 0;
+            for (var i=0;i<filters.length;i++) {
+              if (nactualfilters > 0) cat += ", ";
+              cat += _mixedCase(filters[i][2]);
+              nactualfilters++;
+            }
           }
-        }
-        if (cat != "") {
-          if (source_guid == defaultlibraryguid) label = string_library + " " + cat;
-          else {
-            var pllabel = getPlaylistLabel(source_guid, source_libraryguid);
-            if (pllabel) label += pllabel + ' ' + cat;
-            else label += cat ;
+          if (cat != "") {
+            if (source_guid == defaultlibraryguid) label = string_library + " " + cat;
+            else {
+              var pllabel = getPlaylistLabel(source_guid, source_libraryguid);
+              if (pllabel) label += pllabel + ' ' + cat;
+              else label += cat ;
+            }
           }
         }
       }
+      // Set the extra item's label, it describes what we are showing.
       item.setAttribute("label", label);
-      var list = document.getElementById("playable_list");
-      if (list.selectedItem == item) {
-        list.selectedItem = null; 
-        list.selectedItem = item; 
-      }
     }
   }
   
   function getPlaylistLabel(guid, libraryguid) {
-    var library = libraryManager.getLibrary( libraryguid );
-    if (library) {
-      if (libraryguid == guid) return library.name;
-      var item = library.getMediaItem(guid);
-      return item.name;
-    }
-    return "Unknown";
+    try {
+      var library = libraryManager.getLibrary( libraryguid );
+      if (library) {
+        if (libraryguid == guid) return library.name;
+        var item = library.getMediaItem(guid);
+        return item.name;
+      }
+    } catch (e) {}
+    return "";
   }
   
+  function getPlaylistOriginPage(guid, libraryguid) {
+    try {
+      var library = libraryManager.getLibrary( libraryguid );
+      if (library) {
+        if (libraryguid == guid) return library.getProperty(SBProperties.originPage);
+        var item = library.getMediaItem(guid);
+        return item.getProperty(SBProperties.originPage);
+      }
+    } catch (e) {}
+    return "";
+  }
 
   function _getSearchString( view ) {
     var props = view.currentSearch;
@@ -659,11 +700,11 @@ try
       var filters = [];
       for (var i=0;i<n;i++) {
 	      var prop = properties.getPropertyAt(i);
+
+	      if (!this._isInCascadeFilterSet(view, prop.name)) continue;
+
 	      // Get the property info for the property
 	      var info = pm.getPropertyInfo(prop.name);
-	      
-	      // XXXlone hack hack hack
-	      if (info.name == "http://songbirdnest.com/data/1.0#originURL") continue;
 	      
         filters.push( [ prop.name, 
                         prop.value,
@@ -671,6 +712,15 @@ try
       }
     }
     return filters;
+  }
+  
+  function _isInCascadeFilterSet(view, prop) {
+    var cfs = view.cascadeFilterSet;
+    if (!cfs || cfs.length <= 0) return false;
+    for (var i=0;i<cfs.length;i++) {
+      if (cfs.getProperty(i) == prop) return true;
+    }
+    return false;
   }
 
   function _resetFilters( view ) {
