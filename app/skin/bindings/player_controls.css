@@ -68,22 +68,22 @@ Play/Pause, Previous (back), Next (forward)
 .sb-player-playpause-button-play > button
 {  
   list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
-  -moz-image-region: rect(108px 142px 161px 91px);
+  -moz-image-region: rect(108px 141px 161px 91px);
 }
 .sb-player-play-button-play > button:hover,
 .sb-player-playpause-button-play > button:hover
 {
-  -moz-image-region: rect(54px 142px 107px 91px);
+  -moz-image-region: rect(54px 141px 107px 91px);
 }
 .sb-player-play-button-play > button:active,
 .sb-player-playpause-button-play > button:active
 {
-  -moz-image-region: rect(0px 142px 53px 91px);
+  -moz-image-region: rect(0px 141px 53px 91px);
 }
 .sb-player-play-button-play > button[disabled="true"],
 .sb-player-playpause-button-play > button[disabled="true"]
 {
-  -moz-image-region: rect(162px 142px 215px 91px);
+  -moz-image-region: rect(162px 141px 215px 91px);
 }
 
 
