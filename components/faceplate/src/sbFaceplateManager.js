@@ -203,6 +203,9 @@ FaceplateManager.prototype = {
   // Map of pane IDs to sbIFaceplatePanes
   _panes: null,
   
+  // Most recently shown pane ID
+  _defaultPaneID: null,
+  
   /**
    * Initialize the faceplate manager. Called after profile load.
    * Sets up the intro pane and playback dashboard pane.
@@ -283,6 +286,7 @@ FaceplateManager.prototype = {
     if (!aPane || !aPane.id || !this._panes[aPane.id]) {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
+    this._defaultPaneID = aPane.id;
     this._onShow(this._panes[aPane.id]);
   },
   
@@ -303,6 +307,14 @@ FaceplateManager.prototype = {
   getPanes: function FaceplateManager_getPanes() {
     // Copy all the faceplates into an array, and then return an enumerator
     return new ArrayEnumerator( [this._panes[key] for (key in this._panes)] ); 
+  },
+  
+  getDefaultPane: function FaceplateManager_getDefaultPane() {
+    var pane = this.getPane(this._defaultPaneID);
+    if (!pane) {
+      pane = this.getPane("songbird-intro");
+    }
+    return pane;
   },
   
   addListener: function FaceplateManager_addListener(aListener) {
@@ -386,9 +398,11 @@ FaceplateManager.prototype = {
     // When playback begins for the first time, jump
     // to the playback dashboard
     case DATAREMOTE_PLAYBACK:
-      this._playbackDataRemote.unbind();
-      this._playbackDataRemote = null;
-      this._showDashboardPane();
+      if (this._playbackDataRemote.boolValue) {
+        this._playbackDataRemote.unbind();
+        this._playbackDataRemote = null;
+        this._showDashboardPane();
+      }
     }
   },
 

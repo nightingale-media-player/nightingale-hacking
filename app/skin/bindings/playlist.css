@@ -86,10 +86,10 @@ playlist > stack > vbox
 
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
- border: none !important;
- margin-top: 6px !important;
- margin-bottom: 6px !important;
- height: 10px !important;
+  border: none !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+  height: 10px !important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
@@ -99,7 +99,7 @@ playlist > stack > vbox
 
 .sb-playlist-popup
 {
-	min-width: 160px !important;
+  min-width: 160px !important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-rating )

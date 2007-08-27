@@ -124,6 +124,13 @@ interface sbIFaceplateManager : nsISupports
   nsISimpleEnumerator getPanes();
 
   /**
+   * \brief Get the pane used in the most recent call to showPane.
+   * Used to determine what pane a faceplate should display on load.
+   * \return An active, instantiated, faceplate pane interface.
+   */
+  sbIFaceplatePane getDefaultPane();
+
+  /**
    * \brief Register to receive notification when panes are added, removed, 
    *        and shown. Make sure you remove any listeners you add.
    * 

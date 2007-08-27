@@ -126,7 +126,8 @@ sb-sys-hide-button
 /** 
 ***************************************************************************************************
 SERVICE PANE - a.k.a the Left Pane
-The Service Pane is the primary area for navigating through services and content. It serves as the primary GUI entry point to content and services.
+The Service Pane is the primary area for navigating through services and content. 
+It serves as the primary GUI entry point to content and services.
 ***************************************************************************************************
 */ 
 
@@ -300,8 +301,6 @@ treecolpicker
   background-color: #313131 !important; /* same as the main window */
   border-right: 1px solid #202220 !important;
 }
-
-
 
 treecol[dragging="true"]
 {
@@ -960,7 +959,7 @@ progressmeter.sb-player-seek-slider > .progress-remainder,
 }
 
 
-/** MINI FACEPLATE SEEKBAR **/
+/** MINI FACEPLATE/DASHBOARD **/
 .mini-dash-text
 {
   color: #313131;

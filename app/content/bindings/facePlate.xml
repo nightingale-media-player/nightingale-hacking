@@ -76,7 +76,10 @@
                          Components.interfaces.sbIFaceplatePane);
             this.onCreatePane(pane);
           }
-          this.currentIndex = 0;
+          
+          // Figure out which pane to show first.
+          var initialPane = this._manager.getDefaultPane();
+          this.switchToPane(initialPane.id);
        ]]>
       </constructor>
       

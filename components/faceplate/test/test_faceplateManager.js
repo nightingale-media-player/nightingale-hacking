@@ -153,6 +153,10 @@ function testShowPane() {
   
   // Make sure the listener fired
   assertEqual(faceplateManagerListener.expectShowID, null);
+  
+  // Test getDefaultPane.  
+  var pane = faceplateManager.getDefaultPane();
+  assertEqual(pane.id, panes[0].id);  
 }
 
 
