@@ -41,6 +41,8 @@
 
 #ifdef DEBUG
 #include <nsIXPConnect.h>
+#endif
+#ifdef PR_LOGGING
 #include <prprf.h>
 #endif
 
