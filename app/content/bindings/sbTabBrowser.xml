@@ -2067,7 +2067,9 @@
             <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1" style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
               <children/>
             </xul:arrowscrollbox>
-            <xul:stack align="center" pack="end">
+            <xul:stack align="center" pack="end" hidden="true">
+              <!-- XXXMook the all-tabs button is hidden for now because it's
+                   totally broken - see songbird bug 4066 -->
               <!-- XXXsspitzer hack
                    this extra hbox with position: relative
                    is needed to work around two bugs.

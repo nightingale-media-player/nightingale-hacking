@@ -1591,12 +1591,6 @@ tabpanels {
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
   background-color: #313131;
  }
- 
-/* the all tabs button is broken, hide it (bug 4066) */
-.tabs-alltabs-box,
-.tabs-alltabs-button {
-  display: none;
-}
 
 /** 
 *******************************************************************
