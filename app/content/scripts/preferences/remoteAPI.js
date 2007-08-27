@@ -33,6 +33,8 @@ var gRemoteAPIPane = {
 
   configureWhitelist: function (aType)
   {
+    // JMC - Would be better to have callback from onunload of the new window, I think
+    gRemoteAPIPane.isChanged = true;
     // get ref to the properties file string bundle
     var bundlePreferences = document.getElementById("bundlePreferences");
 
@@ -83,11 +85,21 @@ var gRemoteAPIPane = {
     gRemoteAPIPane.updateDisabledState();
   },
   
+  onUnload: function(event) {
+    if (gRemoteAPIPane.isChanged && window.opener && window.opener.document) {
+      var evt = document.createEvent("Events");
+      evt.initEvent("RemoteAPIPrefChanged", true, false);
+      window.opener.document.dispatchEvent(evt);
+    }
+  },
+  
   onChange: function(event) {
     gRemoteAPIPane.updateDisabledState();
+    gRemoteAPIPane.isChanged = true;
   },
   
   restoreDefaults: function() {
+    gRemoteAPIPane.isChanged = true;
     for (var i=0; i<this._prefKeys.length; i++) {
       var pref_element = document.getElementById(this._prefKeys[i]);
       if (!pref_element) {
@@ -100,4 +112,5 @@ var gRemoteAPIPane = {
 };
 
 window.addEventListener('load', gRemoteAPIPane.onLoad, false);
+window.addEventListener('unload', gRemoteAPIPane.onUnload, false);
 

@@ -330,6 +330,15 @@ sbRemotePlayer::Init()
   LOG(("sbRemotePlayer::Init() -- registering PlaylistCellClick listener"));
   eventTarget->AddEventListener( NS_LITERAL_STRING("PlaylistCellClick"), this , PR_TRUE );
 
+  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefPanelOpened listener"));
+  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIPrefPanelOpened"), this , PR_TRUE );
+  
+  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIHatClosed listener"));
+  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIHatClosed"), this , PR_TRUE );
+  
+  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefChanged listener"));
+  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIPrefChanged"), this , PR_TRUE );
+  
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -1153,7 +1162,24 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove PlaylistCellClick listener from document" );
-
+                
+    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIPrefPanelOpened"),
+                                           this ,
+                                           PR_TRUE );
+    NS_ASSERTION( NS_SUCCEEDED(rv),
+                  "Failed to remove RemoteAPIPrefPanelOpened listener from document" );
+                              
+    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIHatClosed"),
+                                           this ,
+                                           PR_TRUE );
+    NS_ASSERTION( NS_SUCCEEDED(rv),
+                  "Failed to remove RemoteAPIHatClosed listener from document" );
+                             
+    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIPrefChanged"),
+                                           this ,
+                                           PR_TRUE );
+    NS_ASSERTION( NS_SUCCEEDED(rv),
+                  "Failed to remove RemoteAPIPrefChanged listener from document" );                              
     // the page is going away, clean up things that will cause us to
     // not get released.
     UnregisterCommands();
@@ -1242,6 +1268,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ENSURE_SUCCESS(rv, rv);
     rv = destEventTarget->DispatchEvent( remoteEvent, &dummy );
     NS_ENSURE_SUCCESS(rv, rv);
+  } else if ( type.EqualsLiteral("RemoteAPIHatClosed") ) {
+    // printf("JMC: Got an RemoteAPIHatClosed event");
+  } else if ( type.EqualsLiteral("RemoteAPIPrefPanelOpened") ) {
+    // printf("JMC: Got an RemoteAPIPrefPanelOpened event");
+  } else if ( type.EqualsLiteral("RemoteAPIPrefChanged") ) {
+    // printf("JMC: Got an RemoteAPIPrefChanged event");
   }
   return NS_OK;
 }

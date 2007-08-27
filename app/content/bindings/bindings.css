@@ -399,3 +399,7 @@ draggable {
 label.text-link {
   -moz-binding: url("chrome://songbird/content/bindings/textLink.xml#text-link") !important;
 }
+
+notification {
+  -moz-binding: url("chrome://songbird/content/bindings/sbNotification.xml#sbNotification") !important;
+}

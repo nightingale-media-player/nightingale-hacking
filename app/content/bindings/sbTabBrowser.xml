@@ -764,8 +764,10 @@
           var buttons = [{ label: buttonLabel,
                            accessKey: buttonAccessKey,
                            popup: null,    // point to a popup xul widget
-                           callback: function() { 
-                                          SBOpenPreferences("paneRemoteAPI"); }
+                           callback: function(aHat, aButtonInfo) { 
+                             aHat.closeEvent = "RemoteAPIPrefPanelOpened";
+                             SBOpenPreferences("paneRemoteAPI"); 
+                          }
                         }];
 
           var browser = event.currentTarget
@@ -776,7 +778,7 @@
           if (!notification) {
             // if there isn't a notfication object, make one and append it
             const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
-            notificationBox.appendNotification( message,
+            notification = notificationBox.appendNotification( message,
                                                 notificationName,
                                                 iconURL,
                                                 priority,
@@ -786,6 +788,7 @@
             // this has the side effect of showing it if it was dismissed
             notification.message = message;
           }
+          notification.closeEvent = "RemoteAPIHatClosed";
         ]]></body>
       </method>
       
