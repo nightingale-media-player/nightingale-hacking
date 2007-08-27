@@ -66,17 +66,21 @@ private:
                             PRInt32 aType,
                             nsIStringBundle* aStringBundle,
                             PRBool aUserViewable,
-                            PRBool aUserEditable);
+                            PRBool aUserEditable,
+                            PRBool aRemoteReadable,
+                            PRBool aRemoteWritable);
 
   nsresult RegisterNumber(const nsAString& aPropertyName,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
                           PRBool aUserViewable,
                           PRBool aUserEditable,
-                          PRInt32 aMinValue = 0,
-                          PRBool aHasMinValue = PR_FALSE,
-                          PRInt32 aMaxValue = 0,
-                          PRBool aHasMaxValue = PR_FALSE);
+                          PRInt32 aMinValue,
+                          PRBool aHasMinValue,
+                          PRInt32 aMaxValue,
+                          PRBool aHasMaxValue,
+                          PRBool aRemoteReadable,
+                          PRBool aRemoteWritable);
 
   nsresult RegisterProgress(const nsAString& aValuePropertyName,
                             const nsAString& aValueDisplayKey,
@@ -84,34 +88,50 @@ private:
                             const nsAString& aModeDisplayKey,
                             nsIStringBundle* aStringBundle,
                             PRBool aUserViewable,
-                            PRBool aUserEditable);
+                            PRBool aUserEditable,
+                            PRBool aRemoteReadable,
+                            PRBool aRemoteWritable);
 
   nsresult RegisterText(const nsAString& aPropertyName,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
                         PRBool aUserViewable,
                         PRBool aUserEditable,
-                        PRUint32 aNullSort = 0,
-                        PRBool aHasNullSort = PR_FALSE);
+                        PRUint32 aNullSort,
+                        PRBool aHasNullSort,
+                        PRBool aRemoteReadable,
+                        PRBool aRemoteWritable);
 
   nsresult RegisterURI(const nsAString& aPropertyName,
                        const nsAString& aDisplayKey,
                        nsIStringBundle* aStringBundle,
                        PRBool aUserViewable,
-                       PRBool aUserEditable);
+                       PRBool aUserEditable,
+                       PRBool aRemoteReadable,
+                       PRBool aRemoteWritable);
 
   nsresult RegisterCheckbox(const nsAString& aPropertyName,
                             const nsAString& aDisplayKey,
                             nsIStringBundle* aStringBundle,
                             PRBool aUserViewable,
-                            PRBool aUserEditable);
+                            PRBool aUserEditable,
+                            PRBool aRemoteReadable,
+                            PRBool aRemoteWritable);
 
-  nsresult RegisterRatingProperty(nsIStringBundle* aStringBundle);
+  nsresult RegisterRatingProperty(nsIStringBundle* aStringBundle,
+                                  PRBool aRemoteReadable,
+                                  PRBool aRemoteWritable);
 
   nsresult RegisterButton(const nsAString& aPropertyName,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
-                          const nsAString& aLabel);
+                          const nsAString& aLabel,
+                          PRBool aRemoteReadable,
+                          PRBool aRemoteWritable);
+  
+  nsresult SetRemoteAccess(sbIPropertyInfo* aProperty,
+                           PRBool aRemoteReadable,
+                           PRBool aRemoteWritable);
 
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;

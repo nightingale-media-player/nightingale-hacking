@@ -105,6 +105,8 @@ sbPropertyInfo::sbPropertyInfo()
 , mDisplayUsingXBLWidgetLock(nsnull)
 , mUnitsLock(nsnull)
 , mOperatorsLock(nsnull)
+, mRemoteReadableLock(nsnull)
+, mRemoteWritableLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
   NS_ASSERTION(mSortProfileLock, 
@@ -146,6 +148,13 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mOperatorsLock,
     "sbPropertyInfo::mOperatorsLock failed to create lock!");
 
+  mRemoteReadableLock = PR_NewLock();
+  NS_ASSERTION(mRemoteReadableLock,
+    "sbPropertyInfo::mRemoteReadableLock failed to create lock!");
+  
+  mRemoteWritableLock = PR_NewLock();
+  NS_ASSERTION(mRemoteWritableLock,
+    "sbPropertyInfo::mRemoteWritableLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -188,6 +197,14 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mOperatorsLock) {
     PR_DestroyLock(mOperatorsLock);
+  }
+
+  if(mRemoteReadableLock) {
+    PR_DestroyLock(mRemoteReadableLock);
+  }
+
+  if(mRemoteWritableLock) {
+    PR_DestroyLock(mRemoteWritableLock);
   }
 }
 
@@ -523,5 +540,41 @@ NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString &
 NS_IMETHODIMP sbPropertyInfo::GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval)
 {
   _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)
+{
+  NS_ENSURE_ARG_POINTER(aRemoteReadable);
+
+  nsAutoLock lock(mRemoteReadableLock);
+  *aRemoteReadable = mRemoteReadable;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
+{
+  nsAutoLock lock(mRemoteReadableLock);
+  mRemoteReadable = aRemoteReadable;
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(PRBool *aRemoteWritable)
+{
+  NS_ENSURE_ARG_POINTER(aRemoteWritable);
+
+  nsAutoLock lock(mRemoteWritableLock);
+  *aRemoteWritable = mRemoteWritable;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
+{
+  nsAutoLock lock(mRemoteWritableLock);
+  mRemoteWritable = aRemoteWritable;
+  
   return NS_OK;
 }

@@ -29,6 +29,7 @@
 
 #include <sbIPropertyManager.h>
 #include <sbIPropertyArray.h>
+#include <sbIRemotePropertyInfo.h>
 
 #include <nsCOMPtr.h>
 #include <nsIURI.h>
@@ -99,6 +100,7 @@ class sbPropertyInfo : public sbIPropertyInfo
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPROPERTYINFO
+  NS_DECL_SBIREMOTEPROPERTYINFO
 
   sbPropertyInfo();
   virtual ~sbPropertyInfo();
@@ -135,6 +137,12 @@ protected:
   
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;
+  
+  PRLock*   mRemoteReadableLock;
+  PRBool    mRemoteReadable;
+  
+  PRLock*   mRemoteWritableLock;
+  PRBool    mRemoteWritable;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */

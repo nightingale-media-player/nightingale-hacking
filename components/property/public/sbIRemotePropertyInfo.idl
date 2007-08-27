@@ -1,0 +1,53 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+/*
+ * \interface sbIRemotePropertyInfo
+ * \brief Information about how properties should be handled by the RemoteAPI
+ *
+ * Property Info objects can implement this interface to expose how they
+ * they should be exposed over the RemoteAPI.
+ * 
+ * \sa sbIPropertyInfo
+*/
+
+
+[scriptable, uuid(7fc98e6c-0d73-45b7-98dc-6041d111816f)]
+interface sbIRemotePropertyInfo : nsISupports {
+
+  /** 
+   * \brief A web site may read the value of this property.
+   */
+  attribute boolean remoteReadable;
+
+  /**
+   * \brief A web site may write the value of this property.
+   */
+  attribute boolean remoteWritable;
+};
+
