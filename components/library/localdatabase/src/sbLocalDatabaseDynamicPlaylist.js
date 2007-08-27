@@ -208,6 +208,7 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
       return true;
     },
     onEnumeratedItem: function(list, item) {
+      dump("XXXsteve: scheduling list " + list + " from library " + list.library + "\n");
       self._scheduledLists[FIX(item.guid)] = item;
       return true;
     },
@@ -408,6 +409,7 @@ function sbLocalDatabaseDynamicPlaylistService_scheduledLists()
   var a = [];
   for each (var list in this._scheduledLists) {
     a.push(list);
+    dump("XXXsteve: list " + list + " in library " + list.library + " is scheduled\n");
   }
 
   return ArrayConverter.enumerator(a);
