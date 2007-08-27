@@ -47,7 +47,14 @@ function beginWindowTest(url, continueFunction) {
   testPending();
 }
 
+function cleanup() {
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Ci.sbILibraryManager);
+  libraryManager.mainLibrary.clear();
+}
+
 function endWindowTest(e) {
+  cleanup();
   if (!testWindowFailed) {
     testWindowFailed = true;
     if (testBrowser && testListener) {
