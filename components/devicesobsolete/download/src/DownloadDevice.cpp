@@ -1427,7 +1427,7 @@ nsresult sbDownloadDevice::ClearCompletedItems()
 {
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     nsString                    progressStr;
-    PRInt32                     progress;
+    PRInt32                     progress = -1;
     PRUint32                    itemCount;
     PRInt32                     i;
     nsresult                    itemResult;
@@ -1441,25 +1441,29 @@ nsresult sbDownloadDevice::ClearCompletedItems()
         for (i = itemCount - 1; i >= 0; i--)
         {
             /* Get the next item. */
-            itemResult = mpDownloadMediaList->GetItemByIndex(i,
-                                                             getter_AddRefs(pMediaItem));
+            itemResult = mpDownloadMediaList->GetItemByIndex
+                                                (i, getter_AddRefs(pMediaItem));
 
-            /* Get the download progress. */
+            /* Get the download progress.  If the progress has not been set, */
+            /* the item has not been processed yet for download, so skip it. */
             if (NS_SUCCEEDED(itemResult))
             {
                 itemResult = pMediaItem->GetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
                                  progressStr);
-                if (NS_SUCCEEDED(itemResult) && progressStr.IsEmpty())
-                    itemResult = NS_ERROR_FAILURE;
+                if (NS_FAILED(itemResult) || progressStr.IsEmpty())
+                    continue;
             }
-
             if (NS_SUCCEEDED(itemResult))
                 progress = progressStr.ToInteger(&itemResult);
 
             /* Remove item from download device library if complete. */
             if (NS_SUCCEEDED(itemResult) && (progress == 101))
+            {
+                mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
                 itemResult = mpDownloadMediaList->Remove(pMediaItem);
+                mpDeviceLibraryListener->SetIgnoreListener(PR_FALSE);
+            }
 
             /* Warn if item could not be removed. */
             if (NS_FAILED(itemResult))
