@@ -340,7 +340,10 @@ CPlaylistReaderManager.prototype =
                 .getService(Ci.nsIObserverService);
     obs.removeObserver(this, "quit-application");
 
-    for (var i = 0; i < this.m_Listeners.length; i++) {
+    for (let i in this.m_Readers) {
+      this.m_Readers[i] = null;
+    }
+    for (let i in this.m_Listeners) {
       this.m_Listeners[i] = null;
     }
   },
