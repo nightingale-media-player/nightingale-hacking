@@ -43,8 +43,8 @@ Play/Pause, Previous (back), Next (forward)
   -moz-background-clip: padding !important;
   background-color: transparent !important;
   border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
+  margin: 0px;
+  padding: 0px;
   min-width: 0px !important;
   min-height: 0px !important;
 }
@@ -133,7 +133,7 @@ Play/Pause, Previous (back), Next (forward)
 }
 
 
-/* the stop button TODO: MAKE REAL "STOP" BUTTON ART FOR DEFAULT FEATHERS SET */
+/* the stop button */
 
 .sb-player-stop-button-stop > button
 {
@@ -152,7 +152,6 @@ Play/Pause, Previous (back), Next (forward)
 { 
   -moz-image-region: rect(162px 193px 215px 143px);
 }
-
 
 
 
@@ -194,6 +193,8 @@ sb-player-forward-button[disabled="true"]
 {
   -moz-image-region: rect(162px 232px 215px 195px);
 }
+
+
 
 /** 
 ***************************************************************************************************
@@ -269,7 +270,7 @@ slider.sb-player-volume-slider
   background-repeat: no-repeat;
   height: 22px !important;
   border: none;
-  margin-right: 10px;  
+  margin-right: 5px;  
   padding-left: 6px;  
 }
 

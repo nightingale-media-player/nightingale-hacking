@@ -346,7 +346,7 @@
       <xul:hbox id="sb-feathers-toggle-button">
         <xul:sb-clickhold-button anonid="clickhold"  
                   xbl:inherits="position,popupanchor,popupalign"
-                  class="sb-feathers-toggle-button"
+                  class="sb-feathers-toggle-button sb-player-button"
                   menupopuptype="feathers"/>
       </xul:hbox>
     </content>

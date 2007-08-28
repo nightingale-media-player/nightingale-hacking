@@ -258,7 +258,7 @@
         box.setAttribute( 'id', nodeName );
         
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
-        this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
+        this.setAttribute("class", this.getAttribute("class") + " sb-player-button " + nodeName);
       ]]>
       </constructor>
     </implementation>

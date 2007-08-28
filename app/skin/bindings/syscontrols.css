@@ -48,13 +48,6 @@ sb-sys-icon
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns_win.png);
   -moz-image-region: rect(0px 9px 9px 0px);
-  -moz-appearance: none;
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  min-width: 0px;
-  min-height: 0px;
-  border-width: 0px;
 }
 
 .feathers-menu-selected-skin > .menu-iconic-left {
@@ -68,12 +61,22 @@ sb-sys-titlebar > menubar
 }
 
 
+sb-feathers-toggle-button,
+sb-sys-minimize-button,
+sb-sys-close-button,
+sb-sys-hide-button,
+sb-player-fullscreen-button,
+sb-sys-maximize-button
+{
+  margin: 0px 4px 0px 5px !important;
+}
+
+
 /*  Minimize */
 sb-sys-minimize-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns_win.png);
   -moz-image-region: rect(0px 18px 9px 9px);
-  margin-left: 7px;
 }
 
 /*  Maximize - Evict the checkbox guts, just use it for click handling */
@@ -87,7 +90,6 @@ sb-sys-maximize-button > .checkbox-check
 }
 sb-sys-maximize-button
 {
-  margin: 2px 0px 0px 7px;
   background-image: url(chrome://songbird/skin/buttons/sysbtns_win.png); 
   background-position: -18px 0px; 
   background-repeat: no-repeat;
@@ -97,7 +99,6 @@ sb-sys-maximize-button
 /* Restore */
 sb-sys-maximize-button[checked="true"] 
 {
-  margin: 2px 0px 0px 7px;
   background-image: url(chrome://songbird/skin/buttons/sysbtns_win.png);
   background-position: -54px 0px; 
   background-repeat: no-repeat;
@@ -108,7 +109,6 @@ sb-sys-maximize-button[checked="true"]
 /*  Close Window */
 sb-sys-close-button
 {
-  margin-left: 7px;
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns_win.png);
   -moz-image-region: rect(0px 36px 9px 27px);
 }
