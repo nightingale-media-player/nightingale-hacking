@@ -26,8 +26,16 @@
 
 #include "sbButtonPropertyInfo.h"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbButtonPropertyInfo, sbPropertyInfo,
-                                                   sbIButtonPropertyInfo)
+NS_IMPL_ADDREF_INHERITED(sbButtonPropertyInfo, sbPropertyInfo);
+NS_IMPL_RELEASE_INHERITED(sbButtonPropertyInfo, sbPropertyInfo);
+
+NS_INTERFACE_TABLE_HEAD(sbButtonPropertyInfo)
+NS_INTERFACE_TABLE_BEGIN
+NS_INTERFACE_TABLE_ENTRY(sbButtonPropertyInfo, sbIButtonPropertyInfo)
+NS_INTERFACE_TABLE_ENTRY(sbButtonPropertyInfo, sbIPropertyInfo)
+NS_INTERFACE_TABLE_ENTRY(sbButtonPropertyInfo, sbIRemotePropertyInfo)
+NS_INTERFACE_TABLE_END
+NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 
 sbButtonPropertyInfo::sbButtonPropertyInfo()
 {

@@ -95,7 +95,8 @@ protected:
 
 };
 
-class sbPropertyInfo : public sbIPropertyInfo
+class sbPropertyInfo : public sbIPropertyInfo,
+                       public sbIRemotePropertyInfo
 {
 public:
   NS_DECL_ISUPPORTS

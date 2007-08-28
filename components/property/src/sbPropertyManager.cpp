@@ -133,6 +133,7 @@ sbPropertyManager::Observe(nsISupports* aSubject,
 
     // Now we create the system properties.
     rv = CreateSystemProperties();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "failed to create system properties");
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
