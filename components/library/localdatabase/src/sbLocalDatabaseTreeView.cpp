@@ -2243,6 +2243,12 @@ sbLocalDatabaseTreeView::RemoveSelectedMediaItems()
   rv = library->RemoveSelected(selection, mMediaListView);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Invalidate current index as its row has been removed
+  if (mRealSelection) {
+    rv = mRealSelection->SetCurrentIndex(-1);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -2632,6 +2638,18 @@ sbLocalDatabaseTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 
   nsresult rv = mSelection->AdjustSelection(index, count);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the current index is past the last row, invalidate it.
+  PRInt32 currentIndex;
+  rv = this->GetCurrentIndex(&currentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 rowCount;
+  rv = mTreeView->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (currentIndex >= rowCount) {
+    rv = this->SetCurrentIndex(-1);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // This would affect our selection list, but the xul tree binding does not
   // use this method so we won't bother implementing it for now.
