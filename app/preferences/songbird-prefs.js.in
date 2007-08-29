@@ -214,7 +214,7 @@ pref("songbird.rapi.library_create_notify", true);
 // Songbird default urls
 pref("songbird.url.addons", "http://addons.songbirdnest.com/");
 pref("songbird.url.birdhouse", "http://birdhouse.songbirdnest.com/");
-pref("songbird.url.bookmarks", "http://download.songbirdnest.com/bookmarks/bookmarks.xml");
+pref("songbird.url.bookmarks", "http://bundles.songbirdnest.com/bookmarks.xml");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
 pref("songbird.url.bundles", "http://bundles.songbirdnest.com/getbundle/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
