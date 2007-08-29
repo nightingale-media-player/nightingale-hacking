@@ -53,8 +53,20 @@ public:
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem);
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mMediaItem);
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
+  
+  // forward some of sbILibraryResource
+  NS_IMETHOD GetGuid(nsAString & aGuid) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->GetGuid(aGuid); }
+  NS_IMETHOD GetCreated(PRInt64 *aCreated) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->GetCreated(aCreated); }
+  NS_IMETHOD GetUpdated(PRInt64 *aUpdated) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->GetUpdated(aUpdated); }
+  NS_IMETHOD GetPropertyNames(nsIStringEnumerator * *aPropertyNames) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->GetPropertyNames(aPropertyNames); }
+  NS_IMETHOD GetProperty(const nsAString & aName, nsAString & _retval);
+  NS_IMETHOD SetProperty(const nsAString & aName, const nsAString & aValue);
+  NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyNames, sbIPropertyArray **_retval) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->GetProperties(aPropertyNames, _retval); }
+  NS_IMETHOD SetProperties(sbIPropertyArray *aProperties) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->SetProperties(aProperties); }
+  NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !mMediaItem ? NS_ERROR_NULL_POINTER : mMediaItem->Equals(aOtherLibraryResource, _retval); } 
+  
+  
 
   // sbIWrappedMediaItem interface
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();

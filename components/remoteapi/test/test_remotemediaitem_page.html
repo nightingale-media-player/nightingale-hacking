@@ -42,8 +42,21 @@ function runTest(tester) {
     tester.assertTrue(item.created > 0);
     tester.assertTrue(item.updated > 0);
 
+    // test property round-trip
     item.setProperty(SB_NS + "artistName", "foo");
     tester.assertEqual(item.getProperty(SB_NS + "artistName"), "foo");
+
+    // test non-writable property
+    try {
+        item.setProperty(SB_NS + "playCount", 42);
+        tester.fail("did not throw: setProperty(playCount)");
+    } catch(e) { }
+
+    // test non-readable property
+    try {
+        item.getProperty(SB_NS + "contentURL");
+        tester.fail("did not throw: getProperty(contentURL)");
+    } catch(e) { }
 
     tester.assertTrue(item.equals(item));
 
