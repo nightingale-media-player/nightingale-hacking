@@ -253,7 +253,7 @@ interface sbIRemotePlayer : nsISupports
   /*
   Prop: volume
 
-  The volumen of the application on a range from 0 to 255.
+  The volume of the application on a range from 0 to 255.
 
   Type:
     integer
@@ -739,7 +739,46 @@ interface sbIRemotePlayer : nsISupports
   */
   sbIRemoteLibrary libraries(in AString aLibraryID);
 
+  /*
+  Prop: mainLibrary
+
+  The main <Library> for Songbird. This will contain all the <MediaItem>s the
+  user has on their system.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var mainLib = songbird.mainLibrary;
+    (end code)
+
+  See Also:
+    <webLibrary>
+    <libraries()>
+    <siteLibrary()>
+  */
   readonly attribute sbIRemoteLibrary mainLibrary;
+
+  /*
+  Prop: webLibrary
+
+  The web <Library> for Songbird. This will contain all the <MediaItem>s that
+  have been discovered on web pages the user has visited.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var webLib = songbird.webLibrary;
+    (end code)
+
+  See Also:
+    <mainLibrary>
+    <libraries()>
+    <siteLibrary()>
+  */
   readonly attribute sbIRemoteLibrary webLibrary;
 
   /**
