@@ -54,6 +54,7 @@ CPP_SRCS = sbButtonPropertyInfo.cpp \
            sbPropertyManager.cpp \
            sbPropertiesModule.cpp \
            sbRatingPropertyInfo.cpp \
+           sbBooleanPropertyInfo.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \

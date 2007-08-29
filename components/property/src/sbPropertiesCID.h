@@ -145,3 +145,15 @@
 #define SB_BUTTONPROPERTYINFO_CONTRACTID               \
   "@songbirdnest.com/Songbird/Properties/Info/Button;1"
 
+#define SB_BOOLEANPROPERTYINFO_DESCRIPTION                 \
+  "Songbird Boolean Property Info Implementation"
+#define SB_BOOLEANPROPERTYINFO_CID                         \
+  { /*{C74B80C3-A830-4B25-95E2-4F4090335918}*/             \
+    0xc74b80c3,                                            \
+    0xa830,                                                \
+    0x4b25,                                                \
+    { 0x95, 0xe2, 0x4f, 0x40, 0x90, 0x33, 0x59, 0x18 }     \
+  }
+#define SB_BOOLEANPROPERTYINFO_CONTRACTID                  \
+  "@songbirdnest.com/Songbird/Properties/Info/Boolean;1"
+

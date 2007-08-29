@@ -204,6 +204,33 @@ function testDatetimeInfo() {
   log(datetimeInfo.format(sample));
 }
 
+function testBooleanInfo() {
+  var booleanInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
+                    .createInstance(Ci.sbIBooleanPropertyInfo);
+  
+  booleanInfo.name = "BooleanInfo";
+  assertEqual(booleanInfo.type, "boolean");
+  
+  var sample = "not a boolean";
+  assertEqual(booleanInfo.validate(sample), false);
+  try {
+    booleanInfo.format(sample);
+  }
+  catch(err) {
+    assertEqual(err.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+  
+  sample = "0";
+  assertEqual(booleanInfo.validate(sample), true);
+  assertEqual(booleanInfo.format(sample), "0");
+  assertEqual(booleanInfo.makeSortable(sample), "0");
+  
+  sample = "1";
+  assertEqual(booleanInfo.validate(sample), true);
+  assertEqual(booleanInfo.format(sample), "1");
+  assertEqual(booleanInfo.makeSortable(sample), "1");
+}
+
 function runTest () {
 
   log("Testing TextPropertyInfo...");
@@ -220,5 +247,9 @@ function runTest () {
 
   log("Testing DatetimePropertyInfo...");
   testDatetimeInfo();
+  log("OK");
+
+  log("Testing BooleanPropertyInfo...");
+  testBooleanInfo();
   log("OK");
 }
