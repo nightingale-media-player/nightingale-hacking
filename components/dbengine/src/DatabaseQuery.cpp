@@ -45,7 +45,6 @@
 #include <nsIServiceManager.h>
 #include <nsThreadUtils.h>
 #include <nsSupportsArray.h>
-#include <nsProxyRelease.h>
 
 #include <sbProxyUtils.h>
 

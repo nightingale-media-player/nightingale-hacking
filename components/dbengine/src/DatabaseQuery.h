@@ -89,6 +89,7 @@ struct CQueryParameter
 typedef nsTArray<CQueryParameter> bindParameterArray_t;
 
 class CDatabaseEngine;
+class QueryProcessorThread;
 class nsIEventTarget;
 class nsIURI;
 class sbIDatabaseEngine;
@@ -96,6 +97,8 @@ class sbIDatabaseEngine;
 class CDatabaseQuery : public sbIDatabaseQuery
 {
 friend class CDatabaseEngine;
+friend class QueryProcessorThread;
+
 friend int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
 friend void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID);
 

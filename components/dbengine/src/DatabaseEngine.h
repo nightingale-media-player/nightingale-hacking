@@ -43,15 +43,20 @@
 #include "DatabaseQuery.h"
 #include "sbIDatabaseEngine.h"
 
-#include <prlock.h>
 #include <prmon.h>
 #include <prlog.h>
+
+#include <nsAutoLock.h>
+#include <nsAutoPtr.h>
 #include <nsCOMArray.h>
+#include <nsRefPtrHashtable.h>
 #include <nsIThread.h>
+#include <nsThreadUtils.h>
 #include <nsIRunnable.h>
 #include <nsIObserver.h>
-
+#include <nsProxyRelease.h>
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
@@ -90,47 +95,46 @@ public:
 
   static CDatabaseEngine* GetSingleton();
 
+  typedef enum {
+    dbEnginePreShutdown = 0,
+    dbEngineShutdown
+  } threadpoolmsg_t;
+
 protected:
   NS_IMETHOD Init();
   NS_IMETHOD Shutdown();
 
-  PRInt32 OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery);
-  PRInt32 CloseDB(const nsAString &dbGUID);
+  nsresult OpenDB(const nsAString &dbGUID, 
+                  CDatabaseQuery *pQuery,
+                  sqlite3 ** ppHandle);
 
-  PRInt32 DropDB(const nsAString &dbGUID);
+  nsresult CloseDB(sqlite3 *pHandle);
+
+  PRBool HasThreadForGUID(const nsAString & aGUID);
+  already_AddRefed<QueryProcessorThread> GetThreadByQuery(CDatabaseQuery *pQuery, PRBool bCreate = PR_FALSE);
+  already_AddRefed<QueryProcessorThread> CreateThreadFromQuery(CDatabaseQuery *pQuery);
 
   PRInt32 SubmitQueryPrivate(CDatabaseQuery *pQuery);
 
-  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName);
+  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, 
+                                 const nsACString &strTableName);
+
   void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
 
-  nsresult LockDatabase(sqlite3 *pDB);
-  nsresult UnlockDatabase(sqlite3 *pDB);
-
-  nsresult ClearAllDBLocks();
-  nsresult CloseAllDB();
-
   nsresult ClearPersistentQueries();
-  nsresult ClearQueryQueue();
 
-  sqlite3 *GetDBByGUID(const nsAString &dbGUID, CDatabaseQuery *pQuery, PRBool bCreateIfNotOpen = PR_FALSE);
-  sqlite3 *FindDBByGUID(const nsAString &dbGUID);
-
-  void GenerateDBGUIDList();
-  PRInt32 GetDBGUIDList(std::vector<nsString> &vGUIDList);
-
-  static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine);
+  static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine,
+                                         QueryProcessorThread * pThread);
   
 private:
-  //[database guid/name]
-  typedef std::map<nsString, sqlite3 *>  databasemap_t;
-  typedef std::map<sqlite3 *, PRMonitor *> databaselockmap_t;
+  //[query list]
   typedef std::list<CDatabaseQuery *> querylist_t;
+  
   //[table guid/name]
   typedef std::map<nsCString, querylist_t> tablepersistmap_t;
+
   //[database guid/name]
   typedef std::map<nsCString, tablepersistmap_t > querypersistmap_t;
-  typedef std::deque<CDatabaseQuery *> queryqueue_t;
 
   void UpdatePersistentQueries(CDatabaseQuery *pQuery);
   void DoSimpleCallback(CDatabaseQuery *pQuery);
@@ -142,23 +146,16 @@ private:
   PRLock * m_pDBStorePathLock;
   nsString m_DBStorePath;
 
-  std::vector<nsString> m_DatabasesGUIDList;
   PRLock *m_pDatabasesGUIDListLock;
+  std::vector<nsString> m_DatabasesGUIDList;
 
-  databasemap_t m_Databases;
-  PRLock* m_pDatabasesLock;
-
-  databaselockmap_t m_DatabaseLocks;
-  PRLock* m_pDatabaseLocksLock;
-  
-  PRMonitor* m_pQueryProcessorMonitor;
-  nsCOMArray<nsIThread> m_QueryProcessorThreads;
-  PRBool m_QueryProcessorShouldShutdown;
-  queryqueue_t m_QueryQueue;
-  PRBool m_QueryProcessorQueueHasItem;
+  //[database guid / thread]
+  nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorThread> m_ThreadPool;
 
   PRMonitor* m_pPersistentQueriesMonitor;
   querypersistmap_t m_PersistentQueries;
+
+  PRMonitor* m_pThreadMonitor;
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
@@ -166,21 +163,215 @@ private:
 
 class QueryProcessorThread : public nsIRunnable
 {
+   friend class CDatabaseEngine;
+
+public:
+  //[thread queue]
+  typedef nsTArray<CDatabaseQuery *> threadqueue_t;
+
 public:
   NS_DECL_ISUPPORTS
 
-  QueryProcessorThread(CDatabaseEngine* pEngine) {
-    NS_ASSERTION(pEngine, "Null pointer!");
-    mpEngine = pEngine;
+  QueryProcessorThread()
+  : m_Shutdown(PR_FALSE)
+  , m_IdleTime(0)
+  , m_pQueueLock(nsnull)
+  , m_pHandleLock(nsnull)
+  , m_pHandle(nsnull)
+  , m_pEngine(nsnull) {
+    MOZ_COUNT_CTOR(QueryProcessorThread);
+  }
+
+  ~QueryProcessorThread() {
+    if(m_pQueueLock) {
+      PR_DestroyLock(m_pQueueLock);
+    }
+
+    if(m_pHandleLock) {
+      PR_DestroyLock(m_pHandleLock);
+    }
+
+    if(m_pQueueMonitor) {
+      nsAutoMonitor::DestroyMonitor(m_pQueueMonitor);
+    }
+    MOZ_COUNT_DTOR(QueryProcessorThread);
+  }
+
+  nsresult Init(CDatabaseEngine *pEngine,
+                const nsAString &aGUID,
+                sqlite3 *pHandle) {
+    NS_ENSURE_ARG_POINTER(pEngine);
+    NS_ENSURE_ARG_POINTER(pHandle);
+
+    m_pQueueLock = PR_NewLock();
+    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_OUT_OF_MEMORY);
+
+    m_pHandleLock = PR_NewLock();
+    NS_ENSURE_TRUE(m_pHandleLock, NS_ERROR_OUT_OF_MEMORY);
+
+    m_pQueueMonitor = nsAutoMonitor::NewMonitor("QueryProcessorThread.m_pQueueMonitor");
+    NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+    m_pEngine = pEngine;
+    m_pHandle = pHandle;
+
+    m_GUID = aGUID;
+
+    nsCOMPtr<nsIThread> pThread;
+    
+    nsresult rv = NS_NewThread(getter_AddRefs(pThread), this);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Saves an AddRef.
+    pThread.swap(m_pThread);
+
+    return NS_OK;
   }
 
   NS_IMETHOD Run()
   {
-    CDatabaseEngine::QueryProcessor(mpEngine);
+    NS_ENSURE_TRUE(m_pEngine, NS_ERROR_NOT_INITIALIZED);
+
+    CDatabaseEngine::QueryProcessor(m_pEngine, 
+                                    this);
+
+    nsresult rv = ClearQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = m_pEngine->CloseDB(m_pHandle);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    m_pHandle = nsnull;
+
     return NS_OK;
   }
+
+  nsresult LockQueue() {
+    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_NOT_INITIALIZED);
+    PR_Lock(m_pQueueLock);
+    return NS_OK;
+  }
+
+  nsresult UnlockQueue() {
+    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_NOT_INITIALIZED);
+    PR_Unlock(m_pQueueLock);
+    return NS_OK;
+  }
+
+  nsresult PushQueryToQueue(CDatabaseQuery *pQuery, PRBool bPushToFront = PR_FALSE) {
+    NS_ENSURE_ARG_POINTER(pQuery);
+
+    nsresult rv = LockQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    CDatabaseQuery **p = nsnull;
+
+    if(bPushToFront) {
+      p = m_Queue.InsertElementAt(0, pQuery);
+    } else {
+      p = m_Queue.AppendElement(pQuery);
+    }
+
+    NS_ENSURE_TRUE(p, NS_ERROR_OUT_OF_MEMORY);
+
+    return UnlockQueue();
+  }
+
+  nsresult PopQueryFromQueue(CDatabaseQuery ** ppQuery) {
+    NS_ENSURE_ARG_POINTER(ppQuery);
+
+    nsresult rv = LockQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(m_Queue.Length()) {
+      *ppQuery = m_Queue[0];
+      m_Queue.RemoveElementAt(0);
+
+      return UnlockQueue();
+    }
+
+    rv = UnlockQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsresult GetQueueSize(PRUint32 &aSize) {
+    aSize = 0;
+    
+    nsresult rv = LockQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    aSize = m_Queue.Length();
+
+    return UnlockQueue();
+  }
+
+  threadqueue_t * GetQueue() {
+    return &m_Queue;
+  }
+
+  nsresult NotifyQueue() {
+    NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_NOT_INITIALIZED);
+
+    nsAutoMonitor mon(m_pQueueMonitor);
+    mon.Notify();
+
+    return NS_OK;
+  }
+
+  nsresult ClearQueue() {
+    nsresult rv = LockQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    threadqueue_t::size_type current = 0;
+    threadqueue_t::size_type length = m_Queue.Length();
+    
+    for(; current < length; current++) {
+
+      CDatabaseQuery *pQuery = m_Queue[current];
+      nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
+
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not proxy release pQuery");
+        NS_RELEASE(pQuery);
+      }
+    }
+
+    m_Queue.Clear();
+
+    return UnlockQueue();
+  }
+
+  nsresult PrepareForShutdown() {
+    NS_ENSURE_TRUE(m_pEngine, NS_ERROR_NOT_INITIALIZED);
+
+    m_Shutdown = PR_TRUE;
+
+    nsAutoMonitor mon(m_pQueueMonitor);
+    return mon.NotifyAll();
+  }
+
+  nsIThread * GetThread() {
+    return m_pThread;
+  }
+
 protected:
-  CDatabaseEngine* mpEngine;
+  CDatabaseEngine* m_pEngine;
+  nsCOMPtr<nsIThread> m_pThread;
+
+  nsString m_GUID;
+
+  PRBool   m_Shutdown;
+  PRInt64  m_IdleTime;
+
+  PRLock *      m_pHandleLock;
+  sqlite3*      m_pHandle;
+
+  PRMonitor *   m_pQueueMonitor;
+
+  PRLock *      m_pQueueLock;
+  threadqueue_t m_Queue;
 };
 
 #ifdef PR_LOGGING

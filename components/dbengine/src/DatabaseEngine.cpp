@@ -36,7 +36,6 @@
 #include <nsIFile.h>
 #include <nsILocalFile.h>
 #include <nsStringGlue.h>
-#include <nsThreadUtils.h>
 #include <nsIObserverService.h>
 #include <nsISimpleEnumerator.h>
 #include <nsDirectoryServiceDefs.h>
@@ -45,9 +44,6 @@
 #include <nsUnicharUtils.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
-#include <nsProxyRelease.h>
-
-#include <nsAutoLock.h>
 
 #include <vector>
 #include <algorithm>
@@ -71,7 +67,10 @@
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-#define USE_SQLITE_FULL_DISK_CACHING  1
+#define USE_SQLITE_FULL_DISK_CACHING
+#define USE_SQLITE_BUSY_TIMEOUT
+#define USE_SQLITE_SHARED_CACHE
+
 #define SQLITE_MAX_RETRIES            666
 #define QUERY_PROCESSOR_THREAD_COUNT  2
 
@@ -546,12 +545,8 @@ CDatabaseEngine *gEngine = nsnull;
 CDatabaseEngine::CDatabaseEngine()
 : m_pDBStorePathLock(nsnull)
 , m_pDatabasesGUIDListLock(nsnull)
-, m_pDatabasesLock(nsnull)
-, m_pDatabaseLocksLock(nsnull)
-, m_pQueryProcessorMonitor(nsnull)
-, m_QueryProcessorShouldShutdown(PR_FALSE)
-, m_QueryProcessorQueueHasItem(PR_FALSE)
 , m_pPersistentQueriesMonitor(nsnull)
+, m_pThreadMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
 {
@@ -569,12 +564,6 @@ CDatabaseEngine::CDatabaseEngine()
   if (m_AttemptShutdownOnDestruction)
     Shutdown();
 
-  if (m_pDatabasesLock)
-    PR_DestroyLock(m_pDatabasesLock);
-  if (m_pDatabaseLocksLock)
-    PR_DestroyLock(m_pDatabaseLocksLock);
-  if (m_pQueryProcessorMonitor)
-    nsAutoMonitor::DestroyMonitor(m_pQueryProcessorMonitor);
   if (m_pPersistentQueriesMonitor)
     nsAutoMonitor::DestroyMonitor(m_pPersistentQueriesMonitor);
   if (m_pDBStorePathLock)
@@ -608,21 +597,24 @@ CDatabaseEngine* CDatabaseEngine::GetSingleton()
   return gEngine;
 }
 
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::Init()
 {
   LOG(("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
        this, sqlite3_libversion()));
 
-  m_pDatabasesLock = PR_NewLock();
-  NS_ENSURE_TRUE(m_pDatabasesLock, NS_ERROR_OUT_OF_MEMORY);
-
-  m_pDatabaseLocksLock = PR_NewLock();
-  NS_ENSURE_TRUE(m_pDatabaseLocksLock, NS_ERROR_OUT_OF_MEMORY);
+  PRBool success = m_ThreadPool.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   m_pPersistentQueriesMonitor = 
     nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pPersistentQueriesMonitor");
 
   NS_ENSURE_TRUE(m_pPersistentQueriesMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pThreadMonitor = 
+    nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pThreadMonitor");
+
+  NS_ENSURE_TRUE(m_pThreadMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   m_pDBStorePathLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDBStorePathLock, NS_ERROR_OUT_OF_MEMORY);
@@ -630,29 +622,8 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   m_pDatabasesGUIDListLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDatabasesGUIDListLock, NS_ERROR_OUT_OF_MEMORY);
 
-  m_pQueryProcessorMonitor =
-    nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
-  NS_ENSURE_TRUE(m_pQueryProcessorMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv;
-  for (PRInt32 i = 0; i < QUERY_PROCESSOR_THREAD_COUNT; i++) {
-    nsCOMPtr<nsIThread> pThread;
-    nsCOMPtr<nsIRunnable> pQueryProcessorRunner =
-      new QueryProcessorThread(this);
-    NS_ASSERTION(pQueryProcessorRunner, "Unable to create QueryProcessorRunner");
-    if (!pQueryProcessorRunner)
-      break;        
-    rv = NS_NewThread(getter_AddRefs(pThread),
-                      pQueryProcessorRunner);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-    if (NS_SUCCEEDED(rv))
-      m_QueryProcessorThreads.AppendObject(pThread);
-  }
-
-  rv = CreateDBStorePath();
+  nsresult rv = CreateDBStorePath();
   NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create db store folder in profile!");
-
-  GenerateDBGUIDList();
 
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
@@ -671,35 +642,62 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   return NS_OK;
 }
 
+
+//-----------------------------------------------------------------------------
+PR_STATIC_CALLBACK(PLDHashOperator)
+EnumThreadsOperate(nsStringHashKey::KeyType aKey, QueryProcessorThread *aThread, void *aClosure)
+{
+  NS_ASSERTION(aThread, "aThread is null");
+  NS_ASSERTION(aClosure, "aClosure is null");
+
+  // Stop if thread is null.
+  NS_ENSURE_TRUE(aThread, PL_DHASH_STOP);
+
+  // Stop if closure is null because it 
+  // contains the operation we are going to perform.
+  NS_ENSURE_TRUE(aClosure, PL_DHASH_STOP);
+
+  nsresult rv;
+  PRUint32 *op = static_cast<PRUint32 *>(aClosure);
+
+  switch(*op) {
+    case CDatabaseEngine::dbEnginePreShutdown:
+      rv = aThread->PrepareForShutdown();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to prepare worker thread for shutdown.");
+    break;
+
+    case CDatabaseEngine::dbEngineShutdown:
+      rv = aThread->GetThread()->Shutdown();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to shutdown worker thread.");
+    break;
+
+    default:
+      ;
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::Shutdown()
 {
   m_IsShutDown = PR_TRUE;
+  
+  PRUint32 op = dbEnginePreShutdown;
+  m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
 
-  PRInt32 count = m_QueryProcessorThreads.Count();
-  if (count) {
-    {
-      nsAutoMonitor mon(m_pQueryProcessorMonitor);
-      m_QueryProcessorShouldShutdown = PR_TRUE;
-      mon.NotifyAll();
-    }
-
-    for (PRInt32 i = 0; i < count; i++)
-      m_QueryProcessorThreads[i]->Shutdown();
-  }
-
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(CloseAllDB()), "CloseAllDB Failed!");
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearAllDBLocks()), "ClearAllDBLocks Failed!");
-
-  m_DatabaseLocks.clear();
-  m_Databases.clear();
+  op = dbEngineShutdown;
+  m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
 
   NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearPersistentQueries()),
                    "ClearPersistentQueries Failed!");
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearQueryQueue()), "ClearQueryQueue Failed!");
+
+  m_ThreadPool.Clear();
 
   return NS_OK;
 }
 
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
                                        const char *aTopic,
                                        const PRUnichar *aData)
@@ -720,101 +718,84 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
 }
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery)
+nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID, 
+                                 CDatabaseQuery *pQuery,
+                                 sqlite3 ** ppHandle)
 {
-  nsAutoLock lock(m_pDatabasesLock);
-
-  sqlite3 *pDB = nsnull;
+  sqlite3 *pHandle = nsnull;
 
   nsAutoString strFilename;
   GetDBStorePath(dbGUID, pQuery, strFilename);
   
   // Kick sqlite in the pants
-  PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pDB);
+  PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pHandle);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open16 failed!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
   // Remember what we just loaded
-  if(ret == SQLITE_OK)
-  {
-    ret  = sqlite3_create_collation(pDB,
-                                    "tree",
-                                    SQLITE_UTF16BE,
-                                    NULL,
-                                    tree_collate_func_utf16be);
-    ret |= sqlite3_create_collation(pDB,
-                                    "tree",
-                                    SQLITE_UTF16LE,
-                                    NULL,
-                                    tree_collate_func_utf16le);
-    ret |= sqlite3_create_collation(pDB,
-                                    "tree",
-                                    SQLITE_UTF8,
-                                    NULL,
-                                    tree_collate_func_utf8);
+  ret  = sqlite3_create_collation(pHandle,
+                                  "tree",
+                                  SQLITE_UTF16BE,
+                                  NULL,
+                                  tree_collate_func_utf16be);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf16-be!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
-    if(ret == SQLITE_OK)
-    {
-      m_Databases.insert(std::make_pair(PromiseFlatString(dbGUID), pDB));
+  ret = sqlite3_create_collation(pHandle,
+                                 "tree",
+                                 SQLITE_UTF16LE,
+                                 NULL,
+                                 tree_collate_func_utf16le);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf16-le!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
-      {
-        nsAutoLock lock(m_pDatabasesGUIDListLock);
-        PRBool found = PR_FALSE;
-        PRInt32 size = m_DatabasesGUIDList.size(), current = 0;
-        for(; current < size; current++) {
-          if(m_DatabasesGUIDList[current] == dbGUID)
-            found = PR_TRUE;
-        }
-
-        if(!found)
-          m_DatabasesGUIDList.push_back(PromiseFlatString(dbGUID));
-      }
-
+  ret = sqlite3_create_collation(pHandle,
+                                 "tree",
+                                 SQLITE_UTF8,
+                                 NULL,
+                                 tree_collate_func_utf8);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf8!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
+  
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
-      sqlite3_busy_timeout(pDB, 60000);
-
-      char *strErr = nsnull;
-      sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
-      if(strErr) sqlite3_free(strErr);
-
-      sqlite3_enable_shared_cache(1);
+  char *strErr = nsnull;
+  sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
+  if(strErr) {
+    sqlite3_free(strErr);
+  }
 #endif
 
-      NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
-    }
-  }
+#if defined(USE_SQLITE_BUSY_TIMEOUT)
+  sqlite3_busy_timeout(pHandle, 60000);
+#endif
 
-  return ret;
+#if defined(USE_SQLITE_SHARED_CACHE)
+  sqlite3_enable_shared_cache(1);
+#endif
+
+  *ppHandle = pHandle;
+
+  return NS_OK;
 } //OpenDB
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::CloseDB(const nsAString &dbGUID)
+nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 {
-  PRInt32 ret = 0;
-  nsAutoLock lock(m_pDatabasesLock);
-
-  databasemap_t::iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
-
-  if(itDatabases != m_Databases.end())
-  {
-    sqlite3_interrupt(itDatabases->second);
-    ret = sqlite3_close(itDatabases->second);
-    m_Databases.erase(itDatabases);
-  }
+  sqlite3_interrupt(pHandle);
+  
+  PRInt32 ret = sqlite3_close(pHandle);
+  NS_ASSERTION(ret == SQLITE_OK, "");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
  
-  return ret;
+  return NS_OK;
 } //CloseDB
-
-//-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::DropDB(const nsAString &dbGUID)
-{
-  return 0;
-} //DropDB
 
 //-----------------------------------------------------------------------------
 /* [noscript] PRInt32 SubmitQuery (in CDatabaseQueryPtr dbQuery); */
 NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_retval)
 {
   if (m_IsShutDown) {
-    NS_ERROR("Don't submit queries after the DBEngine is shut down!!!!");
+    NS_WARNING("Don't submit queries after the DBEngine is shut down!");
     return NS_ERROR_FAILURE;
   }
 
@@ -825,40 +806,100 @@ NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_r
 //-----------------------------------------------------------------------------
 PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 {
-  PRInt32 ret = 0;
+  //Query is null, bail.
+  if(!pQuery) {
+    return 1;
+  }
 
-  if(!pQuery) return 1;
+  //Grip.
+  NS_ADDREF(pQuery);
 
   // If the query is already executing, do not add it.  This is to prevent
   // the same query from getting executed simultaneously
-  PRBool isExecuting;
+  PRBool isExecuting = PR_FALSE;
   pQuery->IsExecuting(&isExecuting);
   if(isExecuting) {
     return 0;
   }
 
-  {
-    nsAutoMonitor mon(m_pQueryProcessorMonitor);
+  nsRefPtr<QueryProcessorThread> pThread = GetThreadByQuery(pQuery, PR_TRUE);
+  NS_ENSURE_TRUE(pThread, 1);
 
-    pQuery->AddRef();
-    pQuery->m_IsExecuting = PR_TRUE;
+  nsresult rv = pThread->PushQueryToQueue(pQuery);
+  NS_ENSURE_SUCCESS(rv, 1);
 
-    m_QueryQueue.push_back(pQuery);
-    m_QueryProcessorQueueHasItem = PR_TRUE;
-    mon.Notify();
-  }
+  pQuery->m_IsExecuting = PR_TRUE;
+  pThread->NotifyQueue();
 
   PRBool bAsyncQuery = PR_FALSE;
   pQuery->IsAyncQuery(&bAsyncQuery);
 
-  if(!bAsyncQuery)
-  {
-    pQuery->WaitForCompletion(&ret);
-    pQuery->GetLastError(&ret);
+  PRInt32 result = 0;
+  if(!bAsyncQuery) {
+    pQuery->WaitForCompletion(&result);
+    pQuery->GetLastError(&result);
   }
 
-  return ret;
-} //SubmitQuery
+  return result;
+} //SubmitQueryPrivate
+
+//-----------------------------------------------------------------------------
+PRBool CDatabaseEngine::HasThreadForGUID(const nsAString & aGUID)
+{
+  return m_ThreadPool.Get(nsAutoString(aGUID), nsnull);
+}
+
+//-----------------------------------------------------------------------------
+already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDatabaseQuery *pQuery,
+                                                         PRBool bCreate /*= PR_FALSE*/)
+{
+  NS_ENSURE_TRUE(pQuery, nsnull);
+
+  nsAutoString strGUID;
+  nsAutoMonitor mon(m_pThreadMonitor);
+  
+  nsRefPtr<QueryProcessorThread> pThread;
+
+  nsresult rv = pQuery->GetDatabaseGUID(strGUID);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+  
+  if(!m_ThreadPool.Get(strGUID, getter_AddRefs(pThread))) {
+    pThread = CreateThreadFromQuery(pQuery);
+  }
+
+  QueryProcessorThread *p = pThread.get();
+  NS_ADDREF(p);
+
+  return p;
+}
+
+//-----------------------------------------------------------------------------
+already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CDatabaseQuery *pQuery)
+{
+  nsAutoString strGUID;
+  nsAutoMonitor mon(m_pThreadMonitor);
+
+  nsresult rv = pQuery->GetDatabaseGUID(strGUID);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  nsRefPtr<QueryProcessorThread> pThread(new QueryProcessorThread());
+  NS_ENSURE_TRUE(pThread, nsnull);
+
+  sqlite3 *pHandle = nsnull;
+  rv = OpenDB(strGUID, pQuery, &pHandle);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  rv = pThread->Init(this, strGUID, pHandle);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  PRBool success = m_ThreadPool.Put(strGUID, pThread);
+  NS_ENSURE_TRUE(success, nsnull);
+
+  QueryProcessorThread *p = pThread.get();
+  NS_ADDREF(p);
+
+  return p;
+}
 
 //-----------------------------------------------------------------------------
 /* [noscript] void AddPersistentQuery (in CDatabaseQueryPtr dbQuery, in stlCStringRef strTableName); */
@@ -982,85 +1023,6 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
 } //RemovePersistentQuery
 
 //-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::LockDatabase(sqlite3 *pDB)
-{
-  NS_ENSURE_ARG_POINTER(pDB);
-  PRMonitor* lock = nsnull;
-  {
-    nsAutoLock dbLock(m_pDatabaseLocksLock);
-    databaselockmap_t::iterator itLock = m_DatabaseLocks.find(pDB);
-    if(itLock != m_DatabaseLocks.end()) {
-      lock = itLock->second;
-      NS_ENSURE_TRUE(lock, NS_ERROR_NULL_POINTER);
-    }
-    else {
-      lock = PR_NewMonitor();
-      NS_ENSURE_TRUE(lock, NS_ERROR_OUT_OF_MEMORY);
-      m_DatabaseLocks.insert(std::make_pair<sqlite3*, PRMonitor*>(pDB, lock));
-    }
-  }
-
-  PR_EnterMonitor(lock);
-  return NS_OK;
-} //LockDatabase
-
-//-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::UnlockDatabase(sqlite3 *pDB)
-{
-  NS_ENSURE_ARG_POINTER(pDB);
-  PRMonitor* lock = nsnull;
-  {
-    nsAutoLock dbLock(m_pDatabaseLocksLock);
-    databaselockmap_t::iterator itLock = m_DatabaseLocks.find(pDB);
-    NS_ASSERTION(itLock != m_DatabaseLocks.end(), "Called UnlockDatabase on a database that isn't in our map");
-    lock = itLock->second;
-  }
-  NS_ASSERTION(lock, "Null lock stored in database map");
-  PR_ExitMonitor(lock);
-  return NS_OK;
-} //UnlockDatabase
-
-//-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::ClearAllDBLocks()
-{
-  nsAutoLock dbLock(m_pDatabaseLocksLock);
-
-  databaselockmap_t::iterator itLock = m_DatabaseLocks.begin();
-  databaselockmap_t::iterator itEnd = m_DatabaseLocks.end();
-
-  for(PRMonitor* lock = nsnull; itLock != itEnd; itLock++)
-  {
-    lock = itLock->second;
-    if (lock) {
-      PR_DestroyMonitor(lock);
-      lock = nsnull;
-    }
-  }
-  m_DatabaseLocks.clear();
-  return NS_OK;
-} //ClearAllDBLocks
-
-//-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::CloseAllDB()
-{
-  PRInt32 ret = nsnull;
-  nsAutoLock lock(m_pDatabasesLock);
-
-  databasemap_t::iterator itDatabases = m_Databases.begin();
-
-  if(itDatabases != m_Databases.end())
-  {
-    sqlite3_interrupt(itDatabases->second);
-    while((ret = sqlite3_close(itDatabases->second)) != SQLITE_OK)
-      PR_Sleep(33);
-
-    m_Databases.erase(itDatabases);
-  }
-
-  return NS_OK;
-} //CloseAllDB
-
-//-----------------------------------------------------------------------------
 nsresult CDatabaseEngine::ClearPersistentQueries()
 {
   nsAutoMonitor mon(m_pPersistentQueriesMonitor);
@@ -1086,159 +1048,15 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 }
 
 //-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::ClearQueryQueue()
+/*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine,
+                                                            QueryProcessorThread *pThread)
 {
-  while(!m_QueryQueue.empty()) {
-    CDatabaseQuery *pQuery = m_QueryQueue.front();
-    m_QueryQueue.pop_front();
-
-    nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not proxy release pQuery");
-      NS_RELEASE(pQuery);
-    }
-  }
-  
-  return NS_OK;
-}
-
-//-----------------------------------------------------------------------------
-sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, CDatabaseQuery *pQuery, PRBool bCreateIfNotOpen /*= PR_FALSE*/)
-{
-  sqlite3 *pRet = nsnull;
-
-  pRet = FindDBByGUID(dbGUID);
-
-  if(pRet == nsnull)
-  {
-    int ret = OpenDB(dbGUID, pQuery);
-    if(ret == SQLITE_OK)
-    {
-      pRet = FindDBByGUID(dbGUID);
-    }
-  }
-
-  return pRet;
-} //GetDBByGUID
-
-//-----------------------------------------------------------------------------
-void CDatabaseEngine::GenerateDBGUIDList()
-{
-  PRInt32 nRet = 0;
-  PRBool bFlag = PR_FALSE;
-  nsresult rv;
-
-  nsCOMPtr<nsILocalFile> pDBDirectory;
-  nsCOMPtr<nsIServiceManager> svcMgr;
-  rv = NS_GetServiceManager(getter_AddRefs(svcMgr));
-
-  if(NS_FAILED(rv)) return;
-
-  PR_Lock(m_pDBStorePathLock);
-  rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(pDBDirectory));
-  PR_Unlock(m_pDBStorePathLock);
-
-  if (NS_FAILED(rv)) return;
-
-  rv = pDBDirectory->IsDirectory(&bFlag);
-  if(NS_FAILED(rv)) return;
-
-  if(bFlag)
-  {
-    nsCOMPtr<nsISimpleEnumerator> pDirEntries;
-    rv = pDBDirectory->GetDirectoryEntries(getter_AddRefs(pDirEntries));
-
-    if(NS_SUCCEEDED(rv))
-    {
-      PRBool bHasMore;
-
-      for(;;)
-      {
-        if(pDirEntries &&
-           NS_SUCCEEDED(pDirEntries->HasMoreElements(&bHasMore)) &&
-           bHasMore)
-        {
-
-          nsCOMPtr<nsISupports> pDirEntry;
-          rv = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
-
-          if(NS_SUCCEEDED(rv))
-          {
-            nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
-            if(NS_SUCCEEDED(rv))
-            {
-              PRBool bIsFile;
-
-              if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
-              {
-                nsAutoString strLeaf;
-                rv = pEntry->GetLeafName(strLeaf);
-                if (NS_SUCCEEDED(rv))
-                {
-                  NS_NAMED_LITERAL_STRING(dbExt, ".db");
-                  PRInt32 index = strLeaf.Find(dbExt);
-                  if (index > -1)
-                  {
-                    strLeaf.Cut(index, dbExt.Length());
-
-                    PR_Lock(m_pDatabasesGUIDListLock);
-                    m_DatabasesGUIDList.push_back(strLeaf);
-                    PR_Unlock(m_pDatabasesGUIDListLock);
-
-                    ++nRet;
-                  }
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          break;
-        }
-      }
-    }
-  }
-
-  return;
-}
-
-//-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
-{
-  PR_Lock(m_pDatabasesGUIDListLock);
-  vGUIDList = m_DatabasesGUIDList;
-  PR_Unlock(m_pDatabasesGUIDListLock);
-  return vGUIDList.size();
-} //GetDBGUIDList
-
-//-----------------------------------------------------------------------------
-sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
-{
-  sqlite3 *pRet = nsnull;
-
-  PR_Lock(m_pDatabasesLock);
-
-  databasemap_t::const_iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
-  if(itDatabases != m_Databases.end())
-  {
-    pRet = itDatabases->second;
-  }
-
-  PR_Unlock(m_pDatabasesLock);
-
-  return pRet;
-} //FindDBByGUID
-
-//-----------------------------------------------------------------------------
-/*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine)
-{
-  NS_NAMED_LITERAL_STRING(allToken, "*");
-  NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
-  NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
-  NS_NAMED_LITERAL_STRING(strEndToken, "\"");
   NS_NAMED_LITERAL_STRING(strSelectToken, "SELECT");
-  NS_NAMED_LITERAL_STRING(strWhereToken, "WHERE");
+
+  if(!pEngine ||
+     !pThread ) {
+    return;
+  }
 
   CDatabaseQuery *pQuery = nsnull;
 
@@ -1247,536 +1065,448 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     pQuery = nsnull;
 
     { // Enter Monitor
-      nsAutoMonitor mon(pEngine->m_pQueryProcessorMonitor);
-      while (!pEngine->m_QueryProcessorQueueHasItem && !pEngine->m_QueryProcessorShouldShutdown)
+      PRUint32 queueSize = 0;
+
+      nsresult rv = pThread->GetQueueSize(queueSize);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
+
+      nsAutoMonitor mon(pThread->m_pQueueMonitor);
+
+      while (!queueSize && 
+             !pThread->m_Shutdown) {
+        
         mon.Wait();
+        
+        rv = pThread->GetQueueSize(queueSize);
+        NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
+      }
 
       // Handle shutdown request
-      if (pEngine->m_QueryProcessorShouldShutdown) {
+      if (pThread->m_Shutdown) {
+
 #if defined(XP_WIN)
+        // Cleanup all thread resources.
         sqlite3_thread_cleanup();
 #endif
+
         return;
       }
 
       // We must have an item in the queue
-      pQuery = pEngine->m_QueryQueue.front();
-      pEngine->m_QueryQueue.pop_front();
-      if (pEngine->m_QueryQueue.empty()) {
-        pEngine->m_QueryProcessorQueueHasItem = PR_FALSE;
+      rv = pThread->PopQueryFromQueue(&pQuery);
+      NS_ASSERTION(NS_SUCCEEDED(rv), 
+        "Failed to pop query from queue. Thread will restart.");
+      
+      // Restart the thread.
+      if(NS_FAILED(rv)) {
+
+#if defined(XP_WIN)
+        // Cleanup all thread resources.
+        sqlite3_thread_cleanup();
+#endif
+
+        return;
       }
+
     } // Exit Monitor
 
-    NS_ASSERTION(pQuery, "How can we get here without a query?");
-
-    PRBool bAllDB = PR_FALSE;
-    sqlite3 *pDB = nsnull;
-    sqlite3 *pSecondDB = nsnull;
-    nsAutoString dbGUID;
-    PRBool bPersistent = PR_FALSE;
-
-    bPersistent = pQuery->m_PersistentQuery;
-    pQuery->GetDatabaseGUID(dbGUID);
+    
+    PRBool bPersistent = pQuery->m_PersistentQuery;
+    sqlite3 *pDB = pThread->m_pHandle;
 
     LOG(("DBE: Process Start, thread 0x%x query 0x%x",
-         PR_GetCurrentThread(), pQuery));
+      PR_GetCurrentThread(), pQuery));
 
-    nsAutoString lowercaseGUID(dbGUID);
+    PRUint32 nQueryCount = 0;
+    PRBool bFirstRow = PR_TRUE;
+
+    //Default return error.
+    pQuery->SetLastError(SQLITE_ERROR);
+    pQuery->GetQueryCount(&nQueryCount);
+
+    for(PRUint32 currentQuery = 0; currentQuery < nQueryCount && !pQuery->m_IsAborting; currentQuery++)
     {
-      ToLowerCase(lowercaseGUID);
-      bAllDB = allToken.Equals(lowercaseGUID);
-    }
+      int retDB = 0;
+      sqlite3_stmt *pStmt = nsnull;
 
-    if(!bAllDB)
-      pDB = pEngine->GetDBByGUID(dbGUID, pQuery, PR_TRUE);
+      nsAutoString strQuery;
+      bindParameterArray_t* pParameters;
+      const void *pzTail = nsnull;
 
-    if(!pDB && !bAllDB)
-    {
-      //Some bad error we'll talk about later.
-      pQuery->SetLastError(SQLITE_ERROR);
-    }
-    else
-    {
-      std::vector<nsString> vDBList;
-      PRUint32 nNumDB = 1;
-      PRUint32 nQueryCount = 0;
-      PRBool bFirstRow = PR_TRUE;
+      pQuery->GetQuery(currentQuery, strQuery);
+      pParameters = pQuery->GetQueryParameters(currentQuery);
 
-      //Default return error.
-      pQuery->SetLastError(SQLITE_ERROR);
-      pQuery->GetQueryCount(&nQueryCount);
-
-      if(bAllDB)
-        nNumDB = pEngine->GetDBGUIDList(vDBList);
-
-      for(PRUint32 i = 0; i < nQueryCount && !pQuery->m_IsAborting; i++)
+      if(bPersistent)
       {
-
-        int retDB = 0;
-        sqlite3_stmt *pStmt = nsnull;
-
-        nsAutoString strQuery;
-        bindParameterArray_t* pParameters;
-        const void *pzTail = nsnull;
-
-        pQuery->GetQuery(i, strQuery);
-        pParameters = pQuery->GetQueryParameters(i);
-
-        //To enable the ATTACH statement to work, we must parse out the
-        //database GUID and replace it with the full path to the database
-        //file the query wishes to attach.
-        PRInt32 attachOffset = strQuery.Find(strAttachToken, 0, CaseInsensitiveCompare);
-        if(attachOffset > -1)
+        //To enable per-row change notification persistent query callbacks we
+        //must always select the rowid column and store it to compare with the 
+        //rowid's that do get changed. We are notified of rowid's that are modified
+        //using the sqlite3_update_hook function that we call to register a callback
+        //that enables tracking of all data update in the database.
+        PRInt32 selectOffset = strQuery.Find(strSelectToken, 0, CaseInsensitiveCompare);
+        if(selectOffset > -1)
         {
-          PRInt32 startOffset = strQuery.Find(strStartToken, attachOffset, CaseInsensitiveCompare);
-          if(startOffset > -1)
-          {
-            PRInt32 endOffset = strQuery.Find(strEndToken, startOffset, CaseInsensitiveCompare);
-            
-            if(pSecondDB) {
-              pEngine->UnlockDatabase(pSecondDB);
-              pSecondDB = nsnull;
-            }
+          nsAutoString str;
+          str.AssignLiteral("rowid, ");
 
-            nsAutoString strSecondDBGUID(Substring(strQuery,
-                                                   (PRUint32)startOffset,
-                                                   (PRUint32)(endOffset - startOffset)));
-
-            pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, pQuery, PR_TRUE);
-            if(pSecondDB)
-            {
-              nsAutoString strDBPath(strSecondDBGUID);
-              strDBPath.AppendLiteral(".db");
-              
-              PRInt32 index = strQuery.Find(strDBPath);
-              if(index > -1)
-              {
-                pEngine->GetDBStorePath(strSecondDBGUID, pQuery, strDBPath);
-                strQuery.Replace(index, strDBPath.Length(), strDBPath);
-              }
-
-              pEngine->LockDatabase(pSecondDB);
-            }
-          }
+          //Make sure we get the row id column first.
+          strQuery.Insert(str, selectOffset + strSelectToken.Length() + 1);          
         }
+      }
 
-        if(bPersistent)
-        {
-          //To enable per-row change notification persistent query callbacks we
-          //must always select the rowid column and store it to compare with the 
-          //rowid's that do get changed. We are notified of rowid's that are modified
-          //using the sqlite3_update_hook function that we call to register a callback
-          //that enables tracking of all data update in the database.
-          PRInt32 selectOffset = strQuery.Find(strSelectToken, 0, CaseInsensitiveCompare);
-          if(selectOffset > -1)
-          {
-            nsAutoString str;
-            str.AssignLiteral("rowid, ");
+      nsAutoString dbName;
+      pQuery->GetDatabaseGUID(dbName);
 
-            //Make sure we get the row id column first.
-            strQuery.Insert(str, selectOffset + strSelectToken.Length() + 1);          
-          }
+      retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
+      if(retDB != SQLITE_OK) {
+#if defined(HARD_SANITY_CHECK)
+        const char *szErr = sqlite3_errmsg(pDB);
+        nsCAutoString log;
+        log.Append(szErr);
+        log.AppendLiteral("\n");
+        NS_WARNING(log.get());
+#endif
+        continue;
+      }
+
+      sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
+
+      retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
+      if(retDB != SQLITE_OK) {
+#if defined(HARD_SANITY_CHECK)
+        const char *szErr = sqlite3_errmsg(pDB);
+        nsCAutoString log;
+        log.Append(szErr);
+        log.AppendLiteral("\n");
+        NS_WARNING(log.get());
+#endif
+        continue;
+      }
+
+      BEGIN_PERFORMANCE_LOG(strQuery, dbName);
+
+      // If we have parameters for this query, bind them
+      PRUint32 len = pParameters->Length();
+      for(PRUint32 i = 0; i < len; i++) {
+        CQueryParameter& p = pParameters->ElementAt(i);
+
+        switch(p.type) {
+          case ISNULL:
+            sqlite3_bind_null(pStmt, i + 1);
+            break;
+          case UTF8STRING:
+            sqlite3_bind_text(pStmt, i + 1,
+              p.utf8StringValue.get(),
+              p.utf8StringValue.Length(),
+              SQLITE_TRANSIENT);
+            break;
+          case STRING:
+            sqlite3_bind_text16(pStmt, i + 1,
+              p.stringValue.get(),
+              p.stringValue.Length() * 2,
+              SQLITE_TRANSIENT);
+            break;
+          case DOUBLE:
+            sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
+            break;
+          case INTEGER32:
+            sqlite3_bind_int(pStmt, i + 1, p.int32Value);
+            break;
+          case INTEGER64:
+            sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
+            break;
         }
+      }
 
-        for(PRUint32 j = 0; j < nNumDB; j++)
+      LOG(("DBE: '%s' on '%s'\n",
+        NS_ConvertUTF16toUTF8(dbName).get(),
+        NS_ConvertUTF16toUTF8(strQuery).get()));
+
+      pQuery->m_CurrentQuery = currentQuery;
+
+      PRInt32 nRetryCount = 0;
+      PRInt32 totalRows = 0;
+
+      PRUint64 rollingSum = 0;
+      PRUint64 rollingLimit = 0;
+      PRUint32 rollingLimitColumnIndex = 0;
+      PRUint32 rollingRowCount = 0;
+      pQuery->GetRollingLimit(&rollingLimit);
+      pQuery->GetRollingLimitColumnIndex(&rollingLimitColumnIndex);
+
+      PRBool finishEarly = PR_FALSE;
+      do
+      {
+        retDB = sqlite3_step(pStmt);
+
+        switch(retDB)
         {
-          nsAutoString dbName;
-          if(!bAllDB)
+        case SQLITE_ROW: 
           {
-            pQuery->GetDatabaseGUID(dbName);
-            pEngine->LockDatabase(pDB);
-
-            retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
-            sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
-
-#if defined(HARD_SANITY_CHECK)
-            if(retDB != SQLITE_OK)
-            {
-              const char *szErr = sqlite3_errmsg(pDB);
-              nsCAutoString log;
-              log.Append(szErr);
-              log.AppendLiteral("\n");
-              NS_WARNING(log.get());
-            }
-#endif
-          }
-          else
-          {
-            dbName.Assign(vDBList[j]);
-            pDB = pEngine->GetDBByGUID(vDBList[j], pQuery, PR_TRUE);
-            
-            //Just in case there was some kind of bad error while attempting to get the database or create it.
-            if ( !pDB ) 
-              continue;
-            
-            pEngine->LockDatabase(pDB);
-
-            retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
-            sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
-
-#if defined(HARD_SANITY_CHECK)
-            if(retDB != SQLITE_OK)
-            {
-              const char *szErr = sqlite3_errmsg(pDB);
-              nsCAutoString log;
-              log.Append(szErr);
-              log.AppendLiteral("\n");
-              NS_WARNING(log.get());
-            }
-#endif
-          }
-
-          retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
-
-          BEGIN_PERFORMANCE_LOG(strQuery, dbName);
-
-          // If we have parameters for this query, bind them
-          if(retDB == SQLITE_OK) {
-
-            PRUint32 len = pParameters->Length();
-            for(PRUint32 i = 0; i < len; i++) {
-              CQueryParameter& p = pParameters->ElementAt(i);
-
-              switch(p.type) {
-                case ISNULL:
-                  sqlite3_bind_null(pStmt, i + 1);
-                  break;
-                case UTF8STRING:
-                  sqlite3_bind_text(pStmt, i + 1,
-                                    p.utf8StringValue.get(),
-                                    p.utf8StringValue.Length(),
-                                    SQLITE_TRANSIENT);
-                  break;
-                case STRING:
-                  sqlite3_bind_text16(pStmt, i + 1,
-                                      p.stringValue.get(),
-                                      p.stringValue.Length() * 2,
-                                      SQLITE_TRANSIENT);
-                  break;
-                case DOUBLE:
-                  sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
-                  break;
-                case INTEGER32:
-                  sqlite3_bind_int(pStmt, i + 1, p.int32Value);
-                  break;
-                case INTEGER64:
-                  sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
-                  break;
-              }
-            }
-          }
-
-          LOG(("DBE: '%s' on '%s'\n",
-               NS_ConvertUTF16toUTF8(dbName).get(),
-               NS_ConvertUTF16toUTF8(strQuery).get()));
-          pQuery->m_CurrentQuery = i;
-
-          if(retDB != SQLITE_OK)
-          {
-            //Some bad error we'll talk about later.
-            pQuery->SetLastError(SQLITE_ERROR);
-
-#if defined(HARD_SANITY_CHECK)
-            if(retDB != SQLITE_OK)
-            {
-              const char *szErr = sqlite3_errmsg(pDB);
-              nsCAutoString log;
-              log.Append(szErr);
-              log.AppendLiteral("\n");
-              //NS_WARNING(log.get());
-            }
-#endif
-          }
-          else
-          {
-            PRInt32 nRetryCount = 0;
-            PRInt32 totalRows = 0;
-
-            PRUint64 rollingSum = 0;
-            PRUint64 rollingLimit = 0;
-            PRUint32 rollingLimitColumnIndex = 0;
-            PRUint32 rollingRowCount = 0;
-            pQuery->GetRollingLimit(&rollingLimit);
-            pQuery->GetRollingLimitColumnIndex(&rollingLimitColumnIndex);
-
-            PRBool finishEarly = PR_FALSE;
-            do
-            {
-              retDB = sqlite3_step(pStmt);
-
-              switch(retDB)
-              {
-                case SQLITE_ROW: 
-                {
-                  CDatabaseResult *pRes = pQuery->GetResultObject();
-                  PR_Lock(pQuery->m_pQueryResultLock);
-
-                  int nCount = sqlite3_column_count(pStmt);
-
-                  if(bFirstRow)
-                  {
-                    bFirstRow = PR_FALSE;
-
-                    PR_Unlock(pQuery->m_pQueryResultLock);
-                    pRes->ClearResultSet();
-                    PR_Lock(pQuery->m_pQueryResultLock);
-
-                    std::vector<nsString> vColumnNames;
-                    vColumnNames.reserve(nCount);
-                    
-                    int i = 0;
-                    if(bPersistent)
-                    {
-                      PR_Lock(pQuery->m_pSelectedRowIDsLock);
-                      pQuery->m_SelectedRowIDs.clear();
-                      PR_Unlock(pQuery->m_pSelectedRowIDsLock);
-
-                      i = 1;
-                    }
-
-                    for(; i < nCount; i++)
-                    {
-                      PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
-                      nsString strColumnName;
-                      
-                      if(p) {
-                        strColumnName = p;
-                      }
-                      else {
-                        strColumnName.SetIsVoid(PR_TRUE);
-                      }
-                      
-                      vColumnNames.push_back(strColumnName);
-                    }
-
-                    pRes->SetColumnNames(vColumnNames);
-                  }
-
-                  std::vector<nsString> vCellValues;
-                  vCellValues.reserve(nCount);
-
-                  TRACE(("DBE: Result row %d:", totalRows));
-
-                  int i = 0;
-                  if(bPersistent)
-                  {
-                    PRInt64 nRowID = sqlite3_column_int64(pStmt, 0);
-                    PR_Lock(pQuery->m_pSelectedRowIDsLock);
-                    pQuery->m_SelectedRowIDs.push_back(nRowID);
-                    PR_Unlock(pQuery->m_pSelectedRowIDsLock);
-
-                    i = 1;
-                  }
-
-                  // If this is a rolling limit query, increment the rolling
-                  // sum by the value of the  specified column index.
-                  if (rollingLimit > 0) {
-                    rollingSum += sqlite3_column_int64(pStmt, rollingLimitColumnIndex);
-                    rollingRowCount++;
-                  }
-
-                  // Add the row to the result only if this is not a rolling
-                  // limit query, or if this is a rolling limit query and the
-                  // rolling sum has met or exceeded the limit
-                  if (rollingLimit == 0 || rollingSum >= rollingLimit) {
-                    for(; i < nCount; i++)
-                    {
-                      PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
-                      nsString strCellValue;
-  
-                      if(p) {
-                        strCellValue = p;
-                      }
-                      else {
-                        strCellValue.SetIsVoid(PR_TRUE);
-                      }
-  
-                      vCellValues.push_back(strCellValue);
-                      TRACE(("Column %d: '%s' ", i,
-                             NS_ConvertUTF16toUTF8(strCellValue).get()));
-                    }
-                    totalRows++;
-  
-                    pRes->AddRow(vCellValues);
-
-                    // If this is a rolling limit query, we're done
-                    if (rollingLimit > 0) {
-                      pQuery->SetRollingLimitResult(rollingRowCount);
-                      finishEarly = PR_TRUE;
-                    }
-                  }
-
-                  PR_Unlock(pQuery->m_pQueryResultLock);
-                }
-                break;
-
-                case SQLITE_DONE:
-                {
-                  pQuery->SetLastError(SQLITE_OK);
-                  TRACE(("Query complete, %d rows", totalRows));
-                }
-                break;
-
-                case SQLITE_MISUSE:
-                {
-#if defined(HARD_SANITY_CHECK)
-                  NS_WARNING("SQLITE: MISUSE\n");
-                  NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
-                  nsCAutoString log;
-
-                  log.Append(str);
-                  log.AppendLiteral("\n");
-                  NS_WARNING(log.get());
-
-                  const char *szErr = sqlite3_errmsg(pDB);
-                  log.Assign(szErr);
-                  log.AppendLiteral("\n");
-                  NS_WARNING(log.get());
-#endif
-                }
-                break;
-
-                case SQLITE_BUSY:
-                {
-#if defined(HARD_SANITY_CHECK)
-#if defined(XP_WIN)
-                  OutputDebugStringA("SQLITE: BUSY\n");
-                  OutputDebugStringW(PromiseFlatString(strQuery).get());
-                  OutputDebugStringW(L"\n");
-
-                  const char *szErr = sqlite3_errmsg(pDB);
-                  OutputDebugStringA(szErr);
-                  OutputDebugStringA("\n");
-#endif
-#endif
-                  sqlite3_reset(pStmt);
-
-                  if(nRetryCount++ > SQLITE_MAX_RETRIES)
-                  {
-                    PR_Sleep(PR_MillisecondsToInterval(250));
-                    retDB = SQLITE_ROW;
-                  }
-                }
-                break;
-
-                default:
-                {
-                  pQuery->SetLastError(retDB);
-
-#if defined(HARD_SANITY_CHECK)
-#if defined(XP_WIN)
-                  OutputDebugStringA("SQLITE: DEFAULT ERROR\n");
-                  OutputDebugStringA("Error Code: ");
-                  char szCode[64] = {0};
-                  OutputDebugStringA(itoa(retDB, szCode, 10));
-                  OutputDebugStringA("\n");
-
-                  OutputDebugStringW(PromiseFlatString(strQuery).get());
-                  OutputDebugStringW(L"\n");
-
-                  const char *szErr = sqlite3_errmsg(pDB);
-                  OutputDebugStringA(szErr);
-                  OutputDebugStringA("\n");
-#endif
-
-                  {
-                    const char *szErr = sqlite3_errmsg(pDB);
-                    nsCAutoString log;
-                    log.Append(szErr);
-                    log.AppendLiteral("\n");
-                    NS_WARNING(log.get());
-                  }
-#endif
-                }
-              }
-            }
-            while(retDB == SQLITE_ROW && !finishEarly);
-          }
-
-          //Didn't get any rows
-          if(bFirstRow)
-          {
-            PRBool isPersistent = PR_FALSE;
-            pQuery->IsPersistentQuery(&isPersistent);
-
-            if(isPersistent)
-            {
-              nsAutoString strTableName(strQuery);
-              ToLowerCase(strTableName);
-
-              NS_NAMED_LITERAL_STRING(searchStr, " from ");
-
-              PRInt32 foundIndex = strTableName.Find(searchStr);
-              if(foundIndex > -1)
-              {
-                PRUint32 nCutLen = foundIndex + searchStr.Length();
-                strTableName.Cut(0, nCutLen);
-
-                PRUint32 offset = 0;
-                while(strTableName.CharAt(offset) == NS_L(' '))
-                  offset++;
-
-                strTableName.Cut(0, offset);
-
-                NS_NAMED_LITERAL_STRING(spaceStr, " ");
-                foundIndex = strTableName.Find(spaceStr);
-
-                if(foundIndex > -1)
-                  strTableName.SetLength((PRUint32)foundIndex);
-
-                pEngine->AddPersistentQuery(pQuery, NS_ConvertUTF16toUTF8(strTableName));
-              }
-
-              PR_Lock(pQuery->m_pSelectedRowIDsLock);
-              pQuery->m_SelectedRowIDs.clear();
-              PR_Unlock(pQuery->m_pSelectedRowIDsLock);
-            }
-
             CDatabaseResult *pRes = pQuery->GetResultObject();
-            pRes->ClearResultSet();
+            PR_Lock(pQuery->m_pQueryResultLock);
+
+            int nCount = sqlite3_column_count(pStmt);
+
+            if(bFirstRow)
+            {
+              bFirstRow = PR_FALSE;
+
+              PR_Unlock(pQuery->m_pQueryResultLock);
+              pRes->ClearResultSet();
+              PR_Lock(pQuery->m_pQueryResultLock);
+
+              std::vector<nsString> vColumnNames;
+              vColumnNames.reserve(nCount);
+
+              int i = 0;
+              if(bPersistent)
+              {
+                PR_Lock(pQuery->m_pSelectedRowIDsLock);
+                pQuery->m_SelectedRowIDs.clear();
+                PR_Unlock(pQuery->m_pSelectedRowIDsLock);
+
+                i = 1;
+              }
+
+              for(; i < nCount; i++)
+              {
+                PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
+                nsString strColumnName;
+
+                if(p) {
+                  strColumnName = p;
+                }
+                else {
+                  strColumnName.SetIsVoid(PR_TRUE);
+                }
+
+                vColumnNames.push_back(strColumnName);
+              }
+
+              pRes->SetColumnNames(vColumnNames);
+            }
+
+            std::vector<nsString> vCellValues;
+            vCellValues.reserve(nCount);
+
+            TRACE(("DBE: Result row %d:", totalRows));
+
+            int i = 0;
+            if(bPersistent)
+            {
+              PRInt64 nRowID = sqlite3_column_int64(pStmt, 0);
+              PR_Lock(pQuery->m_pSelectedRowIDsLock);
+              pQuery->m_SelectedRowIDs.push_back(nRowID);
+              PR_Unlock(pQuery->m_pSelectedRowIDsLock);
+
+              i = 1;
+            }
+
+            // If this is a rolling limit query, increment the rolling
+            // sum by the value of the  specified column index.
+            if (rollingLimit > 0) {
+              rollingSum += sqlite3_column_int64(pStmt, rollingLimitColumnIndex);
+              rollingRowCount++;
+            }
+
+            // Add the row to the result only if this is not a rolling
+            // limit query, or if this is a rolling limit query and the
+            // rolling sum has met or exceeded the limit
+            if (rollingLimit == 0 || rollingSum >= rollingLimit) {
+              for(; i < nCount; i++)
+              {
+                PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
+                nsString strCellValue;
+
+                if(p) {
+                  strCellValue = p;
+                }
+                else {
+                  strCellValue.SetIsVoid(PR_TRUE);
+                }
+
+                vCellValues.push_back(strCellValue);
+                TRACE(("Column %d: '%s' ", i,
+                  NS_ConvertUTF16toUTF8(strCellValue).get()));
+              }
+              totalRows++;
+
+              pRes->AddRow(vCellValues);
+
+              // If this is a rolling limit query, we're done
+              if (rollingLimit > 0) {
+                pQuery->SetRollingLimitResult(rollingRowCount);
+                finishEarly = PR_TRUE;
+              }
+            }
+
+            PR_Unlock(pQuery->m_pQueryResultLock);
           }
+          break;
 
-          //Always release the statement.
-          retDB = sqlite3_finalize(pStmt);
-
-          pEngine->UnlockDatabase(pDB);
-
-#if defined(HARD_SANITY_CHECK)
-          if(retDB != SQLITE_OK)
+        case SQLITE_DONE:
           {
-            const char *szErr = sqlite3_errmsg(pDB);
+            pQuery->SetLastError(SQLITE_OK);
+            TRACE(("Query complete, %d rows", totalRows));
+          }
+          break;
+
+        case SQLITE_MISUSE:
+          {
+#if defined(HARD_SANITY_CHECK)
+            NS_WARNING("SQLITE: MISUSE\n");
+            NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
             nsCAutoString log;
-            log.Append(szErr);
+
+            log.Append(str);
             log.AppendLiteral("\n");
             NS_WARNING(log.get());
-          }
+
+            const char *szErr = sqlite3_errmsg(pDB);
+            log.Assign(szErr);
+            log.AppendLiteral("\n");
+            NS_WARNING(log.get());
 #endif
+          }
+          break;
+
+        case SQLITE_BUSY:
+          {
+#if defined(HARD_SANITY_CHECK)
+#if defined(XP_WIN)
+            OutputDebugStringA("SQLITE: BUSY\n");
+            OutputDebugStringW(PromiseFlatString(strQuery).get());
+            OutputDebugStringW(L"\n");
+
+            const char *szErr = sqlite3_errmsg(pDB);
+            OutputDebugStringA(szErr);
+            OutputDebugStringA("\n");
+#endif
+#endif
+            sqlite3_reset(pStmt);
+
+            if(nRetryCount++ > SQLITE_MAX_RETRIES)
+            {
+              PR_Sleep(PR_MillisecondsToInterval(250));
+              retDB = SQLITE_ROW;
+            }
+          }
+          break;
+
+        default:
+          {
+            pQuery->SetLastError(retDB);
+
+#if defined(HARD_SANITY_CHECK)
+#if defined(XP_WIN)
+            OutputDebugStringA("SQLITE: DEFAULT ERROR\n");
+            OutputDebugStringA("Error Code: ");
+            char szCode[64] = {0};
+            OutputDebugStringA(itoa(retDB, szCode, 10));
+            OutputDebugStringA("\n");
+
+            OutputDebugStringW(PromiseFlatString(strQuery).get());
+            OutputDebugStringW(L"\n");
+
+            const char *szErr = sqlite3_errmsg(pDB);
+            OutputDebugStringA(szErr);
+            OutputDebugStringA("\n");
+#endif
+
+            {
+              const char *szErr = sqlite3_errmsg(pDB);
+              nsCAutoString log;
+              log.Append(szErr);
+              log.AppendLiteral("\n");
+              NS_WARNING(log.get());
+            }
+#endif
+          }
+        }
+      }
+      while(retDB == SQLITE_ROW && 
+            !pQuery->m_IsAborting &&
+            !finishEarly);
+
+      //Didn't get any rows
+      if(bFirstRow)
+      {
+        PRBool isPersistent = PR_FALSE;
+        pQuery->IsPersistentQuery(&isPersistent);
+
+        if(isPersistent)
+        {
+          nsAutoString strTableName(strQuery);
+          ToLowerCase(strTableName);
+
+          NS_NAMED_LITERAL_STRING(searchStr, " from ");
+
+          PRInt32 foundIndex = strTableName.Find(searchStr);
+          if(foundIndex > -1)
+          {
+            PRUint32 nCutLen = foundIndex + searchStr.Length();
+            strTableName.Cut(0, nCutLen);
+
+            PRUint32 offset = 0;
+            while(strTableName.CharAt(offset) == NS_L(' '))
+              offset++;
+
+            strTableName.Cut(0, offset);
+
+            NS_NAMED_LITERAL_STRING(spaceStr, " ");
+            foundIndex = strTableName.Find(spaceStr);
+
+            if(foundIndex > -1)
+              strTableName.SetLength((PRUint32)foundIndex);
+
+            pEngine->AddPersistentQuery(pQuery, NS_ConvertUTF16toUTF8(strTableName));
+          }
+
+          PR_Lock(pQuery->m_pSelectedRowIDsLock);
+          pQuery->m_SelectedRowIDs.clear();
+          PR_Unlock(pQuery->m_pSelectedRowIDsLock);
         }
 
-        delete pParameters;
+        CDatabaseResult *pRes = pQuery->GetResultObject();
+        pRes->ClearResultSet();
       }
-    }
 
-    if(pSecondDB != nsnull)
-      pEngine->UnlockDatabase(pSecondDB);
+      //Always release the statement.
+      retDB = sqlite3_finalize(pStmt);
+
+#if defined(HARD_SANITY_CHECK)
+      if(retDB != SQLITE_OK)
+      {
+        const char *szErr = sqlite3_errmsg(pDB);
+        nsCAutoString log;
+        log.Append(szErr);
+        log.AppendLiteral("\n");
+        NS_WARNING(log.get());
+      }
+#endif
+      delete pParameters;
+    }
 
     pQuery->m_IsExecuting = PR_FALSE;
     pQuery->m_IsAborting = PR_FALSE;
-
-    LOG(("DBE: Process End"));
 
     //Whatever happened, the query is done running now.
     {
       nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
       pQuery->m_QueryHasCompleted = PR_TRUE;
       mon.NotifyAll();
+
+      LOG(("DBE: Notified query monitor."));
     }
 
     //Check if this query is a persistent query so we can now fire off the callback.
     pEngine->DoSimpleCallback(pQuery);
+    LOG(("DBE: Simple query listeners have been processed."));
 
     //Check if this query changed any data 
     pEngine->UpdatePersistentQueries(pQuery);
+    LOG(("DBE: Persistent queries updated."));
 
     // Release the query on the same thread that the location URI class was
     // created on.  This prevents an assertion.
@@ -1785,7 +1515,12 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
       NS_WARNING("Could not proxy release pQuery");
       NS_RELEASE(pQuery);
     }
+
+    LOG(("DBE: Process End"));
+
   } // while
+
+  return;
 } //QueryProcessor
 
 //-----------------------------------------------------------------------------
@@ -2128,4 +1863,3 @@ sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
   }
 }
 #endif
-
