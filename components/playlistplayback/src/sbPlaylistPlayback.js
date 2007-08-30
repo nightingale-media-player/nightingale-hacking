@@ -1270,6 +1270,7 @@ PlaylistPlayback.prototype = {
     this._stopPlayerLoop();
     this._started = true;
     this._playing.boolValue = false;
+    this._stopNextLoop = false;
     this._lookForPlayingCount = 0;
     this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                   .createInstance( Components.interfaces.nsITimer );
@@ -1481,6 +1482,7 @@ PlaylistPlayback.prototype = {
     var isPlaying = core.getPlaying();
     
     LOG("_onPollCompleted - isPlaying? " + isPlaying);
+    LOG("_onPollCompleted - stop next loop? " + this._stopNextLoop);
     
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
     if ( isPlaying && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
@@ -1494,6 +1496,7 @@ PlaylistPlayback.prototype = {
       
         this._metadataPollCount = 0; // start the count again.
         this._lookForPlayingCount = 0;
+        this._stopNextLoop = false;
       }
       // OH OH!  If our position isn't moving, go to the next track!
       else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
@@ -1519,14 +1522,18 @@ PlaylistPlayback.prototype = {
     else if ( (this._seenPlaying.boolValue || ( len < 0.0 )) &&
               ( this._lookForPlayingCount++ > 8 ) ) {
       
-      LOG("_onPollCompleted - seen playing (" + this._seenPlaying.boolValue + ") OR len: "+len);
+      LOG("_onPollCompleted - seen playing (" + this._seenPlaying.boolValue + ") OR len: " + len);
       
       // Oh, NOW you say we stopped, eh?
       this._seenPlaying.boolValue = false;
       this._stopPlayerLoop();
+      
+      LOG("_onPollCompleted - stop next loop? " + this._stopNextLoop);
+      
       // Don't go on to the next track if we see that we're stopping.
       if ( ! this._stopNextLoop )
         this._playNextPrev(1);
+        
       this._stopNextLoop = false;
     }
     else {
@@ -1557,6 +1564,9 @@ PlaylistPlayback.prototype = {
   },
 
   _playNextPrev: function ( incr ) {
+    
+    LOG("_playNextPrev - increment by " + incr);
+    
     // "FIXME" -- mig sez: I think the reason it was broke is because you
     // basically made it restart on playLIST end.  And that would get confusing,
     // I assume.
