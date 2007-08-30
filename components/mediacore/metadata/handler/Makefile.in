@@ -32,8 +32,10 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = taglib \
           $(NULL)
 
-ifeq (windows_1,$(SB_PLATFORM)_$(HAS_EXTRAS))
+ifeq (windows,$(SB_PLATFORM))
+ifneq (,$(wildcard $(WMALIB_DIR)/include/wmsdk.h))
 SUBDIRS += wma
+endif
 endif
 
 include $(topsrcdir)/build/rules.mk
