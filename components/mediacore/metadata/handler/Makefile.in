@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = taglib \
           $(NULL)
 
-ifeq (windows,$(SB_PLATFORM))
+ifeq (windows_1,$(SB_PLATFORM)_$(HAS_EXTRAS))
 SUBDIRS += wma
 endif
 
