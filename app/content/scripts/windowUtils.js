@@ -258,9 +258,9 @@ function onMinimumWindowSize()
   //
 
 
-  // Yah, okay, this function only works if there's one top level object with an id of "window_parent" (sigh)
-  var parent = document.getElementById('window_parent');
-  if (!parent) parent = document.getElementById('frame_mini'); // grr, bad hardcoding!
+  // Yah, okay, this function only works if the content is within <sb-sys-outer-frame>
+  var outerframe = window.gOuterFrame;
+  if (!parent) parent = document.getElementById('frame_mini'); // grr, bad fallback hardcoding!
   if ( parent ) {
     var w_width = window.innerWidth;
     var w_height = window.innerHeight;

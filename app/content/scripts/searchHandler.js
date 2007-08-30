@@ -367,7 +367,7 @@ const gSearchHandler = {
       return;
   
     if (useNewTab) {
-      getBrowser().loadOneTab(submission.uri.spec, null, null,
+      window.gBrowser.loadOneTab(submission.uri.spec, null, null,
                               submission.postData, null, false);
     } else
       loadURI(submission.uri.spec, null, submission.postData, false);

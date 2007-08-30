@@ -64,7 +64,6 @@ window#mini
   -moz-opacity: 0.99; 
 }
 
-
 /* the horizontal resizers */
 #mini_resize_w,
 #mini_resize_e
@@ -72,7 +71,6 @@ window#mini
   height: 10px;
   width: 2px;
 }
-
 
 /* Restore */
 sb-feathers-toggle-button.miniplayer
@@ -85,7 +83,7 @@ sb-feathers-toggle-button.miniplayer
   -moz-image-region: auto;
 }
 
-/*  Close Window */
+/* Close Window */
 sb-sys-close-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) !important;
@@ -93,12 +91,27 @@ sb-sys-close-button.miniplayer
    margin: 0px 10px 0px 7px !important;
 }
 
-                        
+/* JumpTo Button */
 sb-player-jumpto-button.miniplayer
 {
   display: none;
   margin: 0px 0px 0px 5px;  
 }
 
+
+/* RUNTIME-SPECIFIC HACKS */
+window#mini[hasTitlebar="false"]
+{
+  background-color: transparent !important;
+}
+
+/* PLATFORM-SPECIFIC HACKS */
+window[platform="Linux"] #frame_mini,
+window[platform="Darwin"] #frame_mini
+{
+  /* Remove the roundedness of the borders, these platforms can't handle it. */
+  -moz-border-radius: 0px !important; 
+  border-color: transparent !important;
+}
 
 

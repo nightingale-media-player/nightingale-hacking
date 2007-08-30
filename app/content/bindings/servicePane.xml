@@ -58,6 +58,7 @@
     <implementation>
       <constructor>
           <![CDATA[
+        window.gServicePane = this;
         this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
         this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
         /*

@@ -1072,7 +1072,7 @@
               function selectNewForegroundTab(browser, tab) {
                 browser.selectedTab = tab;
               }
-              setTimeout(selectNewForegroundTab, 0, getBrowser(), tab);
+              setTimeout(selectNewForegroundTab, 0, window.gBrowser, tab);
             }
             if (!bgLoad)
               this.selectedTab = tab;

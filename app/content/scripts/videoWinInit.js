@@ -261,12 +261,13 @@ var SBVideoMinMaxCB =
   GetMinWidth: function()
   {
     // What we'd like it to be
+    var outerframe = window.gOuterFrame;
     var retval = 720;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerWidth != document.getElementById('window_parent').boxObject.width)
+    if (window.innerWidth != outerframe.boxObject.width)
     { 
       // That means we found the document's min width.  Because you can't query it directly.
-      retval = document.getElementById('window_parent').boxObject.width - 1;
+      retval = outerframe.boxObject.width - 1;
     }
     return retval;
   },
@@ -274,12 +275,13 @@ var SBVideoMinMaxCB =
   GetMinHeight: function()
   {
     // What we'd like it to be
+    var outerframe = window.gOuterFrame;
     var retval = 450;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerHeight != document.getElementById('window_parent').boxObject.height)
+    if (window.innerHeight != outerframe.boxObject.height)
     { 
       // That means we found the document's min height.  Because you can't query it directly.
-      retval = document.getElementById('window_parent').boxObject.height - 1;
+      retval = outerframe.boxObject.height - 1;
     }
     return retval;
   },

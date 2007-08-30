@@ -74,7 +74,7 @@
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
   
-  <sb-sys-outer-frame id="window_parent" flex="1">
+  <sb-sys-outer-frame flex="1">
     <sb-sys-titlebar type="hide"/>
 
     <!-- ??? Is this for the mac? -->    

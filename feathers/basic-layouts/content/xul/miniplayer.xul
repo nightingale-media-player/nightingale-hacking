@@ -66,6 +66,7 @@
       <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
   
       <!--  Magic menu to keep OS X happy.  
+            Must have "songbird_menu" id for Firefox compatibility.
             TODO: Make a popup version for everyone else. -->
       <menubar id="songbird_menu" hidden="true"/>
   

@@ -59,20 +59,11 @@ var gMiniplayer = {
      
     // Perform platform specific customization
     var platform = this._getPlatform();
-    if ( (platform == "Darwin") || (platform == "Linux") ) {
-      // Square the frame and remove the border.
-      document.getElementById("frame_mini").setAttribute("style", 
-          "-moz-border-radius: 0px !important; border-color: transparent !important;"); 
-    } else {
-
-      // TODO! Must revisit this soon
-
-      // If no titlebar, then make the background transparent.
-      // Only on windows. (Bug 1656)
-      if (!this._hasTitlebar()) {                                           
-        document.getElementById("mini").setAttribute("style", "background-color: transparent !important;"); 
-      }
-    }
+    
+    // Set attributes on the Window element so we can use them in CSS.    
+    var windowElement = document.getElementsByTagName("window")[0]; 
+    windowElement.setAttribute("platform",platform);
+    windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
     
     // Restore the previous size and position of the miniplayer    
     onWindowLoadSizeAndPosition();
@@ -244,12 +235,15 @@ var gMiniplayer = {
     _minwidth: -1,
     GetMinWidth: function()
     {
-      // If min size is not yet known and if the window size is different from the document's box object, 
-      if (this._minwidth == -1 && window.innerWidth != document.getElementById('frame_mini').boxObject.width)
-      { 
-        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-        this._minwidth = document.getElementById('frame_mini').boxObject.width + 1;
-      }
+      try // I guess this is just a fallback for if a page doesn't provide its own.
+      {
+        // If min size is not yet known and if the window size is different from the document's box object, 
+        if (this._minwidth == -1 && window.innerWidth != document.getElementById('frame_mini').boxObject.width)
+        { 
+          // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+          this._minwidth = document.getElementById('frame_mini').boxObject.width + 1;
+        }
+      } catch(e) {};
       return this._minwidth;
     },
 

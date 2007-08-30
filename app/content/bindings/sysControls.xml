@@ -439,6 +439,7 @@
     <implementation>
       <constructor>
         <![CDATA[
+          window.gOuterFrame = this;
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           var plucked = SBDataGetBoolValue( "accessibility.enabled" );

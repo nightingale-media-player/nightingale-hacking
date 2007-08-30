@@ -70,7 +70,7 @@
   
   <popupset id="mainPopupSet" />
 
-  <sb-sys-outer-frame id="window_parent" flex="1">
+  <sb-sys-outer-frame flex="1">
 
     <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
     <sb-sys-titlebar>
@@ -143,8 +143,10 @@
           <!-- MAIN PANE -->
           <vbox flex="1" id="main_pane_border">
                                         
-            <!-- BROWSER TOOLBAR. Filled via overlay by browserToolbarOverlay.xul and others. -->
-            <toolbox  id="navigator-toolbox" />
+            <!-- BROWSER TOOLBAR.  Filled via overlay by browserToolbarOverlay.xul and others. 
+                  Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
+            -->
+            <toolbox id="navigator-toolbox"/>
 
             <!-- BROWSER -->
             <sb-tabbrowser id="frame_main_pane" flex="1"
@@ -163,9 +165,12 @@
 
   </sb-sys-outer-frame>
 
+
+  <!-- NOTE: These items must retain their IDs for Firefox extension compatibility. -->
   <commandset id="mainCommandSet" />
   <broadcasterset id="mainBroadcasterSet" />
   <keyset id="mainKeyset" />
+
 
   <!-- Load the main window data bindings -->
   <script type="application/x-javascript"   

@@ -65,18 +65,6 @@ document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
 
 
 /**
- * \brief Get the tabbed browser.
- * \return The tabbed browser.
- */
-function getBrowser() {
-  // Ah, no browser registered itself?  Freak out and try getByTagName().
-  if (!window.gBrowser) {
-    window.gBrowser = document.getElementsByTagName("sb-tabbrowser")[0];
-  }
-  return window.gBrowser;
-}
-
-/**
  * \brief Initialize the main window.
  * \note Do not call more than once.
  * \internal
@@ -98,14 +86,19 @@ function SBInitialize()
   try
   {
     onWindowLoadSizeAndPosition();
+    
+    // Set attributes on the Window element so we can use them in CSS.
+    var platform = getPlatformString();    
+    var windowElement = document.getElementsByTagName("window")[0]; 
+    windowElement.setAttribute("platform", platform);
 
     // because the main window can change its minmax size from session to session (ie, long items in the service tree), 
     // we need to determine whether the loaded size is within the current minmax. If not, tweak the size by the difference
     /*
     var w = document.documentElement.boxObject.width;
     var h = document.documentElement.boxObject.height;
-    var diffw = document.getElementById('window_parent').boxObject.width - window.innerWidth;
-    var diffh = document.getElementById('window_parent').boxObject.height - window.innerHeight;
+    var diffw = window.gOuterFrame.boxObject.width - window.innerWidth;
+    var diffh = window.gOuterFrame.boxObject.height - window.innerHeight;
     // todo: see if that detects the situation
     dump("diffw = " + diffw + "\n");
     dump("diffh = " + diffh + "\n");
@@ -113,8 +106,6 @@ function SBInitialize()
     */
     setMinMaxCallback();
 
-    // Initalize gBrowser
-    getBrowser();
 
     initJumpToFileHotkey();
 
@@ -168,11 +159,12 @@ var SBWindowMinMaxCB =
   {
     // What we'd like it to be
     var retval = 750;
+    var outerframe = window.gOuterFrame;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerWidth != document.getElementById('window_parent').boxObject.width)
+    if (window.innerWidth != outerframe.boxObject.width)
     { 
       // That means we found the document's min width.  Because you can't query it directly.
-      retval = document.getElementById('window_parent').boxObject.width - 1;
+      retval = outerframe.boxObject.width - 1;
     }
     return retval;
   },
@@ -180,12 +172,13 @@ var SBWindowMinMaxCB =
   GetMinHeight: function()
   {
     // What we'd like it to be
+    var outerframe = window.gOuterFrame;
     var retval = 400;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerHeight != document.getElementById('window_parent').boxObject.height)
+    if (window.innerHeight != outerframe.boxObject.height)
     { 
       // That means we found the document's min width.  Because you can't query it directly.
-      retval = document.getElementById('window_parent').boxObject.height - 1;
+      outerframe = parent.boxObject.height - 1;
     }
     return retval;
   },
