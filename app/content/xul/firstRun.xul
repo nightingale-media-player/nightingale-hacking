@@ -53,7 +53,7 @@
       </menulist>
     </groupbox>
       
-    <groupbox flex="1" width="&setup.groupbox.width;">
+    <groupbox id="extensions_vbox" flex="1" width="&setup.groupbox.width;">
       <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">

@@ -75,11 +75,16 @@ function firstrunBundleDataReady() {
     setTimeout("firstrunBundleDataReady();", 10);
     return;
   }
-  if (firstrun_bundle.bundleExtensionCount > 0) {
-    setTimeout( "openExtensionsList();", 250 );
-  } else {
+  if (firstrun_bundle.bundleDataStatus !=
+      Components.interfaces.sbIBundle.BUNDLE_DATA_STATUS_SUCCESS) {
     hidePleaseWait();
     showErrorMessage();
+  } else if (firstrun_bundle.bundleExtensionCount < 1) {
+    // there are no extensions
+    hidePleaseWait();
+    hideExtensionList();
+  } else {
+    setTimeout( "openExtensionsList();", 250 );
   }
 }
 
@@ -532,6 +537,11 @@ function hidePleaseWait()
 
 function showUpdateMessage() {
   document.getElementById("error_noupdate_vbox").removeAttribute("hidden");
+  fixWindowHeight();
+}
+
+function hideExtensionList() {
+  document.getElementById("extensions_vbox").setAttribute("hidden", "true");
   fixWindowHeight();
 }
 
