@@ -95,6 +95,9 @@ function newTempURI( name ) {
                       .get("TmpD", Components.interfaces.nsIFile);
   file.append(name);
   file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
+  var registerFileForDelete = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
+                                .getService(Ci.nsPIExternalAppLauncher);
+  registerFileForDelete.deleteTemporaryFileOnExit(file);
   var retval = newFileURI(file);
   log( "newTempURI = " + retval.spec );
   return retval;

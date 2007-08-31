@@ -86,12 +86,17 @@ CPlaylistReaderManager.prototype =
   m_Extensions: new Array(),
   m_MIMETypes: new Array(),
 
-  getTempFilename: function()
+  getTempFilename: function(aExtension)
   {
+    var extension;
+    if (aExtension)
+      extension = aExtension;
+    else
+      extension = "tmp";
     var file = Components.classes["@mozilla.org/file/directory_service;1"]
                          .getService(Components.interfaces.nsIProperties)
                          .get("TmpD", Components.interfaces.nsIFile);
-    file.append("songbird.tmp");
+    file.append("songbird." + extension);
     file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
 
     return file.path;
@@ -173,7 +178,7 @@ CPlaylistReaderManager.prototype =
       this.m_Browser = browser;
 
       // Create a local file to save the remote playlist to
-      var destFile = this.getTempFilename() + "." + theExtension;
+      var destFile = this.getTempFilename(theExtension);
       var localFile = Cc["@mozilla.org/file/local;1"]
                         .createInstance(Ci.nsILocalFile);
       localFile.initWithPath(destFile);
