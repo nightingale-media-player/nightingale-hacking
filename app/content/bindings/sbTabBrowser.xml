@@ -58,6 +58,7 @@
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
+        this.tabStateRestored = false;
         
         /* we need to track when tabs change */
         this.tabChangeEventListener = {
@@ -200,6 +201,7 @@
       <method name="restoreTabState">
         <body><![CDATA[
           var tabs = this._tabState;
+          this.tabStateRestored = true;
           if (tabs) {
             for (var i=0; i<tabs.length; i++) {
               /* load the first url into the current tab and subsequent urls into new tabs */
@@ -1840,7 +1842,7 @@
             }
             this._loadingURL = "";
             
-            if (window && window.gBrowser) {
+            if (window && window.gBrowser && window.gBrowser.tabStateRestored) {
               window.gBrowser.saveTabState();
             }
             
