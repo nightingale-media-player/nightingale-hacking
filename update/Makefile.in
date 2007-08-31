@@ -44,7 +44,7 @@ ifdef DEBUG
 DEBUG_EXT = .debug
 endif
 
-UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
+UPDATE_FILENAME_BASE = $(SB_APPNAME)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
 #
 # On OS X we need to diff from the 'Contents' subdir inside the app bundle.
