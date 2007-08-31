@@ -1,14 +1,16 @@
+? bug-enableDomInspector.patch
+? sanity.diff
 Index: extensions/inspector/install.rdf
 ===================================================================
 RCS file: /cvsroot/mozilla/extensions/inspector/install.rdf,v
-retrieving revision 1.14
-diff -u -p -r1.14 install.rdf
---- extensions/inspector/install.rdf	10 Jun 2007 19:30:14 -0000	1.14
-+++ extensions/inspector/install.rdf	10 Jul 2007 17:33:00 -0000
-@@ -44,6 +44,15 @@
+retrieving revision 1.15
+diff -u -p -r1.15 install.rdf
+--- extensions/inspector/install.rdf	29 Aug 2007 18:05:30 -0000	1.15
++++ extensions/inspector/install.rdf	31 Aug 2007 18:44:32 -0000
+@@ -53,6 +53,15 @@
        </Description>
      </em:targetApplication>
-     
+ 
 +    <em:targetApplication>
 +      <!-- Songbird -->
 +      <Description>
@@ -17,17 +19,17 @@ diff -u -p -r1.14 install.rdf
 +        <em:maxVersion>0.5</em:maxVersion>
 +      </Description>
 +    </em:targetApplication>
-+    
++     
      <!-- EXTENSION AUTHORS!
           DO NOT COPY THIS PROPERTY INTO YOUR INSTALL RDF FILES
-          It will cause users not to be informed of incompatibilities 
+          It will cause users not to be informed of incompatibilities
 Index: extensions/inspector/jar.mn
 ===================================================================
 RCS file: /cvsroot/mozilla/extensions/inspector/jar.mn,v
-retrieving revision 1.30
-diff -u -p -r1.30 jar.mn
---- extensions/inspector/jar.mn	5 Jul 2007 20:44:28 -0000	1.30
-+++ extensions/inspector/jar.mn	10 Jul 2007 17:33:00 -0000
+retrieving revision 1.33
+diff -u -p -r1.33 jar.mn
+--- extensions/inspector/jar.mn	23 Aug 2007 03:26:38 -0000	1.33
++++ extensions/inspector/jar.mn	31 Aug 2007 18:44:32 -0000
 @@ -9,6 +9,7 @@ inspector.jar:
  % overlay chrome://inspector/content/inspector.xul chrome://browser/content/baseMenuOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
  % overlay chrome://calendar/content/calendar.xul chrome://inspector/content/tasksOverlay-sb.xul application={718e30fb-e89b-41dd-9da7-e25a45638b28}
@@ -49,7 +51,7 @@ Index: extensions/inspector/resources/content/tasksOverlay-songbird.xul
 RCS file: extensions/inspector/resources/content/tasksOverlay-songbird.xul
 diff -N extensions/inspector/resources/content/tasksOverlay-songbird.xul
 --- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ extensions/inspector/resources/content/tasksOverlay-songbird.xul	10 Jul 2007 17:33:00 -0000
++++ extensions/inspector/resources/content/tasksOverlay-songbird.xul	31 Aug 2007 18:44:32 -0000
 @@ -0,0 +1,43 @@
 +<?xml version="1.0"?>
 +

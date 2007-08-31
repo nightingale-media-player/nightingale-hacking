@@ -1,16 +1,12 @@
+? bug392909-symbol-cleanup.patch
 Index: Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/Makefile.in,v
-retrieving revision 1.389
-diff -u -8 -p -r1.389 Makefile.in
---- Makefile.in	19 Aug 2007 18:06:53 -0000	1.389
-+++ Makefile.in	20 Aug 2007 18:10:26 -0000
-@@ -164,26 +164,24 @@ ifdef MOZ_CRASHREPORTER
- 	echo building symbol store
- 	mkdir -p $(DIST)/crashreporter-symbols/$(BUILDID)
- 	$(PYTHON) $(topsrcdir)/toolkit/crashreporter/tools/symbolstore.py    \
- 	  $(MAKE_SYM_STORE_ARGS) -s $(topsrcdir) $(DUMP_SYMS_BIN)     \
- 	  $(DIST)/crashreporter-symbols/$(BUILDID)                    \
+retrieving revision 1.390
+diff -u -p -r1.390 Makefile.in
+--- Makefile.in	21 Aug 2007 21:52:54 -0000	1.390
++++ Makefile.in	31 Aug 2007 18:47:15 -0000
+@@ -173,16 +173,14 @@ ifdef MOZ_CRASHREPORTER
  	  $(MAKE_SYM_STORE_PATH) >                                    \
  	  $(DIST)/crashreporter-symbols/$(BUILDID)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_ARCH)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
  	echo packing symbols
@@ -20,17 +16,12 @@ diff -u -8 -p -r1.389 Makefile.in
 -	mv $(DIST)/crashreporter-symbols/crashreporter-symbols-$(BUILDID).zip \
 -          $(topsrcdir)/../$(BUILDID)
  endif # MOZ_CRASHREPORTER
-
+ 
  uploadsymbols:
  ifdef MOZ_CRASHREPORTER
 -	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh $(topsrcdir)/../$(BUILDID)/crashreporter-symbols-$(BUILDID).zip
 +	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh \
 +    $(DIST)/crashreporter-symbols/crashreporter-symbols-$(BUILDID).zip
  endif
-
+ 
  ifeq ($(OS_ARCH),WINNT)
- signnss:
- ifdef MOZILLA_OFFICIAL
- 	echo signing NSS libs
- 	cd $(DIST)/bin; ./shlibsign.exe -v -i softokn3.dll
- 	cd $(DIST)/bin; ./shlibsign.exe -v -i freebl3.dll
