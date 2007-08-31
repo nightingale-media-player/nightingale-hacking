@@ -265,6 +265,12 @@ private:
 
   nsresult Shutdown();
 
+  nsresult BatchCreateMediaItemsInternal(nsIArray* aURIArray,
+                                         nsIArray* aPropertyArrayArray,
+                                         PRBool aAllowDuplicates,
+                                         sbIBatchCreateMediaItemsListener* aListener,
+                                         nsIArray** _retval);
+
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
   // database file we'll be using. Don't confuse it with mGuid (inherited from
@@ -382,8 +388,11 @@ public:
                              sbIDatabaseQuery* aQuery);
 
   nsresult Init();
-  nsresult AddMapping(PRUint32 aQueryIndex, PRUint32 aItemIndex);
-  nsresult GetBatchHelper(sbBatchCreateHelper** _retval);
+  nsresult AddMapping(PRUint32 aQueryIndex,
+                      PRUint32 aItemIndex);
+  nsresult NotifyInternal(nsITimer* aTimer,
+                          PRBool* _retval);
+  sbBatchCreateHelper* BatchHelper();
 
 private:
   sbLocalDatabaseLibrary* mLibrary;
@@ -391,6 +400,9 @@ private:
   nsRefPtr<sbBatchCreateHelper> mBatchHelper;
   nsCOMPtr<sbIDatabaseQuery> mQuery;
   nsDataHashtable<nsUint32HashKey, PRUint32> mQueryToIndexMap;
+
+  nsITimer* mTimer;
+  PRUint32 mQueryCount;
 };
 
 class sbBatchCreateHelper
@@ -399,10 +411,8 @@ public:
   NS_IMETHOD_(nsrefcnt) AddRef(void);
   NS_IMETHOD_(nsrefcnt) Release(void);
 
-  sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary);
   sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
-                      sbBatchCreateTimerCallback* aCallback);
-  ~sbBatchCreateHelper();
+                      sbBatchCreateTimerCallback* aCallback = nsnull);
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
                      nsIArray* aURIArray,

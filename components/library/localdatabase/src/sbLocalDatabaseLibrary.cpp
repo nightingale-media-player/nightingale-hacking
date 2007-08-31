@@ -40,6 +40,7 @@
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIThread.h>
 #include <nsIURI.h>
 #include <nsIUUIDGenerator.h>
 #include <sbIDatabaseQuery.h>
@@ -66,8 +67,10 @@
 #include <nsMemory.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 #include <nsXPCOM.h>
 #include <nsWeakReference.h>
+#include <prinrval.h>
 #include <prlog.h>
 #include <prprf.h>
 #include <prtime.h>
@@ -94,6 +97,11 @@
 #define SB_MEDIALIST_FACTORY_URI_PREFIX   "medialist('"
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
 
+// The number of milliseconds that the library could possibly wait before
+// checking to see if all the async batch create timers have finished on
+// shutdown. This number isn't exact, see the documentation for
+// NS_ProcessPendingEvents.
+#define SHUTDOWN_ASYNC_GRANULARITY_MS 1000
 
 #define SB_ILIBRESOURCE_CAST(_ptr)                                             \
   static_cast<sbILibraryResource*>(static_cast<sbILibrary*>(_ptr))
@@ -1692,6 +1700,31 @@ sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
 
+  nsresult rv;
+
+  // Pump events until all of our async queries have returned.
+  PRUint32 timerCount = (PRUint32)mBatchCreateTimers.Count();
+  if (timerCount) {
+    LOG((LOG_SUBMESSAGE_SPACE "waiting on %u timers", timerCount));
+
+    nsCOMPtr<nsIThread> currentThread(do_GetCurrentThread());
+    NS_ABORT_IF_FALSE(currentThread, "Failed to get current thread!");
+
+    if (currentThread) {
+      while (mBatchCreateTimers.Count()) {
+        LOG((LOG_SUBMESSAGE_SPACE "processing events for %u milliseconds",
+             SHUTDOWN_ASYNC_GRANULARITY_MS));
+#ifdef DEBUG
+        rv =
+#endif
+        NS_ProcessPendingEvents(currentThread,
+                                PR_MillisecondsToInterval(SHUTDOWN_ASYNC_GRANULARITY_MS));
+        NS_ASSERTION(NS_SUCCEEDED(rv), "NS_ProcessPendingEvents failed!");
+      }
+    }
+    LOG((LOG_SUBMESSAGE_SPACE "all timers have died"));
+  }
+
   // Explicitly release our property cache here so we make sure to write all
   // changes to disk (regardless of whether or not this library will be leaked)
   // to prevent data loss.
@@ -1699,7 +1732,7 @@ sbLocalDatabaseLibrary::Shutdown()
 
   if (mDirtyItemCount) {
 #ifdef DEBUG
-    nsresult rv =
+    rv =
 #endif
     RunAnalyzeQuery(PR_FALSE);
 #ifdef DEBUG
@@ -2525,10 +2558,7 @@ sbLocalDatabaseLibrary::Optimize()
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Optimize()", this));
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_TRUE);
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(NS_LITERAL_STRING("VACUUM"));
@@ -2575,40 +2605,10 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIArray,
   NS_ENSURE_ARG_POINTER(aURIArray);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItems()", this));
 
-  nsCOMPtr<nsIArray> filteredArray = aURIArray;
-  if (!aAllowDuplicates) {
-    rv = FilterExistingURIs(aURIArray, getter_AddRefs(filteredArray));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbBatchCreateHelper> helper(new sbBatchCreateHelper(this));
-  NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
-
-  // Set up the batch add query
-  rv = helper->InitQuery(query, filteredArray, aPropertyArrayArray);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Run the async query
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  // Notify and get the new items
-  nsCOMPtr<nsIArray> array;
-  rv = helper->NotifyAndGetItems(getter_AddRefs(array));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return the array of media items
-  NS_ADDREF(*_retval = array);
-
-  return NS_OK;
+  return BatchCreateMediaItemsInternal(aURIArray, aPropertyArrayArray,
+                                       aAllowDuplicates, nsnull, _retval);
 }
 
 /**
@@ -2625,56 +2625,97 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListe
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsAsync()", this));
 
+  return BatchCreateMediaItemsInternal(aURIArray, aPropertyArrayArray,
+                                       aAllowDuplicates, aListener, nsnull);
+}
+
+nsresult
+sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
+                                                      nsIArray* aPropertyArrayArray,
+                                                      PRBool aAllowDuplicates,
+                                                      sbIBatchCreateMediaItemsListener* aListener,
+                                                      nsIArray** _retval)
+{
+  NS_ASSERTION((aListener && !_retval) || (!aListener && _retval),
+               "Only one of |aListener| and |_retval| should be set!");
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal()",
+         this));
+
   nsresult rv;
 
-  nsCOMPtr<nsIArray> filteredArray = aURIArray;
-  if (!aAllowDuplicates) {
+  nsCOMPtr<nsIArray> filteredArray;
+  if (aAllowDuplicates) {
+    filteredArray = aURIArray;
+  }
+  else {
     rv = FilterExistingURIs(aURIArray, getter_AddRefs(filteredArray));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
+
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = query->SetAsyncQuery(PR_TRUE);
+  rv = MakeStandardQuery(getter_AddRefs(query), runAsync);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbBatchCreateTimerCallback> callback;
-  callback = new sbBatchCreateTimerCallback(this, aListener, query);
-  NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = callback->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsRefPtr<sbBatchCreateHelper> helper;
-  rv = callback->GetBatchHelper(getter_AddRefs(helper));
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (runAsync) {
+    callback = new sbBatchCreateTimerCallback(this, aListener, query);
+    NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = callback->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    helper = callback->BatchHelper();
+  }
+  else {
+    helper = new sbBatchCreateHelper(this);
+    NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   // Set up the batch add query
   rv = helper->InitQuery(query, filteredArray, aPropertyArrayArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Run the async query
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
+  PRInt32 dbResult;
+  rv = query->Execute(&dbResult);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
+  NS_ENSURE_TRUE(dbResult == 0, NS_ERROR_FAILURE);
 
-  // Start polling the query for completion
-  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (runAsync) {
+    // Start polling the query for completion
+    nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Stick the timer into a member array so we keep it alive while it does
-  // its thing.  It never gets removed from this array until this library
-  // gets deleted.
-  PRBool success = mBatchCreateTimers.AppendObject(timer);
-  NS_ENSURE_TRUE(success, rv);
+    // Stick the timer into a member array so we keep it alive while it does
+    // its thing.  It never gets removed from this array until this library
+    // gets deleted.
+    PRBool success = mBatchCreateTimers.AppendObject(timer);
+    NS_ENSURE_TRUE(success, rv);
 
-  // This value 333 is magical.  I copied it from the old media scan code.  I
-  // assumed it was a number that was reached through experience tweaking the
-  // callback frequency.
-  rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
-  NS_ENSURE_SUCCESS(rv, rv);
+    // This value 333 is magical.  I copied it from the old media scan code.  I
+    // assumed it was a number that was reached through experience tweaking the
+    // callback frequency.
+    rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("InitWithCallback failed!");
+      success = mBatchCreateTimers.RemoveObject(timer);
+      NS_ASSERTION(success, "Failed to remove a failed timer... Armageddon?");
+      return rv;
+    }
+  }
+  else {
+    // Notify and get the new items
+    nsCOMPtr<nsIArray> array;
+    rv = helper->NotifyAndGetItems(getter_AddRefs(array));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Return the array of media items
+    NS_ADDREF(*_retval = array);
+  }
 
   return NS_OK;
 }
@@ -3314,6 +3355,9 @@ sbLocalDatabaseLibrary::OnQueryEnd(sbIDatabaseResult* aDBResultObject,
 {
   NS_ASSERTION(aQuery.Find("VACUUM") != -1, "Got the wrong callback!");
 
+  // Keep this around to know when the vacuum call finishes... For UI
+  // notification? Remove this whole mess if we never need it.
+
   return NS_OK;
 }
 
@@ -3429,8 +3473,13 @@ sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* a
                                                        sbIDatabaseQuery* aQuery) :
   mLibrary(aLibrary),
   mListener(aListener),
-  mQuery(aQuery)
+  mQuery(aQuery),
+  mTimer(nsnull),
+  mQueryCount(0)
 {
+  NS_ASSERTION(aLibrary, "Null library!");
+  NS_ASSERTION(aListener, "Null listener!");
+  NS_ASSERTION(aQuery, "Null query!");
 }
 
 nsresult
@@ -3455,75 +3504,117 @@ sbBatchCreateTimerCallback::AddMapping(PRUint32 aQueryIndex,
   return NS_OK;
 }
 
-nsresult
-sbBatchCreateTimerCallback::GetBatchHelper(sbBatchCreateHelper** _retval)
+sbBatchCreateHelper*
+sbBatchCreateTimerCallback::BatchHelper()
 {
-  NS_ADDREF(*_retval = mBatchHelper);
-  return NS_OK;
+  NS_ASSERTION(mBatchHelper, "This shouldn't be null, did you call Init?!");
+  return mBatchHelper;
 }
+
 
 NS_IMETHODIMP
 sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
 {
+  NS_ENSURE_ARG_POINTER(aTimer);
+
+  PRBool complete;
+  nsresult rv = NotifyInternal(aTimer, &complete);
+  if (NS_SUCCEEDED(rv) && !complete) {
+    // Everything looks fine, let the timer continue.
+    return NS_OK;
+  }
+
+  // The library won't shut down until all the async timers are cleared, so
+  // cancel this timer if we're done or if there was some kind of error.
+
+  aTimer->Cancel();
+  mLibrary->mBatchCreateTimers.RemoveObject(aTimer);
+
+  // Report the earlier error, if any.
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Gather the media items we added and call the listener.
+  nsCOMPtr<nsIArray> array;
+  rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mListener->OnComplete(array);
+
+  return NS_OK;
+}
+
+nsresult
+sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
+                                           PRBool* _retval)
+{
+  NS_ASSERTION(_retval, "Null retval!");
+
   nsresult rv;
 
-  // Make sure the timer survives throughout the entire method
-  nsCOMPtr<nsITimer> kungFuDeathGrip = aTimer;
-
-  // Check to see if the query is complete
-  PRUint32 len;
-  PRUint32 pos;
-  rv = mQuery->GetQueryCount(&len);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mQuery->CurrentQuery(&pos);
-  NS_ENSURE_SUCCESS(rv, rv);
-  pos = pos + 1;
-
-  if (len == pos) {
-    // We're done, so cancel the timer, gather the media items we added
-    // and call the listener
-    rv = aTimer->Cancel();
+  // Use mTimer as a "runonce" flag so that we can cache the query count.
+  if (!mTimer) {
+    rv = mQuery->GetQueryCount(&mQueryCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIArray> array;
-    rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mListener->OnComplete(array);
-
-    // Since we're done, remove this timer from the library's list of timers
-    PRBool success = mLibrary->mBatchCreateTimers.RemoveObject(aTimer);
-    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+    mTimer = aTimer;
   }
+#ifdef DEBUG
   else {
-    // Notify progress
-    PRUint32 itemIndex;
-    PRBool success = mQueryToIndexMap.Get(pos, &itemIndex);
-    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-    mListener->OnProgress(itemIndex);
+    // Make sure this is the timer we think it should be.
+    NS_ASSERTION(mTimer == aTimer, "Not the timer we saw last time!");
+
+    PRUint32 queryCount;
+    rv = mQuery->GetQueryCount(&queryCount);
+    if (NS_SUCCEEDED(rv)) {
+      // Don't allow the query count to change! If we hit this assertion then
+      // mQuery is being modified by somebody after they gave it to us!
+      NS_ASSERTION(queryCount == mQueryCount, "mQuery should not be changed!");
+    }
+    else {
+      NS_ERROR("Failed to get QueryCount!");
+    }
+  }
+#endif
+
+  // Exit early if there's nothing to do.
+  if (!mQueryCount) {
+    *_retval = PR_TRUE;
+    return NS_OK;
   }
 
+  // Check to see if the query is complete.
+  PRUint32 currentQuery;
+  rv = mQuery->CurrentQuery(&currentQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  currentQuery++;
+  NS_ASSERTION(currentQuery <= mQueryCount, "Invalid position!");
+
+  if (mQueryCount != currentQuery) {
+    // Notify listener of progress.
+    PRUint32 itemIndex;
+    PRBool success = mQueryToIndexMap.Get(currentQuery, &itemIndex);
+    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
+    mListener->OnProgress(itemIndex);
+
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  *_retval = PR_TRUE;
   return NS_OK;
 }
 
 NS_IMPL_ADDREF(sbBatchCreateHelper)
 NS_IMPL_RELEASE(sbBatchCreateHelper)
 
-sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary) :
-  mLibrary(aLibrary),
-  mCallback(nsnull)
-{
-}
-
 sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
                                          sbBatchCreateTimerCallback* aCallback) :
   mLibrary(aLibrary),
   mCallback(aCallback)
 {
-}
-
-sbBatchCreateHelper::~sbBatchCreateHelper()
-{
+  NS_ASSERTION(aLibrary, "Null library!");
 }
 
 nsresult
