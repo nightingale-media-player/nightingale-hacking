@@ -112,10 +112,7 @@ function SBInitialize()
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
       
-    // Look at all these ugly hacks that need to go away.  (sigh)
-    window.gServicePane = document.getElementById('servicepane');
-    
-    gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
+    window.gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
   }
   catch(err)
   {
