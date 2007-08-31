@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="55">
-        <label>trunk/components/devices/base/public/sbIDeviceCompatibility.idl</label>
+        <label>components/devices/base/public/sbIDeviceCompatibility.idl</label>
         <link refid="sbIDeviceCompatibility.idl"/>
         <childnode refid="56" relation="include">
         </childnode>
@@ -65,6 +65,6 @@
 <codeline lineno="59" refid="interfacesb_i_device_compatibility_1cb7c8a31e751e62262ea348c4563f0c0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>userPreference;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl"/>
   </compounddef>
 </doxygen>

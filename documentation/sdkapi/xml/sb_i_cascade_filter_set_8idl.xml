@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="175">
-        <label>trunk/components/library/base/public/sbICascadeFilterSet.idl</label>
+        <label>components/library/base/public/sbICascadeFilterSet.idl</label>
         <link refid="sbICascadeFilterSet.idl"/>
         <childnode refid="176" relation="include">
         </childnode>
@@ -99,6 +99,6 @@
 <codeline lineno="169"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="170"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl"/>
   </compounddef>
 </doxygen>

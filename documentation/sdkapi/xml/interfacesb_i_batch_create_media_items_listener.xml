@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="58"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="58"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_batch_create_media_items_listener_1e5a123aeebaadfc11bd7b7b0409a3af7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -52,14 +52,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Callback for batch media create items. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="51" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" bodystart="50" bodyend="65"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibrary.idl" bodystart="50" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_batch_create_media_items_listener_1e5a123aeebaadfc11bd7b7b0409a3af7" prot="public" virt="non-virtual"><scope>sbIBatchCreateMediaItemsListener</scope><name>onComplete</name></member>
       <member refid="interfacesb_i_batch_create_media_items_listener_1e6a39209454f28ac776ac583cee5eac5" prot="public" virt="non-virtual"><scope>sbIBatchCreateMediaItemsListener</scope><name>onProgress</name></member>

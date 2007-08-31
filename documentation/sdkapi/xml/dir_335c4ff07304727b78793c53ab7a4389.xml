@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_335c4ff07304727b78793c53ab7a4389" kind="dir">
+    <compoundname>components/state/</compoundname>
+    <innerdir refid="dir_13bf28632700c5e9e5640c5467846f82">components/state/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/state/"/>
+  </compounddef>
+</doxygen>

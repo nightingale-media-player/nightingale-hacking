@@ -16,7 +16,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="64"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_callback_13adcf0046c0c65859cb9fa74e290510b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="74"/>
+        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="74"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_callback_12c223d80c0ae9b7c3b00892109503312" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -67,7 +67,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="81"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -75,7 +75,7 @@
     <detaileddescription>
 <para>This interface is meant to be implemented by user code.</para><para>Create one of these objects to be informed of the progress of the media scan.</para><para>NOTE: This object&apos;s methods are called from the media scan thread. Not necessarily safe for javascript!</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref>, <ref refid="interfacesb_i_file_scan" kindref="compound">sbIFileScan</ref>, FileScan.h </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" bodystart="57" bodyend="82"/>
+    <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" bodystart="57" bodyend="82"/>
     <listofallmembers>
       <member refid="interfacesb_i_file_scan_callback_12c223d80c0ae9b7c3b00892109503312" prot="public" virt="non-virtual"><scope>sbIFileScanCallback</scope><name>onFileScanEnd</name></member>
       <member refid="interfacesb_i_file_scan_callback_13adcf0046c0c65859cb9fa74e290510b" prot="public" virt="non-virtual"><scope>sbIFileScanCallback</scope><name>onFileScanFile</name></member>

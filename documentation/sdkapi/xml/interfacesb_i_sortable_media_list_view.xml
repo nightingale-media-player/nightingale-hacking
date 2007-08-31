@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="52" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_sortable_media_list_view_100745a53e42c88307150b27ed2d8feb3" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="57" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="57" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -55,7 +55,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="65"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="65"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_sortable_media_list_view_183ff7bfb3a761c4162cd62e367340f06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="70"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="70"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -77,19 +77,19 @@
 <para>Media lists that implement this interface declare themselves as sortable.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="559">
+      <node id="567">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="558">
+      <node id="566">
         <label>sbISortableMediaListView</label>
         <link refid="interfacesb_i_sortable_media_list_view"/>
-        <childnode refid="559" relation="usage">
+        <childnode refid="567" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="47" bodyend="72"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbISortableMediaListView.idl" bodystart="47" bodyend="72"/>
     <listofallmembers>
       <member refid="interfacesb_i_sortable_media_list_view_183ff7bfb3a761c4162cd62e367340f06" prot="public" virt="non-virtual"><scope>sbISortableMediaListView</scope><name>clearSort</name></member>
       <member refid="interfacesb_i_sortable_media_list_view_100745a53e42c88307150b27ed2d8feb3" prot="public" virt="non-virtual"><scope>sbISortableMediaListView</scope><name>currentSort</name></member>

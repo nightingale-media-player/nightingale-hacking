@@ -8,7 +8,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para>nsISecurityCheckedComponent </para><para><ref refid="interfacesb_i_security_mixin" kindref="compound">sbISecurityMixin</ref> </para><para>sbRemotePlayer </para><para>sbSecurityMixin </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="52" bodyend="54"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="52" bodyend="54"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

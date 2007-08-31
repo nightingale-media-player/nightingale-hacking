@@ -8,7 +8,7 @@
         <label>nsISupports.idl</label>
       </node>
       <node id="130">
-        <label>trunk/components/faceplate/public/sbIFaceplateManagerListener.idl</label>
+        <label>components/faceplate/public/sbIFaceplateManagerListener.idl</label>
         <link refid="sbIFaceplateManagerListener.idl"/>
         <childnode refid="131" relation="include">
         </childnode>
@@ -62,6 +62,6 @@
 <codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDestroyPane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManagerListener.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManagerListener.idl"/>
   </compounddef>
 </doxygen>

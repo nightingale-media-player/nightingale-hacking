@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="56" bodyfile="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" bodystart="56" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -38,7 +38,7 @@
 <para>Adding a state object to the state service repository is automatic upon creation of a state object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="64"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_p_i_state_service_13edb8fbf80daeca9742a49b052239cba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -55,7 +55,7 @@
 <para>Removing a state object from the state service repository is automatic upon destruction of a state object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="72"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -64,7 +64,7 @@
 <para>This interface is implemented as a singleton service. This interface should only be used by code implementing the <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref> interface.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref> </para></simplesect>
 <simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="50" bodyfile="E:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" bodystart="49" bodyend="73"/>
+    <location file="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl" bodystart="49" bodyend="73"/>
     <listofallmembers>
       <member refid="interfacesb_p_i_state_service_1e25664efa00461ab62f37b9d5c4fd334" prot="public" virt="non-virtual"><scope>sbPIStateService</scope><name>addStateObject</name></member>
       <member refid="interfacesb_p_i_state_service_13edb8fbf80daeca9742a49b052239cba" prot="public" virt="non-virtual"><scope>sbPIStateService</scope><name>removeStateObject</name></member>

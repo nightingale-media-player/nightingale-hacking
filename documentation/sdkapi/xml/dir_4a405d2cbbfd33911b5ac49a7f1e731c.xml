@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_4a405d2cbbfd33911b5ac49a7f1e731c" kind="dir">
+    <compoundname>components/library/base/</compoundname>
+    <innerdir refid="dir_9106deeff77eed46f61506a3c275af72">components/library/base/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/library/base/"/>
+  </compounddef>
+</doxygen>

@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="358" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="358" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="358" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="358" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,37 +25,37 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="626">
+      <node id="634">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="625">
+      <node id="633">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="626" relation="public-inheritance">
+        <childnode refid="634" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="628">
+      <node id="636">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="629" relation="usage">
+        <childnode refid="637" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="629">
+      <node id="637">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="627">
+      <node id="635">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="628" relation="public-inheritance">
+        <childnode refid="636" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="353" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="352" bodyend="359"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="353" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="352" bodyend="359"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>constrainScheme</name></member>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayName</name></member>

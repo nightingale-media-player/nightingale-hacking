@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="417"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="417"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,18 +24,18 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="567">
+      <node id="575">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="568">
+      <node id="576">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="567" relation="public-inheritance">
+        <childnode refid="575" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="416" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="415" bodyend="418"/>
+    <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="416" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="415" bodyend="418"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_builder_criterion_13eb2adc99f95c605f1932630f9f1d608" prot="public" virt="non-virtual"><scope>sbISQLBuilderCriterion</scope><name>toString</name></member>
     </listofallmembers>

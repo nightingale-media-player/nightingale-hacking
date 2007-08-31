@@ -4,14 +4,14 @@
     <compoundname>sbICommandLineManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="28">
-        <label>nsISupports.idl</label>
-      </node>
       <node id="27">
-        <label>trunk/components/commandline/public/sbICommandLineManager.idl</label>
+        <label>components/commandline/public/sbICommandLineManager.idl</label>
         <link refid="sbICommandLineManager.idl"/>
         <childnode refid="28" relation="include">
         </childnode>
+      </node>
+      <node id="28">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_command_line_manager" prot="public">sbICommandLineManager</innerclass>
@@ -68,6 +68,6 @@
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl"/>
   </compounddef>
 </doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_a0f9bf6cfd773fcaaa37f93d4b301e0d" kind="dir">
+    <compoundname>bindings/</compoundname>
+    <innerdir refid="dir_510af5a9b3c14dd12129d40f665d3633">bindings/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/bindings/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_b7420cfdb7238644c478343ef4d84301" kind="dir">
+    <compoundname>components/mediacore/metadata/manager/public/</compoundname>
+    <innerfile refid="sb_i_metadata_backscanner_8idl">sbIMetadataBackscanner.idl</innerfile>
+    <innerfile refid="sb_i_metadata_channel_8idl">sbIMetadataChannel.idl</innerfile>
+    <innerfile refid="sb_i_metadata_handler_8idl">sbIMetadataHandler.idl</innerfile>
+    <innerfile refid="sb_i_metadata_job_8idl">sbIMetadataJob.idl</innerfile>
+    <innerfile refid="sb_i_metadata_job_manager_8idl">sbIMetadataJobManager.idl</innerfile>
+    <innerfile refid="sb_i_metadata_manager_8idl">sbIMetadataManager.idl</innerfile>
+    <innerfile refid="sb_i_metadata_utils_8idl">sbIMetadataUtils.idl</innerfile>
+    <innerfile refid="sb_i_metadata_values_8idl">sbIMetadataValues.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/"/>
+  </compounddef>
+</doxygen>

@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" line="76" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" bodystart="76" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" line="76" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,92 +24,92 @@
     <detaileddescription>
 <para>This interface will be sent with the following flavor: application/x-sb-transfer-media-item</para><para>Note that a media item may indeed be a media list, so the consumers of this context will want to check if it is a media list if they wish to handle lists differently. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="532">
+      <node id="540">
         <label>sbILibraryTransferContext</label>
         <link refid="interfacesb_i_library_transfer_context"/>
       </node>
-      <node id="531">
+      <node id="539">
         <label>sbISingleItemTransferContext</label>
         <link refid="interfacesb_i_single_item_transfer_context"/>
-        <childnode refid="532" relation="public-inheritance">
+        <childnode refid="540" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="535">
+      <node id="543">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="536" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="534">
-        <label>sbILibraryTransferContext</label>
-        <link refid="interfacesb_i_library_transfer_context"/>
-        <childnode refid="535" relation="usage">
-          <edgelabel>source</edgelabel>
+        <childnode refid="544" relation="public-inheritance">
         </childnode>
       </node>
       <node id="542">
+        <label>sbILibraryTransferContext</label>
+        <link refid="interfacesb_i_library_transfer_context"/>
+        <childnode refid="543" relation="usage">
+          <edgelabel>source</edgelabel>
+        </childnode>
+      </node>
+      <node id="550">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="539">
+      <node id="547">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="540" relation="usage">
+        <childnode refid="548" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="542" relation="usage">
+        <childnode refid="550" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="538">
+      <node id="546">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="535" relation="public-inheritance">
+        <childnode refid="543" relation="public-inheritance">
         </childnode>
-        <childnode refid="539" relation="usage">
+        <childnode refid="547" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="541" relation="usage">
+        <childnode refid="549" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="537">
+      <node id="545">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="536">
+      <node id="544">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="537" relation="public-inheritance">
+        <childnode refid="545" relation="public-inheritance">
         </childnode>
-        <childnode refid="538" relation="usage">
+        <childnode refid="546" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="533">
+      <node id="541">
         <label>sbISingleItemTransferContext</label>
         <link refid="interfacesb_i_single_item_transfer_context"/>
-        <childnode refid="534" relation="public-inheritance">
+        <childnode refid="542" relation="public-inheritance">
         </childnode>
-        <childnode refid="536" relation="usage">
+        <childnode refid="544" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="540">
+      <node id="548">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="541" relation="usage">
+        <childnode refid="549" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="541">
+      <node id="549">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" line="72" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" bodystart="71" bodyend="77"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl" bodystart="71" bodyend="77"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_transfer_context_13ba7b2274e30a6feeec766f190649be8" prot="public" virt="non-virtual"><scope>sbISingleItemTransferContext</scope><name>count</name></member>
       <member refid="interfacesb_i_single_item_transfer_context_1e60254bf00ad6d2062561296f147963c" prot="public" virt="non-virtual"><scope>sbISingleItemTransferContext</scope><name>item</name></member>

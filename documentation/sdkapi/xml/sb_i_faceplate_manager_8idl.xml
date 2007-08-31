@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="127">
-        <label>trunk/components/faceplate/public/sbIFaceplateManager.idl</label>
+        <label>components/faceplate/public/sbIFaceplateManager.idl</label>
         <link refid="sbIFaceplateManager.idl"/>
         <childnode refid="128" relation="include">
         </childnode>
@@ -69,13 +69,15 @@
 <codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="124"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPanes();</highlight></codeline>
 <codeline lineno="125"><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="140"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"></highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>getDefaultPane();</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl"/>
   </compounddef>
 </doxygen>

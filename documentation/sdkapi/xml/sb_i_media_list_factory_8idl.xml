@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="231">
-        <label>trunk/components/library/base/public/sbIMediaListFactory.idl</label>
+        <label>components/library/base/public/sbIMediaListFactory.idl</label>
         <link refid="sbIMediaListFactory.idl"/>
         <childnode refid="232" relation="include">
         </childnode>
@@ -63,6 +63,6 @@
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListFactory.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListFactory.idl"/>
   </compounddef>
 </doxygen>

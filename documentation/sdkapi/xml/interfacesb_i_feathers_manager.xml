@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="57" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="57" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_feathers_manager_1f21a46e05b9760ad021366cfa20b59d6" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="62" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="62" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="62" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_feathers_manager_1e19315d1af9989b5421c07bba9123a03" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="67" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="67" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="67" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="67" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_feathers_manager_19ce06e150df7c593c107acd850ab5f81" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="72" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="72" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_feathers_manager_1f88d0c0de580dd60d6f3277efd15e118" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="83" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="83" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="83" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_feathers_manager_199dda59c7065df4a6ab43c1d94baa432" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="95" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="95" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="95" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="95" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -95,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="77"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_1cbff729402f6161de8446f0148defeac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -108,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="89"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="89"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_136241d7adea8eec3b4c242c0f54d41c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -133,7 +133,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="108"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="108"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_1bba086d622c240a8e93c6273cd3e11ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -158,7 +158,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="114"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="114"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_14a4852b795bebc293f2003f229d40504" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref></type>
@@ -184,7 +184,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="122"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="122"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_1a3f6c1145bf57ce889f4c5c76c1f25c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -209,7 +209,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="135"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="135"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_11798ffcf7e2a3593b4151095dc5e309e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -234,7 +234,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="141"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="141"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_1cc68c664bea00a1e1ac5289af3d7068f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref></type>
@@ -260,7 +260,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="149"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="149"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_12f3fdf3b9c5ff0f9ab655c8c099e378a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -307,7 +307,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="169"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="169"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_11cf705163c6a5ddf649c3eb71e092b81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -343,7 +343,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="184"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="184"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_1ad3b2e31c3dc72083f8d7408326658a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -380,7 +380,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="196"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="196"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_17f80bd36542c40d6a3b733c54b1934b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -406,7 +406,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="208"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="208"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_18d4d882c103eae24914c1cf60f411b95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -432,7 +432,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="218"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="218"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_14481e6634ff2789cb61b7960e54cadd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -477,7 +477,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="235"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="235"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_19125c53897e784a2b10e5915811d911d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -490,7 +490,7 @@
 <para>Attempts to open the XUL player window layout for the current feathers. If the current layout or skin is invalid, the default feathers will be loaded instead. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="244"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="244"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -515,7 +515,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="252"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="252"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_19debde65ce0281d47f82cfb3233f03d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -540,7 +540,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="259"/>
+        <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="259"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -548,7 +548,7 @@
     <detaileddescription>
 <para>Acts as a registry for installed skins and alternate XUL windows, and provides a mechanism for switching between them.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref>, <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref>, sbIFeathersChangeListener </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="52" bodyend="260"/>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl" bodystart="52" bodyend="260"/>
     <listofallmembers>
       <member refid="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>addListener</name></member>
       <member refid="interfacesb_i_feathers_manager_12f3fdf3b9c5ff0f9ab655c8c099e378a" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>assertCompatibility</name></member>

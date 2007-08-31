@@ -8,16 +8,16 @@
       <node id="38">
         <label>nsIObserver.idl</label>
       </node>
+      <node id="37">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="36">
-        <label>trunk/components/dataremote/public/sbIDataRemote.idl</label>
+        <label>components/dataremote/public/sbIDataRemote.idl</label>
         <link refid="sbIDataRemote.idl"/>
         <childnode refid="37" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
-      </node>
-      <node id="37">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_data_remote" prot="public">sbIDataRemote</innerclass>
@@ -90,6 +90,6 @@
 <codeline lineno="169"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="170"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl"/>
   </compounddef>
 </doxygen>

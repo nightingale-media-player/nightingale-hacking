@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="58">
-        <label>trunk/components/devices/base/public/sbIDeviceContent.idl</label>
+        <label>components/devices/base/public/sbIDeviceContent.idl</label>
         <link refid="sbIDeviceContent.idl"/>
         <childnode refid="59" relation="include">
         </childnode>
@@ -69,6 +69,6 @@
 <codeline lineno="66" refid="interfacesb_i_device_content_18c21ed6447e772a6d8da1b36e4c811a7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref><sp/>libraryFactory;</highlight></codeline>
 <codeline lineno="67"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceContent.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceContent.idl"/>
   </compounddef>
 </doxygen>

@@ -12,7 +12,7 @@
         </childnode>
       </node>
       <node id="352">
-        <label>trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
+        <label>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
         <link refid="sbIPlaylistCommandsBuilder.idl"/>
         <childnode refid="353" relation="include">
         </childnode>
@@ -344,6 +344,6 @@
 <codeline lineno="818"><highlight class="normal"></highlight></codeline>
 <codeline lineno="819"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl"/>
   </compounddef>
 </doxygen>

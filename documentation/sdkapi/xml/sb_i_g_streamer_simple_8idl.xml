@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="338">
-        <label>trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl</label>
+        <label>components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl</label>
         <link refid="sbIGStreamerSimple.idl"/>
         <childnode refid="339" relation="include">
         </childnode>
@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="70"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="70"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_174463472d39b3b4fc1fd3964930beef8" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CONTRACTID</name>
@@ -37,7 +37,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="72"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_1e2c7988e42fbcd7bd14caf2d5373888a" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CLASSNAME</name>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="73"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="73"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -122,6 +122,6 @@
 <codeline lineno="73"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>&quot;GStreamerSimple&quot;</highlight></codeline>
 <codeline lineno="74"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl"/>
   </compounddef>
 </doxygen>

@@ -15,14 +15,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="53"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="53"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to control a media list from remote web pages. </para>    </briefdescription>
     <detaileddescription>
 <para><xrefsect id="todo_1_todo000021"><xreftitle>Todo</xreftitle><xrefdescription><para>Write this documentation</para></xrefdescription></xrefsect></para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" bodystart="51" bodyend="54"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" bodystart="51" bodyend="54"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_media_list_10f5264220052ca13380b741670a2a055" prot="public" virt="non-virtual"><scope>sbIRemoteMediaList</scope><name>getView</name></member>
     </listofallmembers>

@@ -39,7 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="52"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_map_1e453b9bc0c50321d1b25fcc0d90bcf39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -86,7 +86,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="60"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_map_19b566c063c09c601cc92eafecb516a0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -134,7 +134,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="69"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_map_107ee9e978222b8e5c4d8b2d849a75947" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -159,7 +159,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="79"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="79"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -167,7 +167,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="45" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" bodystart="44" bodyend="80"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" bodystart="44" bodyend="80"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_map_19b566c063c09c601cc92eafecb516a0a" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>getContext</name></member>
       <member refid="interfacesb_i_media_list_view_map_1082a4ac99fe46acb6348767b269d78fc" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>getView</name></member>

@@ -6,7 +6,7 @@
     <includes local="yes">nsIWebProgressListener.idl</includes>
     <incdepgraph>
       <node id="364">
-        <label>trunk/components/playlistreader/public/sbIPlaylistReader.idl</label>
+        <label>components/playlistreader/public/sbIPlaylistReader.idl</label>
         <link refid="sbIPlaylistReader.idl"/>
         <childnode refid="365" relation="include">
         </childnode>
@@ -129,6 +129,6 @@
 <codeline lineno="219"><highlight class="normal"></highlight></codeline>
 <codeline lineno="220"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl"/>
   </compounddef>
 </doxygen>

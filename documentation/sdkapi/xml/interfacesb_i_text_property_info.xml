@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="294" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="294" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="294" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="294" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_text_property_info_1a8d381037c32b9ea8dcd0e298c821d3b" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="299" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="299" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="299" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="299" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="304" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="304" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="304" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="304" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -52,43 +52,43 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="618">
+      <node id="626">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="619">
+      <node id="627">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="617" relation="public-inheritance">
+        <childnode refid="625" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="617">
+      <node id="625">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="618" relation="public-inheritance">
+        <childnode refid="626" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="621">
+      <node id="629">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="622" relation="usage">
+        <childnode refid="630" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="622">
+      <node id="630">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="620">
+      <node id="628">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="621" relation="public-inheritance">
+        <childnode refid="629" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="290" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="289" bodyend="305"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="290" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="289" bodyend="305"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>displayUsingSimpleType</name></member>

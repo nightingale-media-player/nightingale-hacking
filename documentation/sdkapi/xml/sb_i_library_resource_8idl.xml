@@ -3,11 +3,11 @@
   <compounddef id="sb_i_library_resource_8idl" kind="file">
     <compoundname>sbILibraryResource.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_media_item_8idl" local="yes">trunk/components/library/base/public/sbIMediaItem.idl</includedby>
-    <includedby refid="sb_i_local_database_resource_property_8idl" local="yes">trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</includedby>
+    <includedby refid="sb_i_media_item_8idl" local="yes">components/library/base/public/sbIMediaItem.idl</includedby>
+    <includedby refid="sb_i_local_database_resource_property_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</includedby>
     <incdepgraph>
       <node id="206">
-        <label>trunk/components/library/base/public/sbILibraryResource.idl</label>
+        <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
         <childnode refid="207" relation="include">
         </childnode>
@@ -17,39 +17,39 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="212">
-        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
-        <link refid="sb_i_local_database_smart_media_list_8idl"/>
-      </node>
       <node id="209">
-        <label>trunk/components/library/base/public/sbIMediaItem.idl</label>
+        <label>components/library/base/public/sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
         <childnode refid="210" relation="include">
         </childnode>
       </node>
-      <node id="213">
-        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
-        <link refid="sb_i_local_database_resource_property_8idl"/>
-      </node>
-      <node id="210">
-        <label>trunk/components/library/base/public/sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="211" relation="include">
-        </childnode>
-        <childnode refid="212" relation="include">
-        </childnode>
-      </node>
       <node id="208">
-        <label>trunk/components/library/base/public/sbILibraryResource.idl</label>
+        <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
         <childnode refid="209" relation="include">
         </childnode>
         <childnode refid="213" relation="include">
         </childnode>
       </node>
+      <node id="210">
+        <label>components/library/base/public/sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="211" relation="include">
+        </childnode>
+        <childnode refid="212" relation="include">
+        </childnode>
+      </node>
+      <node id="212">
+        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+        <link refid="sb_i_local_database_smart_media_list_8idl"/>
+      </node>
       <node id="211">
-        <label>trunk/components/library/base/public/sbILibrary.idl</label>
+        <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
+      </node>
+      <node id="213">
+        <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
+        <link refid="sb_i_local_database_resource_property_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_library_resource" prot="public">sbILibraryResource</innerclass>
@@ -194,6 +194,6 @@
 <codeline lineno="204"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="205"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl"/>
   </compounddef>
 </doxygen>

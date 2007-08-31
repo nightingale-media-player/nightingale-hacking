@@ -23,7 +23,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="53"/>
+        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="53"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="61"/>
+        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></type>
@@ -57,14 +57,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="72"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Provides information about libraries and medialists needed by the service pane. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="43" bodyfile="E:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" bodystart="43" bodyend="73"/>
+    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" bodystart="43" bodyend="73"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getLibraryResourceForNode</name></member>
       <member refid="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getNodeForLibraryResource</name></member>

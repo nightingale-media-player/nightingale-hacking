@@ -3,10 +3,10 @@
   <compounddef id="sb_i_playlist_commands_8idl" kind="file">
     <compoundname>sbIPlaylistCommands.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_playlist_commands_builder_8idl" local="yes">trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</includedby>
+    <includedby refid="sb_i_playlist_commands_builder_8idl" local="yes">components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</includedby>
     <incdepgraph>
       <node id="348">
-        <label>trunk/components/playlistcommands/public/sbIPlaylistCommands.idl</label>
+        <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
         <childnode refid="349" relation="include">
         </childnode>
@@ -17,13 +17,13 @@
     </incdepgraph>
     <invincdepgraph>
       <node id="350">
-        <label>trunk/components/playlistcommands/public/sbIPlaylistCommands.idl</label>
+        <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
         <childnode refid="351" relation="include">
         </childnode>
       </node>
       <node id="351">
-        <label>trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
+        <label>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
         <link refid="sb_i_playlist_commands_builder_8idl-source"/>
       </node>
     </invincdepgraph>
@@ -158,6 +158,6 @@
 <codeline lineno="534"><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>end<sp/>of<sp/>playlistcommands<sp/>group</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="536"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
   </compounddef>
 </doxygen>

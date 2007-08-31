@@ -50,14 +50,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" line="55"/>
+        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" line="55"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Songbird Command line item handler Interface. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" bodystart="45" bodyend="56"/>
+    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineItemHandler.idl" bodystart="45" bodyend="56"/>
     <listofallmembers>
       <member refid="interfacesb_i_command_line_item_handler_11fa699b794bdd9eb1e159688dc8822d0" prot="public" virt="non-virtual"><scope>sbICommandLineItemHandler</scope><name>handleItem</name></member>
     </listofallmembers>

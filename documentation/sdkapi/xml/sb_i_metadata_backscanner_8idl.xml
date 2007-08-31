@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="297">
-        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl</label>
+        <label>components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl</label>
         <link refid="sbIMetadataBackscanner.idl"/>
         <childnode refid="298" relation="include">
         </childnode>
@@ -63,6 +63,6 @@
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
   </compounddef>
 </doxygen>

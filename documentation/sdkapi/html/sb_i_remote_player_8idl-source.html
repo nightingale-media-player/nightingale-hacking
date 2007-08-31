@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>Songbird: trunk/components/remoteapi/public/sbIRemotePlayer.idl Source File</title>
+<title>Songbird: components/remoteapi/public/sbIRemotePlayer.idl Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -14,7 +14,7 @@
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
   </ul>
 </div>
-<h1>trunk/components/remoteapi/public/sbIRemotePlayer.idl</h1><a href="sb_i_remote_player_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<h1>components/remoteapi/public/sbIRemotePlayer.idl</h1><a href="sb_i_remote_player_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
 <a name="l00004"></a>00004 <span class="comment">//</span>
@@ -203,7 +203,7 @@
 <a name="l00253"></a>00253   <span class="comment">/*</span>
 <a name="l00254"></a>00254 <span class="comment">  Prop: volume</span>
 <a name="l00255"></a>00255 <span class="comment"></span>
-<a name="l00256"></a>00256 <span class="comment">  The volumen of the application on a range from 0 to 255.</span>
+<a name="l00256"></a>00256 <span class="comment">  The volume of the application on a range from 0 to 255.</span>
 <a name="l00257"></a>00257 <span class="comment"></span>
 <a name="l00258"></a>00258 <span class="comment">  Type:</span>
 <a name="l00259"></a>00259 <span class="comment">    integer</span>
@@ -632,15 +632,54 @@
 <a name="l00739"></a>00739 <span class="comment">  */</span>
 <a name="l00740"></a>00740   <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> libraries(in AString aLibraryID);
 <a name="l00741"></a>00741 
-<a name="l00742"></a><a class="code" href="interfacesb_i_remote_player.html#22def0e35e5c89b9c5841ee5b97331a8">00742</a>   readonly attribute <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> mainLibrary;
-<a name="l00743"></a><a class="code" href="interfacesb_i_remote_player.html#93af9fadef3eac3ca4335c5664874b2d">00743</a>   readonly attribute <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> webLibrary;
-<a name="l00744"></a>00744 
-<a name="l00748"></a>00748   [noscript] <span class="keywordtype">void</span> fireEventToContent(in AString aClass, in AString aType);
-<a name="l00749"></a>00749 
-<a name="l00753"></a>00753   [noscript] <span class="keywordtype">void</span> onCommandsChanged();
-<a name="l00754"></a>00754 
-<a name="l00755"></a>00755 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:46:28 2007 for Songbird by&nbsp;
+<a name="l00742"></a>00742   <span class="comment">/*</span>
+<a name="l00743"></a>00743 <span class="comment">  Prop: mainLibrary</span>
+<a name="l00744"></a>00744 <span class="comment"></span>
+<a name="l00745"></a>00745 <span class="comment">  The main &lt;Library&gt; for Songbird. This will contain all the &lt;MediaItem&gt;s the</span>
+<a name="l00746"></a>00746 <span class="comment">  user has on their system.</span>
+<a name="l00747"></a>00747 <span class="comment"></span>
+<a name="l00748"></a>00748 <span class="comment">  Type: </span>
+<a name="l00749"></a>00749 <span class="comment">    &lt;Library&gt;</span>
+<a name="l00750"></a>00750 <span class="comment"></span>
+<a name="l00751"></a>00751 <span class="comment">  Example:</span>
+<a name="l00752"></a>00752 <span class="comment">    (start code)</span>
+<a name="l00753"></a>00753 <span class="comment">    var mainLib = songbird.mainLibrary;</span>
+<a name="l00754"></a>00754 <span class="comment">    (end code)</span>
+<a name="l00755"></a>00755 <span class="comment"></span>
+<a name="l00756"></a>00756 <span class="comment">  See Also:</span>
+<a name="l00757"></a>00757 <span class="comment">    &lt;webLibrary&gt;</span>
+<a name="l00758"></a>00758 <span class="comment">    &lt;libraries()&gt;</span>
+<a name="l00759"></a>00759 <span class="comment">    &lt;siteLibrary()&gt;</span>
+<a name="l00760"></a>00760 <span class="comment">  */</span>
+<a name="l00761"></a><a class="code" href="interfacesb_i_remote_player.html#22def0e35e5c89b9c5841ee5b97331a8">00761</a>   readonly attribute <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> mainLibrary;
+<a name="l00762"></a>00762 
+<a name="l00763"></a>00763   <span class="comment">/*</span>
+<a name="l00764"></a>00764 <span class="comment">  Prop: webLibrary</span>
+<a name="l00765"></a>00765 <span class="comment"></span>
+<a name="l00766"></a>00766 <span class="comment">  The web &lt;Library&gt; for Songbird. This will contain all the &lt;MediaItem&gt;s that</span>
+<a name="l00767"></a>00767 <span class="comment">  have been discovered on web pages the user has visited.</span>
+<a name="l00768"></a>00768 <span class="comment"></span>
+<a name="l00769"></a>00769 <span class="comment">  Type: </span>
+<a name="l00770"></a>00770 <span class="comment">    &lt;Library&gt;</span>
+<a name="l00771"></a>00771 <span class="comment"></span>
+<a name="l00772"></a>00772 <span class="comment">  Example:</span>
+<a name="l00773"></a>00773 <span class="comment">    (start code)</span>
+<a name="l00774"></a>00774 <span class="comment">    var webLib = songbird.webLibrary;</span>
+<a name="l00775"></a>00775 <span class="comment">    (end code)</span>
+<a name="l00776"></a>00776 <span class="comment"></span>
+<a name="l00777"></a>00777 <span class="comment">  See Also:</span>
+<a name="l00778"></a>00778 <span class="comment">    &lt;mainLibrary&gt;</span>
+<a name="l00779"></a>00779 <span class="comment">    &lt;libraries()&gt;</span>
+<a name="l00780"></a>00780 <span class="comment">    &lt;siteLibrary()&gt;</span>
+<a name="l00781"></a>00781 <span class="comment">  */</span>
+<a name="l00782"></a><a class="code" href="interfacesb_i_remote_player.html#93af9fadef3eac3ca4335c5664874b2d">00782</a>   readonly attribute <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> webLibrary;
+<a name="l00783"></a>00783 
+<a name="l00787"></a>00787   [noscript] <span class="keywordtype">void</span> fireEventToContent(in AString aClass, in AString aType);
+<a name="l00788"></a>00788 
+<a name="l00792"></a>00792   [noscript] <span class="keywordtype">void</span> onCommandsChanged();
+<a name="l00793"></a>00793 
+<a name="l00794"></a>00794 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:46:58 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

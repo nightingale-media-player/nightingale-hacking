@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="49" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -58,7 +58,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="61"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_193bdf5a267467fb9b3ef581339612de9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -83,7 +83,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="69"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_1dd16799af17404cf1f53b3bd4d603846" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -104,7 +104,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="77"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_154fb8fabdd3d3dd98b3f6aaf207ad3b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -125,7 +125,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="85"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_10a3790bd97bf000be6d8f8661bdf7ab7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -155,7 +155,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="94"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_writer_19fa8fada5cae500f460f7a6e9db7e850" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -185,7 +185,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="103"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="103"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -193,19 +193,19 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="452">
+      <node id="457">
         <label>sbIPlaylistWriter</label>
         <link refid="interfacesb_i_playlist_writer"/>
-        <childnode refid="453" relation="usage">
+        <childnode refid="458" relation="usage">
           <edgelabel>writerListener</edgelabel>
         </childnode>
       </node>
-      <node id="453">
+      <node id="458">
         <label>sbIPlaylistWriterListener</label>
         <link refid="interfacesb_i_playlist_writer_listener"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="47" bodyend="104"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="47" bodyend="104"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_writer_154fb8fabdd3d3dd98b3f6aaf207ad3b3" prot="public" virt="non-virtual"><scope>sbIPlaylistWriter</scope><name>description</name></member>
       <member refid="interfacesb_i_playlist_writer_1dd16799af17404cf1f53b3bd4d603846" prot="public" virt="non-virtual"><scope>sbIPlaylistWriter</scope><name>name</name></member>

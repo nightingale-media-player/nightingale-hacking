@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="136">
-        <label>trunk/components/feathers/public/sbIFeathersManager.idl</label>
+        <label>components/feathers/public/sbIFeathersManager.idl</label>
         <link refid="sbIFeathersManager.idl"/>
         <childnode refid="137" relation="include">
         </childnode>
@@ -133,6 +133,6 @@
 <codeline lineno="263"><highlight class="normal"></highlight></codeline>
 <codeline lineno="264"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManager.idl"/>
   </compounddef>
 </doxygen>

@@ -5,6 +5,12 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
+      <node id="324">
+        <label>sbIMetadataValues.idl</label>
+        <link refid="sb_i_metadata_values_8idl"/>
+        <childnode refid="321" relation="include">
+        </childnode>
+      </node>
       <node id="322">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
@@ -16,17 +22,11 @@
         </childnode>
       </node>
       <node id="320">
-        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+        <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sbIMetadataManager.idl"/>
         <childnode refid="321" relation="include">
         </childnode>
         <childnode refid="322" relation="include">
-        </childnode>
-      </node>
-      <node id="324">
-        <label>sbIMetadataValues.idl</label>
-        <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="321" relation="include">
         </childnode>
       </node>
       <node id="321">
@@ -78,6 +78,6 @@
 <codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of returning the metadata from the url to a file.">sbIMetadataHandler</ref><sp/>getHandlerForMediaURL(in<sp/>AString<sp/>aUrl);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl"/>
   </compounddef>
 </doxygen>

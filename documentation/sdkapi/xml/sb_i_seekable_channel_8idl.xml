@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="291">
-        <label>trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
+        <label>components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
         <link refid="sbISeekableChannel.idl"/>
         <childnode refid="292" relation="include">
         </childnode>
@@ -76,6 +76,6 @@
 <codeline lineno="121"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
   </compounddef>
 </doxygen>

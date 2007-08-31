@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_48a7cf8335d5b1b8418d09a53df6efc0" kind="dir">
+    <compoundname>components/mediacore/playback/gstreamer/public/</compoundname>
+    <innerfile refid="sb_i_g_streamer_service_8idl">sbIGStreamerService.idl</innerfile>
+    <innerfile refid="sb_i_g_streamer_simple_8idl">sbIGStreamerSimple.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/"/>
+  </compounddef>
+</doxygen>

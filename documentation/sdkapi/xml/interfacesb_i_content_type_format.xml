@@ -15,7 +15,7 @@
 <para>Code for the container type </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="41" bodyfile="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="41" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_content_type_format_1aba1f41f93edc844774b20d14deb8139" prot="public" static="no" mutable="no">
         <type>readonly attribute nsISimpleEnumerator</type>
@@ -28,7 +28,7 @@
 <para>Enumerates nsISupportsPRUint32 values of FourCC codes </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="46" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_content_type_format_17d84b00c8779884a8ea52dba1b210eed" prot="public" static="no" mutable="no">
         <type>readonly attribute nsISimpleEnumerator</type>
@@ -41,14 +41,14 @@
 <para>Enumerates nsISupportsPRUint32 values of FourCC codes </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="51" bodyfile="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="51" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="37" bodyfile="E:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="36" bodyend="52"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" line="37" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIContentTypeFormat.idl" bodystart="36" bodyend="52"/>
     <listofallmembers>
       <member refid="interfacesb_i_content_type_format_17a46156e76490b9f41bc47a715154ef7" prot="public" virt="non-virtual"><scope>sbIContentTypeFormat</scope><name>containerFormat</name></member>
       <member refid="interfacesb_i_content_type_format_17d84b00c8779884a8ea52dba1b210eed" prot="public" virt="non-virtual"><scope>sbIContentTypeFormat</scope><name>decodingFormats</name></member>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_6f9bf84c6a78292524045a4a4e3f3546" kind="dir">
+    <compoundname>components/mediacore/metadata/handler/taglib/public/</compoundname>
+    <innerfile refid="sb_i_seekable_channel_8idl">sbISeekableChannel.idl</innerfile>
+    <innerfile refid="sb_i_tag_lib_channel_file_i_o_manager_8idl">sbITagLibChannelFileIOManager.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/"/>
+  </compounddef>
+</doxygen>

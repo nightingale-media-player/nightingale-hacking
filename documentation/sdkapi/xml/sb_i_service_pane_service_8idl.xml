@@ -4,13 +4,13 @@
     <compoundname>sbIServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="415">
-        <label>trunk/components/servicepane/public/sbIServicePaneService.idl</label>
+      <node id="418">
+        <label>components/servicepane/public/sbIServicePaneService.idl</label>
         <link refid="sbIServicePaneService.idl"/>
-        <childnode refid="416" relation="include">
+        <childnode refid="419" relation="include">
         </childnode>
       </node>
-      <node id="416">
+      <node id="419">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -307,6 +307,6 @@
 <codeline lineno="327"><highlight class="normal"></highlight></codeline>
 <codeline lineno="328"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl"/>
   </compounddef>
 </doxygen>

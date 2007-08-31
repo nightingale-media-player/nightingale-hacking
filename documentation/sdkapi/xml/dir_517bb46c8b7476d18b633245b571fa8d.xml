@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_517bb46c8b7476d18b633245b571fa8d" kind="dir">
+    <compoundname>components/sqlbuilder/</compoundname>
+    <innerdir refid="dir_f6227bea57ef0f3f1c52e9e3d4f7e264">components/sqlbuilder/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/sqlbuilder/"/>
+  </compounddef>
+</doxygen>

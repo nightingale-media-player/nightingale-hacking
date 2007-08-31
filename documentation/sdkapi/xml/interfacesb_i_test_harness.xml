@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="51"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="51"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_test_harness_1352cadcbae60b48613b10b7064ba79a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="56"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="56"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_test_harness_1a4b4e3d8a34df5003f580e9a0ab0362e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -57,14 +57,14 @@
 <para>This allows all tests to run and the the testharness to return failure when complete. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface for launching unit tests from XULRunner apps. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="41" bodyfile="E:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" bodystart="40" bodyend="65"/>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl" bodystart="40" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_test_harness_193a2926d8d589777366f6bc7bf420c0f" prot="public" virt="non-virtual"><scope>sbITestHarness</scope><name>init</name></member>
       <member refid="interfacesb_i_test_harness_1a4b4e3d8a34df5003f580e9a0ab0362e" prot="public" virt="non-virtual"><scope>sbITestHarness</scope><name>logFailure</name></member>

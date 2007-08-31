@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_13bf28632700c5e9e5640c5467846f82" kind="dir">
+    <compoundname>components/state/public/</compoundname>
+    <innerfile refid="sb_i_state_datastore_8idl">sbIStateDatastore.idl</innerfile>
+    <innerfile refid="sb_i_state_object_8idl">sbIStateObject.idl</innerfile>
+    <innerfile refid="sb_p_i_state_service_8idl">sbPIStateService.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/state/public/"/>
+  </compounddef>
+</doxygen>

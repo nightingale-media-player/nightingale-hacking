@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="272">
-        <label>trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl</label>
+        <label>components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl</label>
         <link refid="sbILocalDatabasePropertyCache.idl"/>
         <childnode refid="273" relation="include">
         </childnode>
@@ -98,6 +98,6 @@
 <codeline lineno="102"><highlight class="normal"></highlight></codeline>
 <codeline lineno="103"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl"/>
   </compounddef>
 </doxygen>

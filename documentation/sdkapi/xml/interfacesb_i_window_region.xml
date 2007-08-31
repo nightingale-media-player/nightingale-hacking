@@ -37,14 +37,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" line="52"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" line="52"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Window region service interface This is an interface to the window region service, used to assign a region to a window at the OS level. This allows cutting out portions of a window without relying on mozilla&apos;s internal transparency management, which may interfere with the window content. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" line="44" bodyfile="E:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" bodystart="43" bodyend="53"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl" bodystart="43" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_region_1a63cb6ca732f696d3ad56424480afcc0" prot="public" virt="non-virtual"><scope>sbIWindowRegion</scope><name>setWindowRegion</name></member>
     </listofallmembers>

@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="62"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="62"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_callback_12d57c5b4dbd59d48474a7f4e08874311" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -52,7 +52,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_callback_134b22db8dc045be2f3804ac2dd04f4db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -88,7 +88,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="82"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="82"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_base_callback_1549945ba9cd1cda0a11d41b6d160c460" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -135,14 +135,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="95"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="95"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[SOON TO BE DEPRECATED AFTER 0.3] The callback class for <ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref> </para>    </briefdescription>
     <detaileddescription>
 <para>&lt;TODO:Detail&gt;. </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="54" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="53" bodyend="96"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="53" bodyend="96"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_callback_1cdb4d7b71d79de0254524d1ee922f1ae" prot="public" virt="non-virtual"><scope>sbIDeviceBaseCallback</scope><name>onDeviceConnect</name></member>
       <member refid="interfacesb_i_device_base_callback_12d57c5b4dbd59d48474a7f4e08874311" prot="public" virt="non-virtual"><scope>sbIDeviceBaseCallback</scope><name>onDeviceDisconnect</name></member>

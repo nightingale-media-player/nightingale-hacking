@@ -17,7 +17,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="51"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="51"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_1a96dc35bf55ad8aa8774d5612566a3bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -44,7 +44,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="60"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_139f5691f92060f75c7475e96ea279d00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="69"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_189b15a4cfd3f09e61a7240aabf591fab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -86,7 +86,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="77"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_1a285ed0d3c4b3931c308cdc18a9e339b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -124,7 +124,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="87"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="87"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_147de5b20ce1455596cbd2bb16db3edee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -162,7 +162,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="97"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="97"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_13bc00b17ce2a3f22038725369f410a6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>wstring</type>
@@ -189,7 +189,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="109"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="109"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_17ed42c803df6b8c50e4ddc6f38d13553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>wstring</type>
@@ -227,7 +227,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="122"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="122"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_1221137b3d9bd8880212a2fe036655eac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>wstring</type>
@@ -265,7 +265,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="135"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="135"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_result_1c5b06f4261b63f6932dfc720ee58a204" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -279,7 +279,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="146"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="146"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -287,7 +287,7 @@
     <detaileddescription>
 <para>User code retrieves one of these objects from <ref refid="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" kindref="member">sbIDatabaseQuery::getResultObject()</ref></para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="44" bodyfile="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" bodystart="43" bodyend="147"/>
+    <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl" bodystart="43" bodyend="147"/>
     <listofallmembers>
       <member refid="interfacesb_i_database_result_1c5b06f4261b63f6932dfc720ee58a204" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>clearResultSet</name></member>
       <member refid="interfacesb_i_database_result_16d169a4a25ea6254adce3b3b22101d91" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getColumnCount</name></member>

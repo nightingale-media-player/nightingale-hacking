@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="145">
-        <label>trunk/components/feathers/public/sbISkinDescription.idl</label>
+        <label>components/feathers/public/sbISkinDescription.idl</label>
         <link refid="sbISkinDescription.idl"/>
         <childnode refid="146" relation="include">
         </childnode>
@@ -62,6 +62,6 @@
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/sbISkinDescription.idl"/>
   </compounddef>
 </doxygen>

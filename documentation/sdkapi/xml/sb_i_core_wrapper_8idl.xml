@@ -4,14 +4,14 @@
     <compoundname>sbICoreWrapper.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="357">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="356">
-        <label>trunk/components/playlistplayback/public/sbICoreWrapper.idl</label>
+        <label>components/playlistplayback/public/sbICoreWrapper.idl</label>
         <link refid="sbICoreWrapper.idl"/>
         <childnode refid="357" relation="include">
         </childnode>
-      </node>
-      <node id="357">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_core_wrapper" prot="public">sbICoreWrapper</innerclass>
@@ -86,6 +86,6 @@
 <codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getSupportForFileExtension(in<sp/>AString<sp/>aFileExtension);</highlight></codeline>
 <codeline lineno="249"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/playlistplayback/public/sbICoreWrapper.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbICoreWrapper.idl"/>
   </compounddef>
 </doxygen>

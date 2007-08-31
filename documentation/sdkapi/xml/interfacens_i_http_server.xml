@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="68"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_17b4bcc5fc21dd816c55e3ec269c0607d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -40,7 +40,7 @@
 <para>Shuts down this server if it is running; if it is not, this method is a no-op.</para><para>This method will do its best to return after the socket in this server has been closed and all pending requests have completed being served, but this may or may not actually happen, since in some implementations this may not actually be possible. Implementations which can make this promise should make it explicit in implementation documentation. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_121b8c9c096d20aa0260e4bc78add207c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -76,7 +76,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="94"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_181fc7e7e29d82aac5ce7d56d0bedfb3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -120,7 +120,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="112"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="112"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_1cf0bafe1ec3b320e1042b4cfbc8ca453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -157,7 +157,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="131"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="131"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_1f246cfd2ee2a08aa002e1e06d3258c53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -201,7 +201,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="150"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="150"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_server_19f927a8539ccb50040a9ee9ac3f5a353" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -226,14 +226,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="165"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="165"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface that represents an HTTP server. Currently only used by the testharness. (HINT HINT!!!!). </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="56" bodyend="166"/>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="56" bodyend="166"/>
     <listofallmembers>
       <member refid="interfacens_i_http_server_1f246cfd2ee2a08aa002e1e06d3258c53" prot="public" virt="non-virtual"><scope>nsIHttpServer</scope><name>registerDirectory</name></member>
       <member refid="interfacens_i_http_server_1cf0bafe1ec3b320e1042b4cfbc8ca453" prot="public" virt="non-virtual"><scope>nsIHttpServer</scope><name>registerErrorHandler</name></member>

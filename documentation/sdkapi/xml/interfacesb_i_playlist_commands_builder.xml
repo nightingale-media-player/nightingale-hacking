@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="128"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="128"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -131,7 +131,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="144"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="144"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -201,7 +201,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="160"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="160"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -271,7 +271,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="180"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="180"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -352,7 +352,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="198"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="198"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -433,7 +433,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="216"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="216"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -470,7 +470,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="230"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="230"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -518,7 +518,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="242"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="242"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -566,7 +566,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="254"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="254"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -647,7 +647,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="274"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="274"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -739,7 +739,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="294"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="294"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -831,7 +831,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="314"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="314"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -912,7 +912,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="334"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="334"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1004,7 +1004,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="354"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="354"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1096,7 +1096,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="374"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="374"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1155,7 +1155,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="390"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="390"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1225,7 +1225,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="406"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="406"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1295,7 +1295,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="422"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="422"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1365,7 +1365,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="440"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="440"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1446,7 +1446,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="458"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="458"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1527,7 +1527,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="476"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="476"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1586,7 +1586,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="492"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="492"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1656,7 +1656,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="508"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="508"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1726,7 +1726,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="524"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="524"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1774,7 +1774,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="540"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="540"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1833,7 +1833,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="554"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="554"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1892,7 +1892,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="568"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="568"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1973,7 +1973,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="588"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="588"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2021,7 +2021,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="602"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="602"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2069,7 +2069,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="615"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="615"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2095,7 +2095,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="624"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="624"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2132,7 +2132,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="634"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="634"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2146,7 +2146,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="640"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="640"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2160,7 +2160,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="647"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="647"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -2192,30 +2192,30 @@
 </para><para>Commands registered to the PlaylistCommandsManager using the registerPlaylistCommandsMedia[List|Item]() functions should be unregistered using the corresponding unregisterPlaylistCommandsMedia[List|Item]() function before application shutdown. Commands published using the publish() function should be withdrawn using the withdraw() function before application shutdown.</para><para>All instantiated <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> should have their <ref refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" kindref="member">shutdown()</ref> method called before application shutdown to ensure that no external reference remains in their internal arrays.</para><para>Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut strings (key, keycode, modifiers) may take values such as &quot;&amp;value&quot;, which will cause the appropriate localized string to be fetched from the active locale.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="385">
+      <node id="390">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="384">
+      <node id="389">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="385" relation="public-inheritance">
+        <childnode refid="390" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="387">
+      <node id="392">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="386">
+      <node id="391">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="387" relation="public-inheritance">
+        <childnode refid="392" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="114" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="113" bodyend="648"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="114" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="113" bodyend="648"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendAction</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenu</name></member>

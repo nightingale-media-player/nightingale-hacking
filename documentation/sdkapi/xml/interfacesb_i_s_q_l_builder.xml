@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="49" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="49" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1e6f88f4330f1ae6e32ab6244e4292491" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="50" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="50" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_17932e380ede3501036cbbd15acb82ef2" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="51" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="51" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_10b508cc32009b229e56539e07c0e6877" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="52" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="52" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1805277f380a5e4a4a260bb28d38ce731" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="53" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="53" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1a65091061732a05911da854ea8f35ba8" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -88,7 +88,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="54" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="54" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="55" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="55" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_13c7ea9b5a93d06b5651b2930d8b9b472" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="60" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="60" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1cd361a2636559e9627c09784d0099f82" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="65" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="65" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="65" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_11998b6528f7f722b5f24ec83cf7a15dc" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -141,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="70" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="70" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="70" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -154,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="75" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="75" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="75" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="75" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -168,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="77" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="77" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="77" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1ad6e58931a0e11662c919c0846503b8c" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="78" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="78" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="78" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -264,7 +264,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="96"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="96"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_100fa6e88ce37c3ddd278c4420f375367" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -344,7 +344,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="114"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="114"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -402,7 +402,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="127"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="127"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1942a3fc5adb7eea5a1a23cdd0a6be15c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -438,7 +438,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="135"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="135"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_137f276fb7a1b02e7f5398313e22bb43d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -451,7 +451,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="140"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="140"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1f67c7d7433677925da7f20e036ea7ff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -465,7 +465,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="146"/>
+        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="146"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -473,42 +473,42 @@
     <detaileddescription>
 <para>Components implementing this interface are used to build SQL string. The interface is inspired by Squiggle: <ulink url="http://joe.truemesh.com/squiggle/javadoc/index.html">http://joe.truemesh.com/squiggle/javadoc/index.html</ulink> </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="562">
+      <node id="570">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="560" relation="public-inheritance">
+        <childnode refid="568" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="565">
+      <node id="573">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="562" relation="public-inheritance">
+        <childnode refid="570" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="563">
+      <node id="571">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="562" relation="public-inheritance">
+        <childnode refid="570" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="560">
+      <node id="568">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="564">
+      <node id="572">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="562" relation="public-inheritance">
+        <childnode refid="570" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="561">
+      <node id="569">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="560" relation="public-inheritance">
+        <childnode refid="568" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="48" bodyfile="E:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="47" bodyend="147"/>
+    <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="47" bodyend="147"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addJoin</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addJoinWithCriterion</name></member>

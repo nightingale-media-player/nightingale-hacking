@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="12">
-        <label>trunk/components/bundle/public/sbIBundleDataListener.idl</label>
+        <label>components/bundle/public/sbIBundleDataListener.idl</label>
         <link refid="sbIBundleDataListener.idl"/>
         <childnode refid="13" relation="include">
         </childnode>
@@ -58,6 +58,6 @@
 <codeline lineno="59"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onError(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl"/>
   </compounddef>
 </doxygen>

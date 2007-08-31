@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="704"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="704"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -79,7 +79,7 @@
     <detaileddescription>
 <para>This interface may be replaced by a javascript function in any of the <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> functions that take it as a parameter.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="689" bodyfile="E:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="688" bodyend="705"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="689" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="688" bodyend="705"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_builder_get_string_callback_1ab7c43f770940a9adc386eb4cf4b88f3" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderGetStringCallback</scope><name>handleCallback</name></member>
     </listofallmembers>

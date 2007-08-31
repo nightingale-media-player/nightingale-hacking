@@ -15,7 +15,7 @@
 <para>The number of devices currently registered </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="41" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" bodystart="41" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" bodystart="41" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -30,7 +30,7 @@
 <para>Simply calls updateDevices on all loaded controllers. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" line="44"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" line="44"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_manager_1fe1f3d8ce5cde429ebb64cb8968c6602" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -63,7 +63,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="49"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="49"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_manager_12110e24f1cf3202386c7f830106f317d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref></type>
@@ -96,7 +96,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="57"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_manager_1b7793a974650ca7ebe424de324cd56b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -121,7 +121,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="64"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_manager_12c0ed4ddbc1d707ac5fd93f18d0ff69a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref></type>
@@ -161,14 +161,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="73"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="73"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
 <para>This is the DeviceManager service. Make sure to use getService rather than createInstance when using. </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" line="40" bodyfile="E:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" bodystart="39" bodyend="45"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" line="40" bodyfile="e:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl" bodystart="39" bodyend="45"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_manager_12c0f42d75db8a848b3f5352cc0901531" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>deviceCount</name></member>
       <member refid="interfacesb_i_device_manager_1fe1f3d8ce5cde429ebb64cb8968c6602" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>getCategoryByIndex</name></member>

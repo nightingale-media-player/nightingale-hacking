@@ -44,6 +44,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_faceplate_manager.html#a89914857c072e2c353a3a5ab90b0fe1">getPanes</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets an enumerator for all instantiated faceplate panes.  <a href="#a89914857c072e2c353a3a5ab90b0fe1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_faceplate_pane.html">sbIFaceplatePane</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_faceplate_manager.html#b3123e5ca85835f5e94fdeea42d4c045">getDefaultPane</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the pane used in the most recent call to showPane. Used to determine what pane a faceplate should display on load.  <a href="#b3123e5ca85835f5e94fdeea42d4c045"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_faceplate_manager.html#c8dcacaa2eaa08c03ae7c1c2c948e31e">addListener</a> (in <a class="el" href="interfacesb_i_faceplate_manager_listener.html">sbIFaceplateManagerListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Register to receive notification when panes are added, removed, and shown. Make sure you remove any listeners you add.  <a href="#c8dcacaa2eaa08c03ae7c1c2c948e31e"></a><br></td></tr>
@@ -234,6 +237,28 @@ Gets an enumerator for all instantiated faceplate panes.
 
 </div>
 </div><p>
+<a class="anchor" name="b3123e5ca85835f5e94fdeea42d4c045"></a><!-- doxytag: member="sbIFaceplateManager::getDefaultPane" ref="b3123e5ca85835f5e94fdeea42d4c045" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_faceplate_pane.html">sbIFaceplatePane</a> sbIFaceplateManager::getDefaultPane           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the pane used in the most recent call to showPane. Used to determine what pane a faceplate should display on load. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>An active, instantiated, faceplate pane interface. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="c8dcacaa2eaa08c03ae7c1c2c948e31e"></a><!-- doxytag: member="sbIFaceplateManager::addListener" ref="c8dcacaa2eaa08c03ae7c1c2c948e31e" args="(in sbIFaceplateManagerListener aListener)" -->
 <div class="memitem">
 <div class="memproto">
@@ -289,8 +314,8 @@ Unregister notification callbacks.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
-<li>trunk/components/faceplate/public/<a class="el" href="sb_i_faceplate_manager_8idl-source.html">sbIFaceplateManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 23 17:46:29 2007 for Songbird by&nbsp;
+<li>components/faceplate/public/<a class="el" href="sb_i_faceplate_manager_8idl-source.html">sbIFaceplateManager.idl</a></ul>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:47:01 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

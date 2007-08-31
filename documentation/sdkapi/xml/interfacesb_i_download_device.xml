@@ -10,30 +10,30 @@
 <para>&lt;TODO:Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="109">
+      <node id="114">
         <label>sbIDownloadDevice</label>
         <link refid="interfacesb_i_download_device"/>
-        <childnode refid="110" relation="public-inheritance">
+        <childnode refid="115" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="110">
+      <node id="115">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="111">
+      <node id="116">
         <label>sbIDownloadDevice</label>
         <link refid="interfacesb_i_download_device"/>
-        <childnode refid="112" relation="public-inheritance">
+        <childnode refid="117" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="112">
+      <node id="117">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="47" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="46" bodyend="48"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="46" bodyend="48"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>beginTransfer</name></member>

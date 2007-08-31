@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="88">
-        <label>trunk/components/devices/device/public/sbIDevice.idl</label>
+        <label>components/devices/device/public/sbIDevice.idl</label>
         <link refid="sbIDevice.idl"/>
         <childnode refid="89" relation="include">
         </childnode>
@@ -82,6 +82,6 @@
 <codeline lineno="105" refid="interfacesb_i_device_1d55ea7f26e638e59ea18f68497d01126" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDeviceParamaters<sp/>parameters;</highlight></codeline>
 <codeline lineno="106"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devices/device/public/sbIDevice.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/device/public/sbIDevice.idl"/>
   </compounddef>
 </doxygen>

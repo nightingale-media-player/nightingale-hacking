@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="133">
-        <label>trunk/components/faceplate/public/sbIFaceplatePane.idl</label>
+        <label>components/faceplate/public/sbIFaceplatePane.idl</label>
         <link refid="sbIFaceplatePane.idl"/>
         <childnode refid="134" relation="include">
         </childnode>
@@ -74,6 +74,6 @@
 <codeline lineno="116"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplatePane.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplatePane.idl"/>
   </compounddef>
 </doxygen>

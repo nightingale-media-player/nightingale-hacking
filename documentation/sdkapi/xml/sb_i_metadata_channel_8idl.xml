@@ -7,7 +7,7 @@
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
       <node id="300">
-        <label>trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
         <link refid="sbIMetadataChannel.idl"/>
         <childnode refid="301" relation="include">
         </childnode>
@@ -16,8 +16,11 @@
         <childnode refid="303" relation="include">
         </childnode>
       </node>
-      <node id="302">
-        <label>nsIStreamListener.idl</label>
+      <node id="305">
+        <label>sbIMetadataValues.idl</label>
+        <link refid="sb_i_metadata_values_8idl"/>
+        <childnode refid="301" relation="include">
+        </childnode>
       </node>
       <node id="303">
         <label>sbIMetadataHandler.idl</label>
@@ -29,11 +32,8 @@
         <childnode refid="305" relation="include">
         </childnode>
       </node>
-      <node id="305">
-        <label>sbIMetadataValues.idl</label>
-        <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="301" relation="include">
-        </childnode>
+      <node id="302">
+        <label>nsIStreamListener.idl</label>
       </node>
       <node id="301">
         <label>nsISupports.idl</label>
@@ -97,6 +97,6 @@
 <codeline lineno="116"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
 <codeline lineno="117"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl"/>
   </compounddef>
 </doxygen>

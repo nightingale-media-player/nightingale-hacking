@@ -31,4 +31,28 @@ include $(DEPTH)/build/autodefs.mk
 
 SHELL_EXECUTE = $(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
 
+ifeq (windows,$(SB_PLATFORM))
+
+TOOLSDIR = $(topsrcdir)/tools/win32
+
+DOXYGEN_INPUTDIRS = $(topsrcdir)/components \
+                    $(topsrcdir)/bindings \
+                    $(NULL)
+                    
+DOXYGEN_OUTPUTDIR = $(topsrcdir)/documentation/sdkapi \
+                    $(NULL)
+
+DOXYGEN_STRIP_TOPSRCDIR = $(topsrcdir) \
+                          $(NULL)
+
+SONGBIRD_DOCUMENTATION = songbird.dox.in \
+                         $(NULL)
+                         
+DOXYGEN_PREPROCESS = songbird.dox \
+                     $(NULL)
+
+SHELL_EXECUTE = $(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
+
+endif #windows
+
 include $(topsrcdir)/build/rules.mk

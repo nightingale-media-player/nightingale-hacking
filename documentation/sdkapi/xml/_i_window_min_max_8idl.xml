@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="163">
-        <label>trunk/components/integration/public/IWindowMinMax.idl</label>
+        <label>components/integration/public/IWindowMinMax.idl</label>
         <link refid="IWindowMinMax.idl"/>
         <childnode refid="164" relation="include">
         </childnode>
@@ -71,6 +71,6 @@
 <codeline lineno="120"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl"/>
   </compounddef>
 </doxygen>

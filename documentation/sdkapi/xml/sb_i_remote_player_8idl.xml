@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="395">
-        <label>trunk/components/remoteapi/public/sbIRemotePlayer.idl</label>
+      <node id="398">
+        <label>components/remoteapi/public/sbIRemotePlayer.idl</label>
         <link refid="sbIRemotePlayer.idl"/>
-        <childnode refid="396" relation="include">
+        <childnode refid="399" relation="include">
         </childnode>
       </node>
-      <node id="396">
+      <node id="399">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -209,7 +209,7 @@
 <codeline lineno="253"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="254"><highlight class="comment"><sp/><sp/>Prop:<sp/>volume</highlight></codeline>
 <codeline lineno="255"><highlight class="comment"></highlight></codeline>
-<codeline lineno="256"><highlight class="comment"><sp/><sp/>The<sp/>volumen<sp/>of<sp/>the<sp/>application<sp/>on<sp/>a<sp/>range<sp/>from<sp/>0<sp/>to<sp/>255.</highlight></codeline>
+<codeline lineno="256"><highlight class="comment"><sp/><sp/>The<sp/>volume<sp/>of<sp/>the<sp/>application<sp/>on<sp/>a<sp/>range<sp/>from<sp/>0<sp/>to<sp/>255.</highlight></codeline>
 <codeline lineno="257"><highlight class="comment"></highlight></codeline>
 <codeline lineno="258"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
 <codeline lineno="259"><highlight class="comment"><sp/><sp/><sp/><sp/>integer</highlight></codeline>
@@ -638,15 +638,54 @@
 <codeline lineno="739"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="740"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>libraries(in<sp/>AString<sp/>aLibraryID);</highlight></codeline>
 <codeline lineno="741"><highlight class="normal"></highlight></codeline>
-<codeline lineno="742" refid="interfacesb_i_remote_player_122def0e35e5c89b9c5841ee5b97331a8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>mainLibrary;</highlight></codeline>
-<codeline lineno="743" refid="interfacesb_i_remote_player_193af9fadef3eac3ca4335c5664874b2d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>webLibrary;</highlight></codeline>
-<codeline lineno="744"><highlight class="normal"></highlight></codeline>
-<codeline lineno="748"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fireEventToContent(in<sp/>AString<sp/>aClass,<sp/>in<sp/>AString<sp/>aType);</highlight></codeline>
-<codeline lineno="749"><highlight class="normal"></highlight></codeline>
-<codeline lineno="753"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommandsChanged();</highlight></codeline>
-<codeline lineno="754"><highlight class="normal"></highlight></codeline>
-<codeline lineno="755"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="742"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="743"><highlight class="comment"><sp/><sp/>Prop:<sp/>mainLibrary</highlight></codeline>
+<codeline lineno="744"><highlight class="comment"></highlight></codeline>
+<codeline lineno="745"><highlight class="comment"><sp/><sp/>The<sp/>main<sp/>&lt;Library&gt;<sp/>for<sp/>Songbird.<sp/>This<sp/>will<sp/>contain<sp/>all<sp/>the<sp/>&lt;MediaItem&gt;s<sp/>the</highlight></codeline>
+<codeline lineno="746"><highlight class="comment"><sp/><sp/>user<sp/>has<sp/>on<sp/>their<sp/>system.</highlight></codeline>
+<codeline lineno="747"><highlight class="comment"></highlight></codeline>
+<codeline lineno="748"><highlight class="comment"><sp/><sp/>Type:<sp/></highlight></codeline>
+<codeline lineno="749"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;Library&gt;</highlight></codeline>
+<codeline lineno="750"><highlight class="comment"></highlight></codeline>
+<codeline lineno="751"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="752"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="753"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mainLib<sp/>=<sp/>songbird.mainLibrary;</highlight></codeline>
+<codeline lineno="754"><highlight class="comment"><sp/><sp/><sp/><sp/>(end<sp/>code)</highlight></codeline>
+<codeline lineno="755"><highlight class="comment"></highlight></codeline>
+<codeline lineno="756"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="757"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;webLibrary&gt;</highlight></codeline>
+<codeline lineno="758"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;libraries()&gt;</highlight></codeline>
+<codeline lineno="759"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;siteLibrary()&gt;</highlight></codeline>
+<codeline lineno="760"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="761" refid="interfacesb_i_remote_player_122def0e35e5c89b9c5841ee5b97331a8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>mainLibrary;</highlight></codeline>
+<codeline lineno="762"><highlight class="normal"></highlight></codeline>
+<codeline lineno="763"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="764"><highlight class="comment"><sp/><sp/>Prop:<sp/>webLibrary</highlight></codeline>
+<codeline lineno="765"><highlight class="comment"></highlight></codeline>
+<codeline lineno="766"><highlight class="comment"><sp/><sp/>The<sp/>web<sp/>&lt;Library&gt;<sp/>for<sp/>Songbird.<sp/>This<sp/>will<sp/>contain<sp/>all<sp/>the<sp/>&lt;MediaItem&gt;s<sp/>that</highlight></codeline>
+<codeline lineno="767"><highlight class="comment"><sp/><sp/>have<sp/>been<sp/>discovered<sp/>on<sp/>web<sp/>pages<sp/>the<sp/>user<sp/>has<sp/>visited.</highlight></codeline>
+<codeline lineno="768"><highlight class="comment"></highlight></codeline>
+<codeline lineno="769"><highlight class="comment"><sp/><sp/>Type:<sp/></highlight></codeline>
+<codeline lineno="770"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;Library&gt;</highlight></codeline>
+<codeline lineno="771"><highlight class="comment"></highlight></codeline>
+<codeline lineno="772"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="773"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="774"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>webLib<sp/>=<sp/>songbird.webLibrary;</highlight></codeline>
+<codeline lineno="775"><highlight class="comment"><sp/><sp/><sp/><sp/>(end<sp/>code)</highlight></codeline>
+<codeline lineno="776"><highlight class="comment"></highlight></codeline>
+<codeline lineno="777"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="778"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;mainLibrary&gt;</highlight></codeline>
+<codeline lineno="779"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;libraries()&gt;</highlight></codeline>
+<codeline lineno="780"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;siteLibrary()&gt;</highlight></codeline>
+<codeline lineno="781"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="782" refid="interfacesb_i_remote_player_193af9fadef3eac3ca4335c5664874b2d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>webLibrary;</highlight></codeline>
+<codeline lineno="783"><highlight class="normal"></highlight></codeline>
+<codeline lineno="787"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fireEventToContent(in<sp/>AString<sp/>aClass,<sp/>in<sp/>AString<sp/>aType);</highlight></codeline>
+<codeline lineno="788"><highlight class="normal"></highlight></codeline>
+<codeline lineno="792"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommandsChanged();</highlight></codeline>
+<codeline lineno="793"><highlight class="normal"></highlight></codeline>
+<codeline lineno="794"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl"/>
   </compounddef>
 </doxygen>

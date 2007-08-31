@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="94"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="94"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -46,30 +46,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="361">
+      <node id="366">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="360">
+      <node id="365">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="361" relation="public-inheritance">
+        <childnode refid="366" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="363">
+      <node id="368">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="362">
+      <node id="367">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="363" relation="public-inheritance">
+        <childnode refid="368" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="86" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="85" bodyend="95"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="86" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="85" bodyend="95"/>
     <listofallmembers>
       <member refid="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyAt</name></member>

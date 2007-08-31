@@ -7,14 +7,8 @@
     <includes local="yes">nsIPrompt.idl</includes>
     <includes local="yes">nsIAuthPrompt.idl</includes>
     <incdepgraph>
-      <node id="370">
-        <label>nsIProgressEventSink.idl</label>
-      </node>
-      <node id="372">
-        <label>nsIAuthPrompt.idl</label>
-      </node>
       <node id="368">
-        <label>trunk/components/playlistreader/public/sbIPlaylistWriter.idl</label>
+        <label>components/playlistreader/public/sbIPlaylistWriter.idl</label>
         <link refid="sbIPlaylistWriter.idl"/>
         <childnode refid="369" relation="include">
         </childnode>
@@ -24,6 +18,12 @@
         </childnode>
         <childnode refid="372" relation="include">
         </childnode>
+      </node>
+      <node id="370">
+        <label>nsIProgressEventSink.idl</label>
+      </node>
+      <node id="372">
+        <label>nsIAuthPrompt.idl</label>
       </node>
       <node id="369">
         <label>nsISupports.idl</label>
@@ -117,6 +117,6 @@
 <codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl"/>
   </compounddef>
 </doxygen>

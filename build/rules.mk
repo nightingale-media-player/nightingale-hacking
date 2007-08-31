@@ -131,6 +131,11 @@ ifdef SONGBIRD_DEFAULTS
 targets += copy_sb_defaults
 endif
 
+ifdef SONGBIRD_DOCUMENTATION
+targets += copy_sb_documentation
+clean_targets += clean_copy_sb_documentation
+endif
+
 ifdef SONGBIRD_INSTALLER
 targets += copy_sb_installer
 clean_targets += clean_copy_sb_installer
@@ -180,6 +185,11 @@ endif
 ifdef APPINI
 targets += appini_preprocess
 clean_targets += clean_appini
+endif
+
+ifdef DOXYGEN_PREPROCESS
+targets += run_doxygen_preprocess
+clean_targets += clean_doxygen_preprocess
 endif
 
 ifdef INSTALLER_PREPROCESS
@@ -679,6 +689,23 @@ endif #SONGBIRD_DEFAULTS
 
 #-----------------------
 
+ifdef SONGBIRD_DOCUMENTATION
+copy_sb_documentation:
+	for file in $(SONGBIRD_DOCUMENTATION); do \
+  	$(CYGWIN_WRAPPER) $(CP) -dfp $(srcdir)/$$file $(SONGBIRD_DOCUMENTATIONDIR); \
+  done
+
+clean_copy_sb_documentation:
+	for file in $(SONGBIRD_DOCUMENTATION); do \
+    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DOCUMENTATIONDIR)/$$file; \
+  done
+
+.PHONY : copy_sb_documentation clean_copy_sb_documentation
+
+endif #SONGBIRD_DOCUMENTATION
+
+#-----------------------
+
 ifdef SONGBIRD_INSTALLER
 copy_sb_installer:
 	for file in $(SONGBIRD_INSTALLER); do \
@@ -817,6 +844,37 @@ endif #APPINI
 
 #-----------------------
 
+ifdef DOXYGEN_PREPROCESS
+
+# Preprocesses the $(DOXYGEN_PREPROCESS) so that the proper input and output directories
+# can be set.
+
+ifeq (windows,$(SB_PLATFORM))
+DOXYGEN_PPFLAGS = --line-endings=crlf
+endif
+
+run_doxygen_preprocess:
+	for file in $(DOXYGEN_PREPROCESS); do \
+    source=$(SONGBIRD_DOCUMENTATIONDIR)/$$file.in; \
+    target=$(SONGBIRD_DOCUMENTATIONDIR)/$$file; \
+    $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(DOXYGEN_PPFLAGS) \
+      $(ACDEFINES) $(PPDEFINES) -DDOXYGEN_INPUTDIRS="$(DOXYGEN_INPUTDIRS)" \
+      -DDOXYGEN_OUTPUTDIR="$(DOXYGEN_OUTPUTDIR)" \
+      -DDOXYGEN_STRIP_TOPSRCDIR="$(DOXYGEN_STRIP_TOPSRCDIR)" -- \
+      $$source > $$target; \
+  done
+
+clean_doxygen_preprocess:
+	for file in $(DOXYGEN_PREPROCESS); do \
+    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DOCUMENTATIONDIR)/$$file; \
+  done
+
+.PHONY : run_doxygen_preprocess clean_doxygen_preprocess
+
+endif #DOXYGEN_PREPROCESS
+
+#-----------------------
+
 ifdef INSTALLER_PREPROCESS
 
 # Preprocesses the $(INSTALLER_PREPROCESS) files and turns them into plain .nsi files.
@@ -835,7 +893,7 @@ run_installer_preprocess:
 
 clean_installer_preprocess:
 	for file in $(INSTALLER_PREPROCESS); do \
-    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLER)/$$file; \
+    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLERDIR)/$$file; \
   done
 
 .PHONY : run_installer_preprocess clean_installer_preprocess

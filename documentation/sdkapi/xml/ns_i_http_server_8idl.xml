@@ -5,18 +5,18 @@
     <includes local="yes">nsIServerSocket.idl</includes>
     <includes local="yes">nsIPropertyBag.idl</includes>
     <incdepgraph>
-      <node id="432">
+      <node id="435">
         <label>nsIPropertyBag.idl</label>
       </node>
-      <node id="431">
+      <node id="434">
         <label>nsIServerSocket.idl</label>
       </node>
-      <node id="430">
-        <label>trunk/components/testharness/public/nsIHttpServer.idl</label>
+      <node id="433">
+        <label>components/testharness/public/nsIHttpServer.idl</label>
         <link refid="nsIHttpServer.idl"/>
-        <childnode refid="431" relation="include">
+        <childnode refid="434" relation="include">
         </childnode>
-        <childnode refid="432" relation="include">
+        <childnode refid="435" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -143,6 +143,6 @@
 <codeline lineno="349"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write(in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>data);</highlight></codeline>
 <codeline lineno="350"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl"/>
   </compounddef>
 </doxygen>

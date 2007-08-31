@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_7c7ba78463eae274b16a843158e0bc74" kind="dir">
+    <compoundname>components/feathers/public/</compoundname>
+    <innerfile refid="sb_i_feathers_manager_8idl">sbIFeathersManager.idl</innerfile>
+    <innerfile refid="sb_i_feathers_manager_listener_8idl">sbIFeathersManagerListener.idl</innerfile>
+    <innerfile refid="sb_i_layout_description_8idl">sbILayoutDescription.idl</innerfile>
+    <innerfile refid="sb_i_skin_description_8idl">sbISkinDescription.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/"/>
+  </compounddef>
+</doxygen>

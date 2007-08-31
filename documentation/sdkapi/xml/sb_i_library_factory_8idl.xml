@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="187">
-        <label>trunk/components/library/base/public/sbILibraryFactory.idl</label>
+        <label>components/library/base/public/sbILibraryFactory.idl</label>
         <link refid="sbILibraryFactory.idl"/>
         <childnode refid="188" relation="include">
         </childnode>
@@ -62,6 +62,6 @@
 <codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>createLibrary(in<sp/>nsIPropertyBag2<sp/>aCreationParameters);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl"/>
   </compounddef>
 </doxygen>

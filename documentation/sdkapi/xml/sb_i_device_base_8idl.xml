@@ -3,12 +3,12 @@
   <compounddef id="sb_i_device_base_8idl" kind="file">
     <compoundname>sbIDeviceBase.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_c_d_device_8idl" local="yes">trunk/components/devicesobsolete/cd/public/sbICDDevice.idl</includedby>
-    <includedby refid="sb_i_download_device_8idl" local="yes">trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl</includedby>
-    <includedby refid="sb_i_w_m_device_8idl" local="yes">trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl</includedby>
+    <includedby refid="sb_i_c_d_device_8idl" local="yes">components/devicesobsolete/cd/public/sbICDDevice.idl</includedby>
+    <includedby refid="sb_i_download_device_8idl" local="yes">components/devicesobsolete/download/public/sbIDownloadDevice.idl</includedby>
+    <includedby refid="sb_i_w_m_device_8idl" local="yes">components/devicesobsolete/wm/public/sbIWMDevice.idl</includedby>
     <incdepgraph>
       <node id="106">
-        <label>trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
+        <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
         <link refid="sbIDeviceBase.idl"/>
         <childnode refid="107" relation="include">
         </childnode>
@@ -18,20 +18,12 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="109">
-        <label>trunk/components/devicesobsolete/cd/public/sbICDDevice.idl</label>
-        <link refid="sb_i_c_d_device_8idl"/>
-      </node>
-      <node id="110">
-        <label>trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
-        <link refid="sb_i_download_device_8idl"/>
-      </node>
       <node id="111">
-        <label>trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
+        <label>components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
         <link refid="sb_i_w_m_device_8idl"/>
       </node>
       <node id="108">
-        <label>trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
+        <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
         <link refid="sbIDeviceBase.idl"/>
         <childnode refid="109" relation="include">
         </childnode>
@@ -39,6 +31,14 @@
         </childnode>
         <childnode refid="111" relation="include">
         </childnode>
+      </node>
+      <node id="110">
+        <label>components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
+        <link refid="sb_i_download_device_8idl"/>
+      </node>
+      <node id="109">
+        <label>components/devicesobsolete/cd/public/sbICDDevice.idl</label>
+        <link refid="sb_i_c_d_device_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_device_base_callback" prot="public">sbIDeviceBaseCallback</innerclass>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="427"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="427"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_167bc01eb190879935c59d8926b2dbbe5" prot="public" static="no">
         <name>kSB_DEVICE_FILE_FORMAT_WAV</name>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="428"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="428"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_1c0062ec0682ea2ab4cf89ef5809145bc" prot="public" static="no">
         <name>kSB_DEVICE_FILE_FORMAT_MP3</name>
@@ -75,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="429"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="429"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_12480cbc482fbd0c97c212d4b3f118741" prot="public" static="no">
         <name>kSB_DEVICE_FILE_FORMAT_WMA</name>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="430"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="430"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_1429808074d6bdff210ed2a87214230c9" prot="public" static="no">
         <name>kSB_DEVICE_STATE_IDLE</name>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="433"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="433"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_187f670d0920af88870fca0a2798ffa5f" prot="public" static="no">
         <name>kSB_DEVICE_STATE_BUSY</name>
@@ -108,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="434"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="434"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_178af39ba49945c853cca3b77ea97e945" prot="public" static="no">
         <name>kSB_DEVICE_STATE_DOWNLOADING</name>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="435"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="435"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_13ebfbbb4684f01f567be23170c75a2a7" prot="public" static="no">
         <name>kSB_DEVICE_STATE_UPLOADING</name>
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="436"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="436"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_19f968b70796eb013a4b4c0d258f628ab" prot="public" static="no">
         <name>kSB_DEVICE_STATE_DOWNLOAD_PAUSED</name>
@@ -141,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="437"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="437"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_1732b6ad731e3aca2734d043a730109d1" prot="public" static="no">
         <name>kSB_DEVICE_STATE_UPLOAD_PAUSED</name>
@@ -152,7 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="438"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="438"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_base_8idl_185b72d78c79f1491dd70d1709db0371a" prot="public" static="no">
         <name>kSB_DEVICE_STATE_DELETING</name>
@@ -163,7 +163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="439"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="439"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -328,6 +328,6 @@
 <codeline lineno="440"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
 <codeline lineno="441"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/base/public/sbIDeviceBase.idl"/>
   </compounddef>
 </doxygen>

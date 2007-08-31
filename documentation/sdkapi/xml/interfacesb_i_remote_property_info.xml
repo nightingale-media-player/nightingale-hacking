@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_remote_property_info" kind="interface" prot="public">
+    <compoundname>sbIRemotePropertyInfo</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_property_info_12dfa4439b1eb698b3d8bf317d138d535" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIRemotePropertyInfo::remoteReadable</definition>
+        <argsstring></argsstring>
+        <name>remoteReadable</name>
+        <briefdescription>
+<para>A web site may read the value of this property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_property_info_14345680dd6563ce30e6b528341eadd76" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIRemotePropertyInfo::remoteWritable</definition>
+        <argsstring></argsstring>
+        <name>remoteWritable</name>
+        <briefdescription>
+<para>A web site may write the value of this property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl" bodystart="41" bodyend="52"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_property_info_12dfa4439b1eb698b3d8bf317d138d535" prot="public" virt="non-virtual"><scope>sbIRemotePropertyInfo</scope><name>remoteReadable</name></member>
+      <member refid="interfacesb_i_remote_property_info_14345680dd6563ce30e6b528341eadd76" prot="public" virt="non-virtual"><scope>sbIRemotePropertyInfo</scope><name>remoteWritable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

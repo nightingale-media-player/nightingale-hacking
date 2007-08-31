@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="21">
-        <label>trunk/components/commandline/public/sbICommandLineFlagHandler.idl</label>
+        <label>components/commandline/public/sbICommandLineFlagHandler.idl</label>
         <link refid="sbICommandLineFlagHandler.idl"/>
         <childnode refid="22" relation="include">
         </childnode>
@@ -55,6 +55,6 @@
 <codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>handleFlag(in<sp/>AString<sp/>aFlag,<sp/>in<sp/>AString<sp/>aParam);</highlight></codeline>
 <codeline lineno="56"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl"/>
   </compounddef>
 </doxygen>

@@ -6,7 +6,7 @@
     <includes refid="sb_i_local_database_g_u_i_d_array_8idl" local="yes">sbILocalDatabaseGUIDArray.idl</includes>
     <incdepgraph>
       <node id="255">
-        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</label>
+        <label>components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</label>
         <link refid="sbILocalDatabaseAsyncGUIDArray.idl"/>
         <childnode refid="256" relation="include">
         </childnode>
@@ -100,6 +100,6 @@
 <codeline lineno="82"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl"/>
   </compounddef>
 </doxygen>

@@ -3,9 +3,29 @@
   <compounddef id="group__playlistcommands" kind="group">
     <compoundname>playlistcommands</compoundname>
     <title>Playlist Commands</title>
+    <innerclass refid="interfacesb_i_playlist_commands" prot="public">sbIPlaylistCommands</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_manager" prot="public">sbIPlaylistCommandsManager</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder" prot="public">sbIPlaylistCommandsBuilder</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_simple_callback" prot="public">sbIPlaylistCommandsBuilderSimpleCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_get_string_callback" prot="public">sbIPlaylistCommandsBuilderGetStringCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_get_bool_callback" prot="public">sbIPlaylistCommandsBuilderGetBoolCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_set_value_callback" prot="public">sbIPlaylistCommandsBuilderSetValueCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_instantiation_callback" prot="public">sbIPlaylistCommandsBuilderInstantiationCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_p_c_callback" prot="public">sbIPlaylistCommandsBuilderPCCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands" prot="public">sbIPlaylistCommands</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_manager" prot="public">sbIPlaylistCommandsManager</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder" prot="public">sbIPlaylistCommandsBuilder</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_simple_callback" prot="public">sbIPlaylistCommandsBuilderSimpleCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_get_string_callback" prot="public">sbIPlaylistCommandsBuilderGetStringCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_get_bool_callback" prot="public">sbIPlaylistCommandsBuilderGetBoolCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_set_value_callback" prot="public">sbIPlaylistCommandsBuilderSetValueCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_instantiation_callback" prot="public">sbIPlaylistCommandsBuilderInstantiationCallback</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_p_c_callback" prot="public">sbIPlaylistCommandsBuilderPCCallback</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>@{</para><para>@{ </para>    </detaileddescription>
+    </detaileddescription>
   </compounddef>
 </doxygen>

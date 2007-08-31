@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="52">
-        <label>trunk/components/devices/base/public/sbIDeviceCapabilities.idl</label>
+        <label>components/devices/base/public/sbIDeviceCapabilities.idl</label>
         <link refid="sbIDeviceCapabilities.idl"/>
         <childnode refid="53" relation="include">
         </childnode>
@@ -84,6 +84,6 @@
 <codeline lineno="90"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedEvents();</highlight></codeline>
 <codeline lineno="91"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl"/>
   </compounddef>
 </doxygen>

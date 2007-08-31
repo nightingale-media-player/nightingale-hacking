@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="91">
-        <label>trunk/components/devices/manager/public/sbIDeviceManager.idl</label>
+        <label>components/devices/manager/public/sbIDeviceManager.idl</label>
         <link refid="manager/public/sbIDeviceManager.idl"/>
         <childnode refid="92" relation="include">
         </childnode>
@@ -56,6 +56,6 @@
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateDevices();</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl"/>
   </compounddef>
 </doxygen>

@@ -59,7 +59,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="54"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="54"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -67,7 +67,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_window_resize_hook" kindref="compound">sbIWindowResizeHook</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="44" bodyfile="E:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" bodystart="43" bodyend="55"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowResizeHook.idl" bodystart="43" bodyend="55"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_resize_hook_callback_1e8e9d7ebebb4b3e9b6d66ce52e1e61d6" prot="public" virt="non-virtual"><scope>sbIWindowResizeHookCallback</scope><name>onResize</name></member>
     </listofallmembers>

@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="47"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="47"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -27,7 +27,7 @@
 </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="46" bodyfile="E:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" bodystart="45" bodyend="48"/>
+    <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="46" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" bodystart="45" bodyend="48"/>
     <listofallmembers>
       <member refid="interfacesb_i_tab_browser_1529953145ae3991eb77d5f8a7c025b38" prot="public" virt="non-virtual"><scope>sbITabBrowser</scope><name>getTabForDocument</name></member>
     </listofallmembers>

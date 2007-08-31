@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_761b58536c9b3176ad80d41b88c0eb84" kind="dir">
+    <compoundname>components/testharness/public/</compoundname>
+    <innerfile refid="ns_i_http_server_8idl">nsIHttpServer.idl</innerfile>
+    <innerfile refid="sb_i_leak_canary_8idl">sbILeakCanary.idl</innerfile>
+    <innerfile refid="sb_i_test_harness_8idl">sbITestHarness.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/"/>
+  </compounddef>
+</doxygen>

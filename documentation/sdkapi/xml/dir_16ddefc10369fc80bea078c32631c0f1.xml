@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_16ddefc10369fc80bea078c32631c0f1" kind="dir">
+    <compoundname>components/property/public/</compoundname>
+    <innerfile refid="sb_i_property_array_8idl">sbIPropertyArray.idl</innerfile>
+    <innerfile refid="sb_i_property_factory_8idl">sbIPropertyFactory.idl</innerfile>
+    <innerfile refid="sb_i_property_manager_8idl">sbIPropertyManager.idl</innerfile>
+    <innerfile refid="sb_i_remote_property_info_8idl">sbIRemotePropertyInfo.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/property/public/"/>
+  </compounddef>
+</doxygen>

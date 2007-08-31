@@ -47,6 +47,8 @@
     <member refid="interfacesb_i_bookmarks_15a055aa877fc68ac16016f0a89be4c43" kind="function"><name>addFolder</name></member>
     <member refid="interfacesb_i_bookmarks_12afc193a92025c64461f14e56cd6677c" kind="function"><name>bookmarkExists</name></member>
   </compound>
+  <compound refid="interfacesb_i_boolean_property_info" kind="interface"><name>sbIBooleanPropertyInfo</name>
+  </compound>
   <compound refid="interfacesb_i_bundle" kind="interface"><name>sbIBundle</name>
     <member refid="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" kind="variable"><name>bundleId</name></member>
     <member refid="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" kind="variable"><name>bundleDataStatus</name></member>
@@ -458,6 +460,7 @@
     <member refid="interfacesb_i_faceplate_manager_10ad64818af3e1ea01a4ea3c7f866bd12" kind="function"><name>destroyPane</name></member>
     <member refid="interfacesb_i_faceplate_manager_16b31c1d60034d5cab222c88bf806b498" kind="function"><name>getPane</name></member>
     <member refid="interfacesb_i_faceplate_manager_1a89914857c072e2c353a3a5ab90b0fe1" kind="function"><name>getPanes</name></member>
+    <member refid="interfacesb_i_faceplate_manager_1b3123e5ca85835f5e94fdeea42d4c045" kind="function"><name>getDefaultPane</name></member>
     <member refid="interfacesb_i_faceplate_manager_1c8dcacaa2eaa08c03ae7c1c2c948e31e" kind="function"><name>addListener</name></member>
     <member refid="interfacesb_i_faceplate_manager_1a21378003022b523c9812263add006b0" kind="function"><name>removeListener</name></member>
   </compound>
@@ -1331,6 +1334,10 @@
     <member refid="interfacesb_i_remote_player_1d07ad92b9624b860ab2d5c522d61f35e" kind="function"><name>fireEventToContent</name></member>
     <member refid="interfacesb_i_remote_player_12696499c3a08b3353c6f9773a3eeaf8a" kind="function"><name>onCommandsChanged</name></member>
   </compound>
+  <compound refid="interfacesb_i_remote_property_info" kind="interface"><name>sbIRemotePropertyInfo</name>
+    <member refid="interfacesb_i_remote_property_info_12dfa4439b1eb698b3d8bf317d138d535" kind="variable"><name>remoteReadable</name></member>
+    <member refid="interfacesb_i_remote_property_info_14345680dd6563ce30e6b528341eadd76" kind="variable"><name>remoteWritable</name></member>
+  </compound>
   <compound refid="interfacesb_i_remote_site_library" kind="interface"><name>sbIRemoteSiteLibrary</name>
     <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" kind="variable"><name>filename</name></member>
     <member refid="interfacesb_i_remote_site_library_101c31dbb438cc8eda58b14e787c65c7c" kind="function"><name>connectToSiteLibrary</name></member>
@@ -1867,6 +1874,8 @@
   </compound>
   <compound refid="sb_i_property_manager_8idl" kind="file"><name>sbIPropertyManager.idl</name>
   </compound>
+  <compound refid="sb_i_remote_property_info_8idl" kind="file"><name>sbIRemotePropertyInfo.idl</name>
+  </compound>
   <compound refid="sb_i_remote_commands_8idl" kind="file"><name>sbIRemoteCommands.idl</name>
   </compound>
   <compound refid="sb_i_remote_library_8idl" kind="file"><name>sbIRemoteLibrary.idl</name>
@@ -1906,170 +1915,168 @@
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>
-  <compound refid="dir_67424f6dee411f23fad0ec5118f81582" kind="dir"><name>trunk/components/library/base/</name>
+  <compound refid="dir_4a405d2cbbfd33911b5ac49a7f1e731c" kind="dir"><name>components/library/base/</name>
   </compound>
-  <compound refid="dir_0b30fc7af6577cf394ffd029ed7ccbca" kind="dir"><name>trunk/components/devicesobsolete/base/</name>
+  <compound refid="dir_6065b9e3e94feec8b5f5d53920d88a9e" kind="dir"><name>components/devicesobsolete/base/</name>
   </compound>
-  <compound refid="dir_c1298409d0b91d8e561072e13d9fb8a3" kind="dir"><name>trunk/components/devices/base/</name>
+  <compound refid="dir_fd3b05fa239620614751dcb6ccc7c8de" kind="dir"><name>components/devices/base/</name>
   </compound>
-  <compound refid="dir_b3e158ded2b1c3130c4d62756a22af5e" kind="dir"><name>trunk/bindings/</name>
+  <compound refid="dir_a0f9bf6cfd773fcaaa37f93d4b301e0d" kind="dir"><name>bindings/</name>
   </compound>
-  <compound refid="dir_8cb2b2b7d963694f0db6e29b968bef08" kind="dir"><name>trunk/components/bundle/</name>
+  <compound refid="dir_c535194142b062faec3c80e38fd7d351" kind="dir"><name>components/bundle/</name>
   </compound>
-  <compound refid="dir_a5b0a56992e92bce84d2ae82e88f87a5" kind="dir"><name>trunk/components/devicesobsolete/cd/</name>
+  <compound refid="dir_7cc841a03cab41815a741611004ac5c3" kind="dir"><name>components/devicesobsolete/cd/</name>
   </compound>
-  <compound refid="dir_47750ffa7c4bf021105b15aee8933e49" kind="dir"><name>trunk/components/commandline/</name>
+  <compound refid="dir_bf97a75470c26a5482882ce9486cd012" kind="dir"><name>components/commandline/</name>
   </compound>
-  <compound refid="dir_554d9e29904cada84e6fac036ec938ee" kind="dir"><name>trunk/components/</name>
+  <compound refid="dir_50c03f00deb9cc1472785ffa9ca988de" kind="dir"><name>components/</name>
   </compound>
-  <compound refid="dir_8fa4edfe8a66590d5dc41111ec2bbcae" kind="dir"><name>trunk/components/devices/controller/</name>
+  <compound refid="dir_f93c1ea3690f74e62b183d62d729e124" kind="dir"><name>components/devices/controller/</name>
   </compound>
-  <compound refid="dir_c581476f6e5b8b984892432668a7dbc8" kind="dir"><name>trunk/components/controller/</name>
+  <compound refid="dir_3032c8ef7568c1644a8655efaf8e5e33" kind="dir"><name>components/controller/</name>
   </compound>
-  <compound refid="dir_d3abf2ed316b6d38d8909fa6f5c857a8" kind="dir"><name>trunk/components/dataremote/</name>
+  <compound refid="dir_1747e6aa8ae22e606311acca044ea58d" kind="dir"><name>components/dataremote/</name>
   </compound>
-  <compound refid="dir_5a3ad581320e2eea9f177f57b0226b8b" kind="dir"><name>trunk/components/dbengine/</name>
+  <compound refid="dir_c27a30bf6d04f129f53c7bb9c830c70e" kind="dir"><name>components/dbengine/</name>
   </compound>
-  <compound refid="dir_ed048bc88afbb01bdf6744596a44d393" kind="dir"><name>trunk/components/devices/device/</name>
+  <compound refid="dir_42a79bce3bcd113e56746cdfc11e3e30" kind="dir"><name>components/devices/device/</name>
   </compound>
-  <compound refid="dir_e18fd99fff203273abd91b1ec0160db0" kind="dir"><name>trunk/components/devices/</name>
+  <compound refid="dir_3f44f77ce46d12f9a74d16c800fd7764" kind="dir"><name>components/devices/</name>
   </compound>
-  <compound refid="dir_6836a79df3fea536a146939b3c3793a9" kind="dir"><name>trunk/components/devicesobsolete/</name>
+  <compound refid="dir_a489f5bd2733193dd510ba216bc7a248" kind="dir"><name>components/devicesobsolete/</name>
   </compound>
-  <compound refid="dir_227fb9978504335be602bbc40302317e" kind="dir"><name>trunk/components/devicesobsolete/download/</name>
+  <compound refid="dir_9b52c88116d8ca719d3e612d8d9b2687" kind="dir"><name>components/devicesobsolete/download/</name>
   </compound>
-  <compound refid="dir_76feddd1cf3fde1d5b48e6fa07166a20" kind="dir"><name>trunk/components/draganddrop/</name>
+  <compound refid="dir_25b636a73926082a23d639e41339e053" kind="dir"><name>components/draganddrop/</name>
   </compound>
-  <compound refid="dir_4bbfeb36613198861bf4a3f1f2069a95" kind="dir"><name>trunk/components/faceplate/</name>
+  <compound refid="dir_fe0154eca0189feb8eea1a976aa48dc9" kind="dir"><name>components/faceplate/</name>
   </compound>
-  <compound refid="dir_f2aab8db83e53369509832d1f6be80a5" kind="dir"><name>trunk/components/feathers/</name>
+  <compound refid="dir_857f8c6b60f3e591bbcaecbceb3165f1" kind="dir"><name>components/feathers/</name>
   </compound>
-  <compound refid="dir_8a4627e8ae01c3a48b711d61ecad158d" kind="dir"><name>trunk/components/filescan/</name>
+  <compound refid="dir_ddb147f0a2d8be543510b88d65e39e27" kind="dir"><name>components/filescan/</name>
   </compound>
-  <compound refid="dir_2b6861bb571591220332a3f448484769" kind="dir"><name>trunk/components/mediacore/playback/gstreamer/</name>
+  <compound refid="dir_fab49942102bccacd9c3243033e83d30" kind="dir"><name>components/mediacore/playback/gstreamer/</name>
   </compound>
-  <compound refid="dir_c1ea416b6624a2e757a84d75e321dd9a" kind="dir"><name>trunk/components/mediacore/metadata/handler/</name>
+  <compound refid="dir_25bda96bb01b234124cd5536a15a125e" kind="dir"><name>components/mediacore/metadata/handler/</name>
   </compound>
-  <compound refid="dir_65897f653652f449f0b14099188dd6fc" kind="dir"><name>trunk/components/integration/</name>
+  <compound refid="dir_b4ac51877130d35144ab034a14e3cecd" kind="dir"><name>components/integration/</name>
   </compound>
-  <compound refid="dir_db09d20760fc83c5943588dde0691337" kind="dir"><name>trunk/components/library/</name>
+  <compound refid="dir_3749693a662f99aa24debbe491ac1bc2" kind="dir"><name>components/library/</name>
   </compound>
-  <compound refid="dir_355764b14a46ba092b58169882f68ccc" kind="dir"><name>trunk/components/library/localdatabase/</name>
+  <compound refid="dir_f116028c4875b1745a4af091083c664c" kind="dir"><name>components/library/localdatabase/</name>
   </compound>
-  <compound refid="dir_e359c7c999c08e92d642d63a4326fb54" kind="dir"><name>trunk/components/mediacore/metadata/manager/</name>
+  <compound refid="dir_ae4286964e0e1d87814a90eaa18f26be" kind="dir"><name>components/mediacore/metadata/manager/</name>
   </compound>
-  <compound refid="dir_3a762d2c40bd19043532d0589a381ef8" kind="dir"><name>trunk/components/devicesobsolete/manager/</name>
+  <compound refid="dir_854a6a7824568891cff7091ef7bb8c9c" kind="dir"><name>components/devicesobsolete/manager/</name>
   </compound>
-  <compound refid="dir_5f7b54363ea04b0d9e928deb3501d8af" kind="dir"><name>trunk/components/devices/manager/</name>
+  <compound refid="dir_4d0ac1412c572b3d05f2bc2798099f23" kind="dir"><name>components/devices/manager/</name>
   </compound>
-  <compound refid="dir_cffb56690822aa120a2a6da227f76a8b" kind="dir"><name>trunk/components/devices/marshall/</name>
+  <compound refid="dir_79ce69d54d0302e6021e657e1e3bf2ae" kind="dir"><name>components/devices/marshall/</name>
   </compound>
-  <compound refid="dir_a594ac90a794805cd57a8cdb6a6d72d9" kind="dir"><name>trunk/components/mediacore/</name>
+  <compound refid="dir_c6fdb8b8b55e462577a3bc0ccc3eb48e" kind="dir"><name>components/mediacore/</name>
   </compound>
-  <compound refid="dir_09a3b1080d8cd6d1ab24e9e35a9e35f8" kind="dir"><name>trunk/components/mediacore/metadata/</name>
+  <compound refid="dir_04c35295f925eb9565e304cc925c5b00" kind="dir"><name>components/mediacore/metadata/</name>
   </compound>
-  <compound refid="dir_0ffb6a72c8ec358a4a588f09845c1fd2" kind="dir"><name>trunk/components/metrics/</name>
+  <compound refid="dir_a0eda4fc68bc87409b776120bbc21f19" kind="dir"><name>components/metrics/</name>
   </compound>
-  <compound refid="dir_ea5d5fe8c4f4c3ffcf8a73871685e16a" kind="dir"><name>trunk/components/mediacore/playback/</name>
+  <compound refid="dir_d938b2fc95fe5b893bc72a836a31b6a0" kind="dir"><name>components/mediacore/playback/</name>
   </compound>
-  <compound refid="dir_705098b0dcbdb90cb88bf186116ea2cd" kind="dir"><name>trunk/components/playlistcommands/</name>
+  <compound refid="dir_58cac7b2a8c24daa6d2178c1f5e1f639" kind="dir"><name>components/playlistcommands/</name>
   </compound>
-  <compound refid="dir_a4c51cfdb63349312b2145fb7923fa34" kind="dir"><name>trunk/components/playlistplayback/</name>
+  <compound refid="dir_f4ad8264828983321b9e263c1fc3b0fb" kind="dir"><name>components/playlistplayback/</name>
   </compound>
-  <compound refid="dir_98e55903f08fa8f37781e50c7474e559" kind="dir"><name>trunk/components/playlistreader/</name>
+  <compound refid="dir_d42d80ba4a5751a7f082c5d9804b5b9f" kind="dir"><name>components/playlistreader/</name>
   </compound>
-  <compound refid="dir_c9e11d24c6df406469100bd7dfbd549f" kind="dir"><name>trunk/components/property/</name>
+  <compound refid="dir_d9480dcba7c0a340f8c0c78a69d41bbd" kind="dir"><name>components/property/</name>
   </compound>
-  <compound refid="dir_d895d4d0348bb7a4542ce1873140b7ef" kind="dir"><name>trunk/components/testharness/public/</name>
+  <compound refid="dir_761b58536c9b3176ad80d41b88c0eb84" kind="dir"><name>components/testharness/public/</name>
   </compound>
-  <compound refid="dir_62d19048659f2cb8d86c3acda8a49387" kind="dir"><name>trunk/components/state/public/</name>
+  <compound refid="dir_13bf28632700c5e9e5640c5467846f82" kind="dir"><name>components/state/public/</name>
   </compound>
-  <compound refid="dir_33dd6d2f7afadb7b5eee4c4642f6285f" kind="dir"><name>trunk/components/sqlbuilder/public/</name>
+  <compound refid="dir_f6227bea57ef0f3f1c52e9e3d4f7e264" kind="dir"><name>components/sqlbuilder/public/</name>
   </compound>
-  <compound refid="dir_f8599771b1e00003bdc540be429a06c5" kind="dir"><name>trunk/components/servicepane/public/</name>
+  <compound refid="dir_ac7872b9a5197d1dfeea12d36a4b2722" kind="dir"><name>components/servicepane/public/</name>
   </compound>
-  <compound refid="dir_47d19681f3dbc554b0093fba3e20cdd7" kind="dir"><name>trunk/components/remoteapi/public/</name>
+  <compound refid="dir_1729ad211d4efba14ed4a946e564232b" kind="dir"><name>components/remoteapi/public/</name>
   </compound>
-  <compound refid="dir_b937192ce14cf49ab84872dee04d442d" kind="dir"><name>trunk/components/property/public/</name>
+  <compound refid="dir_16ddefc10369fc80bea078c32631c0f1" kind="dir"><name>components/property/public/</name>
   </compound>
-  <compound refid="dir_8baaf2b5aa1c99730d601b1f7eae8d8b" kind="dir"><name>trunk/components/playlistreader/public/</name>
+  <compound refid="dir_f2f6db6e210ed0d6b282463c85471ad2" kind="dir"><name>components/playlistreader/public/</name>
   </compound>
-  <compound refid="dir_b3da49680482637fad4b75339710d270" kind="dir"><name>trunk/components/playlistplayback/public/</name>
+  <compound refid="dir_a880edbeb2f31a6f05c95b5e6d784fba" kind="dir"><name>components/playlistplayback/public/</name>
   </compound>
-  <compound refid="dir_f21f2ba8435aac1d3e9df8db793ac2d6" kind="dir"><name>trunk/components/playlistcommands/public/</name>
+  <compound refid="dir_7f9187617cb25556c3560ce2cb7466c6" kind="dir"><name>components/playlistcommands/public/</name>
   </compound>
-  <compound refid="dir_4144f3991b6227f04680b3854a67a781" kind="dir"><name>trunk/components/metrics/public/</name>
+  <compound refid="dir_3a7c2cccf610f4cad91ea64a239724fa" kind="dir"><name>components/metrics/public/</name>
   </compound>
-  <compound refid="dir_329f3935c2e48968c595a15c56c9168a" kind="dir"><name>trunk/components/mediacore/transcoding/public/</name>
+  <compound refid="dir_99a30a1f9efb3b93c09d067162cdfa80" kind="dir"><name>components/mediacore/transcoding/public/</name>
   </compound>
-  <compound refid="dir_12c4856be00e6a79f1ef1a775bc112b3" kind="dir"><name>trunk/components/mediacore/playback/gstreamer/public/</name>
+  <compound refid="dir_48a7cf8335d5b1b8418d09a53df6efc0" kind="dir"><name>components/mediacore/playback/gstreamer/public/</name>
   </compound>
-  <compound refid="dir_410f51fd834099cedeaa0ebd3406d33f" kind="dir"><name>trunk/components/mediacore/metadata/manager/public/</name>
+  <compound refid="dir_b7420cfdb7238644c478343ef4d84301" kind="dir"><name>components/mediacore/metadata/manager/public/</name>
   </compound>
-  <compound refid="dir_d46e5aa02fdee875b6870d1fe80d5873" kind="dir"><name>trunk/components/mediacore/metadata/handler/taglib/public/</name>
+  <compound refid="dir_6f9bf84c6a78292524045a4a4e3f3546" kind="dir"><name>components/mediacore/metadata/handler/taglib/public/</name>
   </compound>
-  <compound refid="dir_4f1f110abd15da5922c813e677bd7dbd" kind="dir"><name>trunk/components/library/localdatabase/public/</name>
+  <compound refid="dir_9adf39aecd6fc64a8d0a049b46f59040" kind="dir"><name>components/library/localdatabase/public/</name>
   </compound>
-  <compound refid="dir_3774498ec44473b4e35c9d7ff13836f7" kind="dir"><name>trunk/components/library/base/public/</name>
+  <compound refid="dir_9106deeff77eed46f61506a3c275af72" kind="dir"><name>components/library/base/public/</name>
   </compound>
-  <compound refid="dir_cd616bc29eb4d601563ec2cf4847f96e" kind="dir"><name>trunk/components/integration/public/</name>
+  <compound refid="dir_dfc4359139f62d94cc80e0ee54015800" kind="dir"><name>components/integration/public/</name>
   </compound>
-  <compound refid="dir_0e68d2b7b02372c8c57e77e02f852544" kind="dir"><name>trunk/components/filescan/public/</name>
+  <compound refid="dir_c9fa01470b9087b1dea6412348045587" kind="dir"><name>components/filescan/public/</name>
   </compound>
-  <compound refid="dir_d62ab06a383fafaa691e343c4832f17a" kind="dir"><name>trunk/components/feathers/public/</name>
+  <compound refid="dir_7c7ba78463eae274b16a843158e0bc74" kind="dir"><name>components/feathers/public/</name>
   </compound>
-  <compound refid="dir_f4b391f24f183fa5663ffd78a6778ba5" kind="dir"><name>trunk/components/faceplate/public/</name>
+  <compound refid="dir_fdee0feced5e18d52e7933b047e5b0aa" kind="dir"><name>components/faceplate/public/</name>
   </compound>
-  <compound refid="dir_e4649dcd4237e3847648b8ecda5787e9" kind="dir"><name>trunk/components/draganddrop/public/</name>
+  <compound refid="dir_c74919672bf0fdcd1f2cd3dbdf6990d1" kind="dir"><name>components/draganddrop/public/</name>
   </compound>
-  <compound refid="dir_4e8345011bb730df0d1c26c55929ebe3" kind="dir"><name>trunk/components/devicesobsolete/wm/public/</name>
+  <compound refid="dir_1318eeef02088e847ab939eb93b271f6" kind="dir"><name>components/devicesobsolete/wm/public/</name>
   </compound>
-  <compound refid="dir_dae203fdec8f7883723c6de9d9415eff" kind="dir"><name>trunk/components/devicesobsolete/download/public/</name>
+  <compound refid="dir_10dd29d3dc9aecd99a73406f5c63204a" kind="dir"><name>components/devicesobsolete/download/public/</name>
   </compound>
-  <compound refid="dir_7fb003fd9e1fb54ee46b2ef61410a698" kind="dir"><name>trunk/components/devicesobsolete/cd/public/</name>
+  <compound refid="dir_2484f3d213d65cb5f8de86d419a0a276" kind="dir"><name>components/devicesobsolete/cd/public/</name>
   </compound>
-  <compound refid="dir_aee1a16482cb25b5eb3cc3934c0ab970" kind="dir"><name>trunk/components/devicesobsolete/base/public/</name>
+  <compound refid="dir_eb8dfbd859d0a305b4fdc5bc5a3837c1" kind="dir"><name>components/devicesobsolete/base/public/</name>
   </compound>
-  <compound refid="dir_3000a5018db094c9710acaf32e4fcce1" kind="dir"><name>trunk/components/devices/marshall/public/</name>
+  <compound refid="dir_782f2d5b2f7bc0329e7e4dcc4ca4702c" kind="dir"><name>components/devices/marshall/public/</name>
   </compound>
-  <compound refid="dir_dfa08987ee38b8a25b0590d75fa3deb8" kind="dir"><name>trunk/components/devicesobsolete/manager/public/</name>
+  <compound refid="dir_38429c83135e5969ac383ad8282e8d41" kind="dir"><name>components/devicesobsolete/manager/public/</name>
   </compound>
-  <compound refid="dir_be80d522b6fb6012085bf22a13179a37" kind="dir"><name>trunk/components/devices/manager/public/</name>
+  <compound refid="dir_3df759b250e12e151a7f6e0da9fccec1" kind="dir"><name>components/devices/manager/public/</name>
   </compound>
-  <compound refid="dir_e37051ef66144a434052737cc87900cb" kind="dir"><name>trunk/components/devices/device/public/</name>
+  <compound refid="dir_b59a3bfae026a1f7e3b601599b81ccc3" kind="dir"><name>components/devices/device/public/</name>
   </compound>
-  <compound refid="dir_19e73ce752fdebac9deb9c782dc576b8" kind="dir"><name>trunk/components/devices/controller/public/</name>
+  <compound refid="dir_0cbdc5d5a9c7de5364ae9d47acb610d6" kind="dir"><name>components/devices/controller/public/</name>
   </compound>
-  <compound refid="dir_21010eee1037c29c6fe7fb536b40488a" kind="dir"><name>trunk/components/devices/base/public/</name>
+  <compound refid="dir_f08b790e1724520b94e2e5379a905ea6" kind="dir"><name>components/devices/base/public/</name>
   </compound>
-  <compound refid="dir_26cd784bac652f1a4ae71b3458e54bf4" kind="dir"><name>trunk/components/dbengine/public/</name>
+  <compound refid="dir_c1b878a960684143e22053fc38c17d32" kind="dir"><name>components/dbengine/public/</name>
   </compound>
-  <compound refid="dir_3c80320f4093fa8ed56c80161d4ad518" kind="dir"><name>trunk/components/dataremote/public/</name>
+  <compound refid="dir_c3658dc16190ae66e237359622b60b2b" kind="dir"><name>components/dataremote/public/</name>
   </compound>
-  <compound refid="dir_4033c56308a6a4c0c074a210eba55529" kind="dir"><name>trunk/components/controller/public/</name>
+  <compound refid="dir_9fda487433e1e3e93f644b05671ab7bb" kind="dir"><name>components/controller/public/</name>
   </compound>
-  <compound refid="dir_d4af9dd415aa0878755c563ea3cf31a2" kind="dir"><name>trunk/components/commandline/public/</name>
+  <compound refid="dir_5cf66d351b9193247c95b5ed458121e8" kind="dir"><name>components/commandline/public/</name>
   </compound>
-  <compound refid="dir_a4a9d692a550e4375f5bed28ee3217ae" kind="dir"><name>trunk/components/bundle/public/</name>
+  <compound refid="dir_5790d81430839a5a53475fabacf73425" kind="dir"><name>components/bundle/public/</name>
   </compound>
-  <compound refid="dir_592bccaa590ebd43546956f23f183bbb" kind="dir"><name>trunk/bindings/public/</name>
+  <compound refid="dir_510af5a9b3c14dd12129d40f665d3633" kind="dir"><name>bindings/public/</name>
   </compound>
-  <compound refid="dir_f40618d1021d2bc20b8a5e81ad4683b1" kind="dir"><name>trunk/components/remoteapi/</name>
+  <compound refid="dir_5d3295d72eb38138455ad06234008aed" kind="dir"><name>components/remoteapi/</name>
   </compound>
-  <compound refid="dir_01e515a962b6bd09b36f2b2a5fe03f33" kind="dir"><name>trunk/components/servicepane/</name>
+  <compound refid="dir_b26a105debac97ced4e1b873787d3ae0" kind="dir"><name>components/servicepane/</name>
   </compound>
-  <compound refid="dir_e8d1761911d1476ddc45c076eb824188" kind="dir"><name>trunk/components/sqlbuilder/</name>
+  <compound refid="dir_517bb46c8b7476d18b633245b571fa8d" kind="dir"><name>components/sqlbuilder/</name>
   </compound>
-  <compound refid="dir_0b931deec1d355a75694af755f2ef979" kind="dir"><name>trunk/components/state/</name>
+  <compound refid="dir_335c4ff07304727b78793c53ab7a4389" kind="dir"><name>components/state/</name>
   </compound>
-  <compound refid="dir_990ea653c7973a2faed246599241b0a5" kind="dir"><name>trunk/components/mediacore/metadata/handler/taglib/</name>
+  <compound refid="dir_5c2914e3241ea763999ac3e765c29a42" kind="dir"><name>components/mediacore/metadata/handler/taglib/</name>
   </compound>
-  <compound refid="dir_156642a94f654ec97f1230291fb70f92" kind="dir"><name>trunk/components/testharness/</name>
+  <compound refid="dir_575046d8251904f18b170b4d46e0b0a1" kind="dir"><name>components/testharness/</name>
   </compound>
-  <compound refid="dir_32a9d45bf87fdec6b330455da5fc4ebf" kind="dir"><name>trunk/components/mediacore/transcoding/</name>
+  <compound refid="dir_085292134c81f3558ec3fb45c4df1b1d" kind="dir"><name>components/mediacore/transcoding/</name>
   </compound>
-  <compound refid="dir_cea3b5b2ff0184b3f245247d13dec996" kind="dir"><name>trunk/</name>
-  </compound>
-  <compound refid="dir_9e2f06cce3e351ae870d769f9c1b269f" kind="dir"><name>trunk/components/devicesobsolete/wm/</name>
+  <compound refid="dir_b4f086a140d30ed2a75c309e2072a7ce" kind="dir"><name>components/devicesobsolete/wm/</name>
   </compound>
 </doxygenindex>

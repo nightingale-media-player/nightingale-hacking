@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="110"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="110"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_min_max_141e8ea4304a5752f2cbd04bdac9796ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,7 +64,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="119"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="119"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -72,7 +72,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_window_min_max_callback" kindref="compound">sbIWindowMinMaxCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="100" bodyfile="E:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" bodystart="99" bodyend="120"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="100" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" bodystart="99" bodyend="120"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_min_max_141e8ea4304a5752f2cbd04bdac9796ed" prot="public" virt="non-virtual"><scope>sbIWindowMinMax</scope><name>resetCallback</name></member>
       <member refid="interfacesb_i_window_min_max_17c83f997da7ff8d6ef8fa3a2d0db70d9" prot="public" virt="non-virtual"><scope>sbIWindowMinMax</scope><name>setCallback</name></member>

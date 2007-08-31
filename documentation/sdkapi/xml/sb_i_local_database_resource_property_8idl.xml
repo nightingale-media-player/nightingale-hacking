@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
     <incdepgraph>
-      <node id="275">
-        <label>trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
-        <link refid="sbILocalDatabaseResourceProperty.idl"/>
-        <childnode refid="276" relation="include">
-        </childnode>
-        <childnode refid="277" relation="include">
-        </childnode>
-      </node>
       <node id="277">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
         <childnode refid="276" relation="include">
+        </childnode>
+      </node>
+      <node id="275">
+        <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
+        <link refid="sbILocalDatabaseResourceProperty.idl"/>
+        <childnode refid="276" relation="include">
+        </childnode>
+        <childnode refid="277" relation="include">
         </childnode>
       </node>
       <node id="276">
@@ -67,6 +67,6 @@
 <codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aGuid);</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl"/>
   </compounddef>
 </doxygen>

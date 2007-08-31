@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="6">
-        <label>trunk/bindings/public/sbITabBrowser.idl</label>
+        <label>bindings/public/sbITabBrowser.idl</label>
         <link refid="sbITabBrowser.idl"/>
         <childnode refid="7" relation="include">
         </childnode>
@@ -74,6 +74,6 @@
 <codeline lineno="66"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl"/>
+    <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl"/>
   </compounddef>
 </doxygen>

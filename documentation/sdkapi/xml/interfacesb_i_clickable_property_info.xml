@@ -72,7 +72,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="478"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="478"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -80,7 +80,7 @@
     <detaileddescription>
 <para>A property that implements this interface indicates that it can convert a mouse click into a value for the property.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="464" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="463" bodyend="479"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="464" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="463" bodyend="479"/>
     <listofallmembers>
       <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>getValueForClick</name></member>
     </listofallmembers>

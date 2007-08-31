@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="46">
-        <label>trunk/components/dbengine/public/sbIDatabaseResult.idl</label>
+        <label>components/dbengine/public/sbIDatabaseResult.idl</label>
         <link refid="sbIDatabaseResult.idl"/>
         <childnode refid="47" relation="include">
         </childnode>
@@ -72,6 +72,6 @@
 <codeline lineno="146"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearResultSet();</highlight></codeline>
 <codeline lineno="147"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseResult.idl"/>
   </compounddef>
 </doxygen>

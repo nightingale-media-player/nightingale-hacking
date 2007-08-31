@@ -1,0 +1,20 @@
+DOXYGEN Version 1.5.2
+
+Please read INSTALL for compilation instructions.
+
+The latest version of doxygen can be obtained at
+  http://www.doxygen.org/
+
+There are two mailing lists
+  doxygen-users@lists.sourceforge.net
+  doxygen-develop@lists.sourceforge.net
+
+please follow the link in
+
+  http://sourceforge.net/projects/doxygen
+
+to subscribe to the lists or to visit the archives.
+
+Enjoy,
+
+Dimitri van Heesch (dimitri@stack.nl) (03 April 2007)

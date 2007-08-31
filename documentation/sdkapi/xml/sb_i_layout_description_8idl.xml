@@ -4,14 +4,14 @@
     <compoundname>sbILayoutDescription.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="143">
-        <label>nsISupports.idl</label>
-      </node>
       <node id="142">
-        <label>trunk/components/feathers/public/sbILayoutDescription.idl</label>
+        <label>components/feathers/public/sbILayoutDescription.idl</label>
         <link refid="sbILayoutDescription.idl"/>
         <childnode refid="143" relation="include">
         </childnode>
+      </node>
+      <node id="143">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_layout_description" prot="public">sbILayoutDescription</innerclass>
@@ -59,6 +59,6 @@
 <codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TODO:<sp/>Expand<sp/>metadata<sp/>as<sp/>needed<sp/>for<sp/>the<sp/>UI</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/feathers/public/sbILayoutDescription.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/sbILayoutDescription.idl"/>
   </compounddef>
 </doxygen>

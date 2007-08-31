@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="63"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_array_1c1808e07ffeb4d37dce1b756b95f34cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -62,7 +62,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="72"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_array_1790681817c839247a242f2cb363e050f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -75,7 +75,7 @@
 <para>Return the contents of the property array as a string </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="77"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="77"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -83,18 +83,18 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="467">
+      <node id="472">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="468">
+      <node id="473">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="467" relation="public-inheritance">
+        <childnode refid="472" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="57" bodyfile="E:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="56" bodyend="78"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="56" bodyend="78"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIPropertyArray</scope><name>getPropertyAt</name></member>
       <member refid="interfacesb_i_property_array_1c1808e07ffeb4d37dce1b756b95f34cb" prot="public" virt="non-virtual"><scope>sbIPropertyArray</scope><name>getPropertyValue</name></member>

@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="145"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="145"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_enumeration_listener_1c1255d490b8b4b840a1aa4e34173abc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -65,7 +65,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="156"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="156"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_enumeration_listener_1d53606f6d970610d3d33c3f50c3b570b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -101,7 +101,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="165"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="165"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -109,7 +109,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="137" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" bodystart="136" bodyend="166"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="137" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" bodystart="136" bodyend="166"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_enumeration_listener_1c1255d490b8b4b840a1aa4e34173abc5" prot="public" virt="non-virtual"><scope>sbIMediaListEnumerationListener</scope><name>onEnumeratedItem</name></member>
       <member refid="interfacesb_i_media_list_enumeration_listener_1b27aad26b05f542890bec67a5e161960" prot="public" virt="non-virtual"><scope>sbIMediaListEnumerationListener</scope><name>onEnumerationBegin</name></member>

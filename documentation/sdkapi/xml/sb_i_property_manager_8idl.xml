@@ -4,14 +4,14 @@
     <compoundname>sbIPropertyManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="382">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="381">
-        <label>trunk/components/property/public/sbIPropertyManager.idl</label>
+        <label>components/property/public/sbIPropertyManager.idl</label>
         <link refid="sbIPropertyManager.idl"/>
         <childnode refid="382" relation="include">
         </childnode>
-      </node>
-      <node id="382">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_property_manager" prot="public">sbIPropertyManager</innerclass>
@@ -24,6 +24,7 @@
     <innerclass refid="interfacesb_i_progress_property_info" prot="public">sbIProgressPropertyInfo</innerclass>
     <innerclass refid="interfacesb_i_clickable_property_info" prot="public">sbIClickablePropertyInfo</innerclass>
     <innerclass refid="interfacesb_i_button_property_info" prot="public">sbIButtonPropertyInfo</innerclass>
+    <innerclass refid="interfacesb_i_boolean_property_info" prot="public">sbIBooleanPropertyInfo</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -233,7 +234,12 @@
 <codeline lineno="492" refid="interfacesb_i_button_property_info_100b8abfdf045141fbe8e50ef797254fa" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>label;</highlight></codeline>
 <codeline lineno="493"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="494"><highlight class="normal"></highlight></codeline>
+<codeline lineno="500"><highlight class="normal">[scriptable,<sp/>uuid(6d1d6c90-d2b5-48ac-b07f-a0cb5bcaaae9)]</highlight></codeline>
+<codeline lineno="501" refid="interfacesb_i_boolean_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_boolean_property_info" kindref="compound" tooltip="The property information specific to boolean properties.">sbIBooleanPropertyInfo</ref><sp/>:<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref></highlight></codeline>
+<codeline lineno="502"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="503"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="504"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl"/>
   </compounddef>
 </doxygen>

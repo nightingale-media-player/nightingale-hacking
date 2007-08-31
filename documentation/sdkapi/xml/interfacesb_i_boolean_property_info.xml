@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_boolean_property_info" kind="interface" prot="public">
+    <compoundname>sbIBooleanPropertyInfo</compoundname>
+    <basecompoundref refid="interfacesb_i_property_info" prot="public" virt="non-virtual">sbIPropertyInfo</basecompoundref>
+    <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+    <briefdescription>
+<para>The property information specific to boolean properties. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="22">
+        <label>sbIBooleanPropertyInfo</label>
+        <link refid="interfacesb_i_boolean_property_info"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="24">
+        <label>sbIBooleanPropertyInfo</label>
+        <link refid="interfacesb_i_boolean_property_info"/>
+        <childnode refid="25" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>sortProfile</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+    </collaborationgraph>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="502" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="501" bodyend="503"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayUsingSimpleType</name></member>
+      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
+      <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>format</name></member>
+      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
+      <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>getOperator</name></member>
+      <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>makeSortable</name></member>
+      <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>name</name></member>
+      <member refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>nullSort</name></member>
+      <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_BEGINSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_BETWEEN</name></member>
+      <member refid="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_CONTAINS</name></member>
+      <member refid="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_ENDSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_EQUALS</name></member>
+      <member refid="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_GREATER</name></member>
+      <member refid="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_GREATEREQUAL</name></member>
+      <member refid="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_LESS</name></member>
+      <member refid="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_LESSEQUAL</name></member>
+      <member refid="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_NOTEQUALS</name></member>
+      <member refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>operators</name></member>
+      <member refid="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>sanitize</name></member>
+      <member refid="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>SORT_NULL_BIG</name></member>
+      <member refid="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>SORT_NULL_FIRST</name></member>
+      <member refid="interfacesb_i_property_info_1096eee2d42fdc593b9cfb6dfcce30a2e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>SORT_NULL_LAST</name></member>
+      <member refid="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>SORT_NULL_SMALL</name></member>
+      <member refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>sortProfile</name></member>
+      <member refid="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>type</name></member>
+      <member refid="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>units</name></member>
+      <member refid="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>userViewable</name></member>
+      <member refid="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>validate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

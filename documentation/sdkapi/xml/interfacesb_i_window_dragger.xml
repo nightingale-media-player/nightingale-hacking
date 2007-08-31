@@ -38,14 +38,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="72"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Window dragging service interface This is an interface to the window dragging service, used to drag a window without losing mousemove messages when the mouse moves outside the rect of the window being dragged. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="61" bodyfile="E:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" bodystart="60" bodyend="73"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="61" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" bodystart="60" bodyend="73"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_dragger_118d95b32907e262ff464c47e2098a681" prot="public" virt="non-virtual"><scope>sbIWindowDragger</scope><name>beginWindowDrag</name></member>
     </listofallmembers>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_ac7872b9a5197d1dfeea12d36a4b2722" kind="dir">
+    <compoundname>components/servicepane/public/</compoundname>
+    <innerfile refid="sb_i_bookmarks_8idl">sbIBookmarks.idl</innerfile>
+    <innerfile refid="sb_i_library_service_pane_service_8idl">sbILibraryServicePaneService.idl</innerfile>
+    <innerfile refid="sb_i_service_pane_service_8idl">sbIServicePaneService.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/servicepane/public/"/>
+  </compounddef>
+</doxygen>

@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="57"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_c_d_device_1e369421af23b21668af036cd9d2e5cd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -54,7 +54,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="72"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="72"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_c_d_device_1f9db005823c6104f527f7997ce1684f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -91,7 +91,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="85"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="85"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -100,30 +100,30 @@
 <para>&lt;TODO: Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="34">
+      <node id="39">
         <label>sbICDDevice</label>
         <link refid="interfacesb_i_c_d_device"/>
-        <childnode refid="35" relation="public-inheritance">
+        <childnode refid="40" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="35">
+      <node id="40">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="36">
+      <node id="41">
         <label>sbICDDevice</label>
         <link refid="interfacesb_i_c_d_device"/>
-        <childnode refid="37" relation="public-inheritance">
+        <childnode refid="42" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="37">
+      <node id="42">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="46" bodyfile="E:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" bodystart="45" bodyend="86"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/cd/public/sbICDDevice.idl" bodystart="45" bodyend="86"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbICDDevice</scope><name>beginTransfer</name></member>

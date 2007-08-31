@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="79" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="79" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="79" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_tree_view_1a5939198d6a78523714bea805f48da74" prot="public" static="no" mutable="no">
         <type>readonly attribute nsISimpleEnumerator</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="86" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="86" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="86" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_tree_view_1a0debbdf204bf921e80550acf9d7e693" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="92" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="92" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="92" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_tree_view_13d98a05d65b9f645ff67b3de9e2f56a6" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="97" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="97" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="97" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="97" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -93,7 +93,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="74"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="74"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_tree_view_1f214d34b6b789a8e7a499fd3fd74e103" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="102"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="102"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -114,78 +114,78 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="315">
+      <node id="320">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="312" relation="public-inheritance">
+        <childnode refid="317" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="319">
+      <node id="324">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="316">
+      <node id="321">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="317" relation="usage">
+        <childnode refid="322" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="319" relation="usage">
+        <childnode refid="324" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="314">
+      <node id="319">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="315" relation="public-inheritance">
+        <childnode refid="320" relation="public-inheritance">
         </childnode>
-        <childnode refid="316" relation="usage">
+        <childnode refid="321" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="318" relation="usage">
+        <childnode refid="323" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="313">
+      <node id="318">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="312">
+      <node id="317">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="313" relation="public-inheritance">
+        <childnode refid="318" relation="public-inheritance">
         </childnode>
-        <childnode refid="314" relation="usage">
+        <childnode refid="319" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="317">
+      <node id="322">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="318" relation="usage">
+        <childnode refid="323" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="318">
+      <node id="323">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="311">
+      <node id="316">
         <label>sbIMediaListViewTreeView</label>
         <link refid="interfacesb_i_media_list_view_tree_view"/>
-        <childnode refid="312" relation="usage">
+        <childnode refid="317" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
-        <childnode refid="320" relation="usage">
+        <childnode refid="325" relation="usage">
           <edgelabel>observer</edgelabel>
         </childnode>
       </node>
-      <node id="320">
+      <node id="325">
         <label>sbIMediaListViewTreeViewObserver</label>
         <link refid="interfacesb_i_media_list_view_tree_view_observer"/>
       </node>
     </collaborationgraph>
-    <location file="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="58" bodyfile="E:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="57" bodyend="103"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="57" bodyend="103"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_tree_view_1a0debbdf204bf921e80550acf9d7e693" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeView</scope><name>currentMediaItem</name></member>
       <member refid="interfacesb_i_media_list_view_tree_view_15b5fa816181f367503c0bf0c2b6639f7" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeView</scope><name>getNextRowIndexForKeyNavigation</name></member>

@@ -3,28 +3,28 @@
   <compounddef id="sb_i_remote_media_list_8idl" kind="file">
     <compoundname>sbIRemoteMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_remote_library_8idl" local="yes">trunk/components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
+    <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <incdepgraph>
-      <node id="391">
-        <label>trunk/components/remoteapi/public/sbIRemoteMediaList.idl</label>
+      <node id="394">
+        <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="392" relation="include">
+        <childnode refid="395" relation="include">
         </childnode>
       </node>
-      <node id="392">
+      <node id="395">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="394">
-        <label>trunk/components/remoteapi/public/sbIRemoteLibrary.idl</label>
-        <link refid="sb_i_remote_library_8idl-source"/>
-      </node>
-      <node id="393">
-        <label>trunk/components/remoteapi/public/sbIRemoteMediaList.idl</label>
+      <node id="396">
+        <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="394" relation="include">
+        <childnode refid="397" relation="include">
         </childnode>
+      </node>
+      <node id="397">
+        <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
+        <link refid="sb_i_remote_library_8idl-source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_remote_media_list" prot="public">sbIRemoteMediaList</innerclass>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -122,6 +122,6 @@
 <codeline lineno="71"><highlight class="preprocessor">%}</highlight></codeline>
 <codeline lineno="72"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl"/>
   </compounddef>
 </doxygen>

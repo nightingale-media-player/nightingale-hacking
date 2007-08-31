@@ -5,7 +5,7 @@
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
       <node id="160">
-        <label>trunk/components/integration/public/IWindowLayer.idl</label>
+        <label>components/integration/public/IWindowLayer.idl</label>
         <link refid="IWindowLayer.idl"/>
         <childnode refid="161" relation="include">
         </childnode>
@@ -58,6 +58,6 @@
 <codeline lineno="62"><highlight class="normal"><sp/><sp/>PRUInt32<sp/>getOpacity(in<sp/>nsISupports<sp/>aWindow);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="E:/Projects/songbird/trunk/components/integration/public/IWindowLayer.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowLayer.idl"/>
   </compounddef>
 </doxygen>
