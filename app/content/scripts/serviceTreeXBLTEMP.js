@@ -120,7 +120,7 @@ function SBScanServiceTreeNewEntryEditable()
 {
   try
   {
-    var theServiceTree = document.getElementById( "servicepane" );
+    var theServiceTree = window.gServicePane;
     theServiceTreeScanItems.length = 0;
     theServiceTreeScanCount = 0;
     
@@ -208,7 +208,7 @@ function onServiceEdit( index )
       // reset, this is important
       isServiceEditShowing = false; 
     }
-    var theServiceTree = document.getElementById( "servicepane" );
+    var theServiceTree = window.gServicePane;
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;
@@ -291,7 +291,7 @@ function onServiceEditChange( )
 {
   try
   {
-    var theServiceTree = document.getElementById( "servicepane" );
+    var theServiceTree = window.gServicePane;
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;

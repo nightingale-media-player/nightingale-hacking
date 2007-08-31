@@ -161,8 +161,9 @@ var gMiniplayer = {
   {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
   
-    var feathersButton = document.getElementById("mini_btn_feathers");
-    feathersButton.doCommand();
+    var feathersButton = document.getElementsByTagName("sb-feathers-toggle-button")[0];
+    if (feathersButton)
+      feathersButton.doCommand();
   },
 
 

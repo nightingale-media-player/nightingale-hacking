@@ -59,6 +59,7 @@
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMMouseEvent.h>
+#include <nsIDOMNodeList.h>
 #include <nsIDOMNSEvent.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
@@ -165,7 +166,7 @@ const static char* sPublicMetadata[] =
 #define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
 #define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP     NS_LITERAL_STRING("playlist-commands-updated")
-#define SB_WEB_TABBROWSER_ID  NS_LITERAL_STRING("frame_main_pane")
+#define SB_WEB_TABBROWSER     NS_LITERAL_STRING("sb-tabbrowser")
 
 #define SB_LIB_NAME_MAIN      "main"
 #define SB_LIB_NAME_WEB       "web"
@@ -1397,20 +1398,24 @@ sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
 nsresult
 sbRemotePlayer::AcquirePlaylistWidget()
 {
+  nsresult rv;
   LOG(("sbRemotePlayer::AcquirePlaylistWidget()"));
 
   // These get set in initialization, so if they aren't set, bad news
   if (!mChromeDoc || !mContentDoc)
     return NS_ERROR_FAILURE;
 
-  // Get the tabbrowser, ask it for the tab for our document
-  nsCOMPtr<nsIDOMElement> tabBrowserElement;
-  mChromeDoc->GetElementById( SB_WEB_TABBROWSER_ID,
-                              getter_AddRefs(tabBrowserElement) );
+  // Find the sb-tabbrowser ByTagName()[0] (not ById()!)
+  nsCOMPtr<nsIDOMNodeList> tabBrowserElementList;
+  mChromeDoc->GetElementsByTagName( SB_WEB_TABBROWSER,
+                              getter_AddRefs(tabBrowserElementList) );
+  NS_ENSURE_STATE(tabBrowserElementList);
+  nsCOMPtr<nsIDOMNode> tabBrowserElement;
+  rv = tabBrowserElementList->Item( 0, getter_AddRefs(tabBrowserElement) );
   NS_ENSURE_STATE(tabBrowserElement);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Get our interface
-  nsresult rv;
   nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement,
                                                          &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );

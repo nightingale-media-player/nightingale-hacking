@@ -405,7 +405,7 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
             </xul:vbox>
 
-            <xul:draggable id="children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
+            <xul:draggable id="sb-sys-outer-frame-children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
               <children/>
             </xul:draggable>
                   
