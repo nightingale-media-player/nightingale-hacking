@@ -37,6 +37,7 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="LocalLoad();"
+  onunload="LocalUnload();"
   windowtype="Songbird:Library"
 >
   <playlist id="sb-library-page-playlist" 
@@ -81,6 +82,8 @@ if (typeof(kPlaylistCommands) == "undefined") {
   if (!SBProperties)
     throw new Error("Import of kPlaylistCommands module failed!");
 }
+
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 try
 {
@@ -140,14 +143,18 @@ try
           library = libraryManager.getLibrary( libraryGUID );
         } catch(e) {
           // If something bad happens, freak out.
-          if ( history.length > 1 ) {
-            // If possible, hit the back button.
-            history.back();
-            return;
-          }
-          // Otherwise, just show the main library?  Ugly -- doesn't change the url.
-          mediaListGUID = "library";
-          library = libraryManager.mainLibrary;
+          try {
+            // If possible, hit the back button if there's something to go back to.
+            if ( history.previous ) {
+              history.back();
+              return;
+            }
+          } catch (e) {}
+          // Otherwise, just show the main library?
+          location.href =
+                    "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
+                    libraryManager.mainLibrary.guid;
+          return;
         }
 
         // Then the sbIMediaList
@@ -158,14 +165,18 @@ try
           mediaList = library.getMediaItem( mediaListGUID );
         } catch(e) {
           // If something bad happens, freak out.
-          if ( history.length > 1 ) {
-            // If possible, hit the back button.
-            history.back();
-            return;
-          }
-          // Otherwise, just show the mediaList's library?  Ugly -- doesn't change the url.
-          mediaListGUID = "library";
-          mediaList = library;
+          try {
+            // If possible, hit the back button if there's something to go back to.
+            if ( history.previous ) {
+              history.back();
+              return;
+            }
+          } catch (e) {}
+          // Otherwise, just show the mediaList's library?
+          location.href =
+                    "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
+                    library.guid;
+          return;
         }
           
         // Doublecheck that you actually have what you think you have.
@@ -227,6 +238,9 @@ try
           var mgr = new sbIPlaylistCommandsManager();
           var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
           playlist.bind(view, cmds);
+
+          // Listen for changes to library or media list
+          SBLPListener.initialize(library, mediaList);
         }
         else
         {
@@ -238,7 +252,159 @@ try
     {
       alert( err );
     }
+
   }
+
+  function LocalUnload()
+  {
+    SBLPListener.finalize();
+  }
+
+  var SBLPListener =
+  {
+    // Currently displayed media list and library being listened for.
+    libMgr: null,
+    library: null,
+    mediaList: null,
+    mediaListName: null,
+    batchHelper: null,
+    refreshPending: false,
+
+    initialize: function(aLibrary, aMediaList)
+    {
+        this.library = aLibrary;
+        this.mediaList = aMediaList;
+        this.mediaListName = this.mediaList.name;
+
+        this.batchHelper = new BatchHelper();
+        this.refreshPending = false;
+
+        var flags;
+        flags = Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED |
+                Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND;
+        if (this.mediaList != this.library) {
+          flags |= Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                   Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED;
+        }
+        var filter =
+            SBProperties.createArray([ [ SBProperties.mediaListName, null ] ]);
+        this.library.addListener(this, false, flags, filter);
+
+        this.libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Ci.sbILibraryManager);
+        this.libMgr.addListener(this);
+    },
+
+    finalize: function()
+    {
+        this.library.removeListener(this);
+        this.libMgr.removeListener(this);
+        this.libMgr = null;
+        this.library = null;
+        this.mediaList = null;
+        this.mediaListName = null;
+        this.batchHelper = null;
+    },
+
+    onItemAdded: function(aMediaList, aMediaItem) { return (true); },
+    onBeforeItemRemoved: function(aMediaList, aMediaItem) { return (true); },
+    onAfterItemRemoved: function(aMediaList, aMediaItem)
+    {
+      // Do no more if in a batch
+      if (this.batchHelper.isActive()) {
+        this.refreshPending = true;
+        return (true);
+      }
+
+      // If the current media list was removed, handle event by reloading page
+      if (aMediaItem == this.mediaList)
+        location.reload(true);
+
+      return (false);
+    },
+    onItemUpdated: function(aMediaList, aMediaItem, aProperties)
+    {
+      // Do no more if in a batch
+      if (this.batchHelper.isActive()) {
+        this.refreshPending = true;
+        return (true);
+      }
+
+      // If the current media list was modified, handle event by reloading page
+      if (aMediaItem == this.mediaList) {
+        if (this.mediaList.name != this.mediaListName) {
+          this.mediaListName = this.mediaList.name;
+          location.reload(true);
+        }
+      }
+
+      return (false);
+    },
+    onListCleared: function(aMediaList)
+    {
+      // Do no more if in a batch
+      if (this.batchHelper.isActive()) {
+        this.refreshPending = true;
+        return (true);
+      }
+
+      // The current media list must have been removed, so reload
+      location.reload(true);
+
+      return (false);
+    },
+    onBatchBegin: function(aMediaList)
+    {
+      this.batchHelper.begin();
+    },
+    onBatchEnd: function(aMediaList)
+    {
+      this.batchHelper.end();
+
+      if (!this.batchHelper.isActive() && this.refreshPending) {
+        var needReload = false;
+
+        this.refreshPending = false;
+
+        // Check if media list was removed
+        if (this.mediaList != this.library) {
+          try {
+            this.library.getMediaItem(this.mediaList.guid);
+          } catch (e) {
+            needReload = true;
+          }
+        }
+
+        // Check if media list name changed
+        if (!needReload && (this.mediaList.name != this.mediaListName)) {
+          this.mediaListName = this.mediaList.name;
+          needReload = true;
+        }
+
+        // Reload if needed
+        if (needReload)
+          location.reload(true);
+      }
+    },
+
+    onLibraryRegistered: function(aLibrary) {},
+    onLibraryUnregistered: function(aLibrary)
+    {
+      // If the current library was unregistered, handle event by reloading page
+      if (aLibrary == this.library)
+        location.reload(true);
+    },
+
+    QueryInterface: function(aIID) {
+      if (!aIID.equals(Components.interfaces.nsISupports) &&
+          !aIID.equals(Components.interfaces.sbILibraryManagerListener) &&
+          !aIID.equals(Components.interfaces.sbIMediaListListener)) {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      return this;
+    }
+  };
 }
 catch ( err )
 {
