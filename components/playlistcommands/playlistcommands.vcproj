@@ -194,6 +194,13 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\sbPublicPlaylistCommands.js">
 			</File>
 		</Filter>
+		<Filter
+			Name="test"
+			Filter="">
+			<File
+				RelativePath=".\test\test_playlistcommands.js">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\Makefile.in">
 		</File>

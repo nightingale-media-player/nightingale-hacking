@@ -67,7 +67,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, sbLibraryPage.xul
 */
-[scriptable, uuid(fdb73942-56e8-406e-a587-e7e1715d921f)]
+[scriptable, uuid(dfe817f2-5398-4f16-ba62-10483311ffa7)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -101,7 +101,7 @@ interface sbIPlaylistCommands : nsISupports
   * The other functions will be called in turn with the index value that
   * represents each specific command element
   *
-  * \param submenu The submenu for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The number of commands to be created
   */
@@ -113,8 +113,8 @@ interface sbIPlaylistCommands : nsISupports
   * Each command id has a type, these can be 'action', 'separator', 
   * 'value', and 'submenu'.
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The string for the command id
   */
@@ -130,8 +130,8 @@ interface sbIPlaylistCommands : nsISupports
   *
   * "*separator*" - Create a menuseparator or an empty box
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The string for the command id
   */
@@ -144,8 +144,8 @@ interface sbIPlaylistCommands : nsISupports
   * string will be used as an index into the current localization's properties
   * file.
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The string for the displayed text
   */
@@ -158,8 +158,8 @@ interface sbIPlaylistCommands : nsISupports
   * then right-justify all the command buttons after it.  By default, command
   * buttons will adjust their width to the width of their human readable text.
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The value for the flex
   */
@@ -172,9 +172,9 @@ interface sbIPlaylistCommands : nsISupports
   * string will be used as an index into the current localization's properties
   * file.
   *
-  * \param submenu The submenu for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
   * \todo The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
-  * \param index The index of the element for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The string for the tooltip
   */
@@ -187,8 +187,8 @@ interface sbIPlaylistCommands : nsISupports
   * this method will be called to allow the code to enable or disable commands
   * based upon the state of the playlist.
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return True if the command should display as enabled
   */
@@ -197,8 +197,8 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return the visible state for the requested command element index
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return True if the command should be visible
   */
@@ -209,8 +209,8 @@ interface sbIPlaylistCommands : nsISupports
   *
   * The requested elements are always of type 'flag'
 
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The value for the flag
   */
@@ -221,8 +221,8 @@ interface sbIPlaylistCommands : nsISupports
   *
   * The requested elements are always of type 'value'
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The value for the command
   */
@@ -233,8 +233,8 @@ interface sbIPlaylistCommands : nsISupports
   *
   * The requested elements are always of type 'choice'
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The id of the choice item
   */
@@ -243,8 +243,8 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return the shortcut modifiers of the requested command element index
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The shortcut modifiers for the command
   */
@@ -253,8 +253,8 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return the shortcut key of the requested command element index
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The shortcut key for the command
   */
@@ -263,8 +263,8 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return the shortcut keycode of the requested command element index
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The shortcut keycode for the command
   */
@@ -273,8 +273,8 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return a boolean reflecting the local vs window-wide behavior of the shortcut
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return Whether the shortcut is local or not
   */
@@ -286,8 +286,8 @@ interface sbIPlaylistCommands : nsISupports
   * If this method returns a valid interface, all other callbacks for this
   * command item are bypassed.
   *
-  * \param submenu The submenu for which the data is being requested
-  * \param index The index of the element for which the data is being requested
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return An sbIPlaylistCommands interface to a secondary command object
   */
@@ -296,19 +296,25 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Instantiate the custom element associated with the requested command
   *
-  * \param aDocument Document in which to instantate element
+  * \param aSubMenu The submenu for which the item needs to be instantiated
+  * \param aIndex The index if the command whose instantiation is being requested
+  * \param aHost The type of object hosting the command
   * \param aID The id of the custom command whose instantiation is being requested
-  * \param aHost The command host type that made the request
+  * \param aDocument Document in which to instantate element
+  * \return The custom element that has been instantiated
   */
-  nsIDOMNode instantiateCustomCommand( in nsIDOMDocument aDocument, in AString aID, in AString aHost );
+  nsIDOMNode instantiateCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument );
 
   /**
   * \brief Refresh the custom element associated with the requested command
   *
-  * \param aID The id of the custom command element whose refreshing is being requested
+  * \param aSubMenu The submenu for which the item needs to be refreshed
+  * \param aIndex The index if the command whose refresh is being requested
   * \param aHost The command host type that made the request
+  * \param aID The id of the custom command element whose refresh is being requested
+  * \param aCustomCommandElement The element that needs to be refreshed
   */
-  void refreshCustomCommand( in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost );
+  void refreshCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement );
 
   /**
   * \brief Handle the fact that a command was activated
@@ -316,10 +322,13 @@ interface sbIPlaylistCommands : nsISupports
   * When the user activates the command button or menuitem, this method will
   * be called with the event generated.
   *
-  * \param event The event generated by the user's action
+  * \param aSubMenu The submenu for which the command was triggered
+  * \param aIndex The index of the command that was triggered
   * \param aHost The type of object hosting the command
+  * \param aId The id of the command that was triggered
+  * \param aValue The optional value associated with the triggering of the command, or an empty string.
   */
-  void onCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString value );
+  void onCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue );
 
   /**
   * \brief Duplicate the command object

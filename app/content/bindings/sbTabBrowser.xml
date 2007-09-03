@@ -49,7 +49,7 @@
         }
         if (typeof(kPlaylistCommands) == "undefined") {
           Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
-          if (!SBProperties)
+          if (!kPlaylistCommands)
             throw new Error("Import of kPlaylistCommands module failed!");
         }
 

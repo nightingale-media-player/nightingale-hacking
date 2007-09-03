@@ -546,7 +546,7 @@
                                 
                 // Create a toolbarbutton
                 if (custom) {
-                  toolbarbutton = cmdobject.instantiateCustomCommand(document, obj_id, this.hoststring);
+                  toolbarbutton = cmdobject.instantiateCustomCommand(menu, i, this.hoststring, obj_id, document);
                 } else {
                   toolbarbutton = document.createElement( toolbarbutton_type );
                 }
@@ -665,7 +665,7 @@
                 }
               }
               if (toolbarbutton.commandcustom) {
-                cmdobject.refreshCustomCommand(toolbarbutton, toolbarbutton.id, this.hoststring);
+                cmdobject.refreshCustomCommand(toolbarbutton.commandmenu, toolbarbutton.commandindex, this.hoststring, toolbarbutton.id, toolbarbutton);
               }
             }
           } catch (e) {

@@ -430,9 +430,11 @@ sbRemoteCommands::GetCommandSubObject( const nsAString &aSubMenu,
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::InstantiateCustomCommand( nsIDOMDocument *aDocument,
-                                            const nsAString &aID,
+sbRemoteCommands::InstantiateCustomCommand( const nsAString &aSubMenu,
+                                            PRInt32 aIndex,
                                             const nsAString &aHost,
+                                            const nsAString &aID,
+                                            nsIDOMDocument *aDocument,
                                             nsIDOMNode **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -441,9 +443,11 @@ sbRemoteCommands::InstantiateCustomCommand( nsIDOMDocument *aDocument,
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::RefreshCustomCommand( nsIDOMNode *aCustomCommandElement,
-                                        const nsAString &aId,
-                                        const nsAString &aHost)
+sbRemoteCommands::RefreshCustomCommand( const nsAString &aSubMenu,
+                                       PRInt32 aIndex,
+                                       const nsAString &aHost,
+                                       const nsAString &aID,
+                                       nsIDOMNode *aCustomCommandElement)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
