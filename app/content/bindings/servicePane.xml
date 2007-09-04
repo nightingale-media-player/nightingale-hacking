@@ -618,10 +618,15 @@
           this.loadSelectedNode(event);
         }
       ]]></handler>
-      <handler event="click" clickcount="1"><![CDATA[
-        this.loadSelectedNode(event);
+      <handler event="click" clickcount="1" button="0"><![CDATA[
+        // only handle the click if it occured on a treechildren element,
+        // this avoids handling a click when it occured on a child piece of 
+        // ui (for instance, on a contextmenu item)
+        if (event.originalTarget.tagName == "treechildren") {
+          this.loadSelectedNode(event);
+        }
       ]]></handler>
-      <handler event="click" clickcount="2"><![CDATA[
+      <handler event="click" clickcount="2" button="0"><![CDATA[
         var node = this.getNodeForRow(this.mTree.currentIndex);
         if (node && node.editable) {
           this.startEditingNode(node);
