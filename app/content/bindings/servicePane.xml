@@ -528,6 +528,38 @@
           ]]>
         </body>
       </method>
+      <method name="loadSelectedNode">
+        <parameter name="event"/>
+        <body><![CDATA[
+          var node = this.getNodeForRow(this.mTree.currentIndex);
+          
+          if (node && node.url) {
+            this.highlightURL(node.url);
+            
+            this.loadURL(node.url, event);
+            
+            // Bookmarks keep the http url in the id
+            if ( node.id.indexOf("http://") != 0 ) { 
+              //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              
+              var key = "app.servicepane.playlists.click." + 
+                        node.getAttributeNS(this.LSP, "LibraryCustomType");
+                        
+              metrics_inc(key, node.getAttributeNS(this.LSP, "ListCustomType"), null);
+            } 
+            else if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
+            
+              //This enables us to know if we're packaging bookmarks 
+              //that people like or hate while not tracking any bookmarks they create.
+              //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              
+              metrics_inc("app.servicepane.bookmarks.click", node.url, null);
+            }
+          } else {
+            /* FIXME: implement non-go-to-url behaviour */
+          }
+        ]]></body>
+      </method>
     </implementation>
     <handlers>
       <handler event="contextmenu"><![CDATA[
@@ -580,35 +612,14 @@
         // ask the service to notify the modules about selection changes
         this.mService.onSelectionChanged(node?node.id:null, this.mTree, window);
       ]]></handler>
-      <handler event="click" clickcount="1">
-            <![CDATA[
-        var node = this.getNodeForRow(this.mTree.currentIndex);
-        
-        if (node && node.url) {
-          this.highlightURL(node.url);
-          
-          this.loadURL(node.url, event);
-          
-          // Bookmarks keep the http url in the id
-          if ( node.id.indexOf("http://") != 0 ) { 
-            //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
-            
-            var key = "app.servicepane.playlists.click." + 
-                      node.getAttributeNS(this.LSP, "LibraryCustomType");
-                      
-            metrics_inc(key, node.getAttributeNS(this.LSP, "ListCustomType"), null);
-          } 
-          else if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
-          
-            //This enables us to know if we're packaging bookmarks 
-            //that people like or hate while not tracking any bookmarks they create.
-            //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
-            
-            metrics_inc("app.servicepane.bookmarks.click", node.url, null);
-          }
-        } else {
-          /* FIXME: implement non-go-to-url behaviour */
+      <handler event="keypress"><![CDATA[
+        if (event.keyCode == Components.interfaces.nsIDOMKeyEvent.DOM_VK_ENTER ||
+            event.keyCode == Components.interfaces.nsIDOMKeyEvent.DOM_VK_RETURN) {
+          this.loadSelectedNode(event);
         }
+      ]]></handler>
+      <handler event="click" clickcount="1"><![CDATA[
+        this.loadSelectedNode(event);
       ]]></handler>
       <handler event="click" clickcount="2"><![CDATA[
         var node = this.getNodeForRow(this.mTree.currentIndex);
