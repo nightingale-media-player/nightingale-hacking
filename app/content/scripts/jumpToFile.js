@@ -161,12 +161,18 @@ try
     // as a template for instances bound to specific playlist elements
     duplicate: function()
     {
-      var obj = {};
-      for ( var i in this )
-      {
-        obj[ i ] = this[ i ];
-      }
+      var obj = this.dupObject(this);
+      obj.m_Context = this.dupObject(this.m_Context);
       return obj;
+    },
+
+    dupObject: function (obj) {
+      var r = {};
+      for ( var i in obj )
+      {
+        r[ i ] = obj[ i ];
+      }
+      return r;
     },
 
     initCommands: function(aHost) {},

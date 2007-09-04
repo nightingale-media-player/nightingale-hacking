@@ -54,18 +54,9 @@ interface nsISimpleEnumerator;
 * playlist source will call duplicate() on the objects it has stored and
 * return the newly duplicated objects.
 *
-* The duplicate() method should be implemented like so:
+* See documentation on duplicate() for more information.
 *
-* \code
-duplicate: function() {
-  var obj = {};
-  for ( var i in this )
-    obj[ i ] = this[ i ];
-  return obj;
-},
-* \endcode
-* 
-* \sa playlist.xml, sbLibraryPage.xul
+* \sa playlist.xml, sbLibraryPage.xul, duplicate
 */
 [scriptable, uuid(dfe817f2-5398-4f16-ba62-10483311ffa7)]
 interface sbIPlaylistCommands : nsISupports 
@@ -346,7 +337,28 @@ interface sbIPlaylistCommands : nsISupports
   },
   * \endcode
   *
-  * It creates a new object instance and copies the methods over to it.
+  * It creates a new object instance and copies the methods and data over to it.
+  *
+  * In addition, if your object contains more objects whose data should not be shared 
+  * between command instantiation contexts, then these objects should be duplicated 
+  * as well (otherwise, their data will be shared between duplicated instances). 
+  * In this case, the duplicate method should be implemented something like this:
+  *
+  * \code
+  _dupObject: function() {
+    var r = {};
+    for ( var i in obj )
+      r[ i ] = obj[ i ];
+    return r;
+  },
+  duplicate: function() {
+    var obj = this._dupObject(this);
+    obj.myObjectWithProperties = this.dupObject(this.myObjectWithProperties);
+    return obj;
+  },
+  * \endcode
+  *
+  * In case of more complex objects, you may need to create a recursive duplication method. 
   *
   * \return A new copy of this object
   */

@@ -455,6 +455,7 @@
       <parameter name="radioitems"/>
       <body>
         <![CDATA[
+          var toolbarbutton;
           try {
             if (!cmdobject.getVisible(this.hoststring)) return;
             // And make all the new stuff
@@ -469,7 +470,7 @@
               }
               
               var obj_type;
-              var toolbarbutton;
+              toolbarbutton = null;
               if (!stateonly)
               {
                 if (radioitems) obj_type = "choiceitem";
@@ -669,7 +670,11 @@
               }
             }
           } catch (e) {
-            alert("sbCommands.xml - toolbar - " + e);
+            var id="";
+            if (toolbarbutton) {
+              id = "- " + cmdobject.getCommandId(menu, toolbarbutton.commandindex, this.hoststring) + " ";
+            }
+            alert("sbCommands.xml - toolbar - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
@@ -883,6 +888,7 @@
       <parameter name="radioitems"/>
       <body>
         <![CDATA[
+          var menuitem;
           try {
             if (!cmdobject.getVisible(this.hoststring)) return;
             // And make all the new stuff
@@ -890,7 +896,7 @@
             if (stateonly) num = this.menuitems.length;
             for ( var i = 0; i < num; i++ )
             {
-              var menuitem;
+              menuitem = null;
 
               // skip ?
               if (!stateonly && !cmdobject.getCommandVisible( menu, i, this.hoststring )) continue;
@@ -1010,7 +1016,11 @@
               }
             }
           } catch (e) {
-            alert("sbCommands.xml - popup - refreshCommandItems " + e);
+            var id="";
+            if (menuitem) {
+              id = "- " + cmdobject.getCommandId(menu, menuitem.commandindex, this.hoststring) + " ";
+            }
+            alert("sbCommands.xml - popup - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
@@ -1144,6 +1154,7 @@
       <parameter name="radioitems"/>
       <body>
         <![CDATA[
+          var key;
           try {
             // And make all the new stuff
             if (!cmdobject.getVisible(this.hoststring)) return;
@@ -1151,7 +1162,7 @@
             if (stateonly) num = this.keys.length;
             for ( var i = 0; i < num; i++ )
             {
-              var key = null;
+              key = null;
 
               // skip ?
               if (!stateonly && !cmdobject.getCommandVisible( menu, i, this.hoststring )) continue;
@@ -1257,7 +1268,11 @@
               }
             }
           } catch (e) {
-            alert("sbCommands.xml - shortcuts - refreshCommandItems " + e);
+            var id="";
+            if (key) {
+              id = "- " + cmdobject.getCommandId(menu, key.commandindex, this.hoststring) + " ";
+            }
+            alert("sbCommands.xml - shortcuts - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
