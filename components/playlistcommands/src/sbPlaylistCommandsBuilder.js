@@ -1220,7 +1220,7 @@ PlaylistCommandsBuilder.prototype = {
       obj.m_menus.push(menuitem);
     }
     obj.m_root_commands = obj.m_menus[0].m_Menu;
-    obj.m_Context = this.dupObject(obj.m_Context);
+    obj.m_Context = this.dupObject(this.m_Context);
         
     // return the copy
     return obj;
