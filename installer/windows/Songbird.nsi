@@ -34,6 +34,10 @@ SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 CRCCheck force
 
+; Vista compatibility - admin priviledges needed to write things such as
+; uninstaller registry entries into HKLM
+RequestExecutionLevel admin
+
 ; empty files - except for the comment line - for generating custom pages.
 ;!system 'echo ; > options.ini'
 ;!system 'echo ; > components.ini'
