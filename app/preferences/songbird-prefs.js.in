@@ -229,5 +229,6 @@ pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/
 #ifdef XP_WIN
 pref("songbird.mediacore.audioOut", "directsound");
 #endif
+pref("songbird.mediacore.normalize", false);
 #endif
 

@@ -186,6 +186,8 @@ CoreVLC.prototype._applyPreferences = function ()
 {
   var log = this._object.log;
   var config = this._object.config;
+  var prefsService = Cc["@mozilla.org/preferences-service;1"]
+                       .getService(Ci.nsIPrefService);
 
   try {
     log.verbosity = 1;
@@ -240,20 +242,13 @@ CoreVLC.prototype._applyPreferences = function ()
   }
   
   //Turn on volume normalization.
-  //XXXAus: Disabled this based on user feedback. Will be possible to enable
-  //when there is a pref for it.
-  /*
   try {
-    //XXXAus: Read these values from prefs (bug #699)
-    config.setConfigString("main", "audio-filter", "volnorm");
-    config.setConfigInt("normvol", "norm-buff-size", 99);
-    config.setConfigFloat("normvol", "norm-max-level", 5.123456789123);
+    this.handleNormalizeChange()
   }
   catch(e) {
-    this.LOG("normvol module is missing, can't set config item.");
+    this.LOG("volnorm module is missing, can't set config item.");
   }
-  */
-  
+    
   //Set user agent, read from moz prefs.
   //config.setConfigString("access_http", "http-user-agent", "Songbird");
 
@@ -272,12 +267,9 @@ CoreVLC.prototype._applyPreferences = function ()
   
   if(getPlatformString() == "Windows_NT") {
     try {
-      var prefsService = Cc["@mozilla.org/preferences-service;1"]
-                        .getService(Ci.nsIPrefService);
-      
       var prefBranch = prefsService.QueryInterface(Ci.nsIPrefBranch2);
       
-      prefBranch.addObserver("songbird.mediacore.audioOut", this, false);
+      prefBranch.addObserver("songbird.mediacore.", this, false);
       
       var audioOut = prefBranch.getCharPref("songbird.mediacore.audioOut");
       this._setAudioOutput(audioOut);      
@@ -500,13 +492,43 @@ CoreVLC.prototype._processLogMessagesForPlayURL = function()
   return true;
 };
 
-CoreVLC.prototype.observe = function (aSubject, aTopic, aData) 
+CoreVLC.prototype.observe = function CoreVLC_observe(aSubject, aTopic, aData) 
 {
   if(this._ignorePrefChange) {
     return;
   }
 
   var prefBranch = aSubject.QueryInterface(Ci.nsIPrefBranch);
+  
+  switch(aData) {
+    case "songbird.mediacore.audioOut":
+      this.handleAudioOutChange(prefBranch);
+    break;
+    
+    case "songbird.mediacore.normalize":
+      this.handleNormalizeChange(prefBranch);
+    break;
+  }
+};
+
+CoreVLC.prototype.handleNormalizeChange = function CoreVLC_handleNormalizeChange(prefBranch)
+{
+  try {
+    var enableNormalize = prefBranch.getBoolPref("songbird.mediacore.normalize");
+  
+    if(enableNormalize) {
+      config.setConfigString("main", "audio-filter", "volnorm");
+      config.setConfigInt("normvol", "norm-buff-size", 120);
+      config.setConfigFloat("normvol", "norm-max-level", 1.123001230123);
+    }
+  } 
+  catch(e) {}
+
+  return;
+};
+
+CoreVLC.prototype.handleAudioOutChange = function CoreVLC_handleAudioOutChange(prefBranch)
+{
   var audioOut = prefBranch.getCharPref("songbird.mediacore.audioOut");
 
   try {
