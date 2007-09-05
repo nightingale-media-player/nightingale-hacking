@@ -49,7 +49,7 @@ Example:
   var library = songbird.siteLibrary("", "");
 
   //Create a medialist using the library.
-  var mediaList = songbird.createMediaList("simple");
+  var mediaList = library.createMediaList("simple");
 
   //Create some mediaitems and add them to the medialist.
   var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];
