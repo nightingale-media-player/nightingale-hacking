@@ -100,7 +100,7 @@ function runTest () {
   // Try an invalid value
   a = SBProperties.createArray([
     [SBProperties.trackNumber, "invalid"]
-  ]);
+  ], false);
   try {
     item.setProperties(a);
     fail("Exception not thrown");
@@ -111,4 +111,3 @@ function runTest () {
 
   library.removeListener(listener);
 }
-

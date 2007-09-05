@@ -70,8 +70,10 @@ function runTest () {
 }
 
 function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-           .createInstance(Ci.sbIMutablePropertyArray);
+  var array = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                .createInstance(Ci.sbIMutablePropertyArray);
+  array.strict = false;
+  return array;
 }
 
 function assertFilteredSort(list, dataFile) {
@@ -84,4 +86,3 @@ function assertFilteredSort(list, dataFile) {
   assertArray(a, dataFile);
 
 }
-

@@ -135,7 +135,10 @@ function testUpdate() {
 
     dps.updateNow(list);
 
-    sleep(3000);
+    var sleepCount = 0;
+    while (list.length < 2 && sleepCount++ < 20) {
+      sleep(1000);
+    }
 
     // Check the contents of the list
     assertEqual(list.length, 2);
@@ -147,7 +150,10 @@ function testUpdate() {
     writeFile(playlistFile, playlist2);
     dps.updateNow(list);
 
-    sleep(15000);
+    sleepCount = 0;
+    while (list.length < 3 && sleepCount++ < 20) {
+      sleep(1000);
+    }
 
     // Check the contents of the list
     assertEqual(list.length, 3);

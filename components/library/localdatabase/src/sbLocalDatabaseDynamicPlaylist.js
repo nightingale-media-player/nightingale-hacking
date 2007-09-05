@@ -427,7 +427,7 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryRegistered(aLibrary)
 
   // If a library is registered, attach a listener so we can be notified of
   // media item change notifications.
-  var filter = SBProperties.createArray([[SB_PROP_ISSUBSCRIPTION, null]]);
+  var filter = SBProperties.createArray([[SB_PROP_ISSUBSCRIPTION, null]], false);
   aLibrary.addListener(this,
                        false,
                        Ci.sbIMediaList.LISTENER_FLAGS_ALL &
@@ -659,7 +659,7 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
   var downloadList = mainLibrary.getMediaItem(downloadListGUID);
   downloadList.addSome(array.enumerate());
 }
-  
+
 // sbIMedaiListFactory
 function sbLocalDatabaseDynamicMediaListFactory()
 {
@@ -676,11 +676,11 @@ sbLocalDatabaseDynamicMediaListFactory.prototype = {
                  .getService(Ci.sbIMediaListFactory);
     var list = smlf.createMediaList(aInner);
     list.setProperty(SB_PROP_ISSUBSCRIPTION, "1");
-    
+
     //Set customType for use by metrics.
     list.setProperty(SBProperties.customType,
                      "dynamic");
-    
+
     return list;
   },
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListFactory])
@@ -701,4 +701,3 @@ function NSGetModule(compMgr, fileSpec) {
       true);
   });
 }
-

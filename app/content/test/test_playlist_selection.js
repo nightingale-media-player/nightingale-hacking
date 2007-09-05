@@ -29,8 +29,8 @@
  */
 
 function runTest () {
-  var url = "data:application/vnd.mozilla.xul+xml," + 
-            "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" + 
+  var url = "data:application/vnd.mozilla.xul+xml," +
+            "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" +
             "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
@@ -229,12 +229,13 @@ function assertArraySimilar(a1, a2) {
       fail("arrays don't match at index " + i + " '" + a1[i] + "' != '" + a2[i] + "'");
     }
   }
-  
+
 }
 
 function setSort(playlist, property, direction) {
   var view = playlist.mediaListView;
   var pa = createPropertyArray();
+  pa.strict = false;
   pa.appendProperty("http://songbirdnest.com/data/1.0#" + property, direction);
   view.setSort(pa);
 }
@@ -253,4 +254,3 @@ function createPropertyArray() {
   return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
            .createInstance(Ci.sbIMutablePropertyArray);
 }
-

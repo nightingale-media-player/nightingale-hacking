@@ -26,14 +26,17 @@
 
 #include "sbPropertyArray.h"
 
-#include <nsArrayEnumerator.h>
-#include <nsCOMPtr.h>
-#include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
-#include <nsMemory.h>
+#include <sbIPropertyManager.h>
 
+#include <nsArrayEnumerator.h>
+#include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
+#include "sbPropertiesCID.h"
 #include "sbSimpleProperty.h"
 
 NS_IMPL_THREADSAFE_ADDREF(sbPropertyArray)
@@ -54,6 +57,8 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbPropertyArray, nsIArray,
                                               sbIMutablePropertyArray,
                                               nsIClassInfo)
 sbPropertyArray::sbPropertyArray()
+: mArrayLock(nsnull),
+  mStrict(PR_TRUE)
 {
   MOZ_COUNT_CTOR(sbPropertyArray);
 }
@@ -71,6 +76,66 @@ sbPropertyArray::Init()
 {
   mArrayLock = nsAutoLock::NewLock("sbPropertyArray::mArrayLock");
   NS_ENSURE_TRUE(mArrayLock, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+/**
+ * Just unwraps an sbIProperty object for validation.
+ */
+nsresult
+sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
+                                 PRBool* _retval)
+{
+  NS_ASSERTION(aProperty, "Don't hand me a null!");
+  NS_ASSERTION(_retval, "Don't hand me a null!");
+
+  nsString name;
+  nsresult rv = aProperty->GetName(name);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString value;
+  rv = aProperty->GetValue(name);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return ValueIsValid(name, value, _retval);
+}
+
+/**
+ * Asks the Property Manager whether or not the value is valid for the given
+ * property.
+ */
+nsresult
+sbPropertyArray::ValueIsValid(const nsAString& aName,
+                              const nsAString& aValue,
+                              PRBool* _retval)
+{
+  NS_ASSERTION(!aName.IsEmpty(), "Don't pass an empty property name!");
+  NS_ASSERTION(_retval, "Don't hand me a null!");
+
+  if (aValue.IsVoid()) {
+    *_retval = PR_TRUE;
+    return NS_OK;
+  }
+
+  nsresult rv;
+
+  if (!mPropManager) {
+    mPropManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // This will actually *create* a new sbIPropertyInfo if one has not been
+  // registered already...
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropManager->GetPropertyInfo(aName, getter_AddRefs(propInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool valid;
+  rv = propInfo->Validate(aValue, &valid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = valid;
   return NS_OK;
 }
 
@@ -95,7 +160,7 @@ sbPropertyArray::QueryElementAt(PRUint32 aIndex,
                                 const nsIID& aIID,
                                 void** _retval)
 {
-  NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock lock(mArrayLock);
@@ -119,9 +184,11 @@ sbPropertyArray::IndexOf(PRUint32 aStartIndex,
   // nsCOMArray doesn't provide any way for us to start searching for an element
   // at an offset, so warn about the usage. Hopefully no one will use this
   // method anyway ;)
+#ifdef DEBUG
   if (aStartIndex) {
     NS_WARNING("sbPropertyArray::IndexOf ignores aStartIndex parameter!");
   }
+#endif
 
   nsresult rv;
   nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
@@ -175,6 +242,15 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mArrayLock);
+
+  if (mStrict) {
+    PRBool valid;
+    rv = PropertyIsValid(property, &valid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+  }
+
   PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
@@ -187,7 +263,7 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
 NS_IMETHODIMP
 sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
 {
-  NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
 
   nsAutoLock lock(mArrayLock);
   PRBool success = mArray.RemoveObjectAt(aIndex);
@@ -204,7 +280,7 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
                                  PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
-  NS_ENSURE_ARG_MAX(aIndex, mArray.Count());
+  NS_ENSURE_ARG_MAX((PRInt32)aIndex, mArray.Count());
 
   // No support for weak references here
   NS_ENSURE_FALSE(aWeak, NS_ERROR_FAILURE);
@@ -214,6 +290,15 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mArrayLock);
+
+  if (mStrict) {
+    PRBool valid;
+    rv = PropertyIsValid(property, &valid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+  }
+
   PRBool success = mArray.InsertObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
@@ -229,7 +314,7 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
                                   PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
-  NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
 
   // No support for weak references here
   NS_ENSURE_FALSE(aWeak, NS_ERROR_NOT_IMPLEMENTED);
@@ -239,6 +324,15 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mArrayLock);
+
+  if (mStrict) {
+    PRBool valid;
+    rv = PropertyIsValid(property, &valid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+  }
+
   PRBool success = mArray.ReplaceObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
@@ -265,13 +359,62 @@ sbPropertyArray::AppendProperty(const nsAString& aName,
 {
   NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
 
+  nsAutoLock lock(mArrayLock);
+
+  if (mStrict) {
+    PRBool valid;
+    nsresult rv = ValueIsValid(aName, aValue, &valid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+  }
+
   nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aName, aValue);
   NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
+  return NS_OK;
+}
+
+/**
+ * See sbIMutablePropertyArray
+ */
+NS_IMETHODIMP
+sbPropertyArray::SetStrict(PRBool aStrict)
+{
+  nsAutoLock lock(mArrayLock);
+
+  if ((aStrict != mStrict) && mArray.Count()) {
+    NS_WARNING("Can't change strict setting of a non-empty sbPropertyArray!");
+    return NS_ERROR_FAILURE;
+  }
+
+  if (mStrict == aStrict) {
+    return NS_OK;
+  }
+
+  // Free the property manager if it will no longer be needed.
+  if (!aStrict && mPropManager) {
+    mPropManager = nsnull;
+  }
+
+  mStrict = aStrict;
+  return NS_OK;
+}
+
+/**
+ * See sbIMutablePropertyArray
+ */
+NS_IMETHODIMP
+sbPropertyArray::GetStrict(PRBool* aStrict)
+{
+  NS_ENSURE_ARG_POINTER(aStrict);
+
+  nsAutoLock lock(mArrayLock);
+
+  *aStrict = mStrict;
   return NS_OK;
 }
 
@@ -282,7 +425,7 @@ NS_IMETHODIMP
 sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
                                sbIProperty** _retval)
 {
-  NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock lock(mArrayLock);
@@ -322,6 +465,9 @@ sbPropertyArray::GetPropertyValue(const nsAString& aName,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+/**
+ * See sbIPropertyArray
+ */
 NS_IMETHODIMP
 sbPropertyArray::ToString(nsAString& _retval)
 {
@@ -362,6 +508,15 @@ sbPropertyArray::ToString(nsAString& _retval)
   _retval = buff;
 
   return NS_OK;
+}
+
+/**
+ * See sbIPropertyArray
+ */
+NS_IMETHODIMP
+sbPropertyArray::GetValidated(PRBool* aValidated)
+{
+  return GetStrict(aValidated);
 }
 
 // nsIClassInfo
@@ -419,4 +574,3 @@ sbPropertyArray::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

@@ -38,7 +38,7 @@ function runTest () {
 
   var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
   var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-  for (var i = 0; i < 100; i++) {
+  for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
@@ -77,4 +77,3 @@ function runTest () {
                 item.getProperty(SB_NS + "trackNumber"));
   }
 }
-

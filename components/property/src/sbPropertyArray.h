@@ -31,9 +31,13 @@
 
 #include <nsAutoLock.h>
 #include <nsCOMArray.h>
+#include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIClassInfo.h>
 #include <nsIMutableArray.h>
+
+class sbIProperty;
+class sbIPropertyManager;
 
 class sbPropertyArray : public sbIMutablePropertyArray,
                         public nsIMutableArray,
@@ -51,9 +55,19 @@ public:
   ~sbPropertyArray();
 
   nsresult Init();
+
+private:
+  nsresult PropertyIsValid(sbIProperty* aProperty,
+                           PRBool* _retval);
+  nsresult ValueIsValid(const nsAString& aName,
+                        const nsAString& aValue,
+                        PRBool* _retval);
+
 private:
   nsCOMArray<sbIProperty> mArray;
+  nsCOMPtr<sbIPropertyManager> mPropManager;
   PRLock* mArrayLock;
+  PRBool mStrict;
 };
 
 #endif /* __SB_PROPERTYARRAY_H__ */

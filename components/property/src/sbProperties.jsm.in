@@ -42,18 +42,20 @@ var SBProperties = {
 
 ### actual properties generated here via sbStandardProperties.pl
 
-  createArray: function(properties) {
+  createArray: function(properties, strict) {
     var propertyArray =
       Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                 .createInstance(Components.interfaces.sbIMutablePropertyArray);
-      if (properties) {
-        properties.forEach(function(e) {
-          if (e.length == 2) {
-            propertyArray.appendProperty(e[0], e[1]);
-          }
-        });
-      }
-      return propertyArray;
+    if (arguments.length > 1) {
+      propertyArray.strict = arguments[1];
+    }
+    if (properties) {
+      properties.forEach(function(e) {
+        if (e.length == 2) {
+          propertyArray.appendProperty(e[0], e[1]);
+        }
+      });
+    }
+    return propertyArray;
   }
 }
-

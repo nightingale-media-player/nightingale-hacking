@@ -43,7 +43,7 @@ function runTest () {
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SB_NS + "contentLength", i);
-    props.appendProperty(SB_NS + "trackNumber", i);
+    props.appendProperty(SB_NS + "trackNumber", i + 1);
     propertyArray.appendElement(props, false);
   }
 
@@ -55,7 +55,7 @@ function runTest () {
         var item = array.queryElementAt(i, Ci.sbIMediaItem);
         assertTrue(item.contentSrc.equals(newURI("file:///foo/" + i + ".mp3")));
         assertEqual(item.getProperty(SB_NS + "contentLength"), i);
-        assertEqual(item.getProperty(SB_NS + "trackNumber"), i);
+        assertEqual(item.getProperty(SB_NS + "trackNumber"), i + 1);
       }
       testFinished();
     }
@@ -64,4 +64,3 @@ function runTest () {
   library.batchCreateMediaItemsAsync(listener, toAdd, propertyArray, true);
   testPending();
 }
-

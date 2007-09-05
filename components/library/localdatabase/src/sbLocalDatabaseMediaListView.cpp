@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -257,6 +257,9 @@ sbLocalDatabaseMediaListView::Init()
 
   // Set the default sort as our view sort
   mViewSort = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mViewSort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
@@ -516,6 +519,13 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool strict;
+  rv = aSource->GetValidated(&strict);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = clone->SetStrict(strict);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 propertyCount;
   rv = aSource->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -582,7 +592,7 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
 {
   NS_ASSERTION(aProperties, "aProperties is null");
   NS_ASSERTION(aShouldCauseInvalidation, "aShouldCauseInvalidation is null");
-  
+
   // If one of the updated proprties is involved in the current sort, filter,
   // or search, we should invalidate
   nsCOMPtr<sbIPropertyArray> props;
@@ -1596,4 +1606,3 @@ sbLocalDatabaseMediaListView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-
