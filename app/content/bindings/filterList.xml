@@ -41,6 +41,7 @@
           sbid="filter_tree"
           flex="1"
           onselect="_onFilterListSelect(event);"
+          enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
           <xul:treecols sbid="treeColumns" xbl:inherits="class"/>

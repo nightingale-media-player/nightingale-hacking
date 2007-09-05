@@ -250,8 +250,7 @@ treecol[hideheader="true"] {
 
 /* ..... internal box ..... */
 
-treecol:hover:active,
-treecolpicker:hover:active {
+tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
   border-top: 2px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
