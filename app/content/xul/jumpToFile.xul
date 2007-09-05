@@ -40,7 +40,6 @@
  onload="onLoadJumpToFile();"
  onunload="onUnloadJumpToFile();"
  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
- xmlns:sp="http://songbirdnest.com/rdf/servicepane"
 >
   <sb-sys-outer-frame id="jumpto_frame" flex="1">
     <sb-sys-dialog-titlebar/>
@@ -60,16 +59,48 @@
         >
           <menuitem id="current_play_queue" label="-"/>
           <template>
-            <rule sp:contractid="@songbirdnest.com/servicepane/library;1">
-              <menuitem uri="rdf:*"
-                id="rdf:http://home.netscape.com/NC-rdf#Label" 
-                label="rdf:http://home.netscape.com/NC-rdf#Name"
-                value="rdf:http://home.netscape.com/NC-rdf#URL"
-                class="menuitem-iconic"
-                image="rdf:http://home.netscape.com/NC-rdf#Icon"
-                guid="rdf:http://songbirdnest.com/rdf/library-servicepane#ListGUID"
-                library="rdf:http://songbirdnest.com/rdf/library-servicepane#LibraryGUID"
-              />
+            <rule>
+              <conditions>
+                <content uri="?start" />
+                <member container="?start" child="?node" />
+                <triple subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#Name"
+                      object="?name" />
+                <triple subject="?node"
+                      predicate="http://songbirdnest.com/rdf/servicepane#Hidden"
+                      object="false" />                    
+                <triple subject="?node"
+                      predicate="http://songbirdnest.com/rdf/servicepane#contractid"
+                      object="@songbirdnest.com/servicepane/library;1"/>
+              </conditions>
+              <bindings>
+                <binding subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#Icon"
+                      object="?icon" />
+                <binding subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#Label"
+                      object="?id" />
+                <binding subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#URL"
+                      object="?url" />
+                <binding subject="?node"
+                      predicate="http://songbirdnest.com/rdf/library-servicepane#ListGUID"
+                      object="?listguid" />
+                <binding subject="?node"
+                      predicate="http://songbirdnest.com/rdf/library-servicepane#LibraryGUID"
+                      object="?libraryguid" />
+              </bindings>
+              <action>
+                <menuitem uri="?node" 
+                  id="?id"
+                  label="?name"
+                  image="?icon"
+                  class="menuitem-iconic"
+                  value="?url"
+                  guid="?listguid"
+                  library="?libraryguid"
+                />
+              </action>
             </rule>
           </template>
         </menupopup>
