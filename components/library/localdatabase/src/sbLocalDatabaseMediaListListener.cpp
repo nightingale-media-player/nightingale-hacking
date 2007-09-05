@@ -264,8 +264,11 @@ sbLocalDatabaseMediaListListener::SnapshotListenerArray(sbMediaListListenersArra
   PRUint32 length = mListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
     if (mListenerArray[i]->ShouldNotify(aFlags, aProperties)) {
-      ListenerAndIndex* added =
-        aArray.AppendElement(ListenerAndIndex(mListenerArray[i]->mProxy, i));
+      nsString debugAddress;
+      mListenerArray[i]->GetDebugAddress(debugAddress);
+      ListenerAndDebugAddress* added =
+        aArray.AppendElement(ListenerAndDebugAddress(mListenerArray[i]->mProxy,
+                                                     debugAddress));
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
   }
@@ -278,15 +281,26 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
 {
   nsAutoLock lock(mListenerArrayLock);
 
-  PRUint32 length = mListenerArray.Length();
-  for (PRInt32 i = length - 1; i >= 0; --i) {
-    if (aStopNotifying[i].isGone) {
-      mListenerArray.RemoveElementAt(i);
-    }
+  PRUint32 numStopNotifying = aStopNotifying.Length();
+  PRUint32 numListeners     = mListenerArray.Length();
 
-    else {
-      if (aStopNotifying[i].listenerFlags > 0) {
-        mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i].listenerFlags);
+  // The aStopNotifying array tells us what listeners are "gone" (weak
+  // listeners that have gone away) as well as which listeners should no
+  // longer be notified in the current batch.  Match up the listeners in this
+  // array with the main listener array by comparing the listener comptr
+
+  for (PRUint32 i = 0; i  < numStopNotifying; i++) {
+    const StopNotifyFlags& stop = aStopNotifying[i];
+    for (PRUint32 j = 0; j < numListeners; j++) {
+      if (stop.listener == mListenerArray[j]->mProxy) {
+        if (stop.isGone) {
+          mListenerArray.RemoveElementAt(j);
+        }
+        else {
+          if (stop.listenerFlags > 0) {
+            mListenerArray[j]->SetShouldStopNotifying(stop.listenerFlags);
+          }
+        }
       }
     }
   }
@@ -302,10 +316,8 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
 
 #define SB_NOTIFY_LOG_REMEMBER_NOTIFIED                                   \
   PR_BEGIN_MACRO                                                          \
-    nsString address;                                                     \
-    mListenerArray[snapshot[i].index]->GetDebugAddress(address);          \
     __notifiedList.AppendLiteral(" ");                                    \
-    __notifiedList.Append(address);                                       \
+    __notifiedList.Append(snapshot[i].debugAddress);                      \
     __notifiedList.AppendLiteral(" (");                                   \
     __notifiedList.AppendInt(__delta);                                    \
     __notifiedList.AppendLiteral(")");                                    \
@@ -333,27 +345,32 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
 #define SB_NOTIFY_LISTENERS_HEAD                                          \
   NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");       \
                                                                           \
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
+  sbMediaListListenersArray snapshot;
 
 #define SB_NOTIFY_LISTENERS_TAIL(method, call, flag)                      \
   SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));                                  \
-  sbStopNotifyArray stopNotifying(mListenerArray.Length());               \
-  PRBool success = stopNotifying.SetLength(mListenerArray.Length());      \
-  SB_ENSURE_TRUE_VOID(success);                                           \
+                                                                          \
+  PRUint32 length = snapshot.Length();                                    \
+  sbStopNotifyArray stopNotifying(length);                                \
                                                                           \
   SB_NOTIFY_LOG_COUNT(method)                                             \
                                                                           \
-  for (PRUint32 i = 0; i < snapshot.Length(); i++) {                      \
+  for (PRUint32 i = 0; i < length; i++) {                                 \
     PRBool noMoreForBatch = PR_FALSE;                                     \
     SB_NOTIFY_LOG_START_TIMER                                             \
     rv = snapshot[i].listener->call;                                      \
     SB_NOTIFY_LOG_STOP_TIMER                                              \
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), #call " returned a failure code"); \
-    if (rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA)                      \
-      stopNotifying[snapshot[i].index].isGone = PR_TRUE;                  \
+    PRBool isGone = rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;          \
+    PRUint32 listenerFlags = 0;                                           \
     if (noMoreForBatch) {                                                 \
-      stopNotifying[snapshot[i].index].listenerFlags = sbIMediaList::flag;\
+      listenerFlags = sbIMediaList::flag;                                 \
     }                                                                     \
+    StopNotifyFlags* added =                                              \
+      stopNotifying.AppendElement(StopNotifyFlags(snapshot[i].listener,   \
+                                                  listenerFlags,          \
+                                                  isGone));               \
+    SB_ENSURE_TRUE_VOID(added);                                           \
     SB_NOTIFY_LOG_REMEMBER_NOTIFIED;                                      \
   }                                                                       \
                                                                           \
@@ -812,4 +829,3 @@ sbWeakMediaListListenerWrapper::OnBatchEnd(sbIMediaList* aMediaList)
 {
   SB_TRY_NOTIFY(OnBatchEnd(aMediaList))
 }
-

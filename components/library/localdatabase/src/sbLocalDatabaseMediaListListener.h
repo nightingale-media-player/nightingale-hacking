@@ -101,29 +101,34 @@ class sbLocalDatabaseMediaListListener
 {
   friend class sbAutoBatchHelper;
 
-  struct ListenerAndIndex {
-    ListenerAndIndex(sbIMediaListListener* aListener, PRUint32 aIndex) :
+  struct ListenerAndDebugAddress {
+    ListenerAndDebugAddress(sbIMediaListListener* aListener,
+                            const nsAString& aDebugAddress) :
       listener(aListener),
-      index(aIndex)
+      debugAddress(aDebugAddress)
     {}
 
     nsCOMPtr<sbIMediaListListener> listener;
-    PRUint32 index;
+    nsString debugAddress;
   };
-  
+
   // This is used to mark things to stop notifying for the sweep
   struct StopNotifyFlags {
-    StopNotifyFlags() :
-      listenerFlags(0),
-      isGone(PR_FALSE)
+    StopNotifyFlags(sbIMediaListListener* aListener,
+                    PRUint32 aListenerFlags,
+                    PRBool aIsGone) :
+      listener(aListener),
+      listenerFlags(aListenerFlags),
+      isGone(aIsGone)
     {}
+    nsCOMPtr<sbIMediaListListener> listener;
     PRUint32 listenerFlags;
     PRBool isGone;
   };
 
-  typedef nsTArray<ListenerAndIndex> sbMediaListListenersArray;
+  typedef nsTArray<ListenerAndDebugAddress> sbMediaListListenersArray;
   typedef nsTArray<StopNotifyFlags> sbStopNotifyArray;
-  typedef nsAutoPtr<sbListenerInfo> sbListenerInfoAutoPtr; 
+  typedef nsAutoPtr<sbListenerInfo> sbListenerInfoAutoPtr;
 
 public:
   sbLocalDatabaseMediaListListener();
@@ -179,7 +184,7 @@ private:
                                  sbIPropertyArray* aPropertyFilter = nsnull);
   void SweepListenerArray(sbStopNotifyArray& aStopNotifying);
 
-  nsTArray<sbListenerInfoAutoPtr> mListenerArray; 
+  nsTArray<sbListenerInfoAutoPtr> mListenerArray;
 
   PRLock* mListenerArrayLock;
 
