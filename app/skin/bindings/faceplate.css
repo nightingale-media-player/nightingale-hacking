@@ -143,6 +143,12 @@ progressmeter.sb-player-seek-slider > .progress-remainder
   margin: 0px;
 }
 
+.faceplate-artist-box:hover > .faceplate-text,
+.faceplate-album-box:hover > .faceplate-text
+{
+  text-decoration: underline !important;
+}
+
 /* shuffle and repeat */
 .faceplate-shuffle
 {

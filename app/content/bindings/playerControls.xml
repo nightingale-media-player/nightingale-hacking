@@ -1587,14 +1587,7 @@
   
   <!-- JUMP TO CURRENT TRACK BUTTON -->
   
-  
-  <binding id="curtrack-button">
-    
-    <content>
-      <xul:hbox id="sb-player-curtrack-button" flex="1" xbl:inherits="hidden,class">
-        <xul:sb-clickhold-button id="sb-player-curtrack-button-button" oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;" xbl:inherits="label,position,popupanchor,popupalign"/>
-      </xul:hbox>
-    </content>
+  <binding id="curtrack-base">
     
     <implementation>
     
@@ -1659,7 +1652,26 @@
       </method>
     </implementation>
   </binding>
+
+  <binding id="curtrack-button" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
+    
+    <content>
+      <xul:hbox id="sb-player-curtrack-button" flex="1" xbl:inherits="hidden,class">
+        <xul:sb-clickhold-button id="sb-player-curtrack-button-button" oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;" xbl:inherits="label,position,popupanchor,popupalign"/>
+      </xul:hbox>
+    </content>
+
+  </binding>
   
+  <binding id="curtrack-hbox" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
+    
+    <content>
+      <xul:hbox id="sb-player-curtrack-hbox" mousethrough="never" onmousedown="onCurrentTrack();" xbl:inherits="hidden,class,flex,pack">
+        <children/>
+      </xul:hbox>
+    </content>
+
+  </binding>
   
   
   
