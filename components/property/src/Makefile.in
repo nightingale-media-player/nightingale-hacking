@@ -40,12 +40,9 @@ sbProperties.jsm: sbProperties.jsm.in sbStandardProperties.h
 sbProperties.jsm: sbStandardProperties.pl
 	$(PERL) $< $(srcdir)
 
-
-CPP_SRCS = sbButtonPropertyInfo.cpp \
-           sbSimpleProperty.cpp \
+CPP_SRCS = sbSimpleProperty.cpp \
            sbPropertyArray.cpp \
            sbPropertyFactory.cpp \
-           sbProgressPropertyInfo.cpp \
            sbPropertyInfo.cpp \
            sbTextPropertyInfo.cpp \
            sbNumberPropertyInfo.cpp \
@@ -53,8 +50,17 @@ CPP_SRCS = sbButtonPropertyInfo.cpp \
            sbDatetimePropertyInfo.cpp \
            sbPropertyManager.cpp \
            sbPropertiesModule.cpp \
-           sbRatingPropertyInfo.cpp \
+           sbDownloadButtonPropertyBuilder.cpp \
+           sbDownloadButtonPropertyInfo.cpp \
+           sbImmutablePropertyInfo.cpp \
+           sbSimpleButtonPropertyBuilder.cpp \
+           sbSimpleButtonPropertyInfo.cpp \
+           sbImagePropertyBuilder.cpp \
+           sbImagePropertyInfo.cpp \
            sbBooleanPropertyInfo.cpp \
+           sbRatingPropertyBuilder.cpp \
+           sbRatingPropertyInfo.cpp \
+           sbAbstractPropertyBuilder.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \

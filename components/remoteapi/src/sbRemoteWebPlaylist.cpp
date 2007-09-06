@@ -34,6 +34,7 @@
 #include <sbIMediaListView.h>
 #include <sbIMediaListViewTreeView.h>
 #include <sbPropertiesCID.h>
+#include <sbIPropertyBuilder.h>
 
 #include <nsAutoPtr.h>
 #include <nsIDOMElement.h>
@@ -293,61 +294,92 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
 
     // Figure out which type of property we want, special types get a
     // display type set on them, the rest are just text.
-    if ( aColumnType.EqualsLiteral("text") ){
-      info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
-    } else if ( aColumnType.EqualsLiteral("datetime") ) {
-      info = do_CreateInstance( SB_DATETIMEPROPERTYINFO_CONTRACTID, &rv );
-    } else if ( aColumnType.EqualsLiteral("uri") ) {
-      info = do_CreateInstance( SB_URIPROPERTYINFO_CONTRACTID, &rv );
-    } else if ( aColumnType.EqualsLiteral("number") ) {
-      info = do_CreateInstance( SB_NUMBERPROPERTYINFO_CONTRACTID, &rv );
-    } else if ( aColumnType.EqualsLiteral("progress") ) {
-      info = do_CreateInstance( SB_PROGRESSPROPERTYINFO_CONTRACTID, &rv );
+
+    if (aColumnType.EqualsLiteral("text") ||
+        aColumnType.EqualsLiteral("datetime") ||
+        aColumnType.EqualsLiteral("uri") ||
+        aColumnType.EqualsLiteral("number")) {
+      if ( aColumnType.EqualsLiteral("text") ){
+        info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
+      } else if ( aColumnType.EqualsLiteral("datetime") ) {
+        info = do_CreateInstance( SB_DATETIMEPROPERTYINFO_CONTRACTID, &rv );
+      } else if ( aColumnType.EqualsLiteral("uri") ) {
+        info = do_CreateInstance( SB_URIPROPERTYINFO_CONTRACTID, &rv );
+      } else if ( aColumnType.EqualsLiteral("number") ) {
+        info = do_CreateInstance( SB_NUMBERPROPERTYINFO_CONTRACTID, &rv );
+      }
       NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetDisplayUsingSimpleType( NS_LITERAL_STRING("progressmeter") );
-    } else if ( aColumnType.EqualsLiteral("checkbox") ) {
-      info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
-      NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetDisplayUsingSimpleType( NS_LITERAL_STRING("checkbox") );
-    } else if ( aColumnType.EqualsLiteral("image") ) {
-      info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
-      NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetDisplayUsingSimpleType( NS_LITERAL_STRING("image") );
-    } else if ( aColumnType.EqualsLiteral("button") ) {
-      info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
-      NS_ENSURE_SUCCESS( rv, rv );
-      // use image for now, this may change to button if we figure that out.
-      rv = info->SetDisplayUsingSimpleType( NS_LITERAL_STRING("image") );
-    } else {
-      // bad type, return an error - Should we just create text by default?
-      return NS_ERROR_FAILURE;
+
+      if (info) {
+        // set the data on the propinfo
+        rv = info->SetName(aColumnName);
+        NS_ENSURE_SUCCESS( rv, rv );
+        rv = info->SetDisplayName(aDisplayName);
+        NS_ENSURE_SUCCESS( rv, rv );
+        rv = info->SetUserViewable(aUserViewable);
+        NS_ENSURE_SUCCESS( rv, rv );
+        rv = info->SetUserEditable(aUserEditable);
+        NS_ENSURE_SUCCESS( rv, rv );
+        if (aHasNullSort)
+          info->SetNullSort(aNullSort);
+      }
     }
+    else {
+
+      if (aColumnType.EqualsLiteral("button")) {
+        nsCOMPtr<sbISimpleButtonPropertyBuilder> builder =
+          do_CreateInstance(SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->SetPropertyName(aColumnName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetDisplayName(aDisplayName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->Get(getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (aColumnType.EqualsLiteral("image")) {
+        nsCOMPtr<sbIImagePropertyBuilder> builder =
+          do_CreateInstance(SB_IMAGEPROPERTYBUILDER_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->SetPropertyName(aColumnName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetDisplayName(aDisplayName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->Get(getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (aColumnType.EqualsLiteral("downloadbutton")) {
+        nsCOMPtr<sbIDownloadButtonPropertyBuilder> builder =
+          do_CreateInstance(SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->SetPropertyName(aColumnName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetDisplayName(aDisplayName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->Get(getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        // bad type, return an error - Should we just create text by default?
+        return NS_ERROR_FAILURE;
+      }
+
+    }
+
+    // add to the property manager
+    rv = propMngr->AddPropertyInfo(info);
     NS_ENSURE_SUCCESS( rv, rv );
 
-    if (info) {
-      // set the data on the propinfo
-      rv = info->SetName(aColumnName);
-      NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetDisplayName(aDisplayName);
-      NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetUserViewable(aUserViewable);
-      NS_ENSURE_SUCCESS( rv, rv );
-      rv = info->SetUserEditable(aUserEditable);
-      NS_ENSURE_SUCCESS( rv, rv );
-      if (aHasNullSort)
-        info->SetNullSort(aNullSort);
+    rv = InsertColumn( info,
+                       aHidden,
+                       aWidth,
+                       NS_LITERAL_STRING(""),
+                       aBeforeColumnName );
+    NS_ENSURE_SUCCESS( rv, rv );
 
-      // add to the property manager
-      rv = propMngr->AddPropertyInfo(info);
-      NS_ENSURE_SUCCESS( rv, rv );
-
-      rv = InsertColumn( info,
-                         aHidden,
-                         aWidth,
-                         NS_LITERAL_STRING(""),
-                         aBeforeColumnName );
-      NS_ENSURE_SUCCESS( rv, rv );
-    }
   } else {
     // column already exists in the system, if not hidden, show it
     if (!aHidden) {

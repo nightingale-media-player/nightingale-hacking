@@ -1,0 +1,122 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 12 (button demo)</title>
+    <script>
+      var siteLib;
+      var originalWeb;
+      var myDiv;
+      var siteList;
+
+function load() {
+
+  document.addEventListener("PlaylistCellClick", function(event) {
+    alert("boom " + event.property + " " + event.item.getProperty("http://songbirdnest.com/data/1.0#contentURL"));
+  }, false);
+
+  siteLib = songbird.siteLibrary("127.0.0.1", "/");
+  siteLib.name = "Site Lib";
+  siteList = siteLib.createMediaList("simple");
+  songbird.webPlaylist.mediaList = siteList;
+
+  songbird.webPlaylist.addColumn( "text",
+                                  "buttonDemoText",
+                                  "FOO",
+                                  "",
+                                  false,
+                                  true,
+                                  false,
+                                  false,
+                                  0,
+                                  150 ); 
+
+  songbird.webPlaylist.addColumn( "button",
+                                  "buttonDemoBuy",
+                                  "Buy",
+                                  "",
+                                  false,
+                                  true,
+                                  false,
+                                  false,
+                                  0,
+                                  150 ); 
+
+  songbird.webPlaylist.addColumn( "image",
+                                  "buttonDemoImage",
+                                  "My Logo",
+                                  "",
+                                  false,
+                                  true,
+                                  false,
+                                  false,
+                                  0,
+                                  150 ); 
+
+  songbird.webPlaylist.addColumn( "downloadbutton",
+                                  "buttonDemoDownloadButton",
+                                  "Download it!!",
+                                  "",
+                                  false,
+                                  true,
+                                  false,
+                                  false,
+                                  0,
+                                  150 ); 
+
+  var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+  item.setProperty("buttonDemoBuy", "Buy Me"); 
+  item.setProperty("buttonDemoImage", "http://image.com.com/mp3/images/css/v2/icons/realplayer.gif"); 
+  item.setProperty("buttonDemoDownloadButton", "1|0|0"); 
+  siteList.add(item);
+
+  item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+  item.setProperty("buttonDemoBuy", "Don't Buy Me|1"); 
+  item.setProperty("buttonDemoDownloadButton", "1|0|0"); 
+  siteList.add(item);
+}
+function unload() {
+  if (siteList)
+    siteLib.remove(siteList);
+}
+
+    </script>
+  </head>
+
+  <body onload="load();" onunload="unload();">
+    <h1>Buttons</h1>
+    <p> Force a web playlist to appear. <br />
+      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
+    </p>
+    <div id="output">
+    </div>
+  </body>
+
+</html>
+

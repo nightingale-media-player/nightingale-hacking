@@ -1,0 +1,96 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIPropertyBuilder.idl
+ * \brief Definition of the sbIPropertyBuilder interfaces
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+interface sbIPropertyArray;
+interface sbIPropertyInfo;
+interface nsIStringBundle;
+
+/**
+* \interface sbIPropertyBuilder
+* \sa sbIPropertyInfo
+*/
+[scriptable, uuid(9fa1e2e2-ffc5-4705-a527-8bac8e9b68c3)]
+interface sbIPropertyBuilder : nsISupports
+{
+  attribute AString propertyName;
+
+  attribute AString displayName;
+
+  attribute AString displayNameKey;
+
+  sbIPropertyInfo get();
+};
+
+/**
+* \interface sbISimpleButtonPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(bd71935f-697f-424d-9721-6477f4e34556)]
+interface sbISimpleButtonPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+
+  attribute AString labelKey;
+};
+
+/**
+* \interface sbIDownloadButtonPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]
+interface sbIDownloadButtonPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+
+  attribute AString labelKey;
+};
+
+/**
+* \interface sbIImagePropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(7b68af5c-3443-4c5b-9c65-44efe3781510)]
+interface sbIImagePropertyBuilder : sbIPropertyBuilder
+{
+};
+
+/**
+* \interface sbIRatingPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(10f69629-3e74-448a-b627-7ea734644715)]
+interface sbIRatingPropertyBuilder : sbIPropertyBuilder
+{
+};
+

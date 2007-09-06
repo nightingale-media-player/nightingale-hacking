@@ -32,6 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIPropertyArray.idl \
              sbIPropertyFactory.idl \
              sbIPropertyManager.idl \
+             sbIPropertyBuilder.idl \
+             sbITreeViewPropertyInfo.idl \
+             sbIClickablePropertyInfo.idl \
              sbIRemotePropertyInfo.idl \
              $(NULL)
 

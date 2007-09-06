@@ -74,6 +74,11 @@ playlist > stack > vbox
   border-right: 1px solid !important;
 }
 
+.sb-playlist-tree > treechildren::-moz-tree-cell-text
+{
+  padding-top: 1px;
+}
+
 .sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   border: none !important;
@@ -143,10 +148,115 @@ playlist > stack > vbox
   background-image: url(chrome://songbird/skin/tree/stars/5.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-downloadButton, button )
+/* sample code to make all of the playlist cells looks like buttons */
+/* now uses only 2 images and the buttons scale with the text - yay */
+
+/* button default state and baseline */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button )
 {
-  background-image: url(chrome://songbird/skin/tree/button.png);
-  background-repeat: no-repeat;
-  background-position: center left;
+       background-image: url(chrome://songbird/skin/tree/button/l.png);
+       background-position:0px -36px;
+       background-repeat:no-repeat;
+       padding:0 0 0 0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button )
+{
+       background-image: url(chrome://songbird/skin/tree/button/r.png);
+       background-position:100% -36px;
+       background-repeat:no-repeat;
+       padding:2px 9px 2px 0 ! important;
+       margin:0 0 0 10px ! important;
+       color:black ! important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button selected )
+{
+       color:black ! important;
+}
+
+/* button hover state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover )
+{
+       background-position:0px -18px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover )
+{
+       background-position:100% -18px;
+}
+
+/* button active state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active )
+{
+       background-position:0px 0px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
+{
+       background-position:100% 0px;
+       color:black ! important;
+       padding:3px 9px 1px 0 ! important;
+}
+
+/* button disabled state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button disabled )
+{
+       background-position:0px -54px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled )
+{
+       background-position:100% -54px;
+       color:rgb(160,160,160) !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( image )
+{
+       padding:0 0 0 0 ! important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( image active )
+{
+       padding:1px 0 0 0 ! important;
+}
+
+/* sample code to pretty up the download progress in the playlist tree */
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton )
+{
+       padding:0 ! important;
+       margin:0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
+{
+       background-image:url(chrome://songbird/skin/tree/download/remain.png);
+       border: none !important;
+       background-color:none !important;
+       color:rgb(197,25,49) !important;
+       padding:0 ! important;
+       margin:5px 0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted)
+{
+       background: url(chrome://songbird/skin/tree/download/not_started.png);
+       background-position:left center;
+       background-repeat:repeat-x;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressNotStarted )
+{
+
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressCompleted )
+{
+       background: url(chrome://songbird/skin/tree/download/done.png);
+       background-position:center center;
+       background-repeat:no-repeat;
+}
+
+/* Prevent the download button from appearing in the download playlist */
+.download-playlist .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton button )
+{
+      background-image: none;
+}
+
+.download-playlist .sb-playlist-tree > treechildren::-moz-tree-cell-text( downloadbutton button )
+{
+      background-image: none;
 }
 

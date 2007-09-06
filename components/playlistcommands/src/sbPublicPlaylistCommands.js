@@ -840,8 +840,7 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
     var window = unwrap(aContext.window);
     if(playlist.treeView.selectionCount) {
       onBrowserTransfer(new SelectionUnwrapper(
-                       playlist.treeView.selectedMediaItems), 
-                       window);
+                       playlist.treeView.selectedMediaItems));
     }
     else {
       var allItems = {
@@ -862,7 +861,7 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
         Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
       
       var itemEnum = ArrayConverter.enumerator(allItems.items);
-      onBrowserTransfer(itemEnum, window);
+      onBrowserTransfer(itemEnum);
     }
     
     // And show the download table in the chrome playlist if possible.
@@ -1127,65 +1126,10 @@ function plCmd_False(aContext, aSubMenuId, aCommandId, aHost) {
 
 function onBrowserTransfer(mediaItems, parentWindow)
 {
-    try
-    {
-        deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                    getService(Components.interfaces.sbIDeviceManager);
-        if (deviceManager)
-        {
-            var downloadCategory = 'Songbird Download Device';
-            if (deviceManager.hasDeviceForCategory(downloadCategory))
-            {
-                 var downloadDevice =
-                  deviceManager.getDeviceByCategory(downloadCategory);
-                
-                // Make a magic data object to get passed to the dialog
-                var download_data = new Object();
-                download_data.retval = "";
-                download_data.value = dataRemote("download.folder", null).stringValue;
-                
-                if ( ( dataRemote("download.always", null).intValue == 1 ) && 
-                      ( download_data.value.length > 0 ) )
-                {
-                  download_data.retval = "ok";
-                }
-                else
-                {
-                  // Open the window
-                  parentWindow.
-                    SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", 
-                                       "", 
-                                       "chrome,centerscreen", 
-                                       download_data); 
-                }
-
-                // Pick download destination
-                if ( ( download_data.retval == "ok" ) && 
-                      ( download_data.value.length > 0 ) )
-                {
-                  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                        .getService(Components.interfaces.nsIPrefBranch2);
-                  var downloadListGUID =
-                    prefs.getComplexValue("songbird.library.download",
-                                          Components.interfaces.nsISupportsString);
-                  
-                  var libraryManager =
-                    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                              .getService(Components.interfaces.sbILibraryManager);
-                  var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
-                  
-                  //XXXAus: This can be changed to use SB_AddItems(mediaItems, mainLibrary, true)
-                  //when bug #3271 is fixed.
-                  downloadList.addSome(mediaItems);
-                }
-            }
-        }
-    }
-    
-    catch ( err )
-    {
-        LOG( "onBrowserTransfer: " + err );
-    }
+  var ddh =
+    Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+              .getService(Components.interfaces.sbIDownloadDeviceHelper);
+  ddh.downloadSome(mediaItems);
 }
 
 var g_downloadDevice = null;

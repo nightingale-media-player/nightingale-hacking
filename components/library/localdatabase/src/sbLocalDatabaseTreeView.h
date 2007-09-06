@@ -53,7 +53,9 @@ class sbILibrary;
 class sbIMediaList;
 class sbIMediaListView;
 class sbIPropertyArray;
+class sbIPropertyInfo;
 class sbIPropertyManager;
+class sbITreeViewPropertyInfo;
 class sbLocalDatabaseMediaListView;
 
 class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
@@ -174,6 +176,14 @@ private:
     return mFakeAllRow && aRow == 0;
   }
 
+  inline nsresult GetColumnPropertyInfo(nsITreeColumn* aColumn,
+                                        sbIPropertyInfo** aPropertyInfo);
+
+  nsresult GetPropertyInfoAndCachedValue(PRInt32 aRow,
+                                         nsITreeColumn* aColumn,
+                                         nsAString& aValue,
+                                         sbIPropertyInfo** aPropertyInfo);
+
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
@@ -228,6 +238,11 @@ private:
   // Saved list of selected rows and associated guids used to restore selection
   // between rebuilds
   sbSelectionList mSelectionList;
+
+  // Mouse state
+  PRUint32 mMouseState;
+  PRInt32 mMouseStateRow;
+  nsCOMPtr<nsITreeColumn> mMouseStateColumn;
 
   // True when the everything is selected
   PRPackedBool mSelectionIsAll;

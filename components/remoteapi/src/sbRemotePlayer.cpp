@@ -35,6 +35,7 @@
 #include "sbRemoteWebPlaylist.h"
 #include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
+#include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
@@ -581,11 +582,13 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
   nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem) );
   NS_ENSURE_FALSE( listcheck, NS_ERROR_INVALID_ARG );
 
-  nsCOMPtr<sbIMediaList> downloadList;
-  nsresult rv = GetDownloadList( getter_AddRefs(downloadList) );
-  NS_ENSURE_TRUE( downloadList, rv );
+  nsresult rv;
+  nsCOMPtr<sbIDownloadDeviceHelper> dh =
+    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  downloadList->Add(aItem);
+  rv = dh->DownloadItem(aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -597,14 +600,16 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
 
   NS_ENSURE_ARG_POINTER(aList);
 
-  nsCOMPtr<sbIMediaList> downloadList;
-  nsresult rv = GetDownloadList( getter_AddRefs(downloadList) );
-  NS_ENSURE_TRUE( downloadList, rv );
-
+  nsresult rv;
   nsCOMPtr<sbIMediaList> list (do_QueryInterface(aList, &rv));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  downloadList->AddAll(list);
+  nsCOMPtr<sbIDownloadDeviceHelper> dh =
+    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dh->DownloadAll(list);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -616,153 +621,21 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
 
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
 
-  nsCOMPtr<sbIMediaList> downloadList;
-  nsresult rv = GetDownloadList( getter_AddRefs(downloadList) );
-  NS_ENSURE_TRUE( downloadList, rv );
-
   nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
+  nsresult rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
                                  new sbUnwrappingSimpleEnumerator(selection) );
   NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
 
-  downloadList->AddSome(wrapper);
+  nsCOMPtr<sbIDownloadDeviceHelper> dh =
+    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
+  rv = dh->DownloadSome(wrapper);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-// Moving to download device in bug 3521 - will remove in follow-up bug
-nsresult
-sbRemotePlayer::GetDownloadLocation( nsAString &aLocation, PRBool &aAlways )
-{
-  // check for a download folder location
-  nsresult rv;
-  nsCOMPtr<sbIDataRemote> dlFolderRemote =
-    do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = dlFolderRemote->Init( NS_LITERAL_STRING("download.folder"),
-                             SB_PREFS_ROOT );
-  dlFolderRemote->GetStringValue(aLocation);
-
-  // check to see if we always download to the folder
-  nsCOMPtr<sbIDataRemote> dlAlwaysRemote =
-    do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = dlAlwaysRemote->Init( NS_LITERAL_STRING("download.always"),
-                             SB_PREFS_ROOT );
-  dlAlwaysRemote->GetBoolValue(&aAlways);
-
-  return rv;
-}
-
-// Moving to download device in bug 3521 - will remove in follow-up bug
-PRBool
-sbRemotePlayer::LaunchDownloadDialog( nsAString &aLocation )
-{
-  LOG(("sbRemotePlayer::LaunchDownloadDialog()"));
-
-  // get a parameter block to get return value
-  nsresult rv;
-  nsCOMPtr<nsIDialogParamBlock> ioParamBlock(
-    do_CreateInstance( "@mozilla.org/embedcomp/dialogparam;1", &rv ) );
-  NS_ENSURE_SUCCESS( rv, PR_FALSE );
-
-  // find out if we need to add the titlebar from the accessibility pref
-  nsCOMPtr<sbIDataRemote> accEnabledRemote =
-    do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
-  NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  rv = accEnabledRemote->Init( NS_LITERAL_STRING("accessibility.enabled"),
-                               SB_PREFS_ROOT );
-  PRBool wantTitlebar;
-  accEnabledRemote->GetBoolValue(&wantTitlebar);
-
-  // set the string for the chrome features
-  nsCAutoString chromeFeatures = NS_LITERAL_CSTRING("centerscreen,chrome,modal");
-  if (wantTitlebar)
-    chromeFeatures += ",titlebar";
-
-  nsCOMPtr<nsIDOMWindow> window;
-  nsCOMPtr<nsIWindowWatcher> windowWatcher(
-    do_GetService( NS_WINDOWWATCHER_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS( rv, PR_FALSE );
-
-  rv = windowWatcher->OpenWindow( nsnull,
-                                  "chrome://songbird/content/xul/download.xul",
-                                  nsnull,
-                                  chromeFeatures.get(),
-                                  ioParamBlock,
-                                  getter_AddRefs(window) );
-  NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  LOG(("sbRemotePlayer::LaunchDownloadDialog() -- returned from dialog "));
-
-  PRInt32 buttonPressed = 0;
-  nsString location;
-  ioParamBlock->GetInt( 0, &buttonPressed );
-  ioParamBlock->GetString( 0, getter_Copies(location) );
-  aLocation = location;
-  return ( buttonPressed ? PR_TRUE : PR_FALSE );
-}
-
-// Moving to download device in bug 3521 - will remove in follow-up bug
-nsresult
-sbRemotePlayer::GetDownloadList( sbIMediaList **aMediaList ) {
-  LOG(("sbRemotePlayer::GetDownloadList()"));
-
-  nsAutoString folder;
-  PRBool always;
-  nsresult rv = GetDownloadLocation( folder, always );
-
-  PRBool dialogRetval = PR_TRUE;
-  if ( folder.IsEmpty() || !always ) {
-    dialogRetval = LaunchDownloadDialog( folder );
-  }
-
-  LOG(( "sbRemotePlayer::GetDownloadList() -- folder: %s",
-        NS_LossyConvertUTF16toASCII(folder).get() ));
-
-  // If the user cancelled things are OK, but no list
-  if (!dialogRetval) {
-    return NS_OK;
-  }
-
-  // go to prefs and get the GUID for the download list
-  nsCOMPtr<nsIPrefBranch> prefService =
-    do_GetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  nsCOMPtr<nsISupportsString> prefValue;
-  rv = prefService->GetComplexValue( "songbird.library.download",
-                                     NS_GET_IID(nsISupportsString),
-                                     getter_AddRefs(prefValue) );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  nsString downloadListGUID;
-  prefValue->ToString( getter_Copies(downloadListGUID) );
-  LOG(( "sbRemotePlayer::GetDownloadList() -- GUID: %s",
-        NS_LossyConvertUTF16toASCII(downloadListGUID).get() ));
-
-  // get the library manager
-  nsCOMPtr<sbILibraryManager> libraryManager(
-    do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  // downloads currently only go to the main library, get it
-  nsCOMPtr<sbILibrary> mainLibrary;
-  rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLibrary));
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  // get the download list
-  nsCOMPtr<sbIMediaItem> item;
-  rv = mainLibrary->GetMediaItem( downloadListGUID, getter_AddRefs(item) );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  // QI to medialist
-  nsCOMPtr<sbIMediaList> downloadList (do_QueryInterface(item, &rv) );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  NS_IF_ADDREF( *aMediaList = downloadList );
   return NS_OK;
 }
 

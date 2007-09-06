@@ -239,6 +239,14 @@ try
           var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
           playlist.bind(view, cmds);
 
+          // If this is the download playlist, add a class so we can style
+          // it differently
+          var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                              .getService(Components.interfaces.sbIDownloadDeviceHelper);
+          if (ddh.downloadMediaList.equals(mediaList)) {
+            playlist.className += " download-playlist";
+          }
+
           // Listen for changes to library or media list
           SBLPListener.initialize(library, mediaList);
         }

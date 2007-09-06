@@ -24,7 +24,8 @@
 //
 */
 
-Components.utils.import("resource://app/components/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
 var Ci = Components.interfaces;
 var Cc = Components.classes;
@@ -91,7 +92,7 @@ function sbAutoDownloader() {
 }
 sbAutoDownloader.prototype._libraryManager = null;
 sbAutoDownloader.prototype._library = null;
-sbAutoDownloader.prototype._playlist = null;
+sbAutoDownloader.prototype._helper = null;
 sbAutoDownloader.prototype._queue = [];
 sbAutoDownloader.prototype._timer = null;
 
@@ -140,15 +141,9 @@ function sbAutoDownloader_observe(subject, topic, data) {
     // watch for added items
     this._library.addListener(this, false,
         Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED);
-    
-    // find the download playlist
-    var prefs = Cc['@mozilla.org/preferences-service;1']
-        .getService(Ci.nsIPrefBranch);
-    var playlistName = prefs.getCharPref('songbird.library.download');
-    this._playlist = this._library.getMediaItem(playlistName)
-        .QueryInterface(Ci.sbIMediaList);
-    DEBUG(this._playlist.toString());
 
+    this._helper = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                     .getService(Ci.sbIDownloadDeviceHelper);
 
   } else if (topic == "songbird-library-manager-before-shutdown") {
     obs.removeObserver(this, "songbird-library-manager-before-shutdown");
@@ -163,11 +158,12 @@ function sbAutoDownloader_observe(subject, topic, data) {
   } else if (topic == 'timer-callback') {
     while (this._queue.length) {
       var item = this._queue.shift();
-      if (this._playlist.contains(item)) {
+      var playlist = this._helper.downloadMediaList;
+      if (playlist.contains(item)) {
         // it's already in the download playlist
         continue;
       }
-      this._playlist.add(item);
+      this._helper.downloadItem(item);
     }
     this._clearTimer();
   }
@@ -181,9 +177,12 @@ sbAutoDownloader.prototype.onItemAdded =
 function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
   DEBUG();
   if (aMediaItem.contentSrc.scheme.match(/^http/)) {
-    this._queue.push(aMediaItem);
-    if (!this._timer) {
-      this._setUpTimer();
+    // XXXsteve Don't download items explicitly added by the download helper
+    if (aMediaItem.getProperty(SBProperties.downloadStatusTarget) == null) {
+      this._queue.push(aMediaItem);
+      if (!this._timer) {
+        this._setUpTimer();
+      }
     }
   }
 }

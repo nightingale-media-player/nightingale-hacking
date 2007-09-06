@@ -26,17 +26,18 @@
 
 #include "nsIGenericFactory.h"
 
+#include "sbBooleanPropertyInfo.h"
+#include "sbDatetimePropertyInfo.h"
+#include "sbDownloadButtonPropertyBuilder.h"
+#include "sbImagePropertyBuilder.h"
+#include "sbNumberPropertyInfo.h"
 #include "sbPropertyArray.h"
 #include "sbPropertyFactory.h"
 #include "sbPropertyManager.h"
-
-#include "sbDatetimePropertyInfo.h"
-#include "sbNumberPropertyInfo.h"
-#include "sbProgressPropertyInfo.h"
+#include "sbRatingPropertyBuilder.h"
+#include "sbSimpleButtonPropertyBuilder.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
-#include "sbButtonPropertyInfo.h"
-#include "sbBooleanPropertyInfo.h"
 
 #include "sbPropertiesCID.h"
 
@@ -47,11 +48,13 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDatetimePropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbProgressPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbButtonPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbBooleanPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSimpleButtonPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImagePropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRatingPropertyBuilder, Init);
 
 static const nsModuleComponentInfo components[] =
 {
@@ -60,7 +63,7 @@ static const nsModuleComponentInfo components[] =
     SB_MUTABLEPROPERTYARRAY_CID,
     SB_MUTABLEPROPERTYARRAY_CONTRACTID,
     sbPropertyArrayConstructor
-	},  
+	},
 	{
     SB_PROPERTYFACTORY_DESCRIPTION,
     SB_PROPERTYFACTORY_CID,
@@ -99,28 +102,40 @@ static const nsModuleComponentInfo components[] =
     sbTextPropertyInfoConstructor
   },
   {
-    SB_PROGRESSPROPERTYINFO_DESCRIPTION,
-    SB_PROGRESSPROPERTYINFO_CID,
-    SB_PROGRESSPROPERTYINFO_CONTRACTID,
-    sbProgressPropertyInfoConstructor
-  },
-  {
     SB_URIPROPERTYINFO_DESCRIPTION,
     SB_URIPROPERTYINFO_CID,
     SB_URIPROPERTYINFO_CONTRACTID,
     sbURIPropertyInfoConstructor
   },
   {
-    SB_BUTTONPROPERTYINFO_DESCRIPTION,
-    SB_BUTTONPROPERTYINFO_CID,
-    SB_BUTTONPROPERTYINFO_CONTRACTID,
-    sbButtonPropertyInfoConstructor
-  },
-  {
     SB_BOOLEANPROPERTYINFO_DESCRIPTION,
     SB_BOOLEANPROPERTYINFO_CID,
     SB_BOOLEANPROPERTYINFO_CONTRACTID,
     sbBooleanPropertyInfoConstructor
+  },
+  {
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_DESCRIPTION,
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_CID,
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID,
+    sbDownloadButtonPropertyBuilderConstructor
+  },
+  {
+    SB_SIMPLEBUTTONPROPERTYBUILDER_DESCRIPTION,
+    SB_SIMPLEBUTTONPROPERTYBUILDER_CID,
+    SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID,
+    sbSimpleButtonPropertyBuilderConstructor
+  },
+  {
+    SB_IMAGEPROPERTYBUILDER_DESCRIPTION,
+    SB_IMAGEPROPERTYBUILDER_CID,
+    SB_IMAGEPROPERTYBUILDER_CONTRACTID,
+    sbImagePropertyBuilderConstructor
+  },
+  {
+    SB_RATINGPROPERTYBUILDER_DESCRIPTION,
+    SB_RATINGPROPERTYBUILDER_CID,
+    SB_RATINGPROPERTYBUILDER_CONTRACTID,
+    sbRatingPropertyBuilderConstructor
   },
 };
 

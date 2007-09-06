@@ -30,7 +30,9 @@
  */
 
 #include "nsISupports.idl"
+
 interface nsIStringEnumerator;
+interface nsITreeColumn;
 
 /**
  * \interface sbILocalDatabaseTreeView
@@ -39,9 +41,17 @@ interface nsIStringEnumerator;
 [scriptable, uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]
 interface sbILocalDatabaseTreeView : nsISupports
 {
+  const unsigned long MOUSE_STATE_NONE  = 0;
+  const unsigned long MOUSE_STATE_HOVER = 1;
+  const unsigned long MOUSE_STATE_DOWN  = 2;
+
   readonly attribute boolean selectionChanging;
   void setSort(in AString aProperty, in boolean aDirection);
 
   void invalidateRowsByGuid(in AString aGuid);
+
+  void setMouseState(in long aRow,
+                     in nsITreeColumn aColumn,
+                     in unsigned long aState);
 };
 

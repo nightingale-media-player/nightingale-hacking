@@ -95,7 +95,9 @@ endif
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
                            
-JS_COMPONENTS = $(srcdir)/sbAutoDownloader.js
+JS_COMPONENTS = $(srcdir)/sbAutoDownloader.js \
+                $(srcdir)/sbDownloadDeviceHelper.js \
+                $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(JS_COMPONENTS)
 

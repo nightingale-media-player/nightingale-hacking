@@ -61,16 +61,11 @@ NS_IMETHOD GetUserViewable(PRBool *aUserViewable) { return _to GetUserViewable(a
 NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
 NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
 NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
-NS_IMETHOD GetDisplayUsingSimpleType(nsAString & aDisplayUsingSimpleType) { return _to GetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
-NS_IMETHOD SetDisplayUsingSimpleType(const nsAString & aDisplayUsingSimpleType) { return _to SetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
-NS_IMETHOD GetDisplayUsingXBLWidget(nsIURI * *aDisplayUsingXBLWidget) { return _to GetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \
-NS_IMETHOD SetDisplayUsingXBLWidget(nsIURI * aDisplayUsingXBLWidget) { return _to SetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \
 NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
 NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
-NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
-NS_IMETHOD GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval) { return _to GetDisplayPropertiesForValue(aValue, _retval); }
+NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
@@ -126,12 +121,6 @@ protected:
 
   PRLock*   mUserEditableLock;
   PRBool    mUserEditable;
-
-  PRLock*   mDisplayUsingSimpleTypeLock;
-  nsString  mDisplayUsingSimpleType;
-  
-  PRLock*          mDisplayUsingXBLWidgetLock;
-  nsCOMPtr<nsIURI> mDisplayUsingXBLWidget;
 
   PRLock*   mUnitsLock;
   nsString  mUnits;

@@ -72,7 +72,6 @@
 #include <sbIPropertyManager.h>
 #include <sbStandardProperties.h>
 
-
 /* *****************************************************************************
  *
  * Download device configuration.
@@ -109,7 +108,7 @@
 #define SB_DOWNLOAD_COL_SPEC SB_PROPERTY_TRACKNAME " 395 "                     \
                              SB_PROPERTY_ARTISTNAME " 222 "                    \
                              SB_PROPERTY_ALBUMNAME " 222 "                     \
-                             SB_PROPERTY_PROGRESSVALUE
+                             SB_PROPERTY_DOWNLOADBUTTON
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
@@ -760,21 +759,15 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         if (NS_SUCCEEDED(result1))
             result1 = SetTransferDestination(pMediaItem);
 
-        /* Initialize the download progress property. */
+        /* Update the download button property to reflect the stating state. */
         if (NS_SUCCEEDED(result1))
         {
-            result1 = pMediaItem->SetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                                 NS_LITERAL_STRING("-1"));
-        }
-        if (NS_SUCCEEDED(result1))
-        {
-            nsString                    progressModeStr;
-
-            progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
-            result1 = pMediaItem->SetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
-                                 progressModeStr);
+            nsCOMPtr<sbIMediaItem> statusTarget;
+            nsresult rv = GetStatusTarget(pMediaItem,
+                                          getter_AddRefs(statusTarget));
+            NS_ENSURE_SUCCESS(rv, rv);
+            sbAutoDownloadButtonPropertyValue property(pMediaItem, statusTarget);
+            property.value->SetMode(sbDownloadButtonPropertyValue::eStarting);
         }
 
         /* Add it to the transfer queue. */
@@ -861,6 +854,19 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
                                                   pMediaItem);
             if (NS_SUCCEEDED(result1))
                 itemCount++;
+        }
+
+        /* Reset the status target to new */
+        if (NS_SUCCEEDED(result))
+        {
+          nsCOMPtr<sbIMediaItem> statusTarget;
+          nsresult rv = GetStatusTarget(pMediaItem,
+                                        getter_AddRefs(statusTarget));
+          NS_ENSURE_SUCCESS(rv, rv);
+          sbAutoDownloadButtonPropertyValue property(pMediaItem, statusTarget);
+          if (property.value->GetMode() != sbDownloadButtonPropertyValue::eComplete) {
+            property.value->SetMode(sbDownloadButtonPropertyValue::eNew);
+          }
         }
 
         /* Check if current session should be deleted. */
@@ -1367,8 +1373,6 @@ PRBool sbDownloadDevice::GetNextTransferItem(
 nsresult sbDownloadDevice::ResumeTransfers()
 {
     nsCOMPtr<sbIMediaItem>      pMediaItem;
-    nsString                    progressStr;
-    PRInt32                     progress;
     PRUint32                    itemCount;
     PRUint32                    queuedCount = 0;
     PRUint32                    i;
@@ -1383,22 +1387,13 @@ nsresult sbDownloadDevice::ResumeTransfers()
         /* Get the next item. */
         itemResult = mpDownloadMediaList->GetItemByIndex
                                           (i, getter_AddRefs(pMediaItem));
+        NS_ENSURE_SUCCESS(itemResult, itemResult);
 
-        /* Get the download progress. */
-        if (NS_SUCCEEDED(itemResult))
-        {
-            itemResult = pMediaItem->GetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                                 progressStr);
-            if (NS_SUCCEEDED(itemResult) && progressStr.IsEmpty())
-                itemResult = NS_ERROR_FAILURE;
-        }
-        if (NS_SUCCEEDED(itemResult))
-            progress = progressStr.ToInteger(&itemResult);
+        sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
 
         /* Add item to transfer queue if not complete. */
-        if (NS_SUCCEEDED(itemResult) && (progress < 101))
-        {
+        if (property.value->GetMode() != sbDownloadButtonPropertyValue::eComplete) {
+
             nsAutoMonitor mon(mpDeviceMonitor);
             itemResult = AddItemToTransferQueue
                             (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
@@ -1406,6 +1401,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
             if (NS_SUCCEEDED(itemResult))
                 queuedCount++;
         }
+
     }
 
     /* Run the transfer queue if any items were queued. */
@@ -1426,8 +1422,6 @@ nsresult sbDownloadDevice::ResumeTransfers()
 nsresult sbDownloadDevice::ClearCompletedItems()
 {
     nsCOMPtr<sbIMediaItem>      pMediaItem;
-    nsString                    progressStr;
-    PRInt32                     progress = -1;
     PRUint32                    itemCount;
     PRInt32                     i;
     nsresult                    itemResult;
@@ -1443,31 +1437,21 @@ nsresult sbDownloadDevice::ClearCompletedItems()
             /* Get the next item. */
             itemResult = mpDownloadMediaList->GetItemByIndex
                                                 (i, getter_AddRefs(pMediaItem));
+            NS_ENSURE_SUCCESS(itemResult, itemResult);
 
-            /* Get the download progress.  If the progress has not been set, */
-            /* the item has not been processed yet for download, so skip it. */
-            if (NS_SUCCEEDED(itemResult))
-            {
-                itemResult = pMediaItem->GetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                                 progressStr);
-                if (NS_FAILED(itemResult) || progressStr.IsEmpty())
-                    continue;
-            }
-            if (NS_SUCCEEDED(itemResult))
-                progress = progressStr.ToInteger(&itemResult);
-
+            sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
             /* Remove item from download device library if complete. */
-            if (NS_SUCCEEDED(itemResult) && (progress == 101))
+            if (property.value->GetMode() == sbDownloadButtonPropertyValue::eComplete) {
             {
                 mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
                 itemResult = mpDownloadMediaList->Remove(pMediaItem);
                 mpDeviceLibraryListener->SetIgnoreListener(PR_FALSE);
             }
 
-            /* Warn if item could not be removed. */
-            if (NS_FAILED(itemResult))
-                NS_WARNING("Failed to remove completed download item.\n");
+                /* Warn if item could not be removed. */
+                if (NS_FAILED(itemResult))
+                    NS_WARNING("Failed to remove completed download item.\n");
+            }
         }
     }
 
@@ -1848,6 +1832,50 @@ nsresult sbDownloadDevice::OpenDialog(
 }
 
 
+/* static */ nsresult sbDownloadDevice::GetStatusTarget(
+    sbIMediaItem                *apMediaItem,
+    sbIMediaItem                **apStatusTarget)
+{
+    NS_ASSERTION(apMediaItem, "apMediaItem is null");
+    NS_ASSERTION(apStatusTarget, "apStatusTaret is null");
+
+    nsresult rv;
+    nsString target;
+    rv = apMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
+                                  target);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRInt32 pos = target.FindChar(',');
+    if (pos >= 0) {
+        nsDependentSubstring libraryGuid(target, 0, pos);
+        nsDependentSubstring mediaItemGuid(target, pos + 1);
+
+        nsCOMPtr<sbILibraryManager> libraryManager =
+          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbILibrary> library;
+        rv = libraryManager->GetLibrary(libraryGuid, getter_AddRefs(library));
+        if (rv != NS_ERROR_NOT_AVAILABLE) {
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = library->GetItemByGuid(mediaItemGuid, apStatusTarget);
+            if (rv != NS_ERROR_NOT_AVAILABLE) {
+                NS_ENSURE_SUCCESS(rv, rv);
+            }
+            else {
+                NS_WARNING("Status target media item not found");
+                *apStatusTarget = nsnull;
+            }
+        }
+        else {
+            NS_WARNING("Status target library not found");
+            *apStatusTarget = nsnull;
+        }
+    }
+
+    return NS_OK;
+}
+
+
 /* *****************************************************************************
  *******************************************************************************
  *
@@ -1885,7 +1913,6 @@ sbDownloadSession::sbDownloadSession(
     mpMediaItem(pMediaItem),
     mpSessionLock(nsnull),
     mpDownloadDevice(pDownloadDevice),
-    mCurrentProgress(-1),
     mShutdown(PR_FALSE),
     mSuspended(PR_FALSE)
 {
@@ -1935,10 +1962,11 @@ nsresult sbDownloadSession::Initiate()
     /* Get the IO and file protocol services. */
     mpIOService = do_GetService("@mozilla.org/network/io-service;1",
                                 &result);
+
     if (NS_SUCCEEDED(result))
     {
-        mpFileProtocolHandler = do_CreateInstance
-                                ("@mozilla.org/network/protocol;1?name=file",
+        pLibraryManager = do_GetService
+                                ("@songbirdnest.com/Songbird/library/Manager;1",
                                  &result);
     }
 
@@ -1973,7 +2001,13 @@ nsresult sbDownloadSession::Initiate()
                because it's origin cannot be tracked!");
         }
     }
-    
+
+    /* Get the status target, if any */
+    if (NS_SUCCEEDED(result)) {
+      result = sbDownloadDevice::GetStatusTarget(mpMediaItem,
+                                                 getter_AddRefs(mpStatusTarget));
+    }
+
     /* Get the destination download (directory) URI. */
     if (NS_SUCCEEDED(result))
     {
@@ -2009,12 +2043,6 @@ nsresult sbDownloadSession::Initiate()
     }
 
     /* Get the destination library. */
-    if (NS_SUCCEEDED(result))
-    {
-        pLibraryManager = do_GetService
-                                ("@songbirdnest.com/Songbird/library/Manager;1",
-                                 &result);
-    }
     if (NS_SUCCEEDED(result))
         result = pLibraryManager->GetMainLibrary(getter_AddRefs(mpDstLibrary));
 
@@ -2069,6 +2097,10 @@ nsresult sbDownloadSession::Suspend()
           result = mpRequest->Suspend();
       if (NS_SUCCEEDED(result))
           mSuspended = PR_TRUE;
+
+      sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+      property.value->SetMode(sbDownloadButtonPropertyValue::ePaused);
+
     }
 
     return (result);
@@ -2097,6 +2129,9 @@ nsresult sbDownloadSession::Resume()
           result = mpRequest->Resume();
       if (NS_SUCCEEDED(result))
           mSuspended = PR_FALSE;
+
+      sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+      property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
     }
 
     return (result);
@@ -2112,6 +2147,16 @@ nsresult sbDownloadSession::Resume()
 void sbDownloadSession::Shutdown()
 {
     TRACE(("sbDownloadSession[0x%.8x] - Shutdown", this));
+
+    // If shutdown is called, this means the library is shutting down and
+    // we shouldn't be touching the library any more
+    mpMediaItem = nsnull;
+
+    // If there is no lock, this download was never fully initalized so exit
+    // early
+    if (!mpSessionLock) {
+      return;
+    }
 
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
@@ -2131,9 +2176,6 @@ void sbDownloadSession::Shutdown()
       mpWebBrowser = nsnull;
     }
 
-    // If shutdown is called, this means the library is shutting down and
-    // we shouldn't be touching the library any more
-    mpMediaItem = nsnull;
 }
 
 
@@ -2186,8 +2228,6 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
            "aStateFlags 0x%.8x aStatus 0x%.8x",
            this, aWebProgress, aRequest, aStateFlags, aStatus));
 
-    nsString                    currentProgressStr;
-    nsString                    progressModeStr;
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
@@ -2235,13 +2275,8 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             result = CompleteTransfer(aRequest);
 
         /* Set the progress to complete. */
-        mCurrentProgress = 101;
-        currentProgressStr.AppendInt(mCurrentProgress);
-        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                                 currentProgressStr);
-        progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
-        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
-                                 progressModeStr);
+        sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+        property.value->SetMode(sbDownloadButtonPropertyValue::eComplete);
     }
 
     /* Send notification of session completion.  Do this */
@@ -2630,26 +2665,10 @@ void sbDownloadSession::UpdateProgress(
     PRUint64                    aProgress,
     PRUint64                    aProgressMax)
 {
-    PRInt64                     progressPct;
-    nsString                    currentProgressStr;
-    nsString                    progressModeStr;
-
-    /* Compute the download progress.  Save the   */
-    /* last percent for download post-processing. */
-    progressPct = (100 * aProgress) / aProgressMax;
-
-    /* Update download progress if it has changed. */
-    if (progressPct != mCurrentProgress)
-    {
-        /* Update the download progress. */
-        mCurrentProgress = progressPct;
-        currentProgressStr.AppendInt(mCurrentProgress);
-        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                                 currentProgressStr);
-        progressModeStr.AppendInt(nsITreeView::PROGRESS_NORMAL);
-        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
-                                 progressModeStr);
-    }
+    sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+    property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
+    property.value->SetCurrent(aProgress);
+    property.value->SetTotal(aProgressMax);
 }
 
 
@@ -2834,4 +2853,42 @@ NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationEnd(
     return (result);
 }
 
+sbAutoDownloadButtonPropertyValue::sbAutoDownloadButtonPropertyValue(sbIMediaItem* aMediaItem,
+                                                                     sbIMediaItem* aStatusTarget,
+                                                                     PRBool aReadOnly) :
+  value(nsnull),
+  mMediaItem(aMediaItem),
+  mStatusTarget(aStatusTarget),
+  mReadOnly(aReadOnly)
+{
+  NS_ASSERTION(mMediaItem, "mMediaItem is null");
+
+  MOZ_COUNT_CTOR(sbAutoDownloadButtonPropertyValue);
+
+  nsString propertyValue;
+  mMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON),
+                          propertyValue);
+  value = new sbDownloadButtonPropertyValue(propertyValue);
+  NS_ASSERTION(value, "value is null");
+}
+
+sbAutoDownloadButtonPropertyValue::~sbAutoDownloadButtonPropertyValue()
+{
+  if (!mReadOnly && value) {
+    nsString propertyValue;
+    value->GetValue(propertyValue);
+
+    nsresult rv;
+    rv = mMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON),
+                                 propertyValue);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "SetProperty failed");
+
+    if (mStatusTarget) {
+      rv = mStatusTarget->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON),
+                                      propertyValue);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "SetProperty failed");
+    }
+  }
+  MOZ_COUNT_DTOR(sbAutoDownloadButtonPropertyValue);
+}
 

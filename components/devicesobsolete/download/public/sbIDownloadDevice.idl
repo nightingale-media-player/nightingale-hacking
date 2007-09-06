@@ -33,6 +33,10 @@
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
+interface sbIMediaItem;
+interface sbIMediaList;
+interface nsISimpleEnumerator;
+
 /**
  * \interface sbIDownloadDevice
  *
@@ -46,3 +50,16 @@
 interface sbIDownloadDevice : sbIDeviceBase
 {
 };
+
+[scriptable, uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]
+interface sbIDownloadDeviceHelper : nsISupports
+{
+  readonly attribute sbIMediaList downloadMediaList;
+
+  void downloadItem(in sbIMediaItem aMediaItem);
+
+  void downloadSome(in nsISimpleEnumerator aMediaItems);
+
+  void downloadAll(in sbIMediaList aMediaList);
+};
+

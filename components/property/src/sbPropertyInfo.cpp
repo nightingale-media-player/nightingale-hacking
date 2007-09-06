@@ -101,8 +101,6 @@ sbPropertyInfo::sbPropertyInfo()
 , mUserEditableLock(nsnull)
 , mUserEditable(PR_TRUE)
 , mDisplayNameLock(nsnull)
-, mDisplayUsingSimpleTypeLock(nsnull)
-, mDisplayUsingXBLWidgetLock(nsnull)
 , mUnitsLock(nsnull)
 , mOperatorsLock(nsnull)
 , mRemoteReadableLock(nsnull)
@@ -131,14 +129,6 @@ sbPropertyInfo::sbPropertyInfo()
   mUserEditableLock = PR_NewLock();
   NS_ASSERTION(mUserEditableLock, 
     "sbPropertyInfo::mUserEditableLock failed to create lock!");
-
-  mDisplayUsingSimpleTypeLock = PR_NewLock();
-  NS_ASSERTION(mDisplayUsingSimpleTypeLock, 
-    "sbPropertyInfo::mDisplayUsingSimpleTypeLock failed to create lock!");
-
-  mDisplayUsingXBLWidgetLock = PR_NewLock();
-  NS_ASSERTION(mDisplayUsingXBLWidgetLock, 
-    "sbPropertyInfo::mDisplayUsingXBLWidgetLock failed to create lock!");
 
   mUnitsLock = PR_NewLock();
   NS_ASSERTION(mUnitsLock, 
@@ -181,14 +171,6 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mUserEditableLock) {
     PR_DestroyLock(mUserEditableLock);
-  }
-
-  if(mDisplayUsingSimpleTypeLock) {
-    PR_DestroyLock(mDisplayUsingSimpleTypeLock);
-  }
-
-  if(mDisplayUsingXBLWidgetLock) {
-    PR_DestroyLock(mDisplayUsingXBLWidgetLock);
   }
 
   if(mUnitsLock) {
@@ -398,56 +380,6 @@ NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetDisplayUsingSimpleType(nsAString & aDisplayUsingSimpleType)
-{
-  nsAutoLock lock(mDisplayUsingSimpleTypeLock);
-  aDisplayUsingSimpleType = mDisplayUsingSimpleType;
-  return NS_OK;
-}
-NS_IMETHODIMP sbPropertyInfo::SetDisplayUsingSimpleType(const nsAString &aDisplayUsingSimpleType)
-{
-  nsAutoLock lock(mDisplayUsingSimpleTypeLock);
-
-  if(mDisplayUsingSimpleType.IsEmpty()) {
-    mDisplayUsingSimpleType = aDisplayUsingSimpleType;
-    return NS_OK;
-  }
-
-  return NS_ERROR_ALREADY_INITIALIZED;
-}
-
-NS_IMETHODIMP sbPropertyInfo::GetDisplayUsingXBLWidget(nsIURI * *aDisplayUsingXBLWidget)
-{
-  NS_ENSURE_ARG_POINTER(aDisplayUsingXBLWidget);
-  *aDisplayUsingXBLWidget = nsnull;
-  
-  nsAutoLock lock(mDisplayUsingXBLWidgetLock);
-  if(mDisplayUsingXBLWidget) {
-    
-  }
-    
-  return NS_OK;
-}
-NS_IMETHODIMP sbPropertyInfo::SetDisplayUsingXBLWidget(nsIURI *aDisplayUsingXBLWidget)
-{
-  nsAutoLock lock(mDisplayUsingXBLWidgetLock);
-
-  if(!mDisplayUsingXBLWidget) {
-    PRBool isChromeURI = PR_FALSE;
-    nsresult rv = aDisplayUsingXBLWidget->SchemeIs("chrome", &isChromeURI);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if(isChromeURI) {
-      mDisplayUsingXBLWidget = aDisplayUsingXBLWidget;
-      return NS_OK;
-    }
-    
-    return NS_ERROR_INVALID_ARG;
-  }
-
-  return NS_ERROR_ALREADY_INITIALIZED;
-}
-
 NS_IMETHODIMP sbPropertyInfo::GetUnits(nsAString & aUnits)
 {
   nsAutoLock lock(mUnitsLock);
@@ -537,12 +469,6 @@ NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString &
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
 NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteReadable);
@@ -578,3 +504,4 @@ NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
   
   return NS_OK;
 }
+

@@ -1,0 +1,56 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbITreeViewPropertyInfo.idl
+ * \brief Definition of the sbITreeViewPropertyInfo interface
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+/**
+* \interface sbITreeViewPropertyInfo
+* \sa sbIPropertyInfo
+*/
+[scriptable, uuid(c846f7ce-fcac-4d6a-a1d7-615d63c04c5e)]
+interface sbITreeViewPropertyInfo : nsISupports
+{
+  readonly attribute AString columnType;
+
+  AString getImageSrc(in AString aValue);
+
+  long getProgressMode(in AString aValue);
+
+  AString getCellValue(in AString aValue);
+
+  AString getColumnProperties(in AString aValue);
+
+  AString getRowProperties(in AString aValue);
+
+  AString getCellProperties(in AString aValue);
+};
+

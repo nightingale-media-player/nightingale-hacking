@@ -110,29 +110,9 @@ private:
                        PRBool aRemoteReadable,
                        PRBool aRemoteWritable);
 
-  nsresult RegisterCheckbox(const nsAString& aPropertyName,
-                            const nsAString& aDisplayKey,
-                            nsIStringBundle* aStringBundle,
-                            PRBool aUserViewable,
-                            PRBool aUserEditable,
-                            PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
-
-  nsresult RegisterRatingProperty(nsIStringBundle* aStringBundle,
-                                  PRBool aRemoteReadable,
-                                  PRBool aRemoteWritable);
-
-  nsresult RegisterButton(const nsAString& aPropertyName,
-                          const nsAString& aDisplayKey,
-                          nsIStringBundle* aStringBundle,
-                          const nsAString& aLabel,
-                          PRBool aRemoteReadable,
-                          PRBool aRemoteWritable);
-  
   nsresult SetRemoteAccess(sbIPropertyInfo* aProperty,
                            PRBool aRemoteReadable,
                            PRBool aRemoteWritable);
-
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
   

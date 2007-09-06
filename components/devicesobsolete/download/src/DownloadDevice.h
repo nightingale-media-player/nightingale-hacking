@@ -82,6 +82,7 @@
 #include <prmon.h>
 
 /* Songbird imports. */
+#include <sbDownloadButtonPropertyInfo.h>
 #include <sbIDataRemote.h>
 #include <sbILibrary.h>
 #include <sbIMetadataJobManager.h>
@@ -212,6 +213,10 @@ class sbDownloadDevice : public nsIObserver,
     nsresult OpenDialog(
         char                        *aChromeURL,
         nsIDialogParamBlock         *apDialogPB);
+
+    static nsresult GetStatusTarget(
+        sbIMediaItem                *apMediaItem,
+        sbIMediaItem                **apStatusTarget);
 };
 
 
@@ -311,7 +316,6 @@ class sbDownloadSession : public nsIWebProgressListener
      * mpDstLibrary             Destination library.
      * mpDstFile                Destination download file.
      * mpDstURI                 Destination download URI.
-     * mCurrentProgress         Current progress of download.
      * mShutdown                True if session has been shut down.
      * mSuspended               True if session is suspended.
      */
@@ -319,8 +323,6 @@ class sbDownloadSession : public nsIWebProgressListener
     PRLock                      *mpSessionLock;
     sbDownloadDevice            *mpDownloadDevice;
     nsCOMPtr<nsIIOService>      mpIOService;
-    nsCOMPtr<nsIFileProtocolHandler>
-                                mpFileProtocolHandler;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
     nsCOMPtr<nsIRequest>        mpRequest;
@@ -328,7 +330,7 @@ class sbDownloadSession : public nsIWebProgressListener
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
     nsCOMPtr<nsIURI>            mpDstURI;
-    int                         mCurrentProgress;
+    nsCOMPtr<sbIMediaItem>      mpStatusTarget;
     PRBool                      mShutdown;
     PRBool                      mSuspended;
 
@@ -344,7 +346,6 @@ class sbDownloadSession : public nsIWebProgressListener
     void UpdateProgress(
         PRUint64                    aProgress,
         PRUint64                    aProgressMax);
-
 
     /* *************************************************************************
      *
@@ -409,5 +410,20 @@ class sbDownloadSession : public nsIWebProgressListener
     };
 };
 
+class sbAutoDownloadButtonPropertyValue
+{
+public:
+  sbAutoDownloadButtonPropertyValue(sbIMediaItem* aMediaItem,
+                                    sbIMediaItem* aStatusTarget = nsnull,
+                                    PRBool aReadOnly = PR_FALSE);
+  ~sbAutoDownloadButtonPropertyValue();
+
+  nsAutoPtr<sbDownloadButtonPropertyValue> value;
+
+private:
+  nsCOMPtr<sbIMediaItem> mMediaItem;
+  nsCOMPtr<sbIMediaItem> mStatusTarget;
+  PRBool mReadOnly;
+};
 
 #endif // __DOWNLOAD_DEVICE_H__

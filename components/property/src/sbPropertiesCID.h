@@ -97,18 +97,6 @@
 #define SB_NUMBERPROPERTYINFO_CONTRACTID                   \
   "@songbirdnest.com/Songbird/Properties/Info/Number;1"
 
-#define SB_PROGRESSPROPERTYINFO_DESCRIPTION                \
-  "Songbird Progress Property Info Implementation"
-#define SB_PROGRESSPROPERTYINFO_CID                        \
-  { /*{f7465eb1-ea50-4ded-89a3-86efc375ebec}*/             \
-    0xf7465eb1,                                            \
-    0xea50,                                                \
-    0x4ded,                                                \
-    { 0x89, 0xa3, 0x86, 0xef, 0xc3, 0x75, 0xeb, 0xec }     \
-  }
-#define SB_PROGRESSPROPERTYINFO_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/Properties/Info/Progress;1"
-
 #define SB_TEXTPROPERTYINFO_DESCRIPTION                    \
   "Songbird Text Property Info Implementation"
 #define SB_TEXTPROPERTYINFO_CID                            \
@@ -133,18 +121,6 @@
 #define SB_URIPROPERTYINFO_CONTRACTID                 \
   "@songbirdnest.com/Songbird/Properties/Info/URI;1"
 
-#define SB_BUTTONPROPERTYINFO_DESCRIPTION              \
-  "Songbird Button Property Info Implementation"
-#define SB_BUTTONPROPERTYINFO_CID                      \
-  { /*{50f102e1-a73e-498c-91ea-5a7060520a58}*/         \
-    0x50f102e1,                                        \
-    0xa73e,                                            \
-    0x498c,                                            \
-    { 0x91, 0xea, 0x5a, 0x70, 0x60, 0x52, 0x0a, 0x58 } \
-  }
-#define SB_BUTTONPROPERTYINFO_CONTRACTID               \
-  "@songbirdnest.com/Songbird/Properties/Info/Button;1"
-
 #define SB_BOOLEANPROPERTYINFO_DESCRIPTION                 \
   "Songbird Boolean Property Info Implementation"
 #define SB_BOOLEANPROPERTYINFO_CID                         \
@@ -156,4 +132,52 @@
   }
 #define SB_BOOLEANPROPERTYINFO_CONTRACTID                  \
   "@songbirdnest.com/Songbird/Properties/Info/Boolean;1"
+
+#define SB_DOWNLOADBUTTONPROPERTYBUILDER_DESCRIPTION   \
+  "Songbird Download Button Property Builder"
+#define SB_DOWNLOADBUTTONPROPERTYBUILDER_CID           \
+  { /*{186a6af0-ebc3-4147-8cc3-19d92c991efc}*/         \
+    0x186a6af0,                                        \
+    0xebc3,                                            \
+    0x4147,                                            \
+    { 0x8c, 0xc3, 0x19, 0xd9, 0x2c, 0x99, 0x1e, 0xfc } \
+  }
+#define SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID    \
+  "@songbirdnest.com/Songbird/Properties/Builder/DownloadButton;1"
+
+#define SB_SIMPLEBUTTONPROPERTYBUILDER_DESCRIPTION     \
+  "Songbird Simple Button Property Builder"
+#define SB_SIMPLEBUTTONPROPERTYBUILDER_CID             \
+  { /*{fe7c5376-e346-45eb-8660-ee1e3b8e1593}*/         \
+    0xfe7c5376,                                        \
+    0xe346,                                            \
+    0x45eb,                                            \
+    { 0x86, 0x60, 0xee, 0x1e, 0x3b, 0x8e, 0x15, 0x93 } \
+  }
+#define SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID      \
+  "@songbirdnest.com/Songbird/Properties/Builder/SimpleButton;1"
+
+#define SB_IMAGEPROPERTYBUILDER_DESCRIPTION            \
+  "Songbird Image Property Builder"
+#define SB_IMAGEPROPERTYBUILDER_CID                    \
+  { /*{90253df9-a6aa-4060-8849-c4369b6d00d5}*/         \
+    0x90253df9,                                        \
+    0xa6aa,                                            \
+    0x4060,                                            \
+    { 0x88, 0x49, 0xc4, 0x36, 0x9b, 0x6d, 0x00, 0xd5 } \
+  }
+#define SB_IMAGEPROPERTYBUILDER_CONTRACTID             \
+  "@songbirdnest.com/Songbird/Properties/Builder/Image;1"
+
+#define SB_RATINGPROPERTYBUILDER_DESCRIPTION           \
+  "Songbird Rating Property Builder"
+#define SB_RATINGPROPERTYBUILDER_CID                   \
+  { /*{bd281dd7-d8c1-47ba-ae4f-5e3d126e708e}*/         \
+    0xbd281dd7,                                        \
+    0xd8c1,                                            \
+    0x47ba,                                            \
+    { 0xae, 0x4f, 0x5e, 0x3d, 0x12, 0x6e, 0x70, 0x8e } \
+  }
+#define SB_RATINGPROPERTYBUILDER_CONTRACTID            \
+  "@songbirdnest.com/Songbird/Properties/Builder/Rating;1"
 

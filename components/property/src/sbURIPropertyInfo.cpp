@@ -133,6 +133,11 @@ NS_IMETHODIMP sbURIPropertyInfo::Sanitize(const nsAString & aValue, nsAString & 
 
 NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
+  if (aValue.IsVoid()) {
+    _retval.Truncate();
+    return NS_OK;
+  }
+
   nsresult rv = EnsureIOService();
   NS_ENSURE_SUCCESS(rv, rv);
 

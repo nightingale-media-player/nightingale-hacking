@@ -84,6 +84,9 @@
             ondraggesture="_onDragGesture(event);"
             ondragover="_onDragOver(event);"
             ondragdrop="_onDragDrop(event);"
+            onmousemove="_onMouseMove(event);"
+            onmouseout="_onMouseMove(event);"
+            onmouseup="_onMouseUp(event);"
             editable="true"
           >
             <treecols sbid="treecols"/>
@@ -167,6 +170,16 @@
     this._getString("library.trackalreadypresent", "track already present");
   this._str_tracksalreadypresent =
     this._getString("library.tracksalreadypresent", "tracks already present");
+
+  // Add a capturing listener so we can swallow the mousedown for clickable
+  // properties, preventing row selection
+  this._onMouseDownClosure = function(event) {
+    self._onMouseDown(event);
+  };
+  this.addEventListener("mousedown",
+                        this._onMouseDownClosure,
+                        true);
+
 ]]>
       </constructor>
 
@@ -179,6 +192,10 @@
   this._treecols.removeEventListener("DOMAttrModified",
                                      this._onColumnMutationClosure,
                                       false);
+
+  this.removeEventListener("mousedown",
+                           this._onMouseDownClosure,
+                           true);
 
   for (var s = 0; s < this._splitters.length; s++) {
     this._splitters[s].removeEventListener("mousemove", this._onFilterSplitterMove, true);
@@ -400,6 +417,10 @@
       -->
       <field name="_columnSpecOrigin">0</field>
 
+      <!-- Track mouse down for sending mouse state to the tree view -->
+      <field name="_lastMouseDownRow">-1</field>
+      <field name="_lastMouseDownColumn">null</field>
+
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
         "application/x-sb-transfer-media-item"
@@ -417,8 +438,11 @@
       <field name="_XUL_NS" readonly="true">
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       </field>
-      
-      
+      <field name="_pm"     readonly="true">
+        this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+        .getService(this._Ci.sbIPropertyManager)
+      </field>
+
       <!-- Helper property to get and set the search query that is 
            filtering this playlist.
         -->
@@ -631,9 +655,6 @@
       <method name="_setupColumns">
         <body>
 <![CDATA[
-  var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                   .getService(this._Ci.sbIPropertyManager);
-
   // Make sure this is set back to our default (undefined) value.
   this._columnSpecOrigin = 0;
   
@@ -707,7 +728,7 @@
   var ordinal = 0;
   columnMap.forEach(
     function(columnInfo) {
-      var propertyInfo = pm.getPropertyInfo(columnInfo.property);
+      var propertyInfo = this._pm.getPropertyInfo(columnInfo.property);
       if(propertyInfo.userViewable) {
         this._appendColumn(propertyInfo,
                           false,
@@ -724,11 +745,11 @@
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
   // show them
-  var propEnumerator = pm.propertyNames;
+  var propEnumerator = this._pm.propertyNames;
   while (propEnumerator.hasMore()) {
     var propertyName = propEnumerator.getNext();
     if (!alreadyAdded[propertyName]) {
-      var propertyInfo = pm.getPropertyInfo(propertyName);
+      var propertyInfo = this._pm.getPropertyInfo(propertyName);
       if(propertyInfo.userViewable) {
         this._appendColumn(propertyInfo,
                           columnMap.length,
@@ -908,28 +929,28 @@
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
   }
-  
+
   if (sort) {
     treecol.setAttribute("sortDirection", sort);
     treecol.setAttribute("sortActive", "true");
   }
-  
+
   treecol.setAttribute("ordinal", ordinal);
-  
-  var shouldInvalidate;
-  switch (propertyInfo.displayUsingSimpleType) {
-    case "progressmeter":
-      treecol.setAttribute("type", "progressmeter");
-      shouldInvalidate = true;
-      break;
-    case "checkbox":
-      treecol.setAttribute("type", "checkbox");
-      treecol.setAttribute("editable", "true");
-      shouldInvalidate = true;
-      break;
-    default:
-      // Don't do anything, so this will be "text".
-      break;
+
+  if (propertyInfo instanceof this._Ci.sbITreeViewPropertyInfo) {
+    var tvpi = propertyInfo.QueryInterface(this._Ci.sbITreeViewPropertyInfo);
+    switch (tvpi.columnType) {
+      case "progressmeter":
+        treecol.setAttribute("type", "progressmeter");
+        break;
+      case "checkbox":
+        treecol.setAttribute("type", "checkbox");
+        treecol.setAttribute("editable", "true");
+        break;
+      default:
+        // Don't do anything, so this will be "text".
+        break;
+    }
   }
 
   this._treecols.appendChild(treecol);
@@ -1460,60 +1481,78 @@
     {
       var obj = {}, row = {}, col = {};
       bo.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-      // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-      if ( obj.value )
+
+      if (obj.value)
       {
+        // If this clickable cell is disabled, just return
+        var props = this._Cc["@mozilla.org/supports-array;1"]
+                            .createInstance(this._Ci.nsISupportsArray);
+        this.tree.view.getCellProperties(row.value, col.value, props);
+        for (var i = 0; i < props.Count(); i++) {
+          var atom = props.QueryElementAt(i, this._Ci.nsIAtom);
+          if (atom.equals("disabled")) {
+            return;
+          }
+        }
+
         var property = col.value.element.getAttribute("bind");
         var item = this.mediaListView.getItemByIndex(row.value);
 
-        // Fire our PlaylistCellClick event
-        var event = document.createEvent("Events");
-        event.initEvent("PlaylistCellClick", true, true);
-        event.property = property;
-        event.item     = item;
-        event.row      = row.value;
-        event.column   = col.value;
-        this._lastClickEvent = { property: property, item: item, __proto__: evt };
-        this.dispatchEvent(event);
-        this._lastClickEvent = null;
+        function fireEvent() {
+          var event = document.createEvent("Events");
+          event.initEvent("PlaylistCellClick", true, true);
+          event.property = property;
+          event.item     = item;
+          event.row      = row.value;
+          event.column   = col.value;
+          this._lastClickEvent = { property: property, item: item, __proto__: evt };
+          this.dispatchEvent(event);
+          this._lastClickEvent = null;
+        }
 
-        // If the property for this column is a clickable property, get the
-        // value for this click
-        var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                         .getService(this._Ci.sbIPropertyManager);
-        var info = pm.getPropertyInfo(property);
+        var info = this._pm.getPropertyInfo(property);
         if (info instanceof this._Ci.sbIClickablePropertyInfo) {
-
           var clickable =
             info.QueryInterface(this._Ci.sbIClickablePropertyInfo);
 
-          // Compute the X and Y coordinates within the cell
-          var cellX = {};
-          var cellY = {};
-          var cellWidth  = {};
-          var cellHeight = {};
-          bo.getCoordsForCellItem(row.value,
-                                  col.value,
-                                  "cell",
-                                  cellX,
-                                  cellY,
-                                  cellWidth,
-                                  cellHeight);
+          var coords = this._getCellCoords(evt, row.value, col.value);
 
-          var bodyBox = this.tree.getElementsByTagName("treechildren")[0];
-          var x = evt.screenX - bodyBox.boxObject.screenX - cellX.value;
-          var y = evt.screenY - bodyBox.boxObject.screenY - cellY.value;
-
-          // Get the current value for this property
           var oldValue = item.getProperty(property);
 
-          // Get and set the new value for the property
-          var value = clickable.getValueForClick(oldValue,
-                                                 cellWidth.value,
-                                                 cellHeight.value,
-                                                 x,
-                                                 y);
-          this.tree.view.setCellValue(row.value, col.value, value);
+          // Should this click register?
+          var hit = clickable.hitTest(oldValue,
+                                      obj.value,
+                                      coords.cellWidth,
+                                      coords.cellHeight,
+                                      coords.x,
+                                      coords.y);
+          if (!hit) {
+            return;
+          }
+
+          // Special case for the download button propery.  If it is clicked,
+          // start the download
+          if (property == SBProperties.downloadButton) {
+            this._downloadItem(item);
+            evt.stopPropagation();
+            return;
+          }
+
+          // Fire the click event
+          fireEvent();
+
+          // Get and assign the new value to the property
+          try {
+            var value = clickable.getValueForClick(oldValue,
+                                                   coords.cellWidth,
+                                                   coords.cellHeight,
+                                                   coords.x,
+                                                   coords.y);
+            this.tree.view.setCellValue(row.value, col.value, value);
+          }
+          catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
+            // It is ok for this not to be implenented
+          }
           evt.stopPropagation();
         }
         else if (this.treeView.isEditable(row.value, col.value))
@@ -1532,6 +1571,10 @@
             }
           }
         }
+        else {
+          // Else just fire the event
+          fireEvent();
+        }
       }
     }
     this._lastClickIndex = this.tree.currentIndex;
@@ -1544,7 +1587,181 @@
 ]]>
       </body>
     </method>
-    
+
+    <method name="_onMouseMove">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+  if (!obj.value) {
+    return;
+  }
+
+  // Register a hover on all clickable properties that pass the hit test, or
+  // all other cells
+  var shouldHover = false;
+
+  var property = col.value.element.getAttribute("bind");
+  var propertyInfo = this._pm.getPropertyInfo(property);
+  if (propertyInfo instanceof this._Ci.sbIClickablePropertyInfo) {
+    var cpi = propertyInfo.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+    var coords = this._getCellCoords(evt, row.value, col.value);
+
+    var item = this.mediaListView.getItemByIndex(row.value);
+    var oldValue = item.getProperty(property);
+
+    // Should this hover register?
+    var hit = cpi.hitTest(oldValue,
+                          obj.value,
+                          coords.cellWidth,
+                          coords.cellHeight,
+                          coords.x,
+                          coords.y);
+
+    if (hit) {
+      shouldHover = true;
+    }
+  }
+  else {
+    shouldHover = true;
+  }
+
+  var view = this.treeView;
+  if (shouldHover) {
+
+    // Set the state only if this cell is not the last mouse down cell
+    if (!(row.value == this._lastMouseDownRow &&
+        col.value == this._lastMouseDownColumn)) {
+      view.setMouseState(row.value,
+                         col.value,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
+      this._lastMouseDownRow    = -1;
+      this._lastMouseDownColumn = null;
+    }
+  }
+  else {
+    view.setMouseState(-1,
+                       null,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_onMouseDown">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+  if (!obj.value) {
+    return;
+  }
+
+  this._lastMouseDownRow    = row.value;
+  this._lastMouseDownColumn = col.value;
+
+  var view = this.treeView;
+
+  // Register a mouse down on all clickable cells that pass the hit test or
+  // all other cells
+
+  var property = col.value.element.getAttribute("bind");
+  var propertyInfo = this._pm.getPropertyInfo(property);
+  if (propertyInfo instanceof this._Ci.sbIClickablePropertyInfo) {
+    var cpi = propertyInfo.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+    var coords = this._getCellCoords(evt, row.value, col.value);
+
+    var item = this.mediaListView.getItemByIndex(row.value);
+    var oldValue = item.getProperty(property);
+
+    // Should this click register?
+    var hit = cpi.hitTest(oldValue,
+                          obj.value,
+                          coords.cellWidth,
+                          coords.cellHeight,
+                          coords.x,
+                          coords.y);
+    if (hit) {
+      view.setMouseState(row.value,
+                         col.value,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+      if (cpi.suppressSelect) {
+        evt.stopPropagation();
+      }
+    }
+  }
+  else {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_onMouseUp">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+
+  if (obj.value) {
+    var view = this.treeView;
+    if (row.value == this._lastMouseDownRow &&
+        col.value == this._lastMouseDownColumn) {
+      view.setMouseState(row.value,
+                         col.value,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
+    }
+    else {
+      view.setMouseState(-1,
+                         null,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
+    }
+  }
+
+  this._lastMouseDownRow    = -1;
+  this._lastMouseDownColumn = null;
+]]>
+      </body>
+    </method>
+
+    <method name="_getCellCoords">
+      <parameter name="evt"/>
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <body>
+<![CDATA[
+  // Compute the X and Y coordinates within the cell
+  var bo = this.tree.treeBoxObject;
+  var cellX = {};
+  var cellY = {};
+  var cellWidth  = {};
+  var cellHeight = {};
+  bo.getCoordsForCellItem(row,
+                          col,
+                          "cell",
+                          cellX,
+                          cellY,
+                          cellWidth,
+                          cellHeight);
+
+  var bodyBox = this.tree.getElementsByTagName("treechildren")[0];
+  var x = evt.screenX - bodyBox.boxObject.screenX - cellX.value;
+  var y = evt.screenY - bodyBox.boxObject.screenY - cellY.value;
+  return {x: x, y: y, cellWidth: cellWidth, cellHeight: cellHeight};
+]]>
+      </body>
+    </method>
+
     <method name="onPopupShown">
       <parameter name="evt"/>
       <body>
@@ -2001,6 +2218,17 @@
    catch(e) {
    }
  }
+]]>
+        </body>
+      </method>
+
+    <method name="_downloadItem">
+      <parameter name="item"/>
+      <body>
+<![CDATA[
+  var ddh = this._Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                    .getService(this._Ci.sbIDownloadDeviceHelper);
+  ddh.downloadItem(item);
 ]]>
         </body>
       </method>

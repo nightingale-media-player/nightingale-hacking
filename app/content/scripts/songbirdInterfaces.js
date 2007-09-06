@@ -326,20 +326,6 @@ const SB_PROPERTY_MEDIALISTNAME        = SB_PROPERTY_PREFACE + "mediaListName";
  * \deprecated Please see sbProperties.jsm.
  * \internal
  */
-const SB_PROPERTY_PROGRESSMODE         = SB_PROPERTY_PREFACE + "progressMode";
-
-/**
- * \brief Part of standard set of properties.
- * \deprecated Please see sbProperties.jsm.
- * \internal
- */
-const SB_PROPERTY_PROGRESSVALUE        = SB_PROPERTY_PREFACE + "progressValue";
-
-/**
- * \brief Part of standard set of properties.
- * \deprecated Please see sbProperties.jsm.
- * \internal
- */
 const SB_PROPERTY_COLUMNSPEC           = SB_PROPERTY_PREFACE + "columnSpec";
 
 /**
@@ -362,3 +348,11 @@ const SB_PROPERTY_CUSTOMTYPE           = SB_PROPERTY_PREFACE + "customType";
  * \internal
  */
 const SB_PROPERTY_DOWNLOADBUTTON       = SB_PROPERTY_PREFACE + "downloadButton";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_DOWNLOAD_STATUS_TARGET = SB_PROPERTY_PREFACE + "downloadStatusTarget";
+

@@ -61,11 +61,10 @@
 #define SB_PROPERTY_ISLIST                  "http://songbirdnest.com/data/1.0#isList"
 #define SB_PROPERTY_ORDINAL                 "http://songbirdnest.com/data/1.0#ordinal"
 #define SB_PROPERTY_MEDIALISTNAME           "http://songbirdnest.com/data/1.0#mediaListName"
-#define SB_PROPERTY_PROGRESSMODE            "http://songbirdnest.com/data/1.0#progressMode"
-#define SB_PROPERTY_PROGRESSVALUE           "http://songbirdnest.com/data/1.0#progressValue"
 #define SB_PROPERTY_COLUMNSPEC              "http://songbirdnest.com/data/1.0#columnSpec"
 #define SB_PROPERTY_DEFAULTCOLUMNSPEC       "http://songbirdnest.com/data/1.0#defaultColumnSpec"
 #define SB_PROPERTY_CUSTOMTYPE              "http://songbirdnest.com/data/1.0#customType"
 #define SB_PROPERTY_DOWNLOADBUTTON          "http://songbirdnest.com/data/1.0#downloadButton"
+#define SB_PROPERTY_DOWNLOAD_STATUS_TARGET  "http://songbirdnest.com/data/1.0#downloadStatusTarget"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

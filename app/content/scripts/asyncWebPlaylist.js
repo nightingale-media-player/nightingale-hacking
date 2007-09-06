@@ -219,7 +219,8 @@ try
                 // Set the originURL/Page values to remember our state.
                 var propArray = [
                     [SBProperties.originPage, this.currentURL],
-                    [SBProperties.originURL, url]
+                    [SBProperties.originURL, url],
+                    [SBProperties.downloadButton, "1|0|0"]
                   ];
                 // Add the track name if requested.
                 if (name.length > 0) {

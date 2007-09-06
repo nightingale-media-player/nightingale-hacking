@@ -39,7 +39,6 @@ interface nsIURI;
 interface sbIPropertyInfo;
 interface sbIPropertyArray;
 
-
 /**
 * \interface sbIPropertyManager
 * \brief Manager for system wide metadata properties
@@ -197,19 +196,6 @@ interface sbIPropertyInfo : nsISupports
   attribute boolean userEditable;
 
   /**
-   * \brief Display this property using the suggested base widget available for
-   *        tree children. 
-   * Example: 'progressmeter' or 'checkbox'.
-   */
-  attribute AString displayUsingSimpleType;
-
-  /**
-   * \brief Display this property using the suggested XBL
-   * widget identified by the following URI.
-   */
-  attribute nsIURI displayUsingXBLWidget;
-
-  /**
    * \brief True if this property has a selection list
    */
   //attribute boolean hasValues;
@@ -267,17 +253,6 @@ interface sbIPropertyInfo : nsISupports
    * \return The formatted sorting value.
    */
   AString makeSortable(in AString aValue);
-
-  /**
-   * \brief Gets a whitespace-separated string of properties to alter the
-   *        display of a value in a treeview.
-   *
-   * \param aValue
-   *        The current value of the property 
-   *
-   * \return A whitespace-separated string.
-   */
-  AString getDisplayPropertiesForValue(in AString aValue);
 };
 
 /**
@@ -448,34 +423,6 @@ interface sbIProgressPropertyInfo : sbITextPropertyInfo
    * \brief Minimum value allowed.
    */
   attribute AString modePropertyName;
-};
-
-/**
- * \interface sbIClickablePropertyInfo
- * \brief The property information specific to clickable properties
- *
- * A property that implements this interface indicates that it can convert a
- * mouse click into a value for the property.
- *
- * \sa sbIPropertyInfo
- */
-[scriptable, uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]
-interface sbIClickablePropertyInfo : nsISupports
-{
-  /**
-   * \brief Convert a mouse click to a value for this property
-   * \param aCurrentValue The current value of this property
-   * \param aBoxWidth Width of the clickable area
-   * \param aBoxHeight Height of the clickable area
-   * \param aMouseX The X coordinate of the click location
-   * \param aMouseY The Y coordinate of the click location
-   * \return The value that should be given to this property for the click
-   */
-  AString getValueForClick(in AString aCurrentValue,
-                           in unsigned long aBoxWidth,
-                           in unsigned long aBoxHeight,
-                           in unsigned long aMouseX,
-                           in unsigned long aMouseY);
 };
 
 /**

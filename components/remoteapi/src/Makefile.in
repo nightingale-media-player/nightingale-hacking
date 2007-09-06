@@ -69,6 +69,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/devicesobsolete/manager/public \
                $(DEPTH)/components/devicesobsolete/base/public \
+               $(DEPTH)/components/devicesobsolete/download/public \
                $(DEPTH)/bindings/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/localdatabase/src \

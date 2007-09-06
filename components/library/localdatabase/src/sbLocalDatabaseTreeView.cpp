@@ -36,6 +36,7 @@
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
 #include <nsIVariant.h>
+#include <sbIClickablePropertyInfo.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILibrary.h>
@@ -45,6 +46,7 @@
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbISortableMediaListView.h>
+#include <sbITreeViewPropertyInfo.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -176,6 +178,8 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mListType(eLibrary),
  mCachedRowCount(0),
  mNextGetByIndexAsync(-1),
+ mMouseState(sbILocalDatabaseTreeView::MOUSE_STATE_NONE),
+ mMouseStateRow(-1),
  mSelectionIsAll(PR_FALSE),
  mCachedRowCountDirty(PR_TRUE),
  mCachedRowCountPending(PR_FALSE),
@@ -547,8 +551,15 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
     {
       // Try our dirty cache so we can show something
       if (mDirtyRowCache.Get(aIndex, getter_AddRefs(bag))) {
-        rv = bag->GetProperty(bind, _retval);
+        nsString value;
+        rv = bag->GetProperty(bind, value);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = info->Format(value, _retval);
+        if (NS_FAILED(rv)) {
+          _retval.Truncate();
+        }
+
       }
       else {
         _retval.Truncate();
@@ -943,6 +954,42 @@ sbLocalDatabaseTreeView::InvalidateRowsByGuid(const nsAString& aGuid)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::SetMouseState(PRInt32 aRow,
+                                       nsITreeColumn* aColumn,
+                                       PRUint32 aState)
+{
+#ifdef PR_LOGGING
+  PRInt32 colIndex = -1;
+  if (aColumn) {
+    aColumn->GetIndex(&colIndex);
+  }
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetMouseState(%d, %d, %d)", this,
+         aRow, colIndex, aState));
+#endif
+
+  nsresult rv;
+
+  if (mMouseState && mMouseStateRow >= 0 && mMouseStateColumn) {
+    mMouseState = sbILocalDatabaseTreeView::MOUSE_STATE_NONE;
+    if (mTreeBoxObject) {
+      rv = mTreeBoxObject->InvalidateCell(mMouseStateRow, mMouseStateColumn);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  
+  mMouseState       = aState;
+  mMouseStateRow    = aRow;
+  mMouseStateColumn = aColumn;
+
+  if (mMouseStateRow >= 0 && mMouseStateColumn && mTreeBoxObject) {
+    rv = mTreeBoxObject->InvalidateCell(mMouseStateRow, mMouseStateColumn);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 // sbILocalDatabaseGUIDArrayListener
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnBeforeInvalidate()
@@ -1221,6 +1268,53 @@ sbLocalDatabaseTreeView::GetTreeColumnForProperty(const nsAString& aProperty,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+/* inline */ nsresult
+sbLocalDatabaseTreeView::GetColumnPropertyInfo(nsITreeColumn* aColumn,
+                                               sbIPropertyInfo** aPropertyInfo)
+{
+  nsAutoString propertyName;
+  nsresult rv = GetPropertyForTreeColumn(aColumn, propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropMan->GetPropertyInfo(propertyName, aPropertyInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetPropertyInfoAndCachedValue(PRInt32 aRow,
+                                                       nsITreeColumn* aColumn,
+                                                       nsAString& aValue,
+                                                       sbIPropertyInfo** aPropertyInfo)
+{
+  NS_ASSERTION(aColumn, "aColumn is null");
+  NS_ASSERTION(aPropertyInfo, "aPropertyInfo is null");
+
+  PRUint32 index = TreeToArray(aRow);
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  if (!mRowCache.Get(index, getter_AddRefs(bag)) &&
+      !mDirtyRowCache.Get(index, getter_AddRefs(bag))) {
+    // Don't bother to do anything else if this row isn't cached yet.
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<sbIPropertyInfo> pi;
+  nsresult rv = GetColumnPropertyInfo(aColumn, getter_AddRefs(pi));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString propertyName;
+  rv = pi->GetName(propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString value;
+  rv = bag->GetProperty(propertyName, aValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aPropertyInfo = pi);
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetRowCount(PRInt32 *aRowCount)
 {
@@ -1255,23 +1349,8 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
     return NS_OK;
   }
 
-  nsAutoString propertyName;
-  rv = GetPropertyForTreeColumn(col, propertyName);
+  rv = GetCellPropertyValue(TreeToArray(row), col, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString simpleType;
-  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return blank if this is an image property. Otherwise, return text.
-  if (simpleType.EqualsLiteral("image"))
-    _retval.Truncate();
-  else
-    return GetCellPropertyValue(TreeToArray(row), col, _retval);
 
   return NS_OK;
 }
@@ -1368,6 +1447,20 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
 
   nsresult rv;
 
+  PRUint32 count;
+  properties->Count(&count);
+  nsString props;
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<nsIAtom> atom;
+    properties->QueryElementAt(i, NS_GET_IID(nsIAtom), getter_AddRefs(atom));
+    if (atom) {
+      nsString s;
+      atom->ToString(s);
+      props.Append(s);
+      props.AppendLiteral(" ");
+    }
+  }
+
   if (IsAllRow(row)) {
     rv = TokenizeProperties(NS_LITERAL_STRING("all"), properties);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1398,15 +1491,19 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
     rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString displayPropertiesString;
-    rv = propInfo->GetDisplayPropertiesForValue(value, displayPropertiesString);
-    if (NS_FAILED(rv) || displayPropertiesString.IsEmpty()) {
-      continue;
-    }
+    nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(propInfo, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      nsString propertiesString;
+      rv = tvpi->GetRowProperties(value, propertiesString);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = TokenizeProperties(displayPropertiesString, properties);
-    NS_ENSURE_SUCCESS(rv, rv);
+      if (!propertiesString.IsEmpty()) {
+        rv = TokenizeProperties(propertiesString, properties);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
   }
+
 
   return NS_OK;
 }
@@ -1432,19 +1529,57 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
     return NS_OK;
   }
 
-  PRUint32 index = TreeToArray(row);
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  if (!mRowCache.Get(index, getter_AddRefs(bag)) &&
-      !mDirtyRowCache.Get(index, getter_AddRefs(bag))) {
-    // Don't bother to do anything else if this row isn't cached yet.
-    return NS_OK;
-  }
-
-  nsresult rv = GetRowProperties(row, properties);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
 
   rv = GetColumnProperties(col, properties);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the mouse states
+  if (mMouseStateRow == row && mMouseStateColumn == col) {
+    switch(mMouseState) {
+      case sbILocalDatabaseTreeView::MOUSE_STATE_HOVER:
+        rv = TokenizeProperties(NS_LITERAL_STRING("cell-hover"), properties);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      case sbILocalDatabaseTreeView::MOUSE_STATE_DOWN:
+        rv = TokenizeProperties(NS_LITERAL_STRING("cell-active"), properties);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+    }
+  }
+
+  nsCOMPtr<sbIPropertyInfo> pi;
+  nsString value;
+  rv = GetPropertyInfoAndCachedValue(row, col, value, getter_AddRefs(pi));
+  // Returns NS_ERROR_NOT_AVAILABLE when the row is not cached
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(pi, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsString propertiesString;
+    rv = tvpi->GetCellProperties(value, propertiesString);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!propertiesString.IsEmpty()) {
+      rv = TokenizeProperties(propertiesString, properties);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIClickablePropertyInfo> cpi = do_QueryInterface(pi, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    PRBool isDisabled;
+    rv = cpi->IsDisabled(value, &isDisabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (isDisabled) {
+      rv = TokenizeProperties(NS_LITERAL_STRING("disabled"), properties);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   return NS_OK;
 }
@@ -1619,30 +1754,26 @@ sbLocalDatabaseTreeView::GetImageSrc(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
-  nsresult rv;
-
   if (IsAllRow(row)) {
-    _retval.Truncate();
     return NS_OK;
   }
 
-  nsAutoString propertyName;
-  rv = GetPropertyForTreeColumn(col, propertyName);
+  nsresult rv;
+
+  nsString value;
+  nsCOMPtr<sbIPropertyInfo> pi;
+  rv = GetPropertyInfoAndCachedValue(row, col, value, getter_AddRefs(pi));
+  // Returns NS_ERROR_NOT_AVAILABLE when the row is not cached
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString simpleType;
-  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return blank if this is not an image property. Otherwise, return text.
-  if (!simpleType.EqualsLiteral("image"))
-    _retval.Truncate();
-  else
-    return GetCellPropertyValue(TreeToArray(row), col, _retval);
+  nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(pi, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = tvpi->GetImageSrc(value, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -1656,100 +1787,25 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
   NS_ENSURE_ARG_POINTER(_retval);
 
   if (IsAllRow(row)) {
-    *_retval = (PRInt32) nsITreeView::PROGRESS_NONE;
+    *_retval = nsITreeView::PROGRESS_NONE;
     return NS_OK;
   }
 
   nsresult rv;
-  PRUint32 index = TreeToArray(row);
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  if (!mRowCache.Get(index, getter_AddRefs(bag)) &&
-      !mDirtyRowCache.Get(index, getter_AddRefs(bag))) {
 
-    // HACK to get this row's data loaded.
-    nsAutoString cellValue;
-    rv = GetCellPropertyValue(index, col, cellValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+  nsString value;
+  nsCOMPtr<sbIPropertyInfo> pi;
+  rv = GetPropertyInfoAndCachedValue(row, col, value, getter_AddRefs(pi));
+  // Returns NS_ERROR_NOT_AVAILABLE when the row is not cached
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
     return NS_OK;
   }
-
-  // If the progress mode has been explicitly set then we're going to honor it.
-  nsAutoString propertyName;
-  rv = GetPropertyForTreeColumn(col, propertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-#ifdef DEBUG
-  nsAutoString simpleType;
-  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
-  NS_ASSERTION(NS_SUCCEEDED(rv), "GetDisplayUsingSimpleType failed!");
-
-  NS_ASSERTION(simpleType.EqualsLiteral("progressmeter"),
-               "GetProgressMode called for a column with the wrong type!");
-#endif
-
-  nsCOMPtr<sbIProgressPropertyInfo> progressInfo =
-    do_QueryInterface(propInfo, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString modePropertyName;
-  rv = progressInfo->GetModePropertyName(modePropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString modeString;
-  rv = bag->GetProperty(modePropertyName, modeString);
+  nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(pi, &rv);
   if (NS_SUCCEEDED(rv)) {
-    PRInt32 mode = modeString.ToInteger(&rv);
-    if (NS_SUCCEEDED(rv)) {
-      NS_ASSERTION(mode == nsITreeView::PROGRESS_NORMAL ||
-                   mode == nsITreeView::PROGRESS_UNDETERMINED ||
-                   mode == nsITreeView::PROGRESS_NONE,
-                   "Invalid progress mode!");
-
-      *_retval = mode;
-      return NS_OK;
-    }
-  }
-
-  // The value wasn't explicitly set (or wasn't set correctly), so try to make
-  // a reasonable guess based on the vell value.
-  nsAutoString cellValue;
-  rv = GetCellValue(row, col, cellValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (cellValue.IsEmpty()) {
-    // Nothing set, so guess text.
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-    return NS_OK;
-  }
-
-  PRInt32 cellIntValue = cellValue.ToInteger(&rv);
-  if (NS_FAILED(rv)) {
-    // Not an integer, so this must be text.
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-    return NS_OK;
-  }
-
-  if (cellIntValue == PROGRESS_VALUE_UNSET ||
-      cellIntValue == PROGRESS_VALUE_COMPLETE) {
-    // If this is a special value (PROGRESS_VALUE_*) then set no progress so
-    // that CSS can add images, etc.
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-  }
-  else if (cellIntValue > PROGRESS_VALUE_COMPLETE ||
-           cellIntValue < PROGRESS_VALUE_UNSET) {
-    // If this value is something wild print out a warning... And guess
-    // undetermined.
-    *_retval = (PRInt32)nsITreeView::PROGRESS_UNDETERMINED;
-  }
-  else {
-    // Otherwise let's guess normal progress.
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NORMAL;
+    rv = tvpi->GetProgressMode(value, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1760,32 +1816,36 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
                                       nsITreeColumn* col,
                                       nsAString& _retval)
 {
+#ifdef PR_LOGGING
+  PRInt32 colIndex = -1;
+  col->GetIndex(&colIndex);
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellValue(%d, %d)", this,
+         row, colIndex));
+#endif
+
   if (IsAllRow(row)) {
     _retval.Truncate();
     return NS_OK;
   }
 
-  nsAutoString propertyName;
-  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyInfo> pi;
+  nsString value;
+  rv = GetPropertyInfoAndCachedValue(row, col, value, getter_AddRefs(pi));
+  // Returns NS_ERROR_NOT_AVAILABLE when the row is not cached
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString simpleType;
-  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString cellValue;
-  rv = GetCellPropertyValue(TreeToArray(row), col, cellValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (simpleType.EqualsLiteral("checkbox") && cellValue.IsEmpty()) {
-    cellValue.AssignLiteral("false");
+  nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(pi, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = tvpi->GetCellValue(value, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  _retval.Assign(cellValue);
   return NS_OK;
 }
 
@@ -1841,18 +1901,13 @@ sbLocalDatabaseTreeView::IsEditable(PRInt32 row,
 
   nsresult rv;
 
+  nsCOMPtr<sbIPropertyInfo> propInfo;
   nsAutoString bind;
-  rv = GetPropertyForTreeColumn(col, bind);
+  rv = GetColumnPropertyInfo(col, getter_AddRefs(propInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (bind.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
-    *_retval = PR_FALSE;
-  }
-  else {
-    // TODO: Talk to properties registry to find out of this should be
-    // editable
-    *_retval = PR_TRUE;
-  }
+  rv = propInfo->GetUserEditable(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

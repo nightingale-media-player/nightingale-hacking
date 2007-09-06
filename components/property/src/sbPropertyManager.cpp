@@ -35,17 +35,17 @@
 #include <nsIObserverService.h>
 #include <nsAutoPtr.h>
 #include <nsIStringBundle.h>
-
-#include "sbButtonPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
-#include "sbProgressPropertyInfo.h"
-#include "sbRatingPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
+#include "sbDownloadButtonPropertyBuilder.h"
+#include "sbSimpleButtonPropertyBuilder.h"
+#include "sbRatingPropertyBuilder.h"
 
 #include <sbTArrayStringEnumerator.h>
+#include <sbIPropertyBuilder.h>
 
 #ifdef DEBUG
 #include <prprf.h>
@@ -483,10 +483,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Rating
-  rv = RegisterRatingProperty(stringBundle, PR_TRUE, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   //Origin URL
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
                    NS_LITERAL_STRING("property.origin_url"),
@@ -498,14 +494,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       NS_LITERAL_STRING("property.hidden"),
                       stringBundle, PR_FALSE, PR_FALSE, 
                       0, PR_TRUE, 1, PR_TRUE, PR_TRUE, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Progress Value
-  rv = RegisterProgress(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                        NS_LITERAL_STRING("property.progressValue"),
-                        NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
-                        NS_LITERAL_STRING("property.progressMode"),
-                        stringBundle, PR_TRUE, PR_TRUE, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display columns
@@ -535,11 +523,47 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Custom type (used for css and metrics reporting)
-  rv = RegisterButton(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON),
-                      NS_LITERAL_STRING("property.download_button"),
-                      stringBundle, NS_LITERAL_STRING("Download"),
-                      PR_TRUE, PR_TRUE);
+  // Download button
+  nsRefPtr<sbDownloadButtonPropertyBuilder> dbBuilder =
+    new sbDownloadButtonPropertyBuilder();
+  NS_ENSURE_TRUE(dbBuilder, rv);
+
+  rv = dbBuilder->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetPropertyName(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propertyInfo;
+  rv = dbBuilder->Get(getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propertyInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Rating
+  nsRefPtr<sbRatingPropertyBuilder> rBuilder = new sbRatingPropertyBuilder();
+  NS_ENSURE_TRUE(dbBuilder, rv);
+
+  rv = rBuilder->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->SetPropertyName(NS_LITERAL_STRING(SB_PROPERTY_RATING));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.rating"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->Get(getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -594,7 +618,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -755,211 +779,6 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
 
   return NS_OK;
 }
-
-nsresult
-sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
-                                    const nsAString& aValueDisplayKey,
-                                    const nsAString& aModePropertyName,
-                                    const nsAString& aModeDisplayKey,
-                                    nsIStringBundle* aStringBundle, 
-                                    PRBool aUserViewable,
-                                    PRBool aUserEditable,
-                                    PRBool aRemoteReadable,
-                                    PRBool aRemoteWritable)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-
-  nsresult rv = RegisterNumber(aModePropertyName, aModeDisplayKey,
-                               aStringBundle, PR_FALSE, PR_FALSE,
-                               0, PR_FALSE, 0, PR_FALSE,
-                               aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbProgressPropertyInfo>
-    progressProperty(new sbProgressPropertyInfo());
-  NS_ENSURE_TRUE(progressProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = progressProperty->SetName(aValuePropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!aValueDisplayKey.IsEmpty()) {
-    nsAutoString displayValue;
-    rv = GetStringFromName(aStringBundle, aValueDisplayKey, displayValue);
-    if(NS_SUCCEEDED(rv)) {
-      rv = progressProperty->SetDisplayName(displayValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  rv = progressProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("progressmeter"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = progressProperty->SetModePropertyName(aModePropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = progressProperty->SetUserViewable(aUserViewable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = progressProperty->SetUserEditable(aUserEditable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIProgressPropertyInfo*, progressProperty), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
-                                    const nsAString& aDisplayKey,
-                                    nsIStringBundle* aStringBundle,
-                                    PRBool aUserViewable,
-                                    PRBool aUserEditable,
-                                    PRBool aRemoteReadable,
-                                    PRBool aRemoteWritable)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-
-  nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = textProperty->SetName(aPropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!aDisplayKey.IsEmpty()) {
-    nsCOMPtr<nsIStringBundle> stringBundle;
-    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString displayValue;
-    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
-    if(NS_SUCCEEDED(rv)) {
-      rv = textProperty->SetDisplayName(displayValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  rv = textProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("checkbox"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = textProperty->SetUserViewable(aUserViewable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = textProperty->SetUserEditable(aUserEditable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbPropertyManager::RegisterRatingProperty(nsIStringBundle* aStringBundle,
-                                          PRBool aRemoteReadable,
-                                          PRBool aRemoteWritable)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-
-  nsRefPtr<sbRatingPropertyInfo> ratingProperty(new sbRatingPropertyInfo());
-  NS_ENSURE_TRUE(ratingProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = ratingProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_RATING));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = ratingProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = ratingProperty->SetMaxValue(5);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString displayValue;
-  rv = GetStringFromName(aStringBundle,
-                         NS_LITERAL_STRING("property.rating"),
-                         displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = ratingProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = ratingProperty->SetUserViewable(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = ratingProperty->SetUserEditable(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIClickablePropertyInfo*, ratingProperty), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbPropertyManager::RegisterButton(const nsAString& aPropertyName,
-                                  const nsAString& aDisplayKey,
-                                  nsIStringBundle* aStringBundle,
-                                  const nsAString& aLabel,
-                                  PRBool aRemoteReadable,
-                                  PRBool aRemoteWritable)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-
-  nsRefPtr<sbButtonPropertyInfo> buttonProperty(new sbButtonPropertyInfo());
-  NS_ENSURE_TRUE(buttonProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = buttonProperty->SetName(aPropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!aDisplayKey.IsEmpty()) {
-    nsCOMPtr<nsIStringBundle> stringBundle;
-    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString displayValue;
-    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
-    if(NS_SUCCEEDED(rv)) {
-      rv = buttonProperty->SetDisplayName(displayValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  rv = buttonProperty->SetLabel(aLabel);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIButtonPropertyInfo*, buttonProperty), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 
 nsresult
 sbPropertyManager::SetRemoteAccess(sbIPropertyInfo* aProperty,

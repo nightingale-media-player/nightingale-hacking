@@ -1,0 +1,73 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIClickablePropertyInfo.idl
+ * \brief Definition of the sbIClickablePropertyInfo interface
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIClickablePropertyInfo
+ * \brief The property information specific to clickable properties
+ *
+ * A property that implements this interface indicates that it can convert a
+ * mouse click into a value for the property.
+ *
+ * \sa sbIPropertyInfo
+ */
+[scriptable, uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]
+interface sbIClickablePropertyInfo : nsISupports
+{
+  readonly attribute boolean suppressSelect;
+
+  boolean isDisabled(in AString aCurrentValue);
+
+  boolean hitTest(in AString aCurrentValue,
+                  in AString aPart,
+                  in unsigned long aBoxWidth,
+                  in unsigned long aBoxHeight,
+                  in unsigned long aMouseX,
+                  in unsigned long aMouseY);
+
+  /**
+   * \brief Convert a mouse click to a value for this property
+   * \param aCurrentValue The current value of this property
+   * \param aBoxWidth Width of the clickable area
+   * \param aBoxHeight Height of the clickable area
+   * \param aMouseX The X coordinate of the click location
+   * \param aMouseY The Y coordinate of the click location
+   * \return The value that should be given to this property for the click
+   */
+  AString getValueForClick(in AString aCurrentValue,
+                           in unsigned long aBoxWidth,
+                           in unsigned long aBoxHeight,
+                           in unsigned long aMouseX,
+                           in unsigned long aMouseY);
+};
+
