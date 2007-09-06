@@ -212,7 +212,7 @@ sbLocalDatabaseGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListe
 
   if (mListener) {
     nsresult rv;
-    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener = 
+    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
       do_QueryReferent(mListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -297,6 +297,9 @@ sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 
   nsCOMPtr<sbIMutablePropertyArray> sort =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = sort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < mSorts.Length(); i++) {
@@ -1853,4 +1856,3 @@ sbGUIDArrayStringEnumerator::GetNext(nsAString& _retval)
 
   return NS_OK;
 }
-

@@ -440,6 +440,9 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = propArray->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1057,4 +1060,3 @@ sbGUIDArrayPrimarySortEnumerator::GetNext(nsAString& _retval)
   mNextIndex++;
   return NS_OK;
 }
-

@@ -861,6 +861,9 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = sort->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = sort->AppendProperty(aProperty, aDirection ? NS_LITERAL_STRING("a") :
                                                       NS_LITERAL_STRING("d"));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2875,7 +2878,7 @@ sbIndexedGUIDArrayEnumerator::sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
   NS_ASSERTION(aLibrary, "aLibrary is null");
   NS_ASSERTION(aArray, "aArray is null");
 }
-  
+
 nsresult
 sbIndexedGUIDArrayEnumerator::Init()
 {

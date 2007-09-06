@@ -456,39 +456,9 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Validate the incoming property array if it is not already valid
   PRUint32 propertyCount;
   rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyManager> propMan =
-    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  for (PRUint32 i = 0; i < propertyCount; i++) {
-    nsCOMPtr<sbIProperty> property;
-    rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIPropertyInfo> info;
-    rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString value;
-    rv = property->GetValue(value);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool valid;
-    rv = info->Validate(value, &valid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!valid)
-      return NS_ERROR_INVALID_ARG;
-  }
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
