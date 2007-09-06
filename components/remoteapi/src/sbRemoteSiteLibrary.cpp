@@ -174,6 +174,7 @@ NS_IMETHODIMP
 sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
                                            const nsACString &aPath )
 {
+  // aDomain and aPath may be empty
   LOG(( "sbRemoteSiteLibrary::ConnectToSiteLibrary(domain:%s path:%s)",
         aDomain.BeginReading(), aPath.BeginReading() ));
 
@@ -249,6 +250,7 @@ already_AddRefed<nsIFile>
 sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
                                          const nsACString &aPath )
 {
+  // aPath and aDomain may be empty
   LOG(( "sbRemoteSiteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
          aDomain.BeginReading(),
          aPath.BeginReading() ));
@@ -318,6 +320,7 @@ sbRemoteSiteLibrary::GetURI()
 nsresult
 sbRemoteSiteLibrary::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
 {
+  // aDomain may be empty
   NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)", aDomain.BeginReading() ));
 
@@ -427,6 +430,7 @@ sbRemoteSiteLibrary::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
 nsresult
 sbRemoteSiteLibrary::CheckPath( nsACString &aPath, nsIURI *aSiteURI )
 {
+  // aPath may be empty
   NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG(( "sbRemoteSiteLibrary::CheckPath(%s)", aPath.BeginReading() ));
 
@@ -470,7 +474,11 @@ nsresult
 sbRemoteSiteLibrary::FixupDomain( const nsACString& aDomain,
                                   nsACString& _retval )
 {
-  NS_ENSURE_ARG( !aDomain.IsEmpty() );
+  // aDomain may be empty
+  if ( aDomain.IsEmpty() ) {
+    _retval.Truncate();
+    return NS_OK;
+  }
 
   nsCString domain(aDomain);
 
@@ -534,7 +542,11 @@ nsresult
 sbRemoteSiteLibrary::FixupPath( const nsACString& aPath,
                                 nsACString& _retval )
 {
-  NS_ASSERTION( !aPath.IsEmpty(), "Passed an empty path! Bad bad bad!" );
+  // aPath may be empty
+  if ( aPath.IsEmpty() ) {
+    _retval.Truncate();
+    return NS_OK;
+  }
 
   NS_NAMED_LITERAL_CSTRING( slashString, "/" );
 
@@ -564,8 +576,7 @@ sbRemoteSiteLibrary::GetFilenameForSiteLibraryInternal( const nsACString& aDomai
                                                         PRBool aDoFixup,
                                                         nsAString& _retval )
 {
-  NS_ENSURE_ARG( !aDomain.IsEmpty() );
-  NS_ENSURE_ARG( !aPath.IsEmpty() );
+  // aDomain and aPath may be empty
 
   nsresult rv;
 

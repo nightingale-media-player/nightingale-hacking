@@ -32,6 +32,7 @@
     <script>
       var domains = [ "",
                       "file",
+                      "file:",
                       "127.0.0.1",
                       "www.jgaunt.com",
                       "jgaunt.com",
@@ -61,7 +62,9 @@
 
       // create a library and return the filename
       var getFilename = function ( domain, path ) {
-        var siteLib = songbird.siteLibrary( domain, path );
+        try {
+          var siteLib = songbird.siteLibrary( domain, path );
+        } catch (e) { }
         if (siteLib) {
           return siteLib.filename;
         } else {

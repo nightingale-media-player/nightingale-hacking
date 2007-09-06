@@ -47,6 +47,24 @@ function beginWindowTest(url, continueFunction) {
   testPending();
 }
 
+function setAllAccess () {
+  log("******** Setting All Access for RemoteAPI ********");
+  setRapiPref("playback_control_disable", false);
+  setRapiPref("playback_read_disable", false);
+  setRapiPref("library_read_disable", false);
+  setRapiPref("library_write_disable", false);
+  setRapiPref("library_create_disable", false);
+}
+
+function setNoAccess() {
+  log("******** Setting No Access for RemoteAPI ********");
+  setRapiPref("playback_control_disable", true);
+  setRapiPref("playback_read_disable", true);
+  setRapiPref("library_read_disable", true);
+  setRapiPref("library_write_disable", true);
+  setRapiPref("library_create_disable", true);
+}
+
 function cleanup() {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Ci.sbILibraryManager);

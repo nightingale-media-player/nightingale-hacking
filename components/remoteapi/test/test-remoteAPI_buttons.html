@@ -41,7 +41,8 @@ function load() {
     alert("boom " + event.property + " " + event.item.getProperty("http://songbirdnest.com/data/1.0#contentURL"));
   }, false);
 
-  siteLib = songbird.siteLibrary("127.0.0.1", "/");
+  //siteLib = songbird.siteLibrary("127.0.0.1", "/");
+  siteLib = songbird.siteLibrary("", "/");
   siteLib.name = "Site Lib";
   siteList = siteLib.createMediaList("simple");
   songbird.webPlaylist.mediaList = siteList;

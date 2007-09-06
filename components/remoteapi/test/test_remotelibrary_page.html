@@ -78,7 +78,8 @@ function runTest(tester) {
     tester.endRemoteAPITest(e);
   }
 
-  tester.lockDown();
+  // Lock down the permissions, access to objects should change
+  tester.setNoAccess();
 
   try {
     var siteLib = songbird.siteLibrary("127.0.0.1", "/");
