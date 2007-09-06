@@ -1230,6 +1230,11 @@
           this.previousInnerPlaylist = null;
         }
         
+        // Remove the browser DOM loaded event listener.
+        this.linkedBrowser.removeEventListener("DOMContentLoaded",
+                                               this.browserDOMLoadedEventListener,
+                                               true);
+
         // Clear the progress filter.
         this._progressFilter.removeProgressListener(this);
         this.linkedBrowser.removeProgressListener(this._progressFilter);
@@ -1370,6 +1375,17 @@
           this._playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           // FIXME: remove the event listener on the destructor, I guess
           
+          // Start the first scan as soon as the browser DOM has loaded
+          this.browserDOMLoadedEventListener = {
+            tabbrowser: this,
+            handleEvent: function(event) {
+              this.tabbrowser.scanWebPage();
+            }
+          }
+          this.linkedBrowser.addEventListener("DOMContentLoaded",
+                                              this.browserDOMLoadedEventListener,
+                                              true);
+
           // wire up the browser progress filter
           this._progressFilter.addProgressListener(this, /* ignored */ null);
           this.linkedBrowser.addProgressListener(this._progressFilter,
@@ -1522,7 +1538,6 @@
                       .getService(Components.interfaces.sbIMediaListViewMap);
           var view = viewMap.getView(browser, entry);
           
-          var skipScan = view ? true : false;
           
           if (!view) {
             var mediaList =
@@ -1546,19 +1561,9 @@
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
 
-          // If we're restoring a view, don't do anything else
-          if (skipScan) {
-            // Only show it if there's something to see.
-            if (view.length) {
+          // If something has already been scanned into the view, show it.
+          if (view.length)
               this.outerPlaylistShowing = true;
-            }
-            else {
-              // Remove empty media lists.
-              var library = view.mediaList.library;
-              library.remove(view.mediaList);
-            }
-            return;
-          }
 
           // scrape the document.
           var context = {

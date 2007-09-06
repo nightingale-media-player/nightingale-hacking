@@ -1803,6 +1803,10 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
     nsresult rv = UpdateColumnSortAttributes(mCurrentSortProperty,
                                              mCurrentSortDirectionIsAscending);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Rebuild view with the new tree
+    rv = Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

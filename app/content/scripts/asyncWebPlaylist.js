@@ -177,6 +177,12 @@ try
 
         var foundItemsLength = this.items.length;
         if (foundItemsLength) {
+          // Show the playlist now that we're going to populate it.
+          if (context) {
+              context.playlistHasItems = true;
+              context.showPlaylist = true;
+          }
+
           // Let the view know that we're about to make a lot of changes.
           mediaList.beginUpdateBatch();
 
@@ -318,13 +324,6 @@ try
         if (!gPPS.isMediaURL(url)) {
           // Keep the loop going.
           return false;
-        }
-      }
-      
-      if (context) {
-        if (!this.items.length) {
-          context.playlistHasItems = true;
-          context.showPlaylist = true;
         }
       }
 
