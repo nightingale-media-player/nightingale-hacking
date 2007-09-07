@@ -653,11 +653,13 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
     prefs.getComplexValue("songbird.library.download",
                           Ci.nsISupportsString);
 
+/*
   var mainLibrary =
     Cc["@songbirdnest.com/Songbird/library/Manager;1"]
       .getService(Ci.sbILibraryManager).mainLibrary;
   var downloadList = mainLibrary.getMediaItem(downloadListGUID);
   downloadList.addSome(array.enumerate());
+*/
 }
 
 // sbIMedaiListFactory
