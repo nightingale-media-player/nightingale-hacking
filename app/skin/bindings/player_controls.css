@@ -67,7 +67,7 @@ Play/Pause, Previous (back), Next (forward)
 .sb-player-play-button-play > button,
 .sb-player-playpause-button-play > button
 {  
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(108px 141px 161px 91px);
 }
 .sb-player-play-button-play > button:hover,
@@ -92,7 +92,7 @@ Play/Pause, Previous (back), Next (forward)
 .sb-player-pause-button-pause > button,
 .sb-player-playpause-button-pause > button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(108px 89px 161px 39px);
 }
 .sb-player-pause-button-pause > button:hover,
@@ -116,7 +116,7 @@ Play/Pause, Previous (back), Next (forward)
 
 .sb-player-pause-button-resume > button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(0px 89px 52px 39px);
 }
 .sb-player-pause-button-resume > button:hover
@@ -137,7 +137,7 @@ Play/Pause, Previous (back), Next (forward)
 
 .sb-player-stop-button-stop > button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(108px 193px 161px 143px);
 }
 .sb-player-stop-button-stop > button:hover
@@ -159,7 +159,7 @@ Play/Pause, Previous (back), Next (forward)
 
 sb-player-back-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(108px 38px 161px 0px);
 }
 sb-player-back-button:hover
@@ -178,7 +178,7 @@ sb-player-back-button[disabled="true"]
 /* the fwd button */
 sb-player-forward-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
   -moz-image-region: rect(108px 232px 161px 195px);
 }
 sb-player-forward-button:hover
