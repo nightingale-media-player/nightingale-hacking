@@ -663,7 +663,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: previous
+  Func: previous()
 
   Skip to the previous item, if there is one, and begin playing.
 
@@ -683,7 +683,6 @@ interface sbIRemotePlayer : nsISupports
     <playMediaList()>
     <pause()>
     <stop()>
-    <previous()>
     <next()>
   */
   void previous();
