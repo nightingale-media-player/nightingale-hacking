@@ -66,6 +66,7 @@ CPP_SRCS = sbSimpleProperty.cpp \
 CPP_INCLUDES = $(DEPTH)/components/property/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/enumeration/src \
+               $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/nspr \

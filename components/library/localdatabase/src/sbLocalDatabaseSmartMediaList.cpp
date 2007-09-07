@@ -230,7 +230,7 @@ sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(c
 , mRightValue(aRightValue)
 , mLimit(aLimit)
 {
-  mLock = PR_NewLock();
+  mLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaListCondition::mLock");
   NS_ASSERTION(mLock,
     "sbLocalDatabaseSmartMediaListCondition::mLock failed to create lock!");
 }
@@ -238,7 +238,7 @@ sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(c
 sbLocalDatabaseSmartMediaListCondition::~sbLocalDatabaseSmartMediaListCondition()
 {
   if(mLock) {
-    PR_DestroyLock(mLock);
+    nsAutoLock::DestroyLock(mLock);
   }
 }
 
@@ -374,10 +374,10 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
 {
   if(mInnerLock) {
-    PR_DestroyLock(mInnerLock);
+    nsAutoLock::DestroyLock(mInnerLock);
   }
   if(mConditionsLock) {
-    PR_DestroyLock(mConditionsLock);
+    nsAutoLock::DestroyLock(mConditionsLock);
   }
 }
 
@@ -386,10 +386,10 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  mInnerLock = PR_NewLock();
+  mInnerLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mInnerLock");
   NS_ENSURE_TRUE(mInnerLock, NS_ERROR_OUT_OF_MEMORY);
 
-  mConditionsLock = PR_NewLock();
+  mConditionsLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mConditionsLock");
   NS_ENSURE_TRUE(mConditionsLock, NS_ERROR_OUT_OF_MEMORY);
 
   mItem = aItem;
@@ -712,7 +712,7 @@ sbLocalDatabaseSmartMediaList::Rebuild()
   nsresult rv;
 
   // You must either have a match or a limit
-  NS_ENSURE_ARG(!(mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE && 
+  NS_ENSURE_ARG(!(mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE &&
                   mLimitType == sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE));
 
   // If we have a limit, either random or the selection property must be set
@@ -858,7 +858,7 @@ nsresult
 sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
 {
   TRACE(("sbLocalDatabaseSmartMediaList[0x%.8x] - "
-         "RebuildMatchTypeNoneNotRandom()", this));    
+         "RebuildMatchTypeNoneNotRandom()", this));
 
   // Must have some kind of limit and be non-random and have a select property
   // to get here
@@ -2376,4 +2376,3 @@ sbLocalDatabaseSmartMediaList::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

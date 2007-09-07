@@ -33,6 +33,8 @@
 #include <prtime.h>
 #include <prprf.h>
 
+#include <sbLockUtils.h>
+
 static const char *gsFmtRadix10 = "%lld";
 static const char *gsSortFmtRadix10 = "%+020lld";
 static const char *gsFmtMilliseconds10 = "%04d";
@@ -62,7 +64,7 @@ sbDatetimePropertyInfo::sbDatetimePropertyInfo()
   mType = NS_LITERAL_STRING("datetime");
 
   mTimeTypeLock = PR_NewLock();
-  NS_ASSERTION(mTimeTypeLock, 
+  NS_ASSERTION(mTimeTypeLock,
     "sbDatetimePropertyInfo::mTimeTypeLock failed to create lock!");
 
   mMinMaxTimeLock = PR_NewLock();
@@ -139,13 +141,13 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool 
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
   *_retval = PR_TRUE;
-  
+
   if(PR_sscanf(narrow.get(), gsFmtRadix10, &value) != 1) {
     *_retval = PR_FALSE;
     return NS_OK;
   }
 
-  nsAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
   if(value < mMinTime ||
      value > mMaxTime) {
     *_retval = PR_FALSE;
@@ -173,7 +175,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
   }
 
   {
-    nsAutoLock lock(mMinMaxTimeLock);
+    sbSimpleAutoLock lock(mMinMaxTimeLock);
     if(value < mMinTime ||
        value > mMaxTime) {
       return NS_ERROR_INVALID_ARG;
@@ -182,10 +184,10 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
 
   if(timeType != sbIDatetimePropertyInfo::TIMETYPE_TIMESTAMP) {
     nsAutoString out;
-    nsAutoLock lockLocale(mAppLocaleLock);
+    sbSimpleAutoLock lockLocale(mAppLocaleLock);
 
     if(!mAppLocale) {
-      nsCOMPtr<nsILocaleService> localeService = 
+      nsCOMPtr<nsILocaleService> localeService =
         do_GetService("@mozilla.org/intl/nslocaleservice;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -193,7 +195,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    nsAutoLock lockFormatter(mDateTimeFormatLock);
+    sbSimpleAutoLock lockFormatter(mDateTimeFormatLock);
     if(!mDateTimeFormat) {
       mDateTimeFormat = do_CreateInstance(NS_DATETIMEFORMAT_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -204,9 +206,9 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       {
         PRExplodedTime explodedTime = {0};
         PR_ExplodeTime((PRTime) value, PR_LocalTimeParameters, &explodedTime);
-        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale, 
-          kDateFormatNone, 
-          kTimeFormatSeconds, 
+        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
+          kDateFormatNone,
+          kTimeFormatSeconds,
           &explodedTime,
           out);
 
@@ -217,9 +219,9 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       {
         PRExplodedTime explodedTime = {0};
         PR_ExplodeTime((PRTime) value, PR_LocalTimeParameters, &explodedTime);
-        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale, 
-          kDateFormatLong, 
-          kTimeFormatNone, 
+        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
+          kDateFormatLong,
+          kTimeFormatNone,
           &explodedTime,
           out);
 
@@ -230,14 +232,14 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       {
         PRExplodedTime explodedTime = {0};
         PR_ExplodeTime((PRTime) value, PR_LocalTimeParameters, &explodedTime);
-        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale, 
-          kDateFormatShort, 
-          kTimeFormatNoSeconds, 
+        rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
+          kDateFormatShort,
+          kTimeFormatNoSeconds,
           &explodedTime,
           out);
       }
       break;
-    
+
       case sbIDatetimePropertyInfo::TIMETYPE_DURATION:
       {
         PRExplodedTime referenceTime = {0}, explodedTime = {0};
@@ -249,7 +251,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
           out.AppendInt(delta);
           out.AppendLiteral("Y");
         }
-        
+
         delta = explodedTime.tm_month - referenceTime.tm_month;
         if(delta) {
           out.AppendInt(delta);
@@ -280,16 +282,16 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
         if(secs < 10) {
           out.AppendLiteral("0");
         }
-        
+
         out.AppendInt(secs);
 
         if(mDurationDisplayMillisec) {
-          delta = (explodedTime.tm_usec - referenceTime.tm_usec) 
+          delta = (explodedTime.tm_usec - referenceTime.tm_usec)
             / PR_USEC_PER_MSEC;
 
           char c[32] = {0};
           PR_snprintf(c, 32, gsFmtMilliseconds10, delta);
-          
+
           out.AppendLiteral(".");
           out.Append(NS_ConvertUTF8toUTF16(c));
         }
@@ -304,7 +306,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
     _retval = aValue;
     CompressWhitespace(_retval);
   }
- 
+
   return NS_OK;
 }
 
@@ -317,7 +319,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::MakeSortable(const nsAString & aValue, nsA
   _retval = aValue;
   _retval.StripWhitespace();
 
-  nsAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
 
   if(PR_sscanf(narrow.get(), gsFmtRadix10, &value) != 1) {
     _retval = EmptyString();
@@ -341,8 +343,8 @@ NS_IMETHODIMP sbDatetimePropertyInfo::MakeSortable(const nsAString & aValue, nsA
 NS_IMETHODIMP sbDatetimePropertyInfo::GetTimeType(PRInt32 *aTimeType)
 {
   NS_ENSURE_ARG_POINTER(aTimeType);
-  
-  nsAutoLock lock(mTimeTypeLock);
+
+  sbSimpleAutoLock lock(mTimeTypeLock);
   if(mTimeType != sbIDatetimePropertyInfo::TIMETYPE_UNINITIALIZED) {
     *aTimeType = mTimeType;
     return NS_OK;
@@ -352,10 +354,10 @@ NS_IMETHODIMP sbDatetimePropertyInfo::GetTimeType(PRInt32 *aTimeType)
 }
 NS_IMETHODIMP sbDatetimePropertyInfo::SetTimeType(PRInt32 aTimeType)
 {
-  NS_ENSURE_ARG(aTimeType > 0 && 
+  NS_ENSURE_ARG(aTimeType > 0 &&
     aTimeType <= sbDatetimePropertyInfo::TIMETYPE_TIMESTAMP);
 
-  nsAutoLock lock(mTimeTypeLock);
+  sbSimpleAutoLock lock(mTimeTypeLock);
   if(mTimeType == sbIDatetimePropertyInfo::TIMETYPE_UNINITIALIZED) {
     mTimeType = aTimeType;
     return NS_OK;
@@ -367,8 +369,8 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetTimeType(PRInt32 aTimeType)
 NS_IMETHODIMP sbDatetimePropertyInfo::GetMinTime(PRInt64 *aMinTime)
 {
   NS_ENSURE_ARG_POINTER(aMinTime);
-  
-  nsAutoLock lock(mMinMaxTimeLock);
+
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
   *aMinTime = mMinTime;
 
   return NS_OK;
@@ -377,7 +379,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetMinTime(PRInt64 aMinTime)
 {
   NS_ENSURE_ARG(aMinTime > -1);
 
-  nsAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
   mMinTime = aMinTime;
 
   return NS_OK;
@@ -387,7 +389,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::GetMaxTime(PRInt64 *aMaxTime)
 {
   NS_ENSURE_ARG_POINTER(aMaxTime);
 
-  nsAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
   *aMaxTime = mMaxTime;
 
   return NS_OK;
@@ -396,7 +398,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetMaxTime(PRInt64 aMaxTime)
 {
   NS_ENSURE_ARG(aMaxTime > -1);
 
-  nsAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxTimeLock);
   mMaxTime = aMaxTime;
 
   return NS_OK;
@@ -417,7 +419,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetDurationInverse(PRBool aDurationInverse
 NS_IMETHODIMP sbDatetimePropertyInfo::GetDurationWithMilliseconds(PRBool *aDurationWithMilliseconds)
 {
   NS_ENSURE_ARG_POINTER(aDurationWithMilliseconds);
-  *aDurationWithMilliseconds = mDurationDisplayMillisec; 
+  *aDurationWithMilliseconds = mDurationDisplayMillisec;
   return NS_OK;
 }
 NS_IMETHODIMP sbDatetimePropertyInfo::SetDurationWithMilliseconds(PRBool aDurationWithMilliseconds)

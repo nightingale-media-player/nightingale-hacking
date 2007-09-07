@@ -29,8 +29,9 @@
 
 #include <nsISimpleEnumerator.h>
 
-#include <nsAutoLock.h>
 #include <nsArrayEnumerator.h>
+
+#include <sbLockUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
 
@@ -62,7 +63,7 @@ sbPropertyOperator::~sbPropertyOperator()
 
 NS_IMETHODIMP sbPropertyOperator::GetOperator(nsAString & aOperator)
 {
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   aOperator = mOperator;
 
   return NS_OK;
@@ -70,7 +71,7 @@ NS_IMETHODIMP sbPropertyOperator::GetOperator(nsAString & aOperator)
 
 NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReadable)
 {
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   aOperatorReadable = mOperatorReadable;
 
   return NS_OK;
@@ -78,12 +79,12 @@ NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReada
 
 NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, const nsAString & aOperatorReadable)
 {
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   NS_ENSURE_TRUE(mInitialized == PR_FALSE, NS_ERROR_ALREADY_INITIALIZED);
-  
+
   mOperator = aOperator;
   mOperatorReadable = aOperatorReadable;
-  
+
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -107,31 +108,31 @@ sbPropertyInfo::sbPropertyInfo()
 , mRemoteWritableLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
-  NS_ASSERTION(mSortProfileLock, 
+  NS_ASSERTION(mSortProfileLock,
     "sbPropertyInfo::mSortProfileLock failed to create lock!");
 
   mNameLock = PR_NewLock();
-  NS_ASSERTION(mNameLock, 
+  NS_ASSERTION(mNameLock,
     "sbPropertyInfo::mNameLock failed to create lock!");
 
   mTypeLock = PR_NewLock();
-  NS_ASSERTION(mTypeLock, 
+  NS_ASSERTION(mTypeLock,
     "sbPropertyInfo::mTypeLock failed to create lock!");
 
   mDisplayNameLock = PR_NewLock();
-  NS_ASSERTION(mDisplayNameLock, 
+  NS_ASSERTION(mDisplayNameLock,
     "sbPropertyInfo::mDisplayNameLock failed to create lock!");
 
   mUserViewableLock = PR_NewLock();
-  NS_ASSERTION(mUserViewableLock, 
+  NS_ASSERTION(mUserViewableLock,
     "sbPropertyInfo::mUserViewableLock failed to create lock!");
 
   mUserEditableLock = PR_NewLock();
-  NS_ASSERTION(mUserEditableLock, 
+  NS_ASSERTION(mUserEditableLock,
     "sbPropertyInfo::mUserEditableLock failed to create lock!");
 
   mUnitsLock = PR_NewLock();
-  NS_ASSERTION(mUnitsLock, 
+  NS_ASSERTION(mUnitsLock,
     "sbPropertyInfo::mUnitsLock failed to create lock!");
 
   mOperatorsLock = PR_NewLock();
@@ -141,7 +142,7 @@ sbPropertyInfo::sbPropertyInfo()
   mRemoteReadableLock = PR_NewLock();
   NS_ASSERTION(mRemoteReadableLock,
     "sbPropertyInfo::mRemoteReadableLock failed to create lock!");
-  
+
   mRemoteWritableLock = PR_NewLock();
   NS_ASSERTION(mRemoteWritableLock,
     "sbPropertyInfo::mRemoteWritableLock failed to create lock!");
@@ -198,62 +199,62 @@ NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS)
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS)
 {
-  aOPERATOR_NOTEQUALS = NS_LITERAL_STRING(SB_OPERATOR_NOTEQUALS);  
+  aOPERATOR_NOTEQUALS = NS_LITERAL_STRING(SB_OPERATOR_NOTEQUALS);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATER(nsAString & aOPERATOR_GREATER)
 {
-  aOPERATOR_GREATER = NS_LITERAL_STRING(SB_OPERATOR_GREATER);  
+  aOPERATOR_GREATER = NS_LITERAL_STRING(SB_OPERATOR_GREATER);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATEREQUAL(nsAString & aOPERATOR_GREATEREQUAL)
 {
-  aOPERATOR_GREATEREQUAL = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);  
+  aOPERATOR_GREATEREQUAL = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESS(nsAString & aOPERATOR_LESS)
 {
-  aOPERATOR_LESS = NS_LITERAL_STRING(SB_OPERATOR_LESS);  
+  aOPERATOR_LESS = NS_LITERAL_STRING(SB_OPERATOR_LESS);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESSEQUAL(nsAString & aOPERATOR_LESSEQUAL)
 {
-  aOPERATOR_LESSEQUAL = NS_LITERAL_STRING(SB_OPERATOR_LESSEQUAL);  
+  aOPERATOR_LESSEQUAL = NS_LITERAL_STRING(SB_OPERATOR_LESSEQUAL);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS)
 {
-  aOPERATOR_CONTAINS = NS_LITERAL_STRING(SB_OPERATOR_CONTAINS);  
+  aOPERATOR_CONTAINS = NS_LITERAL_STRING(SB_OPERATOR_CONTAINS);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH)
 {
-  aOPERATOR_BEGINSWITH = NS_LITERAL_STRING(SB_OPERATOR_BEGINSWITH);  
+  aOPERATOR_BEGINSWITH = NS_LITERAL_STRING(SB_OPERATOR_BEGINSWITH);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH)
 {
-  aOPERATOR_ENDSWITH = NS_LITERAL_STRING(SB_OPERATOR_ENDSWITH);  
+  aOPERATOR_ENDSWITH = NS_LITERAL_STRING(SB_OPERATOR_ENDSWITH);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN)
 {
-  aOPERATOR_BETWEEN = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);  
+  aOPERATOR_BETWEEN = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::SetNullSort(PRUint32 aNullSort)
 {
   mNullSort = aNullSort;
-  return NS_OK; 
+  return NS_OK;
 }
 NS_IMETHODIMP sbPropertyInfo::GetNullSort(PRUint32 *aNullSort)
 {
@@ -265,8 +266,8 @@ NS_IMETHODIMP sbPropertyInfo::GetNullSort(PRUint32 *aNullSort)
 NS_IMETHODIMP sbPropertyInfo::SetSortProfile(sbIPropertyArray * aSortProfile)
 {
   NS_ENSURE_ARG_POINTER(aSortProfile);
-  
-  nsAutoLock lock(mSortProfileLock);
+
+  sbSimpleAutoLock lock(mSortProfileLock);
   mSortProfile = aSortProfile;
 
   return NS_OK;
@@ -275,7 +276,7 @@ NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
 {
   NS_ENSURE_ARG_POINTER(aSortProfile);
 
-  nsAutoLock lock(mSortProfileLock);
+  sbSimpleAutoLock lock(mSortProfileLock);
   *aSortProfile = mSortProfile;
   NS_ADDREF(*aSortProfile);
 
@@ -284,14 +285,14 @@ NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
 
 NS_IMETHODIMP sbPropertyInfo::GetName(nsAString & aName)
 {
-  nsAutoLock lock(mNameLock);
+  sbSimpleAutoLock lock(mNameLock);
   aName = mName;
   return NS_OK;
 }
 NS_IMETHODIMP sbPropertyInfo::SetName(const nsAString &aName)
 {
-  nsAutoLock lock(mNameLock);
-  
+  sbSimpleAutoLock lock(mNameLock);
+
   if(mName.IsEmpty()) {
     mName = aName;
     return NS_OK;
@@ -302,13 +303,13 @@ NS_IMETHODIMP sbPropertyInfo::SetName(const nsAString &aName)
 
 NS_IMETHODIMP sbPropertyInfo::GetType(nsAString & aType)
 {
-  nsAutoLock lock(mTypeLock);
+  sbSimpleAutoLock lock(mTypeLock);
   aType = mType;
   return NS_OK;
 }
 NS_IMETHODIMP sbPropertyInfo::SetType(const nsAString &aType)
 {
-  nsAutoLock lock(mTypeLock);
+  sbSimpleAutoLock lock(mTypeLock);
 
   if(mType.IsEmpty()) {
     mType = aType;
@@ -320,10 +321,10 @@ NS_IMETHODIMP sbPropertyInfo::SetType(const nsAString &aType)
 
 NS_IMETHODIMP sbPropertyInfo::GetDisplayName(nsAString & aDisplayName)
 {
-  nsAutoLock lock(mDisplayNameLock);
-  
+  sbSimpleAutoLock lock(mDisplayNameLock);
+
   if(mDisplayName.IsEmpty()) {
-    nsAutoLock lock(mNameLock);
+    sbSimpleAutoLock lock(mNameLock);
     aDisplayName = mName;
   }
   else {
@@ -334,7 +335,7 @@ NS_IMETHODIMP sbPropertyInfo::GetDisplayName(nsAString & aDisplayName)
 }
 NS_IMETHODIMP sbPropertyInfo::SetDisplayName(const nsAString &aDisplayName)
 {
-  nsAutoLock lock(mDisplayNameLock);
+  sbSimpleAutoLock lock(mDisplayNameLock);
 
   if(mDisplayName.IsEmpty()) {
     mDisplayName = aDisplayName;
@@ -348,7 +349,7 @@ NS_IMETHODIMP sbPropertyInfo::GetUserViewable(PRBool *aUserViewable)
 {
   NS_ENSURE_ARG_POINTER(aUserViewable);
 
-  nsAutoLock lock(mUserViewableLock);
+  sbSimpleAutoLock lock(mUserViewableLock);
   *aUserViewable = mUserViewable;
 
   return NS_OK;
@@ -356,9 +357,9 @@ NS_IMETHODIMP sbPropertyInfo::GetUserViewable(PRBool *aUserViewable)
 
 NS_IMETHODIMP sbPropertyInfo::SetUserViewable(PRBool aUserViewable)
 {
-  nsAutoLock lock(mUserViewableLock);
+  sbSimpleAutoLock lock(mUserViewableLock);
   mUserViewable = aUserViewable;
-  
+
   return NS_OK;
 }
 
@@ -366,15 +367,15 @@ NS_IMETHODIMP sbPropertyInfo::GetUserEditable(PRBool *aUserEditable)
 {
   NS_ENSURE_ARG_POINTER(aUserEditable);
 
-  nsAutoLock lock(mUserEditableLock);
+  sbSimpleAutoLock lock(mUserEditableLock);
   *aUserEditable = mUserEditable;
-  
+
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
 {
-  nsAutoLock lock(mUserEditableLock);
+  sbSimpleAutoLock lock(mUserEditableLock);
   mUserEditable = aUserEditable;
 
   return NS_OK;
@@ -382,13 +383,13 @@ NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
 
 NS_IMETHODIMP sbPropertyInfo::GetUnits(nsAString & aUnits)
 {
-  nsAutoLock lock(mUnitsLock);
+  sbSimpleAutoLock lock(mUnitsLock);
   aUnits = mUnits;
   return NS_OK;
 }
 NS_IMETHODIMP sbPropertyInfo::SetUnits(const nsAString & aUnits)
 {
-  nsAutoLock lock(mUnitsLock);
+  sbSimpleAutoLock lock(mUnitsLock);
 
   if(mUnits.IsEmpty()) {
     mUnits = aUnits;
@@ -402,20 +403,20 @@ NS_IMETHODIMP sbPropertyInfo::GetOperators(nsISimpleEnumerator * *aOperators)
 {
   NS_ENSURE_ARG_POINTER(aOperators);
 
-  nsAutoLock lock(mOperatorsLock);
+  sbSimpleAutoLock lock(mOperatorsLock);
   return NS_NewArrayEnumerator(aOperators, mOperators);
 }
 NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
 {
   NS_ENSURE_ARG_POINTER(aOperators);
 
-  nsAutoLock lock(mOperatorsLock);
+  sbSimpleAutoLock lock(mOperatorsLock);
   mOperators.Clear();
 
   PRBool hasMore = PR_FALSE;
   nsCOMPtr<nsISupports> object;
 
-  while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) && 
+  while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) &&
          hasMore  &&
          NS_SUCCEEDED(aOperators->GetNext(getter_AddRefs(object)))) {
     nsresult rv;
@@ -473,7 +474,7 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteReadable);
 
-  nsAutoLock lock(mRemoteReadableLock);
+  sbSimpleAutoLock lock(mRemoteReadableLock);
   *aRemoteReadable = mRemoteReadable;
 
   return NS_OK;
@@ -481,9 +482,9 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)
 
 NS_IMETHODIMP sbPropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
 {
-  nsAutoLock lock(mRemoteReadableLock);
+  sbSimpleAutoLock lock(mRemoteReadableLock);
   mRemoteReadable = aRemoteReadable;
-  
+
   return NS_OK;
 }
 
@@ -491,7 +492,7 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(PRBool *aRemoteWritable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteWritable);
 
-  nsAutoLock lock(mRemoteWritableLock);
+  sbSimpleAutoLock lock(mRemoteWritableLock);
   *aRemoteWritable = mRemoteWritable;
 
   return NS_OK;
@@ -499,9 +500,8 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(PRBool *aRemoteWritable)
 
 NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 {
-  nsAutoLock lock(mRemoteWritableLock);
+  sbSimpleAutoLock lock(mRemoteWritableLock);
   mRemoteWritable = aRemoteWritable;
-  
+
   return NS_OK;
 }
-

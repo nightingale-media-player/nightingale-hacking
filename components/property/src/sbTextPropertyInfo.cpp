@@ -26,10 +26,11 @@
 
 #include "sbTextPropertyInfo.h"
 
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
+
+#include <sbLockUtils.h>
 
 NS_IMPL_ADDREF_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
@@ -52,11 +53,11 @@ sbTextPropertyInfo::sbTextPropertyInfo()
   mType = NS_LITERAL_STRING("text");
 
   mMinMaxLock = PR_NewLock();
-  NS_ASSERTION(mMinMaxLock, 
+  NS_ASSERTION(mMinMaxLock,
     "sbTextPropertyInfo::mMinMaxLock failed to create lock!");
 
   mEnforceLowercaseLock = PR_NewLock();
-  NS_ASSERTION(mEnforceLowercaseLock, 
+  NS_ASSERTION(mEnforceLowercaseLock,
     "sbTextPropertyInfo::mMinMaxLock failed to create lock!");
 
   InitializeOperators();
@@ -104,9 +105,9 @@ void sbTextPropertyInfo::InitializeOperators()
 NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   PRInt32 len = aValue.Length();
-  nsAutoLock lock(mMinMaxLock);
+  sbSimpleAutoLock lock(mMinMaxLock);
 
   *_retval = PR_TRUE;
 
@@ -137,7 +138,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
   PRInt32 len = aValue.Length();
 
   {
-    nsAutoLock lock(mMinMaxLock);
+    sbSimpleAutoLock lock(mMinMaxLock);
 
     //If a minimum length is specified and is not respected there's nothing
     //we can do about it, so we reject it.
@@ -155,7 +156,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
 
   //Enforce lowercase if that is requested.
   {
-    nsAutoLock lock(mEnforceLowercaseLock);
+    sbSimpleAutoLock lock(mEnforceLowercaseLock);
     if(mEnforceLowercase) {
       ToLowerCase(_retval);
     }
@@ -163,7 +164,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
 
   rv = Validate(_retval, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if(!valid) {
     rv = NS_ERROR_FAILURE;
     _retval = EmptyString();
@@ -178,12 +179,12 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   PRBool valid = PR_FALSE;
 
   _retval = aValue;
-  
+
   CompressWhitespace(_retval);
   ToLowerCase(_retval);
 
   PRInt32 len = aValue.Length();
-  
+
   PR_Lock(mMinMaxLock);
 
   //If a minimum length is specified and is not respected there's nothing
@@ -214,13 +215,13 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
 NS_IMETHODIMP sbTextPropertyInfo::GetMinLength(PRUint32 *aMinLength)
 {
   NS_ENSURE_ARG_POINTER(aMinLength);
-  nsAutoLock lock(mMinMaxLock);
+  sbSimpleAutoLock lock(mMinMaxLock);
   *aMinLength = mMinLen;
   return NS_OK;
 }
 NS_IMETHODIMP sbTextPropertyInfo::SetMinLength(PRUint32 aMinLength)
 {
-  nsAutoLock lock(mMinMaxLock);
+  sbSimpleAutoLock lock(mMinMaxLock);
   mMinLen = aMinLength;
   return NS_OK;
 }
@@ -228,13 +229,13 @@ NS_IMETHODIMP sbTextPropertyInfo::SetMinLength(PRUint32 aMinLength)
 NS_IMETHODIMP sbTextPropertyInfo::GetMaxLength(PRUint32 *aMaxLength)
 {
   NS_ENSURE_ARG_POINTER(aMaxLength);
-  nsAutoLock lock(mMinMaxLock);
+  sbSimpleAutoLock lock(mMinMaxLock);
   *aMaxLength = mMaxLen;
   return NS_OK;
 }
 NS_IMETHODIMP sbTextPropertyInfo::SetMaxLength(PRUint32 aMaxLength)
 {
-  nsAutoLock lock(mMinMaxLock);
+  sbSimpleAutoLock lock(mMinMaxLock);
   mMaxLen = aMaxLength;
   return NS_OK;
 }
@@ -242,13 +243,13 @@ NS_IMETHODIMP sbTextPropertyInfo::SetMaxLength(PRUint32 aMaxLength)
 NS_IMETHODIMP sbTextPropertyInfo::GetEnforceLowercase(PRBool *aEnforceLowercase)
 {
   NS_ENSURE_ARG_POINTER(aEnforceLowercase);
-  nsAutoLock lock(mEnforceLowercaseLock);
+  sbSimpleAutoLock lock(mEnforceLowercaseLock);
   *aEnforceLowercase = mEnforceLowercase;
   return NS_OK;
 }
 NS_IMETHODIMP sbTextPropertyInfo::SetEnforceLowercase(PRBool aEnforceLowercase)
 {
-  nsAutoLock lock(mEnforceLowercaseLock);
+  sbSimpleAutoLock lock(mEnforceLowercaseLock);
   mEnforceLowercase = aEnforceLowercase;
   return NS_OK;
 }

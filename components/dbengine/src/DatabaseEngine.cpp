@@ -1,32 +1,32 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
 /**
  * \file DatabaseEngine.cpp
- * \brief 
+ * \brief
  */
 
 // INCLUDES ===================================================================
@@ -44,6 +44,7 @@
 #include <nsUnicharUtils.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
+#include <sbLockUtils.h>
 
 #include <vector>
 #include <algorithm>
@@ -63,7 +64,7 @@
 #endif
 
 //Sometimes min is not defined.
-#if !defined(min) 
+#if !defined(min)
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
@@ -107,21 +108,21 @@ void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB
   {
     case SQLITE_INSERT:
     {
-      nsAutoLock lock(pQuery->m_pInsertedRowIDsLock);
+      sbSimpleAutoLock lock(pQuery->m_pInsertedRowIDsLock);
       pQuery->m_InsertedRowIDs.push_back(nRowID);
     }
     break;
 
     case SQLITE_UPDATE:
     {
-      nsAutoLock lock(pQuery->m_pUpdatedRowIDsLock);
+      sbSimpleAutoLock lock(pQuery->m_pUpdatedRowIDsLock);
       pQuery->m_UpdatedRowIDs.push_back(nRowID);
     }
     break;
 
     case SQLITE_DELETE:
     {
-      nsAutoLock lock(pQuery->m_pDeletedRowIDsLock);
+      sbSimpleAutoLock lock(pQuery->m_pDeletedRowIDsLock);
       pQuery->m_DeletedRowIDs.push_back(nRowID);
     }
     break;
@@ -187,7 +188,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
           pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
 
           {
-            nsAutoLock lock(pQuery->m_pModifiedDataLock);
+            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
             nsCAutoString strDBName(pDBName);
 
             if(strDBName.EqualsLiteral("main"))
@@ -224,7 +225,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
           pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
 
           {
-            nsAutoLock lock(pQuery->m_pModifiedDataLock);
+            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
             nsCAutoString strDBName(pDBName);
 
             if(strDBName.EqualsLiteral("main"))
@@ -261,7 +262,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
           pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
 
           {
-            nsAutoLock lock(pQuery->m_pModifiedDataLock);
+            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
             nsCAutoString strDBName(pDBName);
 
             CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
@@ -306,7 +307,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
           pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
 
           {
-            nsAutoLock lock(pQuery->m_pModifiedDataLock);
+            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
             nsCAutoString strDBName(pDBName);
 
             if(strDBName.EqualsLiteral("main"))
@@ -364,9 +365,9 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
         if(pArgA && pArgB && pDBName)
         {
           pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-          
+
           {
-            nsAutoLock lock(pQuery->m_pModifiedDataLock);
+            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
             nsCAutoString strDBName(pDBName);
 
             if(strDBName.EqualsLiteral("main"))
@@ -568,6 +569,8 @@ CDatabaseEngine::CDatabaseEngine()
     nsAutoMonitor::DestroyMonitor(m_pPersistentQueriesMonitor);
   if (m_pDBStorePathLock)
     PR_DestroyLock(m_pDBStorePathLock);
+  if (m_pThreadMonitor)
+    nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -606,12 +609,12 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   PRBool success = m_ThreadPool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  m_pPersistentQueriesMonitor = 
+  m_pPersistentQueriesMonitor =
     nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pPersistentQueriesMonitor");
 
   NS_ENSURE_TRUE(m_pPersistentQueriesMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  m_pThreadMonitor = 
+  m_pThreadMonitor =
     nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pThreadMonitor");
 
   NS_ENSURE_TRUE(m_pThreadMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -653,7 +656,7 @@ EnumThreadsOperate(nsStringHashKey::KeyType aKey, QueryProcessorThread *aThread,
   // Stop if thread is null.
   NS_ENSURE_TRUE(aThread, PL_DHASH_STOP);
 
-  // Stop if closure is null because it 
+  // Stop if closure is null because it
   // contains the operation we are going to perform.
   NS_ENSURE_TRUE(aClosure, PL_DHASH_STOP);
 
@@ -682,7 +685,7 @@ EnumThreadsOperate(nsStringHashKey::KeyType aKey, QueryProcessorThread *aThread,
 NS_IMETHODIMP CDatabaseEngine::Shutdown()
 {
   m_IsShutDown = PR_TRUE;
-  
+
   PRUint32 op = dbEnginePreShutdown;
   m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
 
@@ -705,7 +708,7 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
   // Bail if we don't care about the message
   if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
     return NS_OK;
-  
+
   // Shutdown our threads
   nsresult rv = Shutdown();
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
@@ -718,7 +721,7 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
 }
 
 //-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID, 
+nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
                                  CDatabaseQuery *pQuery,
                                  sqlite3 ** ppHandle)
 {
@@ -726,7 +729,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 
   nsAutoString strFilename;
   GetDBStorePath(dbGUID, pQuery, strFilename);
-  
+
   // Kick sqlite in the pants
   PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open16 failed!");
@@ -756,7 +759,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
                                  tree_collate_func_utf8);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf8!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
-  
+
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
   char *strErr = nsnull;
   sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
@@ -782,11 +785,11 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 {
   sqlite3_interrupt(pHandle);
-  
+
   PRInt32 ret = sqlite3_close(pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
- 
+
   return NS_OK;
 } //CloseDB
 
@@ -857,12 +860,12 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDataba
 
   nsAutoString strGUID;
   nsAutoMonitor mon(m_pThreadMonitor);
-  
+
   nsRefPtr<QueryProcessorThread> pThread;
 
   nsresult rv = pQuery->GetDatabaseGUID(strGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
-  
+
   if(!m_ThreadPool.Get(strGUID, getter_AddRefs(pThread))) {
     pThread = CreateThreadFromQuery(pQuery);
   }
@@ -1072,11 +1075,11 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
       nsAutoMonitor mon(pThread->m_pQueueMonitor);
 
-      while (!queueSize && 
+      while (!queueSize &&
              !pThread->m_Shutdown) {
-        
+
         mon.Wait();
-        
+
         rv = pThread->GetQueueSize(queueSize);
         NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
       }
@@ -1094,9 +1097,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
       // We must have an item in the queue
       rv = pThread->PopQueryFromQueue(&pQuery);
-      NS_ASSERTION(NS_SUCCEEDED(rv), 
+      NS_ASSERTION(NS_SUCCEEDED(rv),
         "Failed to pop query from queue. Thread will restart.");
-      
+
       // Restart the thread.
       if(NS_FAILED(rv)) {
 
@@ -1110,7 +1113,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
     } // Exit Monitor
 
-    
+
     PRBool bPersistent = pQuery->m_PersistentQuery;
     sqlite3 *pDB = pThread->m_pHandle;
 
@@ -1139,7 +1142,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       if(bPersistent)
       {
         //To enable per-row change notification persistent query callbacks we
-        //must always select the rowid column and store it to compare with the 
+        //must always select the rowid column and store it to compare with the
         //rowid's that do get changed. We are notified of rowid's that are modified
         //using the sqlite3_update_hook function that we call to register a callback
         //that enables tracking of all data update in the database.
@@ -1150,7 +1153,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
           str.AssignLiteral("rowid, ");
 
           //Make sure we get the row id column first.
-          strQuery.Insert(str, selectOffset + strSelectToken.Length() + 1);          
+          strQuery.Insert(str, selectOffset + strSelectToken.Length() + 1);
         }
       }
 
@@ -1241,7 +1244,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
         switch(retDB)
         {
-        case SQLITE_ROW: 
+        case SQLITE_ROW:
           {
             CDatabaseResult *pRes = pQuery->GetResultObject();
             PR_Lock(pQuery->m_pQueryResultLock);
@@ -1425,7 +1428,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
           }
         }
       }
-      while(retDB == SQLITE_ROW && 
+      while(retDB == SQLITE_ROW &&
             !pQuery->m_IsAborting &&
             !finishEarly);
 
@@ -1504,7 +1507,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
     pEngine->DoSimpleCallback(pQuery);
     LOG(("DBE: Simple query listeners have been processed."));
 
-    //Check if this query changed any data 
+    //Check if this query changed any data
     pEngine->UpdatePersistentQueries(pQuery);
     LOG(("DBE: Persistent queries updated."));
 
@@ -1532,7 +1535,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
   //Make sure the query has changed persistent query data.
   //Also make sure that the query is not a persistent on itself.
   //This is to avoid circular processing nightmares.
-  if(pQuery->m_HasChangedDataOfPersistQuery && 
+  if(pQuery->m_HasChangedDataOfPersistQuery &&
      !pQuery->m_PersistentQuery)
   {
     PRBool mustExec = PR_FALSE;
@@ -1554,7 +1557,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
     deletedRowCount = pQuery->m_DeletedRowIDs.size();
     PR_Unlock(pQuery->m_pDeletedRowIDsLock);
 
-    nsAutoLock lock(pQuery->m_pModifiedDataLock);
+    sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
     CDatabaseQuery::modifieddata_t::const_iterator itDB = pQuery->m_ModifiedData.begin();
 
     //For each database the query has modified
@@ -1588,7 +1591,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
                 //because there is no way to determine if a rowid selected was affected
                 //or not. Or how it's insertion or removal affects what is already
                 //present.
-                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) || 
+                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) ||
                   ((*itQueries)->m_PersistExecOnInsert && insertedRowCount) )
                 {
                   SubmitQueryPrivate((*itQueries));
@@ -1611,12 +1614,12 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
 
                   intersect.resize(min(pQuery->m_UpdatedRowIDs.size(), (*itQueries)->m_SelectedRowIDs.size()));
                   std::set_intersection(itS, itE, itSS, itEE, intersect.begin());
-                  
+
                   mustExec = intersect.size();
-                  
+
                   PR_Unlock((*itQueries)->m_pSelectedRowIDsLock);
                   PR_Unlock(pQuery->m_pUpdatedRowIDsLock);
-                  
+
                   //persistent query rowids were affected, submit
                   //the query for execution.
                   if(mustExec)
@@ -1646,7 +1649,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
             {
               if((*itQueries)->m_PersistExecSelectiveMode)
               {
-                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) || 
+                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) ||
                     ((*itQueries)->m_PersistExecOnInsert && insertedRowCount) )
                 {
                   (*itQueries)->SetDatabaseGUID(strAllToken);
@@ -1735,11 +1738,11 @@ void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
   PR_Lock(pQuery->m_pPersistentCallbackListLock);
   pQuery->m_PersistentCallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);
   PR_Unlock(pQuery->m_pPersistentCallbackListLock);
-  
+
   callbackCount = callbackSnapshot.Count();
-  if(!callbackCount) 
+  if(!callbackCount)
     return;
-  
+
   for(PRUint32 i = 0; i < callbackCount; i++)
   {
     nsCOMPtr<sbIDatabaseSimpleQueryCallback> callback = callbackSnapshot.ObjectAt(i);
@@ -1760,7 +1763,7 @@ void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
 nsresult CDatabaseEngine::CreateDBStorePath()
 {
   nsresult rv = NS_ERROR_FAILURE;
-  nsAutoLock lock(m_pDBStorePathLock);
+  sbSimpleAutoLock lock(m_pDBStorePathLock);
 
   nsCOMPtr<nsIFile> f;
 
@@ -1770,11 +1773,11 @@ nsresult CDatabaseEngine::CreateDBStorePath()
   rv = f->Append(NS_LITERAL_STRING("db"));
   if(NS_FAILED(rv)) return rv;
 
-  PRBool dirExists = PR_FALSE; 
+  PRBool dirExists = PR_FALSE;
   rv = f->Exists(&dirExists);
   if(NS_FAILED(rv)) return rv;
 
-  if(!dirExists) 
+  if(!dirExists)
   {
     rv = f->Create(nsIFile::DIRECTORY_TYPE, 0700);
     if(NS_FAILED(rv)) return rv;

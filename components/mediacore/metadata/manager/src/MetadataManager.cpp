@@ -1,32 +1,32 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
 /**
 * \file MetadataManager.h
-* \brief 
+* \brief
 */
 
 #pragma once
@@ -59,6 +59,8 @@
 #ifdef PR_LOGGING
 extern PRLogModuleInfo* gMetadataLog;
 #endif
+
+#include <sbLockUtils.h>
 
 // DEFINES ====================================================================
 
@@ -137,7 +139,7 @@ sbMetadataManager *sbMetadataManager::GetSingleton()
 /* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
 NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
 {
-  nsAutoLock lock(m_pContractListLock);
+  sbSimpleAutoLock lock(m_pContractListLock);
 
   if(!_retval) return NS_ERROR_NULL_POINTER;
   *_retval = nsnull;
@@ -183,7 +185,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString url = NS_ConvertUTF8toUTF16(u8Url);
-  
+
   NS_ENSURE_TRUE(m_ContractList.size() > 0, NS_ERROR_FAILURE);
 
   // Go through the list of contract ids, and make them vote on the url

@@ -26,11 +26,12 @@
 
 #include "sbURIPropertyInfo.h"
 
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 
 #include <nsServiceManagerUtils.h>
 #include <nsNetUtil.h>
+
+#include <sbLockUtils.h>
 
 NS_IMPL_ADDREF_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
@@ -50,11 +51,11 @@ sbURIPropertyInfo::sbURIPropertyInfo()
   mType = NS_LITERAL_STRING("uri");
 
   mURISchemeConstraintLock = PR_NewLock();
-  NS_ASSERTION(mURISchemeConstraintLock, 
+  NS_ASSERTION(mURISchemeConstraintLock,
     "sbURIPropertyInfo::mURISchemeConstraintLock failed to create lock!");
 
   mIOServiceLock = PR_NewLock();
-  NS_ASSERTION(mIOServiceLock, 
+  NS_ASSERTION(mIOServiceLock,
     "sbURIPropertyInfo::mIOServiceLock failed to create lock!");
 
   InitializeOperators();
@@ -110,14 +111,14 @@ NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, PRBool *_ret
     return NS_OK;
   }
 
-  nsAutoLock lock(mURISchemeConstraintLock);
+  sbSimpleAutoLock lock(mURISchemeConstraintLock);
   if(!mURISchemeConstraint.IsEmpty()) {
     NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
     PRBool valid = PR_FALSE;
 
     rv = uri->SchemeIs(narrow.get(), &valid);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     if(!valid) {
       *_retval = PR_FALSE;
     }
@@ -145,7 +146,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
   rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mURISchemeConstraintLock);
+  sbSimpleAutoLock lock(mURISchemeConstraintLock);
   if(!mURISchemeConstraint.IsEmpty()) {
     NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
     PRBool valid = PR_FALSE;
@@ -177,7 +178,7 @@ NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAStrin
   rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mURISchemeConstraintLock);
+  sbSimpleAutoLock lock(mURISchemeConstraintLock);
   if(!mURISchemeConstraint.IsEmpty()) {
     NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
     PRBool valid = PR_FALSE;
@@ -202,13 +203,13 @@ NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAStrin
 
 NS_IMETHODIMP sbURIPropertyInfo::GetConstrainScheme(nsAString & aConstrainScheme)
 {
-  nsAutoLock lock(mURISchemeConstraintLock);
+  sbSimpleAutoLock lock(mURISchemeConstraintLock);
   aConstrainScheme = mURISchemeConstraint;
   return NS_OK;
 }
 NS_IMETHODIMP sbURIPropertyInfo::SetConstrainScheme(const nsAString & aConstrainScheme)
 {
-  nsAutoLock lock(mURISchemeConstraintLock);
+  sbSimpleAutoLock lock(mURISchemeConstraintLock);
 
   if(mURISchemeConstraint.IsEmpty()) {
     mURISchemeConstraint = aConstrainScheme;

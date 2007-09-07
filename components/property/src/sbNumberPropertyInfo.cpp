@@ -25,21 +25,21 @@
 */
 
 #include "sbNumberPropertyInfo.h"
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <prprf.h>
 
+#include <sbLockUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
 /*static inline*/
-PRBool IsValidRadix(PRUint32 aRadix) 
+PRBool IsValidRadix(PRUint32 aRadix)
 {
   if(aRadix == 8 ||
      aRadix == 10 ||
      aRadix == 16) {
     return PR_TRUE;
   }
-     
+
   return PR_FALSE;
 }
 
@@ -54,7 +54,7 @@ const char *GetFmtFromRadix(PRUint32 aRadix)
   const char *fmt = nsnull;
 
   switch(aRadix) {
-    case sbINumberPropertyInfo::RADIX_8: 
+    case sbINumberPropertyInfo::RADIX_8:
       fmt = gsFmtRadix8;
     break;
 
@@ -81,7 +81,7 @@ const char *GetSortableFmtFromRadix(PRUint32 aRadix)
   const char *fmt = nsnull;
 
   switch(aRadix) {
-    case sbINumberPropertyInfo::RADIX_8: 
+    case sbINumberPropertyInfo::RADIX_8:
       fmt = gsSortFmtRadix8;
       break;
 
@@ -119,11 +119,11 @@ sbNumberPropertyInfo::sbNumberPropertyInfo()
   mType = NS_LITERAL_STRING("number");
 
   mMinMaxValueLock = PR_NewLock();
-  NS_ASSERTION(mMinMaxValueLock, 
+  NS_ASSERTION(mMinMaxValueLock,
     "sbNumberPropertyInfo::mMinMaxValueLock failed to create lock!");
 
   mRadixLock = PR_NewLock();
-  NS_ASSERTION(mRadixLock, 
+  NS_ASSERTION(mRadixLock,
     "sbNumberPropertyInfo::mRadixLock failed to create lock!");
 
   InitializeOperators();
@@ -143,7 +143,7 @@ void sbNumberPropertyInfo::InitializeOperators()
 {
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
-  
+
   sbPropertyInfo::GetOPERATOR_GREATER(op);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"));
   mOperators.AppendObject(propOp);
@@ -178,14 +178,14 @@ void sbNumberPropertyInfo::InitializeOperators()
 NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
-  
-  nsAutoLock lockRadix(mRadixLock);
+
+  sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
-  
-  nsAutoLock lockMinMax(mMinMaxValueLock);
+
+  sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   *_retval = PR_TRUE;
 
   if(PR_sscanf(narrow.get(), fmt, &value) != 1) {
@@ -214,10 +214,10 @@ NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString &
   _retval = aValue;
   _retval.StripWhitespace();
 
-  nsAutoLock lockRadix(mRadixLock);
+  sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
 
-  nsAutoLock lockMinMax(mMinMaxValueLock);
+  sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   if(PR_sscanf(narrow.get(), fmt, &value) != 1) {
     _retval = EmptyString();
     return NS_ERROR_INVALID_ARG;
@@ -225,7 +225,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString &
 
   char out[32] = {0};
   PR_snprintf(out, 32, fmt, value);
-  
+
   NS_ConvertUTF8toUTF16 wide(out);
   _retval = EmptyString();
 
@@ -250,10 +250,10 @@ NS_IMETHODIMP sbNumberPropertyInfo::MakeSortable(const nsAString & aValue, nsASt
   _retval = aValue;
   _retval.StripWhitespace();
 
-  nsAutoLock lockRadix(mRadixLock);
+  sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
 
-  nsAutoLock lockMinMax(mMinMaxValueLock);
+  sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   if(PR_sscanf(narrow.get(), fmt, &value) != 1) {
     _retval = EmptyString();
     return NS_ERROR_INVALID_ARG;
@@ -277,33 +277,33 @@ NS_IMETHODIMP sbNumberPropertyInfo::MakeSortable(const nsAString & aValue, nsASt
 NS_IMETHODIMP sbNumberPropertyInfo::GetMinValue(PRInt64 *aMinValue)
 {
   NS_ENSURE_ARG_POINTER(aMinValue);
-  nsAutoLock lock(mMinMaxValueLock);
+  sbSimpleAutoLock lock(mMinMaxValueLock);
   *aMinValue = mMinValue;
   return NS_OK;
 }
 NS_IMETHODIMP sbNumberPropertyInfo::SetMinValue(PRInt64 aMinValue)
 {
-  nsAutoLock lock(mMinMaxValueLock);
+  sbSimpleAutoLock lock(mMinMaxValueLock);
 
   if(!mHasSetMinValue) {
     mMinValue = aMinValue;
     mHasSetMinValue = PR_TRUE;
     return NS_OK;
   }
-  
+
   return NS_ERROR_ALREADY_INITIALIZED;
 }
 
 NS_IMETHODIMP sbNumberPropertyInfo::GetMaxValue(PRInt64 *aMaxValue)
 {
   NS_ENSURE_ARG_POINTER(aMaxValue);
-  nsAutoLock lock(mMinMaxValueLock);
+  sbSimpleAutoLock lock(mMinMaxValueLock);
   *aMaxValue = mMaxValue;
   return NS_OK;
 }
 NS_IMETHODIMP sbNumberPropertyInfo::SetMaxValue(PRInt64 aMaxValue)
 {
-  nsAutoLock lock(mMinMaxValueLock);
+  sbSimpleAutoLock lock(mMinMaxValueLock);
 
   if(!mHasSetMaxValue) {
     mMaxValue = aMaxValue;
@@ -318,14 +318,14 @@ NS_IMETHODIMP sbNumberPropertyInfo::GetRadix(PRUint32 *aRadix)
 {
   NS_ENSURE_ARG_POINTER(aRadix);
 
-  nsAutoLock lock(mRadixLock);
+  sbSimpleAutoLock lock(mRadixLock);
   *aRadix = mRadix;
   return NS_OK;
 }
 NS_IMETHODIMP sbNumberPropertyInfo::SetRadix(PRUint32 aRadix)
 {
   NS_ENSURE_TRUE(IsValidRadix(aRadix), NS_ERROR_INVALID_ARG);
-  nsAutoLock lock(mRadixLock);
+  sbSimpleAutoLock lock(mRadixLock);
   mRadix = aRadix;
   return NS_OK;
 }

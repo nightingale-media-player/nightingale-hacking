@@ -1,30 +1,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
-/** 
+/**
 * \file DatabaseQuery.cpp
 *
 */
@@ -47,6 +47,7 @@
 #include <nsSupportsArray.h>
 
 #include <sbProxyUtils.h>
+#include <sbLockUtils.h>
 
 #ifdef DEBUG_locks
 #include <nsPrintfCString.h>
@@ -142,7 +143,7 @@ CDatabaseQuery::~CDatabaseQuery()
   mDatabaseEngine->RemovePersistentQuery(this);
 
   NS_IF_RELEASE(m_QueryResult);
-  
+
   if (m_pLocationURILock)
     PR_DestroyLock(m_pLocationURILock);
 
@@ -210,7 +211,7 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
   nsresult rv = NS_OK;
   *aDatabaseLocation = nsnull;
 
-  nsAutoLock lock(m_pLocationURILock);
+  sbSimpleAutoLock lock(m_pLocationURILock);
   if(m_LocationURI)
   {
     rv = m_LocationURI->Clone(aDatabaseLocation);
@@ -254,7 +255,7 @@ NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
 
     if(isReadable && isWritable)
     {
-      nsAutoLock lock(m_pLocationURILock);
+      sbSimpleAutoLock lock(m_pLocationURILock);
       rv = aDatabaseLocation->Clone(getter_AddRefs(m_LocationURI));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -390,7 +391,7 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
                                      getter_AddRefs(proxiedCallback));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(m_pPersistentCallbackListLock);
+  sbSimpleAutoLock lock(m_pPersistentCallbackListLock);
   m_PersistentCallbackList.Put(dbPersistCB, proxiedCallback);
 
   return NS_OK;
@@ -526,7 +527,7 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObject(sbIDatabaseResult **_retval)
 NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  nsAutoLock lock(m_pQueryResultLock);
+  sbSimpleAutoLock lock(m_pQueryResultLock);
 
   CDatabaseResult *pRes = nsnull;
   NS_NEWXPCOM(pRes, CDatabaseResult);
@@ -617,7 +618,7 @@ NS_IMETHODIMP CDatabaseQuery::AddCallback(sbIDatabaseQueryCallback *dbCallback)
                                      getter_AddRefs(proxiedCallback));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(m_pCallbackListLock);
+  sbSimpleAutoLock lock(m_pCallbackListLock);
   m_PersistentCallbackList.Put(dbCallback, proxiedCallback);
 
   return NS_OK;
@@ -678,7 +679,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint64 *aRollingLimit)
 {
   NS_ENSURE_ARG_POINTER(aRollingLimit);
 
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   *aRollingLimit = m_RollingLimit;
 
@@ -687,7 +688,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint64 *aRollingLimit)
 
 NS_IMETHODIMP CDatabaseQuery::SetRollingLimit(PRUint64 aRollingLimit)
 {
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   m_RollingLimit = aRollingLimit;
 
@@ -698,7 +699,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimitColumnIndex(PRUint32 *aRollingLimit
 {
   NS_ENSURE_ARG_POINTER(aRollingLimitColumnIndex);
 
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   *aRollingLimitColumnIndex = m_RollingLimitColumnIndex;
 
@@ -707,7 +708,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimitColumnIndex(PRUint32 *aRollingLimit
 
 NS_IMETHODIMP CDatabaseQuery::SetRollingLimitColumnIndex(PRUint32 aRollingLimitColumnIndex)
 {
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   m_RollingLimitColumnIndex = aRollingLimitColumnIndex;
 
@@ -718,7 +719,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimitResult(PRUint32 *aRollingLimitResul
 {
   NS_ENSURE_ARG_POINTER(aRollingLimitResult);
 
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   *aRollingLimitResult = m_RollingLimitResult;
 
@@ -727,7 +728,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimitResult(PRUint32 *aRollingLimitResul
 
 NS_IMETHODIMP CDatabaseQuery::SetRollingLimitResult(PRUint32 aRollingLimitResult)
 {
-  nsAutoLock lock(m_pRollingLimitLock);
+  sbSimpleAutoLock lock(m_pRollingLimitLock);
 
   m_RollingLimitResult = aRollingLimitResult;
 
@@ -737,7 +738,7 @@ NS_IMETHODIMP CDatabaseQuery::SetRollingLimitResult(PRUint32 aRollingLimitResult
 NS_IMETHODIMP CDatabaseQuery::BindUTF8StringParameter(PRUint32 aParamIndex,
                                                       const nsACString &aValue)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -751,7 +752,7 @@ NS_IMETHODIMP CDatabaseQuery::BindUTF8StringParameter(PRUint32 aParamIndex,
 NS_IMETHODIMP CDatabaseQuery::BindStringParameter(PRUint32 aParamIndex,
                                                   const nsAString &aValue)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -765,7 +766,7 @@ NS_IMETHODIMP CDatabaseQuery::BindStringParameter(PRUint32 aParamIndex,
 NS_IMETHODIMP CDatabaseQuery::BindDoubleParameter(PRUint32 aParamIndex,
                                                   double aValue)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -779,7 +780,7 @@ NS_IMETHODIMP CDatabaseQuery::BindDoubleParameter(PRUint32 aParamIndex,
 NS_IMETHODIMP CDatabaseQuery::BindInt32Parameter(PRUint32 aParamIndex,
                                                  PRInt32 aValue)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -793,7 +794,7 @@ NS_IMETHODIMP CDatabaseQuery::BindInt32Parameter(PRUint32 aParamIndex,
 NS_IMETHODIMP CDatabaseQuery::BindInt64Parameter(PRUint32 aParamIndex,
                                                   PRInt64 aValue)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -806,7 +807,7 @@ NS_IMETHODIMP CDatabaseQuery::BindInt64Parameter(PRUint32 aParamIndex,
 
 NS_IMETHODIMP CDatabaseQuery::BindNullParameter(PRUint32 aParamIndex)
 {
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -831,7 +832,7 @@ NS_IMETHODIMP CDatabaseQuery::EnsureLastQueryParameter(PRUint32 aParamIndex)
 //-----------------------------------------------------------------------------
 CDatabaseResult *CDatabaseQuery::GetResultObject()
 {
-  nsAutoLock lock(m_pQueryResultLock);
+  sbSimpleAutoLock lock(m_pQueryResultLock);
 
   //m_QueryResult->AddRef();
   return m_QueryResult;
@@ -841,7 +842,7 @@ CDatabaseResult *CDatabaseQuery::GetResultObject()
 bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
 {
   bindParameterArray_t* retval = nsnull;
-  nsAutoLock lock(m_pBindParametersLock);
+  sbSimpleAutoLock lock(m_pBindParametersLock);
 
   if(aQueryIndex < m_BindParameters.Length()) {
     retval = new bindParameterArray_t(m_BindParameters[aQueryIndex]);

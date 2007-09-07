@@ -44,6 +44,7 @@
 #include <nsIObserverService.h>
 #include <nsIMutableArray.h>
 #include <nsNetUtil.h>
+#include <sbLockUtils.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -324,7 +325,7 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
                                                     PRUint32 aEndIndex,
                                                     nsIArray** _retval)
 {
-  nsAutoLock lock(m_pFileStackLock);
+  sbSimpleAutoLock lock(m_pFileStackLock);
 
   PRUint32 length = m_FileStack.size();
   NS_ENSURE_TRUE(aStartIndex < length, NS_ERROR_INVALID_ARG);

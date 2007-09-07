@@ -1,30 +1,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
-/** 
+/**
 * \file  DeviceManager.cpp
 * \Windows Media device Component Implementation.
 */
@@ -86,7 +86,7 @@ sbDeviceManager::~sbDeviceManager()
   NS_ASSERTION(sbDeviceManager::sServiceFinalized,
                "DeviceManager never finalized!");
   if (mLock)
-    PR_DestroyLock(mLock);
+    nsAutoLock::DestroyLock(mLock);
 
   LOG(("DeviceManager[0x%x] - Destroyed", this));
 }
@@ -103,7 +103,7 @@ sbDeviceManager::Initialize()
   NS_ENSURE_FALSE(sbDeviceManager::sServiceInitialized,
                   NS_ERROR_ALREADY_INITIALIZED);
 
-  mLock = PR_NewLock();
+  mLock = nsAutoLock::NewLock("sbDeviceManager::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   mLastRequestedCategory = EmptyString();
@@ -112,7 +112,7 @@ sbDeviceManager::Initialize()
   // profile has been loaded. Also register for XPCOM shutdown notification.
 
   nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService = 
+  nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -174,7 +174,7 @@ sbDeviceManager::Finalize()
 
 // Instantiate all supported devices.
 // This is done by iterating through all registered XPCOM components and
-// finding the components with @songbirdnest.com/Songbird/Device/ prefix for the 
+// finding the components with @songbirdnest.com/Songbird/Device/ prefix for the
 // contract ID for the interface.
 NS_IMETHODIMP
 sbDeviceManager::LoadSupportedDevices()
@@ -197,7 +197,7 @@ sbDeviceManager::LoadSupportedDevices()
   nsCOMPtr<nsISimpleEnumerator> simpleEnumerator;
   rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Enumerate through the contractIDs and look for our prefix
   nsCOMPtr<nsISupports> element;
   PRBool more = PR_FALSE;
@@ -244,7 +244,7 @@ sbDeviceManager::LoadSupportedDevices()
 
     // If everything has succeeded then we can add it to our array
     PRBool ok = mSupportedDevices.AppendObject(device);
-    
+
     // Make sure that our array is behaving properly. If not we're in trouble.
     NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
   }
@@ -315,7 +315,7 @@ sbDeviceManager::HasDeviceForCategory(const nsAString& aCategory,
 
   PRUint32 dummy;
   nsresult rv = GetIndexForCategory(aCategory, &dummy);
-  
+
   *_retval = NS_SUCCEEDED(rv);
   return NS_OK;
 }
@@ -393,7 +393,7 @@ sbDeviceManager::Observe(nsISupports* aSubject,
   LOG(("DeviceManager[0x%x] - Observe: %s", this, aTopic));
 
   nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService = 
+  nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
