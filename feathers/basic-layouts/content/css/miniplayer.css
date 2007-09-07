@@ -94,7 +94,8 @@ sb-sys-close-button.miniplayer
 /* JumpTo Button */
 sb-player-jumpto-button.miniplayer
 {
-  display: none;
+  list-style-image: url(chrome://songbird/skin/icons/icon_jumpto.png) !important;
+  -moz-image-region: auto;
   margin: 0px 0px 0px 5px;  
 }
 
