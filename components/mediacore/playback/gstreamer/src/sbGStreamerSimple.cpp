@@ -874,7 +874,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
-      mBufferentPercent = 0;
+      mBufferingPercent = 0;
       mIsPlayingVideo = PR_FALSE;
       if(mFullscreen && mGdkWinFull != NULL) {
         ReparentToChromeWin(this);
