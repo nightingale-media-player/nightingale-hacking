@@ -472,7 +472,7 @@ checkbox[checked="true"] .checkbox-check
 {
   -moz-appearance: none !important;
   background-color: #FFF !important;
-  background-image: url("default/checkbox_checkmark.png") !important;
+  background-image: url("default/checkbox-checkmark.png") !important;
 }
 
 checkbox[checked="true"][disabled="true"] .checkbox-check {
@@ -689,13 +689,13 @@ menuitem[selected="true"]
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
   list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/checkbox_checkmark.png) !important;
+  background-image: url(chrome://songbird/skin/default/checkbox-checkmark.png) !important;
 }
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
   list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/checkbox_checkmark.png) !important;
+  background-image: url(chrome://songbird/skin/default/checkbox-checkmark.png) !important;
 }
 
 /** 

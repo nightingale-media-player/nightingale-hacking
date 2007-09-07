@@ -47,11 +47,11 @@ FACEPLATE
 }
 .faceplate-left-spacer
 {
-  background-image: url(chrome://songbird/skin/faceplate/faceplate_left.png);
+  background-image: url(chrome://songbird/skin/faceplate/faceplate-left.png);
 }
 .faceplate-right-spacer
 {
-  background-image: url(chrome://songbird/skin/faceplate/faceplate_right.png);
+  background-image: url(chrome://songbird/skin/faceplate/faceplate-right.png);
 }
 /*  Sample for how to style the faceplate based upon the showing pane.
 .faceplate-left-spacer[currentId="songbird-intro"],
@@ -66,7 +66,7 @@ FACEPLATE
 .faceplate-bkgd-box
 {
   height: 55px;
-  background-image: url(chrome://songbird/skin/faceplate/faceplate_bkgd.png);
+  background-image: url(chrome://songbird/skin/faceplate/faceplate-bkgd.png);
   background-repeat: repeat-x;
   overflow: hidden;
 }

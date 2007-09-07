@@ -2426,7 +2426,7 @@ thumb.sb-player-seek-slider
   width: 21px !important;
   height: 10px !important;
   background-color: #7e847b !important;
-  background-image: url(default/seekbar_progress.png) !important;
+  background-image: url(default/seekbar-progress.png) !important;
   border: 1px solid #a7afa2 !important;
 }
 thumb.sb-player-seek-slider > gripper
@@ -2441,13 +2441,13 @@ progressmeter.sb-player-seek-slider
 progressmeter.sb-player-seek-slider > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_progress.png) !important;
+  background-image: url(default/seekbar-progress.png) !important;
   height: 10px !important;
 }
 progressmeter.sb-player-seek-slider > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_remainder.png) !important;
+  background-image: url(default/seekbar-remainder.png) !important;
   height: 10px !important;
 }
 #songbird_seekbar
@@ -2749,7 +2749,7 @@ track_editor label,
 {
   height: 7px !important;
   width: 7px !important; 
-  background-image: url(default/checkbox_checkmark.png) !important;
+  background-image: url(default/checkbox-checkmark.png) !important;
 }
 
 /* Smart Playlist Builder */
@@ -2973,7 +2973,7 @@ menuitem[checked="true"] > hbox[checked="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(default/checkbox_checkmark.png) !important;
+  list-style-image: url(default/checkbox-checkmark.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -2983,7 +2983,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(default/checkbox_checkmark.png) !important;
+  list-style-image: url(default/checkbox-checkmark.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -3237,13 +3237,13 @@ progressmeter.sb-player-seek-slider.miniplayer
 progressmeter.sb-player-seek-slider.miniplayer .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/seekbar_progress.png) !important;
+  background-image: url(mini/seekbar-progress.png) !important;
   height: 6px !important;
 }
 progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/seekbar_remainder.png) !important;
+  background-image: url(mini/seekbar-remainder.png) !important;
   height: 6px !important;
 }
 #songbird_seekbar.miniplayer

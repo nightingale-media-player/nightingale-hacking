@@ -81,7 +81,7 @@ checkbox[disabled="true"] {
 
 checkbox[checked="true"] .checkbox-check 
 {
-  background-image: url("chrome://songbird/skin/checkbox/checkbox_checkmark.png");
+  background-image: url("chrome://songbird/skin/checkbox/checkbox-checkmark.png");
 }
 
 .checkbox-label-box {

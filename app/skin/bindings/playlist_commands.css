@@ -42,7 +42,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: Play Button */
 #library_cmd_play
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 11px 8px 0px);
 }
 #library_cmd_play:hover
@@ -58,7 +58,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: remove Button */
 #library_cmd_remove
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 22px 8px 11px);
 }
 #library_cmd_remove:hover
@@ -74,7 +74,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: edit Button */
 #library_cmd_edit
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 33px 8px 22px);
 }
 #library_cmd_edit:hover
@@ -91,7 +91,7 @@ Playlist toolbar and context menu items.
 /* THIS ONE CREASHES */
 #library_cmd_addtoplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ;
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ;
   -moz-image-region: rect(0px 44px 8px 33px);
 }
 #library_cmd_addtoplaylist:hover
@@ -110,7 +110,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: burntocd Button */
 #library_cmd_burntocd
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 55px 8px 44px);
 }
 #library_cmd_burntocd:hover
@@ -126,7 +126,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: device Button */
 #library_cmd_device
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 66px 8px 55px);
 }
 #library_cmd_device:hover
@@ -142,7 +142,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: addtolibrary Button */
 #library_cmd_addtolibrary
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 77px 8px 66px);
 }
 #library_cmd_addtolibrary[active="true"]:hover
@@ -158,7 +158,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: download Button */
 #library_cmd_download
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 88px 8px 77px);
 }
 #library_cmd_download:hover
@@ -174,7 +174,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: subscribe Button */
 #library_cmd_subscribe
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 121px 8px 110px);
 }
 #library_cmd_subscribe:hover
@@ -190,7 +190,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: pause Button */
 #library_cmd_pause
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 99px 8px 88px);
 }
 #library_cmd_pause:hover
@@ -206,7 +206,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: resume Button */
 #library_cmd_resume
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 11px 8px 0px);
 }
 #library_cmd_resume:hover
@@ -222,7 +222,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: switch to downloads Button */
 #library_cmd_showdlplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 110px 8px 99px);
 }
 #library_cmd_showdlplaylist:hover
@@ -238,7 +238,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: switch to webplaylist Button */
 #library_cmd_showwebplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 132px 8px 121px);
 }
 #library_cmd_showwebplaylist:hover

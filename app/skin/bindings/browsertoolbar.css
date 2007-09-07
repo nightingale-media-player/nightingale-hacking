@@ -34,7 +34,7 @@ WEB TOOLBAR IMAGES
 
 #back-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 16px 16px 0px);
 }
 #back-button:hover
@@ -52,7 +52,7 @@ WEB TOOLBAR IMAGES
 #reload-button,
 .sb-browser-stopreload-reload-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 48px 16px 32px);
 }
 #reload-button:hover,
@@ -73,7 +73,7 @@ WEB TOOLBAR IMAGES
 #stop-button,
 .sb-browser-stopreload-stop-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 64px 16px 48px);
 }
 #stop-button:hover,
@@ -93,7 +93,7 @@ WEB TOOLBAR IMAGES
 }
 #forward-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 32px 16px 16px);
 }
 #forward-button:hover
@@ -110,7 +110,7 @@ WEB TOOLBAR IMAGES
 }
 #home-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 80px 16px 64px);
 }
 #home-button:hover
@@ -127,7 +127,7 @@ WEB TOOLBAR IMAGES
 }
 #bookmark-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 96px 16px 80px);
 }
 #bookmark-button:hover
