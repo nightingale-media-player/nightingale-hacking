@@ -84,6 +84,7 @@ private:
   PRBool mIsPlayingVideo;
   PRBool mFullscreen;
   PRInt32 mLastErrorCode;
+  PRUint16 mBufferingPercent;
 
   double mLastVolume;
 

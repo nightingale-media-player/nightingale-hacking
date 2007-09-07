@@ -46,6 +46,7 @@ interface sbIGStreamerSimple : nsISupports
   readonly attribute boolean isPlaying;
   readonly attribute boolean isPlayingVideo;
   readonly attribute boolean isPaused;
+  readonly attribute unsigned short bufferingPercent;
   readonly attribute unsigned long long streamLength;
   readonly attribute boolean isAtEndOfStream;
   readonly attribute long lastErrorCode;

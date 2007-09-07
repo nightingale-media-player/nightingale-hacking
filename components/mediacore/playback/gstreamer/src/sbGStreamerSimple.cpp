@@ -22,12 +22,16 @@
 #include "nsStringGlue.h"
 #include "prlog.h"
 
-#if defined( PR_LOGGING )
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=gstreamer:5
+ */
+#ifdef PR_LOGGING
 extern PRLogModuleInfo* gGStreamerLog;
-#define LOG(args) PR_LOG(gGStreamerLog, PR_LOG_DEBUG, args)
-#else
-#define LOG(args)
-#endif
+#endif /* PR_LOGGING */
+
+#define TRACE(args) PR_LOG(gGStreamerLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gGStreamerLog, PR_LOG_WARN, args)
 
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
                               sbIGStreamerSimple,
@@ -69,10 +73,12 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mIsPlayingVideo(PR_FALSE),
   mFullscreen(PR_FALSE),
   mLastErrorCode(0),
+  mBufferingPercent(0),
   mLastVolume(0),
   mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Constructed", this));
   mArtist.Assign(EmptyString());
   mAlbum.Assign(EmptyString());
   mTitle.Assign(EmptyString());
@@ -81,6 +87,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
 
 sbGStreamerSimple::~sbGStreamerSimple()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Destructed", this));
   DestroyPlaybin();
 
   // Do i need to close the video window?
@@ -92,14 +99,13 @@ sbGStreamerSimple::~sbGStreamerSimple()
 NS_IMETHODIMP
 sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
 {
+  NS_ENSURE_ARG_POINTER(aVideoOutput);
+  TRACE(("sbGStreamerSimple[0x%.8x] - Init", this));
+
   nsresult rv;
 
   if(mInitialized) {
     return NS_OK;
-  }
-
-  if(aVideoOutput == nsnull) {
-    return NS_ERROR_INVALID_ARG;
   }
 
   nsCOMPtr<nsIProxyObjectManager> proxyObjMgr = 
@@ -189,6 +195,8 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
 NS_IMETHODIMP
 sbGStreamerSimple::SetupPlaybin()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - SetupPlaybin", this));
+
   if (!mPlay) {
     mPlay = gst_element_factory_make("playbin", "play");
     GstElement *audioSink = gst_element_factory_make("gconfaudiosink",
@@ -216,6 +224,8 @@ sbGStreamerSimple::SetupPlaybin()
 NS_IMETHODIMP
 sbGStreamerSimple::DestroyPlaybin()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - DestroyPlaybin", this));
+
   if (mBus) {
     gst_bus_set_flushing(mBus, TRUE);
     mBus = NULL;
@@ -233,6 +243,8 @@ sbGStreamerSimple::DestroyPlaybin()
 NS_IMETHODIMP
 sbGStreamerSimple::GetUri(nsAString& aUri)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetUri", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -253,6 +265,8 @@ sbGStreamerSimple::GetUri(nsAString& aUri)
 NS_IMETHODIMP
 sbGStreamerSimple::SetUri(const nsAString& aUri)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - SetUri", this));
+
   nsresult rv;
 
   if(!mInitialized) {
@@ -279,6 +293,9 @@ sbGStreamerSimple::SetUri(const nsAString& aUri)
 NS_IMETHODIMP
 sbGStreamerSimple::GetVolume(double* aVolume)
 {
+  NS_ENSURE_ARG_POINTER(aVolume);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetVolume", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -291,6 +308,8 @@ sbGStreamerSimple::GetVolume(double* aVolume)
 void
 sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
 {
+  NS_ASSERTION(gsts, "gsts is null");
+
   GdkScreen *fullScreen = NULL;
   GdkWindowAttr attributes;
   gint fullWidth, fullHeight;
@@ -323,6 +342,8 @@ sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
 void
 sbGStreamerSimple::ReparentToChromeWin(sbGStreamerSimple* gsts)
 {
+  NS_ASSERTION(gsts, "gsts is null");
+
   gdk_window_unfullscreen(gsts->mGdkWin);
   gdk_window_reparent(gsts->mGdkWin, gsts->mNativeWin, 0, 0);
   gsts->Resize();
@@ -334,6 +355,9 @@ sbGStreamerSimple::ReparentToChromeWin(sbGStreamerSimple* gsts)
 NS_IMETHODIMP
 sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
 {
+  NS_ENSURE_ARG_POINTER(aFullscreen);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetFullscreen", this));
+
   *aFullscreen = mFullscreen;
 
   return NS_OK;
@@ -342,6 +366,8 @@ sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
 NS_IMETHODIMP
 sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - SetFullscreen", this));
+
   mFullscreen = aFullscreen;
   if(!mFullscreen && mGdkWinFull != NULL) ReparentToChromeWin(this);
 
@@ -351,6 +377,8 @@ sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 NS_IMETHODIMP
 sbGStreamerSimple::SetVolume(double aVolume)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - SetVolume", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -364,6 +392,9 @@ sbGStreamerSimple::SetVolume(double aVolume)
 NS_IMETHODIMP
 sbGStreamerSimple::GetPosition(PRUint64* aPosition)
 {
+  NS_ENSURE_ARG_POINTER(aPosition);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetPosition", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -392,6 +423,9 @@ sbGStreamerSimple::GetPosition(PRUint64* aPosition)
 NS_IMETHODIMP
 sbGStreamerSimple::GetIsPlaying(PRBool* aIsPlaying)
 {
+  NS_ENSURE_ARG_POINTER(aIsPlaying);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetIsPlaying", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -413,6 +447,9 @@ sbGStreamerSimple::GetIsPlaying(PRBool* aIsPlaying)
 NS_IMETHODIMP
 sbGStreamerSimple::GetIsPlayingVideo(PRBool* aIsPlayingVideo)
 {
+  NS_ENSURE_ARG_POINTER(aIsPlayingVideo);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetIsPlayingVideo", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -425,6 +462,9 @@ sbGStreamerSimple::GetIsPlayingVideo(PRBool* aIsPlayingVideo)
 NS_IMETHODIMP
 sbGStreamerSimple::GetIsPaused(PRBool* aIsPaused)
 {
+  NS_ENSURE_ARG_POINTER(aIsPaused);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetIsPaused", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -444,8 +484,22 @@ sbGStreamerSimple::GetIsPaused(PRBool* aIsPaused)
 }
 
 NS_IMETHODIMP
+sbGStreamerSimple::GetBufferingPercent(PRUint16* aBufferingPercent)
+{
+  NS_ENSURE_ARG_POINTER(aBufferingPercent);
+  TRACE(("sbGStreamerSimple[0x%.8x] - aBufferingPercent", this));
+
+  *aBufferingPercent = mBufferingPercent;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerSimple::GetStreamLength(PRUint64* aStreamLength)
 {
+  NS_ENSURE_ARG_POINTER(aStreamLength);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetStreamLength", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -474,6 +528,9 @@ sbGStreamerSimple::GetStreamLength(PRUint64* aStreamLength)
 NS_IMETHODIMP
 sbGStreamerSimple::GetIsAtEndOfStream(PRBool* aIsAtEndOfStream)
 {
+  NS_ENSURE_ARG_POINTER(aIsAtEndOfStream);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetIsAtEndOfStream", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -486,6 +543,9 @@ sbGStreamerSimple::GetIsAtEndOfStream(PRBool* aIsAtEndOfStream)
 NS_IMETHODIMP
 sbGStreamerSimple::GetLastErrorCode(PRInt32* aLastErrorCode)
 {
+  NS_ENSURE_ARG_POINTER(aLastErrorCode);
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetLastErrorCode", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -498,6 +558,8 @@ sbGStreamerSimple::GetLastErrorCode(PRInt32* aLastErrorCode)
 NS_IMETHODIMP
 sbGStreamerSimple::GetArtist(nsAString& aArtist)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetArtist", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -510,6 +572,8 @@ sbGStreamerSimple::GetArtist(nsAString& aArtist)
 NS_IMETHODIMP
 sbGStreamerSimple::GetAlbum(nsAString& aAlbum)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetAlbum", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -522,6 +586,8 @@ sbGStreamerSimple::GetAlbum(nsAString& aAlbum)
 NS_IMETHODIMP
 sbGStreamerSimple::GetTitle(nsAString& aTitle)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetTitle", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -534,6 +600,8 @@ sbGStreamerSimple::GetTitle(nsAString& aTitle)
 NS_IMETHODIMP
 sbGStreamerSimple::GetGenre(nsAString& aGenre)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - GetGenre", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -546,6 +614,8 @@ sbGStreamerSimple::GetGenre(nsAString& aGenre)
 NS_IMETHODIMP
 sbGStreamerSimple::Play()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Play", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -567,6 +637,8 @@ sbGStreamerSimple::Play()
 NS_IMETHODIMP
 sbGStreamerSimple::Pause()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Pause", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -579,6 +651,8 @@ sbGStreamerSimple::Pause()
 NS_IMETHODIMP
 sbGStreamerSimple::Stop()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Stop", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -591,6 +665,7 @@ sbGStreamerSimple::Stop()
   }
   mCursorIntervalTimer->Cancel();
   mLastErrorCode = 0;
+  mBufferingPercent = 0;
 
   return NS_OK;
 }
@@ -598,6 +673,8 @@ sbGStreamerSimple::Stop()
 NS_IMETHODIMP
 sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - Seek", this));
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
@@ -614,6 +691,8 @@ sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
 NS_IMETHODIMP
 sbGStreamerSimple::RestartPlaybin()
 {
+  TRACE(("sbGStreamerSimple[0x%.8x] - RestartPlaybin", this));
+
   nsresult rv;
 
   LOG(("Restarting playbin..."));
@@ -665,17 +744,16 @@ sbGStreamerSimple::SetDefaultCursor(sbGStreamerSimple* gsts)
 NS_IMETHODIMP 
 sbGStreamerSimple::Notify(nsITimer *aTimer)
 {
-  if (!aTimer) 
-    return NS_OK;
-  
+  NS_ENSURE_ARG_POINTER(aTimer);
+
   GdkDisplay *gdkDisplay;
   GdkWindow *gdkWin = this->mGdkWin;
   gint newCursorX=-1;
   gint newCursorY=-1;
-  
+
   if (gdkWin == NULL) 
     return NS_OK;
-  
+
   gdkDisplay = gdk_x11_lookup_xdisplay(GDK_WINDOW_XDISPLAY(gdkWin));
 
   gdk_display_get_pointer(gdkDisplay, NULL, &newCursorX, &newCursorY, NULL);
@@ -796,6 +874,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
+      mBufferentPercent = 0;
       mIsPlayingVideo = PR_FALSE;
       if(mFullscreen && mGdkWinFull != NULL) {
         ReparentToChromeWin(this);
@@ -822,6 +901,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
+      mBufferingPercent = 0;
       mCursorIntervalTimer->Cancel();
       if(mFullscreen && mGdkWinFull != NULL) {
 
@@ -921,6 +1001,14 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       }
 
       gst_tag_list_free(tag_list);
+      break;
+    }
+
+    case GST_MESSAGE_BUFFERING: {
+      gint percent = 0;
+      gst_structure_get_int (message->structure, "buffer-percent", &percent);
+      mBufferingPercent = percent;
+      TRACE(("Buffering (%u percent done)", percent));
       break;
     }
 

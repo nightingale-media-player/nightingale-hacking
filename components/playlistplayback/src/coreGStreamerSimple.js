@@ -59,6 +59,7 @@ function CoreGStreamerSimple()
   this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
                                                      []);
   this._uriChecker = null;
+  this._lastPlayStart = null;
 };
 
 // inherit the prototype from CoreBase
@@ -103,6 +104,7 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
     if (uri instanceof Components.interfaces.nsIFileURL) {
       this._object.uri = aURL;
       this._object.play();
+      this._lastPlayStart = new Date();
       return true;
     }
     else {
@@ -151,6 +153,7 @@ CoreGStreamerSimple.prototype.play = function ()
   try
   {
     this._object.play();
+    this._lastPlayStart = new Date();
   }
   catch(e)
   {
@@ -254,27 +257,34 @@ CoreGStreamerSimple.prototype.getPosition = function ()
   this._verifyObject();
   var curPos = 0;
 
-  try
-  {
-    if(this._object.lastErrorCode > 0) {
-      return -1;
-    }
-    else if(this._object.isAtEndOfStream || !this.getPlaying()) {
-      curPos = 0;
-    }
-    else {
-      curPos = Math.round(this._object.position / (1000 * 1000));
+  var position = -1;
+  try {
+    position = this._object.position;
+  }
+  catch (e) {
+    if(e.result != Components.results.NS_ERROR_NOT_AVAILABLE) {
+      Components.util.reportError(e);
     }
   }
-  catch(e)
-  {
-    if(e.result == Components.results.NS_ERROR_NOT_AVAILABLE)
-    {
-      return -1;
-    }
-    else
-    {
-      this.LOG(e);
+
+  if(this._object.lastErrorCode > 0) {
+    curPos = -1;
+  }
+  else if(this._object.isAtEndOfStream || !this.getPlaying()) {
+    curPos = 0;
+  }
+  else if(position > 0) {
+    curPos = Math.round(position / (1000 * 1000));
+  }
+  else {
+    // If bufferingPercent is > 0 and < 100, we know we are trying to play
+    // a remote stream that is buffering.  While this is happening,
+    // subsitute playback position for the number of milliseconds since play
+    // was requested.  This will make playlistplayback think that the file
+    // is playing and will prevent it from thinking that there is a problem.
+    if (this._object.bufferingPercent > 0 && 
+        this._object.bufferingPercent < 100) {
+      curPos = (new Date()) - this._lastPlayStart;
     }
   }
 
@@ -454,6 +464,7 @@ CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
     this._url = url;
     this._object.uri = url;
     this._object.play();
+    this._lastPlayStart = new Date();
   }
 };
 
