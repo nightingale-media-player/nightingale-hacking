@@ -130,7 +130,7 @@ sb-player-fullscreen-button
 /* Jump-to in the Mini */
 sb-player-jumpto-button 
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_lib_16x16.png); /* Design Note, use the library icon to let the user know how to access it while in mini-mode */
+  list-style-image: url(chrome://songbird/skin/icons/icon_lib.png); /* Design Note, use the library icon to let the user know how to access it while in mini-mode */
 }
 
 /** 

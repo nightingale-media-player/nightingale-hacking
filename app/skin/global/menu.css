@@ -189,19 +189,19 @@ menulist > menupopup > menu > .menu-iconic-left {
 menuitem[checked="true"], 
 menulist > menupopup > menuitem[selected="true"],
 .menulist-menupopup > menuitem[selected="true"] {
-  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  list-style-image: url(chrome://songbird/skin/checkbox/menu_checkmark.png);
   -moz-image-region: rect(0px 7px 7px 0px);
 }
 
 menuitem[checked="true"][disabled="true"] {
-  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  list-style-image: url(chrome://songbird/skin/checkbox/menu_checkmark.png);
   -moz-image-region: rect(14px 7px 21px 0px);
 }
 
 menuitem[checked="true"][_moz-menuactive="true"]:not([disabled="true"]), 
 menulist > menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]),
 .menulist-menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]) {
-  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  list-style-image: url(chrome://songbird/skin/checkbox/menu_checkmark.png);
   -moz-image-region: rect(7px 7px 14px 0px);
 }
 

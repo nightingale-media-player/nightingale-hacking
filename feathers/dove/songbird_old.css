@@ -288,7 +288,7 @@ Love the box.
   padding: 0px 0px 0px 0px !important;
   width: 135px !important;
   background-color: #EEE !important;
-  /*background-image: url(default/bkgd_clouds.png) !important;*/
+  /*background-image: url( ... ) !important;  Custom background images can be fun*/
   color: #505154 !important;
 }
 
@@ -382,27 +382,27 @@ button#service_pane
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist )
 {
-  list-style-image: url(default/icon_playlist_16x16.png) !important;
+  list-style-image: url(default/icon_playlist.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist smart )
 {
-  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+  list-style-image: url(default/icon_smplaylist.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
 {
-  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+  list-style-image: url(default/icon_dynplaylist.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist download )
 {
-  list-style-image: url(default/icon_downloads_16x16.png) !important;
+  list-style-image: url(default/icon_downloads.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
 {
-  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
+  list-style-image: url(default/icon_webplaylist.png) !important;
 }
 
 #frame_service_tree_label
@@ -2749,7 +2749,7 @@ track_editor label,
 {
   height: 7px !important;
   width: 7px !important; 
-  background-image: url(default/check_000.png) !important;
+  background-image: url(default/checkbox_checkmark.png) !important;
 }
 
 /* Smart Playlist Builder */
@@ -2973,7 +2973,7 @@ menuitem[checked="true"] > hbox[checked="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: url(default/checkbox_checkmark.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -2983,7 +2983,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: url(default/checkbox_checkmark.png) !important;
   background-repeat: no-repeat !important;
 }
 

@@ -44,37 +44,37 @@ The Service Pane is the primary area for navigating through services and content
 /* Service Pane Icons **/
 .servicepane_tree > treechildren::-moz-tree-image( library )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_lib_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_lib.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialist )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-smart )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist_16x16.png);
+  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist.png);
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-dynamic )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( download )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_downloads_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_downloads.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( folder open )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_folder_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_folder.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( folder closed )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_folder_closed_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_folder_closed.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( bookmark )
@@ -115,19 +115,19 @@ Currently a single clickhold button below the service tree
 /** NOTE: IDs containing periods are bad... */
 sb-clickhold-button[id="file.new"]
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
 }
 
 .menuitem-iconic[id="file.new"]  {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
 }
 
 .menuitem-iconic[id="file.smart"] {
-  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist.png) ;
 }
 
 .menuitem-iconic[id="file.remote"]{
-  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist_16x16.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist.png) ;
 }
 
                         

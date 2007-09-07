@@ -420,7 +420,7 @@ progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
   width: 16px !important;
   height: 16px !important;
   margin-left: 3px !important;
-  background-image: url(chrome://songbird/skin/default/icon_lib_16x16.png) !important;
+  background-image: url(chrome://songbird/skin/default/icon_lib.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
   background-position: center center;

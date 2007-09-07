@@ -159,5 +159,5 @@ listheader[sortable="true"]:hover:active {
 
 listitem[checked="true"] .listcell-check 
 {
-  background-image: url("chrome://songbird/skin/checkbox/check_fff.png");
+  background-image: url("chrome://songbird/skin/checkbox/checkbox_checkmark.png");
 }
