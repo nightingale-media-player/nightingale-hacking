@@ -66,11 +66,11 @@ spinbuttons {
 }
 .spinbuttons-up
 {   
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_up.png"); /* up arrow */
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-up.png"); /* up arrow */
 }
 
 .spinbuttons-down
 {   
-  list-style-image:  url("chrome://songbird/skin/arrow/arrow_down.png");; /* down arrow */
+  list-style-image:  url("chrome://songbird/skin/arrow/arrow-down.png");; /* down arrow */
 }
 

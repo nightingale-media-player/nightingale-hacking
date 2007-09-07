@@ -52,7 +52,7 @@ searchbar
   margin-left: 2px;
 }
 .searchbar-dropmarker-image {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_down.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-down.png");
   -moz-margin-start: 3px; 
   padding-left: 1px;
   padding-right: 2px;

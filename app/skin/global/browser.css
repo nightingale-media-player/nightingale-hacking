@@ -188,21 +188,21 @@ sb-tabbrowser > tabbox > tabpanels {
   background-color: transparent !important;
   -moz-background-clip: padding !important;  
   background-color: #313131;
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_left.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-left.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_disabled.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-left-disabled.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
   background-color: #313131;
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_disabled.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-left-disabled.png");
 }
  
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
   background-color: #313131;
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_hover.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-left-hover.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
@@ -225,21 +225,21 @@ sb-tabbrowser > tabbox > tabpanels {
   border-right: 1px solid;
   border-bottom: none;
   -moz-background-clip: padding !important;  
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_right.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-right.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down[disabled="true"] {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_disabled.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-right-disabled.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
   background-color: #313131;
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_disabled.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-right-disabled.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
   background-color: #313131;
-  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_hover.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow­-right-hover.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down > .toolbarbutton-icon {

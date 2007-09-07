@@ -408,14 +408,14 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 {
  -moz-appearance: none !important; /* grrrr! */
  background-image: none !important;
- list-style-image:  url("chrome://songbird/skin/arrow/arrow_up.png");
+ list-style-image:  url("chrome://songbird/skin/arrow/arrow-up.png");
  padding: 0px 5px 0px 0px !important;
 } 
 .treecol-sortdirection[sortDirection="descending"]
 {
  -moz-appearance: none !important; /* grrrr! */
  background-image: none !important;
- list-style-image:  url("chrome://songbird/skin/arrow/arrow_down.png");
+ list-style-image:  url("chrome://songbird/skin/arrow/arrow-down.png");
  padding: 0px 5px 0px 0px !important;
 }
 
