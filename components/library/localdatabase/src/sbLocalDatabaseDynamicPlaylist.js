@@ -647,19 +647,10 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
   var metadataJob = metadataJobManager.newJob(array, 5);
 
   // Download the new items
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefBranch2);
-  var downloadListGUID =
-    prefs.getComplexValue("songbird.library.download",
-                          Ci.nsISupportsString);
-
-/*
-  var mainLibrary =
-    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-      .getService(Ci.sbILibraryManager).mainLibrary;
-  var downloadList = mainLibrary.getMediaItem(downloadListGUID);
-  downloadList.addSome(array.enumerate());
-*/
+  var ddh =
+    Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+      .getService(Ci.sbIDownloadDeviceHelper);
+  ddh.downloadSome(array.enumerate());
 }
 
 // sbIMedaiListFactory
