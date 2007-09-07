@@ -901,6 +901,14 @@ sbRemotePlayer::Play()
   nsresult rv = mWebPlaylistWidget->GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  // If the page does not have a web playlist, fall back
+  // to the standard play button functionality.
+  if (!mediaListView) {
+    PRBool retval;
+    mGPPS->Play( &retval );
+    return retval ? NS_OK : NS_ERROR_FAILURE;
+  }
+
   nsCOMPtr<nsITreeView> treeView;
   rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
   NS_ENSURE_SUCCESS( rv, rv );
