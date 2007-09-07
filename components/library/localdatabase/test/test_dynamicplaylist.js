@@ -102,6 +102,8 @@ function testRegistration() {
 
 function testUpdate() {
 
+  setTempDownloadDir();
+
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   var library1 = createLibrary("test_dynamicplaylist1", null, false);
@@ -180,3 +182,18 @@ function writeFile(file, data) {
   foStream.write(data, data.length);
   foStream.close();
 }
+
+function setTempDownloadDir() {
+  var dest = Cc["@mozilla.org/file/directory_service;1"]
+             .getService(Ci.nsIProperties)
+             .get("TmpD", Ci.nsIFile);
+
+  dest.append("dynamicplaylist_test");
+
+  var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+  var dlFolder = new drCtor("download.folder", null);
+  var dlAlways = new drCtor("download.always", null);
+  dlFolder.stringValue = dest.path;
+  dlAlways.boolValue = true;
+}
+
