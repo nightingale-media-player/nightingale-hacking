@@ -1,0 +1,56 @@
+This is a list of listener topics.  See sPublicMetadata in sbRemotePlayer.cpp
+for the canonical list.
+
+File: Listener Topics
+
+ListenerTopic: metadata.artist
+  The name of the artist of the currently playing media.
+
+ListenerTopic: metadata.title
+  The title of the currently playing media.
+
+ListenerTopic: metadata.album
+  The album name of the currently playing media.
+
+ListenerTopic: metadata.genre
+  The genre of the currenly playing media.
+
+ListenerTopic: metadata.url
+  The URL of the currently playing media.
+
+ListenerTopic: metadata.position
+  The current position in the media, as the number of milliseconds offset from
+  the start of the media.
+
+ListenerTopic: metadata.length
+  The total length of the currently playing media.  May be zero for media of
+  unknown length (e.g. streams).
+
+ListenerTopic: metadata.position.str
+  The current position in the current media, as expressed as a string
+  (in minutes:seconds).
+
+ListenerTopic: metadata.length.str
+  The total length of the current media, as expressed as a string
+  (in minutes:seconds).
+
+ListenerTopic: playlist.shuffle
+  A boolean value indicating whether shuffle mode is enabled.
+
+ListenerTopic: playlist.repeat
+  An integer value indicating which repeat mode is currently active.  This has a
+  value of 0 for no repeat, 1 for repeat one, and 2 for repeat all.
+
+ListenerTopic: faceplate.volume
+  The current player volume as an integer between 0 and 255 inclusive.
+
+ListenerTopic: faceplate.mute
+  A boolean value indicating whether the player is currently muted.
+
+ListenerTopic: faceplate.playing
+  A boolean value indicating whether the player is currently playing.  Note that
+  this will be true even if the player is paused.
+
+ListenerTopic: faceplate.paused
+  A boolean value indicating whether the player is currently paused.
+

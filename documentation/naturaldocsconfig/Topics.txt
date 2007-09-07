@@ -98,3 +98,17 @@ Topic Type: MergeWithSame
    Index: No
    Keywords:
       mergewithsame
+
+
+Topic Type: Listener Topic
+
+   Plural: Listener Topics
+   Index: No
+
+   Keywords:
+      listenertopic
+
+
+Alter Topic Type: File
+
+   Index: No

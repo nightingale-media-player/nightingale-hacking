@@ -289,6 +289,9 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
   nsCOMPtr<sbIPropertyInfo> info;
   propMngr->HasProperty( aColumnName, &hasProp );
 
+  // NOTE: if you add more column types here, please be sure to update the
+  // documentation in ../public/sbIRemoteWebPlaylist.idl
+
   if (!hasProp) {
     // property doesn't exist, add it.
 

@@ -151,9 +151,35 @@ interface sbIRemoteWebPlaylist : nsISupports
     hasNullsort - Specify how null values will be sorted visually.
     nullsort - The type of null sorting desired.
     width - The default width of the column when displayed.
+  
+  Column Types:
+    text - Plain text.
+    datetime - A time interval.
+    uri - A URI (web address).
+    number - A number.
+    button - A clickable button.
+    image - A picture.
+    downloadbutton - A button which, when clicked, initiates a download.
+  
+  Null Sorting Types:
+    0 - Null values are infinitely small.  This is the default.
+    1 - Null values are infinitely large.
+    2 - Null values are always first (regardless of sort direction)
+    3 - Null values are always last
 
   Example:
     (start code)
+    // add a text column to the web playlist
+    songbird.webPlaylist.addColumn( "text",
+                                    "columnName",
+                                    "column heading goes here",
+                                    "", // add at the end
+                                    false, // not hidden
+                                    true, // can be viewed
+                                    false, // read-only
+                                    false, // no null sorting
+                                    0,
+                                    150); // pixels
     (end)
 
   See Also:

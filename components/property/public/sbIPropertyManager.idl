@@ -134,6 +134,10 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_ENDSWITH;
   readonly attribute AString OPERATOR_BETWEEN;
 
+  /* NOTE: if you change this list of null sort values, please update the
+   * documentation in sbIRemoteWebPlaylist.idl as well, thanks!
+   */
+
   /**
    * \brief Causes null values to be infinitely small.  This is the default.
    */

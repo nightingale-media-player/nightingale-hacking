@@ -55,13 +55,11 @@ interface sbIRemoteCommands : nsISupports
   Add a command.
   
   Arguments:
-    type - The type of the command.
+    type - The type of the command.  This can be any one of
+           "action", "separator", "value", or "submenu".
     id - The id of the command.
     name - The name of the command.
     tooltip - The tooltip for the command.
-  
-  See Also:
-    The complete list of command types available (<http://songbirdnest.com/>).
   */
   void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
 
@@ -71,6 +69,9 @@ interface sbIRemoteCommands : nsISupports
   
   Arguments:
     id - The id of the command.
+  
+  See Also:
+    <addCommand>
   */
   void removeCommand(in AString aID);
 

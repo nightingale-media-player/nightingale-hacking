@@ -145,6 +145,7 @@ const static char* sPublicMethods[] =
     "playback_read:addListener" };
 
 // dataremotes keys that can be listened to
+// when you change this, please update /documentation/ListenerTopics.txt thanks!
 const static char* sPublicMetadata[] =
   { "metadata.artist",
     "metadata.title",
@@ -390,6 +391,7 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
   // for a newly created library
   nsRefPtr<sbRemoteLibrary> library;
 
+  // NOTE: if you add special library names here, document them in sbIRemotePlayer.idl
   if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_MAIN) ) {
     // No cached main library create a new one.
     LOG(("sbRemotePlayer::Libraries() - creating main library"));

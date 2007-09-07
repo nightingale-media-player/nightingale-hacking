@@ -54,6 +54,9 @@ librarybasefilescleanup="$docstempdir/sbIMediaItem.idl
                          $docstempdir/sbILibraryResource.idl
 "
 
+# Shared lists
+listsdir="$topsrcdir/documentation/lists"
+
 # Cleanup old working temp dir
 rm -rf $docstempdir
 
@@ -84,6 +87,7 @@ rm -f $librarybasefilescleanup
 # Run NaturalDocs
 $topsrcdir/tools/common/naturaldocs/NaturalDocs \
 -i $docstempdir \
+-i $listsdir \
 -o HTML $docsoutputdir \
 -p $ndprojectdir \
 -s Default Docs -r

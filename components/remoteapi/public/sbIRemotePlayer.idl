@@ -345,7 +345,7 @@ interface sbIRemotePlayer : nsISupports
   See Also:
     <removeListener()>
 
-    Visit <http://some/other/part/of/documentation/> for a list of keys for metadata and state.
+    Visit <Listener Topics> for a list of keys for metadata and state.
 
     Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
   */
@@ -381,8 +381,6 @@ interface sbIRemotePlayer : nsISupports
 
   See Also:
     <addListener()>
-
-    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
   */
   void removeListener( in AString aKey,
                        in nsIObserver aObserver );
@@ -727,6 +725,7 @@ interface sbIRemotePlayer : nsISupports
 
   Parameters:
     libraryID - Library ID you wish to access, this can be a path or 'magic' keyword.
+                Currently supported keywords are "main" and "web".
 
   Example:
     (start code)

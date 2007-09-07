@@ -49,6 +49,8 @@ Group: UI Objects  {
    File: WebPlaylist  (sbIRemoteWebPlaylist.idl)
    }  # Group: UI Objects
 
+File: Listener Topics  (ListenerTopics.txt)
+
 Group: Index  {
 
    Index: Everything
