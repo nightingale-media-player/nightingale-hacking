@@ -44,42 +44,42 @@ The Service Pane is the primary area for navigating through services and content
 /* Service Pane Icons **/
 .servicepane_tree > treechildren::-moz-tree-image( library )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_lib.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialist )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-smart )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist.png);
+  list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png);
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-dynamic )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-dynplaylist.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( download )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_downloads.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( folder open )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_folder.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( folder closed )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_folder_closed.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-folder-closed.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( bookmark )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_bookmark.ico) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-bookmark.ico) ;
 }
 
 
@@ -115,19 +115,19 @@ Currently a single clickhold button below the service tree
 /** NOTE: IDs containing periods are bad... */
 sb-clickhold-button[id="file.new"]
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
 .menuitem-iconic[id="file.new"]  {
-  list-style-image: url(chrome://songbird/skin/icons/icon_playlist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
 .menuitem-iconic[id="file.smart"] {
-  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png) ;
 }
 
 .menuitem-iconic[id="file.remote"]{
-  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-dynplaylist.png) ;
 }
 
                         
