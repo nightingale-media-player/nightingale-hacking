@@ -905,7 +905,6 @@ nsresult
 sbLocalDatabaseQuery::AddDistinctConstraint()
 {
   nsresult rv;
-  nsCOMPtr<sbISQLBuilderCriterion> criterion;
 
   // When doing a distict query, add a constraint so we only select media items
   // that have a value for the primary sort
@@ -914,11 +913,28 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
     rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<sbISQLBuilderCriterion> notNull;
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
                                             columnName,
                                             sbISQLSelectBuilder::MATCH_NOTEQUALS,
-                                            getter_AddRefs(criterion));
+                                            getter_AddRefs(notNull));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
+    rv = mBuilder->CreateMatchCriterionString(MEDIAITEMS_ALIAS,
+                                              columnName,
+                                              sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                              EmptyString(),
+                                              getter_AddRefs(notEmptyString));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateAndCriterion(notNull,
+                                      notEmptyString,
+                                      getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = mBuilder->AddCriterion(criterion);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -931,12 +947,28 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
                            GUID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<sbISQLBuilderCriterion> property;
     rv = mBuilder->CreateMatchCriterionLong(DISTINCT_ALIAS,
                                             PROPERTYID_COLUMN,
                                             sbISQLSelectBuilder::MATCH_EQUALS,
                                             GetPropertyId(mPrimarySortProperty),
-                                            getter_AddRefs(criterion));
+                                            getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
+    rv = mBuilder->CreateMatchCriterionString(DISTINCT_ALIAS,
+                                              OBJ_COLUMN,
+                                              sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                              EmptyString(),
+                                              getter_AddRefs(notEmptyString));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateAndCriterion(property,
+                                      notEmptyString,
+                                      getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = mBuilder->AddCriterion(criterion);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -954,8 +986,21 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
     rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Prevent empty values
+    nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
+    rv = mBuilder->CreateMatchCriterionString(MEDIAITEMS_ALIAS,
+                                              columnName,
+                                              sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                              EmptyString(),
+                                              getter_AddRefs(notEmptyString));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddCriterion(notEmptyString);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = mBuilder->AddGroupBy(MEDIAITEMS_ALIAS, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
+
   }
   else {
     if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
@@ -967,6 +1012,17 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
       }
     }
     else {
+      nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
+      rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
+                                                OBJ_COLUMN,
+                                                sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                                EmptyString(),
+                                                getter_AddRefs(notEmptyString));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddCriterion(notEmptyString);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJ_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
     }
