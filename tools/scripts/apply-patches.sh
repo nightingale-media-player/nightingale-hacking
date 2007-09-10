@@ -13,7 +13,8 @@ list_files() {
   find . -maxdepth 1 -type f \
   -name "bug*" \
   ! -name "CVS" \
-  | sed 's/\.\/\(.*\)/"\1"/'
+  | sed 's/\.\/\(.*\)/"\1"/' \
+  | xargs echo
 }
 
 notice() {
