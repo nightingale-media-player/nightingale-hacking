@@ -180,19 +180,16 @@ It serves as the primary GUI entry point to content and services.
   color: #0f100f; /** Groove */
 }
 
-.servicepane_tree > treechildren::-moz-tree-row( dropOn )
+.servicepane_tree > treechildren::-moz-tree-row( dropOn ),
+.servicepane_tree > treechildren::-moz-tree-row( dropBefore ),
+.servicepane_tree > treechildren::-moz-tree-row( dropAfter ),
+.sb-playlist-tree > treechildren::-moz-tree-row( dropOn ),
+.sb-playlist-tree > treechildren::-moz-tree-row( dropBefore ),
+.sb-playlist-tree > treechildren::-moz-tree-row( dropAfter )
 {
-  border-left: 5px solid #8A8F84 !important;
-}
-
-.servicepane_tree > treechildren::-moz-tree-row( dropBefore )
-{
-  border-top: 5px solid #8A8F84 !important;
-}
-
-.servicepane_tree > treechildren::-moz-tree-row( dropAfter )
-{
-  border-bottom: 5px solid #8A8F84 !important;
+  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
+  background-position: center bottom !important;
+  background-repeat: repeat-x !important;
 }
 
 #frame_service_buttonbar button
@@ -1644,5 +1641,6 @@ html|*.error-text,
   color: #F00;
   font-weight: bold;
 }
+
 
 
