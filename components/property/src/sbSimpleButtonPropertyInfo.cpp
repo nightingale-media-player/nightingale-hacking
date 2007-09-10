@@ -48,8 +48,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbSimpleButtonPropertyInfo,
 sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyName,
                                                        const nsAString& aDisplayName,
                                                        PRBool aHasLabel,
-                                                       const nsAString& aLabel) :
-  sbImmutablePropertyInfo()
+                                                       const nsAString& aLabel)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;

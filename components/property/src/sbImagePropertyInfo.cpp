@@ -37,8 +37,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbImagePropertyInfo,
                              sbITreeViewPropertyInfo)
 
 sbImagePropertyInfo::sbImagePropertyInfo(const nsAString& aPropertyName,
-                                         const nsAString& aDisplayName) :
-  sbImmutablePropertyInfo()
+                                         const nsAString& aDisplayName)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;

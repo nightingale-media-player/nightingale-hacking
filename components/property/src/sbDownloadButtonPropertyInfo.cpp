@@ -49,8 +49,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
  */
 sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyName,
                                                            const nsAString& aDisplayName,
-                                                           const nsAString& aLabel) :
-  sbImmutablePropertyInfo()
+                                                           const nsAString& aLabel)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;

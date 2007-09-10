@@ -39,8 +39,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 #define ZERO_HIT_WIDTH 7
 
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyName,
-                                           const nsAString& aDisplayName) :
-  sbImmutablePropertyInfo()
+                                           const nsAString& aDisplayName)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
