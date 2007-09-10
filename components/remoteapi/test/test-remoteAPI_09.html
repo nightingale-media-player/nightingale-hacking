@@ -131,21 +131,35 @@
       }
 
       var setM3UPlaylistNoScan = function setM3UPlaylistNoScan() {
-        siteLib.scanMediaOnCreation = false;
-        if (!m3uMediaList) {
-          m3uMediaList = siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+        var callback = function(list) {
+          m3uMediaList = list;
           m3uMediaList.name = "m3u Test List";
+          setPlaylist(m3uMediaList);
+        };
+        if (!m3uMediaList) {
+          siteLib.scanMediaOnCreation = false;
+          siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+                                         callback);
         }
-        setPlaylist(m3uMediaList);
-        siteLib.scanMediaOnCreation = true;
+        else {
+          setPlaylist(m3uMediaList);
+        }
       }
 
       var setM3UPlaylistWithScan = function setM3UPlaylistWithScan() {
-        if (!m3uMediaList) {
-          m3uMediaList = siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+        var callback = function(list) {
+          m3uMediaList = list;
           m3uMediaList.name = "m3u Test List";
+          setPlaylist(m3uMediaList);
+        };
+        if (!m3uMediaList) {
+          siteLib.scanMediaOnCreation = true;
+          siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+                                         callback);
         }
-        setPlaylist(m3uMediaList);
+        else {
+          setPlaylist(m3uMediaList);
+        }
       }
 
       //

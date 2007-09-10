@@ -79,29 +79,39 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 #undef LOG
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
-// Observer for the PlaylistReader that launches a metadata job when the
-// playlist is loaded.
-class sbRemoteMetadataScanLauncher : public nsIObserver
+// Observer for the PlaylistReader that notifies the callback and optionally
+// launches a metadata job when the playlist is loaded.
+class sbPlaylistReaderObserver : public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
+
+  sbPlaylistReaderObserver(sbICreateMediaListCallback* aCallback,
+                           PRBool aShouldScan) :
+    mCallback(aCallback),
+    mShouldScan(aShouldScan)
+  {
+  }
 
   NS_IMETHODIMP Observe( nsISupports *aSubject,
                          const char *aTopic,
                          const PRUnichar *aData)
   {
-    LOG(( "sbRemoteMetadataScanLauncher::Observe(%s)", aTopic ));
+    NS_ENSURE_ARG_POINTER(aSubject);
+    LOG(( "sbPlaylistReaderObserver::Observe(%s)", aTopic ));
+
     nsresult rv;
-    nsCOMPtr<sbIMetadataJobManager> metaJobManager =
-      do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
+
+    nsCOMPtr<sbIMediaList> mediaList ( do_QueryInterface( aSubject, &rv ) );
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if(NS_SUCCEEDED(rv)) {
-      nsCOMPtr<nsIMutableArray> mediaItems =
-                                 do_CreateInstance( NS_ARRAY_CONTRACTID, &rv );
+    if (mShouldScan) {
+      nsCOMPtr<sbIMetadataJobManager> metaJobManager =
+        do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIMediaList> mediaList ( do_QueryInterface( aSubject, &rv ) );
+      nsCOMPtr<nsIMutableArray> mediaItems =
+                                 do_CreateInstance( NS_ARRAY_CONTRACTID, &rv );
       NS_ENSURE_SUCCESS(rv, rv);
 
       PRUint32 length;
@@ -122,10 +132,23 @@ public:
       rv = metaJobManager->NewJob( mediaItems, 50, getter_AddRefs(job) );
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    if (mCallback) {
+      nsCOMPtr<sbIMediaList> wrappedList;
+      rv = SB_WrapMediaList(mediaList, getter_AddRefs(wrappedList));
+      NS_ENSURE_SUCCESS(rv, rv);
+      mCallback->OnCreated(wrappedList);
+    }
+
     return NS_OK;
   }
+
+private:
+
+  nsCOMPtr<sbICreateMediaListCallback> mCallback;
+  PRBool mShouldScan;
 };
-NS_IMPL_ISUPPORTS1( sbRemoteMetadataScanLauncher, nsIObserver )
+NS_IMPL_ISUPPORTS1( sbPlaylistReaderObserver, nsIObserver )
 
 class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
 {
@@ -307,9 +330,8 @@ sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
 
 NS_IMETHODIMP
 sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
-                                             sbIRemoteMediaList** _retval )
+                                             sbICreateMediaListCallback* aCallback )
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
   LOG(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
@@ -344,24 +366,21 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
                          &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mShouldScan) {
-    nsRefPtr<sbRemoteMetadataScanLauncher> launcher =
-                                            new sbRemoteMetadataScanLauncher();
-    NS_ENSURE_TRUE( launcher, NS_ERROR_OUT_OF_MEMORY );
+  nsRefPtr<sbPlaylistReaderObserver> readerObserver =
+    new sbPlaylistReaderObserver(aCallback, mShouldScan);
+  NS_ENSURE_TRUE( readerObserver, NS_ERROR_OUT_OF_MEMORY );
 
-    nsCOMPtr<nsIObserver> observer( do_QueryInterface( launcher, &rv ) );
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIObserver> observer( do_QueryInterface( readerObserver, &rv ) );
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = lstnr->SetObserver( observer );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = lstnr->SetObserver( observer );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dummy;
   rv = manager->LoadPlaylist( uri, mediaList, EmptyString(), true, lstnr, &dummy );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // This will wrap in the appropriate site/regular RemoteMediaList
-  return SB_WrapMediaList(mediaList, _retval);
+  return NS_OK;
 }
 
 NS_IMETHODIMP

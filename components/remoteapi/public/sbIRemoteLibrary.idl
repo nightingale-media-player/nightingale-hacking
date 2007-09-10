@@ -35,6 +35,13 @@
 interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
 interface sbIMediaItem;
+interface sbIMediaList;
+
+[scriptable, function, uuid(27bfbb84-ac22-46bd-b1bb-cf3baf6f3b3c)]
+interface sbICreateMediaListCallback : nsISupports
+{
+  void onCreated(in sbIMediaList aMediaList);
+};
 
 /*
 Class: Library
@@ -241,8 +248,8 @@ interface sbIRemoteLibrary : nsISupports
    *             supported by Songbird. It must be either http: or https: and
    *             one of the following playlist types: .pls, .m3u, .html and rss
    *             type feeds.
-   *
-   * \returns the media list that gets created.
+   * \param aCallback Optional callback object that gets called when the media
+   *                  list load is complete.
    */
 
   /*
@@ -254,13 +261,13 @@ interface sbIRemoteLibrary : nsISupports
   it found in the file.
 
   Prototype:
-    <MediaList> createMediaListFromFile(String url)
+    <MediaList> createMediaListFromURL(String url, Function callback)
 
   Parameters:
     url - The URL of the file to use for creating the <MediaList>.
-
-  Returns:
-    The newly created <MediaList> or null.
+    callback - The optional function that gets called when the load is complete.
+               This function is passed a single argument that is the newly
+               created list.
 
   Example:
     (start code)
@@ -268,14 +275,17 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
 
     //Create the medialist from a url pointing to a file.
-    var mediaList = library.createMediaListFromURL("http://path/to/file.m3u");
+    library.createMediaListFromURL("http://path/to/file.m3u", function(list) {
+      alert("loaded " + list.length + " items!");
+    });
     (end)
 
   See Also:
     <createMediaItem()>
     <createMediaList()>
   */
-  sbIRemoteMediaList createMediaListFromURL(in AString aURL);
+  void createMediaListFromURL(in AString aURL,
+                              [optional] in sbICreateMediaListCallback aCallback);
 
   /**
    * \brief Connect the remote library to the main or web library
