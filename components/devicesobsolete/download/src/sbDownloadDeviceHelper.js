@@ -51,7 +51,6 @@ sbDownloadDeviceHelper.prototype =
 sbDownloadDeviceHelper.prototype.downloadItem =
 function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 {
-  this._ensureDownloadMediaList();
   if (!this._ensureDestination()) {
     return;
   }
@@ -79,7 +78,6 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 sbDownloadDeviceHelper.prototype.downloadSome =
 function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 {
-  this._ensureDownloadMediaList();
   if (!this._ensureDestination()) {
     return;
   }
@@ -115,7 +113,6 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 sbDownloadDeviceHelper.prototype.downloadAll =
 function sbDownloadDeviceHelper_downloadAll(aMediaList)
 {
-  this._ensureDownloadMediaList();
   if (!this._ensureDestination()) {
     return;
   }
@@ -152,7 +149,6 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
 sbDownloadDeviceHelper.prototype.__defineGetter__("downloadMediaList",
 function sbDownloadDeviceHelper_getDownloadMediaList()
 {
-  this._ensureDownloadMediaList();
   return this._mainLibrary.getItemByGuid(this._getDownloadMediaListGuid());
 });
 
@@ -205,33 +201,6 @@ function sbDownloadDeviceHelper__ensureDestination()
                      paramBlock);
 
   return paramBlock.GetInt(0) == 1;
-}
-
-sbDownloadDeviceHelper.prototype._ensureDownloadMediaList =
-function sbDownloadDeviceHelper__ensureDownloadMediaList()
-{
-
-  let downloadListGUID = this._getDownloadMediaListGuid();
-  if (downloadListGUID) {
-    try {
-      let list = this._mainLibrary.getItemByGuid(downloadListGUID);
-      return;
-    }
-    catch(e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
-      // fall through
-    }
-  }
-
-  let list = this._mainLibrary.createMediaList("simple");
-
-  let iss = Cc["@mozilla.org/supports-string;1"]
-              .createInstance(Ci.nsISupportsString);
-  iss.data = list.guid;
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefBranch2);
-  prefs.setComplexValue(DOWNLOAD_PREF,
-                        Ci.nsISupportsString,
-                        iss);
 }
 
 sbDownloadDeviceHelper.prototype._getDownloadMediaListGuid =

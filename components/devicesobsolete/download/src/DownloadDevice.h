@@ -78,6 +78,7 @@
 #include <nsIDialogParamBlock.h>
 #include <nsIIOService.h>
 #include <nsIObserverService.h>
+#include <nsIPrefService.h>
 #include <nsIStringBundle.h>
 #include <prmon.h>
 
@@ -102,7 +103,8 @@ class sbDownloadSession;
 
 class sbDownloadDevice : public nsIObserver,
                          public sbIDownloadDevice,
-                         public sbDeviceBase
+                         public sbDeviceBase,
+                         public sbIMediaListListener
 {
     /* *************************************************************************
      *
@@ -129,6 +131,7 @@ class sbDownloadDevice : public nsIObserver,
     NS_DECL_NSIOBSERVER
     NS_DECL_SBIDEVICEBASE
     NS_DECL_SBIDOWNLOADDEVICE
+    NS_DECL_SBIMEDIALISTLISTENER
 
 
     /*
@@ -151,7 +154,9 @@ class sbDownloadDevice : public nsIObserver,
     /*
      * mpDownloadMediaList      Download device medialist.
      * mpDeviceLibraryListener  Songbird device library listener.
+     * mpMainLibrary            Main library.
      * mpWebLibrary             Web library.
+     * mpPrefBranch             Preference branch.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
      * mpDownloadDirDR          Default download directory data remote.
@@ -164,7 +169,9 @@ class sbDownloadDevice : public nsIObserver,
     nsCOMPtr<sbIMediaList>      mpDownloadMediaList;
     nsRefPtr<sbDeviceBaseLibraryListener>
                                 mpDeviceLibraryListener;
+    nsCOMPtr<sbILibrary>        mpMainLibrary;
     nsCOMPtr<sbILibrary>        mpWebLibrary;
+    nsCOMPtr<nsIPrefBranch>     mpPrefBranch;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
@@ -172,6 +179,19 @@ class sbDownloadDevice : public nsIObserver,
     nsRefPtr<sbDownloadSession> mpDownloadSession;
     PRMonitor                   *mpDeviceMonitor;
     PRUint32                    mState;
+
+
+    /*
+     * Private media list services.
+     */
+
+    nsresult InitializeDownloadMediaList();
+
+    void FinalizeDownloadMediaList();
+
+    nsresult CreateDownloadMediaList();
+
+    void GetDownloadMediaList();
 
 
     /*
