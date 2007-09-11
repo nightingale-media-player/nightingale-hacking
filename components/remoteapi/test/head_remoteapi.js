@@ -126,8 +126,8 @@ function beginRemoteAPITest(page, continueFunction) {
   testServer.start(port);
   testServer.registerDirectory("/", getFile("."));
 
-  var url = "data:application/vnd.mozilla.xul+xml," + 
-            "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" + 
+  var url = "data:application/vnd.mozilla.xul+xml," +
+            "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" +
             "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
@@ -222,4 +222,3 @@ function setTempDownloadDir() {
 }
 
 initMockCore();
-

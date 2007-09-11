@@ -29,7 +29,31 @@
 
 #include "sbRemoteAPI.h"
 #include "sbRemoteMediaItem.h"
-#include <sbIMediaItem.h>
+#include "sbSecurityMixin.h"
+
+#include <nsStringGlue.h>
+
+class sbIMediaItem;
+
+class sbRemoteSiteMediaItemSecurityMixin : public sbSecurityMixin
+{
+  NS_DECL_ISUPPORTS_INHERITED
+
+public:
+  sbRemoteSiteMediaItemSecurityMixin(sbIMediaItem* aMediaItem)
+  : mMediaItem(aMediaItem)
+  {
+    NS_ASSERTION( aMediaItem, "Null pointer!" );
+  }
+
+  NS_IMETHOD CanGetProperty( const nsIID* aIID,
+                             const PRUnichar* aPropertyName,
+                             char** _retval );
+
+private:
+  // Weak ref, sbRemoteSiteMediaItem already owns this.
+  sbIMediaItem* mMediaItem;
+};
 
 class sbRemoteSiteMediaItem : public sbRemoteMediaItem
 {
@@ -40,9 +64,11 @@ public:
 
   sbRemoteSiteMediaItem( sbIMediaItem *aMediaItem );
 
+  NS_IMETHOD GetProperty( const nsAString& aName,
+                          nsAString& _retval );
+
 protected:
   virtual ~sbRemoteSiteMediaItem();
 };
 
 #endif // __SB_REMOTE_SITEMEDIAITEM_H__
-

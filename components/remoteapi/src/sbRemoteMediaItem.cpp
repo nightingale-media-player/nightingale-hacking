@@ -70,7 +70,7 @@ const static char* sPublicRProperties[] =
 };
 
 const static char* sPublicMethods[] =
-{ 
+{
   // sbILibraryResource
   "library_read:getProperty",
   "library_write:setProperty",
@@ -102,7 +102,7 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaItem)
 sbRemoteMediaItem::sbRemoteMediaItem(sbIMediaItem* aMediaItem) :
   mMediaItem(aMediaItem)
 {
-  NS_ASSERTION(aMediaItem, "Null media list!");
+  NS_ASSERTION(aMediaItem, "Null media item!");
 
 #ifdef PR_LOGGING
   if (!gRemoteMediaItemLog) {
@@ -126,7 +126,7 @@ sbRemoteMediaItem::GetProperty(const nsAString & aName,
                                nsAString & _retval)
 {
   NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
-  
+
   nsresult rv = NS_OK;
 
   // get the property manager service
@@ -134,28 +134,28 @@ sbRemoteMediaItem::GetProperty(const nsAString & aName,
       do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
                      &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // get the property info for the property being requested
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
   rv = propertyManager->GetPropertyInfo(aName, getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // try to get the remote property info for the property being requested
   nsCOMPtr<sbIRemotePropertyInfo> remotePropertyInfo =
       do_QueryInterface( propertyInfo, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // ask the remote property info if this property is readable
   PRBool readable = PR_FALSE;
   rv = remotePropertyInfo->GetRemoteReadable(&readable);
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // well, is it readable?
   if (!readable) {
     // if not return an error
     return NS_ERROR_FAILURE;
   }
-  
+
   // it all looks ok, pass this request on to the real media item
   return mMediaItem->GetProperty(aName, _retval);
 }
@@ -165,7 +165,7 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
                                const nsAString & aValue)
 {
   NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
-  
+
   nsresult rv = NS_OK;
 
   // get the property manager service
@@ -173,28 +173,28 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
       do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
                      &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // get the property info for the property being requested
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
   rv = propertyManager->GetPropertyInfo(aName, getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // try to get the remote property info for the property being requested
   nsCOMPtr<sbIRemotePropertyInfo> remotePropertyInfo =
       do_QueryInterface( propertyInfo, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // ask the remote property info if this property is readable
   PRBool writable = PR_FALSE;
   rv = remotePropertyInfo->GetRemoteWritable(&writable);
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   // well, is it readable?
   if (!writable) {
     // if not return an error
     return NS_ERROR_FAILURE;
   }
-  
+
   // it all looks ok, pass this request on to the real media item
   return mMediaItem->SetProperty(aName, aValue);
 }

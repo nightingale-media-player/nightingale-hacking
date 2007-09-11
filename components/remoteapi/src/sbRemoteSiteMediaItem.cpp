@@ -25,9 +25,10 @@
  */
 
 #include "sbRemoteSiteMediaItem.h"
-#include <sbClassInfoUtils.h>
 
 #include <prlog.h>
+#include <sbClassInfoUtils.h>
+#include <sbStandardProperties.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -55,6 +56,7 @@ const static char* sPublicRProperties[] =
   "site:isMutable",
   "site:mediaCreated",
   "site:mediaUpdated",
+  "site:contentSrc",
   "site:contentLength",
   "site:contentType",
 
@@ -67,7 +69,7 @@ const static char* sPublicRProperties[] =
 };
 
 const static char* sPublicMethods[] =
-{ 
+{
   // sbILibraryResource
   "site:getProperty",
   "site:setProperty",
@@ -76,6 +78,36 @@ const static char* sPublicMethods[] =
   // sbIMediaItem
   // none applicable
 };
+
+NS_IMPL_ISUPPORTS_INHERITED0( sbRemoteSiteMediaItemSecurityMixin,
+                              sbSecurityMixin )
+
+NS_IMETHODIMP
+sbRemoteSiteMediaItemSecurityMixin::CanGetProperty( const nsIID* aIID,
+                                                    const PRUnichar* aPropertyName,
+                                                    char** _retval )
+{
+  nsresult rv = sbSecurityMixin::CanGetProperty( aIID, aPropertyName, _retval );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsDependentString propName(aPropertyName);
+  if (propName.EqualsLiteral("contentSrc")) {
+    nsCOMPtr<nsIURI> uri;
+    rv = mMediaItem->GetContentSrc(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    PRBool isFileURI;
+    rv = uri->SchemeIs( "file" , &isFileURI );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    if (isFileURI) {
+      NS_WARNING("Disallowing access to 'file:' URI from contentSrc attribute");
+      return NS_ERROR_FAILURE;
+    }
+  }
+
+  return NS_OK;
+}
 
 NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteSiteMediaItem,
                               sbRemoteMediaItem,
@@ -90,10 +122,12 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteSiteMediaItem,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaItem)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM(sbRemoteSiteMediaItem,
+                                        sbRemoteSiteMediaItemSecurityMixin,
+                                        (mMediaItem))
 
 sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbIMediaItem* aMediaItem) :
-                       sbRemoteMediaItem(aMediaItem)
+  sbRemoteMediaItem(aMediaItem)
 {
 #ifdef PR_LOGGING
   if (!gRemoteSiteMediaItemLog) {
@@ -101,6 +135,7 @@ sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbIMediaItem* aMediaItem) :
   }
   LOG(("sbRemoteSiteMediaItem::sbRemoteSiteMediaItem()"));
 #endif
+  NS_ASSERTION( aMediaItem, "Null media item!" );
 }
 
 sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
@@ -108,3 +143,26 @@ sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
   LOG(("sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()"));
 }
 
+NS_IMETHODIMP
+sbRemoteSiteMediaItem::GetProperty(const nsAString & aName,
+                                   nsAString & _retval)
+{
+  LOG(("sbRemoteSiteMediaItem::~GetProperty()"));
+
+  nsresult rv = sbRemoteMediaItem::GetProperty( aName, _retval );
+  if ( NS_SUCCEEDED(rv) || !aName.EqualsLiteral(SB_PROPERTY_CONTENTURL) ) {
+    return rv;
+  }
+
+  nsString contentURL;
+  rv = mMediaItem->GetProperty( aName, contentURL );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if (StringBeginsWith( contentURL, NS_LITERAL_STRING("file:") )) {
+    NS_WARNING("Disallowing access to 'file:' URI from contentURL property");
+    return NS_ERROR_FAILURE;
+  }
+
+  _retval.Assign(contentURL);
+  return NS_OK;
+}

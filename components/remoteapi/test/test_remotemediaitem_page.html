@@ -54,9 +54,16 @@ function runTest(tester) {
 
     // test non-readable property
     try {
-        item.getProperty(SB_NS + "contentURL");
-        tester.fail("did not throw: getProperty(contentURL)");
+        item.getProperty(SB_NS + "contentMimeType");
+        tester.fail("did not throw: getProperty(contentMimeType)");
     } catch(e) { }
+
+    // test readable property
+    try {
+        item.getProperty(SB_NS + "contentURL");
+    } catch(e) {
+        tester.fail("should not throw: getProperty(contentURL)");
+    }
 
     tester.assertTrue(item.equals(item));
 
@@ -68,7 +75,7 @@ function runTest(tester) {
     try {
       item.contentLength = 123;
       tester.fail("did not throw");
-    } 
+    }
     catch(e) {}
 
     try {
@@ -118,6 +125,22 @@ function runTest(tester) {
       tester.fail("did not throw: toString");
     }
     catch(e) {}
+
+    var mainLibrary = songbird.mainLibrary;
+    item = mainLibrary.createMediaItem("http://www.foo.com/stupid.mp3");
+
+    try {
+      var contentSrc = item.contentSrc;
+      tester.fail("did not throw: mainLibrary.item.contentSrc");
+    }
+    catch (e) {}
+
+    try {
+      var contentSrc = item.getProperty(SB_NS + "contentURL");
+      tester.fail("did not throw: mainLibrary.item.getProperty(contentURL)");
+    }
+    catch (e) {}
+
   }
   catch(e) {
     tester.endRemoteAPITest(e);
@@ -133,4 +156,3 @@ function runPageTest(tester) {
   </head>
   <body>test_remotemediaitem_page.html</body>
 </html>
-

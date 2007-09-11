@@ -38,13 +38,13 @@
 
 #define SB_DECL_SECURITYCHECKEDCOMP_INIT virtual nsresult Init();
 
-#define SB_IMPL_SECURITYCHECKEDCOMP_INIT(_class)                              \
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM( _class, _mixin, _mixinArgs ) \
 nsresult                                                                      \
 _class::Init()                                                                \
 {                                                                             \
   LOG(( "%s::Init()", #_class ));                                             \
   nsresult rv;                                                                \
-  nsRefPtr<sbSecurityMixin> mixin = new sbSecurityMixin();                    \
+  nsRefPtr<_mixin> mixin = new _mixin _mixinArgs;                             \
   NS_ENSURE_TRUE( mixin, NS_ERROR_OUT_OF_MEMORY );                            \
   /* Get the list of IIDs to pass to the security mixin */                    \
   nsIID **iids;                                                               \
@@ -63,5 +63,7 @@ _class::Init()                                                                \
   return NS_OK;                                                               \
 }
 
-#endif // __SB_REMOTE_API_H__
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT(_class)                              \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM( _class, sbSecurityMixin, () )
 
+#endif // __SB_REMOTE_API_H__
