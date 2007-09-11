@@ -39,7 +39,7 @@ sb-status-bar
 
 sb-status-progressmeter
 {
-   margin: 2px 0px 0px 0px;
+   margin: 2px 0px 0px 8px;
    border: none;
    width: 100px; 
    min-width: 100px; 
