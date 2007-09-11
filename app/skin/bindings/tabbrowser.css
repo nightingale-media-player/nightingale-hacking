@@ -33,6 +33,8 @@ TABBED BROWSER
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 .tab-icon-image {
+  max-width: 16px;
+  max-height: 16px;
   list-style-image: url("chrome://songbird/skin/icons/small-globe-sunken.png");
 }
 
