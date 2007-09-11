@@ -78,7 +78,7 @@ var mediaList = library.createMediaList("simple");
 mediaList.addItem(mediaItem);
 
 //Play it.
-songbird.playMediaList(mediaList);
+songbird.playMediaList(mediaList, 0);
 
 //You may also want to trigger a download to the users machine, for this mediaitem.
 songbird.downloadItem(mediaItem);
