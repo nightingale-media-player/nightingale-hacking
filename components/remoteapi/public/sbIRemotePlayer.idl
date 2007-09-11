@@ -75,7 +75,7 @@ var mediaItem = library.createMediaItem(url);
 var mediaList = library.createMediaList("simple");
 
 //Add a mediaitem to it.
-list.addItem(mediaItem);
+mediaList.addItem(mediaItem);
 
 //Play it.
 songbird.playMediaList(mediaList);
