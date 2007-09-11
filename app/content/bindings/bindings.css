@@ -198,12 +198,10 @@ sb-player-custom-label {
 
 sb-player-numplaylistitems-label {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#numplaylistitems-label") !important;
-  margin: 0px 0px 0px 8px !important;
 }
 
 sb-player-scanning-label {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#scanning-label") !important;
-  margin: 0px 0px 0px 8px !important;
 }
 
 sb-player-curtrack-button {
