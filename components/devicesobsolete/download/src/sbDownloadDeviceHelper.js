@@ -36,6 +36,15 @@ const DOWNLOAD_PREF = "songbird.library.download";
 
 function sbDownloadDeviceHelper()
 {
+  var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
+                 .getService(Ci.sbIDeviceManager);
+  if (devMgr) {
+    var downloadCat = "Songbird Download Device";
+    if (devMgr.hasDeviceForCategory(downloadCat)) {
+      this._downloadDevice = devMgr.getDeviceByCategory(downloadCat)
+                                   .QueryInterface(Ci.sbIDownloadDevice);
+    }
+  }
   this._mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Ci.sbILibraryManager).mainLibrary;
 }
@@ -149,7 +158,7 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
 sbDownloadDeviceHelper.prototype.__defineGetter__("downloadMediaList",
 function sbDownloadDeviceHelper_getDownloadMediaList()
 {
-  return this._mainLibrary.getItemByGuid(this._getDownloadMediaListGuid());
+  return this._downloadDevice.downloadMediaList;
 });
 
 sbDownloadDeviceHelper.prototype._addItemToArrays =
@@ -201,20 +210,6 @@ function sbDownloadDeviceHelper__ensureDestination()
                      paramBlock);
 
   return paramBlock.GetInt(0) == 1;
-}
-
-sbDownloadDeviceHelper.prototype._getDownloadMediaListGuid =
-function sbDownloadDeviceHelper__getDownloadMediaListGuid()
-{
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefBranch2);
-  try {
-    return prefs.getComplexValue(DOWNLOAD_PREF, Ci.nsISupportsString);
-  }
-  catch(e) {
-  }
-
-  return null;
 }
 
 function NSGetModule(compMgr, fileSpec) {

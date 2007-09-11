@@ -473,6 +473,10 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
         /* Remove the device transfer queue. */
         RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
 
+        /* Remove main library listener. */
+        if (mpMainLibrary)
+            mpMainLibrary->RemoveListener(this);
+
         /* Finalize the download media list. */
         FinalizeDownloadMediaList();
     }
@@ -1141,6 +1145,35 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceCount(
     LOG(("1: GetDeviceCount\n"));
 
     return (NS_ERROR_NOT_IMPLEMENTED);
+}
+
+
+/* *****************************************************************************
+ *
+ * Download device sbIDownloadDevice implementation.
+ *
+ ******************************************************************************/
+
+/*
+ * sbIDownloadDevice attribute getters/setters.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetDownloadMediaList(
+    sbIMediaList                **aDownloadMediaList)
+{
+    nsresult                    rv;
+
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aDownloadMediaList);
+
+    /* Ensure the download media list is initialized. */
+    rv = InitializeDownloadMediaList();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Return results. */
+    NS_ADDREF(*aDownloadMediaList = mpDownloadMediaList);
+
+    return (NS_OK);
 }
 
 

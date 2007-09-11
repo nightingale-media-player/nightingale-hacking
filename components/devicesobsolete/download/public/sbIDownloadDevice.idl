@@ -49,6 +49,7 @@ interface nsISimpleEnumerator;
 [scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
 interface sbIDownloadDevice : sbIDeviceBase
 {
+    readonly attribute sbIMediaList downloadMediaList;
 };
 
 [scriptable, uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]
