@@ -46,3 +46,10 @@ sb-status-progressmeter
    max-width: 100px; 
 } 
 
+sb-player-numplaylistitems-label {
+  margin: 0px 0px 0px 8px !important;
+}
+
+sb-player-scanning-label {
+  margin: 0px 0px 0px 8px !important;
+}
