@@ -77,6 +77,9 @@ progressmeter {
   border-width: 1px;
 }
 
+sb-status-progressmeter { 
+  background-image: url(chrome://songbird/skin/backgrounds/status-bar.png);
+} 
 
 sb-status-progressmeter[mode="undetermined"],
 .progress-remainder[mode="undetermined"]
