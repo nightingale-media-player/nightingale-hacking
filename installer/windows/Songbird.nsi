@@ -174,6 +174,8 @@ ShowUninstDetails show
 ; Global Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 var LinkIconFile
+var HasBeenBackedUp
+var BackupLocation
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -185,6 +187,15 @@ Section "-Application" Section1
     Call CloseApp
   ${EndIf}
 
+  ; Check for old version
+  Call CheckForOldVersion
+  
+  ; If present, enable backup section of installer
+  ${If} $0 == "1"
+    MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" IDYES 0 IDNO +1
+    Call BackupOldVersion
+  ${EndIf}
+
   ; Reset output path
   SetOutPath $INSTDIR
 
@@ -192,11 +203,15 @@ Section "-Application" Section1
   SetShellVarContext all
 
   ; Read location of old version
-  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString"
+  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString"
 
-  ${If} $R1 != ""
-    ClearErrors
-    ExecWait '$R1 /S _?=$INSTDIR'
+  ; Uninstall old version
+  ${If} $HasBeenBackedUp == "False"
+    ${If} $R1 != ""
+      ClearErrors
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" IDYES 0 IDNO +1
+      ExecWait '$R1 /S _?=$INSTDIR'
+    ${EndIf}
   ${EndIf}
 
   ; List of files to install
@@ -247,6 +262,27 @@ Section "-Application" Section1
     File ${CRuntimeManifest}
   !endif
 
+  ; Now that we're done installing files, we have to move the backed up version into the new directory tree.
+  ${If} $HasBeenBackedUp == "True"
+    StrCpy $3 "$INSTDIR\legacy\${AppOldVersion}\Songbird"
+    
+    ; Print extra info for user
+    DetailPrint "${ShortBackupMessage}"
+    
+    ; Disable details for this section
+    SetDetailsPrint none
+    
+    CreateDirectory $3
+    CopyFiles /silent "$BackupLocation\*.*" $3
+    
+    DetailPrint "${ShortCleanupMessage}"
+    RMDir /r $BackupLocation
+    
+    ; Done with scary stuff, enable details.
+    SetDetailsPrint both
+    
+  ${EndIf}
+
   ; Register DLLs
   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
   ; is only registered for the last application installed. When the last
@@ -284,14 +320,14 @@ Section "-Application" Section1
   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 
   ; Write the installation path into the registry
-  WriteRegStr HKLM "Software\${BrandFullNameInternal\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
+  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoRepair" 1
   WriteUninstaller ${FileUninstallEXE}
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -343,7 +379,7 @@ Section "Uninstall"
   SetShellVarContext all
   
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}"
 
   ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
   DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
@@ -421,12 +457,17 @@ Section "Uninstall"
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Helper Functions
+; Installer Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function LaunchApp
   Call CloseApp
   Exec "$INSTDIR\${FileMainEXE}"
+FunctionEnd
+
+Function CreateProfile
+  Call CloseApp
+  ExecWait "$INSTDIR\${FileMainEXE} -CreateProfile"
 FunctionEnd
 
 Function CloseApp
@@ -471,6 +512,84 @@ Function CloseApp
   ${nsProcess::Unload}
 
 FunctionEnd
+
+Function GetOldVersionLocation
+  ReadRegStr $0 HKLM "Software\Songbird" "Install_Dir"
+  ClearErrors
+FunctionEnd
+
+Function CheckForOldVersion
+  Call GetOldVersionLocation
+  ${If} $0 == ""
+    StrCpy $0 "0"
+  ${Else}
+    StrCpy $0 "1"
+  ${EndIf}
+FunctionEnd
+
+Function BackupOldVersion
+  SetShellVarContext all
+  
+  ;Find old installation path using registry key / standard install path
+  Call GetOldVersionLocation
+
+  ;Found old version, move to <AppName>_<Version>  
+  ${If} $0 != ""
+    StrCpy $1 "$TEMP\${BrandShortName}_${AppOldVersion}"
+    Rename $0 $1
+    ClearErrors
+  ${Else}
+    Return
+  ${EndIf}
+
+  ;Figure out what link icon file we'll use for the shortcuts
+  ${If} ${AtLeastWinVista}
+    StrCpy $2 "songbird.ico"
+  ${Else}
+    StrCpy $2 "songbird32x32x8.ico"
+  ${EndIf}
+  
+  ;Update shortcuts (if found)
+  ;Desktop shortcut
+  ${If} ${FileExists} "$DESKTOP\Songbird.lnk"
+    Delete "$DESKTOP\Songbird.lnk"
+  ${EndIf}
+  
+  ;QuickLaunch shortcut
+  ${If} ${FileExists} "$QUICKLAUNCH\Songbird.lnk"
+    Delete "$QUICKLAUNCH\Songbird.lnk"
+  ${EndIf}
+  
+  ;Start menu shortcuts and start menu folder.
+  ${If} ${FileExists} "$SMPROGRAMS\Songbird\Songbird.lnk"
+    Delete "$SMPROGRAMS\Songbird\Songbird.lnk"
+  ${EndIf}
+  
+  ${If} ${FileExists} "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
+    Delete "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
+  ${EndIf}
+  
+  ${If} ${FileExists} "$SMPROGRAMS\Songbird"
+    RMDir "$SMPROGRAMS\Songbird"
+  ${EndIf}
+  
+  ;Delete uninstall information
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird"
+  
+  ;Delete install location
+  DeleteRegKey HKLM "Software\Songbird"
+  
+  StrCpy $HasBeenBackedUp "True"
+  StrCpy $BackupLocation $1
+
+  ; Refresh desktop.
+  System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+
+FunctionEnd
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstaller Helper Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.CloseApp
   loop:
@@ -519,7 +638,7 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
-
+  StrCpy $HasBeenBackedUp "False"
 FunctionEnd
 
 Function un.onInit

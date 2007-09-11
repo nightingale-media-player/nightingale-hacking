@@ -8,6 +8,7 @@
 !define URLUpdateInfo         "http://www.songbirdnest.com/"
 
 !define AppVersion            "@SB_MILESTONE@"
+!define AppOldVersion         "0.2.5"
 !define GREVersion            "@SB_MOZILLA_VERSION@"
 !define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
 
@@ -61,3 +62,7 @@
 #endif
 
 !define ForceQuitMessage          "@SB_APPNAME@  is currently running and will be forced to quit."
+!define BackupMessage             "<TODO: Backup 0.2.5 messaging> Backing up Songbird 0.2.5 to $INSTDIR\legacy\0.2.5\Songbird"
+!define ShortBackupMessage        "<TODO: Backup 0.2.5 messaging> Backing up Songbird 0.2.5 to $INSTDIR\legacy\0.2.5\Songbird"
+!define ShortCleanupMessage       "<TODO: Cleanup of 0.2.5 backup messaging> Cleaning up temporary backup files"
+!define UninstallMessage          "We found an older version of @SB_APPNAME@ present on this computer, do you wish to uninstall it before installing @SB_APPNAME@ ${AppVersion}?"
