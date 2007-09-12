@@ -51,7 +51,8 @@ SONGBIRD_DOCUMENTATION = songbird.dox.in \
 DOXYGEN_PREPROCESS = songbird.dox \
                      $(NULL)
 
-SHELL_EXECUTE = $(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
+# Add the sdkapi to the execute chain, because we don't have SHELL_EXECUTE2
+SHELL_EXECUTE += ; $(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
 
 endif #windows
 
