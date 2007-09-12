@@ -423,6 +423,20 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // The where clause that is generated for filtered queries that contain
+  // searches returns duplicate rows, so make this a distinct query if that
+  // is tha case.
+  PRBool hasSearch = PR_FALSE;
+  PRUint32 len = mFilters->Length();
+  for (PRUint32 i = 0; i < len && !hasSearch; i++) {
+    hasSearch = mFilters->ElementAt(i).isSearch;
+  }
+
+  if (hasSearch) {
+    rv = mBuilder->SetDistinct(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
