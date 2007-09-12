@@ -24,6 +24,12 @@
 //
  */
 
+// For Songbird properties.
+Components.utils.import("resource://app/components/sbProperties.jsm");
+const SBJUMPTOINDEXRETRYCOUNT = 3;    // Retries for highlighting new item
+const SBJUMPTOINDEXDELAY      = 500;  // Delay in milliseconds to hightlight
+
+
 // Open functions
 //
 // This file is not standalone
@@ -822,17 +828,69 @@ function SBImportURLIntoWebLibrary(url) {
   return mediaItem;
 }
 
-function SBDisplayViewForListAndPlayItem(list, item) {
-  var view = list.createView();
-  var index = list.indexOf(item, 0);
-
-  // Get the tabbed browser, load new library view, unfiltered.
-  if ( typeof gBrowser != 'undefined' ) { // "if ( gBrowser )" gave a js error?!
-//    gBrowser.loadMediaList(list, null, null, null);
+function SBJumpToIndex(item, retryCount) {
+  // Adjust retry counts
+  if (!retryCount) {
+    retryCount = SBJUMPTOINDEXRETRYCOUNT;
   }
+  retryCount--;
   
-  // Play the item that was just added.
-  gPPS.playView(view, index);
+  // Grab the currentPlayList in view
+  if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
+    var currentPlayList = gBrowser.currentPlaylist;
+    if (currentPlayList) {
+      var currentMediaListView = currentPlayList.mediaListView;
+      var playTree = currentPlayList.tree;
+
+      try {
+        var indexOfItem = currentMediaListView.getIndexForItem(item);
+        playTree.treeBoxObject.ensureRowIsVisible(indexOfItem);
+        playTree.view.selection.select(indexOfItem);
+      } catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+        // NS_ERROR_NOT_AVAILABLE (Item is not in the current list)
+        // Retry if we have failed (but not more than a couple times)
+        if (retryCount > 0) {
+          setTimeout(function () { SBJumpToIndex(item, retryCount); }, SBJUMPTOINDEXDELAY);
+        }
+      }
+    }
+  }
+}
+
+function SBDisplayViewForListAndPlayItem(list, item) {
+  var currentPlayListView = null;
+  var indexOfItem = -1;
+
+  // First we want to try and play from the current view
+  // Grab the currentPlayList in view
+  if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
+    var currentPlayList = gBrowser.currentPlaylist;
+    if (currentPlayList) {
+      currentPlayListView = currentPlayList.mediaListView;
+      try {
+        indexOfItem = currentPlayListView.getIndexForItem(item);
+        // Focus item.
+        setTimeout(function () { SBJumpToIndex(item, SBJUMPTOINDEXRETRYCOUNT); }, SBJUMPTOINDEXDELAY);
+      } catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+        indexOfItem = -1;
+      }
+    }
+  }
+
+  // We did not find the item in the current view, so create our own.
+  if (indexOfItem < 0) {
+    // Create a view from the list
+    currentPlayListView = list.createView();
+
+    // filter the view to just the single item
+    //var filter = SBProperties.createArray([[SBProperties.GUID, item.guid]]);
+    var filter = SBProperties.createArray([[SBProperties.contentURL, item.contentSrc.spec]]);
+    currentPlayListView.setFilters(filter);
+    indexOfItem = currentPlayListView.getIndexForItem(item);
+  }
+
+  // Now play the item.
+  gPPS.playView(currentPlayListView, indexOfItem);
 }
   
 function getFirstItemByProperty(aMediaList, aProperty, aValue) {
