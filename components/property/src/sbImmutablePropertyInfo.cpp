@@ -217,7 +217,7 @@ sbImmutablePropertyInfo::GetRemoteReadable(PRBool* aRemoteReadable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
+sbImmutablePropertyInfo::SetRemoteReadable(const PRBool aRemoteReadable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -231,7 +231,7 @@ sbImmutablePropertyInfo::GetRemoteWritable(PRBool* aRemoteWritable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
+sbImmutablePropertyInfo::SetRemoteWritable(const PRBool aRemoteWritable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
