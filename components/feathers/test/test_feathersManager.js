@@ -193,7 +193,9 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  var skinNames = [DEFAULT_SKIN_NAME, "dove/0.1", "plucked/0.1"];
+  // Bug 4588: Removed plucked and dove, add them back in to this test
+  // when they are updated and shipping again.
+  var skinNames = [DEFAULT_SKIN_NAME];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
