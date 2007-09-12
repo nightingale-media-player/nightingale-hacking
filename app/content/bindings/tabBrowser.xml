@@ -62,7 +62,7 @@
     </resources>
 
     <content>
-      <xul:stringbundle anonid="tbstringbundle" src="chrome://global/locale/tabbrowser.properties"/>
+      <xul:stringbundle anonid="tbstringbundle" src="chrome://browser/locale/tabbrowser.properties"/>
       <xul:tabbox anonid="tabbox" flex="1" eventnode="document" xbl:inherits="handleCtrlPageUpDown"
                   onselect="if (!('updateCurrentBrowser' in this.parentNode) || event.target.localName != 'tabpanels') return; this.parentNode.updateCurrentBrowser();">
         <xul:hbox class="tab-drop-indicator-bar">
@@ -109,7 +109,7 @@
                                 node.removeCurrentTab();">
             <xul:tab selected="true" validate="never"
                      onerror="this.parentNode.parentNode.parentNode.parentNode.addToMissedIconCache(this.getAttribute('image'));
-                              this.removeAttribute('image');"
+                              this.parentNode.parentNode.parentNode.parentNode.setIcon(this, null);"
                      maxwidth="250" width="0" minwidth="100" flex="100"
                      class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
           </xul:tabs>
@@ -697,6 +697,8 @@
               p = this.mProgressListeners[i];
               if (p) {
                 p.onLocationChange(webProgress, null, loc);
+                if ('onLinkIconAvailable' in p)
+                  p.onLinkIconAvailable(this.mCurrentBrowser);
                 if (securityUI)
                   p.onSecurityChange(webProgress, null, securityUI.state);
 
@@ -1158,7 +1160,7 @@
             t.width = 0;
             t.setAttribute("flex", "100");
             t.setAttribute("validate", "never");
-            t.setAttribute("onerror", "this.parentNode.parentNode.parentNode.parentNode.addToMissedIconCache(this.getAttribute('image')); this.removeAttribute('image');");
+            t.setAttribute("onerror", "this.parentNode.parentNode.parentNode.parentNode.addToMissedIconCache(this.getAttribute('image')); this.parentNode.parentNode.parentNode.parentNode.setIcon(this, null);");
             t.className = "tabbrowser-tab";
 
             this.mTabContainer.appendChild(t);

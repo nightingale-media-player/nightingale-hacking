@@ -181,6 +181,21 @@
         ]]></body>
       </method>
 
+      <method name="onLinkIconAvailable">
+        <parameter name="aBrowser" />
+        <body><![CDATA[
+          // Do nothing if icon is not for the currently displayed URI.
+          if (aBrowser.currentURI.spec != this.uri)
+            return;
+
+          // Use icon if service pane is not providing one.
+          if (!gServicePane.getURLImage(this.uri)) {
+            var image = aBrowser.mIconURL;
+            SBDataSetStringValue("browser.url.image", image?image:'');
+          }
+        ]]></body>
+      </method>
+
     </implementation>
     
     <handlers>
