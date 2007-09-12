@@ -32,13 +32,10 @@
     <script>
       var siteLib;
       var originalWeb;
-      var myDiv;
       var siteList;
 
-
       // get a handle on the original medialist and set up the 'store'
-      var load = function load() {
-        myDiv = document.getElementById("output");
+      function load() {
 
         siteLib = songbird.siteLibrary("", "/");
         siteLib.name = "Site Lib";
@@ -49,54 +46,121 @@
         populateList();
       }
 
-      var unload = function unload() {
-        if (siteList)
+      function unload() {
+        if (siteLib && siteList)
           siteLib.remove(siteList);
       }
 
-      var setPlaylist = function setPlaylist(aMediaList) {
+      function setPlaylist(aMediaList) {
         songbird.webPlaylist.mediaList = aMediaList;
       }
 
-      var showColumns = function showColumns() {
+      function showColumns() {
         songbird.webPlaylist.showColumn("buttonDemoPlay");
         songbird.webPlaylist.showColumn("buttonDemoShare");
         songbird.webPlaylist.showColumn("buttonDemoLogo");
       }
 
-      var hideColumns = function hideColumns() {
+      function hideColumns() {
         songbird.webPlaylist.hideColumn("buttonDemoPlay");
         songbird.webPlaylist.hideColumn("buttonDemoShare");
         songbird.webPlaylist.hideColumn("buttonDemoLogo");
+        songbird.webPlaylist.hideColumn("http://songbirdnest.com/data/1.0#artistName");
       }
 
-      var populateList = function populateList() {
+      function populateList() {
         var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-        item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-        item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
-        item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
+        try {
+          item.setProperty("buttonDemoText", "bar"); 
+          item.setProperty("demoText", "foo"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoText property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoPlay property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoShare property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoLogo property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("Rating", "3"); 
+        } catch (e) {
+          dump("Failed to set Rating property\n");
+          throw(e);
+        }
         siteList.add(item);
 
         item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
-        item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-        item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
-        item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
+        try {
+          item.setProperty("buttonDemoText", "foobar"); 
+          item.setProperty("demoText", "barfoo"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoText property");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoPlay property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoShare property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
+        } catch (e) {
+          dump("Failed to set buttonDemoLogo property\n");
+          throw(e);
+        }
+        try {
+          item.setProperty("Rating", "3"); 
+        } catch (e) {
+          dump("Failed to set Rating property\n");
+          throw(e);
+        }
         siteList.add(item);
       }
 
       var addDemoColumns = function addDemoColumns() {
         try {
-          songbird.webPlaylist.addColumn( "text",
-                                          "buttonDemoText",
-                                          "FOO",
-                                          "",
-                                          false,
-                                          true,
-                                          false,
-                                          false,
-                                          0,
-                                          150 ); 
-          songbird.webPlaylist.addColumn( "button",
+          songbird.webPlaylist.addColumn( "text",           // type
+                                          "demoText",       // name
+                                          "BAR",            // display name
+                                          "",               // before column
+                                          false,            // hidden
+                                          true,             // userViewable
+                                          true,             // userEditable
+                                          false,            // hasNullSort
+                                          0,                // nullSort
+                                          150 );            // width
+          songbird.webPlaylist.addColumn( "text",           // type
+                                          "buttonDemoText", // name
+                                          "FOO",            // display name
+                                          "",               // before column
+                                          false,            // hidden
+                                          true,             // userViewable
+                                          false,            // userEditable
+                                          false,            // hasNullSort
+                                          0,                // nullSort
+                                          150 );            // width
+          songbird.webPlaylist.addColumn( "image",
                                           "buttonDemoPlay",
                                           "Play",
                                           "",
@@ -116,6 +180,26 @@
                                           false,
                                           0,
                                           100 ); 
+          songbird.webPlaylist.addColumn( "rating",
+                                          "rating",
+                                          "Rating",
+                                          "",
+                                          false,
+                                          true,
+                                          false,
+                                          false,
+                                          0,
+                                          50 ); 
+          songbird.webPlaylist.addColumn( "downloadbutton",
+                                          "downloadButton",
+                                          "Download",
+                                          "",
+                                          false,
+                                          true,
+                                          false,
+                                          false,
+                                          0,
+                                          50 ); 
           songbird.webPlaylist.addColumn( "button",
                                           "buttonDemoLogo",
                                           "Logo",
@@ -136,8 +220,6 @@
 
   <body onload="load();" onunload="unload();">
     <h1>Creation of MediaList from a Library and setting as webplaylist</h1>
-    <p> Force a web playlist to appear. <br />
-      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
     <form>
       <p> show/hide columns </p>
       <input type="button" id="show_columns_button" value="show columns"
@@ -148,7 +230,6 @@
              onclick="songbird.webPlaylist.showColumnBefore('buttonDemoPlay', 'buttonDemoLogo');" /> 
       <br />
     </form>
-    </p>
     <div id="output">
     </div>
   </body>

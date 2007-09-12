@@ -39,11 +39,15 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 #define ZERO_HIT_WIDTH 7
 
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyName,
-                                           const nsAString& aDisplayName)
+                                           const nsAString& aDisplayName,
+                                           const PRBool aRemoteReadable,
+                                           const PRBool aRemoteWritable)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
   mUserViewable = PR_TRUE;
+  mRemoteReadable = aRemoteReadable;
+  mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("rating");
 }
 

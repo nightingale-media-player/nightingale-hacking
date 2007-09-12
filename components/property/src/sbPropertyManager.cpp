@@ -782,18 +782,15 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
 
 nsresult
 sbPropertyManager::SetRemoteAccess(sbIPropertyInfo* aProperty,
-                PRBool aRemoteReadable,
-                PRBool aRemoteWritable)
+                                   PRBool aRemoteReadable,
+                                   PRBool aRemoteWritable)
 {
   nsresult rv = NS_OK;
   
-  nsCOMPtr<sbIRemotePropertyInfo> propertyInfo = do_QueryInterface(aProperty, &rv);
-  NS_ENSURE_SUCCESS(rv,rv);
-  
-  rv = propertyInfo->SetRemoteReadable(aRemoteReadable);
+  rv = aProperty->SetRemoteReadable(aRemoteReadable);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  propertyInfo->SetRemoteWritable(aRemoteWritable);
+  rv = aProperty->SetRemoteWritable(aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;

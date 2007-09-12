@@ -39,7 +39,6 @@ NS_INTERFACE_TABLE_HEAD(sbTextPropertyInfo)
 NS_INTERFACE_TABLE_BEGIN
 NS_INTERFACE_TABLE_ENTRY(sbTextPropertyInfo, sbITextPropertyInfo)
 NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbTextPropertyInfo, sbIPropertyInfo, sbITextPropertyInfo)
-NS_INTERFACE_TABLE_ENTRY(sbTextPropertyInfo, sbIRemotePropertyInfo)
 NS_INTERFACE_TABLE_END
 NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 

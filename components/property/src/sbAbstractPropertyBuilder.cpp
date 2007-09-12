@@ -156,3 +156,29 @@ sbAbstractPropertyBuilder::SetDisplayNameKey(const nsAString& aDisplayNameKey)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbAbstractPropertyBuilder::GetRemoteReadable(PRBool* aRemoteReadable)
+{
+  *aRemoteReadable = mRemoteReadable;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbAbstractPropertyBuilder::SetRemoteReadable(const PRBool aRemoteReadable)
+{
+  mRemoteReadable = aRemoteReadable;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAbstractPropertyBuilder::GetRemoteWritable(PRBool* aRemoteWritable)
+{
+  *aRemoteWritable = mRemoteWritable;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbAbstractPropertyBuilder::SetRemoteWritable(const PRBool aRemoteWritable)
+{
+  mRemoteWritable = aRemoteWritable;
+  return NS_OK;
+}
+

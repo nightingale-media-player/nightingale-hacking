@@ -104,7 +104,6 @@ NS_INTERFACE_TABLE_HEAD(sbNumberPropertyInfo)
 NS_INTERFACE_TABLE_BEGIN
 NS_INTERFACE_TABLE_ENTRY(sbNumberPropertyInfo, sbINumberPropertyInfo)
 NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbNumberPropertyInfo, sbIPropertyInfo, sbINumberPropertyInfo)
-NS_INTERFACE_TABLE_ENTRY(sbNumberPropertyInfo, sbIRemotePropertyInfo)
 NS_INTERFACE_TABLE_END
 NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 

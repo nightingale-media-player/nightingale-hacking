@@ -62,7 +62,12 @@ sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   }
 
   nsRefPtr<sbSimpleButtonPropertyInfo> pi =
-    new sbSimpleButtonPropertyInfo(mPropertyName, displayName, hasLabel, label);
+    new sbSimpleButtonPropertyInfo(mPropertyName,
+                                   displayName,
+                                   hasLabel,
+                                   label,
+                                   mRemoteReadable,
+                                   mRemoteWritable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();

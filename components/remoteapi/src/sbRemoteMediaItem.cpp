@@ -29,7 +29,6 @@
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
 #include <sbIPropertyManager.h>
-#include <sbIRemotePropertyInfo.h>
 #include <nsServiceManagerUtils.h>
 
 /*
@@ -140,14 +139,9 @@ sbRemoteMediaItem::GetProperty(const nsAString & aName,
   rv = propertyManager->GetPropertyInfo(aName, getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // try to get the remote property info for the property being requested
-  nsCOMPtr<sbIRemotePropertyInfo> remotePropertyInfo =
-      do_QueryInterface( propertyInfo, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // ask the remote property info if this property is readable
+  // ask if this property is remotely readable
   PRBool readable = PR_FALSE;
-  rv = remotePropertyInfo->GetRemoteReadable(&readable);
+  rv = propertyInfo->GetRemoteReadable(&readable);
   NS_ENSURE_SUCCESS( rv, rv );
 
   // well, is it readable?
@@ -174,27 +168,39 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
                      &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // get the property info for the property being requested
+  // Check to see if we have the property first, if not we must create it with
+  // the right settings so websites can modify it.
+  PRBool hasProp;
+  rv = propertyManager->HasProperty( aName, &hasProp );
+
+  // get the property info for the property being requested - this will create
+  // it if it didn't already exist.
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  rv = propertyManager->GetPropertyInfo(aName, getter_AddRefs(propertyInfo));
+  rv = propertyManager->GetPropertyInfo( aName, getter_AddRefs(propertyInfo) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // try to get the remote property info for the property being requested
-  nsCOMPtr<sbIRemotePropertyInfo> remotePropertyInfo =
-      do_QueryInterface( propertyInfo, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  // check to see if the prop already existed or if we created it
+  if (hasProp) {
+    // ask if this property is remotely writable
+    PRBool writable = PR_FALSE;
+    rv = propertyInfo->GetRemoteWritable(&writable);
+    NS_ENSURE_SUCCESS( rv, rv );
 
-  // ask the remote property info if this property is readable
-  PRBool writable = PR_FALSE;
-  rv = remotePropertyInfo->GetRemoteWritable(&writable);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // well, is it readable?
-  if (!writable) {
-    // if not return an error
-    return NS_ERROR_FAILURE;
+    // well, is it writeable?
+    if (!writable) {
+      // if not return an error
+      return NS_ERROR_FAILURE;
+    }
   }
+  else {
+    // we created a new property in the system so enable remote write/read
+    rv = propertyInfo->SetRemoteWritable(PR_TRUE);
+    NS_ENSURE_SUCCESS( rv, rv );
 
+    rv = propertyInfo->SetRemoteReadable(PR_TRUE);
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  
   // it all looks ok, pass this request on to the real media item
   return mMediaItem->SetProperty(aName, aValue);
 }

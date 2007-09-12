@@ -50,7 +50,9 @@ public:
 
   sbDownloadButtonPropertyInfo(const nsAString& aPropertyName,
                                const nsAString& aDisplayName,
-                               const nsAString& aLabel);
+                               const nsAString& aLabel,
+                               const PRBool aRemoteReadable,
+                               const PRBool aRemoteWritable);
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 

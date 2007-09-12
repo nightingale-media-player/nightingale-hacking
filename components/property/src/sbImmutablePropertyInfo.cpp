@@ -36,7 +36,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbImmutablePropertyInfo, sbIPropertyInfo)
 sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mNullSort(sbIPropertyInfo::SORT_NULL_SMALL),
   mUserViewable(PR_FALSE),
-  mUserEditable(PR_FALSE)
+  mUserEditable(PR_FALSE),
+  mRemoteReadable(PR_FALSE),
+  mRemoteWritable(PR_FALSE)
 {
 }
 
@@ -202,6 +204,34 @@ sbImmutablePropertyInfo::GetUserEditable(PRBool* aUserEditable)
 
 NS_IMETHODIMP
 sbImmutablePropertyInfo::SetUserEditable(PRBool aUserEditable)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetRemoteReadable(PRBool* aRemoteReadable)
+{
+  NS_ENSURE_ARG_POINTER(aRemoteReadable);
+  *aRemoteReadable = mRemoteReadable;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetRemoteWritable(PRBool* aRemoteWritable)
+{
+  NS_ENSURE_ARG_POINTER(aRemoteWritable);
+  *aRemoteWritable = mRemoteWritable;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

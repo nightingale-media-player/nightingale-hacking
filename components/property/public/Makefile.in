@@ -35,7 +35,6 @@ XPIDL_SRCS = sbIPropertyArray.idl \
              sbIPropertyBuilder.idl \
              sbITreeViewPropertyInfo.idl \
              sbIClickablePropertyInfo.idl \
-             sbIRemotePropertyInfo.idl \
              $(NULL)
 
 XPIDL_MODULE = sbProperties.xpt

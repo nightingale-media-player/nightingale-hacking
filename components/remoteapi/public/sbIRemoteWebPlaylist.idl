@@ -160,6 +160,7 @@ interface sbIRemoteWebPlaylist : nsISupports
     button - A clickable button.
     image - A picture.
     downloadbutton - A button which, when clicked, initiates a download.
+    rating - 5 stars representing the value
   
   Null Sorting Types:
     0 - Null values are infinitely small.  This is the default.

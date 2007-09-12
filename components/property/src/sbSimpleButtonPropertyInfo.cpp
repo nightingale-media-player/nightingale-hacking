@@ -48,13 +48,17 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbSimpleButtonPropertyInfo,
 sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyName,
                                                        const nsAString& aDisplayName,
                                                        PRBool aHasLabel,
-                                                       const nsAString& aLabel)
+                                                       const nsAString& aLabel,
+                                                       const PRBool aRemoteReadable,
+                                                       const PRBool aRemoteWritable)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
   mHasLabel = aHasLabel;
   mLabel = aLabel;
   mUserViewable = PR_TRUE;
+  mRemoteReadable = aRemoteReadable;
+  mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("button");
 }
 

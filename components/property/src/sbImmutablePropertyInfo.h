@@ -53,6 +53,8 @@ protected:
   nsString mDisplayName;
   PRBool mUserViewable;
   PRBool mUserEditable;
+  PRBool mRemoteReadable;
+  PRBool mRemoteWritable;
   nsString mUnits;
   nsCOMPtr<nsIStringBundle> mBundle;
 };

@@ -29,7 +29,6 @@
 
 #include <sbIPropertyManager.h>
 #include <sbIPropertyArray.h>
-#include <sbIRemotePropertyInfo.h>
 
 #include <nsCOMPtr.h>
 #include <nsIURI.h>
@@ -61,6 +60,10 @@ NS_IMETHOD GetUserViewable(PRBool *aUserViewable) { return _to GetUserViewable(a
 NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
 NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
 NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
+NS_IMETHOD GetRemoteReadable(PRBool *aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
+NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
+NS_IMETHOD GetRemoteWritable(PRBool *aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
+NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } \
 NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
 NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
@@ -90,13 +93,11 @@ protected:
 
 };
 
-class sbPropertyInfo : public sbIPropertyInfo,
-                       public sbIRemotePropertyInfo
+class sbPropertyInfo : public sbIPropertyInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPROPERTYINFO
-  NS_DECL_SBIREMOTEPROPERTYINFO
 
   sbPropertyInfo();
   virtual ~sbPropertyInfo();

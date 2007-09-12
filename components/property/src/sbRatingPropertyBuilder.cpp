@@ -47,8 +47,10 @@ sbRatingPropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsresult rv = GetFinalDisplayName(displayName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbRatingPropertyInfo> pi =
-    new sbRatingPropertyInfo(mPropertyName, displayName);
+  nsRefPtr<sbRatingPropertyInfo> pi = new sbRatingPropertyInfo(mPropertyName,
+                                                               displayName,
+                                                               mRemoteReadable,
+                                                               mRemoteWritable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();

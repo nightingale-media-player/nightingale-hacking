@@ -46,7 +46,6 @@ NS_INTERFACE_TABLE_HEAD(sbDatetimePropertyInfo)
 NS_INTERFACE_TABLE_BEGIN
 NS_INTERFACE_TABLE_ENTRY(sbDatetimePropertyInfo, sbIDatetimePropertyInfo)
 NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbDatetimePropertyInfo, sbIPropertyInfo, sbIDatetimePropertyInfo)
-NS_INTERFACE_TABLE_ENTRY(sbDatetimePropertyInfo, sbIRemotePropertyInfo)
 NS_INTERFACE_TABLE_END
 NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 

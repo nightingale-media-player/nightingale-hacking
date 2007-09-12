@@ -49,12 +49,16 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
  */
 sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyName,
                                                            const nsAString& aDisplayName,
-                                                           const nsAString& aLabel)
+                                                           const nsAString& aLabel,
+                                                           const PRBool aRemoteReadable,
+                                                           const PRBool aRemoteWritable)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
   mLabel = aLabel;
   mUserViewable = PR_TRUE;
+  mRemoteReadable = aRemoteReadable;
+  mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("downloadbutton");
 }
 

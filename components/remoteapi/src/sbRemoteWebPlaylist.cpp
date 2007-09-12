@@ -298,6 +298,7 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
     // Figure out which type of property we want, special types get a
     // display type set on them, the rest are just text.
 
+    // these types get created directly
     if (aColumnType.EqualsLiteral("text") ||
         aColumnType.EqualsLiteral("datetime") ||
         aColumnType.EqualsLiteral("uri") ||
@@ -327,42 +328,31 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
           info->SetNullSort(aNullSort);
       }
     }
+    // these types get created through builders
     else {
-
+      nsCOMPtr<sbIPropertyBuilder> builder;
       if (aColumnType.EqualsLiteral("button")) {
-        nsCOMPtr<sbISimpleButtonPropertyBuilder> builder =
+        LOG(( "sbRemoteWebPlaylist::AddColumn() - using a button builder" ));
+        builder =
           do_CreateInstance(SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetPropertyName(aColumnName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->SetDisplayName(aDisplayName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->Get(getter_AddRefs(info));
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else if (aColumnType.EqualsLiteral("image")) {
-        nsCOMPtr<sbIImagePropertyBuilder> builder =
+        LOG(( "sbRemoteWebPlaylist::AddColumn() - using a image builder" ));
+        builder =
           do_CreateInstance(SB_IMAGEPROPERTYBUILDER_CONTRACTID, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetPropertyName(aColumnName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->SetDisplayName(aDisplayName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->Get(getter_AddRefs(info));
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else if (aColumnType.EqualsLiteral("downloadbutton")) {
-        nsCOMPtr<sbIDownloadButtonPropertyBuilder> builder =
+        LOG(( "sbRemoteWebPlaylist::AddColumn() - using a downloadbutton builder" ));
+        builder =
           do_CreateInstance(SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetPropertyName(aColumnName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->SetDisplayName(aDisplayName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->Get(getter_AddRefs(info));
+      }
+      else if (aColumnType.EqualsLiteral("rating")) {
+        LOG(( "sbRemoteWebPlaylist::AddColumn() - using a downloadbutton builder" ));
+        builder =
+          do_CreateInstance(SB_RATINGPROPERTYBUILDER_CONTRACTID, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
@@ -370,6 +360,36 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
         return NS_ERROR_FAILURE;
       }
 
+      // set all the common properties together
+      if (builder) {
+        rv = builder->SetPropertyName(aColumnName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetDisplayName(aDisplayName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetRemoteReadable(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetRemoteWritable(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->Get(getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+    }
+
+    // we created a new property in the system so enable remote write/read
+    if (NS_SUCCEEDED(rv) ) {
+      LOG(( "sbRemoteWebPlaylist::AddColumn() - we have a remotePropertyInfo item" ));
+      rv = info->SetRemoteWritable(PR_TRUE);
+      // XXXredfive can't ensure success because the immutable properties also
+      // implement this interface and return an error code
+      //NS_ENSURE_SUCCESS( rv, rv );
+
+      rv = info->SetRemoteReadable(PR_TRUE);
+      // XXXredfive can't ensure success because the immutable properties also
+      // implement this interface and return an error code
+      //NS_ENSURE_SUCCESS( rv, rv );
+    } else {
+      LOG(( "sbRemoteWebPlaylist::AddColumn() - we DONT have a remotePropertyInfo item" ));
     }
 
     // add to the property manager

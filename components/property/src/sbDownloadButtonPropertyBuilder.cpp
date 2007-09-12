@@ -57,7 +57,11 @@ sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   }
 
   nsRefPtr<sbDownloadButtonPropertyInfo> pi =
-    new sbDownloadButtonPropertyInfo(mPropertyName, displayName, label);
+    new sbDownloadButtonPropertyInfo(mPropertyName,
+                                     displayName,
+                                     label,
+                                     mRemoteReadable,
+                                     mRemoteWritable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();

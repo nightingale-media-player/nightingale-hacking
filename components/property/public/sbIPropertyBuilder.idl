@@ -49,6 +49,10 @@ interface sbIPropertyBuilder : nsISupports
 
   attribute AString displayNameKey;
 
+  attribute boolean remoteReadable;
+
+  attribute boolean remoteWritable;
+
   sbIPropertyInfo get();
 };
 

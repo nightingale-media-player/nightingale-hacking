@@ -199,6 +199,16 @@ interface sbIPropertyInfo : nsISupports
    */
   attribute boolean userEditable;
 
+  /** 
+   * \brief A web site may read the value of this property.
+   */
+  attribute boolean remoteReadable;
+
+  /**
+   * \brief A web site may write the value of this property.
+   */
+  attribute boolean remoteWritable;
+
   /**
    * \brief True if this property has a selection list
    */
