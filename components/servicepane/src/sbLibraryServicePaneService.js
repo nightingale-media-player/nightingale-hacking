@@ -269,14 +269,26 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
   dump('isLibrary='+isLibrary+'\n');
   
   // The Rules:
-  //  * playlists and items can be dropped on top of playlists or libraries
-  //  * playlists can be dropped next to other playlists (ie: in a library)
-  
-  if (dropOnto || (dropList && isLibrary)) {
-    return containerResource
-  } else {
-    return null;
+  //  * (non-playlist) items can be dropped on top of playlists or libraries
+  //  * playlists can be dropped next to other playlists in the same container
+
+  if (!dropList && dropOnto) {
+    return containerResource;
   }
+  if (dropList && isLibrary) {
+    var draggedItem = this._getDndData(aDragSession,
+                                       TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                       Ci.sbISingleListTransferContext);
+    if (!draggedItem) {
+      return null;
+    }
+    var draggedContainer = this.getNodeForLibraryResource(draggedItem.list);
+    if (draggedContainer == container) {
+      return containerResource;
+    }
+  }
+  
+  return null;
 }
 
 sbLibraryServicePane.prototype.canDrop =

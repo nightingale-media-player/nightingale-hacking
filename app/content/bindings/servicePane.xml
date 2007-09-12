@@ -724,7 +724,7 @@
         if (this.mService.canDrop(node.id, session, orientation)) {
           this.mService.onDrop(node.id, session, orientation);
         }
-        this._dragService.endDragSession();
+        this._dragService.endDragSession(true);
       ]]></handler>
     </handlers>
   </binding>
