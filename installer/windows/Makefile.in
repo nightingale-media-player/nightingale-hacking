@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_DIST = $(srcdir)/GPL.txt \
                 $(srcdir)/LICENSE.txt \
                 $(srcdir)/TRADEMARK.txt \
+                $(topsrcdir)/installer/common/README.txt \
                 $(NULL)
 
 ifdef SONGBIRD_OFFICIAL

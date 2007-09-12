@@ -28,6 +28,12 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_DIST = $(srcdir)/GPL.txt \
+                $(srcdir)/LICENSE.txt \
+                $(srcdir)/TRADEMARK.txt \
+                $(topsrcdir)/installer/common/README.txt \
+                $(NULL)
+
 SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh $(SB_PLATFORM)-$(SB_ARCH)
 
 include $(topsrcdir)/build/rules.mk
