@@ -457,7 +457,7 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-g -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -Wno-attributes -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-g -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
@@ -507,7 +507,7 @@ case "$SB_PLATFORM" in
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
-    GCC_COMPILER_FLAGS="-c -gstabs+ -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -Wno-attributes -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -gstabs+ -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
