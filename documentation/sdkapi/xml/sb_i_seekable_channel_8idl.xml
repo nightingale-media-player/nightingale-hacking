@@ -4,14 +4,14 @@
     <compoundname>sbISeekableChannel.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="292">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="291">
         <label>components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
         <link refid="sbISeekableChannel.idl"/>
         <childnode refid="292" relation="include">
         </childnode>
-      </node>
-      <node id="292">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_seekable_channel_listener" prot="public">sbISeekableChannelListener</innerclass>
@@ -76,6 +76,6 @@
 <codeline lineno="121"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
   </compounddef>
 </doxygen>

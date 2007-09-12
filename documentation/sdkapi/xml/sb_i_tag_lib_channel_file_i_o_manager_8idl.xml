@@ -67,6 +67,6 @@
 <codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setChannelRestart(<sp/>in<sp/>AString<sp/>aChannelID,<sp/>in<sp/>PRBool<sp/>aRestart<sp/>);</highlight></codeline>
 <codeline lineno="93"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl"/>
   </compounddef>
 </doxygen>

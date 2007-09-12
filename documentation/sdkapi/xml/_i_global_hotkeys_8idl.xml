@@ -65,6 +65,6 @@
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl"/>
+    <location file="c:/projects/songbird/components/integration/public/IGlobalHotkeys.idl"/>
   </compounddef>
 </doxygen>

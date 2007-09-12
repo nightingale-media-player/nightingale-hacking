@@ -6,6 +6,12 @@
     <includedby refid="sb_i_library_8idl" local="yes">components/library/base/public/sbILibrary.idl</includedby>
     <includedby refid="sb_i_local_database_smart_media_list_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</includedby>
     <incdepgraph>
+      <node id="224">
+        <label>components/library/base/public/sbIMediaList.idl</label>
+        <link refid="sbIMediaList.idl"/>
+        <childnode refid="225" relation="include">
+        </childnode>
+      </node>
       <node id="225">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
@@ -16,12 +22,6 @@
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
         <childnode refid="227" relation="include">
-        </childnode>
-      </node>
-      <node id="224">
-        <label>components/library/base/public/sbIMediaList.idl</label>
-        <link refid="sbIMediaList.idl"/>
-        <childnode refid="225" relation="include">
         </childnode>
       </node>
       <node id="227">
@@ -37,13 +37,13 @@
         <childnode refid="230" relation="include">
         </childnode>
       </node>
-      <node id="230">
-        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
-        <link refid="sb_i_local_database_smart_media_list_8idl"/>
-      </node>
       <node id="229">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
+      </node>
+      <node id="230">
+        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+        <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_media_list" prot="public">sbIMediaList</innerclass>
@@ -777,11 +777,13 @@
 <codeline lineno="895"><highlight class="comment"></highlight></codeline>
 <codeline lineno="896"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
 <codeline lineno="897"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;enumerateItemsByProperty()&gt;</highlight></codeline>
-<codeline lineno="898"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="899"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getDistinctValuesForProperty(in<sp/>AString<sp/>aPropertyName);</highlight></codeline>
-<codeline lineno="900"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="901"><highlight class="normal"></highlight></codeline>
+<codeline lineno="898"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="899"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h&gt;,<sp/>for<sp/>a<sp/>list<sp/>of<sp/>standard<sp/>properties.</highlight></codeline>
+<codeline lineno="900"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="901"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getDistinctValuesForProperty(in<sp/>AString<sp/>aPropertyName);</highlight></codeline>
+<codeline lineno="902"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="903"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaList.idl"/>
+    <location file="c:/projects/songbird/components/library/base/public/sbIMediaList.idl"/>
   </compounddef>
 </doxygen>

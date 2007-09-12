@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="378">
+      <node id="384">
         <label>components/property/public/sbIPropertyFactory.idl</label>
         <link refid="sbIPropertyFactory.idl"/>
-        <childnode refid="379" relation="include">
+        <childnode refid="385" relation="include">
         </childnode>
       </node>
-      <node id="379">
+      <node id="385">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -57,6 +57,6 @@
 <codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyFactory.idl"/>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyFactory.idl"/>
   </compounddef>
 </doxygen>

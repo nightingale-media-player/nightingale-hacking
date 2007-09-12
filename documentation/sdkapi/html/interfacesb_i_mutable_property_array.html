@@ -31,13 +31,16 @@
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mutable_property_array.html#df84beb4b234886860067cf37e1e1423">appendProperty</a> (in AString aName, in AString aValue)</td></tr>
 
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">strict</a></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00085">85</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00091">91</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="df84beb4b234886860067cf37e1e1423"></a><!-- doxytag: member="sbIMutablePropertyArray::appendProperty" ref="df84beb4b234886860067cf37e1e1423" args="(in AString aName, in AString aValue)" -->
 <div class="memitem">
 <div class="memproto">
@@ -68,15 +71,40 @@ Adds a new property to the array<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aName</em>&nbsp;</td><td>The name of the property </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aValue</em>&nbsp;</td><td>The value of the property </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aValue</em>&nbsp;</td><td>The value of the property</td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_ILLEGAL_VALUE</em>&nbsp;</td><td>if the 'strict' attribute is true and aValue fails the 'validate' method of the <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> represented by aName fails. </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="e13867716c7fa3d64006f8b9ff10a615"></a><!-- doxytag: member="sbIMutablePropertyArray::strict" ref="e13867716c7fa3d64006f8b9ff10a615" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute boolean <a class="el" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">sbIMutablePropertyArray::strict</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Determines whether or not the appendProperty method will throw on invalid input (i.e. setting a value on a property whose <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> 'validate' method fails on that input). Defaults to true.<p>
+An example of improper usage is setting non-numeric text in a property whose parent <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> is actually <a class="el" href="interfacesb_i_number_property_info.html" title="The property information specific to numeric fields.">sbINumberPropertyInfo</a>.<p>
+Note that this property can only be set if the implementing array is empty. Any attempt to set this property after 'appendProperty' has been called will throw NS_ERROR_FAILURE. 
+<p>
+Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00118">118</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:47:03 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

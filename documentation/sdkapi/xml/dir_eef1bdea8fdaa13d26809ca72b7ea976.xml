@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_eef1bdea8fdaa13d26809ca72b7ea976" kind="dir">
+    <compoundname>components/library/localdatabase/public/</compoundname>
+    <innerfile refid="sb_i_local_database_async_g_u_i_d_array_8idl">sbILocalDatabaseAsyncGUIDArray.idl</innerfile>
+    <innerfile refid="sb_i_local_database_dynamic_playlist_service_8idl">sbILocalDatabaseDynamicPlaylistService.idl</innerfile>
+    <innerfile refid="sb_i_local_database_g_u_i_d_array_8idl">sbILocalDatabaseGUIDArray.idl</innerfile>
+    <innerfile refid="sb_i_local_database_library_8idl">sbILocalDatabaseLibrary.idl</innerfile>
+    <innerfile refid="sb_i_local_database_media_item_8idl">sbILocalDatabaseMediaItem.idl</innerfile>
+    <innerfile refid="sb_i_local_database_property_cache_8idl">sbILocalDatabasePropertyCache.idl</innerfile>
+    <innerfile refid="sb_i_local_database_resource_property_8idl">sbILocalDatabaseResourceProperty.idl</innerfile>
+    <innerfile refid="sb_i_local_database_simple_media_list_8idl">sbILocalDatabaseSimpleMediaList.idl</innerfile>
+    <innerfile refid="sb_i_local_database_smart_media_list_8idl">sbILocalDatabaseSmartMediaList.idl</innerfile>
+    <innerfile refid="sb_i_local_database_tree_view_8idl">sbILocalDatabaseTreeView.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/"/>
+  </compounddef>
+</doxygen>

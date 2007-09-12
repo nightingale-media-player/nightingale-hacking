@@ -5,6 +5,12 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
+      <node id="284">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="285" relation="include">
+        </childnode>
+      </node>
       <node id="285">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
@@ -15,12 +21,6 @@
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
         <childnode refid="283" relation="include">
-        </childnode>
-      </node>
-      <node id="284">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="285" relation="include">
         </childnode>
       </node>
       <node id="282">
@@ -133,6 +133,6 @@
 <codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>rebuild();</highlight></codeline>
 <codeline lineno="173"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl"/>
   </compounddef>
 </doxygen>

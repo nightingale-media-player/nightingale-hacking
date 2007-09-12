@@ -65,6 +65,6 @@
 <codeline lineno="66" refid="interfacesb_i_device_identification_10900867735bfa0e1b968a1efd41158ba" refkind="member"><highlight class="normal"><sp/>attribute<sp/>nsIURI<sp/>uri;</highlight></codeline>
 <codeline lineno="67"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl"/>
+    <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl"/>
   </compounddef>
 </doxygen>

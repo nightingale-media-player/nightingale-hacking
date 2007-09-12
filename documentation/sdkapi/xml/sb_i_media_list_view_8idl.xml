@@ -75,6 +75,6 @@
 <codeline lineno="99"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListView.idl"/>
+    <location file="c:/projects/songbird/components/library/base/public/sbIMediaListView.idl"/>
   </compounddef>
 </doxygen>

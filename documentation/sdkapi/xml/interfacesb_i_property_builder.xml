@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_property_builder" kind="interface" prot="public">
+    <compoundname>sbIPropertyBuilder</compoundname>
+    <derivedcompoundref refid="interfacesb_i_download_button_property_builder" prot="public" virt="non-virtual">sbIDownloadButtonPropertyBuilder</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_image_property_builder" prot="public" virt="non-virtual">sbIImagePropertyBuilder</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_rating_property_builder" prot="public" virt="non-virtual">sbIRatingPropertyBuilder</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_simple_button_property_builder" prot="public" virt="non-virtual">sbISimpleButtonPropertyBuilder</derivedcompoundref>
+    <includes refid="sb_i_property_builder_8idl" local="no">sbIPropertyBuilder.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyBuilder::propertyName</definition>
+        <argsstring></argsstring>
+        <name>propertyName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="46" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyBuilder::displayName</definition>
+        <argsstring></argsstring>
+        <name>displayName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="48" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyBuilder::displayNameKey</definition>
+        <argsstring></argsstring>
+        <name>displayNameKey</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="50" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></type>
+        <definition>sbIPropertyInfo sbIPropertyBuilder::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="505">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="508">
+        <label>sbIRatingPropertyBuilder</label>
+        <link refid="interfacesb_i_rating_property_builder"/>
+        <childnode refid="505" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="509">
+        <label>sbISimpleButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_simple_button_property_builder"/>
+        <childnode refid="505" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="506">
+        <label>sbIDownloadButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_download_button_property_builder"/>
+        <childnode refid="505" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="507">
+        <label>sbIImagePropertyBuilder</label>
+        <link refid="interfacesb_i_image_property_builder"/>
+        <childnode refid="505" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="45" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="44" bodyend="53"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>displayNameKey</name></member>
+      <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>get</name></member>
+      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>propertyName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

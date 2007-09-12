@@ -24,7 +24,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -32,30 +32,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="243">
+      <node id="271">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="244" relation="public-inheritance">
+        <childnode refid="272" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="244">
+      <node id="272">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="245">
+      <node id="273">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="246" relation="public-inheritance">
+        <childnode refid="274" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="246">
+      <node id="274">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>created</name></member>
       <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>equals</name></member>

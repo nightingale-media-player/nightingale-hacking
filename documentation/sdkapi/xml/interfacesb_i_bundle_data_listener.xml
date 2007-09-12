@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl" line="52"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_data_listener_1a04961c929e9b52bde15d44aef08faff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl" line="59"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="59"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -61,7 +61,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleDataListener.idl" bodystart="44" bodyend="60"/>
+    <location file="c:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="45" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" bodystart="44" bodyend="60"/>
     <listofallmembers>
       <member refid="interfacesb_i_bundle_data_listener_1f83887e981e59e9f21376899c36283c0" prot="public" virt="non-virtual"><scope>sbIBundleDataListener</scope><name>onDownloadComplete</name></member>
       <member refid="interfacesb_i_bundle_data_listener_1a04961c929e9b52bde15d44aef08faff" prot="public" virt="non-virtual"><scope>sbIBundleDataListener</scope><name>onError</name></member>

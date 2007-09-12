@@ -22,12 +22,6 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="220">
-        <label>components/library/base/public/sbIMediaItem.idl</label>
-        <link refid="sbIMediaItem.idl"/>
-        <childnode refid="221" relation="include">
-        </childnode>
-      </node>
       <node id="221">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
@@ -36,13 +30,19 @@
         <childnode refid="223" relation="include">
         </childnode>
       </node>
-      <node id="223">
-        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
-        <link refid="sb_i_local_database_smart_media_list_8idl"/>
-      </node>
       <node id="222">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
+      </node>
+      <node id="220">
+        <label>components/library/base/public/sbIMediaItem.idl</label>
+        <link refid="sbIMediaItem.idl"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+      </node>
+      <node id="223">
+        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+        <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_media_item" prot="public">sbIMediaItem</innerclass>
@@ -183,6 +183,6 @@
 <codeline lineno="206"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="207"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl"/>
+    <location file="c:/projects/songbird/components/library/base/public/sbIMediaItem.idl"/>
   </compounddef>
 </doxygen>

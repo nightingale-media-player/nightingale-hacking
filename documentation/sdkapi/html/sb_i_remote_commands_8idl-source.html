@@ -59,37 +59,38 @@
 <a name="l00055"></a>00055 <span class="comment">  Add a command.</span>
 <a name="l00056"></a>00056 <span class="comment">  </span>
 <a name="l00057"></a>00057 <span class="comment">  Arguments:</span>
-<a name="l00058"></a>00058 <span class="comment">    type - The type of the command.</span>
-<a name="l00059"></a>00059 <span class="comment">    id - The id of the command.</span>
-<a name="l00060"></a>00060 <span class="comment">    name - The name of the command.</span>
-<a name="l00061"></a>00061 <span class="comment">    tooltip - The tooltip for the command.</span>
-<a name="l00062"></a>00062 <span class="comment">  </span>
-<a name="l00063"></a>00063 <span class="comment">  See Also:</span>
-<a name="l00064"></a>00064 <span class="comment">    The complete list of command types available (&lt;http://songbirdnest.com/&gt;).</span>
-<a name="l00065"></a>00065 <span class="comment">  */</span>
-<a name="l00066"></a>00066   <span class="keywordtype">void</span> addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068   <span class="comment">/*</span>
-<a name="l00069"></a>00069 <span class="comment">  Function: removeCommand</span>
-<a name="l00070"></a>00070 <span class="comment">  Remove a command.</span>
-<a name="l00071"></a>00071 <span class="comment">  </span>
-<a name="l00072"></a>00072 <span class="comment">  Arguments:</span>
-<a name="l00073"></a>00073 <span class="comment">    id - The id of the command.</span>
-<a name="l00074"></a>00074 <span class="comment">  */</span>
-<a name="l00075"></a>00075   <span class="keywordtype">void</span> removeCommand(in AString aID);
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077   <span class="comment">// Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable</span>
-<a name="l00078"></a>00078   <span class="keywordtype">void</span> setCommandData( in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aNumCommands,
-<a name="l00079"></a>00079                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aTypeArray,
-<a name="l00080"></a>00080                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aIDArray,
-<a name="l00081"></a>00081                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aNameArray,
-<a name="l00082"></a>00082                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aTooltipArray);
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084   <span class="comment">// the remotePlayer sets this after it creates it.</span>
-<a name="l00085"></a><a class="code" href="interfacesb_i_remote_commands.html#25aba5bffa62ec5bb4d3288598958905">00085</a>   [noscript] attribute <a class="code" href="interfacesb_i_remote_player.html" title="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</a> owner;
-<a name="l00086"></a>00086 };
-<a name="l00087"></a>00087 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:46:58 2007 for Songbird by&nbsp;
+<a name="l00058"></a>00058 <span class="comment">    type - The type of the command.  This can be any one of</span>
+<a name="l00059"></a>00059 <span class="comment">           "action", "separator", "value", or "submenu".</span>
+<a name="l00060"></a>00060 <span class="comment">    id - The id of the command.</span>
+<a name="l00061"></a>00061 <span class="comment">    name - The name of the command.</span>
+<a name="l00062"></a>00062 <span class="comment">    tooltip - The tooltip for the command.</span>
+<a name="l00063"></a>00063 <span class="comment">  */</span>
+<a name="l00064"></a>00064   <span class="keywordtype">void</span> addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066   <span class="comment">/*</span>
+<a name="l00067"></a>00067 <span class="comment">  Function: removeCommand</span>
+<a name="l00068"></a>00068 <span class="comment">  Remove a command.</span>
+<a name="l00069"></a>00069 <span class="comment">  </span>
+<a name="l00070"></a>00070 <span class="comment">  Arguments:</span>
+<a name="l00071"></a>00071 <span class="comment">    id - The id of the command.</span>
+<a name="l00072"></a>00072 <span class="comment">  </span>
+<a name="l00073"></a>00073 <span class="comment">  See Also:</span>
+<a name="l00074"></a>00074 <span class="comment">    &lt;addCommand&gt;</span>
+<a name="l00075"></a>00075 <span class="comment">  */</span>
+<a name="l00076"></a>00076   <span class="keywordtype">void</span> removeCommand(in AString aID);
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078   <span class="comment">// Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable</span>
+<a name="l00079"></a>00079   <span class="keywordtype">void</span> setCommandData( in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aNumCommands,
+<a name="l00080"></a>00080                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aTypeArray,
+<a name="l00081"></a>00081                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aIDArray,
+<a name="l00082"></a>00082                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aNameArray,
+<a name="l00083"></a>00083                        [<span class="keyword">const</span>, array, size_is(aNumCommands)] in wstring aTooltipArray);
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085   <span class="comment">// the remotePlayer sets this after it creates it.</span>
+<a name="l00086"></a><a class="code" href="interfacesb_i_remote_commands.html#25aba5bffa62ec5bb4d3288598958905">00086</a>   [noscript] attribute <a class="code" href="interfacesb_i_remote_player.html" title="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</a> owner;
+<a name="l00087"></a>00087 };
+<a name="l00088"></a>00088 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

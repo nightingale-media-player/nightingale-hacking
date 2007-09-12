@@ -68,6 +68,6 @@
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl"/>
+    <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl"/>
   </compounddef>
 </doxygen>

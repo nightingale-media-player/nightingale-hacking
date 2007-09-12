@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_b5aae889d73af65c98c42a3afb4003c9" kind="dir">
+    <compoundname>components/mediacore/transcoding/</compoundname>
+    <innerdir refid="dir_e83978c223f8935f358aad8588285e16">components/mediacore/transcoding/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/mediacore/transcoding/"/>
+  </compounddef>
+</doxygen>

@@ -100,6 +100,6 @@
 <codeline lineno="82"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl"/>
   </compounddef>
 </doxygen>

@@ -47,18 +47,28 @@
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]</highlight></codeline>
-<codeline lineno="40" refid="interfacesb_i_local_database_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_tree_view" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseTreeView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="42" refid="interfacesb_i_local_database_tree_view_161d370c0ac87d1397550fe5dfc70e6d0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>selectionChanging;</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSort(in<sp/>AString<sp/>aProperty,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aDirection);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>invalidateRowsByGuid(in<sp/>AString<sp/>aGuid);</highlight></codeline>
-<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsITreeColumn;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]</highlight></codeline>
+<codeline lineno="42" refid="interfacesb_i_local_database_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_tree_view" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseTreeView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_local_database_tree_view_1a4c891555bff25005b7fbeb8b9db6746" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MOUSE_STATE_NONE<sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_local_database_tree_view_112b258c4dccb1ff031125e61e01cd3ce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MOUSE_STATE_HOVER<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_local_database_tree_view_1dd4ff1b42e3a1e7359f8066991b15bfd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MOUSE_STATE_DOWN<sp/><sp/>=<sp/>2;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_local_database_tree_view_161d370c0ac87d1397550fe5dfc70e6d0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>selectionChanging;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSort(in<sp/>AString<sp/>aProperty,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aDirection);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>invalidateRowsByGuid(in<sp/>AString<sp/>aGuid);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setMouseState(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRow,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsITreeColumn<sp/>aColumn,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aState);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl"/>
   </compounddef>
 </doxygen>

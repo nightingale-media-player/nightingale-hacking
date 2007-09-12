@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_simple_button_property_builder" kind="interface" prot="public">
+    <compoundname>sbISimpleButtonPropertyBuilder</compoundname>
+    <basecompoundref refid="interfacesb_i_property_builder" prot="public" virt="non-virtual">sbIPropertyBuilder</basecompoundref>
+    <includes refid="sb_i_property_builder_8idl" local="no">sbIPropertyBuilder.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbISimpleButtonPropertyBuilder::label</definition>
+        <argsstring></argsstring>
+        <name>label</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="62" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbISimpleButtonPropertyBuilder::labelKey</definition>
+        <argsstring></argsstring>
+        <name>labelKey</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="64" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="580">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="579">
+        <label>sbISimpleButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_simple_button_property_builder"/>
+        <childnode refid="580" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="582">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="581">
+        <label>sbISimpleButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_simple_button_property_builder"/>
+        <childnode refid="582" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="61" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="60" bodyend="65"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>displayNameKey</name></member>
+      <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>get</name></member>
+      <member refid="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>label</name></member>
+      <member refid="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>labelKey</name></member>
+      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>propertyName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

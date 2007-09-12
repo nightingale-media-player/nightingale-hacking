@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" bodystart="53" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="53" bodyfile="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_datastore_19c16e3026b5e7cb6fd4f5fc054b99542" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="60" bodyfile="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_datastore_10c6b36b053b9872ee02e02a6f232e0f6" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="67" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" bodystart="67" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="67" bodyfile="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="67" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_datastore_161e0ce7ff0b9ee7a7b85455583e91858" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="74" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" bodystart="74" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="74" bodyfile="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="74" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -81,7 +81,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="81"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_state_datastore_19c7624e8e17358bbc094f81be89a3298" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -106,7 +106,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="88"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="88"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_state_datastore_1f66ed9704d80a9d3af4292b6cc806884" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -142,7 +142,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="96"/>
+        <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="96"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -151,7 +151,7 @@
 <para>This interface may be implemented to provide new datastores for the state service.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref> </para></simplesect>
 <simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl" bodystart="47" bodyend="97"/>
+    <location file="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="48" bodyfile="c:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="47" bodyend="97"/>
     <listofallmembers>
       <member refid="interfacesb_i_state_datastore_19c16e3026b5e7cb6fd4f5fc054b99542" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>canStoreSerializableObjects</name></member>
       <member refid="interfacesb_i_state_datastore_1056cd6ec44c3b28f4054de03db8ff185" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>createObjectStorage</name></member>

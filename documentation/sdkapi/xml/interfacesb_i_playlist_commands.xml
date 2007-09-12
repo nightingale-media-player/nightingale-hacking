@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="82"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="73"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1929b6337af7bb3e1c9d4756983614185" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="94"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_156c2884682507bd539b8791abb121ce9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -73,7 +73,7 @@
         <detaileddescription>
 <para>The implementor should return the number of commands to be created</para><para>The other functions will be called in turn with the index value that represents each specific command element</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
@@ -90,7 +90,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="108"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="99"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1778c89393b0ffa9d983ef2b4c9992e98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -114,14 +114,14 @@
         <detaileddescription>
 <para>Each command id has a type, these can be &apos;action&apos;, &apos;separator&apos;, &apos;value&apos;, and &apos;submenu&apos;.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -138,7 +138,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="121"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="112"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1f36bdd44bf20bb36e8708187b084694d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -162,14 +162,14 @@
         <detaileddescription>
 <para>Each command id should be unique within this commands object. The visual style of the command can be set in the CSS.</para><para>Some id strings are parsed to create different objects:</para><para>&quot;*separator*&quot; - Create a menuseparator or an empty box</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -186,7 +186,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="138"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="129"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_156c211b094da00ce66821aec7dcdfe06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -210,14 +210,14 @@
         <detaileddescription>
 <para>If the string begins with an &quot;&amp;&quot; character, the remaining portion of the string will be used as an index into the current localization&apos;s properties file.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -234,7 +234,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="152"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="143"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1d1d5bc85681507c610d77e725feaf79a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -258,14 +258,14 @@
         <detaileddescription>
 <para>For instance, you can make your &quot;*separator*&quot; element have a flex of 1 and then right-justify all the command buttons after it. By default, command buttons will adjust their width to the width of their human readable text.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -282,7 +282,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="166"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="157"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_17a3b47a7fcc4b5669e2afce8971140b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -306,7 +306,7 @@
         <detaileddescription>
 <para>If the string begins with an &quot;&amp;&quot; character, the remaining portion of the string will be used as an index into the current localization&apos;s properties file.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
@@ -314,7 +314,7 @@
 </parameterlist>
 <xrefsect id="todo_1_todo000015"><xreftitle>Todo</xreftitle><xrefdescription><para>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -331,7 +331,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="181"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="172"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_17c6d9630fce924796bc1ca7996bf1ed8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -355,14 +355,14 @@
         <detaileddescription>
 <para>When the selection of the playlist changes state, or the tree is rebuilt, this method will be called to allow the code to enable or disable commands based upon the state of the playlist.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -379,7 +379,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="195"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="186"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_17fff72cb877c78f1b33a93a499ba7645" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -403,14 +403,14 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -427,7 +427,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="205"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="196"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_17f792b58876f0f45f99292826242d9ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -451,14 +451,14 @@
         <detaileddescription>
 <para>The requested elements are always of type &apos;flag&apos;</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -475,7 +475,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="217"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="208"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1a8d829ed7469cc76243d708986b10ed7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -499,14 +499,14 @@
         <detaileddescription>
 <para>The requested elements are always of type &apos;value&apos;</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -523,7 +523,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="229"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="220"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_12eb43c97ac5d08c097849cb3e83a1ff6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -543,14 +543,14 @@
         <detaileddescription>
 <para>The requested elements are always of type &apos;choice&apos;</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -567,7 +567,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="241"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="232"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1ed637cfcad45059107bf302b9efd2cdd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -591,14 +591,14 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -615,7 +615,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="251"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="242"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_15a3b4dbef7a86dee2d1d75cd703e1834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -639,14 +639,14 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -663,7 +663,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="261"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="252"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1d0ab8facdce22215e53f4f023bf92027" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -687,14 +687,14 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -711,7 +711,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="271"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="262"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_172394c0b9c268172e96433b8514a1256" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -735,14 +735,14 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -759,7 +759,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="281"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="272"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_122b327106b0ac35f0324bbbfab64760e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
@@ -783,14 +783,14 @@
         <detaileddescription>
 <para>If this method returns a valid interface, all other callbacks for this command item are bypassed.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>submenu</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The submenu for which the data is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>index</parametername>
+<parametername>aIndex</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>The index of the element for which the data is being requested </para></parameterdescription>
@@ -807,34 +807,56 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="294"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="285"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_1e0ff460cfa7a50a45713bb1829cac06c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_135c1dbac68fb3ab44c55413e46cf6133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIDOMNode</type>
         <definition>nsIDOMNode sbIPlaylistCommands::instantiateCustomCommand</definition>
-        <argsstring>(in nsIDOMDocument aDocument, in AString aID, in AString aHost)</argsstring>
+        <argsstring>(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument)</argsstring>
         <name>instantiateCustomCommand</name>
         <param>
-          <type>in nsIDOMDocument</type>
-          <declname>aDocument</declname>
+          <type>in AString</type>
+          <declname>aSubMenu</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aHost</declname>
         </param>
         <param>
           <type>in AString</type>
           <declname>aID</declname>
         </param>
         <param>
-          <type>in AString</type>
-          <declname>aHost</declname>
+          <type>in nsIDOMDocument</type>
+          <declname>aDocument</declname>
         </param>
         <briefdescription>
 <para>Instantiate the custom element associated with the requested command. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aDocument</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Document in which to instantate element </para></parameterdescription>
+<para>The submenu for which the item needs to be instantiated </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index if the command whose instantiation is being requested </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aHost</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of object hosting the command </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -845,43 +867,59 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>aHost</parametername>
+<parametername>aDocument</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The command host type that made the request </para></parameterdescription>
+<para>Document in which to instantate element </para></parameterdescription>
 </parameteritem>
 </parameterlist>
+<simplesect kind="return"><para>The custom element that has been instantiated </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="303"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="297"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_10aa9ac74d13817c51effb3ad295d5a80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_14c4862a3686c2331bf9cea21dd5fd30d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommands::refreshCustomCommand</definition>
-        <argsstring>(in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost)</argsstring>
+        <argsstring>(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement)</argsstring>
         <name>refreshCustomCommand</name>
         <param>
-          <type>in nsIDOMNode</type>
-          <declname>aCustomCommandElement</declname>
+          <type>in AString</type>
+          <declname>aSubMenu</declname>
         </param>
         <param>
-          <type>in AString</type>
-          <declname>aId</declname>
+          <type>in PRInt32</type>
+          <declname>aIndex</declname>
         </param>
         <param>
           <type>in AString</type>
           <declname>aHost</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aID</declname>
+        </param>
+        <param>
+          <type>in nsIDOMNode</type>
+          <declname>aCustomCommandElement</declname>
         </param>
         <briefdescription>
 <para>Refresh the custom element associated with the requested command. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aID</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The id of the custom command element whose refreshing is being requested </para></parameterdescription>
+<para>The submenu for which the item needs to be refreshed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index if the command whose refresh is being requested </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -890,16 +928,30 @@
 <parameterdescription>
 <para>The command host type that made the request </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The id of the custom command element whose refresh is being requested </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCustomCommandElement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The element that needs to be refreshed </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="311"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="308"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_11c89ee75cc35a28bb10ea6fd50878132" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_1e02f535edda7e2168728af69590c50d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommands::onCommand</definition>
-        <argsstring>(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString value)</argsstring>
+        <argsstring>(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue)</argsstring>
         <name>onCommand</name>
         <param>
           <type>in AString</type>
@@ -919,17 +971,24 @@
         </param>
         <param>
           <type>in AString</type>
-          <declname>value</declname>
+          <declname>aValue</declname>
         </param>
         <briefdescription>
 <para>Handle the fact that a command was activated. </para>        </briefdescription>
         <detaileddescription>
 <para>When the user activates the command button or menuitem, this method will be called with the event generated.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>event</parametername>
+<parametername>aSubMenu</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The event generated by the user&apos;s action </para></parameterdescription>
+<para>The submenu for which the command was triggered </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the command that was triggered </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -938,11 +997,25 @@
 <parameterdescription>
 <para>The type of object hosting the command </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The id of the command that was triggered </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The optional value associated with the triggering of the command, or an empty string. </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="322"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="322"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
@@ -958,11 +1031,22 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>obj[<sp/>i<sp/>]<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">[<sp/>i<sp/>];</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>obj;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>},</highlight></codeline>
-</programlisting></para><para>It creates a new object instance and copies the methods over to it.</para><para><simplesect kind="return"><para>A new copy of this object </para></simplesect>
+</programlisting></para><para>It creates a new object instance and copies the methods and data over to it.</para><para>In addition, if your object contains more objects whose data should not be shared between command instantiation contexts, then these objects should be duplicated as well (otherwise, their data will be shared between duplicated instances). In this case, the duplicate method should be implemented something like this:</para><para><programlisting><codeline><highlight class="normal"><sp/><sp/>_dupObject:<sp/>function()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/>r<sp/>=<sp/>{};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>var<sp/>i<sp/>in<sp/>obj<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>r[<sp/>i<sp/>]<sp/>=<sp/>obj[<sp/>i<sp/>];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>r;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member" tooltip="Duplicate the command object.">duplicate</ref>:<sp/>function()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/>obj<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">._dupObject(</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>obj.myObjectWithProperties<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">.dupObject(</highlight><highlight class="keyword">this</highlight><highlight class="normal">.myObjectWithProperties);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>obj;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>},</highlight></codeline>
+</programlisting></para><para>In case of more complex objects, you may need to create a recursive duplication method.</para><para><simplesect kind="return"><para>A new copy of this object </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="344"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="365"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_18cc0de0e54c8d55d497d60a900b1dd3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -987,7 +1071,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="354"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="375"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_1272c3e0eb8d5d4f17dadc180b05df3f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1000,33 +1084,27 @@
 <para>When a command instantiator is done with a command object, it calls its shutdown() method before removing it from its internal lists. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="362"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="383"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface that represents the set of command buttons and context menu items available on a displayed playlist. </para>    </briefdescription>
     <detaileddescription>
-<para>This interface is meant to be implemented by user code.</para><para>Implementors that create their own specific database libraries and playlists (eg: <ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref>) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object&apos;s purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.</para><para>These objects ought to be created in javascript. When a new playlist is created, it will query <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> for command objects, and the playlist source will call <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> on the objects it has stored and return the newly duplicated objects.</para><para>The <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> method should be implemented like so:</para><para><programlisting><codeline><highlight class="normal"><ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member" tooltip="Duplicate the command object.">duplicate</ref>:<sp/>function()<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/>var<sp/>obj<sp/>=<sp/>{};</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>var<sp/>i<sp/>in<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>)</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>obj[<sp/>i<sp/>]<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">[<sp/>i<sp/>];</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>obj;</highlight></codeline>
-<codeline><highlight class="normal">},</highlight></codeline>
-</programlisting></para><para><simplesect kind="see"><para>playlist.xml, sbLibraryPage.xul </para></simplesect>
+<para>This interface is meant to be implemented by user code.</para><para>Implementors that create their own specific database libraries and playlists (eg: <ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref>) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object&apos;s purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.</para><para>These objects ought to be created in javascript. When a new playlist is created, it will query <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> for command objects, and the playlist source will call <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> on the objects it has stored and return the newly duplicated objects.</para><para>See documentation on <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> for more information.</para><para><simplesect kind="see"><para>playlist.xml, sbLibraryPage.xul, <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="386">
+      <node id="414">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="387">
+      <node id="415">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="386" relation="public-inheritance">
+        <childnode refid="414" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="71" bodyend="363"/>
+    <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="63" bodyfile="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="62" bodyend="384"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>duplicate</name></member>
       <member refid="interfacesb_i_playlist_commands_12eb43c97ac5d08c097849cb3e83a1ff6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandChoiceItem</name></member>
@@ -1047,9 +1125,9 @@
       <member refid="interfacesb_i_playlist_commands_156c2884682507bd539b8791abb121ce9" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getNumCommands</name></member>
       <member refid="interfacesb_i_playlist_commands_1dbb2388f97739fc8ff69c802b48abcb6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getVisible</name></member>
       <member refid="interfacesb_i_playlist_commands_18cc0de0e54c8d55d497d60a900b1dd3d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>initCommands</name></member>
-      <member refid="interfacesb_i_playlist_commands_1e0ff460cfa7a50a45713bb1829cac06c" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>instantiateCustomCommand</name></member>
-      <member refid="interfacesb_i_playlist_commands_11c89ee75cc35a28bb10ea6fd50878132" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>onCommand</name></member>
-      <member refid="interfacesb_i_playlist_commands_10aa9ac74d13817c51effb3ad295d5a80" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>refreshCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_135c1dbac68fb3ab44c55413e46cf6133" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>instantiateCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_1e02f535edda7e2168728af69590c50d7" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>onCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_14c4862a3686c2331bf9cea21dd5fd30d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>refreshCustomCommand</name></member>
       <member refid="interfacesb_i_playlist_commands_1929b6337af7bb3e1c9d4756983614185" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>setContext</name></member>
       <member refid="interfacesb_i_playlist_commands_1272c3e0eb8d5d4f17dadc180b05df3f5" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>shutdownCommands</name></member>
     </listofallmembers>

@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="294" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="294" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="273" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="273" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_text_property_info_1a8d381037c32b9ea8dcd0e298c821d3b" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="299" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="299" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="278" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="278" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="304" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="304" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="283" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="283" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -52,50 +52,47 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="626">
+      <node id="670">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="627">
+      <node id="671">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="625" relation="public-inheritance">
+        <childnode refid="669" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="625">
+      <node id="669">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="626" relation="public-inheritance">
+        <childnode refid="670" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="629">
+      <node id="673">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="630" relation="usage">
+        <childnode refid="674" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="630">
+      <node id="674">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="628">
+      <node id="672">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="629" relation="public-inheritance">
+        <childnode refid="673" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="290" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="289" bodyend="305"/>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="269" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="268" bodyend="284"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>displayName</name></member>
-      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>displayUsingSimpleType</name></member>
-      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
       <member refid="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>enforceLowercase</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>format</name></member>
-      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_text_property_info_1a8d381037c32b9ea8dcd0e298c821d3b" prot="public" virt="non-virtual"><scope>sbITextPropertyInfo</scope><name>maxLength</name></member>

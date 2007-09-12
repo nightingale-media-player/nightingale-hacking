@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="128"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="130"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -131,7 +131,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="144"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="146"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_195b7927bfac115dbecf9883ed192f3c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -201,7 +201,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="160"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="162"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -271,7 +271,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="180"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="182"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -352,7 +352,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="198"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="200"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -433,7 +433,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="216"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="218"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -470,7 +470,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="230"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="232"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_113f042bae829d9cdc549a2100c1ee9e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -518,7 +518,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="242"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="244"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_122666e12b9b567f73d690a0156e218f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -566,7 +566,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="254"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="256"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -647,7 +647,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="274"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="276"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -739,7 +739,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="294"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="296"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -831,7 +831,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="314"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="316"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1775e8c3c909aa4c4f444006d604ef7ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -912,7 +912,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="334"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="336"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1004,7 +1004,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="354"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="356"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1096,12 +1096,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="374"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="376"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1c415c0596e7ed8642e87132c3cf35b63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::appendChoiceMenu</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback)</argsstring>
         <name>appendChoiceMenu</name>
         <param>
           <type>in AString</type>
@@ -1118,6 +1118,10 @@
         <param>
           <type>in AString</type>
           <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aItemCallback</declname>
         </param>
         <briefdescription>
 <para>Append a choicemenu to the set of commands. </para>        </briefdescription>
@@ -1150,17 +1154,24 @@
 <parameterdescription>
 <para>The tooltip text for the choicemenu to add </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aItemCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the id of the currently selected choice item </para></parameterdescription>
+</parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" kindref="member">insertChoiceMenuBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1c415c0596e7ed8642e87132c3cf35b63" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_17681da39e7e0c780fe9a402370e81dbe" kindref="member">insertChoiceMenuBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1adc70eececd4217a3dc5d776f65dfdde" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="390"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="394"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_17681da39e7e0c780fe9a402370e81dbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuBefore</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback)</argsstring>
         <name>insertChoiceMenuBefore</name>
         <param>
           <type>in AString</type>
@@ -1181,6 +1192,10 @@
         <param>
           <type>in AString</type>
           <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aItemCallback</declname>
         </param>
         <briefdescription>
 <para>Insert a choicemenu into the set of commands. </para>        </briefdescription>
@@ -1220,17 +1235,24 @@
 <parameterdescription>
 <para>The tooltip text for the choicemenu to add </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aItemCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the id of the currently selected choice item </para></parameterdescription>
+</parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1c415c0596e7ed8642e87132c3cf35b63" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1adc70eececd4217a3dc5d776f65dfdde" kindref="member">insertChoiceMenuAfter</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="406"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="412"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1adc70eececd4217a3dc5d776f65dfdde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::insertChoiceMenuAfter</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aChoiceMenuId, in AString aLabel, in AString aTooltipText, in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback)</argsstring>
         <name>insertChoiceMenuAfter</name>
         <param>
           <type>in AString</type>
@@ -1251,6 +1273,10 @@
         <param>
           <type>in AString</type>
           <declname>aTooltipText</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound">sbIPlaylistCommandsBuilderGetStringCallback</ref></type>
+          <declname>aItemCallback</declname>
         </param>
         <briefdescription>
 <para>Insert a choicemenu into the set of commands. </para>        </briefdescription>
@@ -1290,12 +1316,19 @@
 <parameterdescription>
 <para>The tooltip text for the choicemenu to add </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aItemCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The interface or function to call to retrieve the id of the currently selected choice item </para></parameterdescription>
+</parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" kindref="member">insertChoiceMenuBefore</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1c415c0596e7ed8642e87132c3cf35b63" kindref="member">appendChoiceMenu</ref>, <ref refid="interfacesb_i_playlist_commands_builder_17681da39e7e0c780fe9a402370e81dbe" kindref="member">insertChoiceMenuBefore</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="422"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="430"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1365,7 +1398,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="440"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="448"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1446,7 +1479,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="458"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="466"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1527,12 +1560,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="476"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="484"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1b77875a23e1f84226f6e42b9f113db17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::appendCustomItem</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback)</argsstring>
         <name>appendCustomItem</name>
         <param>
           <type>in AString</type>
@@ -1547,7 +1580,7 @@
           <declname>aInstantiationCallback</declname>
         </param>
         <param>
-          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_refresh_callback" kindref="compound">sbIPlaylistCommandsBuilderRefreshCallback</ref></type>
           <declname>aRefreshCallback</declname>
         </param>
         <briefdescription>
@@ -1582,16 +1615,16 @@
 <para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_181f149617b889790b7f01c370945ff8a" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_17df8babd72eb227853d6eecc68d340ce" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="492"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="500"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_181f149617b889790b7f01c370945ff8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::insertCustomItemBefore</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aBeforeId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback)</argsstring>
         <name>insertCustomItemBefore</name>
         <param>
           <type>in AString</type>
@@ -1610,7 +1643,7 @@
           <declname>aInstantiationCallback</declname>
         </param>
         <param>
-          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_refresh_callback" kindref="compound">sbIPlaylistCommandsBuilderRefreshCallback</ref></type>
           <declname>aRefreshCallback</declname>
         </param>
         <briefdescription>
@@ -1652,16 +1685,16 @@
 <para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1b77875a23e1f84226f6e42b9f113db17" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_17df8babd72eb227853d6eecc68d340ce" kindref="member">insertCustomItemAfter</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="508"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="516"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_17df8babd72eb227853d6eecc68d340ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::insertCustomItemAfter</definition>
-        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderSimpleCallback aRefreshCallback)</argsstring>
+        <argsstring>(in AString aParentSubMenuId, in AString aAfterId, in AString aCustomItemId, in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback)</argsstring>
         <name>insertCustomItemAfter</name>
         <param>
           <type>in AString</type>
@@ -1680,7 +1713,7 @@
           <declname>aInstantiationCallback</declname>
         </param>
         <param>
-          <type>in <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref></type>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_refresh_callback" kindref="compound">sbIPlaylistCommandsBuilderRefreshCallback</ref></type>
           <declname>aRefreshCallback</declname>
         </param>
         <briefdescription>
@@ -1722,11 +1755,11 @@
 <para>The interface or function to call when this customitem should be refreshed </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1b77875a23e1f84226f6e42b9f113db17" kindref="member">appendCustomItem</ref>, <ref refid="interfacesb_i_playlist_commands_builder_181f149617b889790b7f01c370945ff8a" kindref="member">insertCustomItemBefore</ref>, <ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound">sbIPlaylistCommandsBuilderSimpleCallback</ref>, <ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound">sbIPlaylistCommandsBuilderInstantiationCallback</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="524"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="532"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1774,7 +1807,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="540"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="548"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12b38e6511fba2e9f2553d0018c343e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1833,7 +1866,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="554"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="562"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1892,7 +1925,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="568"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="576"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1973,7 +2006,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="588"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="596"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2021,7 +2054,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="602"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="610"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_159be6f8c5b9228b5e927307c2fd0989d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2069,7 +2102,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="615"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="623"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1a032391b79e4b2d96292866aef435929" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2095,7 +2128,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="624"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="632"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2128,25 +2161,38 @@
 <para>The Id of the command item to remove </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" kindref="member">removeAllCommands</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_143369f3d99534956fd0a463c7a1c8821" kindref="member">removeAllCommands</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="634"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="642"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_143369f3d99534956fd0a463c7a1c8821" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistCommandsBuilder::removeAllCommands</definition>
-        <argsstring>()</argsstring>
+        <argsstring>([optional] in AString aParentSubMenuId)</argsstring>
         <name>removeAllCommands</name>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in AString</type>
+          <declname>aParentSubMenuId</declname>
+        </param>
         <briefdescription>
 <para>Remove all commands from the set. </para>        </briefdescription>
         <detaileddescription>
-<para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" kindref="member">removeCommand</ref> </para></simplesect>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParentSubMenuId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An optional menu id whose commands (and submenus) should be removed. Without this parameter, all commands and submenus are removed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" kindref="member">removeCommand</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="640"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="649"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2160,7 +2206,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="647"/>
+        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="656"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -2192,35 +2238,35 @@
 </para><para>Commands registered to the PlaylistCommandsManager using the registerPlaylistCommandsMedia[List|Item]() functions should be unregistered using the corresponding unregisterPlaylistCommandsMedia[List|Item]() function before application shutdown. Commands published using the publish() function should be withdrawn using the withdraw() function before application shutdown.</para><para>All instantiated <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> should have their <ref refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" kindref="member">shutdown()</ref> method called before application shutdown to ensure that no external reference remains in their internal arrays.</para><para>Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut strings (key, keycode, modifiers) may take values such as &quot;&amp;value&quot;, which will cause the appropriate localized string to be fetched from the active locale.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="390">
+      <node id="418">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="389">
+      <node id="417">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="390" relation="public-inheritance">
+        <childnode refid="418" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="392">
+      <node id="420">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="391">
+      <node id="419">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="392" relation="public-inheritance">
+        <childnode refid="420" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="114" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="113" bodyend="648"/>
+    <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="116" bodyfile="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="115" bodyend="657"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_builder_1eccbf22b27144868a4038b81bbc5a019" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendAction</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_17aca9cf6edd185c6a462b2c36fef5a94" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenu</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1c415c0596e7ed8642e87132c3cf35b63" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenu</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_14b4450cdd0036e1e3f52bc49a2e3ba2a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendChoiceMenuItem</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1a520618b40dfd70e1c17936999627023" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendCustomItem</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1b77875a23e1f84226f6e42b9f113db17" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendCustomItem</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1ea2aba51885d7b2d0c708195a10518e3" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendFlag</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_10cd9e15afcf7e7bc5e7603bce29de5f6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendPlaylistCommands</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_116472521ab259cdefd9efac1731fd6ae" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>appendSeparator</name></member>
@@ -2247,12 +2293,12 @@
       <member refid="interfacesb_i_playlist_commands_18cc0de0e54c8d55d497d60a900b1dd3d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>initCommands</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_168dacf23c8bd6a405b48c439f0e58be2" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertActionAfter</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_153d8e2ed25746439203c8b9caee11efc" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertActionBefore</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1e0113efc62bce30e053c2bd121d5679f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuAfter</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1e2abd4a781c7e54e78f126de95c10abf" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_1adc70eececd4217a3dc5d776f65dfdde" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_17681da39e7e0c780fe9a402370e81dbe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuBefore</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_160f79625d9472fc82b3375d31b127d3a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuItemAfter</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1c2a7ac3592b9c5714da327c1c8aa197d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertChoiceMenuItemBefore</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1f61900ff926761dc9fc5f174678b8557" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemAfter</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1e3bbe4a0891f7fe5351e9be98c40b7bb" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemBefore</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_17df8babd72eb227853d6eecc68d340ce" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemAfter</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_181f149617b889790b7f01c370945ff8a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertCustomItemBefore</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_16f42df0204e2c0874e352dcb57094479" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertFlagAfter</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_19b431226c2b468570e50a2834e95017a" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertFlagBefore</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_167a7d4149256830887490c5fc4bca52d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertPlaylistCommandsAfter</name></member>
@@ -2263,10 +2309,10 @@
       <member refid="interfacesb_i_playlist_commands_builder_1db82c329f5b0d216a88b2c20898c35cd" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertSubmenuBefore</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1cd7b17e052afc6a82cacda3cb5264cc9" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertValueAfter</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1b79163ec6ab1d5499f2c55c2574ed555" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>insertValueBefore</name></member>
-      <member refid="interfacesb_i_playlist_commands_1e0ff460cfa7a50a45713bb1829cac06c" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>instantiateCustomCommand</name></member>
-      <member refid="interfacesb_i_playlist_commands_11c89ee75cc35a28bb10ea6fd50878132" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>onCommand</name></member>
-      <member refid="interfacesb_i_playlist_commands_10aa9ac74d13817c51effb3ad295d5a80" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>refreshCustomCommand</name></member>
-      <member refid="interfacesb_i_playlist_commands_builder_1e9770a02ad65f3a7fd80bd75181e2576" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>removeAllCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_135c1dbac68fb3ab44c55413e46cf6133" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>instantiateCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_1e02f535edda7e2168728af69590c50d7" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>onCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_14c4862a3686c2331bf9cea21dd5fd30d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>refreshCustomCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_143369f3d99534956fd0a463c7a1c8821" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>removeAllCommands</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1596af9dbd78669b02fc1dcc117720e02" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>removeCommand</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_1d0a42761d8b5e5ee9bf95e33870a60c1" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setCommandEnabledCallback</name></member>
       <member refid="interfacesb_i_playlist_commands_builder_12f20d1f1384e4cfeafc9f1038fbfdafe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilder</scope><name>setCommandShortcut</name></member>

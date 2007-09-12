@@ -88,6 +88,6 @@
 <codeline lineno="112"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="113"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl"/>
   </compounddef>
 </doxygen>

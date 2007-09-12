@@ -115,6 +115,6 @@
 <codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_file_scan_callback" kindref="compound" tooltip="The callback to the sbIFileScanQuery interface.">sbIFileScanCallback</ref><sp/>pCallback);</highlight></codeline>
 <codeline lineno="286"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl"/>
+    <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl"/>
   </compounddef>
 </doxygen>

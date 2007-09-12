@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="127" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="127" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="126" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="126" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="128" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="128" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="127" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="129" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="129" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="128" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="128" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="130" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="130" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="129" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="129" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="131" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="131" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="130" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="130" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="132" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="132" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="131" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="131" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="133" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="133" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="132" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="132" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="134" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="134" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="133" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="133" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -124,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="135" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="135" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="134" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="134" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="136" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="136" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="135" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="135" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="141" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="141" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="144" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="144" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -165,7 +165,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="146" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="146" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="149" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="149" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -179,7 +179,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="151" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="151" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="154" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1096eee2d42fdc593b9cfb6dfcce30a2e" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -193,7 +193,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="156" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="156" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="159" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="159" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -206,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="161" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="161" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="164" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="164" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -219,7 +219,7 @@
 <para>This is a list of columns to sort by for a peculiar property. For example, when sorting by artist, you typically want to sort by Artist, Album and Track No. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="170" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="170" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="173" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="173" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -232,7 +232,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="175" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="175" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="178" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="178" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -245,7 +245,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="180" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="180" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="183" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="183" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -258,7 +258,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="185" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="185" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="188" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="188" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -271,7 +271,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="191" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="191" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="194" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="194" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -284,33 +284,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="197" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="197" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" static="no" mutable="no">
-        <type>attribute AString</type>
-        <definition>attribute AString sbIPropertyInfo::displayUsingSimpleType</definition>
-        <argsstring></argsstring>
-        <name>displayUsingSimpleType</name>
-        <briefdescription>
-<para>Display this property using the suggested base widget available for tree children. Example: &apos;progressmeter&apos; or &apos;checkbox&apos;. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="204" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="204" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" static="no" mutable="no">
-        <type>attribute nsIURI</type>
-        <definition>attribute nsIURI sbIPropertyInfo::displayUsingXBLWidget</definition>
-        <argsstring></argsstring>
-        <name>displayUsingXBLWidget</name>
-        <briefdescription>
-<para>Display this property using the suggested XBL widget identified by the following URI. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="210" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="210" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="200" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -324,7 +298,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="227" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="227" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="217" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="217" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" static="no" mutable="no">
         <type>attribute nsISimpleEnumerator</type>
@@ -337,7 +311,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="232" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="232" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="222" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="222" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -365,7 +339,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="240"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="230"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -391,7 +365,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="247"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="237"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -409,7 +383,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="255"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="245"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -435,7 +409,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="262"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="252"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -461,33 +435,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="269"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>AString</type>
-        <definition>AString sbIPropertyInfo::getDisplayPropertiesForValue</definition>
-        <argsstring>(in AString aValue)</argsstring>
-        <name>getDisplayPropertiesForValue</name>
-        <param>
-          <type>in AString</type>
-          <declname>aValue</declname>
-        </param>
-        <briefdescription>
-<para>Gets a whitespace-separated string of properties to alter the display of a value in a treeview. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aValue</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The current value of the property</para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>A whitespace-separated string. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="280"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="259"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -496,67 +444,64 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_manager" kindref="compound">sbIPropertyManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="478">
+      <node id="514">
         <label>sbIBooleanPropertyInfo</label>
         <link refid="interfacesb_i_boolean_property_info"/>
-        <childnode refid="477" relation="public-inheritance">
+        <childnode refid="513" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="479">
+      <node id="515">
         <label>sbIDatetimePropertyInfo</label>
         <link refid="interfacesb_i_datetime_property_info"/>
-        <childnode refid="477" relation="public-inheritance">
+        <childnode refid="513" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="477">
+      <node id="513">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="480">
+      <node id="516">
         <label>sbINumberPropertyInfo</label>
         <link refid="interfacesb_i_number_property_info"/>
-        <childnode refid="477" relation="public-inheritance">
+        <childnode refid="513" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="482">
+      <node id="518">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="481" relation="public-inheritance">
+        <childnode refid="517" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="483">
+      <node id="519">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="477" relation="public-inheritance">
+        <childnode refid="513" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="481">
+      <node id="517">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="477" relation="public-inheritance">
+        <childnode refid="513" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="484">
+      <node id="520">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="485" relation="usage">
+        <childnode refid="521" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="485">
+      <node id="521">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="126" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="125" bodyend="281"/>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="125" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="124" bodyend="260"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayName</name></member>
-      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayUsingSimpleType</name></member>
-      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>format</name></member>
-      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>name</name></member>

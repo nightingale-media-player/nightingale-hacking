@@ -40,6 +40,9 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_array.html#790681817c839247a242f2cb363e050f">toString</a> ()</td></tr>
 
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_array.html#27fc9af3c2ff93791bab98e11ec1c3fe">validated</a></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 An interface to carry around arrays of nsIProperty instances. Users of this interface should only QI it to a <a class="el" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a> if they are the owners of the instance. 
@@ -124,9 +127,27 @@ Gets the value for a property in the array<p>
 Return the contents of the property array as a string 
 </div>
 </div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="27fc9af3c2ff93791bab98e11ec1c3fe"></a><!-- doxytag: member="sbIPropertyArray::validated" ref="27fc9af3c2ff93791bab98e11ec1c3fe" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute boolean <a class="el" href="interfacesb_i_property_array.html#27fc9af3c2ff93791bab98e11ec1c3fe">sbIPropertyArray::validated</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Determines whether or not the items in the array have been validated prior to insertion. 
+<p>
+Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00083">83</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:47:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:47 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

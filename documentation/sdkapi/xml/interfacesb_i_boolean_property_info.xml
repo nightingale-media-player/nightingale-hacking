@@ -40,13 +40,10 @@
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="502" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="501" bodyend="503"/>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="453" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="452" bodyend="454"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayName</name></member>
-      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayUsingSimpleType</name></member>
-      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>format</name></member>
-      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>name</name></member>

@@ -15,7 +15,7 @@
 <para>A string identifying the vendor of a device. Included in the hash code. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="42" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="42" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_identification_1193c75b8fb5a8bd47cfdce528f885e1c" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIVariant</type>
@@ -28,7 +28,7 @@
 <para>Model number for the device. Can be set in any appropriate format, but will be converted to a string and included in the hash code. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="48" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="48" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_identification_18bc74bdb5220e7e37e49080b4d9f385f" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIVariant</type>
@@ -41,7 +41,7 @@
 <para>Serial number for the device. Can be set in any appropriate format, but will be converted to a string and included in the hash code. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="54" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="54" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_identification_1f23a0ed2726816b083ced9b39865dea5" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -54,7 +54,7 @@
 <para>A human readable name. Not included in the hash code and therefore optional. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="60" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_identification_10900867735bfa0e1b968a1efd41158ba" prot="public" static="no" mutable="no">
         <type>attribute nsIURI</type>
@@ -67,14 +67,14 @@
 <para>A URI representing the location of the device. Not included in the hash code and therefore optional. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="66" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="66" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="66" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="66" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" line="38" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="37" bodyend="67"/>
+    <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" line="38" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceIdentification.idl" bodystart="37" bodyend="67"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_identification_1f23a0ed2726816b083ced9b39865dea5" prot="public" virt="non-virtual"><scope>sbIDeviceIdentification</scope><name>friendlyName</name></member>
       <member refid="interfacesb_i_device_identification_1193c75b8fb5a8bd47cfdce528f885e1c" prot="public" virt="non-virtual"><scope>sbIDeviceIdentification</scope><name>modelNumber</name></member>

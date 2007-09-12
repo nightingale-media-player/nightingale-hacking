@@ -60,6 +60,6 @@
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryUnregistered(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManagerListener.idl"/>
+    <location file="c:/projects/songbird/components/library/base/public/sbILibraryManagerListener.idl"/>
   </compounddef>
 </doxygen>

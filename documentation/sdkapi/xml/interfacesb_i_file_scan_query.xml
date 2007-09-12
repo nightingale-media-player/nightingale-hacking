@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="119" bodyfile="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" bodystart="119" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="119" bodyfile="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="119" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -43,7 +43,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="127"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="127"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -58,7 +58,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="135"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="135"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -84,7 +84,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="143"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="143"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -99,7 +99,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="151"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="151"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1ec3994386511d670a8ad2e8a33efc702" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -116,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="153"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="153"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_154b7e0f516cff8e13ce36ee1f7ff65bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -142,7 +142,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="161"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="161"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1ab2972bd7991f33d8e8fe96b704042fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref></type>
@@ -157,7 +157,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="169"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="169"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_19e4960653a6369875294bfab9a69b39f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRUint32</type>
@@ -172,7 +172,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="177"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="177"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1e7a9f627728653fd6e8fe9502e412410" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="182"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="182"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1f0a881a77fe077adbf324aabcc9ae22f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -215,7 +215,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="192"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="192"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1bbff3f54a1ee4d59dd913b473f3daa7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -230,7 +230,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="200"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="200"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_16f3e680f18fc1444d52d9a9b7574e0c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -247,7 +247,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="205"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="205"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -262,7 +262,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="216"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="216"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_182d49ccf710ab59a227d2336c9e831b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -277,7 +277,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="227"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="227"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1d275265b3e6a263d2bc52bad915e9dda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -294,7 +294,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="232"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="232"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_17e29f6f6d4b4087039781af8710edcdf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -307,7 +307,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="237"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="237"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1fbb61d763fac766339eca3b9b7ceff2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
@@ -328,7 +328,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="243"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="243"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -341,7 +341,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="248"/>
+        <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="248"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -365,7 +365,7 @@ function ScanBeneathADirectory(aPath) {
 }
 </verbatim></para><para><simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan" kindref="compound">sbIFileScan</ref>, FileScan.h </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="118" bodyfile="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" bodystart="117" bodyend="249"/>
+    <location file="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="118" bodyfile="c:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="117" bodyend="249"/>
     <listofallmembers>
       <member refid="interfacesb_i_file_scan_query_1ec3994386511d670a8ad2e8a33efc702" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>addFileExtension</name></member>
       <member refid="interfacesb_i_file_scan_query_1e7a9f627728653fd6e8fe9502e412410" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>addFilePath</name></member>

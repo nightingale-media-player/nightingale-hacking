@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_2d93083d6e2f3b2cff08bb57e0c827fe" kind="dir">
+    <compoundname>components/controller/public/</compoundname>
+    <innerfile refid="sb_i_application_controller_8idl">sbIApplicationController.idl</innerfile>
+    <innerfile refid="sb_i_controller_8idl">sbIController.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/controller/public/"/>
+  </compounddef>
+</doxygen>

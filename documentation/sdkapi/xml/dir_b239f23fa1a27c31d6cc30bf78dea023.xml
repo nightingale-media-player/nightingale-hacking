@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_b239f23fa1a27c31d6cc30bf78dea023" kind="dir">
+    <compoundname>components/faceplate/</compoundname>
+    <innerdir refid="dir_73ac8a062e497f45c9aa8fb9dffd738d">components/faceplate/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/faceplate/"/>
+  </compounddef>
+</doxygen>

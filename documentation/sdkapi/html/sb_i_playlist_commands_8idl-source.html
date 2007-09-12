@@ -49,94 +49,94 @@
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00034"></a>00034 interface nsISimpleEnumerator;
 <a name="l00035"></a>00035 
-<a name="l00070"></a>00070 [scriptable, uuid(fdb73942-56e8-406e-a587-e7e1715d921f)]
-<a name="l00071"></a><a class="code" href="interfacesb_i_playlist_commands.html">00071</a> interface <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> : nsISupports 
-<a name="l00072"></a>00072 {
-<a name="l00082"></a>00082   PRBool getVisible( in AString aHost );
-<a name="l00083"></a>00083   
-<a name="l00094"></a>00094   <span class="keywordtype">void</span> setContext( in <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a> aContext );
-<a name="l00095"></a>00095 
-<a name="l00108"></a>00108   PRInt32 getNumCommands( in AString aSubMenu, in AString aHost );
-<a name="l00109"></a>00109 
-<a name="l00121"></a>00121   AString getCommandType( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00122"></a>00122 
-<a name="l00138"></a>00138   AString getCommandId( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00139"></a>00139 
-<a name="l00152"></a>00152   AString getCommandText( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00153"></a>00153 
-<a name="l00166"></a>00166   PRInt32 getCommandFlex( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00167"></a>00167 
-<a name="l00181"></a>00181   AString getCommandToolTipText(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00182"></a>00182 
-<a name="l00195"></a>00195   PRBool getCommandEnabled(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00196"></a>00196 
-<a name="l00205"></a>00205   PRBool getCommandVisible(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00206"></a>00206 
-<a name="l00217"></a>00217   PRBool getCommandFlag( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00218"></a>00218 
-<a name="l00229"></a>00229   AString getCommandValue( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00230"></a>00230 
-<a name="l00241"></a>00241   AString getCommandChoiceItem( in AString aChoiceMenu, in AString aHost );
-<a name="l00242"></a>00242 
-<a name="l00251"></a>00251   AString getCommandShortcutModifiers( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00252"></a>00252 
-<a name="l00261"></a>00261   AString getCommandShortcutKey( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00262"></a>00262 
-<a name="l00271"></a>00271   AString getCommandShortcutKeycode( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00272"></a>00272 
-<a name="l00281"></a>00281   PRBool getCommandShortcutLocal( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00282"></a>00282 
-<a name="l00294"></a>00294   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> getCommandSubObject( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
-<a name="l00295"></a>00295 
-<a name="l00303"></a>00303   nsIDOMNode instantiateCustomCommand( in nsIDOMDocument aDocument, in AString aID, in AString aHost );
-<a name="l00304"></a>00304 
-<a name="l00311"></a>00311   <span class="keywordtype">void</span> refreshCustomCommand( in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost );
-<a name="l00312"></a>00312 
-<a name="l00322"></a>00322   <span class="keywordtype">void</span> onCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString value );
+<a name="l00061"></a>00061 [scriptable, uuid(dfe817f2-5398-4f16-ba62-10483311ffa7)]
+<a name="l00062"></a><a class="code" href="interfacesb_i_playlist_commands.html">00062</a> interface <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> : nsISupports 
+<a name="l00063"></a>00063 {
+<a name="l00073"></a>00073   PRBool getVisible( in AString aHost );
+<a name="l00074"></a>00074   
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> setContext( in <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a> aContext );
+<a name="l00086"></a>00086 
+<a name="l00099"></a>00099   PRInt32 getNumCommands( in AString aSubMenu, in AString aHost );
+<a name="l00100"></a>00100 
+<a name="l00112"></a>00112   AString getCommandType( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00113"></a>00113 
+<a name="l00129"></a>00129   AString getCommandId( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00130"></a>00130 
+<a name="l00143"></a>00143   AString getCommandText( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00144"></a>00144 
+<a name="l00157"></a>00157   PRInt32 getCommandFlex( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00158"></a>00158 
+<a name="l00172"></a>00172   AString getCommandToolTipText(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00173"></a>00173 
+<a name="l00186"></a>00186   PRBool getCommandEnabled(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00187"></a>00187 
+<a name="l00196"></a>00196   PRBool getCommandVisible(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00197"></a>00197 
+<a name="l00208"></a>00208   PRBool getCommandFlag( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00209"></a>00209 
+<a name="l00220"></a>00220   AString getCommandValue( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00221"></a>00221 
+<a name="l00232"></a>00232   AString getCommandChoiceItem( in AString aChoiceMenu, in AString aHost );
+<a name="l00233"></a>00233 
+<a name="l00242"></a>00242   AString getCommandShortcutModifiers( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00243"></a>00243 
+<a name="l00252"></a>00252   AString getCommandShortcutKey( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00253"></a>00253 
+<a name="l00262"></a>00262   AString getCommandShortcutKeycode( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00263"></a>00263 
+<a name="l00272"></a>00272   PRBool getCommandShortcutLocal( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00273"></a>00273 
+<a name="l00285"></a>00285   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> getCommandSubObject( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+<a name="l00286"></a>00286 
+<a name="l00297"></a>00297   nsIDOMNode instantiateCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument );
+<a name="l00298"></a>00298 
+<a name="l00308"></a>00308   <span class="keywordtype">void</span> refreshCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement );
+<a name="l00309"></a>00309 
+<a name="l00322"></a>00322   <span class="keywordtype">void</span> onCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue );
 <a name="l00323"></a>00323 
-<a name="l00344"></a>00344   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> duplicate( );
-<a name="l00345"></a>00345 
-<a name="l00354"></a>00354   <span class="keywordtype">void</span> initCommands( in AString aHost );
-<a name="l00355"></a>00355 
-<a name="l00362"></a>00362   <span class="keywordtype">void</span> shutdownCommands( );
-<a name="l00363"></a>00363 };
-<a name="l00364"></a>00364 
-<a name="l00369"></a>00369 [scriptable, uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]
-<a name="l00370"></a><a class="code" href="interfacesb_i_playlist_commands_context.html">00370</a> interface <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a> : nsISupports
-<a name="l00371"></a>00371 {
-<a name="l00375"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#69c851cca7096063b8c4363539e70936">00375</a>   readonly attribute nsIDOMNode playlist;   
+<a name="l00365"></a>00365   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> duplicate( );
+<a name="l00366"></a>00366 
+<a name="l00375"></a>00375   <span class="keywordtype">void</span> initCommands( in AString aHost );
 <a name="l00376"></a>00376 
-<a name="l00380"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#20a1534f23df5eb094c906333520ec54">00380</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> medialist;
-<a name="l00381"></a>00381 
-<a name="l00385"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#d62ad80fa57bfa8ddabdca72a12e5abe">00385</a>   readonly attribute nsIDOMWindow window;   
-<a name="l00386"></a>00386 
-<a name="l00390"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#1d8e53e9b4ad2510701628472a36643f">00390</a>   readonly attribute <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> commands;   
-<a name="l00391"></a>00391 };
-<a name="l00392"></a>00392 
-<a name="l00398"></a>00398 [scriptable, uuid(2ca0eb0c-ab36-4a5a-b63e-dd34ca54f9da)]
-<a name="l00399"></a><a class="code" href="interfacesb_i_playlist_commands_manager.html">00399</a> interface <a class="code" href="interfacesb_i_playlist_commands_manager.html" title="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</a> : nsISupports
-<a name="l00400"></a>00400 {
-<a name="l00418"></a>00418   <span class="keywordtype">void</span> registerPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00419"></a>00419   
-<a name="l00430"></a>00430   <span class="keywordtype">void</span> unregisterPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00431"></a>00431   
-<a name="l00447"></a>00447   nsISimpleEnumerator getPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType );
-<a name="l00448"></a>00448 
-<a name="l00465"></a>00465   <span class="keywordtype">void</span> registerPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00466"></a>00466   
-<a name="l00476"></a>00476   <span class="keywordtype">void</span> unregisterPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00477"></a>00477   
-<a name="l00493"></a>00493   nsISimpleEnumerator getPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType );
-<a name="l00494"></a>00494 
-<a name="l00506"></a>00506   <span class="keywordtype">void</span> publish( in AString aCommandGUID, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00507"></a>00507 
-<a name="l00521"></a>00521   <span class="keywordtype">void</span> withdraw( in AString aCommandGUID, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00522"></a>00522 
-<a name="l00532"></a>00532   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> request( in AString aContextGUID );
-<a name="l00533"></a>00533 };
-<a name="l00534"></a>00534  <span class="comment">// end of playlistcommands group</span>
-<a name="l00536"></a>00536 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:46:58 2007 for Songbird by&nbsp;
+<a name="l00383"></a>00383   <span class="keywordtype">void</span> shutdownCommands( );
+<a name="l00384"></a>00384 };
+<a name="l00385"></a>00385 
+<a name="l00390"></a>00390 [scriptable, uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]
+<a name="l00391"></a><a class="code" href="interfacesb_i_playlist_commands_context.html">00391</a> interface <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a> : nsISupports
+<a name="l00392"></a>00392 {
+<a name="l00396"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#69c851cca7096063b8c4363539e70936">00396</a>   readonly attribute nsIDOMNode playlist;   
+<a name="l00397"></a>00397 
+<a name="l00401"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#20a1534f23df5eb094c906333520ec54">00401</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> medialist;
+<a name="l00402"></a>00402 
+<a name="l00406"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#d62ad80fa57bfa8ddabdca72a12e5abe">00406</a>   readonly attribute nsIDOMWindow window;   
+<a name="l00407"></a>00407 
+<a name="l00411"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#1d8e53e9b4ad2510701628472a36643f">00411</a>   readonly attribute <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> commands;   
+<a name="l00412"></a>00412 };
+<a name="l00413"></a>00413 
+<a name="l00419"></a>00419 [scriptable, uuid(2ca0eb0c-ab36-4a5a-b63e-dd34ca54f9da)]
+<a name="l00420"></a><a class="code" href="interfacesb_i_playlist_commands_manager.html">00420</a> interface <a class="code" href="interfacesb_i_playlist_commands_manager.html" title="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</a> : nsISupports
+<a name="l00421"></a>00421 {
+<a name="l00439"></a>00439   <span class="keywordtype">void</span> registerPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00440"></a>00440   
+<a name="l00451"></a>00451   <span class="keywordtype">void</span> unregisterPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00452"></a>00452   
+<a name="l00468"></a>00468   nsISimpleEnumerator getPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType );
+<a name="l00469"></a>00469 
+<a name="l00486"></a>00486   <span class="keywordtype">void</span> registerPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00487"></a>00487   
+<a name="l00497"></a>00497   <span class="keywordtype">void</span> unregisterPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00498"></a>00498   
+<a name="l00514"></a>00514   nsISimpleEnumerator getPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType );
+<a name="l00515"></a>00515 
+<a name="l00527"></a>00527   <span class="keywordtype">void</span> publish( in AString aCommandGUID, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00528"></a>00528 
+<a name="l00542"></a>00542   <span class="keywordtype">void</span> withdraw( in AString aCommandGUID, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00543"></a>00543 
+<a name="l00553"></a>00553   <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> request( in AString aContextGUID );
+<a name="l00554"></a>00554 };
+<a name="l00555"></a>00555  <span class="comment">// end of playlistcommands group</span>
+<a name="l00557"></a>00557 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_create_media_list_callback" kind="interface" prot="public">
+    <compoundname>sbICreateMediaListCallback</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_create_media_list_callback_17189d87fd56f5b5faa279c686385619b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICreateMediaListCallback::onCreated</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onCreated</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="43"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="42" bodyfile="c:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="41" bodyend="44"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_create_media_list_callback_17189d87fd56f5b5faa279c686385619b" prot="public" virt="non-virtual"><scope>sbICreateMediaListCallback</scope><name>onCreated</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

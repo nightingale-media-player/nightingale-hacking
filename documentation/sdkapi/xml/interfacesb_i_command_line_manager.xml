@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="56"/>
+        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="56"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_command_line_manager_168fb99371dfc5f753ad792a4bcbfc8f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="63"/>
+        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_command_line_manager_1205108bc9434b62deb9fb5430ae1ff51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -79,7 +79,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="70"/>
+        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="70"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_command_line_manager_1283c0549898e8d45f9d02794f833aac3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -116,7 +116,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="78"/>
+        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="78"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_command_line_manager_118b8f18b939b1de0cff8dda01a3c3615" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -153,14 +153,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="86"/>
+        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="86"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Songbird Command line manager interface. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineManager.idl" bodystart="49" bodyend="87"/>
+    <location file="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" line="50" bodyfile="c:/projects/songbird/components/commandline/public/sbICommandLineManager.idl" bodystart="49" bodyend="87"/>
     <listofallmembers>
       <member refid="interfacesb_i_command_line_manager_1283c0549898e8d45f9d02794f833aac3" prot="public" virt="non-virtual"><scope>sbICommandLineManager</scope><name>addFlagHandler</name></member>
       <member refid="interfacesb_i_command_line_manager_12fd526b0f7c6d04d219465992ca73c1b" prot="public" virt="non-virtual"><scope>sbICommandLineManager</scope><name>addItemHandler</name></member>

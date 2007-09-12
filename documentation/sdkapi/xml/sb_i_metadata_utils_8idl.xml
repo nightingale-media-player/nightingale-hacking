@@ -55,6 +55,6 @@
 <codeline lineno="36"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl"/>
   </compounddef>
 </doxygen>

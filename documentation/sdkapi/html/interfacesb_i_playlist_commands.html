@@ -89,15 +89,15 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#22b327106b0ac35f0324bbbfab64760e">getCommandSubObject</a> (in AString aSubMenu, in PRInt32 aIndex, in AString aHost)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return an <a class="el" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> secondary object.  <a href="#22b327106b0ac35f0324bbbfab64760e"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIDOMNode&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#e0ff460cfa7a50a45713bb1829cac06c">instantiateCustomCommand</a> (in nsIDOMDocument aDocument, in AString aID, in AString aHost)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIDOMNode&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#35c1dbac68fb3ab44c55413e46cf6133">instantiateCustomCommand</a> (in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Instantiate the custom element associated with the requested command.  <a href="#e0ff460cfa7a50a45713bb1829cac06c"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#0aa9ac74d13817c51effb3ad295d5a80">refreshCustomCommand</a> (in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Instantiate the custom element associated with the requested command.  <a href="#35c1dbac68fb3ab44c55413e46cf6133"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#4c4862a3686c2331bf9cea21dd5fd30d">refreshCustomCommand</a> (in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Refresh the custom element associated with the requested command.  <a href="#0aa9ac74d13817c51effb3ad295d5a80"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#1c89ee75cc35a28bb10ea6fd50878132">onCommand</a> (in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString value)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Refresh the custom element associated with the requested command.  <a href="#4c4862a3686c2331bf9cea21dd5fd30d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#e02f535edda7e2168728af69590c50d7">onCommand</a> (in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Handle the fact that a command was activated.  <a href="#1c89ee75cc35a28bb10ea6fd50878132"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Handle the fact that a command was activated.  <a href="#e02f535edda7e2168728af69590c50d7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55">duplicate</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Duplicate the command object.  <a href="#51cc0b067c69415f31b861762528cb55"></a><br></td></tr>
@@ -114,20 +114,13 @@ An interface that represents the set of command buttons and context menu items a
 This interface is meant to be implemented by user code.<p>
 Implementors that create their own specific database libraries and playlists (eg: <a class="el" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object's purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.<p>
 These objects ought to be created in javascript. When a new playlist is created, it will query <a class="el" href="interfacesb_i_playlist_commands_manager.html" title="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</a> for command objects, and the playlist source will call <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate()</a> on the objects it has stored and return the newly duplicated objects.<p>
-The <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate()</a> method should be implemented like so:<p>
-<div class="fragment"><pre class="fragment"><a class="code" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate</a>: function() {
-  var obj = {};
-  <span class="keywordflow">for</span> ( var i in <span class="keyword">this</span> )
-    obj[ i ] = <span class="keyword">this</span>[ i ];
-  <span class="keywordflow">return</span> obj;
-},
-</pre></div><p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd>playlist.xml, sbLibraryPage.xul </dd></dl>
+See documentation on <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate()</a> for more information.<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd>playlist.xml, sbLibraryPage.xul, <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate</a> </dd></dl>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_commands_8idl-source.html#l00071">71</a> of file <a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_playlist_commands_8idl-source.html#l00062">62</a> of file <a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="dbb2388f97739fc8ff69c802b48abcb6"></a><!-- doxytag: member="sbIPlaylistCommands::getVisible" ref="dbb2388f97739fc8ff69c802b48abcb6" args="(in AString aHost)" -->
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +210,7 @@ The implementor should return the number of commands to be created<p>
 The other functions will be called in turn with the index value that represents each specific command element<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -262,8 +255,8 @@ Return the type of the requested command element index.
 Each command id has a type, these can be 'action', 'separator', 'value', and 'submenu'.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -310,8 +303,8 @@ Some id strings are parsed to create different objects:<p>
 "*separator*" - Create a menuseparator or an empty box<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -356,8 +349,8 @@ Return the human readable text for the requested command element index.
 If the string begins with an "&amp;" character, the remaining portion of the string will be used as an index into the current localization's properties file.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -402,8 +395,8 @@ Return the flex value for the requested command element index.
 For instance, you can make your "*separator*" element have a flex of 1 and then right-justify all the command buttons after it. By default, command buttons will adjust their width to the width of their human readable text.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -448,13 +441,13 @@ Return the human readable text for the requested command element's tooltip.
 If the string begins with an "&amp;" character, the remaining portion of the string will be used as an index into the current localization's properties file.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
   </table>
 </dl>
 <dl compact><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -499,8 +492,8 @@ Return the enabled state for the requested command element index.
 When the selection of the playlist changes state, or the tree is rebuilt, this method will be called to allow the code to enable or disable commands based upon the state of the playlist.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -544,8 +537,8 @@ Return the visible state for the requested command element index.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -590,8 +583,8 @@ Return the value of the flag for the requested command element index.
 The requested elements are always of type 'flag'<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -636,8 +629,8 @@ Return the value of the requested command element index.
 The requested elements are always of type 'value'<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -676,8 +669,8 @@ Return the selected item for choice list of the requested command element index.
 The requested elements are always of type 'choice'<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -721,8 +714,8 @@ Return the shortcut modifiers of the requested command element index.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -766,8 +759,8 @@ Return the shortcut key of the requested command element index.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -811,8 +804,8 @@ Return the shortcut keycode of the requested command element index.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -856,8 +849,8 @@ Return a boolean reflecting the local vs window-wide behavior of the shortcut.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -902,8 +895,8 @@ Return an <a class="el" href="interfacesb_i_playlist_commands.html" title="An in
 If this method returns a valid interface, all other callbacks for this command item are bypassed.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>submenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the data is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the element for which the data is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
   </table>
 </dl>
@@ -911,15 +904,27 @@ If this method returns a valid interface, all other callbacks for this command i
 
 </div>
 </div><p>
-<a class="anchor" name="e0ff460cfa7a50a45713bb1829cac06c"></a><!-- doxytag: member="sbIPlaylistCommands::instantiateCustomCommand" ref="e0ff460cfa7a50a45713bb1829cac06c" args="(in nsIDOMDocument aDocument, in AString aID, in AString aHost)" -->
+<a class="anchor" name="35c1dbac68fb3ab44c55413e46cf6133"></a><!-- doxytag: member="sbIPlaylistCommands::instantiateCustomCommand" ref="35c1dbac68fb3ab44c55413e46cf6133" args="(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">nsIDOMNode sbIPlaylistCommands::instantiateCustomCommand           </td>
           <td>(</td>
-          <td class="paramtype">in nsIDOMDocument&nbsp;</td>
-          <td class="paramname"> <em>aDocument</em>, </td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aSubMenu</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRInt32&nbsp;</td>
+          <td class="paramname"> <em>aIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aHost</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -930,8 +935,8 @@ If this method returns a valid interface, all other callbacks for this command i
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aHost</em></td><td>&nbsp;</td>
+          <td class="paramtype">in nsIDOMDocument&nbsp;</td>
+          <td class="paramname"> <em>aDocument</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -947,35 +952,50 @@ Instantiate the custom element associated with the requested command.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aDocument</em>&nbsp;</td><td>Document in which to instantate element </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the item needs to be instantiated </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index if the command whose instantiation is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aID</em>&nbsp;</td><td>The id of the custom command whose instantiation is being requested </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The command host type that made the request </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aDocument</em>&nbsp;</td><td>Document in which to instantate element </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The custom element that has been instantiated </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="0aa9ac74d13817c51effb3ad295d5a80"></a><!-- doxytag: member="sbIPlaylistCommands::refreshCustomCommand" ref="0aa9ac74d13817c51effb3ad295d5a80" args="(in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost)" -->
+<a class="anchor" name="4c4862a3686c2331bf9cea21dd5fd30d"></a><!-- doxytag: member="sbIPlaylistCommands::refreshCustomCommand" ref="4c4862a3686c2331bf9cea21dd5fd30d" args="(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void sbIPlaylistCommands::refreshCustomCommand           </td>
           <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aSubMenu</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRInt32&nbsp;</td>
+          <td class="paramname"> <em>aIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aHost</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">in nsIDOMNode&nbsp;</td>
-          <td class="paramname"> <em>aCustomCommandElement</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aId</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aHost</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aCustomCommandElement</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -991,14 +1011,17 @@ Refresh the custom element associated with the requested command.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aID</em>&nbsp;</td><td>The id of the custom command element whose refreshing is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the item needs to be refreshed </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index if the command whose refresh is being requested </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The command host type that made the request </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aID</em>&nbsp;</td><td>The id of the custom command element whose refresh is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCustomCommandElement</em>&nbsp;</td><td>The element that needs to be refreshed </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="1c89ee75cc35a28bb10ea6fd50878132"></a><!-- doxytag: member="sbIPlaylistCommands::onCommand" ref="1c89ee75cc35a28bb10ea6fd50878132" args="(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString value)" -->
+<a class="anchor" name="e02f535edda7e2168728af69590c50d7"></a><!-- doxytag: member="sbIPlaylistCommands::onCommand" ref="e02f535edda7e2168728af69590c50d7" args="(in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1030,7 +1053,7 @@ Refresh the custom element associated with the requested command.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>value</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aValue</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -1047,8 +1070,11 @@ Handle the fact that a command was activated.
 When the user activates the command button or menuitem, this method will be called with the event generated.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>event</em>&nbsp;</td><td>The event generated by the user's action </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSubMenu</em>&nbsp;</td><td>The submenu for which the command was triggered </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index of the command that was triggered </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aHost</em>&nbsp;</td><td>The type of object hosting the command </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aId</em>&nbsp;</td><td>The id of the command that was triggered </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aValue</em>&nbsp;</td><td>The optional value associated with the triggering of the command, or an empty string. </td></tr>
   </table>
 </dl>
 
@@ -1080,7 +1106,21 @@ When a command object is to be given to a playlist, the object registered with <
     <span class="keywordflow">return</span> obj;
   },
 </pre></div><p>
-It creates a new object instance and copies the methods over to it.<p>
+It creates a new object instance and copies the methods and data over to it.<p>
+In addition, if your object contains more objects whose data should not be shared between command instantiation contexts, then these objects should be duplicated as well (otherwise, their data will be shared between duplicated instances). In this case, the duplicate method should be implemented something like this:<p>
+<div class="fragment"><pre class="fragment">  _dupObject: function() {
+    var r = {};
+    <span class="keywordflow">for</span> ( var i in obj )
+      r[ i ] = obj[ i ];
+    <span class="keywordflow">return</span> r;
+  },
+  <a class="code" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate</a>: function() {
+    var obj = <span class="keyword">this</span>._dupObject(<span class="keyword">this</span>);
+    obj.myObjectWithProperties = <span class="keyword">this</span>.dupObject(<span class="keyword">this</span>.myObjectWithProperties);
+    <span class="keywordflow">return</span> obj;
+  },
+</pre></div><p>
+In case of more complex objects, you may need to create a recursive duplication method.<p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>A new copy of this object </dd></dl>
 
 </div>
@@ -1136,7 +1176,7 @@ When a command instantiator is done with a command object, it calls its shutdown
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/playlistcommands/public/<a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:47:04 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

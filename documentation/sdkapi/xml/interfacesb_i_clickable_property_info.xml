@@ -2,8 +2,77 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_clickable_property_info" kind="interface" prot="public">
     <compoundname>sbIClickablePropertyInfo</compoundname>
-    <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+    <includes refid="sb_i_clickable_property_info_8idl" local="no">sbIClickablePropertyInfo.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIClickablePropertyInfo::suppressSelect</definition>
+        <argsstring></argsstring>
+        <name>suppressSelect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" line="47" bodyfile="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_clickable_property_info_1fb8ff701c95bc01aca7a1d56975d5b8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIClickablePropertyInfo::isDisabled</definition>
+        <argsstring>(in AString aCurrentValue)</argsstring>
+        <name>isDisabled</name>
+        <param>
+          <type>in AString</type>
+          <declname>aCurrentValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" line="49"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_clickable_property_info_1c017715d79b8755c70194a37be9bf1a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIClickablePropertyInfo::hitTest</definition>
+        <argsstring>(in AString aCurrentValue, in AString aPart, in unsigned long aBoxWidth, in unsigned long aBoxHeight, in unsigned long aMouseX, in unsigned long aMouseY)</argsstring>
+        <name>hitTest</name>
+        <param>
+          <type>in AString</type>
+          <declname>aCurrentValue</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aPart</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aBoxWidth</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aBoxHeight</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMouseX</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMouseY</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" line="56"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
         <definition>AString sbIClickablePropertyInfo::getValueForClick</definition>
@@ -72,7 +141,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="478"/>
+        <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -80,9 +149,12 @@
     <detaileddescription>
 <para>A property that implements this interface indicates that it can convert a mouse click into a value for the property.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="464" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="463" bodyend="479"/>
+    <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" line="46" bodyfile="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl" bodystart="45" bodyend="72"/>
     <listofallmembers>
       <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>getValueForClick</name></member>
+      <member refid="interfacesb_i_clickable_property_info_1c017715d79b8755c70194a37be9bf1a7" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>hitTest</name></member>
+      <member refid="interfacesb_i_clickable_property_info_1fb8ff701c95bc01aca7a1d56975d5b8f" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>isDisabled</name></member>
+      <member refid="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>suppressSelect</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

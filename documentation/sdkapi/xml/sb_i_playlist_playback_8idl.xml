@@ -9,9 +9,6 @@
       <node id="362">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="361">
-        <label>nsIObserver.idl</label>
-      </node>
       <node id="359">
         <label>components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
         <link refid="sbIPlaylistPlayback.idl"/>
@@ -21,6 +18,9 @@
         </childnode>
         <childnode refid="362" relation="include">
         </childnode>
+      </node>
+      <node id="361">
+        <label>nsIObserver.idl</label>
       </node>
       <node id="360">
         <label>nsISupports.idl</label>
@@ -177,6 +177,6 @@
 <codeline lineno="462"><highlight class="normal"></highlight></codeline>
 <codeline lineno="463"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
+    <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
   </compounddef>
 </doxygen>

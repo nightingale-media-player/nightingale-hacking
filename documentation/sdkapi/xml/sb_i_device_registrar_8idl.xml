@@ -66,6 +66,6 @@
 <codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>getDevice(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDeviceId);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl"/>
+    <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl"/>
   </compounddef>
 </doxygen>

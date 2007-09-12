@@ -15,7 +15,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="58" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="58" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" prot="public" static="no" mutable="no">
         <type>readonly attribute long</type>
@@ -28,7 +28,7 @@
 <para>const long BUNDLE_DATA_STATUS_ERROR = -1; const long BUNDLE_DATA_STATUS_DOWNLOADING = 0; const long BUNDLE_DATA_STATUS_SUCCESS = 1; </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="93" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="93" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="93" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="94" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="94" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="94" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="94" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_127021decdb394e85da728f8a1731d2f9" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -56,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="95" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="95" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="95" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_13cdfdc33967a7055cc28e6cae651cbfc" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="96" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="96" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="96" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="96" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIDOMDocument</type>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="102" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="102" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="102" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_1872dfb6bfbaf33819d607488ce02bde2" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -96,7 +96,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="108" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="108" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="108" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="108" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_16f6788aa816aade7879cf249ba2dacd8" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="114" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="114" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="114" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="114" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_18c78474d2172a000df84fc2436df7ed7" prot="public" static="no" mutable="no">
         <type>readonly attribute long</type>
@@ -123,7 +123,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="120" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="120" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="120" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="120" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="180" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="180" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="180" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="180" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_1937bb7e919cc05a6b151af54d1911b56" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="181" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="181" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="181" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="181" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_bundle_141fc07c93014d9c2baf82f95f9763d6a" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -165,7 +165,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="189" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="189" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="189" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="189" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -193,7 +193,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="67"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="67"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -219,7 +219,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="76"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_12ff42a66ab5ead61e3e786dd0e964351" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -245,7 +245,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="84"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1dc0e9ae859f0cf22393ac28e59dacef1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -283,7 +283,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="130"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="130"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1cf73fa57ee5be53462e6b9a7f77ac082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -310,7 +310,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="141"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="141"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1ca4f669e27f6d3cc67fca45c99208682" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -340,7 +340,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="149"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="149"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_1d15dffad2590fffa1b38b27488384ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -366,7 +366,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="157"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="157"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_11af1c032b87327cccaaf3c2eb2fb40e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -392,7 +392,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="165"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="165"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_11ca5c30b43ebafc1a221d8d9bbab74a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -419,7 +419,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="179"/>
+        <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="179"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -427,7 +427,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_data_listener" kindref="compound">sbIBundleDataListener</ref>, <ref refid="interfacesb_i_bundle_install_listener" kindref="compound">sbIBundleInstallListener</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundle.idl" bodystart="50" bodyend="190"/>
+    <location file="c:/projects/songbird/components/bundle/public/sbIBundle.idl" line="51" bodyfile="c:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="50" bodyend="190"/>
     <listofallmembers>
       <member refid="interfacesb_i_bundle_1c21815fa4d93e0775d1444d9fd2c615f" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>addBundleDataListener</name></member>
       <member refid="interfacesb_i_bundle_1d15dffad2590fffa1b38b27488384ba2" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>addBundleInstallListener</name></member>

@@ -63,6 +63,6 @@
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
   </compounddef>
 </doxygen>

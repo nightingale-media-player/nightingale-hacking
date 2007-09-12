@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="358" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="358" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="337" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="337" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,44 +25,41 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="634">
+      <node id="680">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="633">
+      <node id="679">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="634" relation="public-inheritance">
+        <childnode refid="680" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="636">
+      <node id="682">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="637" relation="usage">
+        <childnode refid="683" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="637">
+      <node id="683">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="635">
+      <node id="681">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="636" relation="public-inheritance">
+        <childnode refid="682" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="353" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="352" bodyend="359"/>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="332" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="331" bodyend="338"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>constrainScheme</name></member>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayName</name></member>
-      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayUsingSimpleType</name></member>
-      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>format</name></member>
-      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>name</name></member>

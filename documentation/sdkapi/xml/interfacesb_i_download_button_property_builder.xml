@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_download_button_property_builder" kind="interface" prot="public">
+    <compoundname>sbIDownloadButtonPropertyBuilder</compoundname>
+    <basecompoundref refid="interfacesb_i_property_builder" prot="public" virt="non-virtual">sbIPropertyBuilder</basecompoundref>
+    <includes refid="sb_i_property_builder_8idl" local="no">sbIPropertyBuilder.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_download_button_property_builder_1ae1fba82bad46f7ddcc9c9a7ca770062" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIDownloadButtonPropertyBuilder::label</definition>
+        <argsstring></argsstring>
+        <name>label</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="74" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_download_button_property_builder_14f7fe4ff0c89129ca14d6cf4608c151a" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIDownloadButtonPropertyBuilder::labelKey</definition>
+        <argsstring></argsstring>
+        <name>labelKey</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="76" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="117">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="116">
+        <label>sbIDownloadButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_download_button_property_builder"/>
+        <childnode refid="117" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="119">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="118">
+        <label>sbIDownloadButtonPropertyBuilder</label>
+        <link refid="interfacesb_i_download_button_property_builder"/>
+        <childnode refid="119" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="73" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="72" bodyend="77"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>displayNameKey</name></member>
+      <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>get</name></member>
+      <member refid="interfacesb_i_download_button_property_builder_1ae1fba82bad46f7ddcc9c9a7ca770062" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>label</name></member>
+      <member refid="interfacesb_i_download_button_property_builder_14f7fe4ff0c89129ca14d6cf4608c151a" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>labelKey</name></member>
+      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIDownloadButtonPropertyBuilder</scope><name>propertyName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

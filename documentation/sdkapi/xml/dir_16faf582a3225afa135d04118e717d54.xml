@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_16faf582a3225afa135d04118e717d54" kind="dir">
+    <compoundname>components/dbengine/public/</compoundname>
+    <innerfile refid="sb_i_database_engine_8idl">sbIDatabaseEngine.idl</innerfile>
+    <innerfile refid="sb_i_database_query_8idl">sbIDatabaseQuery.idl</innerfile>
+    <innerfile refid="sb_i_database_result_8idl">sbIDatabaseResult.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/projects/songbird/components/dbengine/public/"/>
+  </compounddef>
+</doxygen>

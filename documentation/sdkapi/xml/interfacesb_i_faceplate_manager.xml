@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="73" bodyfile="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" bodystart="73" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="73" bodyfile="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" bodystart="73" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -73,7 +73,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="92"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="92"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_1545cf70bbb71ce151fd93679f93b6316" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="100"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="100"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_10ad64818af3e1ea01a4ea3c7f866bd12" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -123,7 +123,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="108"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="108"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_16b31c1d60034d5cab222c88bf806b498" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref></type>
@@ -149,7 +149,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="118"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="118"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_1a89914857c072e2c353a3a5ab90b0fe1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -163,7 +163,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="124"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="124"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_1b3123e5ca85835f5e94fdeea42d4c045" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref></type>
@@ -177,7 +177,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="131"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="131"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_1c8dcacaa2eaa08c03ae7c1c2c948e31e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -202,7 +202,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="139"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="139"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_faceplate_manager_1a21378003022b523c9812263add006b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -227,7 +227,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="146"/>
+        <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="146"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -246,7 +246,7 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pane.setData(</highlight><highlight class="stringliteral">&quot;progress-hidden&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);<sp/></highlight></codeline>
 </programlisting></para><para>To make a custom faceplate, see the facePlate.xml. Create a binding to act as a pane, register it using <ref refid="interfacesb_i_faceplate_manager_17190e4356a8bc3f53abe315e94ba5a79" kindref="member">sbIFaceplateManager.createPane</ref>, communicate with it via <ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref>, and then remove it via <ref refid="interfacesb_i_faceplate_manager_10ad64818af3e1ea01a4ea3c7f866bd12" kindref="member">sbIFaceplateManager.destroyPane</ref> when finished.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref> facePlate.xml </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" line="69" bodyfile="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplateManager.idl" bodystart="68" bodyend="147"/>
+    <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" line="69" bodyfile="c:/projects/songbird/components/faceplate/public/sbIFaceplateManager.idl" bodystart="68" bodyend="147"/>
     <listofallmembers>
       <member refid="interfacesb_i_faceplate_manager_1c8dcacaa2eaa08c03ae7c1c2c948e31e" prot="public" virt="non-virtual"><scope>sbIFaceplateManager</scope><name>addListener</name></member>
       <member refid="interfacesb_i_faceplate_manager_17190e4356a8bc3f53abe315e94ba5a79" prot="public" virt="non-virtual"><scope>sbIFaceplateManager</scope><name>createPane</name></member>

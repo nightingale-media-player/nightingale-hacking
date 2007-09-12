@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="384">
+      <node id="390">
         <label>components/property/public/sbIRemotePropertyInfo.idl</label>
         <link refid="sbIRemotePropertyInfo.idl"/>
-        <childnode refid="385" relation="include">
+        <childnode refid="391" relation="include">
         </childnode>
       </node>
-      <node id="385">
+      <node id="391">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -68,6 +68,6 @@
 <codeline lineno="52"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIRemotePropertyInfo.idl"/>
+    <location file="c:/projects/songbird/components/property/public/sbIRemotePropertyInfo.idl"/>
   </compounddef>
 </doxygen>

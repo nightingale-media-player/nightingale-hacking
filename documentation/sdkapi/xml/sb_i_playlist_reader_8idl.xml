@@ -129,6 +129,6 @@
 <codeline lineno="219"><highlight class="normal"></highlight></codeline>
 <codeline lineno="220"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl"/>
+    <location file="c:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl"/>
   </compounddef>
 </doxygen>

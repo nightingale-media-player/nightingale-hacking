@@ -40,9 +40,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_remote_media_list.html">sbIRemoteMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_library.html#e5c3bf799d6a3ef49bccd3d19e5d7512">createMediaList</a> (in AString aType)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a media list.  <a href="#e5c3bf799d6a3ef49bccd3d19e5d7512"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_remote_media_list.html">sbIRemoteMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_library.html#74246b1e632b24b99ae6e7802f78311e">createMediaListFromURL</a> (in AString aURL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_library.html#f49eeaaea6d0735699b3b22f6a590e48">createMediaListFromURL</a> (in AString aURL,[optional] in <a class="el" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a> aCallback)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a media list from an exising playlist file.  <a href="#74246b1e632b24b99ae6e7802f78311e"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a media list from an exising playlist file.  <a href="#f49eeaaea6d0735699b3b22f6a590e48"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_library.html#164f45e178034664ede744941d84b52d">connectToDefaultLibrary</a> (in AString aLibName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect the remote library to the main or web library.  <a href="#164f45e178034664ede744941d84b52d"></a><br></td></tr>
@@ -61,7 +61,7 @@ The remote library interface allows websites to create media items in a manner m
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_remote_library_8idl-source.html#l00100">100</a> of file <a class="el" href="sb_i_remote_library_8idl-source.html">sbIRemoteLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_remote_library_8idl-source.html#l00107">107</a> of file <a class="el" href="sb_i_remote_library_8idl-source.html">sbIRemoteLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="b80da1ce2f6cd92240a3c823c10383fe"></a><!-- doxytag: member="sbIRemoteLibrary::createMediaItem" ref="b80da1ce2f6cd92240a3c823c10383fe" args="(in AString aURL)" -->
 <div class="memitem">
 <div class="memproto">
@@ -121,17 +121,26 @@ Create and insert a media list into the library for the type passed in.<p>
 
 </div>
 </div><p>
-<a class="anchor" name="74246b1e632b24b99ae6e7802f78311e"></a><!-- doxytag: member="sbIRemoteLibrary::createMediaListFromURL" ref="74246b1e632b24b99ae6e7802f78311e" args="(in AString aURL)" -->
+<a class="anchor" name="f49eeaaea6d0735699b3b22f6a590e48"></a><!-- doxytag: member="sbIRemoteLibrary::createMediaListFromURL" ref="f49eeaaea6d0735699b3b22f6a590e48" args="(in AString aURL,[optional] in sbICreateMediaListCallback aCallback)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="interfacesb_i_remote_media_list.html">sbIRemoteMediaList</a> sbIRemoteLibrary::createMediaListFromURL           </td>
+          <td class="memname">void sbIRemoteLibrary::createMediaListFromURL           </td>
           <td>(</td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aURL</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a>&nbsp;</td>
+          <td class="paramname"> <em>aCallback</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -143,10 +152,10 @@ Create a media list from an exising playlist file.
 Create and insert a media list into the library. The URL passed in must be an http or https url that points to a type of playlist file supported by Songbird. That is currently: .pls, .m3u, .html, and rss type feeds.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>A string that points to a type of playlist file that is supported by Songbird. It must be either http: or https: and one of the following playlist types: .pls, .m3u, .html and rss type feeds.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>A string that points to a type of playlist file that is supported by Songbird. It must be either http: or https: and one of the following playlist types: .pls, .m3u, .html and rss type feeds. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCallback</em>&nbsp;</td><td>Optional callback object that gets called when the media list load is complete. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>the media list that gets created. </dd></dl>
 
 </div>
 </div><p>
@@ -224,12 +233,12 @@ Control whether or not media is scanned when created.
 <p>
 This attribute controlls whether or not the library will cause the metadata to be scanned for any tracks created. If a website wants to hand-set it's metadata then it should set this to false. By default this is true. If metadat for a particular track has already been scanned, that metadata will show up automatically ( for instance for 2 items created from the same URL ). 
 <p>
-Definition at line <a class="el" href="sb_i_remote_library_8idl-source.html#l00131">131</a> of file <a class="el" href="sb_i_remote_library_8idl-source.html">sbIRemoteLibrary.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_library_8idl-source.html#l00138">138</a> of file <a class="el" href="sb_i_remote_library_8idl-source.html">sbIRemoteLibrary.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/remoteapi/public/<a class="el" href="sb_i_remote_library_8idl-source.html">sbIRemoteLibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:47:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:47 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

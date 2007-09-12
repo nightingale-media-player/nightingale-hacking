@@ -4,14 +4,14 @@
     <compoundname>sbIApplicationController.idl</compoundname>
     <includes local="yes">nsIControllers.idl</includes>
     <incdepgraph>
+      <node id="31">
+        <label>nsIControllers.idl</label>
+      </node>
       <node id="30">
         <label>components/controller/public/sbIApplicationController.idl</label>
         <link refid="sbIApplicationController.idl"/>
         <childnode refid="31" relation="include">
         </childnode>
-      </node>
-      <node id="31">
-        <label>nsIControllers.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_application_controller" prot="public">sbIApplicationController</innerclass>
@@ -71,6 +71,6 @@
 <codeline lineno="91"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>getActiveMediaListInWindow(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
 <codeline lineno="92"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl"/>
+    <location file="c:/projects/songbird/components/controller/public/sbIApplicationController.idl"/>
   </compounddef>
 </doxygen>

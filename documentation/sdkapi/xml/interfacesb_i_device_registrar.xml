@@ -15,7 +15,7 @@
 <para>An enumeration of sbIDevices currently registered. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="53" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="53" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_registrar_1e9e14727604f19829039a6d87c0bd4ef" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -28,7 +28,7 @@
 <para>The number of sbIDevices currently registered. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="58" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="58" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -47,7 +47,7 @@
 <para>Registers an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="43"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="43"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_registrar_1e98da593fce16a36e398ac10defb8a5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,7 +64,7 @@
 <para>Unregisters an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="48"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="48"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_registrar_128813380ce5501a92b12462e316423fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
@@ -81,14 +81,14 @@
 <para>Retrieve a registered device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="63"/>
+        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="63"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="39" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="38" bodyend="64"/>
+    <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="39" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="38" bodyend="64"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_registrar_1e9e14727604f19829039a6d87c0bd4ef" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>deviceCount</name></member>
       <member refid="interfacesb_i_device_registrar_1f944cd3b938fdf3792224ba6e4e1aaf3" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>devices</name></member>

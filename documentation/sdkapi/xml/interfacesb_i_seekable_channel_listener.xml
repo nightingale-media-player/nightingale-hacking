@@ -26,7 +26,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="57"/>
+        <location file="c:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="57"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -34,7 +34,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="46" bodyend="58"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="47" bodyfile="c:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="46" bodyend="58"/>
     <listofallmembers>
       <member refid="interfacesb_i_seekable_channel_listener_19da820b57b65a0853c5adefccb9a2cf5" prot="public" virt="non-virtual"><scope>sbISeekableChannelListener</scope><name>onChannelDataAvailable</name></member>
     </listofallmembers>

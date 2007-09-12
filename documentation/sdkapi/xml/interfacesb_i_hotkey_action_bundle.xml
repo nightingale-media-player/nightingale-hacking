@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="23" bodyfile="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" bodystart="23" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="23" bodyfile="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" bodystart="23" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="24"/>
+        <location file="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="24"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_hotkey_action_bundle_160202e9b3d4fd2dbb5853603644f15d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="25"/>
+        <location file="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="25"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_hotkey_action_bundle_10f3a9782ee4301302d57aab5037be641" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="26"/>
+        <location file="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="26"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -76,7 +76,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_hotkey_actions" kindref="compound">sbIHotkeyActions</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" line="22" bodyfile="e:/Projects/songbird/trunk/components/integration/public/sbIHotkeyActions.idl" bodystart="21" bodyend="27"/>
+    <location file="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" line="22" bodyfile="c:/projects/songbird/components/integration/public/sbIHotkeyActions.idl" bodystart="21" bodyend="27"/>
     <listofallmembers>
       <member refid="interfacesb_i_hotkey_action_bundle_1ae0e85d107a34c751a11cac1e457a6a9" prot="public" virt="non-virtual"><scope>sbIHotkeyActionBundle</scope><name>actionCount</name></member>
       <member refid="interfacesb_i_hotkey_action_bundle_160202e9b3d4fd2dbb5853603644f15d8" prot="public" virt="non-virtual"><scope>sbIHotkeyActionBundle</scope><name>enumActionID</name></member>

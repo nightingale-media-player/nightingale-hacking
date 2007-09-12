@@ -59,16 +59,19 @@
 <a name="l00072"></a>00072   AString getPropertyValue(in AString aName);
 <a name="l00073"></a>00073 
 <a name="l00077"></a>00077   AString toString();
-<a name="l00078"></a>00078 };
-<a name="l00079"></a>00079 
-<a name="l00084"></a>00084 [scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
-<a name="l00085"></a><a class="code" href="interfacesb_i_mutable_property_array.html">00085</a> interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a> : <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>
-<a name="l00086"></a>00086 {
-<a name="l00093"></a>00093   <span class="keywordtype">void</span> appendProperty(in AString aName,
-<a name="l00094"></a>00094                       in AString aValue);
-<a name="l00095"></a>00095 };
-<a name="l00096"></a>00096 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:46:58 2007 for Songbird by&nbsp;
+<a name="l00078"></a>00078 
+<a name="l00083"></a><a class="code" href="interfacesb_i_property_array.html#27fc9af3c2ff93791bab98e11ec1c3fe">00083</a>   readonly attribute <span class="keywordtype">boolean</span> validated;
+<a name="l00084"></a>00084 };
+<a name="l00085"></a>00085 
+<a name="l00090"></a>00090 [scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
+<a name="l00091"></a><a class="code" href="interfacesb_i_mutable_property_array.html">00091</a> interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a> : <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>
+<a name="l00092"></a>00092 {
+<a name="l00103"></a>00103   <span class="keywordtype">void</span> appendProperty(in AString aName,
+<a name="l00104"></a>00104                       in AString aValue);
+<a name="l00105"></a>00105 
+<a name="l00118"></a><a class="code" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">00118</a>   attribute <span class="keywordtype">boolean</span> strict;
+<a name="l00119"></a>00119 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

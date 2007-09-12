@@ -32,10 +32,6 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="312">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sb_i_metadata_channel_8idl"/>
-      </node>
       <node id="311">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sbIMetadataHandler.idl"/>
@@ -43,6 +39,10 @@
         </childnode>
         <childnode refid="313" relation="include">
         </childnode>
+      </node>
+      <node id="312">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sb_i_metadata_channel_8idl"/>
       </node>
       <node id="313">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
@@ -109,6 +109,6 @@
 <codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
 <codeline lineno="159"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl"/>
   </compounddef>
 </doxygen>

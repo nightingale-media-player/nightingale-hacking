@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="48"/>
+        <location file="c:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="48"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_13bb23ef4af1ef9ea6c4452beb0abd40e" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CONTRACTID</name>
@@ -37,7 +37,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="50"/>
+        <location file="c:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="50"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_1fddc0abf67ebf94b0b5a89df319cf818" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CLASSNAME</name>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="51"/>
+        <location file="c:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="51"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -100,6 +100,6 @@
 <codeline lineno="52"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl"/>
+    <location file="c:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl"/>
   </compounddef>
 </doxygen>

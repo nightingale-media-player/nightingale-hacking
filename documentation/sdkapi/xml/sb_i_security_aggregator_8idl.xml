@@ -5,26 +5,26 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_security_mixin_8idl" local="yes">components/remoteapi/public/sbISecurityMixin.idl</includedby>
     <incdepgraph>
-      <node id="404">
+      <node id="413">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="405" relation="include">
+        <childnode refid="414" relation="include">
         </childnode>
       </node>
-      <node id="405">
+      <node id="414">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="407">
-        <label>components/remoteapi/public/sbISecurityMixin.idl</label>
-        <link refid="sb_i_security_mixin_8idl"/>
-      </node>
-      <node id="406">
+      <node id="415">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="416" relation="include">
         </childnode>
+      </node>
+      <node id="416">
+        <label>components/remoteapi/public/sbISecurityMixin.idl</label>
+        <link refid="sb_i_security_mixin_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_security_aggregator" prot="public">sbISecurityAggregator</innerclass>
@@ -68,6 +68,6 @@
 <codeline lineno="54"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl"/>
+    <location file="c:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl"/>
   </compounddef>
 </doxygen>

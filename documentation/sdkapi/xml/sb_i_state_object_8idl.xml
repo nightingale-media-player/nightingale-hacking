@@ -4,13 +4,13 @@
     <compoundname>sbIStateObject.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="427">
+      <node id="436">
         <label>components/state/public/sbIStateObject.idl</label>
         <link refid="sbIStateObject.idl"/>
-        <childnode refid="428" relation="include">
+        <childnode refid="437" relation="include">
         </childnode>
       </node>
-      <node id="428">
+      <node id="437">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -78,6 +78,6 @@
 <codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeObserver(in<sp/>nsIObserver<sp/>aObserver);</highlight></codeline>
 <codeline lineno="137"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl"/>
+    <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl"/>
   </compounddef>
 </doxygen>

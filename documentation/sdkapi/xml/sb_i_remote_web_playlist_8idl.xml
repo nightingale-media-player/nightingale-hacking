@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteWebPlaylist.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="401">
+      <node id="410">
         <label>components/remoteapi/public/sbIRemoteWebPlaylist.idl</label>
         <link refid="sbIRemoteWebPlaylist.idl"/>
-        <childnode refid="402" relation="include">
+        <childnode refid="411" relation="include">
         </childnode>
       </node>
-      <node id="402">
+      <node id="411">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -161,52 +161,78 @@
 <codeline lineno="151"><highlight class="comment"><sp/><sp/><sp/><sp/>hasNullsort<sp/>-<sp/>Specify<sp/>how<sp/>null<sp/>values<sp/>will<sp/>be<sp/>sorted<sp/>visually.</highlight></codeline>
 <codeline lineno="152"><highlight class="comment"><sp/><sp/><sp/><sp/>nullsort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
 <codeline lineno="153"><highlight class="comment"><sp/><sp/><sp/><sp/>width<sp/>-<sp/>The<sp/>default<sp/>width<sp/>of<sp/>the<sp/>column<sp/>when<sp/>displayed.</highlight></codeline>
-<codeline lineno="154"><highlight class="comment"></highlight></codeline>
-<codeline lineno="155"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="157"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="158"><highlight class="comment"></highlight></codeline>
-<codeline lineno="159"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="160"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;showColumnBefore()&gt;</highlight></codeline>
-<codeline lineno="161"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addColumn(<sp/>in<sp/>AString<sp/>aColumnType,</highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aColumnName,</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDisplayName,</highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeColumnName,</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aHidden,</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aUserViewable,</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aUserEditable,</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aHasNullSort,</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aNullSort,</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWidth<sp/>);</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="174"><highlight class="comment"><sp/><sp/>Func:<sp/>showColumnBefore()</highlight></codeline>
-<codeline lineno="175"><highlight class="comment"></highlight></codeline>
-<codeline lineno="176"><highlight class="comment"><sp/><sp/>Show<sp/>a<sp/>column<sp/>before<sp/>another<sp/>column.<sp/>This<sp/>enables<sp/>you<sp/>to<sp/>move</highlight></codeline>
-<codeline lineno="177"><highlight class="comment"><sp/><sp/>columns<sp/>around<sp/>visually<sp/>as<sp/>well<sp/>as<sp/>specify<sp/>where<sp/>you<sp/>might<sp/>want<sp/>your<sp/>own</highlight></codeline>
-<codeline lineno="178"><highlight class="comment"><sp/><sp/>column<sp/>to<sp/>be<sp/>shown.</highlight></codeline>
-<codeline lineno="179"><highlight class="comment"></highlight></codeline>
-<codeline lineno="180"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/><sp/>showColumnBefore(String<sp/>columnName,<sp/>String<sp/>beforeColumn)</highlight></codeline>
-<codeline lineno="182"><highlight class="comment"></highlight></codeline>
-<codeline lineno="183"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/><sp/>columnName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>column<sp/>to<sp/>move.</highlight></codeline>
-<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/><sp/>beforeColumn<sp/>-<sp/>Show<sp/>the<sp/>column<sp/>with<sp/>columnName<sp/></highlight></codeline>
-<codeline lineno="186"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>before<sp/>the<sp/>column<sp/>with<sp/>beforeColumn.</highlight></codeline>
-<codeline lineno="187"><highlight class="comment"></highlight></codeline>
-<codeline lineno="188"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="189"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="191"><highlight class="comment"></highlight></codeline>
-<codeline lineno="192"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="193"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addColumn()&gt;</highlight></codeline>
-<codeline lineno="194"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showColumnBefore(<sp/>in<sp/>AString<sp/>aColumnName,</highlight></codeline>
-<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeColumnName<sp/>);</highlight></codeline>
-<codeline lineno="197"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="154"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/><sp/>Column<sp/>Types:</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/>text<sp/>-<sp/>Plain<sp/>text.</highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/><sp/><sp/><sp/>datetime<sp/>-<sp/>A<sp/>time<sp/>interval.</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"><sp/><sp/><sp/><sp/>uri<sp/>-<sp/>A<sp/>URI<sp/>(web<sp/>address).</highlight></codeline>
+<codeline lineno="159"><highlight class="comment"><sp/><sp/><sp/><sp/>number<sp/>-<sp/>A<sp/>number.</highlight></codeline>
+<codeline lineno="160"><highlight class="comment"><sp/><sp/><sp/><sp/>button<sp/>-<sp/>A<sp/>clickable<sp/>button.</highlight></codeline>
+<codeline lineno="161"><highlight class="comment"><sp/><sp/><sp/><sp/>image<sp/>-<sp/>A<sp/>picture.</highlight></codeline>
+<codeline lineno="162"><highlight class="comment"><sp/><sp/><sp/><sp/>downloadbutton<sp/>-<sp/>A<sp/>button<sp/>which,<sp/>when<sp/>clicked,<sp/>initiates<sp/>a<sp/>download.</highlight></codeline>
+<codeline lineno="163"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="164"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
+<codeline lineno="165"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"></highlight></codeline>
+<codeline lineno="170"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="172"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>add<sp/>a<sp/>text<sp/>column<sp/>to<sp/>the<sp/>web<sp/>playlist</highlight></codeline>
+<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.webPlaylist.addColumn(<sp/>&quot;text&quot;,</highlight></codeline>
+<codeline lineno="174"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;columnName&quot;,</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;column<sp/>heading<sp/>goes<sp/>here&quot;,</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;&quot;,<sp/>//<sp/>add<sp/>at<sp/>the<sp/>end</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>false,<sp/>//<sp/>not<sp/>hidden</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>true,<sp/>//<sp/>can<sp/>be<sp/>viewed</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>false,<sp/>//<sp/>read-only</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>false,<sp/>//<sp/>no<sp/>null<sp/>sorting</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>150);<sp/>//<sp/>pixels</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="184"><highlight class="comment"></highlight></codeline>
+<codeline lineno="185"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="186"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;showColumnBefore()&gt;</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addColumn(<sp/>in<sp/>AString<sp/>aColumnType,</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aColumnName,</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDisplayName,</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeColumnName,</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aHidden,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aUserViewable,</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aUserEditable,</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aHasNullSort,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aNullSort,</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWidth<sp/>);</highlight></codeline>
 <codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/>Func:<sp/>showColumnBefore()</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"></highlight></codeline>
+<codeline lineno="202"><highlight class="comment"><sp/><sp/>Show<sp/>a<sp/>column<sp/>before<sp/>another<sp/>column.<sp/>This<sp/>enables<sp/>you<sp/>to<sp/>move</highlight></codeline>
+<codeline lineno="203"><highlight class="comment"><sp/><sp/>columns<sp/>around<sp/>visually<sp/>as<sp/>well<sp/>as<sp/>specify<sp/>where<sp/>you<sp/>might<sp/>want<sp/>your<sp/>own</highlight></codeline>
+<codeline lineno="204"><highlight class="comment"><sp/><sp/>column<sp/>to<sp/>be<sp/>shown.</highlight></codeline>
+<codeline lineno="205"><highlight class="comment"></highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/><sp/>showColumnBefore(String<sp/>columnName,<sp/>String<sp/>beforeColumn)</highlight></codeline>
+<codeline lineno="208"><highlight class="comment"></highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="210"><highlight class="comment"><sp/><sp/><sp/><sp/>columnName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>column<sp/>to<sp/>move.</highlight></codeline>
+<codeline lineno="211"><highlight class="comment"><sp/><sp/><sp/><sp/>beforeColumn<sp/>-<sp/>Show<sp/>the<sp/>column<sp/>with<sp/>columnName<sp/></highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>before<sp/>the<sp/>column<sp/>with<sp/>beforeColumn.</highlight></codeline>
+<codeline lineno="213"><highlight class="comment"></highlight></codeline>
+<codeline lineno="214"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"></highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addColumn()&gt;</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showColumnBefore(<sp/>in<sp/>AString<sp/>aColumnName,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeColumnName<sp/>);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl"/>
+    <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl"/>
   </compounddef>
 </doxygen>

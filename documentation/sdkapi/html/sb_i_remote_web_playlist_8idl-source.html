@@ -155,52 +155,78 @@
 <a name="l00151"></a>00151 <span class="comment">    hasNullsort - Specify how null values will be sorted visually.</span>
 <a name="l00152"></a>00152 <span class="comment">    nullsort - The type of null sorting desired.</span>
 <a name="l00153"></a>00153 <span class="comment">    width - The default width of the column when displayed.</span>
-<a name="l00154"></a>00154 <span class="comment"></span>
-<a name="l00155"></a>00155 <span class="comment">  Example:</span>
-<a name="l00156"></a>00156 <span class="comment">    (start code)</span>
-<a name="l00157"></a>00157 <span class="comment">    (end)</span>
-<a name="l00158"></a>00158 <span class="comment"></span>
-<a name="l00159"></a>00159 <span class="comment">  See Also:</span>
-<a name="l00160"></a>00160 <span class="comment">    &lt;showColumnBefore()&gt;</span>
-<a name="l00161"></a>00161 <span class="comment">  */</span>
-<a name="l00162"></a>00162   <span class="keywordtype">void</span> addColumn( in AString aColumnType,
-<a name="l00163"></a>00163                   in AString aColumnName,
-<a name="l00164"></a>00164                   in AString aDisplayName,
-<a name="l00165"></a>00165                   in AString aBeforeColumnName,
-<a name="l00166"></a>00166                   in <span class="keywordtype">boolean</span> aHidden,
-<a name="l00167"></a>00167                   in <span class="keywordtype">boolean</span> aUserViewable,
-<a name="l00168"></a>00168                   in <span class="keywordtype">boolean</span> aUserEditable,
-<a name="l00169"></a>00169                   in <span class="keywordtype">boolean</span> aHasNullSort,
-<a name="l00170"></a>00170                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aNullSort,
-<a name="l00171"></a>00171                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aWidth );
-<a name="l00172"></a>00172 
-<a name="l00173"></a>00173   <span class="comment">/*</span>
-<a name="l00174"></a>00174 <span class="comment">  Func: showColumnBefore()</span>
-<a name="l00175"></a>00175 <span class="comment"></span>
-<a name="l00176"></a>00176 <span class="comment">  Show a column before another column. This enables you to move</span>
-<a name="l00177"></a>00177 <span class="comment">  columns around visually as well as specify where you might want your own</span>
-<a name="l00178"></a>00178 <span class="comment">  column to be shown.</span>
-<a name="l00179"></a>00179 <span class="comment"></span>
-<a name="l00180"></a>00180 <span class="comment">  Prototype:</span>
-<a name="l00181"></a>00181 <span class="comment">    showColumnBefore(String columnName, String beforeColumn)</span>
-<a name="l00182"></a>00182 <span class="comment"></span>
-<a name="l00183"></a>00183 <span class="comment">  Parameters:</span>
-<a name="l00184"></a>00184 <span class="comment">    columnName - The name of column to move.</span>
-<a name="l00185"></a>00185 <span class="comment">    beforeColumn - Show the column with columnName </span>
-<a name="l00186"></a>00186 <span class="comment">                   before the column with beforeColumn.</span>
-<a name="l00187"></a>00187 <span class="comment"></span>
-<a name="l00188"></a>00188 <span class="comment">  Example:</span>
-<a name="l00189"></a>00189 <span class="comment">    (start code)</span>
-<a name="l00190"></a>00190 <span class="comment">    (end)</span>
-<a name="l00191"></a>00191 <span class="comment"></span>
-<a name="l00192"></a>00192 <span class="comment">  See Also:</span>
-<a name="l00193"></a>00193 <span class="comment">    &lt;addColumn()&gt;</span>
-<a name="l00194"></a>00194 <span class="comment">  */</span>
-<a name="l00195"></a>00195   <span class="keywordtype">void</span> showColumnBefore( in AString aColumnName,
-<a name="l00196"></a>00196                          in AString aBeforeColumnName );
-<a name="l00197"></a>00197 };
+<a name="l00154"></a>00154 <span class="comment">  </span>
+<a name="l00155"></a>00155 <span class="comment">  Column Types:</span>
+<a name="l00156"></a>00156 <span class="comment">    text - Plain text.</span>
+<a name="l00157"></a>00157 <span class="comment">    datetime - A time interval.</span>
+<a name="l00158"></a>00158 <span class="comment">    uri - A URI (web address).</span>
+<a name="l00159"></a>00159 <span class="comment">    number - A number.</span>
+<a name="l00160"></a>00160 <span class="comment">    button - A clickable button.</span>
+<a name="l00161"></a>00161 <span class="comment">    image - A picture.</span>
+<a name="l00162"></a>00162 <span class="comment">    downloadbutton - A button which, when clicked, initiates a download.</span>
+<a name="l00163"></a>00163 <span class="comment">  </span>
+<a name="l00164"></a>00164 <span class="comment">  Null Sorting Types:</span>
+<a name="l00165"></a>00165 <span class="comment">    0 - Null values are infinitely small.  This is the default.</span>
+<a name="l00166"></a>00166 <span class="comment">    1 - Null values are infinitely large.</span>
+<a name="l00167"></a>00167 <span class="comment">    2 - Null values are always first (regardless of sort direction)</span>
+<a name="l00168"></a>00168 <span class="comment">    3 - Null values are always last</span>
+<a name="l00169"></a>00169 <span class="comment"></span>
+<a name="l00170"></a>00170 <span class="comment">  Example:</span>
+<a name="l00171"></a>00171 <span class="comment">    (start code)</span>
+<a name="l00172"></a>00172 <span class="comment">    // add a text column to the web playlist</span>
+<a name="l00173"></a>00173 <span class="comment">    songbird.webPlaylist.addColumn( "text",</span>
+<a name="l00174"></a>00174 <span class="comment">                                    "columnName",</span>
+<a name="l00175"></a>00175 <span class="comment">                                    "column heading goes here",</span>
+<a name="l00176"></a>00176 <span class="comment">                                    "", // add at the end</span>
+<a name="l00177"></a>00177 <span class="comment">                                    false, // not hidden</span>
+<a name="l00178"></a>00178 <span class="comment">                                    true, // can be viewed</span>
+<a name="l00179"></a>00179 <span class="comment">                                    false, // read-only</span>
+<a name="l00180"></a>00180 <span class="comment">                                    false, // no null sorting</span>
+<a name="l00181"></a>00181 <span class="comment">                                    0,</span>
+<a name="l00182"></a>00182 <span class="comment">                                    150); // pixels</span>
+<a name="l00183"></a>00183 <span class="comment">    (end)</span>
+<a name="l00184"></a>00184 <span class="comment"></span>
+<a name="l00185"></a>00185 <span class="comment">  See Also:</span>
+<a name="l00186"></a>00186 <span class="comment">    &lt;showColumnBefore()&gt;</span>
+<a name="l00187"></a>00187 <span class="comment">  */</span>
+<a name="l00188"></a>00188   <span class="keywordtype">void</span> addColumn( in AString aColumnType,
+<a name="l00189"></a>00189                   in AString aColumnName,
+<a name="l00190"></a>00190                   in AString aDisplayName,
+<a name="l00191"></a>00191                   in AString aBeforeColumnName,
+<a name="l00192"></a>00192                   in <span class="keywordtype">boolean</span> aHidden,
+<a name="l00193"></a>00193                   in <span class="keywordtype">boolean</span> aUserViewable,
+<a name="l00194"></a>00194                   in <span class="keywordtype">boolean</span> aUserEditable,
+<a name="l00195"></a>00195                   in <span class="keywordtype">boolean</span> aHasNullSort,
+<a name="l00196"></a>00196                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aNullSort,
+<a name="l00197"></a>00197                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aWidth );
 <a name="l00198"></a>00198 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 31 13:46:58 2007 for Songbird by&nbsp;
+<a name="l00199"></a>00199   <span class="comment">/*</span>
+<a name="l00200"></a>00200 <span class="comment">  Func: showColumnBefore()</span>
+<a name="l00201"></a>00201 <span class="comment"></span>
+<a name="l00202"></a>00202 <span class="comment">  Show a column before another column. This enables you to move</span>
+<a name="l00203"></a>00203 <span class="comment">  columns around visually as well as specify where you might want your own</span>
+<a name="l00204"></a>00204 <span class="comment">  column to be shown.</span>
+<a name="l00205"></a>00205 <span class="comment"></span>
+<a name="l00206"></a>00206 <span class="comment">  Prototype:</span>
+<a name="l00207"></a>00207 <span class="comment">    showColumnBefore(String columnName, String beforeColumn)</span>
+<a name="l00208"></a>00208 <span class="comment"></span>
+<a name="l00209"></a>00209 <span class="comment">  Parameters:</span>
+<a name="l00210"></a>00210 <span class="comment">    columnName - The name of column to move.</span>
+<a name="l00211"></a>00211 <span class="comment">    beforeColumn - Show the column with columnName </span>
+<a name="l00212"></a>00212 <span class="comment">                   before the column with beforeColumn.</span>
+<a name="l00213"></a>00213 <span class="comment"></span>
+<a name="l00214"></a>00214 <span class="comment">  Example:</span>
+<a name="l00215"></a>00215 <span class="comment">    (start code)</span>
+<a name="l00216"></a>00216 <span class="comment">    (end)</span>
+<a name="l00217"></a>00217 <span class="comment"></span>
+<a name="l00218"></a>00218 <span class="comment">  See Also:</span>
+<a name="l00219"></a>00219 <span class="comment">    &lt;addColumn()&gt;</span>
+<a name="l00220"></a>00220 <span class="comment">  */</span>
+<a name="l00221"></a>00221   <span class="keywordtype">void</span> showColumnBefore( in AString aColumnName,
+<a name="l00222"></a>00222                          in AString aBeforeColumnName );
+<a name="l00223"></a>00223 };
+<a name="l00224"></a>00224 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -4,36 +4,110 @@
     <compoundname>sbIDownloadDevice</compoundname>
     <basecompoundref refid="interfacesb_i_device_base" prot="public" virt="non-virtual">sbIDeviceBase</basecompoundref>
     <includes refid="sb_i_download_device_8idl" local="no">sbIDownloadDevice.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_download_device_1c0735875642e9ce9ced23209641da2df" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>readonly attribute sbIMediaList sbIDownloadDevice::downloadMediaList</definition>
+        <argsstring></argsstring>
+        <name>downloadMediaList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="52" bodyfile="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
 <para>Songbird DownloadDevice Interface. </para>    </briefdescription>
     <detaileddescription>
 <para>&lt;TODO:Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="114">
+      <node id="120">
         <label>sbIDownloadDevice</label>
         <link refid="interfacesb_i_download_device"/>
-        <childnode refid="115" relation="public-inheritance">
+        <childnode refid="121" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="115">
+      <node id="121">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="116">
-        <label>sbIDownloadDevice</label>
-        <link refid="interfacesb_i_download_device"/>
-        <childnode refid="117" relation="public-inheritance">
+      <node id="124">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="125" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="117">
+      <node id="131">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="128">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="129" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="131" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="122">
+        <label>sbIDownloadDevice</label>
+        <link refid="interfacesb_i_download_device"/>
+        <childnode refid="123" relation="public-inheritance">
+        </childnode>
+        <childnode refid="124" relation="usage">
+          <edgelabel>downloadMediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="127">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="124" relation="public-inheritance">
+        </childnode>
+        <childnode refid="128" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="130" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="126">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="125">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="126" relation="public-inheritance">
+        </childnode>
+        <childnode refid="127" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="123">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
+      <node id="129">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="130" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="130">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="46" bodyend="48"/>
+    <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="51" bodyfile="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="50" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>beginTransfer</name></member>
@@ -43,6 +117,7 @@
       <member refid="interfacesb_i_device_base_10822a294b0931fcc6decf3dfce99eb18" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>deviceCategory</name></member>
       <member refid="interfacesb_i_device_base_184f2266170fa22c6978b003964d3419a" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>deviceCount</name></member>
       <member refid="interfacesb_i_device_base_1a0b2aa200a8ba41a6b59aa4dc266d533" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>deviceIdentifiers</name></member>
+      <member refid="interfacesb_i_download_device_1c0735875642e9ce9ced23209641da2df" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>downloadMediaList</name></member>
       <member refid="interfacesb_i_device_base_1ddf45a09e5de5494f4b7234aa7653122" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>ejectDevice</name></member>
       <member refid="interfacesb_i_device_base_1a4c7914066a37e1c8fb771d24d93896b" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>FILE_FORMAT_MP3</name></member>
       <member refid="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" prot="public" virt="non-virtual"><scope>sbIDownloadDevice</scope><name>FILE_FORMAT_UNDEFINED</name></member>

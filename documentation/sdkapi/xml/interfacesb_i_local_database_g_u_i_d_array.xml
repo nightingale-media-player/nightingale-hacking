@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="56" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="56" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1bdacc34062adbb85068599a45a440d0b" prot="public" static="no" mutable="no">
         <type>attribute nsIURI</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="58" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="58" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1041f57709d7eeb20f6cdfc25c9a06c6e" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="60" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_19715f036cda3f651762cd7d6cfc45a49" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="62" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="62" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="62" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1418b057e55c49b4750bd4721ac671f9b" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="64" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="64" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="64" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="64" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1bbbd1837051c5ce70c8bea1e9bcee4ce" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="66" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="66" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="66" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="66" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_11b793cfac37c5c63458f7355b8773d8f" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="68" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="68" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="68" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="68" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1b86ce778048b83e60a82076cb8369b25" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="70" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="70" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="70" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1e88a5acc480536103d80e8af04638f7b" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_local_database_g_u_i_d_array_listener" kindref="compound">sbILocalDatabaseGUIDArrayListener</ref></type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="72" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="72" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_1d5430041b126e51f9cfdbde4cac60f04" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_local_database_property_cache" kindref="compound">sbILocalDatabasePropertyCache</ref></type>
@@ -133,7 +133,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="74" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="74" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="74" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_g_u_i_d_array_129a9562b17ef691daa5dccd01aec23bd" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="81" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="81" bodyend="-1"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="81" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="81" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -169,7 +169,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="77"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_10f910885c76bb8aa1a490fd99058c465" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="79"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="79"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1ed00f10128aa5e5c312e414abb7f9c8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -207,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="85"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_154ac7c6678f66477ad13a5e21abe2447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="87"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="87"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_12ebfd90bc16599a8dbf027040492ea2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -237,7 +237,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="89"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="89"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_12bd92dcb3d8dbf8334dac0a56e879d45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -271,7 +271,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="97"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="97"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_19ded021d2ee2a362e39b35bbb560d261" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -305,7 +305,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="105"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="105"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1734956e259d65c24e20aaa62bf011a2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -339,7 +339,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="113"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="113"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1fabdc8dfe5fe919f30d392afaa41dede" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -373,7 +373,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="121"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="121"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_19d1b1a66f01199944308cf4d4347163e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -386,7 +386,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="123"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="123"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_17bf478c43bca49c37dcde3a22a5c7286" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_local_database_g_u_i_d_array" kindref="compound">sbILocalDatabaseGUIDArray</ref></type>
@@ -399,7 +399,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="125"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="125"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_11cadd21bcac93d4e65a2f8385857cada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -416,7 +416,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="127"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="127"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1360ddd4a7f3ffaece66d0e9d629e6820" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -433,7 +433,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="129"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="129"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1939ca7e8368ef220828919ad35715cf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -450,7 +450,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="131"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="131"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1bba3b93d54588f2a440627a56c0ee0e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -467,7 +467,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="133"/>
+        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="133"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -475,45 +475,45 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="225">
+      <node id="253">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="226">
+      <node id="254">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="225" relation="public-inheritance">
+        <childnode refid="253" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="227">
+      <node id="255">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="228" relation="usage">
+        <childnode refid="256" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="229" relation="usage">
+        <childnode refid="257" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="230" relation="usage">
+        <childnode refid="258" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="230">
+      <node id="258">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="229">
+      <node id="257">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="228">
+      <node id="256">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="54" bodyend="134"/>
+    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="55" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="54" bodyend="134"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1ed00f10128aa5e5c312e414abb7f9c8a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>addFilter</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bfb91fa9a24952b3d1b0ff58427cb747" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>addSort</name></member>

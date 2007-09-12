@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="199"/>
+        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="199"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -46,7 +46,7 @@
     <detaileddescription>
 <para>A representation of a handler for HTTP requests. The handler is used by calling its .handle method with data for an incoming request; it is the handler&apos;s job to use that data as it sees fit to make the desired response.</para><para><simplesect kind="note"><para>This interface uses the [function] attribute, so you can pass a script-defined function with the functionality of <ref refid="interfacens_i_http_request_handler_131d05b4e927e44dea1875c420364faae" kindref="member">handle()</ref> to any method which has a <ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref> parameter, instead of wrapping it in an otherwise empty object. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="184" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="183" bodyend="200"/>
+    <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="184" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="183" bodyend="200"/>
     <listofallmembers>
       <member refid="interfacens_i_http_request_handler_131d05b4e927e44dea1875c420364faae" prot="public" virt="non-virtual"><scope>nsIHttpRequestHandler</scope><name>handle</name></member>
     </listofallmembers>

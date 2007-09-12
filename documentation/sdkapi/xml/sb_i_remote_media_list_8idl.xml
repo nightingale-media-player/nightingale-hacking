@@ -5,24 +5,24 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <incdepgraph>
-      <node id="394">
+      <node id="403">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="395" relation="include">
+        <childnode refid="404" relation="include">
         </childnode>
       </node>
-      <node id="395">
+      <node id="404">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="396">
+      <node id="405">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="397" relation="include">
+        <childnode refid="406" relation="include">
         </childnode>
       </node>
-      <node id="397">
+      <node id="406">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
       </node>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="71"/>
+        <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -122,6 +122,6 @@
 <codeline lineno="71"><highlight class="preprocessor">%}</highlight></codeline>
 <codeline lineno="72"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl"/>
+    <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl"/>
   </compounddef>
 </doxygen>

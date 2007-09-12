@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_rating_property_builder" kind="interface" prot="public">
+    <compoundname>sbIRatingPropertyBuilder</compoundname>
+    <basecompoundref refid="interfacesb_i_property_builder" prot="public" virt="non-virtual">sbIPropertyBuilder</basecompoundref>
+    <includes refid="sb_i_property_builder_8idl" local="no">sbIPropertyBuilder.idl</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="527">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="526">
+        <label>sbIRatingPropertyBuilder</label>
+        <link refid="interfacesb_i_rating_property_builder"/>
+        <childnode refid="527" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="529">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="528">
+        <label>sbIRatingPropertyBuilder</label>
+        <link refid="interfacesb_i_rating_property_builder"/>
+        <childnode refid="529" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="94" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="93" bodyend="95"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayNameKey</name></member>
+      <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>get</name></member>
+      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>propertyName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

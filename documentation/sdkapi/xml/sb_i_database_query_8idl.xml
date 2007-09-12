@@ -156,6 +156,6 @@
 <codeline lineno="493"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindNullParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex);</highlight></codeline>
 <codeline lineno="494"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl"/>
+    <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl"/>
   </compounddef>
 </doxygen>

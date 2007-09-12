@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_tree_view_property_info" kind="interface" prot="public">
+    <compoundname>sbITreeViewPropertyInfo</compoundname>
+    <includes refid="sb_i_tree_view_property_info_8idl" local="no">sbITreeViewPropertyInfo.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_tree_view_property_info_1905d0aa95122f0331479b9aa338b842c" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbITreeViewPropertyInfo::columnType</definition>
+        <argsstring></argsstring>
+        <name>columnType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="42" bodyfile="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_1244aba007fa5d839687896a1ecb16784" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbITreeViewPropertyInfo::getImageSrc</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getImageSrc</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="44"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_1e18c6c5dd98b51d961112aa9a280c270" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long sbITreeViewPropertyInfo::getProgressMode</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getProgressMode</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="46"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_102e82568a08a328f2a67ec4b149e54de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbITreeViewPropertyInfo::getCellValue</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getCellValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="48"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_121a13ba52c4c5c54a4f869f5c0ceed77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbITreeViewPropertyInfo::getColumnProperties</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getColumnProperties</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_1ada7f3dabbc31f6913bc62d219f78f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbITreeViewPropertyInfo::getRowProperties</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getRowProperties</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_tree_view_property_info_10b33407322a62ae9256bbc86ace095cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbITreeViewPropertyInfo::getCellProperties</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getCellProperties</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="54"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="41" bodyfile="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="40" bodyend="55"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_tree_view_property_info_1905d0aa95122f0331479b9aa338b842c" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>columnType</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_10b33407322a62ae9256bbc86ace095cf" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getCellProperties</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_102e82568a08a328f2a67ec4b149e54de" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getCellValue</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_121a13ba52c4c5c54a4f869f5c0ceed77" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getColumnProperties</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_1244aba007fa5d839687896a1ecb16784" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getImageSrc</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_1e18c6c5dd98b51d961112aa9a280c270" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getProgressMode</name></member>
+      <member refid="interfacesb_i_tree_view_property_info_1ada7f3dabbc31f6913bc62d219f78f67" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getRowProperties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
