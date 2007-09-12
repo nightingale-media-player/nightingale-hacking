@@ -163,7 +163,7 @@ sbAbstractPropertyBuilder::GetRemoteReadable(PRBool* aRemoteReadable)
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetRemoteReadable(const PRBool aRemoteReadable)
+sbAbstractPropertyBuilder::SetRemoteReadable(PRBool aRemoteReadable)
 {
   mRemoteReadable = aRemoteReadable;
   return NS_OK;
@@ -176,7 +176,7 @@ sbAbstractPropertyBuilder::GetRemoteWritable(PRBool* aRemoteWritable)
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetRemoteWritable(const PRBool aRemoteWritable)
+sbAbstractPropertyBuilder::SetRemoteWritable(PRBool aRemoteWritable)
 {
   mRemoteWritable = aRemoteWritable;
   return NS_OK;

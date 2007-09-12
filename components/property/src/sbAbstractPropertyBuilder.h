@@ -41,9 +41,9 @@
   NS_IMETHOD GetDisplayNameKey(nsAString & aDisplayNameKey) { return _to GetDisplayNameKey(aDisplayNameKey); } \
   NS_IMETHOD SetDisplayNameKey(const nsAString & aDisplayNameKey) { return _to SetDisplayNameKey(aDisplayNameKey); } \
   NS_IMETHOD GetRemoteReadable(PRBool * aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
-  NS_IMETHOD SetRemoteReadable(const PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
+  NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
   NS_IMETHOD GetRemoteWritable(PRBool * aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
-  NS_IMETHOD SetRemoteWritable(const PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); }
+  NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); }
 
 class sbAbstractPropertyBuilder : public sbIPropertyBuilder
 {
