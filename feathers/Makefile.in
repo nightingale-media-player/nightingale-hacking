@@ -30,10 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = basic-layouts \
-          dove \
           rubberducky \
-          classic \
-          plucked \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
