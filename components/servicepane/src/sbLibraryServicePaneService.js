@@ -123,6 +123,9 @@ function sbLibraryServicePane_servicePaneInit(sps) {
             getService(Ci.nsIObserverService);
   obs.addObserver(this, "songbird-library-manager-ready", false);
   obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
+
+  // get the library manager
+  this._initLibraryManager();
 }
 
 sbLibraryServicePane.prototype.shutdown = 
@@ -1342,6 +1345,19 @@ function sbLibraryServicePane_onBatchEnd(aMediaList) {
 
 }
 
+
+sbLibraryServicePane.prototype._initLibraryManager =
+function sbLibraryServicePane__initLibraryManager() {
+  // get the library manager
+  this._libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
+                           .getService(Ci.sbILibraryManager);
+
+  // register for notifications so that we can keep the service pane
+  // in sync with the the libraries
+  this._libraryManager.addListener(this);
+
+  this._addAllLibraries();
+}
 /////////////////
 // nsIObserver //
 /////////////////
@@ -1355,15 +1371,9 @@ function sbLibraryServicePane_observe(subject, topic, data) {
   if (topic == "songbird-library-manager-ready") {
     obs.removeObserver(this, "songbird-library-manager-ready");
 
-    // get the library manager
-    this._libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
-                             .getService(Ci.sbILibraryManager);
-
-    // register for notifications so that we can keep the service pane
-    // in sync with the the libraries
-    this._libraryManager.addListener(this);
-
-    this._addAllLibraries();
+    if (!this._libraryManager) {
+      this._initLibraryManager();
+    }
   }
   else if (topic == "songbird-library-manager-before-shutdown") {
     obs.removeObserver(this, "songbird-library-manager-before-shutdown");

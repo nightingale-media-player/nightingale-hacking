@@ -166,6 +166,7 @@
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
+        this.mService.init();
 
         while (this.mTree.database.GetDataSources().hasMoreElements()) {
           this.mTree.database.RemoveDataSource(

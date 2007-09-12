@@ -67,6 +67,9 @@ function sbBookmarks() {
   
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
+
+  this._importAttempts = 5;
+  this._importTimer = null;
 }
 sbBookmarks.prototype.QueryInterface = 
 function sbBookmarks_QueryInterface(iid) {
@@ -80,103 +83,161 @@ function sbBookmarks_QueryInterface(iid) {
 sbBookmarks.prototype.servicePaneInit = 
 function sbBookmarks_servicePaneInit(sps) {
   this._servicePane = sps;
-  var service = this;
   
-  // if we don't have a bookmarks node in the tree
+  // if we don't have a bookmarks node in the tree that has the Imported
+  // attribute...
   this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
-
-  if (!this._bookmarkNode) {
-    var prefsService =
-        Components.classes["@mozilla.org/preferences-service;1"].
-        getService(Components.interfaces.nsIPrefBranch);
-    var bookmarksURL = prefsService.getCharPref("songbird.url.bookmarks");
-    
-    // fetch the default set of bookmarks through a series of tubes
-    // FIXME: don't use XHR - use nsIChannel and friends
-    // FIXME: send parameters and/or headers to indicate product version or something
-    var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-        .createInstance(Ci.nsIDOMEventTarget);
-    xhr.addEventListener('load', function(evt) {
-      var root = xhr.responseXML.documentElement;
-      var folders = root.getElementsByTagName('folder');
-      for (var f=0; f<folders.length; f++) {
-        var folder = folders[f];
-        if (!folder.hasAttribute('id') ||
-            !folder.hasAttribute('name')) {
-          // the folder is missing required attributes, we must ignore it
-          continue;
-        }
-
-        var fnode = sps.getNode(folder.getAttribute('id'));
-        
-        if (!fnode) {
-          // if the folder doesn't exist, create it
-          fnode = service.addFolderAt(folder.getAttribute('id'),
-              folder.getAttribute('name'), folder.getAttribute('image'),
-              sps.root, null);
-        }
-        
-        fnode.isOpen = (folder.getAttribute('open') == 'true');
-        
-        if (fnode && fnode.getAttributeNS(BSP, 'Imported')) {
-          // don't reimport a folder that's already been imported
-          continue;
-        }
-        
-        if (fnode.id == ROOTNODE) {
-          // we just created the default bookmarks root
-          // we'll need that later if we want to let the user create
-          // their own bookmarks
-          service._bookmarkNode = fnode;
-        }
-        
-        // now, let's create what goes in
-        var bookmarks = folder.getElementsByTagName('bookmark');
-        for (var b=0; b<bookmarks.length; b++) {
-          var bookmark = bookmarks[b];
-          if (!bookmark.hasAttribute('url') ||
-              !bookmark.hasAttribute('name')) {
-            // missing required attributes
-            continue;
-          }
-          // If the bookmark already exists, then it's somewhere else
-          // in the tree and we should leave it there untouched.
-          // I think.
-          var bnode = sps.getNode(bookmark.getAttribute('url'));
-          if (bnode) {
-            continue;
-          }
-          // create the bookmark
-          bnode = service.addBookmarkAt(bookmark.getAttribute('url'),
-              bookmark.getAttribute('name'), bookmark.getAttribute('image'),
-              fnode, null);
-
-          // remember we imported it.
-          bnode.setAttributeNS(BSP, 'Imported', 'true');
-        }
-        
-        fnode.setAttributeNS(BSP, 'Imported', 'true');
-      }
-      
-      // try to import json bookmarks from 0.2.5
-      try {
-        service.migrateLegacyBookmarks();
-      } catch (e) {
-      }
-
-    }, false);
-    xhr.addEventListener('error', function(evt) {
-      // FIXME: handle errors. if we do nothing here then the user won't
-      //    have bookmarks, but when they start the app again it
-      //    will try to fetch them again.
-    }, false);
-    xhr.QueryInterface(Ci.nsIXMLHttpRequest);
-    xhr.open('GET', bookmarksURL, true);
-    xhr.send(null);
+  if (!this._bookmarkNode ||
+      this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {
+    // run the importer
+    this.importBookmarks();
   }
 
   var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
   this._stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
+}
+
+sbBookmarks.prototype.scheduleImportBookmarks =
+function sbBookmarks_scheduleImportBookmarks() {
+  this._importTimer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
+  this._importTimer.init(this, 5000, Ci.nsITimer.TYPE_ONE_SHOT);
+}
+
+sbBookmarks.prototype.observe = 
+function sbBookmarks_observe(subject, topic, data) {
+  if (topic == 'timer-callback' && subject == this._importTimer) {
+    // the bookmarks import timer
+    this._importTimer = null;
+    if (!this._servicePane) {
+      // hmm, we're shutting down, no need to import now
+      return;
+    }
+    this.importBookmarks();
+  }
+}
+
+sbBookmarks.prototype.importBookmarks =
+function sbBookmarks_importBookmarks() {
+  var prefsService =
+      Components.classes["@mozilla.org/preferences-service;1"].
+      getService(Components.interfaces.nsIPrefBranch);
+  var bookmarksURL = prefsService.getCharPref("songbird.url.bookmarks");
+  
+  // fetch the default set of bookmarks through a series of tubes
+  // FIXME: don't use XHR - use nsIChannel and friends
+  // FIXME: send parameters and/or headers to indicate product version or something
+  var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+      .createInstance(Ci.nsIDOMEventTarget);
+  var sps = this._servicePane;
+  var service = this;
+  function importError() {
+    service._importAttempts--;
+    if (service._importAttempts < 0) {
+      // we tried, but it's time to give up till the next time the player starts
+      // but first, let's create some default bookmarks to get us through
+      if (!service._bookmarkNode) {
+        // create bookmarks folder
+        service._bookmarkNode = service.addFolderAt('SB:Bookmarks',
+            '&servicesource.bookmarks', null, sps.root, null);
+      }
+      var default_bookmarks = [
+        {name:'Add-ons', url:'http://addons.songbirdnest.com/'},
+        {name:'Directory', url:'http://birdhouse.songbirdnest.com/directory'}];
+      for (var i=0; i<default_bookmarks.length; i++) {
+        var bm = default_bookmarks[i];
+        var bnode = sps.getNode(bm.url);
+        if (!bnode) {
+          service.addBookmarkAt(bm.url, bm.name, 
+            'chrome://songbird-branding/skin/logo_16.png', 
+            service._bookmarkNode, null);
+        }
+      }
+      
+      return;
+    }
+    service.scheduleImportBookmarks();
+  }
+  xhr.addEventListener('load', function(evt) {
+    var root = null;
+    try {
+      // a non-XML page will cause an exception here.
+      root = xhr.responseXML.documentElement;
+    } catch (e) {
+      // catch it and try again
+      importError();
+      return;
+    }
+    var folders = root.getElementsByTagName('folder');
+    for (var f=0; folders && f<folders.length; f++) {
+      var folder = folders[f];
+      if (!folder.hasAttribute('id') ||
+          !folder.hasAttribute('name')) {
+        // the folder is missing required attributes, we must ignore it
+        continue;
+      }
+
+      var fnode = sps.getNode(folder.getAttribute('id'));
+      
+      if (!fnode) {
+        // if the folder doesn't exist, create it
+        fnode = service.addFolderAt(folder.getAttribute('id'),
+            folder.getAttribute('name'), folder.getAttribute('image'),
+            sps.root, null);
+      }
+      
+      fnode.isOpen = (folder.getAttribute('open') == 'true');
+      
+      if (fnode && fnode.getAttributeNS(BSP, 'Imported')) {
+        // don't reimport a folder that's already been imported
+        continue;
+      }
+      
+      if (fnode.id == ROOTNODE) {
+        // we just created the default bookmarks root
+        // we'll need that later if we want to let the user create
+        // their own bookmarks
+        service._bookmarkNode = fnode;
+      }
+      
+      // now, let's create what goes in
+      var bookmarks = folder.getElementsByTagName('bookmark');
+      for (var b=0; bookmarks && b<bookmarks.length; b++) {
+        var bookmark = bookmarks[b];
+        if (!bookmark.hasAttribute('url') ||
+            !bookmark.hasAttribute('name')) {
+          // missing required attributes
+          continue;
+        }
+        // If the bookmark already exists, then it's somewhere else
+        // in the tree and we should leave it there untouched.
+        // Except that it should be marked as imported now...
+        var bnode = sps.getNode(bookmark.getAttribute('url'));
+        if (!bnode) {
+          // create the bookmark
+          bnode = service.addBookmarkAt(bookmark.getAttribute('url'),
+              bookmark.getAttribute('name'), bookmark.getAttribute('image'),
+              fnode, null);
+        }
+        // remember we imported it.
+        bnode.setAttributeNS(BSP, 'Imported', 'true');
+      }
+      
+      fnode.setAttributeNS(BSP, 'Imported', 'true');
+    }
+    
+    // try to import json bookmarks from 0.2.5
+    try {
+      service.migrateLegacyBookmarks();
+    } catch (e) {
+    }
+
+  }, false);
+  xhr.addEventListener('error', function(evt) {
+    importError();
+  }, false);
+  xhr.QueryInterface(Ci.nsIXMLHttpRequest);
+  xhr.open('GET', bookmarksURL, true);
+  xhr.send(null);
 }
 
 sbBookmarks.prototype.shutdown = 
@@ -184,6 +245,10 @@ function sbBookmarks_shutdown() {
   this._bookmarkNode = null;
   this._servicePane = null;
   this._stringBundle = null;
+  if (this._importTimer) {
+    this._importTimer.cancel();
+    this._importTimer = null;
+  }
 }
 
 sbBookmarks.prototype.getString =

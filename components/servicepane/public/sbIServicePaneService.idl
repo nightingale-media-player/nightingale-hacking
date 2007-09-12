@@ -171,6 +171,11 @@ interface sbIServicePaneService : nsISupports
    */
   readonly attribute sbIServicePaneNode root;
 
+  /**
+   * \brief Initialize the service. This may be called multiple times safely
+   */
+  void init();
+
   /* \brief Add a node to the tree
    * Create a new node and add it as a child of the specified parent. If a
    * child with the given id already exists then do not create it, and return

@@ -388,35 +388,33 @@ ServicePaneNode.prototype.clearNode = function () {
 
 
 function ServicePaneService () {
-  debug('ServicePaneService() starts\n');
-  // we want to wait till profile-after-change to initialize
+  DEBUG('ServicePaneService() starts');
+  this._initialized = false;
   var obsSvc = Cc['@mozilla.org/observer-service;1']
     .getService(Ci.nsIObserverService);
-  obsSvc.addObserver(this, 'profile-after-change', false);
   obsSvc.addObserver(this, 'quit-application', false);
-  debug('ServicePaneService() ends\n');
+  DEBUG('ServicePaneService() ends');
 }
 ServicePaneService.prototype.observe = /* for nsIObserver */
 function ServicePaneService_observe(subject, topic, data) {
-  debug('ServicePaneService.observe() begins\n');
-  if (topic == 'profile-after-change') {
-    // bwe only want this topic once so remove the observer
-    var obsSvc = Cc['@mozilla.org/observer-service;1']
-      .getService(Ci.nsIObserverService);
-    obsSvc.removeObserver(this, 'profile-after-change');
-    // the profile is loaded - initialize the service
-    this.init();
-  }
-  else if (topic == 'quit-application') {
+  DEBUG('ServicePaneService.observe() begins');
+  if (topic == 'quit-application') {
     var obsSvc = Cc['@mozilla.org/observer-service;1']
       .getService(Ci.nsIObserverService);
     obsSvc.removeObserver(this, 'quit-application');
     this.shutdown();
   }
-  debug('ServicePaneService.observe() ends\n');
+  DEBUG('ServicePaneService.observe() ends');
 }
 ServicePaneService.prototype.init = function ServicePaneService_init() {
-  debug('ServicePaneService.init() begins\n');
+  DEBUG('ServicePaneService.init() begins');
+
+  if (this._initialized) {
+    // already initialized
+    DEBUG('already initialized');
+    return;
+  }
+  this._initialized = true;
 
   var dirsvc = Cc['@mozilla.org/file/directory_service;1'].getService(Ci.nsIProperties);
 
@@ -466,21 +464,26 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   for(var i=0; i<module_keys.length; i++) {
     var key = module_keys[i];
     var contractid = catMgr.getCategoryEntry('service-pane', key);
-    debug ('sbSPS: trying to load contractid: '+contractid+'\n');
-    debug ('sbSPS: Cc[contractid]: '+Cc[contractid]+'\n');
+    DEBUG ('trying to load contractid: '+contractid);
+    DEBUG ('Cc[contractid]: '+Cc[contractid]);
     try {
       var module = Cc[contractid].getService(Ci.sbIServicePaneModule);
       module.servicePaneInit(this);
       this._modules.push(module);
     } catch (e) {
-      debug('ERROR CREATING SERVICE PANE MODULE: '+e);
+      DEBUG('ERROR CREATING SERVICE PANE MODULE: '+e);
     }
   }
-  debug('ServicePaneService.init() ends\n');
+  DEBUG('ServicePaneService.init() ends');
 }
 
 ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
-  debug('ServicePaneService.shutdown() begins\n');
+  DEBUG('ServicePaneService.shutdown() begins');
+
+  if (!this._initialized) {
+    // if we werent initialized, there's no need to shutdown
+    return;
+  }
 
   // Clear our array of service pane providers.  This is needed to break a
   // reference cycle between the provider and this service
@@ -500,16 +503,18 @@ ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
   this._root = null;
   this._dsSaver = null;
 
-  debug('ServicePaneService.shutdown() ends\n');
+  DEBUG('ServicePaneService.shutdown() ends');
 }
 
 // for sbIServicePaneService.dataSource
 ServicePaneService.prototype.__defineGetter__('dataSource', function () {
+  if (!this._initialized) { this.init(); }
   return this._dataSourceWrapped;
 });
 
 // for sbIServicePaneService.root
 ServicePaneService.prototype.__defineGetter__('root', function () { 
+  if (!this._initialized) { this.init(); }
   return this._root;
 });
 
@@ -525,6 +530,7 @@ function ServicePaneService_QueryInterface(iid) {
 }
 ServicePaneService.prototype.addNode =
 function ServicePaneService_addNode(aId, aParent, aContainer) {
+  if (!this._initialized) { this.init(); }
   DEBUG ('ServicePaneService.addNode('+aId+','+aParent+')');
 
   /* ensure the parent is supplied */
@@ -572,6 +578,7 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
 }
 ServicePaneService.prototype.removeNode =
 function ServicePaneService_removeNode(aNode) {
+  if (!this._initialized) { this.init(); }
   /* ensure the node is supplied*/
   if (aNode == null) {
     throw Ce('you need to supply a node to removeNode');
@@ -591,6 +598,7 @@ function ServicePaneService_removeNode(aNode) {
 }
 ServicePaneService.prototype.getNode =
 function ServicePaneService_getNode(aId) {
+  if (!this._initialized) { this.init(); }
   var resource = RDFSVC.GetResource(aId);
   /* ensure the node already exists */
   if (!this._dataSource.GetTargets(resource,
@@ -604,6 +612,7 @@ function ServicePaneService_getNode(aId) {
 
 ServicePaneService.prototype.getNodeForURL =
 function ServicePaneService_getNodeForURL(aURL) {
+  if (!this._initialized) { this.init(); }
   var ncURL = RDFSVC.GetResource(NC+"URL");
   var url = RDFSVC.GetLiteral(aURL);
   var target = this._dataSource.GetSource(ncURL, url, true);
@@ -617,6 +626,7 @@ function ServicePaneService_save() {
 
 ServicePaneService.prototype.fillContextMenu =
 function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
+  if (!this._initialized) { this.init(); }
   var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
     try {
@@ -632,6 +642,7 @@ function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
 
 ServicePaneService.prototype.fillNewItemMenu =
 function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
+  if (!this._initialized) { this.init(); }
   var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
     try {
@@ -647,6 +658,7 @@ function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
 
 ServicePaneService.prototype.onSelectionChanged =
 function ServicePaneService_onSelectionChanged(aId, aContainer, aParentWindow) {
+  if (!this._initialized) { this.init(); }
   var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
     try {
@@ -662,6 +674,7 @@ function ServicePaneService_onSelectionChanged(aId, aContainer, aParentWindow) {
 
 ServicePaneService.prototype._canDropReorder =
 function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
+  if (!this._initialized) { this.init(); }
   // see if we can handle the drag and drop based on node properties
   var types = [];
   if (aOrientation == 0) {
@@ -688,6 +701,7 @@ function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
 }
 ServicePaneService.prototype.canDrop =
 function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
+  if (!this._initialized) { this.init(); }
   var node = this.getNode(aId);
   if (!node) {
     return false;
@@ -709,6 +723,7 @@ function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
 }
 ServicePaneService.prototype.onDrop =
 function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
+  if (!this._initialized) { this.init(); }
   var node = this.getNode(aId);
   if (!node) {
     return;
@@ -778,6 +793,7 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
 }
 ServicePaneService.prototype.onDragGesture =
 function ServicePaneService_onDragGesture(aId, aTransferable) {
+  if (!this._initialized) { this.init(); }
   DEBUG('onDragGesture('+aId+', '+aTransferable+')');
   var node = this.getNode(aId);
   if (!node) {
@@ -831,6 +847,7 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
  */
 ServicePaneService.prototype.onRename =
 function ServicePaneService_onRename(aID, aNewName) {
+  if (!this._initialized) { this.init(); }
   var node = this.getNode(aID);
   if (!node || !node.editable) {
     return;
