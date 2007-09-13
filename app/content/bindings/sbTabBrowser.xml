@@ -1364,11 +1364,11 @@
           this._playlist.setAttribute('minheight', '0');
           this._playlist.setAttribute('columnSpec',
               SBProperties.ordinal + ' 20 a ' +
-              SBProperties.trackName + ' 395 ' +
+              SBProperties.trackName + ' 375 ' +
               SBProperties.duration + ' 50 ' +
               SBProperties.artistName + ' 222 ' +
               SBProperties.albumName + ' 222 ' +
-              SBProperties.genre + ' 70');
+              SBProperties.downloadButton + ' 90');
 
           // add some events, eh?
           this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
