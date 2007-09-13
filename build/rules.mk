@@ -218,6 +218,22 @@ clean:: $(clean_targets) \
         $(NULL)
 
 #------------------------------------------------------------------------------
+# Redefine these for extensions
+#------------------------------------------------------------------------------
+
+ifdef EXTENSION_STAGE_DIR
+
+SONGBIRD_CHROMEDIR        = $(EXTENSION_STAGE_DIR)/chrome
+SONGBIRD_COMPONENTSDIR    = $(EXTENSION_STAGE_DIR)/components
+SONGBIRD_DEFAULTSDIR      = $(EXTENSION_STAGE_DIR)/defaults
+SONGBIRD_PREFERENCESDIR   = $(EXTENSION_STAGE_DIR)/defaults/preferences
+SONGBIRD_PLUGINSDIR       = $(EXTENSION_STAGE_DIR)/plugins
+SONGBIRD_SEARCHPLUGINSDIR = $(EXTENSION_STAGE_DIR)/searchplugins
+SONGBIRD_SCRIPTSDIR       = $(EXTENSION_STAGE_DIR)/scripts
+
+endif
+
+#------------------------------------------------------------------------------
 # Update Makefiles
 #------------------------------------------------------------------------------
 
@@ -574,7 +590,7 @@ endif #XPIDL_MODULE
 
 ifdef SUBDIRS
 
-make_subdirs: $(SUBDIRS)
+make_subdirs: make_ext_stage $(SUBDIRS)
 
 # Hacky McHack says "ours goes to 13" - and find a better way
 ifdef SUBDIRDEPS
@@ -659,6 +675,9 @@ endif #CLONEDIR
 
 ifdef SONGBIRD_DIST
 copy_sb_dist:
+ifeq (,$(wildcard $(SONGBIRD_DISTDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
@@ -667,6 +686,9 @@ endif #SONGBIRD_DIST
 
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
+ifeq (,$(wildcard $(SONGBIRD_CHROMEDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_CHROMEDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
@@ -675,6 +697,9 @@ endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
+ifeq (,$(wildcard $(SONGBIRD_COMPONENTSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_COMPONENTSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
@@ -683,6 +708,9 @@ endif #SONGBIRD_COMPONENTS
 
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
+ifeq (,$(wildcard $(SONGBIRD_DEFAULTSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DEFAULTSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS
@@ -691,6 +719,9 @@ endif #SONGBIRD_DEFAULTS
 
 ifdef SONGBIRD_DOCUMENTATION
 copy_sb_documentation:
+ifeq (,$(wildcard $(SONGBIRD_DOCUMENTATIONDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DOCUMENTATIONDIR)
+endif
 	for file in $(SONGBIRD_DOCUMENTATION); do \
   	$(CYGWIN_WRAPPER) $(CP) -dfp $(srcdir)/$$file $(SONGBIRD_DOCUMENTATIONDIR); \
   done
@@ -708,6 +739,9 @@ endif #SONGBIRD_DOCUMENTATION
 
 ifdef SONGBIRD_INSTALLER
 copy_sb_installer:
+ifeq (,$(wildcard $(SONGBIRD_INSTALLERDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_INSTALLERDIR)
+endif
 	for file in $(SONGBIRD_INSTALLER); do \
   	$(CYGWIN_WRAPPER) $(CP) -dfp $(srcdir)/$$file $(SONGBIRD_INSTALLERDIR); \
   done
@@ -726,6 +760,9 @@ endif #SONGBIRD_INSTALLER
 ifdef SONGBIRD_PREFS
 songbird_pref_files := $(addprefix $(srcdir)/,$(SONGBIRD_PREFS))
 copy_sb_prefs:
+ifeq (,$(wildcard $(SONGBIRD_PREFERENCESDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(songbird_pref_files) $(SONGBIRD_PREFERENCESDIR)
 .PHONY : copy_sb_prefs
 endif #SONGBIRD_PREFS
@@ -734,6 +771,9 @@ endif #SONGBIRD_PREFS
 
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
+ifeq (,$(wildcard $(SONGBIRD_PLUGINSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_PLUGINSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
@@ -742,7 +782,9 @@ endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_SEARCHPLUGINS
 copy_sb_searchplugins:
+ifeq (,$(wildcard $(SONGBIRD_SEARCHPLUGINSDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_SEARCHPLUGINSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_SEARCHPLUGINS) $(SONGBIRD_SEARCHPLUGINSDIR)
 .PHONY : copy_sb_searchplugins
 endif #SONGBIRD_SEARCHPLUGINS
@@ -751,6 +793,9 @@ endif #SONGBIRD_SEARCHPLUGINS
 
 ifdef SONGBIRD_SCRIPTS
 copy_sb_scripts:
+ifeq (,$(wildcard $(SONGBIRD_SCRIPTSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_SCRIPTSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_SCRIPTS) $(SONGBIRD_SCRIPTSDIR)
 .PHONY : copy_sb_scripts
 endif #SONGBIRD_SCRIPTS
@@ -763,7 +808,9 @@ SONGBIRD_TESTSDIR := $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
 endif #SONGBIRD_TEST_COMPONENT
 copy_sb_tests:
 ifneq (,$(SB_ENABLE_TESTS))
+ifeq (,$(wildcard $(SONGBIRD_TESTSDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_TESTSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
 endif
 .PHONY : copy_sb_tests
@@ -773,6 +820,9 @@ endif #SONGBIRD_TESTS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
+ifeq (,$(wildcard $(SONGBIRD_VLCPLUGINSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_VLCPLUGINSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
@@ -781,6 +831,9 @@ endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
+ifeq (,$(wildcard $(SONGBIRD_XULRUNNERDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_XULRUNNERDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
@@ -789,6 +842,9 @@ endif #SONGBIRD_XULRUNNER
 
 ifdef SONGBIRD_CONTENTS
 copy_sb_macoscontents:
+ifeq (,$(wildcard $(SONGBIRD_CONTENTSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_CONTENTSDIR)
+endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_CONTENTS) $(SONGBIRD_CONTENTSDIR)
 .PHONY : copy_sb_macoscontents
 endif #SONGBIRD_CONTENTS
@@ -906,29 +962,21 @@ endif #INSTALLER_PREPROCESS
 
 ifdef JAR_MANIFEST
 
+ifdef EXTENSION_STAGE_DIR
+JAR_IS_EXTENSION = 1
+endif
+
 # Extension jars need to go to the extensions subdirectory of the xulrunner
 # folder. Otherwise everything goes into the chrome directory.
-
-MANIFEST_MOVE_CMD = $(CYGWIN_WRAPPER) $(MV) -f \
-                      $(TARGET_DIR)/../chrome.manifest \
-                      $(TARGET_DIR)/ \
-                      $(NULL)
 
 # Allow this to be overridden
 ifdef JAR_TARGET_DIR
 TARGET_DIR = $(JAR_TARGET_DIR)
 else
 ifdef JAR_IS_EXTENSION
-TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/.package
-EXTENSION_PACKAGING_CMD = $(CYGWIN_WRAPPER) $(RM) -rf \
-                            $(TARGET_DIR)/../$(EXTENSION_UUID) && \
-                            $(CYGWIN_WRAPPER) $(MV) -f \
-                            $(TARGET_DIR) \
-                            $(TARGET_DIR)/../$(EXTENSION_UUID) \
-                            $(NULL)
+TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)/chrome
 else
 TARGET_DIR = $(SONGBIRD_CHROMEDIR)
-MANIFEST_MOVE_CMD =
 endif
 endif
 
@@ -1019,12 +1067,11 @@ ifneq (,$(jar_mn_in_exists))
 endif
 
 make_jar: $(JAR_MANIFEST)
-	@$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
-	@$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
+	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
       $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(jar_manifest_file)
 	@$(CYGWIN_WRAPPER) $(RM) -rf $(TARGET_DIR)/stage
-	@$(MANIFEST_MOVE_CMD)
-	@$(EXTENSION_PACKAGING_CMD)
+
 
 clean_jar_postprocess:
 	$(CYGWIN_WRAPPER) $(RM) -f ./$(JAR_MANIFEST)
@@ -1067,6 +1114,13 @@ endif
 #              INSTALL_EXTENSION - whether or not to install the XPI
 #
 #            Note that INSTALL_EXTENSION requires that EXTENSION_UUID be set
+
+make_ext_stage:
+ifdef EXTENSION_STAGE_DIR
+ifneq (clean,$(MAKECMDGOALS))
+	$(MKDIR) -p $(EXTENSION_STAGE_DIR)
+endif
+endif
 
 ifdef XPI_NAME
 

@@ -1,11 +1,6 @@
 rubberducky.jar:
-#ifdef USING_FLAT_JARS
-% skin  songbird  rubberducky/0.2  rubberducky/feathers/rubberducky/songbird/skin/
-% skin  rubberducky  rubberducky/0.2  rubberducky/feathers/rubberducky/songbird/skin/
-#else
-% skin  songbird  rubberducky/0.2  jar:rubberducky.jar!/feathers/rubberducky/songbird/skin/
-% skin  rubberducky  rubberducky/0.2  jar:rubberducky.jar!/feathers/rubberducky/songbird/skin/
-#endif
+% skin  songbird  rubberducky/0.2  %feathers/rubberducky/songbird/skin/
+% skin  rubberducky  rubberducky/0.2  %feathers/rubberducky/songbird/skin/
 % skin  global  rubberducky/0.2  chrome://songbird-global/skin/
 @include_all_to feathers/rubberducky/songbird/
 

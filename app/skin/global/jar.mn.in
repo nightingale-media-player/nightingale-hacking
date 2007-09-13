@@ -1,8 +1,4 @@
 songbird.jar:
-#ifdef USING_FLAT_JARS
-% skin  songbird-global classic/1.0  songbird/skin/global/
-#else
-% skin  songbird-global  classic/1.0  jar:songbird.jar!/skin/global/
-#endif
+% skin  songbird-global classic/1.0  %skin/global/
 @include_all_to skin/global/
 *       skin/global/wizard.css                      (wizard.css)

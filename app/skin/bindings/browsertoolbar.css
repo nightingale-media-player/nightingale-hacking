@@ -27,11 +27,16 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 WEB TOOLBAR IMAGES
-***************************************************************************************************
+
+Applies images to the toolbar buttons in browserToolbarOverlay.xul.  
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */
 
+/** The back button **/
 #back-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
@@ -49,6 +54,9 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 16px 48px 0px);
 }
+
+
+/** The reload button **/
 #reload-button,
 .sb-browser-stopreload-reload-button
 {
@@ -70,6 +78,9 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 48px 48px 32px);
 }
+
+
+/** The stop button **/
 #stop-button,
 .sb-browser-stopreload-stop-button
 {
@@ -91,6 +102,9 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 64px 48px 48px);
 }
+
+
+/** The forward button **/
 #forward-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
@@ -108,6 +122,9 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 32px 48px 16px);
 }
+
+
+/** The home button **/
 #home-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
@@ -125,6 +142,9 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 80px 48px 64px);
 }
+
+
+/** The bookmark button **/
 #bookmark-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);

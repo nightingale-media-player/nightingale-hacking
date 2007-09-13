@@ -57,6 +57,9 @@ sbTestHarness.prototype = {
 
   // list of all tests that failed
   mFailedTests: null,
+  
+  // number of tests that have been successfully completed
+  mTestCount: 0,
 
   // toplevel default files to always attempt to load
   mHeadSongbird : null,
@@ -241,6 +244,8 @@ sbTestHarness.prototype = {
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
 
+        this.mTestCount++;
+
         // reset the name
         _test_name = "sbTestHarness";
 
@@ -254,9 +259,13 @@ sbTestHarness.prototype = {
         log("[Test Harness] - " + this.mFailedTests[index]);
       log("\n\n");
     }
+    else if (this.mTestCount > 0) {
+      log("\n\n");
+      log("[Test Harness] *** ALL TESTS PASSED\n\n");    
+    }
     else {
       log("\n\n");
-      log("[Test Harness] *** ALL TESTS PASSED\n\n");
+      log("[Test Harness] *** NO TESTS FOUND\n\n");
     }
 
     consoleService.unregisterListener(consoleListener);

@@ -1,9 +1,5 @@
 songbird.jar:
-#ifdef USING_FLAT_JARS
-% content  songbird  songbird/content/songbird/
-#else
-% content  songbird  jar:songbird.jar!/content/songbird/
-#endif
+% content  songbird  %content/songbird/
 @include_all_to content/songbird/feathers/basic-layouts/
 * content/songbird/feathers/basic-layouts/xul/mainwin.xul              (xul/mainwin.xul)
 

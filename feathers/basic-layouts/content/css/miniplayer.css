@@ -58,10 +58,6 @@ window#mini
   background-color: #313131 !important;  /** Match the Main Window */
   padding: 0px 0px 0px 0px !important;
   height: 22px;
-  
-  /** HACK! Without this line the desktop will show through around all text.
-      See Mozilla bug 371919. Remove ASAP. */
-  -moz-opacity: 0.99; 
 }
 
 /* the horizontal resizers */

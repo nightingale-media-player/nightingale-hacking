@@ -1,9 +1,5 @@
 songbird.jar:
-#ifdef USING_FLAT_JARS
-% content  songbird  songbird/content/songbird/
-#else
-% content  songbird  jar:songbird.jar!/content/songbird/
-#endif
+% content  songbird  %content/songbird/
 % overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/mainOverlay.xul
 % overlay chrome://browser/content/preferences/permissions.xul               chrome://songbird/content/xul/preferences/permissionsOverlay.xul
 % overlay chrome://mozapps/content/extensions/extensions.xul                 chrome://songbird/content/xul/extensionManagerOverlay.xul

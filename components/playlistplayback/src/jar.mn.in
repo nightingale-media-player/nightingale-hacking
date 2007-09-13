@@ -1,9 +1,5 @@
 songbird.jar:
-#if USING_FLAT_JARS
-% content  songbird  songbird/content/songbird/
-#else
-% content  songbird  jar:songbird.jar!/content/songbird/
-#endif
+% content  songbird  %content/songbird/
 # XXXben Swap this block with the next for the new QuickTime core.
 #if 0
   content/songbird/scripts/coreQuickTime.js       (coreQuickTime.js)
