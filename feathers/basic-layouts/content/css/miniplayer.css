@@ -82,7 +82,7 @@ sb-feathers-toggle-button.miniplayer
 /* Close Window */
 sb-sys-close-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) !important;
+  list-style-image: url(chrome://songbird/skin/miniplayer/close.png) !important;
   -moz-image-region: auto;
    margin: 0px 10px 0px 7px !important;
 }

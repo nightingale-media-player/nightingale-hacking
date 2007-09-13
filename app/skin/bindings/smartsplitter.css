@@ -74,7 +74,7 @@ sb-smart-splitter
 splitter:not([orient="vertical"])[state="collapsed"],
 sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 {
-  background: url(chrome://songbird/skin/splitter/grippy_collapsed_vertical.png) transparent no-repeat center;
+  background: url(chrome://songbird/skin/splitter/grippy-collapsed-vertical.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }
@@ -83,7 +83,7 @@ sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 splitter[state="collapsed"][orient="vertical"],
 sb-smart-splitter[state="collapsed"][orient="vertical"]
 {
-  background: url(chrome://songbird/skin/splitter/grippy_collapsed_horizontal.png) transparent no-repeat center;
+  background: url(chrome://songbird/skin/splitter/grippy-collapsed-horizontal.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }
