@@ -80,6 +80,7 @@ function setup() {
   servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
                           .getService(Components.interfaces.sbIServicePaneService);
   assertNotEqual(servicePane, null);
+  servicePane.init();
 
   libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
                                  .getService(Components.interfaces.sbILibraryServicePaneService);

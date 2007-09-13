@@ -30,6 +30,11 @@
 
 
 function runTest () {
+  // initialize the service pane first. this is what happens in real life.
+  // otherwise the bookmarks service crashes
+  var SPS = Components.classes['@songbirdnest.com/servicepane/service;1'].getService(Components.interfaces.sbIServicePaneService);
+  SPS.init();
+  
   var BMS = Components.classes['@songbirdnest.com/servicepane/bookmarks;1'].getService(Components.interfaces.sbIBookmarks);
   
   // okay, did we get it?

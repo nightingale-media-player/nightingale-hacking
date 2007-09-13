@@ -84,11 +84,16 @@ sbBookmarks.prototype.servicePaneInit =
 function sbBookmarks_servicePaneInit(sps) {
   this._servicePane = sps;
   
-  // if we don't have a bookmarks node in the tree that has the Imported
-  // attribute...
+  // if we don't have a bookmarks node, lets create one
   this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
-  if (!this._bookmarkNode ||
-      this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {
+  if (!this._bookmarkNode) {
+    // create bookmarks folder
+    this._bookmarkNode = this.addFolderAt('SB:Bookmarks',
+        '&servicesource.bookmarks', null, sps.root, null);
+  }
+    
+  // if the bookmark node doesn't have the Imported attribute set, lets do an import
+  if (this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {
     // run the importer
     this.importBookmarks();
   }
@@ -135,11 +140,6 @@ function sbBookmarks_importBookmarks() {
     if (service._importAttempts < 0) {
       // we tried, but it's time to give up till the next time the player starts
       // but first, let's create some default bookmarks to get us through
-      if (!service._bookmarkNode) {
-        // create bookmarks folder
-        service._bookmarkNode = service.addFolderAt('SB:Bookmarks',
-            '&servicesource.bookmarks', null, sps.root, null);
-      }
       var default_bookmarks = [
         {name:'Add-ons', url:'http://addons.songbirdnest.com/'},
         {name:'Directory', url:'http://birdhouse.songbirdnest.com/directory'}];
