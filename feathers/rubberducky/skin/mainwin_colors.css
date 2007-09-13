@@ -151,6 +151,7 @@ It serves as the primary GUI entry point to content and services.
   margin-right: -1px;
 }
 
+.servicepane_tree > treechildren::-moz-tree-cell-text( selected ),
 .servicepane_tree
 {
   color: #B3BAAC; /** Light Color 1 */
@@ -166,19 +167,18 @@ It serves as the primary GUI entry point to content and services.
   border: none;
 }
 
-.servicepane_tree > treechildren::-moz-tree-row( selected )
+/** Since it will be a difficult task to keep 
+the service pane and the browser in sync, 
+we should nix the painting of the selection.*/
+
+/**.servicepane_tree > treechildren::-moz-tree-row( selected )
 {
   -moz-border-radius-topright: 2px;
   -moz-border-radius-topleft: 1px;
   -moz-border-radius-bottomright: 2px;
   -moz-border-radius-bottomleft: 1px;
-  background-color: #8A8F84; /** Light Color 2 */
-}
-
-.servicepane_tree > treechildren::-moz-tree-cell-text( selected )
-{
-  color: #0f100f; /** Groove */
-}
+  background-color: #8A8F84;  Light Color 2 
+}*/
 
 .servicepane_tree > treechildren::-moz-tree-row( dropOn ),
 .servicepane_tree > treechildren::-moz-tree-row( dropBefore ),
@@ -509,6 +509,13 @@ treechildren::-moz-tree-column(insertbefore)
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton, button )
 {
   color: #feffff; /** Light Color Brightest */
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
+{
+  color: #feffff !important; /** Light Color Brightest */
 }
 
 /** 
@@ -874,8 +881,12 @@ THE STATUS PANE
 */ 
 
 sb-status-progressmeter { 
-  background-color: #0f100f; /** Groove  */
-  color: #feffff !important; /** Light Color Brightest */ 
+  background-color: transparent;
+  color: #feffff !important; /** Light Color Brightest */
+  border-top: 1px solid #0f100f; /** Groove  */
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
+  border-right: 1px solid #202220; /** Button Shadow */ 
 } 
 
 sb-status-progressmeter .progress-bar { 
