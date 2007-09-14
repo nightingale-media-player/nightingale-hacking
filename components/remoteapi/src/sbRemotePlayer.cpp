@@ -1033,6 +1033,21 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
   aEvent->GetType(type);
   if ( type.EqualsLiteral("unload") ) {
     nsresult rv;
+    
+    // check if this is the right document being unloaded (yay tabs)
+    nsCOMPtr<nsIDOMNSEvent> nsEvent( do_QueryInterface( aEvent, &rv ) );
+    if ( NS_FAILED(rv) )
+      return NS_OK;
+
+    nsCOMPtr<nsIDOMEventTarget> originalEventTarget;
+    rv = nsEvent->GetOriginalTarget( getter_AddRefs(originalEventTarget) );
+    NS_ENSURE_SUCCESS( rv, rv );
+    
+    if ( !SameCOMIdentity( originalEventTarget, mContentDoc ) ) {
+      // not the content doc we're interested in
+      return NS_OK;
+    }
+    
     nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
     NS_ENSURE_STATE(eventTarget);
     rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("unload"),
