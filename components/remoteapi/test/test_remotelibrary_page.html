@@ -74,10 +74,12 @@ function runTest(tester) {
 
     var list;
     siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
-                                   function(mediaList) { list = mediaList; });
-    tester.sleep(2000);
-    tester.assertEqual(list.length, 4);
-
+                                   function(mediaList) { var test = tester;
+                                                         list = mediaList;
+                                                         test.testFinished();
+                                                         test.assertEqual(list.length, 3);
+                                                         test = null });
+    tester.testPending(); 
   } catch (e) {
     tester.endRemoteAPITest(e);
   }
