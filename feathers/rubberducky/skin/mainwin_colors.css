@@ -485,25 +485,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #B3BAAC; /** Light Color 1 */
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-progressmeter( odd )
-{
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #B3BAAC; /** Light Color 1 */
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected )
-{
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Groove */
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
-{
-  background-color: #8A8F84; /** Light Color 2 */
+  color: #474948; /** Rubber Highlight */
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton, button )

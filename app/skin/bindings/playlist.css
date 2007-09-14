@@ -164,14 +164,12 @@ playlist > stack > vbox
        background-image: url(chrome://songbird/skin/tree/button/button_right.png);
        background-position:100% -36px;
        background-repeat:no-repeat;
-       padding:1px 12px 3px 0 ! important;
        margin:0 0 0 13px ! important;
-       color:black ! important;
+       padding:3px 14px 4px 0 ! important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button selected )
 {
-       color:black ! important;
 }
 
 /* button hover state */
@@ -192,8 +190,7 @@ playlist > stack > vbox
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
 {
        background-position:100% 0px;
-       color:black ! important;
-       padding:2px 12px 2px 0 ! important;
+       padding:4px 14px 3px 0 ! important;
 }
 
 /* button disabled state */
@@ -204,7 +201,6 @@ playlist > stack > vbox
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled )
 {
        background-position:100% -54px;
-       color:rgb(160,160,160) !important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-image( image )
@@ -228,7 +224,6 @@ playlist > stack > vbox
        background-image:url(chrome://songbird/skin/tree/download/remain.png);
        border: none !important;
        background-color:none !important;
-       color: #474948 !important; /** Rubber Highlight */
        padding:0 ! important;
        margin:5px 0 ! important;
 }
