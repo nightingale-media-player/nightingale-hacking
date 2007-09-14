@@ -77,6 +77,14 @@
                 boolean="true"
                 inverted="true" />
     </command>
+
+    <command id="cmd_bm_newlinkedplaylist"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
+      <observes type="dataremote"
+                key="browser.canlinkedplaylist" 
+                attribute="disabled" 
+                boolean="true"
+                inverted="true" />  
+    </command>
   </commandset>
   
   <broadcasterset id="mainBroadcasterSet">

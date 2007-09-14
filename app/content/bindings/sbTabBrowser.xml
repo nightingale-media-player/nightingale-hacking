@@ -525,6 +525,9 @@
               this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
               
             }
+
+            SBDataSetBoolValue('browser.canlinkedplaylist',
+                               this.mCurrentTab.outerPlaylistShowing);
           }
           catch ( err )
           {

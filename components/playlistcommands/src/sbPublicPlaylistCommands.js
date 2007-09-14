@@ -97,7 +97,6 @@ PublicPlaylistCommands.prototype = {
   m_cmd_Remove                    : null, // remove the selected track(s)
   m_cmd_Edit                      : null, // edit the selected track(s)
   m_cmd_Download                  : null, // download the selected track(s)
-  m_cmd_Subscribe                 : null, // subscribe to the currently displayed site
   m_cmd_AddToLibrary              : null, // add the selection to the library
   m_cmd_CopyTrackLocation         : null, // copy the select track(s) location(s)
   m_cmd_ShowDownloadPlaylist      : null, // switch the outer playlist container to the download playlist
@@ -284,29 +283,6 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Download.setCommandEnabledCallback(null,
                                                   "library_cmd_download",
                                                   plCmd_IsAnyTrackSelected);
-    
-    // --------------------------------------------------------------------------
-    // The SUBSCRIBE button
-    // --------------------------------------------------------------------------
-
-    this.m_cmd_Subscribe = new PlaylistCommandsBuilder();
-
-    this.m_cmd_Subscribe.appendAction(null, 
-                                      "library_cmd_subscribe",
-                                      "&command.subscribe",
-                                      "&command.tooltip.subscribe",
-                                      plCmd_Subscribe_TriggerCallback);
-
-    this.m_cmd_Subscribe.setCommandShortcut(null,
-                                            "library_cmd_subscribe",
-                                            "&command.shortcut.key.subscribe",
-                                            "&command.shortcut.keycode.subscribe",
-                                            "&command.shortcut.modifiers.subscribe",
-                                            true);
-
-    this.m_cmd_Subscribe.setCommandEnabledCallback(null,
-                                                   "library_cmd_subscribe",
-                                                   plCmd_CanSubscribe);
 
     // --------------------------------------------------------------------------
     // The ADDTOLIBRARY button
@@ -540,7 +516,6 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
-    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SUBSCRIBE, this.m_cmd_Subscribe);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -597,9 +572,6 @@ PublicPlaylistCommands.prototype = {
     this.m_webPlaylistCommands.appendPlaylistCommands(null, 
                                                       "library_cmdobj_download",
                                                       this.m_cmd_Download);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
-                                                      "library_cmdobj_subscribe",
-                                                      this.m_cmd_Subscribe);
     this.m_webPlaylistCommands.appendPlaylistCommands(null, 
                                                       "library_cmdobj_addtoplaylist",
                                                       SBPlaylistCommand_AddToPlaylist);
@@ -695,7 +667,6 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SUBSCRIBE, this.m_cmd_Subscribe);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -753,7 +724,6 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Remove.shutdown();
     this.m_cmd_Edit.shutdown();
     this.m_cmd_Download.shutdown();
-    this.m_cmd_Subscribe.shutdown();
     this.m_cmd_AddToLibrary.shutdown();
     this.m_cmd_CopyTrackLocation.shutdown();
     this.m_cmd_ShowDownloadPlaylist.shutdown();
@@ -871,17 +841,6 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
   catch( err )          
   {
     LOG( "plCmd_Download_TriggerCallback Error:" + err );
-  }
-}
-
-// Called when the subscribe action is triggered
-function plCmd_Subscribe_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
-  // Bring up the subscribe dialog with the web playlist url
-  // XXX this should instead extract the url from an #originPage property on the list
-  var window = unwrap(aContext.window);
-  var browser = window.gBrowser;
-  if (browser) {
-    window.SBSubscribe(null, browser.currentURI); 
   }
 }
 
@@ -1069,12 +1028,6 @@ function plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
   return (medialist.library != medialist);
-}
-
-// Returns true if the conditions are ok for subscribing to a page
-function plCmd_CanSubscribe(aContext, aSubMenuId, aCommandId, aHost) {
-  return plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) &&
-        plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost);
 }
 
 // Returns true if the conditions are ok for adding tracks to the library
