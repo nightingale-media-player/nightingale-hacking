@@ -1277,10 +1277,10 @@ checkbox[disabled="true"] {
 /* ::::: checkmark image ::::: */
 
 .checkbox-check {
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
+  border-bottom: 1px solid #797f76; /** Button Highlight */
+  border-left: 1px solid  #202220; /** Button Shadow */ 
+  border-top: 1px solid  #202220; /** Button Shadow */ 
+  border-right: 1px solid  #202220; /** Button Shadow */
   background-color: #0f100f; /** Groove */  
 }
 
