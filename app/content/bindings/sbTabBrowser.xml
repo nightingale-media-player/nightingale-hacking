@@ -2007,6 +2007,8 @@
         Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                   .getService(Components.interfaces.sbIMediaListViewMap)
                   .releaseViews(event.target.linkedBrowser);
+        // save the tab state soon
+        setTimeout("window.gBrowser.saveTabState();", 100);
       ]]></handler>
 
       <handler event="dragenter"><![CDATA[
