@@ -1,27 +1,26 @@
-? bug392909-symbol-cleanup.patch
 Index: Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/Makefile.in,v
-retrieving revision 1.390
-diff -u -p -r1.390 Makefile.in
---- Makefile.in	21 Aug 2007 21:52:54 -0000	1.390
-+++ Makefile.in	31 Aug 2007 18:47:15 -0000
-@@ -173,16 +173,14 @@ ifdef MOZ_CRASHREPORTER
+retrieving revision 1.391
+diff -u -p -r1.391 Makefile.in
+--- Makefile.in	10 Sep 2007 17:36:17 -0000	1.391
++++ Makefile.in	14 Sep 2007 17:11:15 -0000
+@@ -176,16 +176,14 @@ ifdef MOZ_CRASHREPORTER
  	  $(MAKE_SYM_STORE_PATH) >                                    \
- 	  $(DIST)/crashreporter-symbols/$(BUILDID)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_ARCH)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
+ 	  $(DIST)/crashreporter-symbols/$(BUILDID)/$(SYMBOL_ARCHIVE_BASENAME)-symbols.txt
  	echo packing symbols
 -	mkdir -p $(topsrcdir)/../$(BUILDID)
  	cd $(DIST)/crashreporter-symbols/$(BUILDID) && \
-           zip -r9D ../crashreporter-symbols-$(BUILDID).zip .
--	mv $(DIST)/crashreporter-symbols/crashreporter-symbols-$(BUILDID).zip \
+           zip -r9D ../crashreporter-symbols-$(SYMBOL_ARCHIVE_BASENAME).zip .
+-	mv $(DIST)/crashreporter-symbols/crashreporter-symbols-$(SYMBOL_ARCHIVE_BASENAME).zip \
 -          $(topsrcdir)/../$(BUILDID)
  endif # MOZ_CRASHREPORTER
  
  uploadsymbols:
  ifdef MOZ_CRASHREPORTER
--	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh $(topsrcdir)/../$(BUILDID)/crashreporter-symbols-$(BUILDID).zip
-+	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh \
-+    $(DIST)/crashreporter-symbols/crashreporter-symbols-$(BUILDID).zip
+-	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh $(topsrcdir)/../$(BUILDID)/crashreporter-symbols-$(SYMBOL_ARCHIVE_BASENAME).zip
++ 	$(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.sh \
++          $(DIST)/crashreporter-symbols/crashreporter-symbols-$(SYMBOL_ARCHIVE_BASENAME).zip
  endif
  
  ifeq ($(OS_ARCH),WINNT)
