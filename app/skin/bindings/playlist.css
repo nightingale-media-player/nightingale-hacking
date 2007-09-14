@@ -234,7 +234,7 @@ playlist > stack > vbox
 }
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted)
 {
-       background: url(chrome://songbird/skin/tree/download/not_started.png);
+       background: url(chrome://songbird/skin/tree/download/not-started.png);
        background-position:left center;
        background-repeat:repeat-x;
 }

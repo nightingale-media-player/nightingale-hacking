@@ -205,11 +205,11 @@ Mute and Slider
 
 .sb-player-mute-button-muteoff > .clickhold-button
 {
-  list-style-image: url(chrome://songbird/skin/volume/mute_off.png);
+  list-style-image: url(chrome://songbird/skin/volume/mute-off.png);
 }
 .sb-player-mute-button-muteon > .clickhold-button
 {
-  list-style-image: url(chrome://songbird/skin/volume/mute_on.png);
+  list-style-image: url(chrome://songbird/skin/volume/mute-on.png);
 }
 
 sb-player-mute-button {
@@ -239,14 +239,14 @@ thumb.sb-player-volume-slider
 {
   width: 14px;
   height: 14px;
-  background-image: url(chrome://songbird/skin/volume/volume_thumb.png);
+  background-image: url(chrome://songbird/skin/volume/volume-thumb.png);
   background-repeat: no-repeat;
   background-position: center center;
   border: none;
 }
 thumb.sb-player-volume-slider:active
 {
-  background-image: url(chrome://songbird/skin/volume/volume_thumb_active.png);
+  background-image: url(chrome://songbird/skin/volume/volume-thumb-active.png);
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -265,7 +265,7 @@ progressmeter.sb-player-volume-slider > .progress-remainder
     
 slider.sb-player-volume-slider
 {
-  background-image: url(chrome://songbird/skin/volume/volume_progress-slider-bkgd.png);
+  background-image: url(chrome://songbird/skin/volume/volume-progress-slider-bkgd.png);
   background-position: left center;
   background-repeat: no-repeat;
   height: 22px !important;
@@ -277,7 +277,7 @@ slider.sb-player-volume-slider
 
 progressmeter.sb-player-volume-slider
 {
-  background-image: url(chrome://songbird/skin/volume/volume_progressmeter-bkgd.png);
+  background-image: url(chrome://songbird/skin/volume/volume-progressmeter-bkgd.png);
   background-position: right center;
   height: 22px !important;
   border: none;
