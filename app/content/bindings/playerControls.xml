@@ -1489,7 +1489,10 @@
 
               if ( length > 0 ) {
                 // display media list length
-                displayValue = SBString("faceplate.items", "items") + ': ' + length;
+                var displayFormat = SBString("faceplate.itemsformat." + length,
+                        SBString("faceplate.itemsformat", "%s items"));
+
+                displayValue = displayFormat.replace('%s', length);
               }
             }
             var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
