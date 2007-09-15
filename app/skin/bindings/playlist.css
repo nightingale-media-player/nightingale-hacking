@@ -148,9 +148,6 @@ playlist > stack > vbox
   background-image: url(chrome://songbird/skin/tree/stars/5.png);
 }
 
-/* sample code to make all of the playlist cells looks like buttons */
-/* now uses only 2 images and the buttons scale with the text - yay */
-
 /* button default state and baseline */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button )
 {
@@ -203,17 +200,25 @@ playlist > stack > vbox
        background-position:100% -54px;
 }
 
+/* clickable image */
+.sb-playlist-tree > treechildren::-moz-tree-cell( image )
+{
+       padding:0px ! important;
+       margin:0px ! important;
+}
 .sb-playlist-tree > treechildren::-moz-tree-image( image )
 {
-       padding:0 0 0 0 ! important;
+       padding:1px 1px 1px 1px ! important;
+       margin:0 ! important;
+       /* ALWAYS resize the image to 16px high because max-height wont work */
+       height:16px;
 }
-
-.sb-playlist-tree > treechildren::-moz-tree-image( image active )
+.sb-playlist-tree > treechildren::-moz-tree-image( image cell-active )
 {
-       padding:1px 0 0 0 ! important;
+       padding:2px 1px 0 1px ! important;
 }
 
-/* sample code to pretty up the download progress in the playlist tree */
+
 .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton )
 {
        padding:0 ! important;
