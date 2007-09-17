@@ -104,7 +104,6 @@ protected:
   virtual ~sbRemotePlayer();
 
   static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
-  static nsresult FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDocument );
 
   // Helper Methods
   nsresult Init();

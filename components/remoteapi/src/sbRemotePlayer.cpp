@@ -66,6 +66,7 @@
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindowInternal.h>
 #include <nsIDOMXULDocument.h>
+#include <nsIDOMXULElement.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIJSContextStack.h>
 #include <nsIPrefBranch.h>
@@ -169,6 +170,10 @@ const static char* sPublicMetadata[] =
 #define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP     NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER     NS_LITERAL_STRING("sb-tabbrowser")
+
+#define SB_EVENT_RAPI_PREF_PANEL_OPENED   NS_LITERAL_STRING("RemoteAPIPrefPanelOpened")
+#define SB_EVENT_RAPI_PREF_CHANGED        NS_LITERAL_STRING("RemoteAPIPrefChanged")
+#define SB_EVENT_RAPI_HAT_CLOSED          NS_LITERAL_STRING("RemoteAPIHatClosed")
 
 #define SB_LIB_NAME_MAIN      "main"
 #define SB_LIB_NAME_WEB       "web"
@@ -334,13 +339,13 @@ sbRemotePlayer::Init()
   eventTarget->AddEventListener( NS_LITERAL_STRING("PlaylistCellClick"), this , PR_TRUE );
 
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefPanelOpened listener"));
-  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIPrefPanelOpened"), this , PR_TRUE );
+  eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED, this , PR_TRUE );
   
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIHatClosed listener"));
-  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIHatClosed"), this , PR_TRUE );
+  eventTarget->AddEventListener( SB_EVENT_RAPI_HAT_CLOSED, this , PR_TRUE );
   
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefChanged listener"));
-  eventTarget->AddEventListener( NS_LITERAL_STRING("RemoteAPIPrefChanged"), this , PR_TRUE );
+  eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_CHANGED, this , PR_TRUE );
   
   mInitialized = PR_TRUE;
 
@@ -1027,13 +1032,14 @@ sbRemotePlayer::FireEventToContent( const nsAString &aClass,
 NS_IMETHODIMP
 sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
 {
-  LOG(("sbRemotePlayer::HandleEvent()"));
+  LOG(( "sbRemotePlayer::HandleEvent() this: %08x", this ));
   NS_ENSURE_ARG_POINTER(aEvent);
   nsAutoString type;
   aEvent->GetType(type);
   if ( type.EqualsLiteral("unload") ) {
+    LOG(("sbRemotePlayer::HandleEvent() - unload event"));
     nsresult rv;
-    
+
     // check if this is the right document being unloaded (yay tabs)
     nsCOMPtr<nsIDOMNSEvent> nsEvent( do_QueryInterface( aEvent, &rv ) );
     if ( NS_FAILED(rv) )
@@ -1042,12 +1048,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     nsCOMPtr<nsIDOMEventTarget> originalEventTarget;
     rv = nsEvent->GetOriginalTarget( getter_AddRefs(originalEventTarget) );
     NS_ENSURE_SUCCESS( rv, rv );
-    
+
     if ( !SameCOMIdentity( originalEventTarget, mContentDoc ) ) {
       // not the content doc we're interested in
       return NS_OK;
     }
-    
+
     nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
     NS_ENSURE_STATE(eventTarget);
     rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("unload"),
@@ -1062,19 +1068,19 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove PlaylistCellClick listener from document" );
                 
-    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIPrefPanelOpened"),
+    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIPrefPanelOpened listener from document" );
                               
-    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIHatClosed"),
+    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_HAT_CLOSED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIHatClosed listener from document" );
                              
-    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("RemoteAPIPrefChanged"),
+    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_CHANGED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
@@ -1086,6 +1092,7 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     mContentDoc = nsnull;
     mChromeDoc = nsnull;
   } else if ( type.EqualsLiteral("PlaylistCellClick") ) {
+    LOG(("sbRemotePlayer::HandleEvent() - PlaylistCellClick event"));
     nsresult rv;
 
     // get the event information from the playlist
@@ -1167,12 +1174,50 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ENSURE_SUCCESS(rv, rv);
     rv = destEventTarget->DispatchEvent( remoteEvent, &dummy );
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if ( type.EqualsLiteral("RemoteAPIHatClosed") ) {
-    // printf("JMC: Got an RemoteAPIHatClosed event");
-  } else if ( type.EqualsLiteral("RemoteAPIPrefPanelOpened") ) {
-    // printf("JMC: Got an RemoteAPIPrefPanelOpened event");
-  } else if ( type.EqualsLiteral("RemoteAPIPrefChanged") ) {
-    // printf("JMC: Got an RemoteAPIPrefChanged event");
+  } else {
+    // The 2 cases we want to pass the event on.
+    //   1) The target was the chrome document, happens when the event comes
+    //      from the preferences panel
+    //   2) The target was a XUL Element, happens when the event comes from
+    //      the notification box.
+
+    // Get the original target
+    nsresult rv;
+    nsCOMPtr<nsIDOMNSEvent> nsEvent( do_QueryInterface( aEvent, &rv ) );
+    if ( NS_FAILED(rv) )
+      return NS_OK;
+    
+    nsCOMPtr<nsIDOMEventTarget> originalEventTarget;
+    rv = nsEvent->GetOriginalTarget( getter_AddRefs(originalEventTarget) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    PRBool allow = PR_FALSE;
+    if ( SameCOMIdentity( originalEventTarget, mChromeDoc ) ) {
+      LOG(( "sbRemotePlayer::HandleEvent() - target IS this chromeDoc - ALLOWING " ));
+      allow = PR_TRUE;
+    }
+
+    nsCOMPtr<nsIDOMXULElement> domXULElement = do_QueryInterface(originalEventTarget, &rv);
+    if (domXULElement) {
+      // XXXredfive - when the rapi service comes online and we can map between
+      //              a tab and the songbird object we will be able to look up
+      //              to see if this notification box was ours. For now always
+      //              fire an event.
+      LOG(( "sbRemotePlayer::HandleEvent() - is a DOMXULElement - ALLOWING" ));
+      allow = PR_TRUE;
+    }
+
+    if ( allow ) {
+      if ( type.Equals(SB_EVENT_RAPI_PREF_PANEL_OPENED) ||
+           type.Equals(SB_EVENT_RAPI_PREF_CHANGED) ||
+           type.Equals(SB_EVENT_RAPI_HAT_CLOSED) ) {
+        LOG(( "sbRemotePlayer::HandleEvent() - %s",
+              NS_LossyConvertUTF16toASCII(type).get() ));
+        return FireEventToContent( RAPI_EVENT_CLASS, type );
+      } else {
+        LOG(("sbRemotePlayer::HandleEvent() - Some other event"));
+      }
+    }
   }
   return NS_OK;
 }
@@ -1247,17 +1292,6 @@ sbRemotePlayer::GetWindowFromJS() {
 }
 
 nsresult
-sbRemotePlayer::FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDoc )
-{
-  LOG(("sbRemotePlayer::FireRemoteAPIAccessedEvent()"));
-
-  return sbRemotePlayer::DispatchEvent( aContentDoc,
-                        RAPI_EVENT_CLASS,
-                        RAPI_EVENT_TYPE,
-                        PR_TRUE );
-}
-
-nsresult
 sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
                                const nsAString &aClass,
                                const nsAString &aType,
@@ -1288,7 +1322,7 @@ sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
   NS_ENSURE_SUCCESS( rv, rv );
   privEvt->SetTrusted(aIsTrusted);
 
-  // Fire an event to the chrome system. This even will NOT get to content.
+  // Fire an event to the chrome system. This event will NOT get to content.
   PRBool dummy;
   return eventTarget->DispatchEvent( event, &dummy );
 }

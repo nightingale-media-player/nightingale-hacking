@@ -30,11 +30,10 @@ var gRemoteAPIPane = {
     'songbird.rapi.library_write_disable',
     'songbird.rapi.library_create_disable'
   ],
+  isChanged: false,
 
   configureWhitelist: function (aType)
   {
-    // JMC - Would be better to have callback from onunload of the new window, I think
-    gRemoteAPIPane.isChanged = true;
     // get ref to the properties file string bundle
     var bundlePreferences = document.getElementById("bundlePreferences");
 
@@ -51,7 +50,8 @@ var gRemoteAPIPane = {
         settings: bundlePreferences.getString("rapi." + aType + ".block_settings"),
         prompt: bundlePreferences.getString("rapi.block_prompt"),
         pref: "songbird.rapi." + aType + "_notify"
-      }
+      },
+      remoteAPIPane: gRemoteAPIPane
     };
     
     // open the permission window to set allow/disallow/session permissions

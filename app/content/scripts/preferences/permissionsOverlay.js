@@ -37,6 +37,7 @@ var gSongbirdPermissionsOverlay = {
       return;
     }
     gSongbirdPermissionsOverlay.blocking = window.arguments[0].blocking;
+    gSongbirdPermissionsOverlay.remoteAPIPane = window.arguments[0].remoteAPIPane;
 
     var permissionsText = document.getElementById('permissionsText');
     if (!permissionsText) {
@@ -52,6 +53,7 @@ var gSongbirdPermissionsOverlay = {
     permissionsText.parentNode.insertBefore(settings, permissionsText);    
     
     gSongbirdPermissionsOverlay.prompt = document.createElement('checkbox');
+    gSongbirdPermissionsOverlay.prompt.id = 'blockChkbx';
     permissionsText.parentNode.insertBefore(gSongbirdPermissionsOverlay.prompt,
       permissionsText);
     gSongbirdPermissionsOverlay.prompt.label = gSongbirdPermissionsOverlay.blocking.prompt;
@@ -62,21 +64,32 @@ var gSongbirdPermissionsOverlay = {
     } catch (e) {
       // don't fail on a missing pref
     }
+    gSongbirdPermissionsOverlay.originalBlocked = 
+      gSongbirdPermissionsOverlay.prompt.checked ? true : false;
     gSongbirdPermissionsOverlay.prompt.addEventListener('command',
-      gSongbirdPermissionsOverlay.onCommand, false);
+      gSongbirdPermissionsOverlay.onCheckboxCommand, false);
 
-    window.addEventListener('close', gSongbirdPermissionsOverlay.onClose, false);
+    window.addEventListener('unload', gSongbirdPermissionsOverlay.onClose, false);
+    window.addEventListener('command', gSongbirdPermissionsOverlay.onCommand, false);
   },
-  onCommand: function(event) {
+  onCheckboxCommand: function(event) {
     gSongbirdPermissionsOverlay.prefs.setBoolPref(
         gSongbirdPermissionsOverlay.blocking.pref,
         gSongbirdPermissionsOverlay.prompt.checked);
   },
+  onCommand: function(event) {
+    if ( event.target.id ) {
+      // the close button doesn't have an id - very fragile!
+      gSongbirdPermissionsOverlay.remoteAPIPane.isChanged = true;
+    }
+  },
   onClose: function(event) {
+    window.removeEventListener('command', gSongbirdPermissionsOverlay.onCommand, false);
     gSongbirdPermissionsOverlay.prompt.removeEventListener('command',
-      gSongbirdPermissionsOverlay.onCommand, false);
-    window.removeEventListener('close', gSongbirdPermissionsOverlay.onClose,
-      false);
+      gSongbirdPermissionsOverlay.onCheckboxCommand, false);
+    window.removeEventListener('unload',
+                               gSongbirdPermissionsOverlay.onClose,
+                               false);
   }
 };
 window.addEventListener('load', gSongbirdPermissionsOverlay.onLoad, false);
