@@ -482,10 +482,10 @@ const gSearchHandler = {
       // the engine to immediately submit the query
       searchBar.value = "";
       searchBar.currentEngine = songbirdEngine;
-      
-      // Set the query to match the state of the media list
-      this._syncSearchBarToPlaylist();
     }
+
+    // Set the query to match the state of the media list
+    this._syncSearchBarToPlaylist();
   },
   
   

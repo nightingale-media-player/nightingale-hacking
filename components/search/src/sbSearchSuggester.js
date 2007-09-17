@@ -179,6 +179,15 @@ AutoCompleteResult.prototype = {
     return "suggesthint";   // category label on any other line of results
   },
 
+  /** 
+   * Retrieves an image url. 
+   * @param  index    the index of the image url requested 
+   * @return          the image url at the specified index 
+   */ 
+  getImageAt: function(index) { 
+    return ""; 
+  },
+     
   /**
    * Removes a result from the resultset
    * @param  index    the index of the result to remove
