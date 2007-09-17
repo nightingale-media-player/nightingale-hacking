@@ -95,7 +95,7 @@ sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString value;
-  rv = aProperty->GetValue(name);
+  rv = aProperty->GetValue(value);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return ValueIsValid(name, value, _retval);
