@@ -309,6 +309,9 @@ interface sbIRemoteLibrary : nsISupports
   Get the site media list with the given name.  Note that to compare for
   identity one must compare the guid (instead of JS object comparisions).
 
+  NOTE: This method will not work with the main library, it is only for
+  use with the Site Library.
+
   Prototype:
     <MediaList> getMediaListByName(String name)
 
