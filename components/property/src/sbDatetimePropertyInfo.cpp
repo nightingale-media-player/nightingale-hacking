@@ -353,7 +353,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::GetTimeType(PRInt32 *aTimeType)
 }
 NS_IMETHODIMP sbDatetimePropertyInfo::SetTimeType(PRInt32 aTimeType)
 {
-  NS_ENSURE_ARG(aTimeType > 0 &&
+  NS_ENSURE_ARG(aTimeType > sbDatetimePropertyInfo::TIMETYPE_UNINITIALIZED &&
     aTimeType <= sbDatetimePropertyInfo::TIMETYPE_TIMESTAMP);
 
   sbSimpleAutoLock lock(mTimeTypeLock);
