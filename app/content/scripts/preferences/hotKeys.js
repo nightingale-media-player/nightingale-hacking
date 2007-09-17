@@ -43,6 +43,8 @@ var gHotkeysPane = {
 
   init: function ()
   {
+    window.removeEventListener('load', onHotkeysLoad, false);
+    
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/messageBox.js", this );
     
@@ -298,4 +300,9 @@ function onHotkeysUnload()
   gHotkeysPane.onUnload();
 }
 
+function onHotkeysLoad() 
+{
+  gHotkeysPane.init();
+}
 
+window.addEventListener('load', onHotkeysLoad, false);

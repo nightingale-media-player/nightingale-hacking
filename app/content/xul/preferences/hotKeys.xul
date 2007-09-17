@@ -29,12 +29,13 @@
 
 <!-- todo: internationalize -->
 
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <overlay id="HotkeysPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <prefpane id="paneHotkeys" onpaneload="gHotkeysPane.init();">
+  <prefpane id="paneHotkeys">
 
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotKeys.js"/>
 
