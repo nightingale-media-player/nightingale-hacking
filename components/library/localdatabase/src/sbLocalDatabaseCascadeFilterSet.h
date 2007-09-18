@@ -37,6 +37,7 @@
 #include <nsWeakReference.h>
 
 #include <sbICascadeFilterSet.h>
+#include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbIMediaListListener.h>
 #include <sbLibraryUtils.h>
 
@@ -48,6 +49,7 @@ class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
 class sbIMutablePropertyArray;
+class sbLocalDatabaseCascadeFilterSetArrayListener;
 
 class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
                                         public sbICascadeFilterSet,
@@ -80,6 +82,8 @@ public:
 
   void ClearMediaListView();
 
+  nsresult OnGetLength(PRUint32 aIndex, PRUint32 aLength);
+
 private:
   struct sbFilterSpec {
     PRBool isSearch;
@@ -88,6 +92,8 @@ private:
     sbStringArray values;
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> array;
     nsRefPtr<sbLocalDatabaseTreeView> treeView;
+    nsRefPtr<sbLocalDatabaseCascadeFilterSetArrayListener> arrayListener;
+    PRUint32 cachedValueCount;
     PRBool invalidationPending;
   };
 
@@ -124,6 +130,24 @@ private:
 
   // Is our media list in a batch
   sbLibraryBatchHelper mBatchHelper;
+};
+
+class sbLocalDatabaseCascadeFilterSetArrayListener :
+                                  public nsSupportsWeakReference,
+                                  public sbILocalDatabaseAsyncGUIDArrayListener
+{
+  friend class sbLocalDatabaseCascadeFilterSet;
+
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
+
+  nsresult Init(sbLocalDatabaseCascadeFilterSet *aCascadeFilterSet);
+
+private:
+  nsCOMPtr<nsIWeakReference> mWeakCascadeFilterSet;
+  sbLocalDatabaseCascadeFilterSet* mCascadeFilterSet;
+  PRUint32 mIndex;
 };
 
 class sbGUIDArrayPrimarySortEnumerator : public nsIStringEnumerator

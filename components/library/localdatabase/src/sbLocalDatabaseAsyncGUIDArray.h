@@ -41,6 +41,8 @@
 
 class nsIThread;
 class nsIWeakReference;
+class sbLocalDatabaseAsyncGUIDArrayListenerInfo;
+class sbWeakAsyncListenerWrapper;
 
 // These need compilation unit scoping so both classes can use them
 enum CommandType {
@@ -83,29 +85,15 @@ public:
 
   ~sbLocalDatabaseAsyncGUIDArray();
 private:
-  class sbWeakAsyncListenerWrapper : public sbILocalDatabaseAsyncGUIDArrayListener
-  {
-  public:
-    NS_DECL_ISUPPORTS
-    NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
-
-    sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakListener);
-    ~sbWeakAsyncListenerWrapper();
-
-    already_AddRefed<sbILocalDatabaseAsyncGUIDArrayListener> GetListener();
-
-  private:
-    nsCOMPtr<nsIWeakReference> mWeakListener;
-  };
 
   // GUID array this class wraps
   nsCOMPtr<sbILocalDatabaseGUIDArray> mInner;
 
-  // The weak listener wrapper
-  nsRefPtr<sbWeakAsyncListenerWrapper> mWeakListenerWrapper;
-
-  // Listener that gets notified when commands complete
-  nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> mProxiedListener;
+  // Array of listeners that get notified when commands complete
+  typedef nsAutoPtr<sbLocalDatabaseAsyncGUIDArrayListenerInfo>
+                              sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr;
+  nsTArray<sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr>
+                                                            mAsyncListenerArray;
 
   // Queue of pending commands
   sbCommandQueue mQueue;
@@ -124,6 +112,18 @@ private:
 
   // True if the thread has been explictly shut down
   PRPackedBool mThreadShutDown;
+
+  nsresult SendOnGetLength(PRUint32 aLength, nsresult aResult);
+  nsresult SendOnGetGuidByIndex(PRUint32 aIndex,
+                                const nsAString& aGUID,
+                                nsresult aResult);
+  nsresult SendOnGetSortPropertyValueByIndex(PRUint32 aIndex,
+                                             const nsAString& aGUID,
+                                             nsresult aResult);
+  nsresult SendOnGetMediaItemIdByIndex(PRUint32 aIndex,
+                                       PRUint32 aMediaItemId,
+                                       nsresult aResult);
+  nsresult SendOnStateChange(PRUint32 aState);
 };
 
 class CommandProcessor : public nsIRunnable
@@ -138,6 +138,41 @@ public:
 
 protected:
   sbLocalDatabaseAsyncGUIDArray* mFriendArray;
+};
+
+class sbWeakAsyncListenerWrapper : public sbILocalDatabaseAsyncGUIDArrayListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
+
+  sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakListener);
+  ~sbWeakAsyncListenerWrapper();
+
+  already_AddRefed<sbILocalDatabaseAsyncGUIDArrayListener> GetListener();
+
+private:
+  nsCOMPtr<nsIWeakReference> mWeakListener;
+};
+
+class sbLocalDatabaseAsyncGUIDArrayListenerInfo
+{
+friend class sbLocalDatabaseAsyncGUIDArray;
+public:
+  sbLocalDatabaseAsyncGUIDArrayListenerInfo();
+  ~sbLocalDatabaseAsyncGUIDArrayListenerInfo();
+
+  nsresult Init(nsIWeakReference* aWeakListener);
+
+private:
+
+  nsCOMPtr<nsISupports> mRef;
+
+  // The weak listener wrapper
+  nsRefPtr<sbWeakAsyncListenerWrapper> mWeakListenerWrapper;
+
+  // Listener that gets notified when commands complete
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> mProxiedListener;
 };
 
 #endif /* __SBLOCALDATABASEASYNCGUIDARRAY_H__ */

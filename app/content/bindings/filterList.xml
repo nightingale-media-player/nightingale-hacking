@@ -177,7 +177,7 @@
       <method name="_updateColumnLabel">
         <body>
           <![CDATA[
-            var n = this.cfs.getValueCount(this.index); 
+            var n = this.cfs.getValueCount(this.index, true); 
             var itemsstr;
             switch (n) {
               case 0:

@@ -152,7 +152,7 @@ sbLocalDatabaseAsyncGUIDArray::EnqueueCommand(CommandType aType,
 {
   nsresult rv;
 
-  NS_ENSURE_STATE(mProxiedListener);
+  NS_ENSURE_STATE(mAsyncListenerArray.Length());
   NS_ENSURE_FALSE(mThreadShutDown, NS_ERROR_ABORT);
 
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - EnqueueCommand(%d, %d)",
@@ -179,42 +179,67 @@ sbLocalDatabaseAsyncGUIDArray::EnqueueCommand(CommandType aType,
 
 // sbILocalDatabaseAsyncGUIDArray
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::SetAsyncListener(sbILocalDatabaseAsyncGUIDArrayListener* aListener)
+sbLocalDatabaseAsyncGUIDArray::AddAsyncListener
+                            (sbILocalDatabaseAsyncGUIDArrayListener* aListener)
 {
+  TRACE(("LocalDatabaseAsyncGUIDArray[0x%.8x] - AddAsyncListener 0x%.8x",
+         this, aListener));
+
   NS_ENSURE_ARG_POINTER(aListener);
   nsAutoMonitor monitor(mSyncMonitor);
 
+  // See if we have already added this listener.
+  PRUint32 length = mAsyncListenerArray.Length();
   nsresult rv;
-  nsCOMPtr<nsIWeakReference> weakListener =
-    do_GetWeakReference(aListener, &rv);
+  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mWeakListenerWrapper = new sbWeakAsyncListenerWrapper(weakListener);
-  NS_ENSURE_TRUE(mWeakListenerWrapper, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(sbILocalDatabaseAsyncGUIDArrayListener),
-                            mWeakListenerWrapper,
-                            NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(mProxiedListener));
+  nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < length; i++) {
+    if(mAsyncListenerArray[i]->mRef == weak) {
+      NS_WARNING("Attempted to add an async listener twice!");
+      return NS_OK;
+    }
+  }
+
+  sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr
+                          info(new sbLocalDatabaseAsyncGUIDArrayListenerInfo());
+  NS_ENSURE_TRUE(info, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = info->Init(weak);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr* added =
+                              mAsyncListenerArray.AppendElement(info.forget());
+  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetAsyncListener(sbILocalDatabaseAsyncGUIDArrayListener** aListener)
+sbLocalDatabaseAsyncGUIDArray::RemoveAsyncListener
+                            (sbILocalDatabaseAsyncGUIDArrayListener* aListener)
 {
+  TRACE(("LocalDatabaseAsyncGUIDArray[0x%.8x] - RemoveAsyncListener 0x%.8x",
+         this, aListener));
+
   NS_ENSURE_ARG_POINTER(aListener);
   nsAutoMonitor monitor(mSyncMonitor);
 
-  if (mWeakListenerWrapper) {
-    nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener =
-      mWeakListenerWrapper->GetListener();
-    NS_IF_ADDREF(*aListener = listener);
-  }
-  else {
-    *aListener = nsnull;
+  nsresult rv;
+  PRUint32 length = mAsyncListenerArray.Length();
+
+  nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCEEDED(rv)) {
+    for (PRUint32 i = 0; i < length; i++) {
+      if(mAsyncListenerArray[i]->mRef == weak) {
+        mAsyncListenerArray.RemoveElementAt(i);
+        return NS_OK;
+      }
+    }
+    NS_WARNING("Attempted to remove an async listener that was never added!");
   }
 
   return NS_OK;
@@ -568,6 +593,105 @@ sbLocalDatabaseAsyncGUIDArray::RemoveByIndex(PRUint32 aIndex)
   return mInner->RemoveByIndex(aIndex);
 }
 
+nsresult
+sbLocalDatabaseAsyncGUIDArray::SendOnGetLength(PRUint32 aLength,
+                                               nsresult aResult)
+{
+  nsresult rv;
+  PRBool listenSucceeded = PR_TRUE;
+
+  PRUint32 length = mAsyncListenerArray.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = mAsyncListenerArray[i]->mProxiedListener->OnGetLength(aLength,
+                                                               aResult);
+    if (NS_FAILED(rv))
+      listenSucceeded = PR_FALSE;
+  }
+  NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseAsyncGUIDArray::SendOnGetGuidByIndex(PRUint32 aIndex,
+                                                    const nsAString& aGUID,
+                                                    nsresult aResult)
+{
+  nsresult rv;
+  PRBool listenSucceeded = PR_TRUE;
+
+  PRUint32 length = mAsyncListenerArray.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = mAsyncListenerArray[i]->mProxiedListener->OnGetGuidByIndex(aIndex,
+                                                                    aGUID,
+                                                                    aResult);
+    if (NS_FAILED(rv))
+      listenSucceeded = PR_FALSE;
+  }
+  NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseAsyncGUIDArray::SendOnGetSortPropertyValueByIndex
+                                                        (PRUint32 aIndex,
+                                                         const nsAString& aGUID,
+                                                         nsresult aResult)
+{
+  nsresult rv;
+  PRBool listenSucceeded = PR_TRUE;
+
+  PRUint32 length = mAsyncListenerArray.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = mAsyncListenerArray[i]->mProxiedListener->
+                          OnGetSortPropertyValueByIndex(aIndex, aGUID, aResult);
+    if (NS_FAILED(rv))
+      listenSucceeded = PR_FALSE;
+  }
+  NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseAsyncGUIDArray::SendOnGetMediaItemIdByIndex
+                                                        (PRUint32 aIndex,
+                                                         PRUint32 aMediaItemId,
+                                                         nsresult aResult)
+{
+  nsresult rv;
+  PRBool listenSucceeded = PR_TRUE;
+
+  PRUint32 length = mAsyncListenerArray.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = mAsyncListenerArray[i]->mProxiedListener->
+                        OnGetMediaItemIdByIndex(aIndex, aMediaItemId, aResult);
+    if (NS_FAILED(rv))
+      listenSucceeded = PR_FALSE;
+  }
+  NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseAsyncGUIDArray::SendOnStateChange(PRUint32 aState)
+{
+  nsresult rv;
+  PRBool listenSucceeded = PR_TRUE;
+
+  PRUint32 length = mAsyncListenerArray.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = mAsyncListenerArray[i]->mProxiedListener->OnStateChange(aState);
+    if (NS_FAILED(rv))
+      listenSucceeded = PR_FALSE;
+  }
+  NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
+
+  return NS_OK;
+}
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(CommandProcessor, nsIRunnable)
 
 CommandProcessor::CommandProcessor(sbLocalDatabaseAsyncGUIDArray* aFriendArray) :
@@ -609,26 +733,29 @@ CommandProcessor::Run()
         nsAutoMonitor monitor(mFriendArray->mSyncMonitor);
 
         // For each remaining item on the queue, send errors
-        nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener(mFriendArray->mProxiedListener);
         for (PRUint32 i = 0; i < mFriendArray->mQueue.Length(); i++) {
           const CommandSpec& command = mFriendArray->mQueue[i];
           switch(command.type) {
             case eGetLength:
-              rv = listener->OnGetLength(0, NS_ERROR_ABORT);
+              rv = mFriendArray->SendOnGetLength(0, NS_ERROR_ABORT);
             break;
 
             case eGetByIndex:
-              rv = listener->OnGetGuidByIndex(0, EmptyString(), NS_ERROR_ABORT);
+              rv = mFriendArray->SendOnGetGuidByIndex(0,
+                                                      EmptyString(),
+                                                      NS_ERROR_ABORT);
             break;
 
             case eGetSortPropertyValueByIndex:
-              rv = listener->OnGetSortPropertyValueByIndex(0,
-                                                           EmptyString(),
-                                                           NS_ERROR_ABORT);
+              rv = mFriendArray->SendOnGetSortPropertyValueByIndex(0,
+                                                               EmptyString(),
+                                                               NS_ERROR_ABORT);
             break;
 
             case eGetMediaItemIdByIndex:
-              rv = listener->OnGetMediaItemIdByIndex(0, 0, NS_ERROR_ABORT);
+              rv = mFriendArray->SendOnGetMediaItemIdByIndex(0,
+                                                             0,
+                                                             NS_ERROR_ABORT);
             break;
 
             default:
@@ -656,9 +783,9 @@ CommandProcessor::Run()
 
       // Just for convenience
       nsCOMPtr<sbILocalDatabaseGUIDArray> inner(mFriendArray->mInner);
-      nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener(mFriendArray->mProxiedListener);
 
-      rv = listener->OnStateChange(sbILocalDatabaseAsyncGUIDArrayListener::STATE_BUSY);
+      rv = mFriendArray->SendOnStateChange
+                          (sbILocalDatabaseAsyncGUIDArrayListener::STATE_BUSY);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
 
       switch (cs.type) {
@@ -669,7 +796,7 @@ CommandProcessor::Run()
 
             PRUint32 length;
             nsresult innerResult = inner->GetLength(&length);
-            rv = listener->OnGetLength(length, innerResult);
+            rv = mFriendArray->SendOnGetLength(length, innerResult);
           }
         break;
 
@@ -680,7 +807,9 @@ CommandProcessor::Run()
 
             nsAutoString guid;
             nsresult innerResult = inner->GetGuidByIndex(cs.index, guid);
-            rv = listener->OnGetGuidByIndex(cs.index, guid, innerResult);
+            rv = mFriendArray->SendOnGetGuidByIndex(cs.index,
+                                                    guid,
+                                                    innerResult);
           }
         break;
 
@@ -692,9 +821,9 @@ CommandProcessor::Run()
             nsAutoString value;
             nsresult innerResult = inner->GetSortPropertyValueByIndex(cs.index,
                                                                       value);
-            rv = listener->OnGetSortPropertyValueByIndex(cs.index,
-                                                         value,
-                                                         innerResult);
+            rv = mFriendArray->SendOnGetSortPropertyValueByIndex(cs.index,
+                                                                 value,
+                                                                 innerResult);
           }
         break;
 
@@ -706,9 +835,9 @@ CommandProcessor::Run()
             PRUint32 mediaItemId;
             nsresult innerResult = inner->GetMediaItemIdByIndex(cs.index,
                                                                 &mediaItemId);
-            rv = listener->OnGetMediaItemIdByIndex(cs.index,
-                                                   mediaItemId,
-                                                   innerResult);
+            rv = mFriendArray->SendOnGetMediaItemIdByIndex(cs.index,
+                                                           mediaItemId,
+                                                           innerResult);
           }
         break;
 
@@ -719,7 +848,8 @@ CommandProcessor::Run()
       }
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
 
-      rv = listener->OnStateChange(sbILocalDatabaseAsyncGUIDArrayListener::STATE_IDLE);
+      rv = mFriendArray->SendOnStateChange
+                          (sbILocalDatabaseAsyncGUIDArrayListener::STATE_IDLE);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
     }
   }
@@ -729,23 +859,23 @@ CommandProcessor::Run()
   return NS_OK;
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper,
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbWeakAsyncListenerWrapper,
                               sbILocalDatabaseAsyncGUIDArrayListener)
 
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakReference) :
+sbWeakAsyncListenerWrapper::sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakReference) :
   mWeakListener(aWeakReference)
 {
   NS_ASSERTION(mWeakListener, "aWeakReference is null");
   MOZ_COUNT_CTOR(sbWeakAsyncListenerWrapper);
 }
 
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::~sbWeakAsyncListenerWrapper()
+sbWeakAsyncListenerWrapper::~sbWeakAsyncListenerWrapper()
 {
   MOZ_COUNT_DTOR(sbWeakAsyncListenerWrapper);
 }
 
 already_AddRefed<sbILocalDatabaseAsyncGUIDArrayListener>
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::GetListener()
+sbWeakAsyncListenerWrapper::GetListener()
 {
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> strongListener =
     do_QueryReferent(mWeakListener);
@@ -767,39 +897,73 @@ sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::GetListener()
   return NS_OK;
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetLength(PRUint32 aLength,
-                                                                       nsresult aResult)
+sbWeakAsyncListenerWrapper::OnGetLength(PRUint32 aLength,
+                                        nsresult aResult)
 {
   SB_TRY_NOTIFY(OnGetLength(aLength, aResult))
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetGuidByIndex(PRUint32 aIndex,
-                                                                            const nsAString& aGUID,
-                                                                            nsresult aResult)
+sbWeakAsyncListenerWrapper::OnGetGuidByIndex(PRUint32 aIndex,
+                                             const nsAString& aGUID,
+                                             nsresult aResult)
 {
   SB_TRY_NOTIFY(OnGetGuidByIndex(aIndex, aGUID, aResult))
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetSortPropertyValueByIndex(PRUint32 aIndex,
-                                                                                         const nsAString& aPropertySortValue,
-                                                                                         nsresult aResult)
+sbWeakAsyncListenerWrapper::OnGetSortPropertyValueByIndex(PRUint32 aIndex,
+                                                          const nsAString& aPropertySortValue,
+                                                          nsresult aResult)
 {
   SB_TRY_NOTIFY(OnGetSortPropertyValueByIndex(aIndex, aPropertySortValue, aResult))
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetMediaItemIdByIndex(PRUint32 aIndex,
-                                                                                   PRUint32 aMediaItemId,
-                                                                                   nsresult aResult)
+sbWeakAsyncListenerWrapper::OnGetMediaItemIdByIndex(PRUint32 aIndex,
+                                                    PRUint32 aMediaItemId,
+                                                    nsresult aResult)
 {
   SB_TRY_NOTIFY(OnGetMediaItemIdByIndex(aIndex, aMediaItemId, aResult))
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnStateChange(PRUint32 aState)
+sbWeakAsyncListenerWrapper::OnStateChange(PRUint32 aState)
 {
   SB_TRY_NOTIFY(OnStateChange(aState))
+}
+
+sbLocalDatabaseAsyncGUIDArrayListenerInfo::
+                                    sbLocalDatabaseAsyncGUIDArrayListenerInfo()
+{
+  MOZ_COUNT_CTOR(sbLocalDatabaseAsyncGUIDArrayListenerInfo);
+}
+
+sbLocalDatabaseAsyncGUIDArrayListenerInfo::
+                                    ~sbLocalDatabaseAsyncGUIDArrayListenerInfo()
+{
+  MOZ_COUNT_DTOR(sbLocalDatabaseAsyncGUIDArrayListenerInfo);
+}
+
+nsresult
+sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(nsIWeakReference* aWeakListener)
+{
+  NS_ASSERTION(aWeakListener, "aWeakListener is null");
+  nsresult rv;
+
+  mRef = do_QueryInterface(aWeakListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mWeakListenerWrapper = new sbWeakAsyncListenerWrapper(aWeakListener);
+  NS_ENSURE_TRUE(mWeakListenerWrapper, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(sbILocalDatabaseAsyncGUIDArrayListener),
+                            mWeakListenerWrapper,
+                            NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mProxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 

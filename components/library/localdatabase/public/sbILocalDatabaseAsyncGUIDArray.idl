@@ -68,7 +68,9 @@ interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
 [scriptable, uuid(b1e017b3-6417-4f37-9685-3d3a09efbe99)]
 interface sbILocalDatabaseAsyncGUIDArray : sbILocalDatabaseGUIDArray
 {
-  attribute sbILocalDatabaseAsyncGUIDArrayListener asyncListener;
+  void addAsyncListener(in sbILocalDatabaseAsyncGUIDArrayListener aListener);
+
+  void removeAsyncListener(in sbILocalDatabaseAsyncGUIDArrayListener aListener);
 
   void getLengthAsync();
 

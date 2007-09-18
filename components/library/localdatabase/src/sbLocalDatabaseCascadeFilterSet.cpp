@@ -185,11 +185,19 @@ sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
   fs->isSearch = PR_FALSE;
   fs->property = aProperty;
   fs->invalidationPending = PR_FALSE;
+  fs->cachedValueCount = 0;
 
   rv = mProtoArray->CloneAsyncArray(getter_AddRefs(fs->array));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = fs->array->AddSort(aProperty, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NEWXPCOM(fs->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
+  NS_ENSURE_TRUE(fs->arrayListener, NS_ERROR_OUT_OF_MEMORY);
+  rv = fs->arrayListener->Init(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = fs->array->AddAsyncListener(fs->arrayListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ConfigureArray(mFilters.Length() - 1);
@@ -221,6 +229,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 
   fs->isSearch = PR_TRUE;
   fs->invalidationPending = PR_FALSE;
+  fs->cachedValueCount = 0;
 
   for (PRUint32 i = 0; i < aPropertyArrayCount; i++) {
     if (aPropertyArray[i]) {
@@ -237,6 +246,13 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 
   rv = fs->array->AddSort(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
                           PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NEWXPCOM(fs->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
+  NS_ENSURE_TRUE(fs->arrayListener, NS_ERROR_OUT_OF_MEMORY);
+  rv = fs->arrayListener->Init(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = fs->array->AddAsyncListener(fs->arrayListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ConfigureArray(mFilters.Length() - 1);
@@ -257,6 +273,10 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
+
+  sbFilterSpec& fs = mFilters[aIndex];
+  if (fs.arrayListener)
+    fs.array->RemoveAsyncListener(fs.arrayListener);
 
   mFilters.RemoveElementAt(aIndex);
 
@@ -463,14 +483,24 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
+                                               PRBool aUseCache,
                                                PRUint32 *_retval)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetValueCount", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
-  nsresult rv = mFilters[aIndex].array->GetLength(_retval);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aUseCache) {
+    *_retval = mFilters[aIndex].cachedValueCount;
+  }
+  else {
+    PRUint32 valueCount;
+    nsresult rv = mFilters[aIndex].array->GetLength(&valueCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = OnGetLength(aIndex, valueCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    *_retval = valueCount;
+  }
 
   return NS_OK;
 }
@@ -688,6 +718,25 @@ sbLocalDatabaseCascadeFilterSet::ClearMediaListView()
 }
 
 nsresult
+sbLocalDatabaseCascadeFilterSet::OnGetLength(PRUint32 aIndex,
+                                             PRUint32 aLength)
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - OnGetLength(%d, %d)",
+         this, aIndex, aLength));
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
+
+  PRUint32 index = aIndex;
+  if (aLength != mFilters[index].cachedValueCount) {
+    mFilters[index].cachedValueCount = aLength;
+
+    // Notify listeners
+    mListeners.EnumerateEntries(OnValuesChangedCallback, &index);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - ConfigureArray", this));
@@ -696,6 +745,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   nsresult rv;
 
   sbFilterSpec& fs = mFilters[aIndex];
+  fs.arrayListener->mIndex = aIndex;
 
   // Clear this filter since our upstream filters have changed
   rv = fs.array->ClearFilters();
@@ -1025,6 +1075,85 @@ sbLocalDatabaseCascadeFilterSet::OnValuesChangedCallback(nsISupportsHashKey* aKe
                      "OnValuesChanged returned a failure code");
   }
   return PL_DHASH_NEXT;
+}
+
+NS_IMPL_ISUPPORTS2(sbLocalDatabaseCascadeFilterSetArrayListener,
+                   nsISupportsWeakReference,
+                   sbILocalDatabaseAsyncGUIDArrayListener)
+
+nsresult sbLocalDatabaseCascadeFilterSetArrayListener::Init
+                            (sbLocalDatabaseCascadeFilterSet *aCascadeFilterSet)
+{
+  nsresult rv;
+
+  mWeakCascadeFilterSet =
+    do_GetWeakReference
+      (NS_ISUPPORTS_CAST(sbICascadeFilterSet*, aCascadeFilterSet), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mCascadeFilterSet = aCascadeFilterSet;
+
+  return NS_OK;
+}
+
+// sbILocalDatabaseAsyncGUIDArrayListener
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetArrayListener::OnGetLength(PRUint32 aLength,
+                                                          nsresult aResult)
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSetArrayListener[0x%.8x] - "
+         "OnGetLength(%d)", this, aLength));
+
+  nsresult rv;
+
+  if (NS_SUCCEEDED(aResult)) {
+    nsCOMPtr<nsISupports> cascadeFilterSetRef =
+                                  do_QueryReferent(mWeakCascadeFilterSet, &rv);
+    if (cascadeFilterSetRef) {
+#ifdef DEBUG
+      nsCOMPtr<nsISupports> classPtr = do_QueryInterface
+              (NS_ISUPPORTS_CAST(sbICascadeFilterSet*, mCascadeFilterSet), &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(classPtr == cascadeFilterSetRef,
+                   "Weak reference and class pointer are out of sync!");
+#endif
+      rv = mCascadeFilterSet->OnGetLength(mIndex, aLength);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetArrayListener::OnGetGuidByIndex
+                                                        (PRUint32 aIndex,
+                                                         const nsAString& aGUID,
+                                                         nsresult aResult)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetArrayListener::OnGetSortPropertyValueByIndex
+                                                        (PRUint32 aIndex,
+                                                         const nsAString& aGUID,
+                                                         nsresult aResult)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetArrayListener::OnGetMediaItemIdByIndex
+                                                        (PRUint32 aIndex,
+                                                         PRUint32 aMediaItemId,
+                                                         nsresult aResult)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetArrayListener::OnStateChange(PRUint32 aState)
+{
+  return NS_OK;
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayPrimarySortEnumerator, nsIStringEnumerator)

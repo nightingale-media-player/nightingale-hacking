@@ -137,9 +137,14 @@ interface sbICascadeFilterSet : nsISupports
   /**
    * \brief Get the number of possible values for a filter
    * \param aIndex Index of the filter
+   * \param aUseCache If true, use a cached value if available.  This may be
+   *                  used by listeners to get a new value count without forcing
+   *                  the count to be recalculated.  The cached value may not be
+   *                  the most up-to-date value.  The default is false.
    * \return The number of possible values for a filter
    */
-  unsigned long getValueCount(in unsigned short aIndex);
+  unsigned long getValueCount(in unsigned short aIndex,
+                              [optional] in boolean aUseCache);
   
   /**
    * \brief Get the property for a filter by index

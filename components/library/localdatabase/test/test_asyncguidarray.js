@@ -91,10 +91,12 @@ function doTest(array) {
     case "getLengthAsync":
 
       var listener = new ArrayListener();
-      array.asyncListener = listener;
+      array.addAsyncListener(listener);
       array.getLengthAsync();
 
-      var tester = function() {
+      var tester = {};
+      tester.listener = listener;
+      tester.func = function() {
         if (listener.gotLength) {
           if (listener.rv == Cr.NS_OK && listener.length == 101) {
             return 1;
@@ -112,10 +114,12 @@ function doTest(array) {
     case "getGuidByIndexAsync":
 
       var listener = new ArrayListener();
-      array.asyncListener = listener;
+      array.addAsyncListener(listener);
       array.getGuidByIndexAsync(0);
 
-      var tester = function() {
+      var tester = {};
+      tester.listener = listener;
+      tester.func = function() {
         if (listener.gotGuid) {
           if (listener.rv == Cr.NS_OK &&
               listener.guid == "3E4FAFDA-AD99-11DB-9321-C22AB7121F49") {
@@ -134,10 +138,12 @@ function doTest(array) {
     case "getSortPropertyValueByIndex":
 
       var listener = new ArrayListener();
-      array.asyncListener = listener;
+      array.addAsyncListener(listener);
       array.getSortPropertyValueByIndexAsync(0);
 
-      var tester = function() {
+      var tester = {};
+      tester.listener = listener;
+      tester.func = function() {
         if (listener.gotValue) {
           if (listener.rv == Cr.NS_OK &&
               listener.value == "ac black") {
@@ -156,10 +162,12 @@ function doTest(array) {
     case "getMediaItemIdByIndex":
 
       var listener = new ArrayListener();
-      array.asyncListener = listener;
+      array.addAsyncListener(listener);
       array.getMediaItemIdByIndexAsync(0);
 
-      var tester = function() {
+      var tester = {};
+      tester.listener = listener;
+      tester.func = function() {
         if (listener.gotMediaItemId) {
           if (listener.rv == Cr.NS_OK &&
               listener.mediaItemId == testMediaItemId) {
@@ -177,7 +185,8 @@ function doTest(array) {
   }
 
   // Shouldn't get here
-  var tester = function() { return -1; }
+  var tester = {};
+  tester.func = function() { return -1; }
   return tester;
 }
 
@@ -191,7 +200,17 @@ TimerLoop.prototype.notify = function(timer)
   var shouldContinue = false;
 
   if (currentTester) {
-    var result = currentTester.apply(this);
+    var result = currentTester.func.apply(this);
+    if (result != 0) {
+      try {
+        this._array.removeAsyncListener(currentTester.listener);
+      }
+      catch (ex) {
+        log("exception: " + ex);
+        result = -1;
+      }
+    }
+
     if (result == 1) {
       log("phase '" + phases[currentPhase] + "' passed");
       currentTester = null;
@@ -211,8 +230,15 @@ TimerLoop.prototype.notify = function(timer)
   }
   else {
     if (currentPhase < phases.length) {
-      currentTester = doTest(this._array);
-      shouldContinue = true;
+      try {
+        currentTester = doTest(this._array);
+        shouldContinue = true;
+      }
+      catch (ex) {
+        log("exception: " + ex);
+        failed = true;
+        shouldContinue = false;
+      }
     }
   }
 

@@ -34,7 +34,13 @@ function CascadeListener()
 
 CascadeListener.prototype.onValuesChanged = function(index)
 {
+  for (var i = 0; i < this.indexes.length; i++)
+  {
+    if (this.indexes[i] == index)
+      return;
+  }
   this.indexes.push(index);
+  this.indexes.sort(function numberorder(a, b) { return a - b; });
 }
 
 CascadeListener.prototype.onChange = function()
@@ -64,6 +70,10 @@ function runTest () {
   // With no filtering applied, we should have 8 artists and 8 albums
   assertEqual(cfs.getValueCount(1), 8);
   assertEqual(cfs.getValueCount(2), 8);
+
+  // Test that reading a cached value matches the last read
+  assertEqual(cfs.getValueCount(1, true), 8);
+  assertEqual(cfs.getValueCount(2, true), 8);
 
   // Putting AC/DC in the search box should filter down to only one artist
   // and one album

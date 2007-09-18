@@ -200,6 +200,14 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
 sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 {
   MOZ_COUNT_DTOR(sbLocalDatabaseTreeView);
+  nsresult rv;
+  if (mArray) {
+    nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> asyncListener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this),
+                        &rv);
+    if (NS_SUCCEEDED(rv))
+      mArray->RemoveAsyncListener(asyncListener);
+  }
 }
 
 nsresult
@@ -238,7 +246,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetAsyncListener(asyncListener);
+  rv = mArray->AddAsyncListener(asyncListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->GetFetchSize(&mFetchSize);
@@ -2801,10 +2809,16 @@ sbLocalDatabaseTreeSelection::CheckIsSelectAll(PRBool* _retval)
   // no rows, or only the first row, this is an all selection
   if (mAllRow) {
     if (isSelectAll || rangeCount == 0 || isFirstRowSelected) {
-      mTreeView->mSelectionChanging = PR_TRUE;
-      rv = mSelection->Select(0);
-      mTreeView->mSelectionChanging = PR_FALSE;
+      PRInt32 count;
+      rv = mTreeView->GetRowCount(&count);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      if (count) {
+        mTreeView->mSelectionChanging = PR_TRUE;
+        rv = mSelection->Select(0);
+        mTreeView->mSelectionChanging = PR_FALSE;
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       isSelectAll = PR_TRUE;
     }
