@@ -302,8 +302,11 @@ treecolpicker
 treecol[dragging="true"]
 {
   background-color: transparent !important;
-  color: #B3BAAC; /** Light Color 1 */
-  opacity: .3;
+}
+
+treecol[dragging="true"] > label
+{
+  color: #5c5f58; /** Selected Focus Row */
 }
 
 treecol[insertafter="true"] 
