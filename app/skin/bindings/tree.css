@@ -39,7 +39,10 @@ Extra tree styles
 {
   list-style-image: url(chrome://songbird/skin/tree/column-picker.png);
 }
+/** 
+Commenting out the hover states for column headers.  Called "distracting" in bug 4636.
 treecolpicker:hover .tree-columnpicker-icon
 {
   list-style-image: url(chrome://songbird/skin/tree/column-picker-hover.png) !important;
 }
+*/
