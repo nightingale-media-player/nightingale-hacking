@@ -508,6 +508,10 @@ treechildren::-moz-tree-column(insertbefore)
   color: #feffff !important; /** Light Color Brightest */
 }
 
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled )
+{
+  color: #B3BAAC !important; /** Light Color 1 */
+}
 /** 
 ***************************************************************************************************
 BUTTONS
