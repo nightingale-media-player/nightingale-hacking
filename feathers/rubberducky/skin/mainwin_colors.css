@@ -315,10 +315,18 @@ treecol > label
 {
   color: #8A8F84; /** Light Color 2 */
 }
+
+/** 
+Commenting out the hover states for column headers.  Called "distracting" in bug 4636.
+tree treecol:hover
+{
+  border-top: 1px solid #797f76; 
+}
 treecol:hover > label
 {
-  color: #feffff !important; /** Light Color Brightest */ 
+  color: #feffff !important; 
 }
+*/
 
 /* column picker **/
 .tree-columnpicker-icon
