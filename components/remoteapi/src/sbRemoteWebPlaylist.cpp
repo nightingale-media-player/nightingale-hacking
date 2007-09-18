@@ -264,11 +264,11 @@ NS_IMETHODIMP
 sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
                                 const nsAString& aColumnName,
                                 const nsAString& aDisplayName,
+                                const nsAString& aButtonLabel,
                                 const nsAString& aBeforeColumnName,
                                 PRBool aHidden,
                                 PRBool aUserViewable,
                                 PRBool aUserEditable,
-                                PRBool aHasNullSort,
                                 PRUint32 aNullSort,
                                 PRUint32 aWidth )
 {
@@ -324,8 +324,8 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
         NS_ENSURE_SUCCESS( rv, rv );
         rv = info->SetUserEditable(aUserEditable);
         NS_ENSURE_SUCCESS( rv, rv );
-        if (aHasNullSort)
-          info->SetNullSort(aNullSort);
+        rv = info->SetNullSort(aNullSort);
+        NS_ENSURE_SUCCESS( rv, rv );
       }
     }
     // these types get created through builders
@@ -335,6 +335,13 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
         LOG(( "sbRemoteWebPlaylist::AddColumn() - using a button builder" ));
         builder =
           do_CreateInstance(SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbISimpleButtonPropertyBuilder> buttonBuilder (
+          do_QueryInterface(builder));
+        NS_ENSURE_STATE(buttonBuilder);
+
+        rv = buttonBuilder->SetLabel(aButtonLabel);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else if (aColumnType.EqualsLiteral("image")) {
@@ -347,6 +354,13 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
         LOG(( "sbRemoteWebPlaylist::AddColumn() - using a downloadbutton builder" ));
         builder =
           do_CreateInstance(SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIDownloadButtonPropertyBuilder> dlBuilder (
+          do_QueryInterface(builder));
+        NS_ENSURE_STATE(dlBuilder);
+
+        rv = dlBuilder->SetLabel(aButtonLabel);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else if (aColumnType.EqualsLiteral("rating")) {
@@ -380,14 +394,14 @@ sbRemoteWebPlaylist::AddColumn( const nsAString& aColumnType,
     if (NS_SUCCEEDED(rv) ) {
       LOG(( "sbRemoteWebPlaylist::AddColumn() - we have a remotePropertyInfo item" ));
       rv = info->SetRemoteWritable(PR_TRUE);
-      // XXXredfive can't ensure success because the immutable properties also
-      // implement this interface and return an error code
-      //NS_ENSURE_SUCCESS( rv, rv );
+      if ( NS_FAILED(rv) && rv != NS_ERROR_NOT_IMPLEMENTED ) {
+        return rv;
+      }
 
       rv = info->SetRemoteReadable(PR_TRUE);
-      // XXXredfive can't ensure success because the immutable properties also
-      // implement this interface and return an error code
-      //NS_ENSURE_SUCCESS( rv, rv );
+      if ( NS_FAILED(rv) && rv != NS_ERROR_NOT_IMPLEMENTED ) {
+        return rv;
+      }
     } else {
       LOG(( "sbRemoteWebPlaylist::AddColumn() - we DONT have a remotePropertyInfo item" ));
     }

@@ -130,11 +130,11 @@ interface sbIRemoteWebPlaylist : nsISupports
     addColumn(String columnType, 
               String columnName,  
               String displayName, 
+              String buttonLabel, 
               String beforeColumn, 
               Boolean hidden, 
               Boolean viewable, 
               Boolean editable,
-              Boolean hasNullsort,
               Number nullsort,
               Number width)
 
@@ -142,13 +142,13 @@ interface sbIRemoteWebPlaylist : nsISupports
     columnType - The type of column.
     columnName - The name of the column.
     displayName - The displayed name of the column.
+    buttonLabel - The label for a button, if of type simple/download button
     beforeColumn - Insert this column before the column with this name. 
                    If an empty string is specified, the column is appended 
                    to the end of the existing columns.
     hidden - Hidden column by default.
     viewable - Column can be viewed by the user.
     editable - Column row cell values can be edited by the user.
-    hasNullsort - Specify how null values will be sorted visually.
     nullsort - The type of null sorting desired.
     width - The default width of the column when displayed.
   
@@ -174,6 +174,7 @@ interface sbIRemoteWebPlaylist : nsISupports
     songbird.webPlaylist.addColumn( "text",
                                     "columnName",
                                     "column heading goes here",
+                                    "", // nothing needed for text
                                     "", // add at the end
                                     false, // not hidden
                                     true, // can be viewed
@@ -189,11 +190,11 @@ interface sbIRemoteWebPlaylist : nsISupports
   void addColumn( in AString aColumnType,
                   in AString aColumnName,
                   in AString aDisplayName,
+                  in AString aButtonLabel,
                   in AString aBeforeColumnName,
                   in boolean aHidden,
                   in boolean aUserViewable,
                   in boolean aUserEditable,
-                  in boolean aHasNullSort,
                   in unsigned long aNullSort,
                   in unsigned long aWidth );
 

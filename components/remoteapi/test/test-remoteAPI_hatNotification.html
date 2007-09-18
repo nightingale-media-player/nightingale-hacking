@@ -54,6 +54,11 @@
       }
 
       function handleEvent(aEvent) {
+        if ( aEvent.type == 'RemoteAPIHatClosed' ) {
+          alert ("You have opted to not configure Songbird so our webpage can interact " +
+                 "with it at it's fullest. Please open tools->options and configure the " +
+                 "RemoteAPI preferences to allow us XYZ permissions.");
+        }
         myDiv.appendChild(document.createTextNode(aEvent['originalTarget'].location));
         myDiv.appendChild(document.createElement("br"));
         //for ( var stuff in aEvent ) {

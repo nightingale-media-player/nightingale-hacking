@@ -28,7 +28,7 @@
 
 <html>
   <head>
-    <title>Remote API Test: 12 (button demo)</title>
+    <title>Remote API Test: Custom Buttons</title>
     <script>
       var siteLib;
       var originalWeb;
@@ -51,20 +51,20 @@ function load() {
                                   "buttonDemoText",
                                   "FOO",
                                   "",
+                                  "",
                                   false,
                                   true,
-                                  false,
                                   false,
                                   0,
                                   150 ); 
 
   songbird.webPlaylist.addColumn( "button",
                                   "buttonDemoBuy",
-                                  "Buy",
+                                  "Get it!",
+                                  "FOO",
                                   "",
                                   false,
                                   true,
-                                  false,
                                   false,
                                   0,
                                   150 ); 
@@ -72,10 +72,10 @@ function load() {
   songbird.webPlaylist.addColumn( "image",
                                   "buttonDemoImage",
                                   "My Logo",
+                                  "Foo",    // won't appear on image columns
                                   "",
                                   false,
                                   true,
-                                  false,
                                   false,
                                   0,
                                   150 ); 
@@ -83,10 +83,10 @@ function load() {
   songbird.webPlaylist.addColumn( "downloadbutton",
                                   "buttonDemoDownloadButton",
                                   "Download it!!",
+                                  "Download",
                                   "",
                                   false,
                                   true,
-                                  false,
                                   false,
                                   0,
                                   150 ); 
@@ -95,12 +95,12 @@ function load() {
                                   "demoRating",
                                   "Rate Me!!",
                                   "",
+                                  "",
                                   false,
                                   true,
                                   true,
-                                  false,
                                   0,
-                                  150 ); 
+                                  400 ); 
 
   var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
   item.setProperty("buttonDemoBuy", "Buy Me"); 
