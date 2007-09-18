@@ -170,6 +170,9 @@ pref("browser.search.log", false);
 // Ordering of Search Engines in the Engine list. 
 pref("browser.search.order.1",                "chrome://branding/locale/brand.properties");
 pref("browser.search.order.2",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.3",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.4",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.5",                "chrome://branding/locale/brand.properties");
 
 // search bar results always open in a new tab
 pref("browser.search.openintab", false);

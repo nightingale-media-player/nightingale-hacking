@@ -1,0 +1,10 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>SkreemR</ShortName>
+<Description>SkreemR audio search</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">chrome://service-icons/skin/skreemr.ico</Image>
+<Url type="text/html" method="GET" template="http://skreemr.com/results.jsp">
+  <Param name="q" value="{searchTerms}"/>      
+</Url>
+<SearchForm>http://skreemr.com/</SearchForm>
+</SearchPlugin>

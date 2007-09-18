@@ -1,6 +1,6 @@
 <SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/" xmlns:os="http://a9.com/-/spec/opensearch/1.1/">
-<os:ShortName>elbo.ws</os:ShortName>
-<os:Description>elbo.ws music blog aggregator</os:Description>
+<os:ShortName>Elbows</os:ShortName>
+<os:Description>Elbows music blog aggregator</os:Description>
 <os:InputEncoding>UTF-8</os:InputEncoding>
 <os:Image width="16" height="16">data:image/x-icon;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAABMLAAATCwAAAAAAAAAAAAD8//78/v3////Esqh4TTeAV0d1SjhrOR+umY/X2drAxMSSgHeCWkn9/fz///7z9PT7//77/P3///////+VcmBlLxFfLw9zTTvCw8Le4eH8/v7W19Z0Vkvv6ef////4+vr8//7////p6+uRkY9FNSxGJRNpOR/WzMj////////9//7///+ooJvUzcv////3+fn+///r7O1ZWlkqLCovMTQgIiFyZl/////9///8//78/v3+///h5OTDwsP////3+fj///+VlpYxMS84ODc1NDQwMTJCQEHs7e3////8//78//78//3////Jycj7/Pv4+vn9/v9jY2M6Ojk1NjYyMzVgW0h3bFHBwsb////8//78//39/v3////IyMn39/f3+vn29etVU0o7PDswMjEtLjCqmnBFPzPLzMz////8//78//79//74+fnFxcT4+fj4+vr28M9gVjIsLjo3Nzqkk3B3a08uLzLx8vH////8//78//7////j5OM4ODezs7P6+vr8+Oe0pWR5cFe5qXuRgWEaGx6jpKP////9//39//7///////+ur64AAABlZWT29/f+///MsppxXDlKPSoVERM/Pz/Cw8P////////////n6Onw8O9HSEYAAABLS0r4+Pj8+/tkRzwEAAAlHBo4KiIcHR60tbSYl5fAwL+FhYVxcG9+fX0AAAAAAAB7e3v6+vr///+empdaWVleYGBZVVUcHRwcHR1YWFc1NTQ1NDWFhIULCwsAAAABAQHHx8b6+vr+///u7OuDfXtdX19rbGsWFxcEBAQmJiUqKSrHyMckJSQAAAAAAABLS0v9/f74+vn8//7///+spKBlY2BfXl5kY2MQEA8AAABwcnFBQUEAAAAAAAAhICDb29v////3+fn8//7+//7u6eeMdm9mYF1UVVZaWVo4MzQcFRUODAwPDApSUE7a2dn////8//74+/r8//78/f3+///19PLUz824t7aNjIuEgoF3bWtxY162qaX++vn////8//78//7y9fQAAAAAAAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAD//wAAAAAAAP//</os:Image>
 <os:Url type="text/html" method="GET" template="http://elbo.ws/mp3s/{searchTerms}/">

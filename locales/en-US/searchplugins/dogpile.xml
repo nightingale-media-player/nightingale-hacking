@@ -1,6 +1,6 @@
 <SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
-<ShortName>dogpile</ShortName>
-<Description>dogpile audio search</Description>
+<ShortName>Dogpile</ShortName>
+<Description>Dogpile audio search</Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image width="16" height="16">chrome://service-icons/skin/dogpile.ico</Image>
 <Url type="text/html" method="GET" template="http://www.dogpile.com/info.dogpl/search/redir.htm">

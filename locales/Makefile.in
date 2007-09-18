@@ -34,12 +34,10 @@ JAR_MANIFEST = jar.mn
 # Everybody gets English for now...
 SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/dogpile.xml \
                          $(srcdir)/en-US/searchplugins/elbows.xml \
-                         $(srcdir)/en-US/searchplugins/google.xml \
+                         $(srcdir)/en-US/searchplugins/hypemachine.xml \
                          $(srcdir)/en-US/searchplugins/google-lyrics.xml \
-                         $(srcdir)/en-US/searchplugins/mefeedia.xml \
                          $(srcdir)/en-US/searchplugins/songbird-internal-search.xml \
-                         $(srcdir)/en-US/searchplugins/wikipedia.xml \
-                         $(srcdir)/en-US/searchplugins/yahoo.xml \
+                         $(srcdir)/en-US/searchplugins/skreemr.xml \
                          $(srcdir)/en-US/searchplugins/yahoo-lyrics.xml \
                          $(NULL)
 

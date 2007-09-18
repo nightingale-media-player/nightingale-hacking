@@ -1,0 +1,8 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>The Hype Machine</ShortName>
+<Description>Search music blogs and upcoming concerts</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">chrome://service-icons/skin/hypemachine.ico</Image>
+<Url type="text/html" method="GET" template="http://hypem.com/search/{searchTerms}/1/" />
+<SearchForm>http://hypem.com/</SearchForm>
+</SearchPlugin>
