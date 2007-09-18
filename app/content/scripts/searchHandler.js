@@ -539,6 +539,11 @@ const gSearchHandler = {
    * Note: The playlist may not be initialized.
    */
   _isPlaylistShowing: function SearchHandler__isPlaylistShowing() {
+    if (!gBrowser.mCurrentBrowser.currentURI) {
+      // about:blank pages have no playlist (about:blank causes currentURI = null)
+      return false;
+    }
+    
     var url = gBrowser.mCurrentBrowser.currentURI.spec;
     return url.indexOf("sbLibraryPage") >= 0;
   },  

@@ -507,6 +507,9 @@
             // Nothing in the status text
             theStatusText.stringValue = "";
             
+            if (!aLocation) {
+              aLocation = "about:blank";
+            }
             // set the context-menu based on the chromeyness of the location
             if (aLocation.scheme == 'chrome') {
 
@@ -1457,6 +1460,11 @@
       <!-- sbITabBrowserTab -->
       <property name="innerPlaylist" readonly="true">
         <getter><![CDATA[
+          if (!this.linkedBrowser.currentURI) {
+            // guard against null currentURI that can be caused by about:blank
+            return null;
+          }
+          
           if (this.linkedBrowser.currentURI.scheme != 'chrome') {
             // only chrome urls can supply a playlist
             return null;

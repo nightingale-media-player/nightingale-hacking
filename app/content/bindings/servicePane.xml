@@ -441,7 +441,9 @@
            * one we requested then we should deselect the tree.
            */
           dump('onLocationChange\n');
-          this.highlightURL(aLocation.spec);
+          if (aLocation) {
+            this.highlightURL(aLocation.spec);
+          }
         ]]></body>
       </method>
       <method name="onStatusChange">

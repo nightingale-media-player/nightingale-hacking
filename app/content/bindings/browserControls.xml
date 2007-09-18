@@ -136,7 +136,11 @@
         <parameter name="aLocation" />
         <body><![CDATA[
           // when the tabbrowser location changes update the location bar
-          this.uri = aLocation.spec;
+          if (!aLocation) {
+            this.uri = "about:blank";
+          } else {
+            this.uri = aLocation.spec;
+          }
         ]]></body>
       </method>
       
@@ -185,7 +189,7 @@
         <parameter name="aBrowser" />
         <body><![CDATA[
           // Do nothing if icon is not for the currently displayed URI.
-          if (aBrowser.currentURI.spec != this.uri)
+          if (!aBrowser.currentURI || aBrowser.currentURI.spec != this.uri)
             return;
 
           // Use icon if service pane is not providing one.
