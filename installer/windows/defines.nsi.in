@@ -49,8 +49,8 @@
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}_${ARCH}.exe"
 !define PreferredIcon             songbird.ico
-!define PreferredInstallerIcon    songbird.ico
-!define PreferredUninstallerIcon  songbird.ico
+!define PreferredInstallerIcon    songbird_installer.ico
+!define PreferredUninstallerIcon  songbird_installer.ico
 !define VistaIcon                 songbird_vista.ico
 #else
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}_${BUILD_ID}\"
