@@ -84,11 +84,11 @@ sbMetadataJobManager::sbMetadataJobManager()
 
   nsCOMPtr< sbIDataRemote > dataDisplayString = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
   NS_ASSERTION(dataDisplayString, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
-  dataDisplayString->Init( NS_LITERAL_STRING("songbird.backscan.status"), NS_LITERAL_STRING("") );
+  dataDisplayString->Init( NS_LITERAL_STRING("backscan.status"), NS_LITERAL_STRING("") );
   dataDisplayString->SetStringValue( NS_LITERAL_STRING("") );
   nsCOMPtr< sbIDataRemote > dataCurrentMetadataJobs = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
   NS_ASSERTION(dataCurrentMetadataJobs, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
-  dataCurrentMetadataJobs->Init( NS_LITERAL_STRING("songbird.backscan.concurrent"), NS_LITERAL_STRING("") );
+  dataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"), NS_LITERAL_STRING("") );
   dataCurrentMetadataJobs->SetIntValue( 0 );
 
   rv = InitCurrentTasks();
