@@ -140,43 +140,44 @@ sbTestHarness.prototype = {
       if ( !testDir.exists() || !testDir.isDirectory() )
         continue;
 
-      // get an enumerator for the contents of the directory
-      var dirEnum = testDir.directoryEntries;
+      // put the test names into an array so we can sort them
+      var testNameArray = new Array();
+
+      if ( testCompTests.length == 0 ) {
+        // if the user didn't specify the tests to be run, get them all
+
+        // get an enumerator for the contents of the directory
+        let dirEnum = testDir.directoryEntries;
+
+        while ( dirEnum.hasMoreElements() ) {
+          let testFile = dirEnum.getNext().QueryInterface(Ci.nsIFile);
+
+          // skip over directories for now (our build system does not allow for
+          // creating hierarchical test directories
+          if (testFile.isDirectory())
+            continue;
+
+          // check for test_*.js; the parans cause the string to get parsed into
+          //   result as an array
+          var regex = /^test_(.+)\.js$/;
+          var result = testFile.leafName.match(regex);
+          if (!result)
+            continue;
+
+          testNameArray.push(result[1]);
+        }
+
+        // ensure all platforms do them in the same order
+        testNameArray.sort();
+      }
+      else {
+        // if the user did specify, run only them and in that order
+        testNameArray = testCompTests;
+      }
 
       // for each test_ file load it and the corresponding head & tail files
-      while ( dirEnum.hasMoreElements() ) {
-        var testFile = dirEnum.getNext().QueryInterface(Ci.nsIFile);
-
-        // skip over directories for now (our build system does not allow for
-        // creating hierarchical test directories
-        if (testFile.isDirectory())
-          continue;
-
-        // check for test_*.js; the parans cause the string to get parsed into
-        //   result as an array
-        var regex = /^(test_)(.+)(\.js)$/;
-        var result = testFile.leafName.match(regex);
-        if (!result)
-          continue;
-          
-        // our root string will always be in 2
-        // use this to look for tail_ and head_ files
-        var testBase = result[2];
-
-        // Check to see if the caller was specific about the actual tests to
-        // run. If so make sure the testBase matches otherwise don't run it.
-        if (testCompTests.length != 0 ) {
-          var testName;
-          for (testName in testCompTests) {
-            if ( testCompTests[testName] == testBase )
-              break;
-          }
-          // if the above loop didn't find a match skip this test, these
-          //   aren't the droids you're looking for, move along, move along
-          if (testCompTests[testName] != testBase)
-            continue;
-        }
-         
+      for ( let index = 0; index < testNameArray.length; index++ ) {
+        let testBase = testNameArray[index];
 
         // clone the nsIFile object so we can point to 3 files
         var testFile = testDir.clone().QueryInterface(Ci.nsILocalFile);
@@ -281,7 +282,7 @@ sbTestHarness.prototype = {
   buildTestComponents : function() {
     // iterate over all directories in testharness and add ALL directories 
     // found to the list of dirs to recurse through.
-    var dirEnum = this.mTestDir.directoryEntries;
+    let dirEnum = this.mTestDir.directoryEntries;
 
     this.mTestComponents = new Array();
     while ( dirEnum.hasMoreElements() ) {
@@ -290,6 +291,7 @@ sbTestHarness.prototype = {
         this.mTestComponents.push(entry.leafName);
       }
     }
+    this.mTestComponents.sort();
   },
 
   logFailure: function (aComponentName) {
