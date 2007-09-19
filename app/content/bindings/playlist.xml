@@ -1103,12 +1103,14 @@
         <![CDATA[
           // Out with the old
           this.removeCommands(); 
-          // In with the new
-          this._commands = this.commands = commands;
-          this._toolbar.hidden = true;
-          this._toolbar.bind(this.mediaListView.mediaList, this, commands);
-          this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands);
-          this._shortcuts.bind(this.mediaListView.mediaList, this, commands);
+          if (this.getAttribute("hidecommands") != "true") {
+              // In with the new
+              this._commands = this.commands = commands;
+              this._toolbar.hidden = true;
+              this._toolbar.bind(this.mediaListView.mediaList, this, commands);
+              this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands);
+              this._shortcuts.bind(this.mediaListView.mediaList, this, commands);
+          }
         ]]>
         </body>
       </method>
