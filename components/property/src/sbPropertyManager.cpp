@@ -547,6 +547,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Download details
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                    NS_LITERAL_STRING("property.download_details"),
+                    stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Rating
   nsRefPtr<sbRatingPropertyBuilder> rBuilder = new sbRatingPropertyBuilder();
   NS_ENSURE_TRUE(dbBuilder, rv);

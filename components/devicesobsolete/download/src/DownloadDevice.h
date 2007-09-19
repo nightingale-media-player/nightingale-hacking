@@ -159,6 +159,7 @@ class sbDownloadDevice : public nsIObserver,
      * mpPrefBranch             Preference branch.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
+     * mQueuedStr               Download queued string.
      * mpDownloadDirDR          Default download directory data remote.
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
@@ -174,6 +175,7 @@ class sbDownloadDevice : public nsIObserver,
     nsCOMPtr<nsIPrefBranch>     mpPrefBranch;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
+    nsString                    mQueuedStr;
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
@@ -197,6 +199,9 @@ class sbDownloadDevice : public nsIObserver,
     /*
      * Private transfer services.
      */
+
+    nsresult EnqueueItem(
+        sbIMediaItem                *apMediaItem);
 
     nsresult RunTransferQueue();
 
@@ -328,6 +333,9 @@ class sbDownloadSession : public nsIWebProgressListener
     /*
      * mpSessionLock            Lock for session.
      * mpDownloadDevice         Managing download device.
+     * mpStringBundle           Download device string bundle.
+     * mCompleteStr             Download complete string.
+     * mErrorStr                Download error string.
      * mpIOService              I/O service.
      * mpFileProtocolHandler    File protocol handler.
      * mpWebBrowser             Web browser used for download.
@@ -338,10 +346,16 @@ class sbDownloadSession : public nsIWebProgressListener
      * mpDstURI                 Destination download URI.
      * mShutdown                True if session has been shut down.
      * mSuspended               True if session is suspended.
+     * mLastUpdate              Last time progress was updated.
+     * mLastProgressBytes       Number of progress bytes on last update.
+     * mRate                    Download rate.
      */
 
     PRLock                      *mpSessionLock;
     sbDownloadDevice            *mpDownloadDevice;
+    nsCOMPtr<nsIStringBundle>   mpStringBundle;
+    nsString                    mCompleteStr;
+    nsString                    mErrorStr;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
@@ -353,6 +367,9 @@ class sbDownloadSession : public nsIWebProgressListener
     nsCOMPtr<sbIMediaItem>      mpStatusTarget;
     PRBool                      mShutdown;
     PRBool                      mSuspended;
+    PRTime                      mLastUpdate;
+    PRUint64                    mLastProgressBytes;
+    double                      mRate;
 
 
     /*
@@ -366,6 +383,35 @@ class sbDownloadSession : public nsIWebProgressListener
     void UpdateProgress(
         PRUint64                    aProgress,
         PRUint64                    aProgressMax);
+
+    void UpdateDownloadDetails(
+        PRUint64                    aProgress,
+        PRUint64                    aProgressMax);
+
+    void UpdateDownloadRate(
+        PRUint64                    aProgress,
+        PRUint64                    aElapsedUSecs);
+
+    nsresult FormatProgress(
+        nsString                    &aProgressStr,
+        PRUint64                    aProgress,
+        PRUint64                    aProgressMax,
+        double                      aRate,
+        PRUint32                    aRemSeconds);
+
+    nsresult FormatRate(
+        nsString                    &aRateStr,
+        double                      aRate);
+
+    nsresult FormatByteProgress(
+        nsString                    &aByteProgressStr,
+        PRUint64                    aBytes,
+        PRUint64                    aBytesMax);
+
+    nsresult FormatTime(
+        nsString                    &aTimeStr,
+        PRUint32                    aSeconds);
+
 
     /* *************************************************************************
      *

@@ -92,6 +92,8 @@
  * SB_DOWNLOAD_COL_SPEC         Default download device playlist column spec.
  * SB_PREF_DOWNLOAD_LIBRARY     Download library preference name.
  * SB_PREF_WEB_LIBRARY          Web library GUID preference name.
+ * SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS
+ *                              Update period for download progress.
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
@@ -106,13 +108,17 @@
                 "&chrome://songbird/locale/songbird.properties#device.download"
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
-#define SB_DOWNLOAD_COL_SPEC SB_PROPERTY_TRACKNAME " 395 "                     \
-                             SB_PROPERTY_ARTISTNAME " 222 "                    \
-                             SB_PROPERTY_ALBUMNAME " 222 "                     \
+#define SB_DOWNLOAD_COL_SPEC SB_PROPERTY_TRACKNAME " 235 "                     \
+                             SB_PROPERTY_ARTISTNAME " 152 "                    \
+                             SB_PROPERTY_ALBUMNAME " 152 "                     \
+                             SB_PROPERTY_CONTENTMIMETYPE " 50 "                \
+                             SB_PROPERTY_DOWNLOAD_DETAILS " 250 "              \
                              SB_PROPERTY_DOWNLOADBUTTON
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
+#define SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS   1000
+
 
 /* *****************************************************************************
  *
@@ -281,6 +287,14 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                             (SB_STRING_BUNDLE_CHROME_URL,
                                              getter_AddRefs(mpStringBundle));
         }
+    }
+
+    /* Get some strings. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = mpStringBundle->GetStringFromName
+                            (NS_LITERAL_STRING("device.download.queued").get(),
+                             getter_Copies(mQueuedStr));
     }
 
     /* Get the main library. */
@@ -614,8 +628,10 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     PRUint32                    itemCount;
     PRUint32                    i;
-    nsresult                    result1;
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
+
+    /* Validate parameters. */
+    NS_ENSURE_ARG_POINTER(aMediaItems);
 
     /* Do nothing unless operation is upload.  Uploading an item to the   */
     /* download device will download the item to the destination library. */
@@ -625,41 +641,22 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     /* Clear completed items. */
     ClearCompletedItems();
 
-    /* Add all the media items to the transfer queue. */
-    result = aMediaItems->GetLength(&itemCount);
-    for (i = 0; ((i < itemCount) && NS_SUCCEEDED(result)); i++)
+    /* Add all the media items to the transfer queue.  If any error    */
+    /* occurs on an item, remove it and continue with remaining items. */
+    rv = aMediaItems->GetLength(&itemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    for (i = 0; i < itemCount; i++)
     {
-        /* Get the next media item. */
-        pMediaItem = do_QueryElementAt(aMediaItems, i, &result1);
-        if (NS_FAILED(result1))
-            pMediaItem = nsnull;
+        /* Get the next media item.  Skip to next item on error. */
+        pMediaItem = do_QueryElementAt(aMediaItems, i, &rv);
+        if (NS_FAILED(rv))
+            continue;
 
-        /* Set its transfer destination. */
-        if (NS_SUCCEEDED(result1))
-            result1 = SetTransferDestination(pMediaItem);
-
-        /* Update the download button property to reflect the stating state. */
-        if (NS_SUCCEEDED(result1))
-        {
-            nsCOMPtr<sbIMediaItem> statusTarget;
-            nsresult rv = GetStatusTarget(pMediaItem,
-                                          getter_AddRefs(statusTarget));
-            NS_ENSURE_SUCCESS(rv, rv);
-            sbAutoDownloadButtonPropertyValue property(pMediaItem, statusTarget);
-            property.value->SetMode(sbDownloadButtonPropertyValue::eStarting);
-        }
-
-        /* Add it to the transfer queue. */
-        if (NS_SUCCEEDED(result1))
-        {
-            nsAutoMonitor mon(mpDeviceMonitor);
-            result1 = AddItemToTransferQueue
-                                    (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     pMediaItem);
-        }
+        /* Enqueue the media item for download. */
+        rv = EnqueueItem(pMediaItem);
 
         /* Remove item on error. */
-        if (NS_FAILED(result1) && pMediaItem)
+        if (NS_FAILED(rv))
         {
             mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
             mpDownloadMediaList->Remove(pMediaItem);
@@ -668,10 +665,10 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     }
 
     /* Run the transfer queue. */
-    if (NS_SUCCEEDED(result))
-        result = RunTransferQueue();
+    rv = RunTransferQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    return (result);
+    return (NS_OK);
 }
 
 
@@ -743,7 +740,8 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
                                         getter_AddRefs(statusTarget));
           NS_ENSURE_SUCCESS(rv, rv);
           sbAutoDownloadButtonPropertyValue property(pMediaItem, statusTarget);
-          if (property.value->GetMode() != sbDownloadButtonPropertyValue::eComplete) {
+          if (property.value->GetMode() !=
+              sbDownloadButtonPropertyValue::eComplete) {
             property.value->SetMode(sbDownloadButtonPropertyValue::eNew);
           }
         }
@@ -1533,6 +1531,56 @@ void sbDownloadDevice::GetDownloadMediaList()
  ******************************************************************************/
 
 /*
+ * EnqueueItem
+ *
+ *   --> apMediaItem            Media item to enqueue.
+ *
+ *   This function enqueues the media item specified by apMediaItem for
+ * download.
+ */
+
+nsresult sbDownloadDevice::EnqueueItem(
+    sbIMediaItem                *apMediaItem)
+{
+    nsresult                    rv;
+
+    /* Set the item transfer destination. */
+    rv = SetTransferDestination(apMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Update the download button property to reflect the stating state. */
+    nsCOMPtr<sbIMediaItem> statusTarget;
+    rv = GetStatusTarget(apMediaItem, getter_AddRefs(statusTarget));
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoDownloadButtonPropertyValue property(apMediaItem, statusTarget);
+    property.value->SetMode(sbDownloadButtonPropertyValue::eStarting);
+
+    /* Mark the download detail property as queued. */
+    rv = apMediaItem->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             mQueuedStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (statusTarget)
+    {
+        rv = statusTarget->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             mQueuedStr);
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    /* Add item to the transfer queue. */
+    {
+        nsAutoMonitor mon(mpDeviceMonitor);
+        rv = AddItemToTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+                                    apMediaItem);
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return (NS_OK);
+}
+
+
+/*
  * RunTransferQueue
  *
  *   This function runs the transfer queue.  It will start transferring the next
@@ -2149,6 +2197,7 @@ nsresult sbDownloadDevice::OpenDialog(
 
 /* Mozilla imports. */
 #include <nsIChannel.h>
+#include <prprf.h>
 
 
 /* *****************************************************************************
@@ -2171,7 +2220,8 @@ sbDownloadSession::sbDownloadSession(
     mpSessionLock(nsnull),
     mpDownloadDevice(pDownloadDevice),
     mShutdown(PR_FALSE),
-    mSuspended(PR_FALSE)
+    mSuspended(PR_FALSE),
+    mLastProgressBytes(0)
 {
     TRACE(("sbDownloadSession[0x%.8x] - ctor", this));
 }
@@ -2225,6 +2275,37 @@ nsresult sbDownloadSession::Initiate()
         pLibraryManager = do_GetService
                                 ("@songbirdnest.com/Songbird/library/Manager;1",
                                  &result);
+    }
+
+    /* Get the string bundle. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsCOMPtr<nsIStringBundleService>
+                                    pStringBundleService;
+
+        /* Get the download device string bundle. */
+        pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID,
+                                             &result);
+        if (NS_SUCCEEDED(result))
+        {
+            result = pStringBundleService->CreateBundle
+                                            (SB_STRING_BUNDLE_CHROME_URL,
+                                             getter_AddRefs(mpStringBundle));
+        }
+    }
+
+    /* Get some strings. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = mpStringBundle->GetStringFromName
+                        (NS_LITERAL_STRING("device.download.complete").get(),
+                         getter_Copies(mCompleteStr));
+    }
+    if (NS_SUCCEEDED(result))
+    {
+        result = mpStringBundle->GetStringFromName
+                        (NS_LITERAL_STRING("device.download.error").get(),
+                         getter_Copies(mErrorStr));
     }
 
     /* Create the session lock. */
@@ -2317,7 +2398,10 @@ nsresult sbDownloadSession::Initiate()
 
     /* Set up the listener. */
     if (NS_SUCCEEDED(result))
+    {
+        mLastUpdate = PR_Now();
         result = mpWebBrowser->SetProgressListener(this);
+    }
 
     /* Initiate the download. */
     if (NS_SUCCEEDED(result))
@@ -2494,7 +2578,6 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
     /* Process state change with the session locked. */
     {
-
         /* Lock the session. */
         nsAutoLock lock(mpSessionLock);
 
@@ -2531,9 +2614,25 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
             result = CompleteTransfer(aRequest);
 
-        /* Set the progress to complete. */
+        /* Set the progress to complete.  Nothing to do on error. */
         sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
         property.value->SetMode(sbDownloadButtonPropertyValue::eComplete);
+
+        /* Set the final download status. */
+        nsAutoString statusStr;
+        if (NS_SUCCEEDED(status))
+            statusStr.Assign(mCompleteStr);
+        else
+            statusStr.Assign(mErrorStr);
+        mpMediaItem->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             statusStr);
+        if (mpStatusTarget)
+        {
+            mpStatusTarget->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             statusStr);
+        }
     }
 
     /* Send notification of session completion.  Do this */
@@ -2922,10 +3021,349 @@ void sbDownloadSession::UpdateProgress(
     PRUint64                    aProgress,
     PRUint64                    aProgressMax)
 {
+    /* Update the download button property. */
     sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
     property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
     property.value->SetCurrent(aProgress);
     property.value->SetTotal(aProgressMax);
+
+    /* Update the download details. */
+    UpdateDownloadDetails(aProgress, aProgressMax);
+}
+
+
+/*
+ * UpdateDownloadDetails
+ *
+ *   --> aProgress              Current progress value.
+ *   --> aProgressMax           Maximum progress value.
+ *
+ *   This function updates the download details with the download session
+ * progress values specified by aProgress and aProgressMax.
+ */
+
+void sbDownloadSession::UpdateDownloadDetails(
+    PRUint64                    aProgress,
+    PRUint64                    aProgressMax)
+{
+    nsAutoString                progressStr;
+    PRTime                      now;
+    PRUint64                    elapsedUSecs;
+    PRUint32                    remainingSecs;
+    nsresult                    rv;
+
+    /* Determine the elapsed time since the last update. */
+    now = PR_Now();
+    elapsedUSecs = now - mLastUpdate;
+
+    /* Limit the update rate. */
+    if (   mLastUpdate
+        && (elapsedUSecs < (  SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS
+                            * PR_USEC_PER_MSEC)))
+    {
+        return;
+    }
+
+    /* Update the download rate. */
+    UpdateDownloadRate(aProgress, elapsedUSecs);
+
+    /* Compute the remaining number of seconds to download. */
+    if (mRate)
+    {
+        remainingSecs = (PRUint32) 
+                    ((double(aProgressMax) - double(aProgress)) / mRate + 0.5);
+    }
+    else
+    {
+        remainingSecs = 0;
+    }
+
+    /* Produce the formatted progress string. */
+    rv = FormatProgress(progressStr,
+                        aProgress,
+                        aProgressMax,
+                        mRate,
+                        remainingSecs);
+   if (NS_FAILED(rv))
+       progressStr.AssignLiteral("???");
+
+    /* Update the download details property.  Nothing to do on error. */
+    mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             progressStr);
+    if (mpStatusTarget)
+    {
+        mpStatusTarget->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
+                             progressStr);
+    }
+
+    /* Save update state. */
+    mLastUpdate = now;
+    mLastProgressBytes = aProgress;
+}
+
+
+/*
+ * UpdateDownloadRate
+ *
+ *   --> aProgress              Number of bytes downloaded.
+ *   --> aElapsedUSecs          Number of microseconds elapsed since last
+ *                              update.
+ *
+ *   This function updates the download rate computed by the number of bytes
+ * downloaded specified by aProgress and the elapsed time since the last update
+ * specified by aElapsedUSecs.
+ */
+
+void sbDownloadSession::UpdateDownloadRate(
+    PRUint64                    aProgress,
+    PRUint64                    aElapsedUSecs)
+{
+    double                      elapsedSecs;
+    PRUint64                    dlByteCount;
+    double                      rate;
+
+    /* Get the number of elapsed seconds. */
+    /* Do nothing if no time has elapsed. */
+    elapsedSecs = double(aElapsedUSecs) / PR_USEC_PER_SEC;
+    if (elapsedSecs <= 0.0)
+        return;
+
+    /* Compute the current download rate. */
+    dlByteCount = aProgress - mLastProgressBytes;
+    rate = double(dlByteCount) / elapsedSecs;
+
+    /* Calculate smoothed download rate average. */
+    if (mLastProgressBytes)
+        mRate = 0.9 * mRate + 0.1 * rate;
+    else
+        mRate = rate;
+}
+
+
+/*
+ * FormatProgress
+ *
+ *   <-- aProgressStr           Formatted progress string.
+ *   --> aProgress              Current progress value.
+ *   --> aProgressMax           Maximum progress value.
+ *   --> aRate                  Download rate.
+ *   --> aRemSeconds            Reaminig download seconds.
+ *
+ *   This function returns in aProgressStr a formatted string containing the
+ * progress values specified by aProgress, aProgressMax, aRate, and aRemSeconds.
+ */
+
+nsresult sbDownloadSession::FormatProgress(
+    nsString                    &aProgressStr,
+    PRUint64                    aProgress,
+    PRUint64                    aProgressMax,
+    double                      aRate,
+    PRUint32                    aRemSeconds)
+{
+    nsAutoString                byteProgressStr;
+    nsAutoString                rateStr;
+    nsAutoString                timeStr;
+    const PRUnichar             *stringList[3];
+    nsresult                    rv;
+
+    /* Format byte progress. */
+    rv = FormatByteProgress(byteProgressStr, aProgress, aProgressMax);
+    NS_ENSURE_SUCCESS(rv, rv);
+    stringList[0] = byteProgressStr.get();
+
+    /* Format download rate. */
+    rv = FormatRate(rateStr, aRate);
+    NS_ENSURE_SUCCESS(rv, rv);
+    stringList[1] = rateStr.get();
+
+    /* Format remaining download time. */
+    rv = FormatTime(timeStr, aRemSeconds);
+    NS_ENSURE_SUCCESS(rv, rv);
+    stringList[2] = timeStr.get();
+
+    /* Format download progress. */
+    rv = mpStringBundle->FormatStringFromName
+                    (NS_LITERAL_STRING("device.download.statusFormat").get(),
+                     stringList,
+                     3,
+                     getter_Copies(aProgressStr));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return (NS_OK);
+}
+
+
+/*
+ * FormatRate
+ *
+ *   <-- aRateStr               Formatted rate string.
+ *   --> aRate                  Download rate.
+ *
+ *   This function returns in aRateStr a formatted string containing the
+ * download rate specified by aRate.
+ */
+
+nsresult sbDownloadSession::FormatRate(
+    nsString                    &aRateStr,
+    double                      aRate)
+{
+    char                        rateStr[32];
+
+    /* Format the download rate. */
+    PR_snprintf(rateStr, sizeof(rateStr), "%.1f", aRate / 1024.0 + 0.05);
+    aRateStr.AssignLiteral(rateStr);
+
+    return (NS_OK);
+}
+
+
+/*
+ * FormatByteProgress
+ *
+ *   <-- aBytesProgressStr      Formatted byte progress string.
+ *   --> aBytes                 Number of bytes downloaded.
+ *   --> aBytesMax              Maximum number of download bytes.
+ *
+ *   This function returns in aBytesProgressStr a formatted string containing
+ * the download byte progress values specified by aBytes and aBytesMax.
+ */
+
+nsresult sbDownloadSession::FormatByteProgress(
+    nsString                    &aByteProgressStr,
+    PRUint64                    aBytes,
+    PRUint64                    aBytesMax)
+{
+    double                      bytesKB,
+                                bytesMB;
+    double                      bytesMaxKB,
+                                bytesMaxMB;
+    double                      bytesVal;
+    double                      bytesMaxVal;
+    char                        bytesValStr[32];
+    char                        bytesMaxValStr[32];
+    nsAutoString                bytesValNSStr;
+    nsAutoString                bytesMaxValNSStr;
+    nsAutoString                stringName;
+    const PRUnichar             *stringList[2];
+    nsresult                    rv;
+
+    /* Get the number of download kilobytes and megabytes. */
+    bytesKB = double(aBytes) / 1024.0;
+    bytesMB = bytesKB / 1024.0;
+
+    /* Get the number of max download kilobytes and megabytes. */
+    bytesMaxKB = double(aBytesMax) / 1024.0;
+    bytesMaxMB = bytesMaxKB / 1024.0;
+
+    /* Determine format of byte progress status. */
+    if (bytesMB >= 1.0)
+    {
+        stringName.AssignLiteral("device.download.statusFormatMBMB");
+        bytesVal = bytesMB;
+        bytesMaxVal = bytesMaxMB;
+    }
+    else if (bytesMaxMB >= 1.0)
+    {
+        stringName.AssignLiteral("device.download.statusFormatKBMB");
+        bytesVal = bytesKB;
+        bytesMaxVal = bytesMaxMB;
+    }
+    else
+    {
+        stringName.AssignLiteral("device.download.statusFormatKBKB");
+        bytesVal = bytesKB;
+        bytesMaxVal = bytesMaxKB;
+    }
+
+    /* Format the download bytes status. */
+    PR_snprintf(bytesValStr, sizeof(bytesValStr), "%.1f", bytesVal);
+    bytesValNSStr.AssignLiteral(bytesValStr);
+    stringList[0] = bytesValNSStr.get();
+
+    /* Format the max download bytes status. */
+    PR_snprintf(bytesMaxValStr, sizeof(bytesMaxValStr), "%.1f", bytesMaxVal);
+    bytesMaxValNSStr.AssignLiteral(bytesMaxValStr);
+    stringList[1] = bytesMaxValNSStr.get();
+
+    /* Format the download progress status. */
+    rv = mpStringBundle->FormatStringFromName(stringName.get(),
+                                              stringList,
+                                              2,
+                                              getter_Copies(aByteProgressStr));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return (NS_OK);
+}
+
+
+/*
+ * FormatTime
+ *
+ *   <-- aTimeStr               Formatted time string.
+ *   --> aSeconds               Number of seconds.
+ *
+ *   This function returns in aTimeStr a formatted time string for the number of
+ * seconds specified by aSeconds.
+ */
+
+nsresult sbDownloadSession::FormatTime(
+    nsString                    &aTimeStr,
+    PRUint32                    aSeconds)
+{
+    nsAutoString                stringName;
+    PRUint32                    hours,
+                                minutes,
+                                seconds;
+    nsAutoString                hoursStr,
+                                minutesStr,
+                                secondsStr;
+    const PRUnichar             *stringList[3];
+    nsresult                    rv;
+
+    /* Initialize the time seconds field. */
+    seconds = aSeconds;
+
+    /* Extract the hours field. */
+    hours = aSeconds / 3600;
+    hoursStr.AppendInt(hours);
+    seconds -= hours * 3600;
+
+    /* Extract the minutes field. */
+    minutes = aSeconds / 60;
+    if (hours && minutes < 10)
+        minutesStr.AssignLiteral("0");
+    minutesStr.AppendInt(minutes);
+    seconds -= minutes * 60;
+
+    /* Extract the seconds field. */
+    if (seconds < 10)
+        secondsStr.AssignLiteral("0");
+    secondsStr.AppendInt(seconds);
+
+    /* Determine the time format. */
+    if (hours)
+    {
+        stringName.AssignLiteral("device.download.longTimeFormat");
+        stringList[0] = hoursStr.get();
+        stringList[1] = minutesStr.get();
+        stringList[2] = secondsStr.get();
+    }
+    else
+    {
+        stringName.AssignLiteral("device.download.shortTimeFormat");
+        stringList[0] = minutesStr.get();
+        stringList[1] = secondsStr.get();
+    }
+
+    /* Format the time string. */
+    rv = mpStringBundle->FormatStringFromName(stringName.get(),
+                                              stringList,
+                                              3,
+                                              getter_Copies(aTimeStr));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return (NS_OK);
 }
 
 

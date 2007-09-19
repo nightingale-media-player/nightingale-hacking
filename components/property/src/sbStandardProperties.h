@@ -66,5 +66,6 @@
 #define SB_PROPERTY_CUSTOMTYPE              "http://songbirdnest.com/data/1.0#customType"
 #define SB_PROPERTY_DOWNLOADBUTTON          "http://songbirdnest.com/data/1.0#downloadButton"
 #define SB_PROPERTY_DOWNLOAD_STATUS_TARGET  "http://songbirdnest.com/data/1.0#downloadStatusTarget"
+#define SB_PROPERTY_DOWNLOAD_DETAILS        "http://songbirdnest.com/data/1.0#downloadDetails"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */
