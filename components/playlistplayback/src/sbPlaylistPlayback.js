@@ -24,6 +24,8 @@
 //
  */
 
+Components.utils.import("resource://app/components/sbProperties.jsm");
+
 /**
  * ----------------------------------------------------------------------------
  * Constants
@@ -1638,6 +1640,12 @@ PlaylistPlayback.prototype = {
     var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                    .getService(Components.interfaces.sbILibraryManager);
     var view = libraryManager.mainLibrary.createView();
+    // Filter the view as if it is being shown in the UI to determine
+    // if this library actually has anything playable in it
+    view.setFilters(SBProperties.createArray([
+      [SBProperties.isList, "0"],
+      [SBProperties.hidden, "0"]
+    ]));
     if (view.length > 0) {
       this.playView(view, 0);
     }

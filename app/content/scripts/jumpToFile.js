@@ -419,9 +419,9 @@ try
   function _selectPlaylist( guid, libraryguid ) {
     var menulist = document.getElementById("playable_list");
     var item = document.getElementById("current_play_queue");
-    // set default, if we don't find the list, we'll use that item to display
+    // set default to null, if we don't find the list, we'll use the extra item to display
     // the unknown playlist
-    menulist.selectedItem = item;
+    menulist.selectedItem = null;
     // look for the playlist and select it
     menulist.menupopup.builder.addListener( JumpToPlaylistListListener );
     JumpToPlaylistListListener.didRebuild();
@@ -603,7 +603,7 @@ try
     // show or hide and customize the "Current Play Queue" item according to the presence or absence of a search string and filters
     var no_search = (!search || search == "");
     var no_filter = !_hasFilters(filters);
-    if (no_search && no_filter && menulist.selectedItem != item) {
+    if (no_search && no_filter && menulist.selectedItem != null) {
       // We do not need the extra item, what we're showing was found in the
       // datasource, and has no extra filter or search. Hide the extra item.
       item.setAttribute("hidden", "true");
@@ -612,7 +612,7 @@ try
       var label = ""
       item.setAttribute("hidden", "false");
       // Did we find the playlist we were looking for in the datasource ?
-      if (menulist.selectedItem == item) {
+      if (menulist.selectedItem == null) {
         // No, we didn't ! To summarize,
         // The selected playlist is the current play queue, however it was not
         // found in the list of playlists. This means one of several possible scenarios:
@@ -656,6 +656,8 @@ try
       }
       // Set the extra item's label, it describes what we are showing.
       item.setAttribute("label", label);
+      // Select the item
+      menulist.selectedItem = item;
     }
   }
   
