@@ -614,10 +614,6 @@ PublicPlaylistCommands.prototype = {
     this.m_downloadCommands.appendPlaylistCommands(null, 
                                                    "library_cmdobj_pauseresumedownload",
                                                    this.m_cmd_PauseResumeDownload);
-    this.m_downloadCommands.appendSeparator(null, "separator");
-    this.m_downloadCommands.appendPlaylistCommands(null, 
-                                                   "library_cmdobj_showwebplaylist",
-                                                   this.m_cmd_ShowWebPlaylist);
 
     this.m_downloadCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
 
