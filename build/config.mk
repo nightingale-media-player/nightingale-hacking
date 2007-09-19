@@ -129,6 +129,27 @@ PPDEFINES += $(if $(MEDIA_CORE_VLC), -DMEDIA_CORE_VLC=1) \
 # support for different versions of MSVC
 PPDEFINES += $(if $(_MSC_VER), -D_MSC_VER=$(_MSC_VER))
 
+# define default extension architecture
+ifeq (windows,$(SB_PLATFORM))
+    EXTENSION_ARCH = WINNT_x86-msvc
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+    ifeq (i686,$(SB_ARCH))
+        EXTENSION_ARCH = Darwin_x86-gcc3
+    else
+        EXTENSION_ARCH = Darwin_$(SB_ARCH)-gcc3
+    endif
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+    ifeq (i686,$(SB_ARCH))
+        EXTENSION_ARCH = Linux_x86-gcc3
+    else
+        EXTENSION_ARCH = Linux_$(SB_ARCH)-gcc3
+    endif
+endif
+
 #------------------------------------------------------------------------------
 endif #CONFIG_MK_INCLUDED
 #------------------------------------------------------------------------------
