@@ -38,6 +38,7 @@ moz_utils = sbMozStringUtils
 endif
 
 CPP_SRCS = sbRemoteAPIModule.cpp \
+           sbRemoteAPIService.cpp \
            sbRemoteCommands.cpp \
            sbRemoteIndexedMediaItem.cpp \
            sbRemoteLibrary.cpp \
@@ -83,6 +84,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/js \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \

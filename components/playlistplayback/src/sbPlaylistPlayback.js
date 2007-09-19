@@ -317,6 +317,11 @@ PlaylistPlayback.prototype = {
   _metadataLenText:    null,
   _statusText:         null,
   _statusStyle:        null,
+  
+  /**
+   * For tracking change of playback control - used as event broadcaster
+   */
+  _controlTriggered:    null,
     
   _restartOnPlaybackEnd: null,
   _restartAppNow:        null,
@@ -411,6 +416,9 @@ PlaylistPlayback.prototype = {
 
     this._statusText            = createDataRemote("faceplate.status.text", null );
     this._statusStyle           = createDataRemote("faceplate.status.style", null );
+
+    // track the last time playback controls were used
+    this._controlTriggered       = createDataRemote("playback.control.triggered", null);
 
     // Set startup defaults
     this._metadataPos.intValue = 0;
@@ -575,6 +583,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.setPosition(val);
+    this._controlTriggered.stringValue = Date.now();
     return true;
   },
   
@@ -902,6 +911,7 @@ PlaylistPlayback.prototype = {
       
       this._metadataURL.stringValue = spec;
       this._playURL.stringValue = spec;
+      this._controlTriggered.stringValue = Date.now();
       core.playURL(spec);
 
       LOG( "playURL() '" + core.getId() + "'(" + this.position + "/" +
@@ -932,6 +942,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.pause();
+    this._controlTriggered.stringValue = Date.now();
     return true;
   },
 
@@ -966,6 +977,7 @@ PlaylistPlayback.prototype = {
     }
 */    
     this._playingVideo.boolValue = false;
+    this._controlTriggered.stringValue = Date.now();
     return true;
   },
 
@@ -974,6 +986,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(1);
+    this._controlTriggered.stringValue = Date.now();
     return this._playlistIndex;
   },
 
@@ -982,6 +995,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(-1);
+    this._controlTriggered.stringValue = Date.now();
     return this._playlistIndex;
   },
 

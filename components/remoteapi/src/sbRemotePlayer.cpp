@@ -39,6 +39,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIRemoteAPIService.h>
 #include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
 #include <sbITabBrowser.h>
@@ -72,12 +73,15 @@
 #include <nsIPrefBranch.h>
 #include <nsIPresShell.h>
 #include <nsIPrivateDOMEvent.h>
+#include <nsIPromptService.h>
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptNameSpaceManager.h>
+#include <nsIStringBundle.h>
 #include <nsITreeSelection.h>
 #include <nsITreeView.h>
 #include <nsIURI.h>
 #include <nsIWindowMediator.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -192,6 +196,38 @@ UnbindAndRelease ( const nsAString &aKey,
   aRemObs.remote->Unbind();
   return PL_DHASH_REMOVE;
 }
+
+// helper class to push a system pricipal so that all calls across xpconnect
+// will succeed.  Similar to nsAutoLock, except for principals
+class sbAutoPrincipalPusher
+{
+  public:
+    sbAutoPrincipalPusher()
+    {
+      mStack = do_GetService("@mozilla.org/js/xpc/ContextStack;1");
+      if (mStack) {
+        nsresult rv = mStack->Push(nsnull);
+        if (NS_FAILED(rv)) {
+          // failed to push the stack, don't accidentally pop it later
+          mStack = nsnull;
+        }
+      }
+    }
+    ~sbAutoPrincipalPusher()
+    {
+      if (mStack) {
+        JSContext *cx;
+        mStack->Pop(&cx);
+      }
+    }
+    // tell people if we succeeded in pushing the principal
+    operator PRBool() const
+    {
+      return mStack ? PR_TRUE : PR_FALSE ;
+    }
+  protected:
+    nsCOMPtr<nsIJSContextStack> mStack;
+};
 
 NS_IMPL_ISUPPORTS6( sbRemotePlayer,
                     nsIClassInfo,
@@ -784,6 +820,10 @@ sbRemotePlayer::SetPosition( PRInt64 aPosition )
 {
   LOG(("sbRemotePlayer::SetPosition()"));
   NS_ENSURE_ARG_POINTER(aPosition);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   if (!mdrPosition) {
     nsresult rv;
     mdrPosition = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
@@ -793,7 +833,10 @@ sbRemotePlayer::SetPosition( PRInt64 aPosition )
                             SB_PREFS_ROOT );
     NS_ENSURE_SUCCESS( rv, rv );
   }
-  return mdrPosition->SetIntValue(aPosition);
+  rv = mdrPosition->SetIntValue(aPosition);
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  return TakePlaybackControl( nsnull );
 }
 
 NS_IMETHODIMP
@@ -897,13 +940,16 @@ sbRemotePlayer::Play()
   LOG(("sbRemotePlayer::Play()"));
   NS_ENSURE_STATE(mGPPS);
 
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+  
   if (!mWebPlaylistWidget) {
-    nsresult rv = AcquirePlaylistWidget();
+    rv = AcquirePlaylistWidget();
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
   nsCOMPtr<sbIMediaListView> mediaListView;
-  nsresult rv = mWebPlaylistWidget->GetListView( getter_AddRefs(mediaListView) );
+  rv = mWebPlaylistWidget->GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // If the page does not have a web playlist, fall back
@@ -928,7 +974,10 @@ sbRemotePlayer::Play()
     index = 0;
 
   PRBool retval;
-  mGPPS->PlayView( mediaListView, index, &retval );
+  rv = mGPPS->PlayView( mediaListView, index, &retval );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -939,7 +988,8 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_STATE(mGPPS);
 
-  nsresult rv;
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Get the existing view if there is one
   nsCOMPtr<sbIMediaListView> mediaListView;
@@ -958,7 +1008,10 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
     aIndex = 0;
 
   PRBool retval;
-  mGPPS->PlayView( mediaListView, aIndex, &retval );
+  rv = mGPPS->PlayView( mediaListView, aIndex, &retval );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -967,8 +1020,15 @@ sbRemotePlayer::PlayURL( const nsAString &aURL )
 {
   LOG(("sbRemotePlayer::PlayURL()"));
   NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   PRBool retval;
-  mGPPS->PlayURL( aURL, &retval );
+  rv = mGPPS->PlayURL( aURL, &retval );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -977,8 +1037,15 @@ sbRemotePlayer::Stop()
 {
   LOG(("sbRemotePlayer::Stop()"));
   NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   PRBool retval;
-  mGPPS->Stop(&retval);
+  rv = mGPPS->Stop(&retval);
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -987,8 +1054,17 @@ sbRemotePlayer::Pause()
 {
   LOG(("sbRemotePlayer::Pause()"));
   NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   PRBool retval;
-  mGPPS->Pause(&retval);
+  rv = mGPPS->Pause(&retval);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
+
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -997,8 +1073,15 @@ sbRemotePlayer::Next()
 {
   LOG(("sbRemotePlayer::Next()"));
   NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   PRInt32 retval;
-  mGPPS->Next(&retval);
+  rv = mGPPS->Next(&retval);
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -1007,8 +1090,15 @@ sbRemotePlayer::Previous()
 {
   LOG(("sbRemotePlayer::Previous()"));
   NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv = ConfirmPlaybackControl();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   PRInt32 retval;
-  mGPPS->Previous(&retval);
+  rv = mGPPS->Previous(&retval);
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = TakePlaybackControl( nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -1250,6 +1340,175 @@ sbRemotePlayer::UnregisterCommands()
   NS_ASSERTION( NS_SUCCEEDED(rv),
                 "Failed to unregister commands from playlistcommandsmanager" );
 
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::ConfirmPlaybackControl() {
+  // the web site is trying to control the user's playback.
+  // try to guess if this is likely to annoy the user.
+
+  LOG(("sbRemotePlayer::ConfirmPlaybackControl()"));
+  
+  PRBool isPlaying;
+  nsresult rv;
+  
+  // we are safe to run from untrusted script.  Since we may end up across
+  // XPConnect and land in JS again, we need to push a principal so that when
+  // XPConnect looks it sees that it's a chrome caller.
+  
+  // before we do that, however, we need to get any information we need from
+  // the content document (since that will be unavailable when we push)
+  nsCOMPtr<sbISecurityMixin> securityMixin =
+    do_QueryInterface( mSecurityMixin, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<nsIURI> codebaseURI;
+  rv = securityMixin->GetCodebase( getter_AddRefs(codebaseURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCOMPtr<nsPIDOMWindow> jsWindow = GetWindowFromJS();
+
+  // we can now push the new principal
+  sbAutoPrincipalPusher principal;
+  if (!principal) {
+    return NS_ERROR_FAILURE;
+  }
+
+  rv = mGPPS->GetPlaying( &isPlaying );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  if (!isPlaying) {
+    // The player is not playing, allow it
+    LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- not playing, allow"));
+    return NS_OK;
+  }
+  
+  // check to see if this page has control
+  nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
+    do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  PRBool hasPlaybackControl;
+  rv = remoteAPIService->HasPlaybackControl( codebaseURI, &hasPlaybackControl );
+  NS_ENSURE_SUCCESS( rv, rv );
+  if ( hasPlaybackControl ) {
+    LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- URI has control, allow"));
+    return NS_OK;
+  }
+  
+  // we're playing stuff from the user, prompt. eww.
+  nsCOMPtr<nsIStringBundleService> sbs =
+    do_GetService( NS_STRINGBUNDLE_CONTRACTID, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  // get the branding...
+  nsCOMPtr<nsIStringBundle> bundle;
+  rv = sbs->CreateBundle( "chrome://branding/locale/brand.properties",
+                          getter_AddRefs(bundle) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsString branding;
+  rv = bundle->GetStringFromName( NS_LITERAL_STRING("brandShortName").get(),
+                                  getter_Copies(branding) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  // ... and the host so the user has information to decide if this should be allowed
+  nsCString hostUTF8;
+  rv = codebaseURI->GetHost(hostUTF8);
+  NS_ENSURE_SUCCESS( rv, rv );
+  if ( hostUTF8.IsEmpty() ) {
+    // no host (e.g. file:///); fall back to full URL
+    rv = codebaseURI->GetSpec(hostUTF8);
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  NS_ConvertUTF8toUTF16 host(hostUTF8);
+
+  // and the prompt title and message
+  rv = sbs->CreateBundle( "chrome://songbird/locale/songbird.properties",
+                          getter_AddRefs(bundle) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  const PRUnichar *formatParams[2];
+  formatParams[0] = branding.BeginReading();
+  formatParams[1] = host.BeginReading();
+
+  nsString message;
+  rv = bundle->FormatStringFromName( NS_LITERAL_STRING("rapi.playback_control.blocked.message").get(),
+                                     formatParams,
+                                     NS_ARRAY_LENGTH(formatParams),
+                                     getter_Copies(message) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsString title;
+  rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.playback_control.blocked.title").get(),
+                                  getter_Copies(title) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  // now we can actually go for the prompt
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService( "@mozilla.org/embedcomp/prompt-service;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // this is launched by the child window, tell Gecko about it.
+  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface( jsWindow, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  PRBool allowed;
+  rv = promptService->Confirm( window,
+                               title.BeginReading(),
+                               message.BeginReading(),
+                               &allowed );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return allowed ? NS_OK : NS_ERROR_ABORT ;
+}
+
+nsresult
+sbRemotePlayer::GetBrowser( nsIDOMElement** aElement )
+{
+  nsresult rv;
+  // Find the sb-tabbrowser ByTagName()[0] (not ById()!)
+  NS_ENSURE_STATE(mChromeDoc);
+  nsCOMPtr<nsIDOMNodeList> tabBrowserElementList;
+  mChromeDoc->GetElementsByTagName( SB_WEB_TABBROWSER,
+                              getter_AddRefs(tabBrowserElementList) );
+  NS_ENSURE_STATE(tabBrowserElementList);
+  nsCOMPtr<nsIDOMNode> tabBrowserElement;
+  rv = tabBrowserElementList->Item( 0, getter_AddRefs(tabBrowserElement) );
+  NS_ENSURE_STATE(tabBrowserElement);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Get our interface
+  nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement,
+                                                         &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  rv = tabbrowser->GetBrowserForDocument( mContentDoc, aElement );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::TakePlaybackControl( nsIURI* aURI )
+{
+  nsresult rv;
+  nsCOMPtr<nsIURI> uri = aURI;
+  
+  // try to guess the URI if we are not given one
+  if ( NS_UNLIKELY(!uri) ) {
+    nsCOMPtr<sbISecurityMixin> securityMixin =
+      do_QueryInterface( mSecurityMixin, &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = securityMixin->GetCodebase( getter_AddRefs(uri) );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  
+  nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
+    do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  rv = remoteAPIService->TakePlaybackControl( uri, nsnull );
+  NS_ENSURE_SUCCESS( rv, rv );
   return NS_OK;
 }
 

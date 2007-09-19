@@ -45,6 +45,7 @@ interface nsIDOMElement;
 interface sbITabBrowser : nsISupports
 {
   sbITabBrowserTab getTabForDocument( in nsIDOMDocument aContentDocument );
+  nsIDOMElement getBrowserForDocument(in nsIDOMDocument aDocument);
 };
 
 /**

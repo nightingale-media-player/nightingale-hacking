@@ -110,6 +110,9 @@ protected:
   nsresult AcquirePlaylistWidget();
   nsresult RegisterCommands( PRBool aUseDefaultCommands );
   nsresult UnregisterCommands();
+  nsresult ConfirmPlaybackControl();
+  nsresult GetBrowser( nsIDOMElement** aElement );
+  nsresult TakePlaybackControl( nsIURI* aURI );
 
   // Data members
   PRBool mInitialized;
