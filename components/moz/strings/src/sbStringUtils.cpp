@@ -63,7 +63,9 @@ ToInteger64(const nsAString& str, nsresult* rv)
   NS_LossyConvertUTF16toASCII narrow(str);
   PRInt32 converted = PR_sscanf(narrow.get(), "%llu", &result);
   if (converted != 1) {
-    *rv = NS_ERROR_INVALID_ARG;
+    if (rv) {
+      *rv = NS_ERROR_INVALID_ARG;
+    }
     return 0;
   }
 
@@ -73,6 +75,9 @@ ToInteger64(const nsAString& str, nsresult* rv)
   NS_ASSERTION(check.Equals(str), "Conversion failed");
 #endif
 
+  if (rv) {
+    *rv = NS_OK;
+  }
   return result;
 }
 
