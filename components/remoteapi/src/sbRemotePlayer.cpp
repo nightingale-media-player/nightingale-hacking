@@ -35,6 +35,7 @@
 #include "sbRemoteWebPlaylist.h"
 #include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
+#include <sbIDataRemote.h>
 #include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
@@ -181,6 +182,8 @@ const static char* sPublicMetadata[] =
 
 #define SB_LIB_NAME_MAIN      "main"
 #define SB_LIB_NAME_WEB       "web"
+
+#define SB_DATAREMOTE_FACEPLATE_STATUS NS_LITERAL_STRING("faceplate.status.override.text")
 
 // callback for destructor to clear out the observer hashtable
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -376,13 +379,19 @@ sbRemotePlayer::Init()
 
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefPanelOpened listener"));
   eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED, this , PR_TRUE );
-  
+
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIHatClosed listener"));
   eventTarget->AddEventListener( SB_EVENT_RAPI_HAT_CLOSED, this , PR_TRUE );
-  
+
   LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefChanged listener"));
   eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_CHANGED, this , PR_TRUE );
-  
+
+  mNotificationMgr = new sbRemoteNotificationManager();
+  NS_ENSURE_TRUE(mNotificationMgr, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mNotificationMgr->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -436,13 +445,13 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
   if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_MAIN) ) {
     // No cached main library create a new one.
     LOG(("sbRemotePlayer::Libraries() - creating main library"));
-    library = new sbRemoteLibrary();
+    library = new sbRemoteLibrary(this);
     NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
   }
   else if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_WEB) ) {
     // No cached web library create a new one.
     LOG(("sbRemotePlayer::Libraries() - creating web library"));
-    library = new sbRemoteWebLibrary();
+    library = new sbRemoteWebLibrary(this);
     NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
   }
   else {
@@ -490,7 +499,7 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
   }
 
   nsRefPtr<sbRemoteSiteLibrary> library;
-  library = new sbRemoteSiteLibrary();
+  library = new sbRemoteSiteLibrary(this);
   NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
 
   rv = library->Init();
@@ -632,6 +641,8 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
 
   rv = dh->DownloadItem(aItem);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mNotificationMgr->Action(sbRemoteNotificationManager::eDownload, nsnull);
 
   return NS_OK;
 }
@@ -1249,7 +1260,7 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     privEvt->SetTrusted( PR_TRUE );
 
     // make our custom wrapper event
-    nsRefPtr<sbRemotePlaylistClickEvent> remoteEvent( new sbRemotePlaylistClickEvent() );
+    nsRefPtr<sbRemotePlaylistClickEvent> remoteEvent( new sbRemotePlaylistClickEvent(this) );
     NS_ENSURE_TRUE(remoteEvent, NS_ERROR_OUT_OF_MEMORY);
 
     rv = remoteEvent->Init();
@@ -1627,7 +1638,7 @@ sbRemotePlayer::AcquirePlaylistWidget()
 
   // Create the RemotePlaylistWidget
   nsRefPtr<sbRemoteWebPlaylist> pWebPlaylist =
-                         new sbRemoteWebPlaylist( playlistWidget, browserTab );
+                         new sbRemoteWebPlaylist( this, playlistWidget, browserTab );
   NS_ENSURE_TRUE( pWebPlaylist, NS_ERROR_FAILURE );
 
   rv = pWebPlaylist->Init();
@@ -1637,6 +1648,12 @@ sbRemotePlayer::AcquirePlaylistWidget()
   NS_ENSURE_TRUE( mWebPlaylistWidget, NS_ERROR_FAILURE );
 
   return NS_OK;
+}
+
+sbRemoteNotificationManager*
+sbRemotePlayer::GetNotificationManager()
+{
+  return mNotificationMgr;
 }
 
 // ---------------------------------------------------------------------------
@@ -1689,3 +1706,4 @@ sbRemotePlayer::Unregister( nsIComponentManager* aCompMgr,
                                     PR_TRUE );   /* delete persisted data */
   return rv;
 }
+

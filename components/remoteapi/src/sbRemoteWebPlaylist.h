@@ -40,6 +40,8 @@
 #include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
 
+class sbRemotePlayer;
+
 class sbRemoteWebPlaylist : public nsIClassInfo,
                             public nsISecurityCheckedComponent,
                             public sbISecurityAggregator,
@@ -56,7 +58,8 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_FORWARD_SAFE_SBIPLAYLISTWIDGET(mPlaylistWidget)
 
-  sbRemoteWebPlaylist( sbIPlaylistWidget *aPlaylistWidget,
+  sbRemoteWebPlaylist( sbRemotePlayer *aRemotePlayer,
+                       sbIPlaylistWidget *aPlaylistWidget,
                        sbITabBrowserTab *aBrowserTab );
 protected:
 
@@ -64,6 +67,7 @@ protected:
 
   PRBool mInitialized;
 
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIPlaylistWidget> mPlaylistWidget;
   nsCOMPtr<sbITabBrowserTab> mOwnerTab;
 };

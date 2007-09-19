@@ -26,6 +26,8 @@
 
 #include "sbRemotePlaylistClickEvent.h"
 #include "sbRemoteAPIUtils.h"
+#include "sbRemotePlayer.h"
+
 #include <sbClassInfoUtils.h>
 
 #include <sbIPlaylistClickEvent.h>
@@ -102,8 +104,10 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemotePlaylistClickEvent)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemotePlaylistClickEvent)
 
-sbRemotePlaylistClickEvent::sbRemotePlaylistClickEvent( )
+sbRemotePlaylistClickEvent::sbRemotePlaylistClickEvent( sbRemotePlayer* aRemotePlayer ) :
+  mRemotePlayer(aRemotePlayer)
 {
+  NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
   MOZ_COUNT_CTOR(sbRemotePlaylistClickEvent);
 #ifdef PR_LOGGING
   if (!gRemoteEventLog) {
@@ -129,7 +133,7 @@ NS_IMETHODIMP sbRemotePlaylistClickEvent::InitEvent( sbIPlaylistClickEvent* aCli
   rv = aClickEvent->GetItem( getter_AddRefs(item) );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SB_WrapMediaItem(item, getter_AddRefs(mWrappedItem));
+  rv = SB_WrapMediaItem(mRemotePlayer, item, getter_AddRefs(mWrappedItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aClickEvent->GetProperty( mProperty );

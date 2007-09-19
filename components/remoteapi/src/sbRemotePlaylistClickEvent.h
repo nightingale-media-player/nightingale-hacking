@@ -44,6 +44,7 @@
 #include <nsCOMPtr.h>
 
 class sbIPlaylistClickEvent;
+class sbRemotePlayer;
 
 class sbRemotePlaylistClickEvent : public nsIClassInfo,
                                    public nsISecurityCheckedComponent,
@@ -77,12 +78,13 @@ public:
   NS_IMETHOD SetTrusted(PRBool aTrusted);
 
 public:
-  sbRemotePlaylistClickEvent( );
+  sbRemotePlaylistClickEvent( sbRemotePlayer* aRemotePlayer );
   ~sbRemotePlaylistClickEvent( );
   NS_IMETHOD InitEvent( sbIPlaylistClickEvent*, nsIDOMMouseEvent* );
 
 protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
 
   // sbIPlaylistClickEvent
   nsCOMPtr<sbIMediaItem> mWrappedItem;

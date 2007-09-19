@@ -35,6 +35,8 @@
 
 #include <nsIClassInfo.h>
 
+class sbRemotePlayer;
+
 class sbRemoteMediaList : public sbRemoteMediaListBase
 {
 public:
@@ -42,7 +44,8 @@ public:
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteMediaList( sbIMediaList* aMediaList,
+  sbRemoteMediaList( sbRemotePlayer* aRemotePlayer,
+                     sbIMediaList* aMediaList,
                      sbIMediaListView* aMediaListView );
 
 protected:

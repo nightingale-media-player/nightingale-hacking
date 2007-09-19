@@ -24,6 +24,7 @@
 //
  */
 
+#include "sbRemotePlayer.h"
 #include "sbRemoteSiteLibrary.h"
 
 #include <nsINetUtil.h>
@@ -138,7 +139,8 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteLibrary)
 
 #define kNotFound -1
 
-sbRemoteSiteLibrary::sbRemoteSiteLibrary()
+sbRemoteSiteLibrary::sbRemoteSiteLibrary(sbRemotePlayer* aRemotePlayer) :
+  sbRemoteLibraryBase(aRemotePlayer)
 {
 #ifdef PR_LOGGING
   if (!gSiteLibraryLog) {
@@ -234,7 +236,9 @@ sbRemoteSiteLibrary::InitInternalMediaList()
   nsresult rv = mediaList->CreateView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  mRemSiteMediaList = new sbRemoteSiteMediaList( mediaList, mediaListView );
+  mRemSiteMediaList = new sbRemoteSiteMediaList( mRemotePlayer,
+                                                 mediaList,
+                                                 mediaListView );
   NS_ENSURE_TRUE( mRemSiteMediaList, NS_ERROR_OUT_OF_MEMORY );
 
   rv = mRemSiteMediaList->Init();

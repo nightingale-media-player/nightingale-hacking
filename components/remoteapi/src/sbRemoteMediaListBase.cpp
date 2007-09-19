@@ -27,6 +27,7 @@
 #include "sbRemoteAPIUtils.h"
 #include "sbRemoteMediaListBase.h"
 #include "sbRemoteWrappingStringEnumerator.h"
+#include "sbRemotePlayer.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIRemoteMediaList.h>
@@ -67,16 +68,21 @@ NS_IMPL_ISUPPORTS8(sbRemoteMediaListBase,
                    sbIMediaItem,
                    sbILibraryResource)
 
-sbRemoteMediaListBase::sbRemoteMediaListBase(sbIMediaList* aMediaList,
+sbRemoteMediaListBase::sbRemoteMediaListBase(sbRemotePlayer* aRemotePlayer,
+                                             sbIMediaList* aMediaList,
                                              sbIMediaListView* aMediaListView) :
+  mRemotePlayer(aRemotePlayer),
   mMediaList(aMediaList),
   mMediaListView(aMediaListView)
 {
+  NS_ASSERTION(aRemotePlayer, "Null remote player!");
   NS_ASSERTION(aMediaList, "Null media list!");
   NS_ASSERTION(aMediaListView, "Null media list view!");
 
   mMediaItem = do_QueryInterface(mMediaList);
   NS_ASSERTION(mMediaItem, "Could not QI media list to media item");
+
+  mMediaItem->GetLibrary(getter_AddRefs(mLibrary));
 
 #ifdef PR_LOGGING
   if (!gRemoteMediaListLog) {
@@ -114,6 +120,41 @@ sbRemoteMediaListBase::GetMediaList()
   return list;
 }
 
+// ---------------------------------------------------------------------------
+//
+//                        sbILibraryResource
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::SetProperty(const nsAString& aName,
+                                   const nsAString& aValue)
+{
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NULL_POINTER);
+
+  nsresult rv = mMediaList->SetProperty(aName, aValue);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedItems, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::SetProperties(sbIPropertyArray* aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NULL_POINTER);
+
+  nsresult rv = mMediaList->SetProperties(aProperties);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedItems, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
 
 // ---------------------------------------------------------------------------
 //
@@ -131,7 +172,7 @@ sbRemoteMediaListBase::GetItemByGuid(const nsAString& aGuid,
   nsresult rv = mMediaList->GetItemByGuid(aGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return SB_WrapMediaItem(item, _retval);
+  return SB_WrapMediaItem(mRemotePlayer, item, _retval);
 }
 
 NS_IMETHODIMP
@@ -143,7 +184,7 @@ sbRemoteMediaListBase::GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval)
   nsresult rv = mMediaList->GetItemByIndex(aIndex, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return SB_WrapMediaItem(item, _retval);
+  return SB_WrapMediaItem(mRemotePlayer, item, _retval);
 }
 
 NS_IMETHODIMP
@@ -153,7 +194,7 @@ sbRemoteMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener *aEnume
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
   nsRefPtr<sbMediaListEnumerationListenerWrapper> wrapper(
-    new sbMediaListEnumerationListenerWrapper(aEnumerationListener));
+    new sbMediaListEnumerationListenerWrapper(mRemotePlayer, aEnumerationListener));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mMediaList->EnumerateAllItems(wrapper, aEnumerationType);
@@ -171,7 +212,7 @@ sbRemoteMediaListBase::EnumerateItemsByProperty(const nsAString& aPropertyName,
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
   nsRefPtr<sbMediaListEnumerationListenerWrapper> wrapper(
-    new sbMediaListEnumerationListenerWrapper(aEnumerationListener));
+    new sbMediaListEnumerationListenerWrapper(mRemotePlayer, aEnumerationListener));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mMediaList->EnumerateItemsByProperty(aPropertyName,
@@ -192,7 +233,9 @@ sbRemoteMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  nsresult rv = SB_WrapMediaItem(aMediaItem, getter_AddRefs(mediaItem));
+  nsresult rv = SB_WrapMediaItem(mRemotePlayer,
+                                 aMediaItem,
+                                 getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mMediaList->IndexOf(mediaItem, aStartFrom, _retval);
@@ -207,7 +250,9 @@ sbRemoteMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  nsresult rv = SB_WrapMediaItem(aMediaItem, getter_AddRefs(mediaItem));
+  nsresult rv = SB_WrapMediaItem(mRemotePlayer,
+                                 aMediaItem,
+                                 getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mMediaList->LastIndexOf(mediaItem, aStartFrom, _retval);
@@ -220,7 +265,9 @@ sbRemoteMediaListBase::Contains(sbIMediaItem* aMediaItem, PRBool* _retval)
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  nsresult rv = SB_WrapMediaItem(aMediaItem, getter_AddRefs(mediaItem));
+  nsresult rv = SB_WrapMediaItem(mRemotePlayer,
+                                 aMediaItem,
+                                 getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mMediaList->Contains(mediaItem, _retval);
@@ -240,7 +287,14 @@ sbRemoteMediaListBase::Add(sbIMediaItem *aMediaItem)
   nsCOMPtr<sbIMediaItem> internalMediaItem = wrappedMediaItem->GetMediaItem();
   NS_ENSURE_TRUE(internalMediaItem, NS_ERROR_FAILURE);
 
-  return mMediaList->Add(internalMediaItem);
+  rv = mMediaList->Add(internalMediaItem);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -256,7 +310,14 @@ sbRemoteMediaListBase::AddAll(sbIMediaList *aMediaList)
   nsCOMPtr<sbIMediaList> internalMediaList = wrappedMediaList->GetMediaList();
   NS_ENSURE_TRUE(internalMediaList, NS_ERROR_FAILURE);
 
-  return mMediaList->AddAll(internalMediaList);
+  rv = mMediaList->AddAll(internalMediaList);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -268,7 +329,14 @@ sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
     new sbUnwrappingSimpleEnumerator(aMediaItems));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  return mMediaList->AddSome(wrapper);
+  nsresult rv = mMediaList->AddSome(wrapper);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -285,7 +353,14 @@ sbRemoteMediaListBase::Remove(sbIMediaItem* aMediaItem)
   nsCOMPtr<sbIMediaItem> internalMediaItem = wrappedMediaItem->GetMediaItem();
   NS_ENSURE_TRUE(internalMediaItem, NS_ERROR_FAILURE);
 
-  return mMediaList->Remove(internalMediaItem);
+  rv = mMediaList->Remove(internalMediaItem);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -340,9 +415,12 @@ sbRemoteMediaListBase::GetView( sbIMediaListView **aView )
 NS_IMPL_ISUPPORTS1(sbMediaListEnumerationListenerWrapper,
                    sbIMediaListEnumerationListener)
 
-sbMediaListEnumerationListenerWrapper::sbMediaListEnumerationListenerWrapper(sbIMediaListEnumerationListener* aWrapped) :
+sbMediaListEnumerationListenerWrapper::sbMediaListEnumerationListenerWrapper(sbRemotePlayer* aRemotePlayer,
+                                                                             sbIMediaListEnumerationListener* aWrapped) :
+  mRemotePlayer(aRemotePlayer),
   mWrapped(aWrapped)
 {
+  NS_ASSERTION(aRemotePlayer, "Null remote player!");
   NS_ASSERTION(aWrapped, "Null wrapped enumerator!");
 }
 
@@ -354,7 +432,9 @@ sbMediaListEnumerationListenerWrapper::OnEnumerationBegin(sbIMediaList *aMediaLi
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList(aMediaList, getter_AddRefs(mediaList));
+  nsresult rv = SB_WrapMediaList(mRemotePlayer,
+                                 aMediaList,
+                                 getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mWrapped->OnEnumerationBegin(mediaList, _retval);
@@ -370,11 +450,13 @@ sbMediaListEnumerationListenerWrapper::OnEnumeratedItem(sbIMediaList *aMediaList
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList(aMediaList, getter_AddRefs(mediaList));
+  nsresult rv = SB_WrapMediaList(mRemotePlayer,
+                                 aMediaList,
+                                 getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = SB_WrapMediaItem(aMediaItem, getter_AddRefs(mediaItem));
+  rv = SB_WrapMediaItem(mRemotePlayer, aMediaItem, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mWrapped->OnEnumeratedItem(mediaList, mediaItem, _retval);
@@ -387,7 +469,9 @@ sbMediaListEnumerationListenerWrapper::OnEnumerationEnd(sbIMediaList *aMediaList
   NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList(aMediaList, getter_AddRefs(mediaList));
+  nsresult rv = SB_WrapMediaList(mRemotePlayer,
+                                 aMediaList,
+                                 getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mWrapped->OnEnumerationEnd(mediaList, aStatusCode);;

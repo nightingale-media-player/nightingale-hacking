@@ -32,6 +32,8 @@
 
 #include <nsIClassInfo.h>
 
+class sbRemotePlayer;
+
 class sbRemoteLibrary : public sbRemoteLibraryBase
 {
 public:
@@ -39,7 +41,7 @@ public:
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteLibrary();
+  sbRemoteLibrary(sbRemotePlayer* aRemotePlayer);
 
 protected:
   virtual ~sbRemoteLibrary();

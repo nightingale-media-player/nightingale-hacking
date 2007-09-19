@@ -37,6 +37,8 @@
 #include <nsISecurityCheckedComponent.h>
 #include <nsCOMPtr.h>
 
+class sbRemotePlayer;
+
 class sbRemoteIndexedMediaItem : public nsIClassInfo,
                                  public nsISecurityCheckedComponent,
                                  public sbISecurityAggregator,
@@ -51,12 +53,14 @@ public:
 
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
 
-  sbRemoteIndexedMediaItem(sbIIndexedMediaItem* aIndexedMediaItem);
+  sbRemoteIndexedMediaItem(sbRemotePlayer* aRemotePlayer,
+                           sbIIndexedMediaItem* aIndexedMediaItem);
 
 protected:
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIIndexedMediaItem> mIndexedMediaItem;
 };
 

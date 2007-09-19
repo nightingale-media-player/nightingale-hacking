@@ -28,6 +28,7 @@
 #define __SB_REMOTE_MEDIALISTBASE_H__
 
 #include "sbRemoteAPI.h"
+#include "sbRemoteForwardingMacros.h"
 
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -43,8 +44,9 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
+class sbILibrary;
 class sbIMediaListView;
-class sbIMediaItem;
+class sbRemotePlayer;
 
 // derived classes need to implement nsIClassInfo
 class sbRemoteMediaListBase : public sbIMediaList,
@@ -59,10 +61,14 @@ public:
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTEMEDIALIST
 
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mMediaItem)
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY_SETPROPERTIES(mMediaItem)
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
+
+  // sbILibraryResource
+  NS_IMETHOD SetProperty(const nsAString& aName, const nsAString& aValue);
+  NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
 
   // sbIMediaList
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
@@ -91,7 +97,8 @@ public:
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
   NS_IMETHOD_(already_AddRefed<sbIMediaList>) GetMediaList();
 
-  sbRemoteMediaListBase(sbIMediaList* aMediaList,
+  sbRemoteMediaListBase(sbRemotePlayer* aRemotePlayer,
+                        sbIMediaList* aMediaList,
                         sbIMediaListView* aMediaListView);
 
   // implemented in derived classes
@@ -102,9 +109,11 @@ protected:
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIMediaList> mMediaList;
   nsCOMPtr<sbIMediaListView> mMediaListView;
   nsCOMPtr<sbIMediaItem> mMediaItem;
+  nsCOMPtr<sbILibrary> mLibrary;
 };
 
 class sbMediaListEnumerationListenerWrapper : public sbIMediaListEnumerationListener
@@ -113,9 +122,11 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  sbMediaListEnumerationListenerWrapper(sbIMediaListEnumerationListener* aWrapped);
+  sbMediaListEnumerationListenerWrapper(sbRemotePlayer* aRemotePlayer,
+                                        sbIMediaListEnumerationListener* aWrapped);
 
 private:
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIMediaListEnumerationListener> mWrapped;
 };
 

@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteMediaList.h"
+#include "sbRemotePlayer.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -126,9 +127,10 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaList)
 
-sbRemoteMediaList::sbRemoteMediaList( sbIMediaList* aMediaList,
+sbRemoteMediaList::sbRemoteMediaList( sbRemotePlayer* aRemotePlayer,
+                                      sbIMediaList* aMediaList,
                                       sbIMediaListView* aMediaListView ) :
-  sbRemoteMediaListBase( aMediaList, aMediaListView )
+  sbRemoteMediaListBase( aRemotePlayer, aMediaList, aMediaListView )
 {
 #ifdef PR_LOGGING
   if (!gRemoteMediaListLog) {

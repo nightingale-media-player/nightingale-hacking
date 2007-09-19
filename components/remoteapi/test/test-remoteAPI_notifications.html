@@ -1,0 +1,149 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+<head>
+  <title>Remote API Test: Notifications</title>
+  <script>
+var mainLibrary;
+var siteLibrary;
+var siteItem;
+var mainLibraryItem;
+var mainLibraryList;
+
+function init() {
+  mainLibrary = songbird.libraries("main");
+  siteLibrary = songbird.siteLibrary("127.0.0.1", "/");
+  siteItem = siteLibrary.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+
+  for (var i = 0; i < mainLibrary.length; i++) {
+    var item = mainLibrary.getItemByIndex(i);
+    if (item instanceof Components.interfaces.sbIMediaList) {
+      mainLibraryList = item;
+    }
+    else {
+      mainLibraryItem = item;
+    }
+
+    if (mainLibraryList != null && mainLibraryItem != null) {
+      break;
+    }
+  }
+
+}
+  </script>
+</head>
+<body onload="init();">
+  <h1>Test notifications.</h1>
+
+  <ol>
+    <li>
+      <p>Added Media item(s) to download queue</p>
+      <ul>
+        <li>
+          <input
+            type="button"
+            onclick="songbird.downloadItem(siteItem);"
+            value="songbird.downloadItem(siteItem)"
+          />
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>Updated &lt;node_name&gt; with new media items(s)</p>
+      <ul>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibrary.createMediaItem('http://example.com/foo.mp3');"
+            value="mainLibrary.createMediaItem('http://example.com/foo.mp3')"
+          />
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>Updated &lt;node_name&gt; with new playlist(s)</p>
+      <ul>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibrary.createMediaList('simple');"
+            value="mainLibrary.createMediaList('simple')"
+          />
+        </li>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibrary.createMediaListFromURL('http://www.jgaunt.com/uploads/uploads.m3u');"
+            value="mainLibrary.createMediaListFromURL('http://www.jgaunt.com/uploads/uploads.m3u')"
+          />
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>Edited metadata for media item(s) in &lt;node_name&gt;</p>
+      <ul>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibrary.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+            value="mainLibrary.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+          />
+        </li>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibraryList.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+            value="mainLibraryList.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+          />
+        </li>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibraryItem.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+            value="mainLibraryItem.setProperty('http://songbirdnest.com/data/1.0#lyrics', 'foo')"
+          />
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>Edited playlist(s) in &lt;node_name&gt;</p>
+      <ul>
+        <li>
+          <input
+            type="button"
+            onclick="mainLibraryList.add(mainLibraryItem)"
+            value="mainLibraryList.add(mainLibraryItem)"
+          />
+        </li>
+      </ul>
+    </li>
+  </ol>
+</body>
+</html>
+

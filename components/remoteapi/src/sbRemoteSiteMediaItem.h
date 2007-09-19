@@ -34,6 +34,7 @@
 #include <nsStringGlue.h>
 
 class sbIMediaItem;
+class sbRemotePlayer;
 
 class sbRemoteSiteMediaItemSecurityMixin : public sbSecurityMixin
 {
@@ -62,7 +63,8 @@ public:
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteSiteMediaItem( sbIMediaItem *aMediaItem );
+  sbRemoteSiteMediaItem( sbRemotePlayer *aRemotePlayer,
+                         sbIMediaItem *aMediaItem );
 
   NS_IMETHOD GetProperty( const nsAString& aName,
                           nsAString& _retval );

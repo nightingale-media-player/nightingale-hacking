@@ -26,6 +26,7 @@
 
 #include "sbRemoteAPIUtils.h"
 #include "sbRemoteIndexedMediaItem.h"
+#include "sbRemotePlayer.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>
@@ -66,9 +67,12 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteIndexedMediaItem)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteIndexedMediaItem)
 
-sbRemoteIndexedMediaItem::sbRemoteIndexedMediaItem(sbIIndexedMediaItem* aIndexedMediaItem) :
+sbRemoteIndexedMediaItem::sbRemoteIndexedMediaItem(sbRemotePlayer* aRemotePlayer,
+                                                   sbIIndexedMediaItem* aIndexedMediaItem) :
+  mRemotePlayer(aRemotePlayer),
   mIndexedMediaItem(aIndexedMediaItem)
 {
+  NS_ASSERTION(aRemotePlayer, "Null remote player!");
   NS_ASSERTION(aIndexedMediaItem, "Null media item!");
 }
 
@@ -95,7 +99,9 @@ sbRemoteIndexedMediaItem::GetMediaItem(sbIMediaItem** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> wrappedMediaItem;
-  rv =  SB_WrapMediaItem(mediaItem, getter_AddRefs(wrappedMediaItem));
+  rv =  SB_WrapMediaItem(mRemotePlayer,
+                         mediaItem,
+                         getter_AddRefs(wrappedMediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = wrappedMediaItem);

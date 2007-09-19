@@ -24,6 +24,7 @@
 //
  */
 
+#include "sbRemotePlayer.h"
 #include "sbRemoteWebLibrary.h"
 #include "sbRemoteWebMediaList.h"
 
@@ -96,7 +97,8 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebLibrary)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebLibrary)
 
-sbRemoteWebLibrary::sbRemoteWebLibrary() : sbRemoteLibrary()
+sbRemoteWebLibrary::sbRemoteWebLibrary(sbRemotePlayer* aRemotePlayer) :
+  sbRemoteLibrary(aRemotePlayer)
 {
 #ifdef PR_LOGGING
   if (!gWebLibraryLog) {
@@ -124,7 +126,9 @@ sbRemoteWebLibrary::InitInternalMediaList()
   nsresult rv = mediaList->CreateView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  mRemMediaList = new sbRemoteWebMediaList( mediaList, mediaListView );
+  mRemMediaList = new sbRemoteWebMediaList( mRemotePlayer,
+                                            mediaList,
+                                            mediaListView );
   NS_ENSURE_TRUE( mRemMediaList, NS_ERROR_OUT_OF_MEMORY );
 
   rv = mRemMediaList->Init();

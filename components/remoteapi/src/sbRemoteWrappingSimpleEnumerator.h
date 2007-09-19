@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_WRAPPINGSIMPLEENUMERATOR_H__
 #define __SB_REMOTE_WRAPPINGSIMPLEENUMERATOR_H__
 
+#include "sbRemotePlayer.h"
+
 #include <nsISimpleEnumerator.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
@@ -49,13 +51,20 @@ public:
 
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
-  sbRemoteWrappingSimpleEnumerator(nsISimpleEnumerator* aWrapped) :
-    mWrapped(aWrapped) {};
+  sbRemoteWrappingSimpleEnumerator(sbRemotePlayer* aRemotePlayer,
+                                   nsISimpleEnumerator* aWrapped) :
+    mRemotePlayer(aRemotePlayer),
+    mWrapped(aWrapped)
+    {
+      NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
+      NS_ASSERTION(aWrapped, "aWrapped is null");
+    };
 
   nsresult Init();
 
 protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<nsISimpleEnumerator> mWrapped;
 };
 

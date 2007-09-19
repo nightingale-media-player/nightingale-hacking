@@ -28,6 +28,7 @@
 #define __SB_REMOTE_PLAYER_H__
 
 #include "sbRemoteAPI.h"
+#include "sbRemoteNotificationManager.h"
 
 #include <sbIDataRemote.h>
 #include <sbIMediaList.h>
@@ -67,6 +68,7 @@ struct sbRemoteObserver {
 };
 
 class sbRemoteCommands;
+class sbIDataRemote;
 
 class sbRemotePlayer : public sbIRemotePlayer,
                        public nsIClassInfo,
@@ -99,6 +101,7 @@ public:
                                  const nsAString &aClass,
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
+  sbRemoteNotificationManager* GetNotificationManager();
 
 protected:
   virtual ~sbRemotePlayer();
@@ -150,6 +153,8 @@ protected:
 
   // SecurityCheckedComponent vars
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+
+  nsRefPtr<sbRemoteNotificationManager> mNotificationMgr;
 };
 
 #endif // __SB_REMOTE_PLAYER_H__

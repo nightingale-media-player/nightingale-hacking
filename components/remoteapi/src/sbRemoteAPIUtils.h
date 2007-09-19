@@ -41,6 +41,7 @@
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteWebMediaItem.h"
 #include "sbRemoteWebMediaList.h"
+#include "sbRemotePlayer.h"
 
 // Figures out if the media item passed in is from the named
 // library by comparing the GUIDs from the item and the named library
@@ -79,9 +80,11 @@ SB_IsFromLibName( sbIMediaItem *aMediaItem,
 // given an existing list, create a view and hand back
 // the wrapped list
 static nsresult
-SB_WrapMediaList( sbIMediaList *aMediaList,
+SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
+                  sbIMediaList *aMediaList,
                   sbIMediaList **aRemoteMediaList )
 {
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aRemoteMediaList);
 
@@ -104,11 +107,17 @@ SB_WrapMediaList( sbIMediaList *aMediaList,
 
   nsRefPtr<sbRemoteMediaList> remoteMediaList;
   if (isMain) {
-    remoteMediaList = new sbRemoteMediaList( aMediaList, mediaListView );
+    remoteMediaList = new sbRemoteMediaList( aRemotePlayer,
+                                             aMediaList,
+                                             mediaListView );
   } else if (isWeb) {
-    remoteMediaList = new sbRemoteWebMediaList( aMediaList, mediaListView );
+    remoteMediaList = new sbRemoteWebMediaList( aRemotePlayer,
+                                                aMediaList,
+                                                mediaListView );
   } else {
-    remoteMediaList = new sbRemoteSiteMediaList( aMediaList, mediaListView );
+    remoteMediaList = new sbRemoteSiteMediaList( aRemotePlayer,
+                                                 aMediaList,
+                                                 mediaListView );
   }
   NS_ENSURE_TRUE( remoteMediaList, NS_ERROR_OUT_OF_MEMORY );
   rv = remoteMediaList->Init();
@@ -123,9 +132,11 @@ SB_WrapMediaList( sbIMediaList *aMediaList,
 // given an existing item, create either a wrapped list
 // or wrapped item, handing it back as an item
 static nsresult
-SB_WrapMediaItem( sbIMediaItem *aMediaItem,
+SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
+                  sbIMediaItem *aMediaItem,
                   sbIMediaItem **aRemoteMediaItem )
 {
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aRemoteMediaItem);
 
@@ -135,7 +146,9 @@ SB_WrapMediaItem( sbIMediaItem *aMediaItem,
   if ( NS_SUCCEEDED(rv) ) {
 
     nsCOMPtr<sbIMediaList> remoteMediaList;
-    rv = SB_WrapMediaList( mediaList, getter_AddRefs(remoteMediaList) );
+    rv = SB_WrapMediaList( aRemotePlayer,
+                           mediaList,
+                           getter_AddRefs(remoteMediaList) );
     NS_ENSURE_SUCCESS( rv, rv );
 
     rv = CallQueryInterface( remoteMediaList.get(), aRemoteMediaItem );
@@ -150,14 +163,13 @@ SB_WrapMediaItem( sbIMediaItem *aMediaItem,
     rv = SB_IsFromLibName( aMediaItem, NS_LITERAL_STRING("web"), &isWeb );
     NS_ENSURE_SUCCESS( rv, rv );
 
-
     nsRefPtr<sbRemoteMediaItem> remoteMediaItem;
     if (isMain) {
-      remoteMediaItem = new sbRemoteMediaItem( aMediaItem );
+      remoteMediaItem = new sbRemoteMediaItem( aRemotePlayer, aMediaItem );
     } else if (isWeb) {
-      remoteMediaItem = new sbRemoteWebMediaItem( aMediaItem );
+      remoteMediaItem = new sbRemoteWebMediaItem( aRemotePlayer, aMediaItem );
     } else {
-      remoteMediaItem = new sbRemoteSiteMediaItem( aMediaItem );
+      remoteMediaItem = new sbRemoteSiteMediaItem( aRemotePlayer, aMediaItem );
     }
     NS_ENSURE_TRUE( remoteMediaItem, NS_ERROR_OUT_OF_MEMORY );
     rv = remoteMediaItem->Init();
@@ -174,11 +186,18 @@ SB_WrapMediaItem( sbIMediaItem *aMediaItem,
 // list. This is merely just a wrapper around the other method to QI
 // to a sbIRemoteMediaList
 static nsresult
-SB_WrapMediaList( sbIMediaList *aMediaList,
+SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
+                  sbIMediaList *aMediaList,
                   sbIRemoteMediaList **aRemoteMediaList )
 {
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aRemoteMediaList);
+
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList( aMediaList, getter_AddRefs(mediaList) );
+  nsresult rv = SB_WrapMediaList( aRemotePlayer, 
+                                  aMediaList,
+                                  getter_AddRefs(mediaList) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIRemoteMediaList> remoteMediaList =
@@ -194,9 +213,11 @@ SB_WrapMediaList( sbIMediaList *aMediaList,
 // given an existing view, walk back in to the list and
 // hand back the wrapped list
 static nsresult
-SB_WrapMediaList( sbIMediaListView *aMediaListView,
+SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
+                  sbIMediaListView *aMediaListView,
                   sbIRemoteMediaList **aRemoteMediaList )
 {
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
   NS_ENSURE_ARG_POINTER(aMediaListView);
   NS_ENSURE_ARG_POINTER(aRemoteMediaList);
 
@@ -219,11 +240,17 @@ SB_WrapMediaList( sbIMediaListView *aMediaListView,
 
   nsRefPtr<sbRemoteMediaList> remoteMediaList;
   if (isMain) {
-    remoteMediaList = new sbRemoteMediaList( mediaList, aMediaListView );
+    remoteMediaList = new sbRemoteMediaList( aRemotePlayer,
+                                             mediaList,
+                                             aMediaListView );
   } else if (isWeb) {
-    remoteMediaList = new sbRemoteWebMediaList( mediaList, aMediaListView );
+    remoteMediaList = new sbRemoteWebMediaList( aRemotePlayer,
+                                                mediaList,
+                                                aMediaListView );
   } else {
-    remoteMediaList = new sbRemoteSiteMediaList( mediaList, aMediaListView );
+    remoteMediaList = new sbRemoteSiteMediaList( aRemotePlayer,
+                                                 mediaList,
+                                                 aMediaListView );
   }
   NS_ENSURE_TRUE( remoteMediaList, NS_ERROR_OUT_OF_MEMORY );
   rv = remoteMediaList->Init();

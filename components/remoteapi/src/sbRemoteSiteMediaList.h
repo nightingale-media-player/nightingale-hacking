@@ -33,6 +33,8 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 
+class sbRemotePlayer;
+
 class sbRemoteSiteMediaList : public sbRemoteMediaList
 {
 public:
@@ -40,7 +42,8 @@ public:
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteSiteMediaList( sbIMediaList *aMediaList,
+  sbRemoteSiteMediaList( sbRemotePlayer* aRemotePlayer,
+                         sbIMediaList *aMediaList,
                          sbIMediaListView *aMediaListView );
 
 protected:

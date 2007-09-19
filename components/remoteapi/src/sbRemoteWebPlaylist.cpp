@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteAPIUtils.h"
+#include "sbRemotePlayer.h"
 #include "sbRemoteWebPlaylist.h"
 #include "sbRemoteWrappingSimpleEnumerator.h"
 
@@ -104,12 +105,15 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY( sbRemoteWebPlaylist )
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT( sbRemoteWebPlaylist )
 
-sbRemoteWebPlaylist::sbRemoteWebPlaylist( sbIPlaylistWidget *aWebPlaylistWidget,
+sbRemoteWebPlaylist::sbRemoteWebPlaylist( sbRemotePlayer *aRemotePlayer,
+                                          sbIPlaylistWidget *aWebPlaylistWidget,
                                           sbITabBrowserTab *aTabBrowserTab ) :
   mInitialized(PR_FALSE),
+  mRemotePlayer(aRemotePlayer),
   mPlaylistWidget(aWebPlaylistWidget),
   mOwnerTab(aTabBrowserTab)
 {
+  NS_ASSERTION( aRemotePlayer, "Null remote player!" );
   NS_ASSERTION( aWebPlaylistWidget, "Null playlist widget!" );
   NS_ASSERTION( aTabBrowserTab, "Null playlist widget!" );
 
@@ -192,7 +196,7 @@ sbRemoteWebPlaylist::GetMediaList( sbIRemoteMediaList **aMediaList )
   }
 
   // create wrapped medialist, this addrefs
-  return SB_WrapMediaList( mediaListView, aMediaList );
+  return SB_WrapMediaList( mRemotePlayer, mediaListView, aMediaList );
 }
 
 NS_IMETHODIMP
@@ -220,7 +224,7 @@ sbRemoteWebPlaylist::GetSelection( nsISimpleEnumerator **aSelection )
 
   // wrap it so it's safe
   nsRefPtr<sbRemoteWrappingSimpleEnumerator> wrapped(
-                             new sbRemoteWrappingSimpleEnumerator(selection) );
+                             new sbRemoteWrappingSimpleEnumerator(mRemotePlayer, selection) );
   NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
 
   rv = wrapped->Init();

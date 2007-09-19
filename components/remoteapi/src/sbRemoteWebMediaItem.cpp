@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteWebMediaItem.h"
+#include "sbRemotePlayer.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -92,8 +93,9 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebMediaItem)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebMediaItem)
 
-sbRemoteWebMediaItem::sbRemoteWebMediaItem( sbIMediaItem* aMediaItem ) :
-  sbRemoteMediaItem(aMediaItem)
+sbRemoteWebMediaItem::sbRemoteWebMediaItem( sbRemotePlayer* aRemotePlayer,
+                                            sbIMediaItem* aMediaItem ) :
+  sbRemoteMediaItem(aRemotePlayer, aMediaItem)
 {
 #ifdef PR_LOGGING
   if (!gRemoteWebMediaItemLog) {

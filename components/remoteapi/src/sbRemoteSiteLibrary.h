@@ -35,6 +35,7 @@
 
 class nsIFile;
 class nsIURI;
+class sbRemotePlayer;
 
 class sbRemoteSiteLibrary : public sbRemoteLibraryBase,
                             public sbIRemoteSiteLibrary
@@ -46,7 +47,7 @@ public:
   NS_FORWARD_SBIREMOTELIBRARY(sbRemoteLibraryBase::)
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteSiteLibrary();
+  sbRemoteSiteLibrary(sbRemotePlayer* aRemotePlayer);
 
   static nsresult GetFilenameForSiteLibrary( const nsACString& aDomain,
                                              const nsACString& aPath,

@@ -25,10 +25,12 @@
  */
 
 #include "sbRemoteMediaItem.h"
+#include "sbRemotePlayer.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
 #include <sbIPropertyManager.h>
+#include <sbILibrary.h>
 #include <nsServiceManagerUtils.h>
 
 /*
@@ -98,9 +100,12 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaItem)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaItem)
 
-sbRemoteMediaItem::sbRemoteMediaItem(sbIMediaItem* aMediaItem) :
+sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
+                                     sbIMediaItem* aMediaItem) :
+  mRemotePlayer(aRemotePlayer),
   mMediaItem(aMediaItem)
 {
+  NS_ASSERTION(aRemotePlayer, "Null remote player!");
   NS_ASSERTION(aMediaItem, "Null media item!");
 
 #ifdef PR_LOGGING
@@ -202,5 +207,35 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
   }
   
   // it all looks ok, pass this request on to the real media item
-  return mMediaItem->SetProperty(aName, aValue);
+  rv = mMediaItem->SetProperty(aName, aValue);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbILibrary> library;
+    rv = mMediaItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedItems, library);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
+
+NS_IMETHODIMP
+sbRemoteMediaItem::SetProperties(sbIPropertyArray * aProperties)
+{
+  NS_ENSURE_ARG_POINTER( aProperties );
+  NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
+
+  nsresult rv = mMediaItem->SetProperties(aProperties);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbILibrary> library;
+    rv = mMediaItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eEditedItems, library);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+

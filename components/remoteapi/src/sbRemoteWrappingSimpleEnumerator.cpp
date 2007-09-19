@@ -95,7 +95,7 @@ sbRemoteWrappingSimpleEnumerator::GetNext(nsISupports** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbRemoteIndexedMediaItem> indexedMediaItem =
-    new sbRemoteIndexedMediaItem(item);
+    new sbRemoteIndexedMediaItem(mRemotePlayer, item);
   NS_ENSURE_TRUE(indexedMediaItem, NS_ERROR_OUT_OF_MEMORY);
 
   rv = indexedMediaItem->Init();

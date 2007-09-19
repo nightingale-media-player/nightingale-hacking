@@ -154,6 +154,7 @@ NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParentKey, nsISupports *
 /* void setView (in nsISupports aParentKey, in nsISupports aPageKey, in sbIMediaListView aView); */
 NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParentKey, nsISupports *aPageKey, sbIMediaListView *aView)
 {
+  return NS_OK;
   NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
   NS_ENSURE_ARG_POINTER( aParentKey );
   NS_ENSURE_ARG_POINTER( aPageKey );

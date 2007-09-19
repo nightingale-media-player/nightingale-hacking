@@ -31,6 +31,8 @@
 #include "sbRemoteMediaItem.h"
 #include <sbIMediaItem.h>
 
+class sbRemotePlayer;
+
 class sbRemoteWebMediaItem : public sbRemoteMediaItem
 {
 public:
@@ -38,7 +40,8 @@ public:
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteWebMediaItem( sbIMediaItem *aMediaItem );
+  sbRemoteWebMediaItem( sbRemotePlayer *aRemotePlayer,
+                        sbIMediaItem *aMediaItem );
 
 protected:
   virtual ~sbRemoteWebMediaItem();

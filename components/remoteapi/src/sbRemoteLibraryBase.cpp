@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteLibraryBase.h"
+#include "sbRemotePlayer.h"
 
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
@@ -86,11 +87,15 @@ class sbPlaylistReaderObserver : public nsIObserver
 public:
   NS_DECL_ISUPPORTS
 
-  sbPlaylistReaderObserver(sbICreateMediaListCallback* aCallback,
+  sbPlaylistReaderObserver(sbRemotePlayer* aRemotePlayer,
+                           sbICreateMediaListCallback* aCallback,
                            PRBool aShouldScan) :
+    mRemotePlayer(aRemotePlayer),
     mCallback(aCallback),
     mShouldScan(aShouldScan)
   {
+    NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
+    NS_ASSERTION(aCallback, "aCallback is null");
   }
 
   NS_IMETHODIMP Observe( nsISupports *aSubject,
@@ -135,7 +140,9 @@ public:
 
     if (mCallback) {
       nsCOMPtr<sbIMediaList> wrappedList;
-      rv = SB_WrapMediaList(mediaList, getter_AddRefs(wrappedList));
+      rv = SB_WrapMediaList(mRemotePlayer,
+                            mediaList,
+                            getter_AddRefs(wrappedList));
       NS_ENSURE_SUCCESS(rv, rv);
       mCallback->OnCreated(wrappedList);
     }
@@ -145,6 +152,7 @@ public:
 
 private:
 
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbICreateMediaListCallback> mCallback;
   PRBool mShouldScan;
 };
@@ -193,10 +201,12 @@ NS_IMPL_ISUPPORTS9( sbRemoteLibraryBase,
                     sbILibraryResource,
                     sbIRemoteLibrary )
 
-sbRemoteLibraryBase::sbRemoteLibraryBase() :
+sbRemoteLibraryBase::sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer) :
   mShouldScan(PR_TRUE),
-  mEnumerationResult(NS_ERROR_NOT_INITIALIZED)
+  mEnumerationResult(NS_ERROR_NOT_INITIALIZED),
+  mRemotePlayer(aRemotePlayer)
 {
+  NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbRemoteLibraryBase");
@@ -273,7 +283,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   // Only allow the creation of media items with http(s) schemes
   PRBool validScheme;
   uri->SchemeIs("http", &validScheme);
-  if (!validScheme) {
+  if (!validScheme) { 
     uri->SchemeIs("https", &validScheme);
     if (!validScheme) {
       return NS_ERROR_INVALID_ARG;
@@ -306,7 +316,14 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   }
 
   // This will wrap in the appropriate site/regular RemoteMediaItem
-  return SB_WrapMediaItem(mediaItem, _retval);
+  rv = SB_WrapMediaItem(mRemotePlayer, mediaItem, _retval);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eUpdatedWithItems, mLibrary);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -325,7 +342,12 @@ sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // This will wrap in the appropriate site/regular RemoteMediaList
-  return SB_WrapMediaList(mediaList, _retval);
+  rv = SB_WrapMediaList(mRemotePlayer, mediaList, _retval);
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
+  }
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -367,7 +389,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbPlaylistReaderObserver> readerObserver =
-    new sbPlaylistReaderObserver(aCallback, mShouldScan);
+    new sbPlaylistReaderObserver(mRemotePlayer, aCallback, mShouldScan);
   NS_ENSURE_TRUE( readerObserver, NS_ERROR_OUT_OF_MEMORY );
 
   nsCOMPtr<nsIObserver> observer( do_QueryInterface( readerObserver, &rv ) );
@@ -379,6 +401,11 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   PRInt32 dummy;
   rv = manager->LoadPlaylist( uri, mediaList, EmptyString(), true, lstnr, &dummy );
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (NS_SUCCEEDED(rv)) {
+    mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
+  }
 
   return NS_OK;
 }
@@ -417,7 +444,7 @@ sbRemoteLibraryBase::GetMediaListByName( const nsAString & aName,
       nsCOMPtr<sbIMediaList> list = do_QueryInterface( res, &rv );
       if ( NS_FAILED(rv) )
         continue;
-      rv = SB_WrapMediaList( list, _retval );
+      rv = SB_WrapMediaList( mRemotePlayer, list, _retval );
       if ( NS_SUCCEEDED(rv) )
         return NS_OK;
     }

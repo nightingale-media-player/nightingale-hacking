@@ -56,6 +56,7 @@
 
 class nsIStringEnumerator;
 class sbIMediaItem;
+class sbRemotePlayer;
 
 // PURE VIRTUAL: Inherits but doesn't impl nsIClassInfo
 //               derived classes must impl.
@@ -80,7 +81,7 @@ public:
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
-  sbRemoteLibraryBase();
+  sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
 
   // sbIWrappedMediaList
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
@@ -109,6 +110,8 @@ protected:
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
 };
 
 #endif // __SB_REMOTE_LIBRARYBASE_H__

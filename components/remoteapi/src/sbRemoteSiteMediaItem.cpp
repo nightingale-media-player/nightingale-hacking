@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteSiteMediaItem.h"
+#include "sbRemotePlayer.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -126,8 +127,9 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM(sbRemoteSiteMediaItem,
                                         sbRemoteSiteMediaItemSecurityMixin,
                                         (mMediaItem))
 
-sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbIMediaItem* aMediaItem) :
-  sbRemoteMediaItem(aMediaItem)
+sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbRemotePlayer* aRemotePlayer,
+                                             sbIMediaItem* aMediaItem) :
+  sbRemoteMediaItem(aRemotePlayer, aMediaItem)
 {
 #ifdef PR_LOGGING
   if (!gRemoteSiteMediaItemLog) {
