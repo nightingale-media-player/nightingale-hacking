@@ -720,6 +720,10 @@
                       Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                                 .getService(Components.interfaces.sbIMetadataJobManager);
                     var metadataJob = metadataJobManager.newJob(array, 5);
+
+                    // Start playback
+                    var view = mediaList.createView();
+                    gPPS.playView(view, 0);
                   }
                 }
               };
