@@ -46,7 +46,9 @@
         <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
         -->
         <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+        <!-- XXX lone: disabled; see bug 4387
         <menuitem id="file.folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;"/>
+        -->
         <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
         <menuitem id="file.url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
         <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>

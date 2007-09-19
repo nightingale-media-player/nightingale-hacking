@@ -438,6 +438,8 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
 
 sbBookmarks.prototype.fillNewItemMenu =
 function sbBookmarks_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
+  // XXX lone: disabled; see bug 4387
+  /*
   var stringBundle = this._stringBundle;
   function add(id, label, accesskey, oncommand) {
     var menuitem = aContextMenu.ownerDocument.createElement('menuitem');
@@ -450,6 +452,7 @@ function sbBookmarks_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
   }
 
   add('file.folder', 'menu.file.folder', 'menu.file.folder.accesskey', 'doMenu("file.folder")');
+  */
 }
 
 sbBookmarks.prototype.onSelectionChanged=
