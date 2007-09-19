@@ -903,14 +903,7 @@ function plCmd_ShowDownloadPlaylist_TriggerCallback(aContext, aSubMenuId, aComma
   var window = unwrap(aContext.window);
   var browser = window.gBrowser;
   if (browser) {
-    if (window.location.pathname ==
-        '/content/xul/sbLibraryPage.xul') {
-      // we're in the web library / inner playlist view
-      browser.loadMediaList(browser.downloadList);
-    } else {
-      // we're in a web playlist / outer playlist view
-      browser.mCurrentTab.switchToDownloadView();
-    } 
+    browser.loadMediaList(browser.downloadList);
   }
 }
 
