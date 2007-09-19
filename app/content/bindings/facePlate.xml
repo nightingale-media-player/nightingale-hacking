@@ -462,8 +462,10 @@
           <!-- SONG ALBUM DISPLAY -->
           <xul:sb-player-curtrack-hbox class="faceplate-album-box" pack="center" align="center" >
             <xul:sb-player-title-label align="center"  crop="end"  class="faceplate-text" />
-            <xul:label anonid="slash_label" value=" / "  crop="end" hidden="true"  class="faceplate-text"  />
-            <xul:sb-player-album-label value=""  crop="end"  class="faceplate-text" />
+            <xul:hbox align="center" class="faceplate-text">
+              <xul:label anonid="slash_label" value=" / "  crop="end" hidden="true"  class="faceplate-text"  />
+            </xul:hbox>
+            <xul:sb-player-album-label align="center" value=""  crop="end"  class="faceplate-text" />
           </xul:sb-player-curtrack-hbox>
           <!-- SEEK BAR -->
           <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
