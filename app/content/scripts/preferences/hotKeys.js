@@ -24,8 +24,6 @@
 //
 */
 
-// todo: internationalize 
-
 var gHotkeysPane = {
 
   _list: null,
@@ -41,14 +39,12 @@ var gHotkeysPane = {
   _hotkeylabel: null,
   _actionlabel: null,
 
-  init: function ()
+  init: function init()
   {
-    window.removeEventListener('load', onHotkeysLoad, false);
-    
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/messageBox.js", this );
     
-    document.defaultView.addEventListener("unload", onHotkeysUnload, true);
+    window.addEventListener("unload", onHotkeysUnload, true);
     
     this._binding_enabled = SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
 
@@ -70,6 +66,7 @@ var gHotkeysPane = {
   
   onUnload: function()
   {
+    window.removeEventListener("unload", onHotkeysUnload, true);
     this._binding_enabled.unbind();
     this._binding_enabled = null;
   },
@@ -300,9 +297,3 @@ function onHotkeysUnload()
   gHotkeysPane.onUnload();
 }
 
-function onHotkeysLoad() 
-{
-  gHotkeysPane.init();
-}
-
-window.addEventListener('load', onHotkeysLoad, false);

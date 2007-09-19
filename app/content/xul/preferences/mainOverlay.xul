@@ -28,9 +28,8 @@
 -->
 
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/preferences.css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!-- todo: internationalize -->
- 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
