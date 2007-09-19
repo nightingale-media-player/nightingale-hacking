@@ -60,7 +60,7 @@ librarybasefilescleanup="$docstempdir/sbIMediaItem.idl
 bindingsfiles="$bindingsdir/public/sbIPlaylistWidget.idl"
 
 # Bindings files we need to clean up
-bindingsfilescleanup="$docstempdir/public/sbIPlaylistWidget.idl"
+bindingsfilescleanup="$docstempdir/sbIPlaylistWidget.idl"
 
 # Shared lists
 listsdir="$topsrcdir/documentation/lists"
@@ -97,7 +97,7 @@ $scriptsdir/extract.pl sbIPlaylistWidget < $docstempdir/sbIPlaylistWidget.idl >>
 
 # Delete source files for merge so we don't get duplicate classes.
 rm -f $librarybasefilescleanup
-rm -f $bidningsfilecleanup
+rm -f $bindingsfilescleanup
 
 # Run NaturalDocs
 $topsrcdir/tools/common/naturaldocs/NaturalDocs \
