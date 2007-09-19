@@ -270,6 +270,8 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
 NS_METHOD sbPropertyManager::CreateSystemProperties()
 {
   nsresult rv;
+  // If you add or remove properties accessible to remote pages, please update
+  // the documentation in sbILibraryResource.idl as well, thanks!
 
   nsCOMPtr<nsIStringBundle> stringBundle;
   rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));

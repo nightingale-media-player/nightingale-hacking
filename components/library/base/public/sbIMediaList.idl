@@ -896,7 +896,7 @@ interface sbIMediaList : sbIMediaItem
   See Also:
     <enumerateItemsByProperty()>
     
-    <http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h>, for a list of standard properties.
+    <getProperty()>
   */
   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
 };
