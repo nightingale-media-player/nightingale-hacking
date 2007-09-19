@@ -62,6 +62,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
 #ifdef DEBUG
@@ -758,24 +759,19 @@ sbLocalDatabaseTreeView::GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId)
 {
   nsresult rv;
 
-  switch(mListType) {
-    case eLibrary:
-      // If this is a library, the guid of the item is usable for the id
-      rv = mArray->GetGuidByIndex(aIndex, aId);
-      NS_ENSURE_SUCCESS(rv, rv);
-    break;
-    case eSimple:
-      // If this is a simple media list, we use the ordinal as our unique
-      // identifier since there can be more than one of the same item in
-      // the list which causes duplicate guids
-      rv = mArray->GetOrdinalByIndex(aIndex, aId);
-      NS_ENSURE_SUCCESS(rv, rv);
-    break;
-    case eDistinct:
-      // For distinct lists, the sort key works as a unique id
-      rv = mArray->GetSortPropertyValueByIndex(aIndex, aId);
-      NS_ENSURE_SUCCESS(rv, rv);
-    break;
+  // For distinct lists, the sort key works as a unique id, otherwise we can
+  // use the rowid
+  if (mListType == eDistinct) {
+    rv = mArray->GetSortPropertyValueByIndex(aIndex, aId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    PRUint64 rowid;
+    rv = mArray->GetRowidByIndex(aIndex, &rowid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    aId.Truncate();
+    AppendInt(aId, rowid);
   }
 
   return NS_OK;

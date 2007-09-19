@@ -544,6 +544,15 @@ sbLocalDatabaseAsyncGUIDArray::GetGuidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetRowidByIndex(PRUint32 aIndex,
+                                               PRUint64* _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetRowidByIndex(aIndex, _retval);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Invalidate()
 {
   nsAutoMonitor monitor(mSyncMonitor);
@@ -583,6 +592,15 @@ sbLocalDatabaseAsyncGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetFirstIndexByGuid(aGuid, _retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetIndexByRowid(PRUint64 aRowid,
+                                               PRUint32* _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetIndexByRowid(aRowid, _retval);
 }
 
 NS_IMETHODIMP

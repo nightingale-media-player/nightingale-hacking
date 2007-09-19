@@ -91,6 +91,25 @@ interface sbIMediaListView : nsISupports
   unsigned long getUnfilteredIndex(in unsigned long aIndex);
 
   /**
+   * \brief Returns an opaque identifier that uniquely identifies the media
+   *        item at a given position.  This identifier can be used later to
+   *        find the same media item after this view's filter and sort has
+   *        been changed.
+   * \param aIndex Filtered index of the media item
+   * \return Opaque identifier of specified media item
+   */
+  AString getViewItemUIDForIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Given an opaque identifier returned by getViewItemUIDForIndex,
+   *        return the index of the media item it identifies.
+   * \param aViewItemUID The opaque identifier returned by
+   *        getViewItemUIDForIndex
+   * \return Index of media item the identifer identifies.
+   */
+  unsigned long getIndexForViewItemUID(in AString aViewItemUID);
+
+  /**
    * \brief Create a clone of this view.  This will return a copy with the
    *        same search, filter, sort, and cascade filter set as the original.
    * \return A clone of the media list view

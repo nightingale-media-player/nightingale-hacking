@@ -47,13 +47,13 @@
 #define ORDINAL_COLUMN        NS_LITERAL_STRING("ordinal")
 #define PROPERTYNAME_COLUMN   NS_LITERAL_STRING("property_name")
 #define MEDIALISTYPEID_COLUMN NS_LITERAL_STRING("media_list_type_id")
+#define ROWID_COLUMN          NS_LITERAL_STRING("rowid")
 
 #define PROPERTIES_TABLE       NS_LITERAL_STRING("resource_properties")
 #define MEDIAITEMS_TABLE       NS_LITERAL_STRING("media_items")
 #define SIMPLEMEDIALISTS_TABLE NS_LITERAL_STRING("simple_media_lists")
 #define PROPERTYIDS_TABLE      NS_LITERAL_STRING("properties")
 
-#define BASE_ALIAS       NS_LITERAL_STRING("_base")
 #define MEDIAITEMS_ALIAS NS_LITERAL_STRING("_mi")
 #define CONSTRAINT_ALIAS NS_LITERAL_STRING("_con")
 #define GETNOTNULL_ALIAS NS_LITERAL_STRING("_getnotnull")
@@ -420,6 +420,27 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
   }
   else {
     rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If this is a library query, add the rowid from the media_items table,
+  // otherwise add it from the simple_media_lists table
+  nsString base;
+  if (mIsFullLibrary) {
+    base = MEDIAITEMS_ALIAS;
+  }
+  else {
+    base = CONSTRAINT_ALIAS;
+  }
+
+  if (mIsDistinct) {
+    nsString buff;
+    MaxExpr(base, ROWID_COLUMN, buff);
+    rv = mBuilder->AddColumn(EmptyString(), buff);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddColumn(base, ROWID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

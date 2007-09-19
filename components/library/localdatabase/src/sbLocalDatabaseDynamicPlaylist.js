@@ -28,7 +28,6 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/components/sbProperties.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;

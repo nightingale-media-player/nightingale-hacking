@@ -30,6 +30,8 @@
 
 function runTest () {
 
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+
   var library = createLibrary("test_medialistview");
 
   // Tests for getUnfilteredIndex
@@ -40,9 +42,9 @@ function runTest () {
 
   var view = list.createView();
 
-  var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
-  view.setFilters(pa);
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.artistName, "AC/DC"]
+  ]));
 
   for (var i = 0; i < view.length; i++) {
     var viewItem = view.getItemByIndex(i);
@@ -53,16 +55,16 @@ function runTest () {
   // For a simple media list, set up a small media list, filter it and check
   // the unfiltered index
   var item1 = library.createMediaItem(newURI("file:///foo/1.mp3"));
-  item1.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Fall");
+  item1.setProperty(SBProperties.artistName, "The Fall");
 
   var item2 = library.createMediaItem(newURI("file:///foo/2.mp3"));
-  item2.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
+  item2.setProperty(SBProperties.artistName, "The Dirtbombs");
 
   var item3 = library.createMediaItem(newURI("file:///foo/3.mp3"));
-  item3.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
+  item3.setProperty(SBProperties.artistName, "The Dirtbombs");
 
   var item4 = library.createMediaItem(newURI("file:///foo/4.mp3"));
-  item4.setProperty("http://songbirdnest.com/data/1.0#artistName", "Air");
+  item4.setProperty(SBProperties.artistName, "Air");
 
   list = library.createMediaList("simple");
   list.add(item1);
@@ -77,9 +79,9 @@ function runTest () {
     assertEqual(listIndex, list.indexOf(viewItem, 0));
   }
 
-  var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
-  view.setFilters(pa);
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.artistName, "The Dirtbombs"]
+  ]));
 
   for (var i = 0; i < view.length; i++) {
     var viewItem = view.getItemByIndex(i);
@@ -96,10 +98,9 @@ function runTest () {
   forceCache(view);
   assertEqual(view.getIndexForItem(item), 69);
 
-  view = library.createView();
-  pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
-  view.setFilters(pa);
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.artistName, "AC/DC"]
+  ]));
 
   assertEqual(view.getIndexForItem(item), 4);
   forceCache(view);
@@ -110,10 +111,9 @@ function runTest () {
   forceCache(view);
   assertEqual(view.getIndexForItem(item3), 2);
 
-  view = list.createView();
-  pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
-  view.setFilters(pa);
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.artistName, "The Dirtbombs"]
+  ]));
 
   assertEqual(view.getIndexForItem(item3), 1);
   forceCache(view);
@@ -121,12 +121,72 @@ function runTest () {
 
   try {
     view.getIndexForItem(item1);
-    fail("NS_ERROR_NOT_AVAILABLE exected");
+    fail("NS_ERROR_NOT_AVAILABLE expected");
   }
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
   }
 
+  // test index item uid
+  view = library.createView();
+  view.setSort(SBProperties.createArray([
+    [SBProperties.artistName, "a"]
+  ]));
+
+  var items = [];
+  var uids = [];
+  for (var i = 0; i < view.length; i++) {
+    items.push(view.getItemByIndex(i));
+    uids.push(view.getViewItemUIDForIndex(i));
+  }
+
+  view.setSort(SBProperties.createArray([
+    [SBProperties.trackName, "a"]
+  ]));
+
+  for (var i = 0; i < uids.length; i++) {
+    var index = view.getIndexForViewItemUID(uids[i]);
+    var item = view.getItemByIndex(index);
+    assertTrue(item.equals(items[i]));
+  }
+
+  view = list.createView();
+  view.setSort(SBProperties.createArray([
+    [SBProperties.artistName, "a"]
+  ]));
+
+  var items = [];
+  var uids = [];
+  for (var i = 0; i < view.length; i++) {
+    items.push(view.getItemByIndex(i));
+    uids.push(view.getViewItemUIDForIndex(i));
+  }
+
+  view.setSort(SBProperties.createArray([
+    [SBProperties.artistName, "d"]
+  ]));
+
+  for (var i = 0; i < uids.length; i++) {
+    var index = view.getIndexForViewItemUID(uids[i]);
+    var item = view.getItemByIndex(index);
+    assertTrue(item.equals(items[i]));
+  }
+
+  try {
+    view.getViewItemUIDForIndex(100000);
+    fail("NS_ERROR_INVALID_ARG expected");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
+  try {
+    view.getIndexForViewItemUID("foo");
+    fail("NS_ERROR_INVALID_ARG expected");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
 }
 
 function forceCache(view) {
@@ -135,10 +195,5 @@ function forceCache(view) {
     view.getItemByIndex(i);
   }
 
-}
-
-function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-           .createInstance(Ci.sbIMutablePropertyArray);
 }
 

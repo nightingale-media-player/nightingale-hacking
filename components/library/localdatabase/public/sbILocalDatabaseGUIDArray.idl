@@ -120,6 +120,14 @@ interface sbILocalDatabaseGUIDArray : nsISupports
    */
   AString getGuidByIndex(in unsigned long aIndex);
 
+  /**
+   * \brief Return the rowid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  unsigned long long getRowidByIndex(in unsigned long aIndex);
+
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();
@@ -131,5 +139,7 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   unsigned long getFirstIndexByPrefix(in AString aPrefix);
 
   unsigned long getFirstIndexByGuid(in AString aGuid);
+
+  unsigned long getIndexByRowid(in unsigned long long aRowid);
 };
 

@@ -49,6 +49,7 @@
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <prlog.h>
 
@@ -442,6 +443,39 @@ sbLocalDatabaseMediaListView::GetUnfilteredIndex(PRUint32 aIndex,
     rv = sml->GetIndexByOrdinal(ordinal, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetViewItemUIDForIndex(PRUint32 aIndex,
+                                                     nsAString& _retval)
+{
+  nsresult rv;
+
+  PRUint64 rowid;
+  rv = mArray->GetRowidByIndex(aIndex, &rowid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Truncate();
+  AppendInt(_retval, rowid);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetIndexForViewItemUID(const nsAString& aViewItemUID,
+                                                     PRUint32* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  PRUint64 rowid = ToInteger64(aViewItemUID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->GetIndexByRowid(rowid, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

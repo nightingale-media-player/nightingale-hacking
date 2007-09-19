@@ -31,6 +31,7 @@ Components.utils.import("resource://app/components/sbProperties.jsm");
  * Constants
  * ----------------------------------------------------------------------------
  */
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // XPCOM Registration
 const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
@@ -245,6 +246,10 @@ PlaylistPlayback.prototype.constructor = PlaylistPlayback;
  * Prototype
  */
 PlaylistPlayback.prototype = {
+  classDescription: SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME,
+  classID:          SONGBIRD_PLAYLISTPLAYBACK_CID,
+  contractID:       SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID,
+
   /**
    * ---------------------------------------------
    * Private Variables
@@ -398,6 +403,7 @@ PlaylistPlayback.prototype = {
     this._playlistRef           = createDataRemote("playlist.ref", null);
     this._playlistIndex         = createDataRemote("playlist.index", null);
     this._playingView           = null;
+    this._playingViewItemUID    = null;
     this._repeat                = createDataRemote("playlist.repeat", null);
     this._shuffle               = createDataRemote("playlist.shuffle", null);
     this._showRemaining         = createDataRemote("faceplate.showremainingtime", null);
@@ -870,6 +876,9 @@ PlaylistPlayback.prototype = {
 
     // pull metadata and filters from aSourceRef
     this._updateCurrentInfoFromView(aView, aIndex);
+
+    // Remember this item's view UID so we can find it if the view changes
+    this._playingViewItemUID = aView.getViewItemUIDForIndex(aIndex);
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
@@ -1591,8 +1600,7 @@ PlaylistPlayback.prototype = {
       this._restartApp();
       return;
     }
-                                                        // GRRRRRR!
-    var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
+
     var cur_ref = this._playingRef.stringValue;
     var cur_url = this._playURL.stringValue;
 
@@ -1602,7 +1610,21 @@ PlaylistPlayback.prototype = {
       return;
     }
 
-    this._playlistIndex.intValue = cur_index;
+    // Get the index of the item that just finished from the view using the
+    // stored view item UID.  This is so we can determine the "next" track
+    // based on the previous track's current position in the view, not its
+    // position when playback started
+    var cur_index;
+    try {
+      cur_index =
+        this._playingView.getIndexForViewItemUID(this._playingViewItemUID);
+    }
+    catch(e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+      // The item that just finished has vanished from the current view.  We
+      // have no context to find the next track so just stop
+      this.stop();
+      return;
+    }
 
     LOG( "current index: " + cur_index );
     
@@ -1759,70 +1781,19 @@ PlaylistPlayback.prototype = {
   
 }; // PlaylistPlayback.prototype
 
-/**
- * ----------------------------------------------------------------------------
- * Registration for XPCOM
- * ----------------------------------------------------------------------------
- * Adapted from nsUpdateService.js
- */
-var gModule = {
 
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               fileSpec, location, type);
-    }
-    var categoryManager = Components.classes["@mozilla.org/categorymanager;1"]
-                                    .getService(Components.interfaces.nsICategoryManager);
-    categoryManager.addCategoryEntry("app-startup", this._objects.playback.className,
-                                     "service," + this._objects.playback.contractID, 
-                                     true, true, null);
-  },
+function NSGetModule(compMgr, fileSpec) {
 
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+  return XPCOMUtils.generateModule([
+    PlaylistPlayback,
+  ],
+  function(aCompMgr, aFileSpec, aLocation) {
+    XPCOMUtils.categoryManager.addCategoryEntry(
+      "app-startup",
+      PlaylistPlayback.prototype.classDescription,
+      "service," + PlaylistPlayback.prototype.contractID,
+      true,
+      true);
+  });
+}
 
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
-    }
-    
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
-
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
-      if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
-  
-  _objects: {
-    // The PlaylistPlayback Component
-    playback: { CID        : SONGBIRD_PLAYLISTPLAYBACK_CID,
-                contractID : SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID,
-                className  : SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME,
-                factory    : #1#(PlaylistPlayback)
-              },
-  },
-
-  canUnload: function(componentManager) { 
-    return true; 
-  },
-  
-  unregisterSelf: function(componentManager, fileSpec, location, type) {
-    var categoryManager = Components.classes["@mozilla.org/categorymanager;1"]
-                                    .getService(Components.interfaces.nsICategoryManager);
-    categoryManager.deleteCategoryEntry("app-startup",
-                                        this._objects.playback.contractID, true);
-  }
-}; // gModule
-
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
-} // NSGetModule

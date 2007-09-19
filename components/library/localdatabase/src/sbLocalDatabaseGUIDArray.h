@@ -42,6 +42,7 @@
 #include <nsIStringEnumerator.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
+#include <sbHashKeys.h>
 
 class nsIURI;
 class nsIWeakReference;
@@ -68,22 +69,26 @@ private:
     ArrayItem(PRUint32 aMediaItemId,
               const nsAString& aGuid,
               const nsAString& aValue,
-              const nsAString& aOrdinal) :
+              const nsAString& aOrdinal,
+              PRUint64 aRowid) :
       mediaItemId(aMediaItemId),
       guid(aGuid),
       sortPropertyValue(aValue),
-      ordinal(aOrdinal)
+      ordinal(aOrdinal),
+      rowid(aRowid)
     {
     };
 
     ArrayItem(PRUint32 aMediaItemId,
               const PRUnichar* aGuid,
               const PRUnichar* aValue,
-              const PRUnichar* aOrdinal) :
+              const PRUnichar* aOrdinal,
+              PRUint64 aRowid) :
       mediaItemId(aMediaItemId),
       guid(aGuid),
       sortPropertyValue(aValue),
-      ordinal(aOrdinal)
+      ordinal(aOrdinal),
+      rowid(aRowid)
     {
     };
 
@@ -91,6 +96,7 @@ private:
     nsString guid;
     nsString sortPropertyValue;
     nsString ordinal;
+    PRUint64 rowid;
   };
 
   ~sbLocalDatabaseGUIDArray();
@@ -109,7 +115,7 @@ private:
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
 
-  nsresult FetchRows(PRUint32 aRequestedIndex);
+  nsresult FetchRows(PRUint32 aRequestedIndex, PRUint32 aFetchSize);
 
   nsresult SortRows(PRUint32 aStartIndex,
                     PRUint32 aEndIndex,
@@ -212,6 +218,9 @@ private:
   // Map of guid -> first array index
   nsDataHashtable<nsStringHashKey, PRUint32> mGuidToFirstIndexMap;
 
+  // Map of rowid -> array index
+  nsDataHashtable<sbUint64HashKey, PRUint32> mRowidToIndexMap;
+
   // Get distinct values?
   PRPackedBool mIsDistinct;
 
@@ -220,8 +229,6 @@ private:
 
   // How nulls are sorted
   PRPackedBool mNullsFirst;
-protected:
-  /* additional members */
 };
 
 class sbGUIDArrayEnumerator : public nsISimpleEnumerator

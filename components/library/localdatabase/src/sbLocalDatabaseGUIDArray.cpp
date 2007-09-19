@@ -50,6 +50,7 @@
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -443,6 +444,24 @@ sbLocalDatabaseGUIDArray::GetGuidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetRowidByIndex(PRUint32 aIndex,
+                                          PRUint64* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = item->rowid;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate()
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
@@ -464,6 +483,7 @@ sbLocalDatabaseGUIDArray::Invalidate()
 
   mCache.Clear();
   mGuidToFirstIndexMap.Clear();
+  mRowidToIndexMap.Clear();
 
   if(mPrimarySortKeyPositionCache.IsInitialized()) {
     mPrimarySortKeyPositionCache.Clear();
@@ -567,9 +587,14 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
     nsString guid;
     rv = GetGuidByIndex(aIndex, guid);
     NS_ENSURE_SUCCESS(rv, rv);
+    mGuidToFirstIndexMap.Remove(guid);
+
+    PRUint64 rowid;
+    rv = GetRowidByIndex(aIndex, &rowid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mRowidToIndexMap.Remove(rowid);
 
     mCache.RemoveElementAt(aIndex);
-    mGuidToFirstIndexMap.Remove(guid);
   }
 
   // Adjust the null length of the array.  Made sure we decrement the non
@@ -690,6 +715,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
     // If we are fully cached and the guid was not found, then we know that
     // it does not exist in this array
     if (mCache.Length() == mLength) {
+      return NS_ERROR_NOT_AVAILABLE;
     }
 
     // If it wasn't found, we need to find the first uncached row
@@ -734,13 +760,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 
   // So the guid we are looking for is not cached.  Cache the rest of the
   // array and search it
-
-  // Temporarily make the fetch size the same size as the array so we read in
-  // the rest of the array in one shot
-  PRUint32 oldFetchSize = mFetchSize;
-  mFetchSize = mLength;
-  rv = FetchRows(firstUncached);
-  mFetchSize = oldFetchSize;
+  rv = FetchRows(firstUncached, mLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
@@ -749,9 +769,59 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   if (mGuidToFirstIndexMap.Get(aGuid, _retval)) {
     return NS_OK;
   }
-  else {
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
+                                          PRUint32* _retval)
+{
+  TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - GetIndexByRowid", this));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  if (mValid == PR_FALSE) {
+    rv = Initialize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // First check to see if we have this in cache
+  if (mRowidToIndexMap.Get(aRowid, _retval)) {
+    return NS_OK;
+  }
+
+  // If we are fully cached and the rowid was not found, then we know that
+  // it does not exist in this array
+  if (mCache.Length() == mLength) {
     return NS_ERROR_NOT_AVAILABLE;
   }
+
+  // If no, we need to cache the entire guid array.  Find the first uncached
+  // row so we can trigger the load
+  PRUint32 firstUncached = 0;
+  PRBool found = PR_FALSE;
+  for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
+    if (!mCache[i]) {
+      firstUncached = i;
+      found = PR_TRUE;
+    }
+  }
+
+  NS_ASSERTION(!found, "Unable to find first uncached row?");
+
+  rv = FetchRows(firstUncached, mLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
+
+  // Either the guid is in the map or it just not in our array
+  if (mRowidToIndexMap.Get(aRowid, _retval)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult
@@ -774,6 +844,11 @@ sbLocalDatabaseGUIDArray::Initialize()
 
   if (!mGuidToFirstIndexMap.IsInitialized()) {
     PRBool success = mGuidToFirstIndexMap.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  if (!mRowidToIndexMap.IsInitialized()) {
+    PRBool success = mRowidToIndexMap.Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -1268,7 +1343,8 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
+sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
+                                    PRUint32 aFetchSize)
 {
   nsresult rv;
 
@@ -1308,10 +1384,10 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
   /*
    * Divide the array up into cells and figure out what cell to fetch
    */
-  PRUint32 cell = aRequestedIndex / mFetchSize;
+  PRUint32 cell = aRequestedIndex / aFetchSize;
 
-  PRUint32 indexD = cell * mFetchSize;
-  PRUint32 indexE = indexD + mFetchSize - 1;
+  PRUint32 indexD = cell * aFetchSize;
+  PRUint32 indexE = indexD + aFetchSize - 1;
   if (indexE > indexC) {
     indexE = indexC;
   }
@@ -1446,7 +1522,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   for (PRUint32 i = 0; i < rowCount; i++) {
     PRUint32 index = i + aDestIndexOffset;
 
-    nsAutoString mediaItemIdStr;
+    nsString mediaItemIdStr;
     rv = result->GetRowCell(i, 0, mediaItemIdStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1465,7 +1541,14 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     rv = result->GetRowCell(i, 3, ordinal);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    ArrayItem* item = new ArrayItem(mediaItemId, guid, value, ordinal);
+    nsString rowidStr;
+    rv = result->GetRowCell(i, 4, rowidStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint64 rowid = ToInteger64(rowidStr, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    ArrayItem* item = new ArrayItem(mediaItemId, guid, value, ordinal, rowid);
     NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
     nsAutoPtr<ArrayItem>* success =
@@ -1479,6 +1562,10 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
       PRBool added = mGuidToFirstIndexMap.Put(guid, index);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
+
+    // Add the new rowid to the rowid to index map.
+    PRBool added = mRowidToIndexMap.Put(rowid, index);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
     TRACE(("ReplaceElementsAt %d %s", index,
            NS_ConvertUTF16toUTF8(item->guid).get()));
@@ -1531,7 +1618,8 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
       ArrayItem* item = new ArrayItem(0,
                                       NS_LITERAL_STRING("error"),
                                       NS_LITERAL_STRING("error"),
-                                      EmptyString());
+                                      EmptyString(),
+                                      0);
       NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
       nsAutoPtr<ArrayItem>* success =
@@ -1755,7 +1843,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
    * Also we should probably track movement to make backwards scrolling more
    * efficient
    */
-  rv = FetchRows(aIndex);
+  rv = FetchRows(aIndex, mFetchSize);
   NS_ENSURE_SUCCESS(rv, rv);
 
    *_retval = mCache[aIndex];

@@ -24,7 +24,19 @@
 //
 */
 
+#ifndef __SBSTRINGUTILS_H__
+#define __SBSTRINGUTILS_H__
+
 #include <nsStringGlue.h>
 
 /// @see nsString::FindCharInSet
-PRInt32 nsString_FindCharInSet(const nsAString& aString, const char *aPattern, PRInt32 aOffset = 0);
+PRInt32 nsString_FindCharInSet(const nsAString& aString,
+                               const char *aPattern,
+                               PRInt32 aOffset = 0);
+
+void AppendInt(nsAString& str, PRUint64 val);
+
+PRUint64 ToInteger64(const nsAString& str, nsresult* rv);
+
+#endif /* __SBSTRINGUTILS_H__ */
+
