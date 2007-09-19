@@ -222,7 +222,15 @@ treechildren::-moz-tree-checkbox(disabled)
 
 /* ::::: tree columns ::::: */
 
-treecol,
+treecol { 
+  -moz-appearance: treeheadercell;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  background-color: -moz-Dialog;
+  color: -moz-DialogText;
+  padding: 0px 4px;
+}
+
 treecolpicker { 
   -moz-appearance: treeheadercell;
   -moz-box-align: center;
@@ -230,6 +238,7 @@ treecolpicker {
   background-color: -moz-Dialog;
   color: -moz-DialogText;
   padding: 0px 4px;
+  min-width: 15px;
 }
 
 .treecol-image {
