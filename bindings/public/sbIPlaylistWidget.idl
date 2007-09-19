@@ -37,6 +37,9 @@ interface sbIPlaylistCommands;
 interface sbIPropertyInfo;
 interface sbIPlaylistClickEvent;
 
+/*
+ Class PlaylistWidget
+ */
 /**
  * \interface sbIPlaylistWidget
  * \brief 
@@ -44,20 +47,99 @@ interface sbIPlaylistClickEvent;
 [scriptable, uuid(7a33d37c-34a3-4fe0-8d8d-5eb6e680457a)]
 interface sbIPlaylistWidget : nsISupports
 {
+  /**
+   * \brief Cause the commands to be re-fetched
+   *
+   * This will cause the playlist to fetch the list of commands again
+   * so that any newly added commands will appear in the UI for the
+   * playlist
+   *
+   * Note: Not callable from web pages.
+   */
   void rescanCommands();
+
+  /**
+   * \brief Get the view being displayed in the <PlaylistWidget>
+   *
+   * \returns A medialist view for the currently displayed medialist
+   */
   sbIMediaListView getListView();
+
+  /**
+   * \brief Attach the <PlaylistWidget> to the view passed in.
+   *
+   * \param mediaListView - the ordered, sorted, selected grouping of tracks
+   *                        to display in the UI
+   * \param commands - the commands to be used
+   * \param resize - boolean, if true the playlist will look up the
+   *                 resize_height attribute for the size to resize to.
+   * \param collapse - apparently no longer used
+   */
   void bind( in sbIMediaListView mediaListView,
              in sbIPlaylistCommands commands,
              in boolean resize,
              in boolean collapse );
+
+  /**
+   * \brief Make a column show up in the UI
+   *
+   * \param aColumnName - the name of the column to display
+   */
+  /*
+   Function: showColumn
+
+   Causes a column to appear in the <PlaylistWidget> UI. The column must
+   already exist in the system.
+
+   Arguments:
+     aColumnName - The name of the column to display
+  */
   void showColumn( in AString aColumnName );
+
+  /**
+   * \brief Make a column disappear from the UI
+   *
+   * \param aColumnName - the name of the column to hide
+   */
+  /*
+   Function: hideColumn
+
+   Arguments:
+     aColumnName - The name of the column to hide
+  */
   void hideColumn( in AString aColumnName );
+
+  /**
+   * \brief Make the named column move before the second
+   *
+   * \param aColumnName - The column to move
+   * \param aBeforeColumnName - The column that will be after (to the right of)
+   *                            the first column
+   */
   void moveColumnBefore( in AString aColumnName,
                          in AString aBeforeColumnName );
+
+  /**
+   * \brief Add a column indicated by the propertyInfo into the UI
+   *
+   * \param aPropInfo - the propertyInfo that defines the column data
+   * \param aIsHidden - if the column should be visible
+   * \param aWidth - the width of the column
+   * \param aSortOrder - What direction the sort should be in
+   * \param aBeforeCol - The column name that the added column should be
+   *                     inserted before
+   */
   void insertColumn( in sbIPropertyInfo aPropInfo,
                      in boolean aIsHidden,
                      in long aWidth,
                      in AString aSortOrder,
                      in AString aBeforeCol );
+
+  /**
+   * \brief The last click even that occured on this <PlaylistWidget>
+   *
+   * This is used only during the propogation of the PlaylistClickEvent event
+   * and will only be non-null for a very brief time during that flow.
+   */
   readonly attribute sbIPlaylistClickEvent lastClickEvent;
 };
