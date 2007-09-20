@@ -68,7 +68,14 @@ const componentData =
      script: "sbHTMLPlaylistHandler.js",
      constructor: "sbHTMLPlaylistHandler",
      category: "playlist-reader",
-     categoryEntry: "html"}
+     categoryEntry: "html"},
+     
+   {cid: Components.ID("{e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}"),
+     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/ASX;1",
+     script: "sbASXPlaylistHandler.js",
+     constructor: "sbASXPlaylistHandler",
+     category: "playlist-reader",
+     categoryEntry: "asx"}
   ];
 
 var sbPlaylistHandlerModule = {

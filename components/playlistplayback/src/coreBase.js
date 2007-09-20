@@ -153,7 +153,7 @@ CoreBase.prototype =
   LOG: function ( aString, aImplName ) {
     if (!aImplName)
       aImplName = "CoreBase";
-    dump("***" + aImplName + " *** " + aString + "\n");
+    dump("*** " + aImplName + " *** " + aString + "\n");
   },
 
   /**

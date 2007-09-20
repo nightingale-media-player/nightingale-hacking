@@ -36,6 +36,7 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/test_plshandler.js \
                  $(srcdir)/test_feedhandler.js \
                  $(srcdir)/test_htmlhandler.js \
+                 $(srcdir)/test_asxhandler.js \
                  $(srcdir)/test_manager.js \
                  $(srcdir)/test_manager_async.js \
                  $(srcdir)/files/relative_remote.m3u \
@@ -69,6 +70,8 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/twit_result.xml \
                  $(srcdir)/files/fluxblog_org.html \
                  $(srcdir)/files/fluxblog_org_result.xml \
+                 $(srcdir)/files/kqedradio.asx \
+                 $(srcdir)/files/kqedradio_result.xml \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

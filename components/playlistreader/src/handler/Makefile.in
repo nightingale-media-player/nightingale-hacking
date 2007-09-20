@@ -37,6 +37,7 @@ SONGBIRD_SCRIPTS = $(srcdir)/sbPlaylistHandlerUtils.js \
                    $(srcdir)/sbPLSPlaylistHandler.js \
                    $(srcdir)/sbFeedPlaylistHandler.js \
                    $(srcdir)/sbHTMLPlaylistHandler.js \
+                   $(srcdir)/sbASXPlaylistHandler.js \
                    $(NULL)
 
 include $(topsrcdir)/build/rules.mk

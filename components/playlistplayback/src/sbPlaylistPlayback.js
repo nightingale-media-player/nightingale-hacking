@@ -1571,7 +1571,7 @@ PlaylistPlayback.prototype = {
       LOG("_onPollCompleted - lookForPlayingCount > 80 or ERROR.");
       
         if ( ! this._stopNextLoop )
-          this.next();
+          this._playNextPrev(1);
         this._stopNextLoop = false;
       }
     }

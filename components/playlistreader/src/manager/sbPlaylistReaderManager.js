@@ -326,6 +326,10 @@ CPlaylistReaderManager.prototype =
       {
         regexp:    /.*(mp3|ogg|flac|wav|m4a|wma|wmv|asx|asf|avi|mov|mpg|mp4)$/im,
         mimeType: "audio/mpegurl"
+      },
+      {
+        regexp:    /^<ASX/i,
+        mimeType: "video/x-ms-asf"
       }
     ];
 

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<item-tests>
+  <item-test property="#contentURL" value="mms://kqedwm.streamguys.us/wm.kqed/ads/asiaf/asiaf03062007.wma">
+    <assert-property-value name="#contentURL" value="mms://kqedwm.streamguys.us/wm.kqed/ads/asiaf/asiaf03062007.wma"/>
+  </item-test>
+  <item-test property="#contentURL" value="http://kqedsc01.streamguys.us:8000/">
+    <assert-property-value name="#contentURL" value="http://kqedsc01.streamguys.us:8000/"/>
+  </item-test>
+  <item-test property="#contentURL" value="http://kqedsc01.streamguys.us:80/">
+    <assert-property-value name="#contentURL" value="http://kqedsc01.streamguys.us/"/>
+  </item-test>
+</item-tests>
