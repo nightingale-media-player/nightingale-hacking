@@ -38,7 +38,28 @@ interface sbIRemoteMediaList;
 /*
 Class: WebPlaylist
 
-The <WebPlaylist> UI object.
+The <WebPlaylist> UI object. This object controls the UI that appears at
+the bottom of the page. The information accessible here and operations
+available here correspond to the the actual UI. Selection, column modification
+and setting of the <MediaList> that serves as the data for the UI.
+
+Columns:
+A note about columns. All the columns in the UI are driven by the existance
+of global level properties in Songbird. There are a number of types available
+to the developer ( see addColumn() ). Each column must have a unique name and
+there are a number system default names we use to get the default set of
+columns. They are set when Songbird starts. When a column name is required as a
+parameter to a function the default names can be used provided the operation
+is not trying to add a column of that name. They can be passed in for the
+before column, or they can be hidden via hideColumn().
+
+The default columns have names of this format -
+(begin code)
+ http://songbirdnest.com/data/1.0#<columnIdentifier>
+(end)
+
+The complete list of column names can be found in 
+http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h
 
 */
 /**
@@ -124,7 +145,14 @@ interface sbIRemoteWebPlaylist : nsISupports
   /*
   Func: addColumn()
 
-  Add a column of data to the <WebPlaylist>.
+  Add a column of data to the <WebPlaylist>. If the column already exists in
+  the system and the hidden is false then the column will be shown before the
+  column name passed in but no other settings will be adjusted.
+
+  If you want to set the values of new columns for each track you must add
+  the column before calling setProperty on each track. Otherwise the system
+  will automatically add the property to the system as type text and it
+  won't have the setting you set through this call.
 
   Prototype:
     addColumn(String columnType, 
@@ -135,7 +163,7 @@ interface sbIRemoteWebPlaylist : nsISupports
               Boolean hidden, 
               Boolean viewable, 
               Boolean editable,
-              Number nullsort,
+              Number nullSort,
               Number width)
 
   Parameters:
@@ -143,7 +171,7 @@ interface sbIRemoteWebPlaylist : nsISupports
     columnName - The name of the column.
     displayName - The displayed name of the column.
     buttonLabel - The label for a button, if of type simple/download button
-    beforeColumn - Insert this column before the column with this name. 
+    beforeColumn - Insert the new column before the column with this name. 
                    If an empty string is specified, the column is appended 
                    to the end of the existing columns.
     hidden - Hidden column by default.
@@ -151,7 +179,7 @@ interface sbIRemoteWebPlaylist : nsISupports
     editable - Column row cell values can be edited by the user.
     nullsort - The type of null sorting desired.
     width - The default width of the column when displayed.
-  
+
   Column Types:
     text - Plain text.
     datetime - A time interval.
@@ -161,7 +189,7 @@ interface sbIRemoteWebPlaylist : nsISupports
     image - A picture.
     downloadbutton - A button which, when clicked, initiates a download.
     rating - 5 stars representing the value
-  
+
   Null Sorting Types:
     0 - Null values are infinitely small.  This is the default.
     1 - Null values are infinitely large.
@@ -172,14 +200,13 @@ interface sbIRemoteWebPlaylist : nsISupports
     (start code)
     // add a text column to the web playlist
     songbird.webPlaylist.addColumn( "text",
-                                    "columnName",
+                                    "http://domain.com/colname1",  // make sure it's unique
                                     "column heading goes here",
-                                    "", // nothing needed for text
+                                    "", // nothing needed for type text
                                     "", // add at the end
                                     false, // not hidden
                                     true, // can be viewed
                                     false, // read-only
-                                    false, // no null sorting
                                     0,
                                     150); // pixels
     (end)

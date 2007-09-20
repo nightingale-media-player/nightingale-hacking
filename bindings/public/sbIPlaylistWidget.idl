@@ -54,19 +54,19 @@ interface sbIPlaylistWidget : nsISupports
    * so that any newly added commands will appear in the UI for the
    * playlist
    *
-   * Note: Not callable from web pages.
+   * NOTE - Not callable from web pages.
    */
   void rescanCommands();
 
   /**
-   * \brief Get the view being displayed in the <PlaylistWidget>
+   * \brief Get the view being displayed in the <WebPlaylist>
    *
    * \returns A medialist view for the currently displayed medialist
    */
   sbIMediaListView getListView();
 
   /**
-   * \brief Attach the <PlaylistWidget> to the view passed in.
+   * \brief Attach the <WebPlaylist> to the view passed in.
    *
    * \param mediaListView - the ordered, sorted, selected grouping of tracks
    *                        to display in the UI
@@ -88,7 +88,7 @@ interface sbIPlaylistWidget : nsISupports
   /*
    Function: showColumn
 
-   Causes a column to appear in the <PlaylistWidget> UI. The column must
+   Makes a column appear in the <WebPlaylist> UI. The column must
    already exist in the system.
 
    Arguments:
@@ -103,6 +103,8 @@ interface sbIPlaylistWidget : nsISupports
    */
   /*
    Function: hideColumn
+
+   Makes a column disappear from view.
 
    Arguments:
      aColumnName - The name of the column to hide
@@ -136,7 +138,7 @@ interface sbIPlaylistWidget : nsISupports
                      in AString aBeforeCol );
 
   /**
-   * \brief The last click even that occured on this <PlaylistWidget>
+   * \brief The last click even that occured on this <WebPlaylist>
    *
    * This is used only during the propogation of the PlaylistClickEvent event
    * and will only be non-null for a very brief time during that flow.
