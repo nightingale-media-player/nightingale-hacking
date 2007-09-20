@@ -114,38 +114,65 @@ playlist > stack > vbox
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating )
 {
-  background-position: center left;
   background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/tree/ratings.png);
 }
 
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/0.png);
+  background-position:4px 0px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, selected ),
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0, selected )
+{
+  background-position:4px -18px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/1.png);
+  background-position:4px -36px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1, selected )
+{
+  background-position:4px -54px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/2.png);
+  background-position:4px -72px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2, selected )
+{
+  background-position:4px -90px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/3.png);
+  background-position:4px -108px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3, selected )
+{
+  background-position:4px -126px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/4.png);
+  background-position:4px -144px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4, selected )
+{
+  background-position:4px -162px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5 )
 {
-  background-image: url(chrome://songbird/skin/tree/stars/5.png);
+  background-position:4px -180px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5, selected )
+{
+  background-position:4px -198px;
 }
 
 /* button default state and baseline */

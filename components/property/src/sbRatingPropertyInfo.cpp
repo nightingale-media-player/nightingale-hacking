@@ -34,9 +34,9 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
                              sbIClickablePropertyInfo,
                              sbITreeViewPropertyInfo)
 
-#define STAR_WIDTH 16
+#define STAR_WIDTH 14
 #define MAX_RATING 5
-#define ZERO_HIT_WIDTH 7
+#define ZERO_HIT_WIDTH 4
 
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyName,
                                            const nsAString& aDisplayName,
@@ -171,7 +171,7 @@ sbRatingPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
     rating = 0;
   }
   else {
-    rating = (aMouseX / STAR_WIDTH) + 1;
+    rating = ((aMouseX - ZERO_HIT_WIDTH) / STAR_WIDTH) + 1;
 
     if (rating > MAX_RATING) {
       rating = MAX_RATING;
