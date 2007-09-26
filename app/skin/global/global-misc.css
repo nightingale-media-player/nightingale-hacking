@@ -200,6 +200,12 @@ browser {
     background-color: #FFFFFF;
 }
 
+/* XXX Mook: this sucks, bug 4809 needs to move this elsewhere */
+/* (from chrome://mozapps/skin/extensions/update.css) */
+image.throbber {
+  list-style-image: url("chrome://songbird/skin/icons/spinner-spin.png");
+}
+
 /* miscellaneous stuff */
 
 #OCSPDialog {
