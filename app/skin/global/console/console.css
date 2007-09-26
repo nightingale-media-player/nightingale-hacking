@@ -58,6 +58,15 @@
   color: #505050;
 }
 
+.console-row-msg > label, 
+    .console-row-msg > description, 
+    .console-row-file > label {
+  color: black;
+}
+
+.console-error-source > .text-link {
+  color: blue;
+}
 
 .console-row-msg > label {
   font-weight: bold;
