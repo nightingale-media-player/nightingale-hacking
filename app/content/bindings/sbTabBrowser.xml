@@ -1460,7 +1460,7 @@
           }
 
           if (this == this.parentNode.selectedItem) {
-            // if in the foreground then we should set the state of the 
+            // if in the foreground then we should set the state of the
             // subscribe button based on the visibility of the playlist
             SBDataSetBoolValue('browser.canlinkedplaylist', val);
           }
