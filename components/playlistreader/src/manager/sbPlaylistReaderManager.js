@@ -216,6 +216,9 @@ CPlaylistReaderManager.prototype =
       prListener.destinationURI = localFileUri;
       prListener.addDistinctOnly = aAddDistinctOnly;
 
+      // let the download decompress gzip as appropriate
+      this.m_Browser.persistFlags &= ~(Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION);
+
 //      this.m_Browser.persistFlags |= 2; // PERSIST_FLAGS_BYPASS_CACHE;
 
       this.m_Browser.progressListener = prListener;
