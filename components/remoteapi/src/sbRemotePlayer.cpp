@@ -1192,6 +1192,10 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     mCommandsObject = nsnull;
     mContentDoc = nsnull;
     mChromeDoc = nsnull;
+
+    // Explicitly clear the cached libraries so we can break the reference
+    // cycle between the library classes and this class
+    mCachedLibraries.Clear();
   } else if ( type.EqualsLiteral("PlaylistCellClick") ) {
     LOG(("sbRemotePlayer::HandleEvent() - PlaylistCellClick event"));
     nsresult rv;

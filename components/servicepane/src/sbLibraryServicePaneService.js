@@ -302,6 +302,64 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
   
   if (list) {
     dump('I CAN HAS DORP\n');
+    // XXX Mook: hack for bug 4760 to do special handling for the download
+    // playlist.  This will need to be expanded later to use IDLs on the
+    // list so that things like extensions can do this too.
+    var customType = list.getProperty(SBProperties.customType);
+    if (customType == "download") {
+      var IOS = Cc["@mozilla.org/network/io-service;1"]
+                  .getService(Ci.nsIIOService);
+
+      function canDownload(aMediaItem) {
+        var contentSpec = aMediaItem.getProperty(SBProperties.contentURL);
+        var contentURL = IOS.newURI(contentSpec, null, null);
+        switch(contentURL.scheme) {
+          case "http":
+          case "https":
+          case "ftp":
+            // these are safe to download
+            dump(<>[{contentURL.spec} accept]&#10;</>);
+            return true;
+        }
+        dump(<>[{contentURL.spec} DENY]&#10;</>);
+        return false;
+      }
+
+      if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+        var context = this._getDndData(aDragSession,
+                                       TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                       Ci.sbIMultipleItemTransferContext);
+        var items = context.items;
+        // we must remember to reset the context before we exit, so that when we
+        // actually need the items in onDrop we can get them again!
+        var count = 0;
+        while (items.hasMoreElements()) {
+          var item = items.getNext();
+          item.QueryInterface(Ci.sbIIndexedMediaItem);
+          if (!canDownload(item.mediaItem)) {
+            context.reset();
+            return false;
+          }
+          ++count;
+        }
+        if (count < 1) {
+          // umm, where's that list of items?
+          context.reset();
+          return false;
+        }
+        // all items in the list are downloadable
+        context.reset();
+        return true;
+      } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
+        var context = this._getDndData(aDragSession,
+                                       TYPE_X_SB_TRANSFER_MEDIA_ITEM,
+                                       Ci.sbISingleItemTransferContext);
+        return canDownload(context.item);
+      } else {
+        // huh? _getMediaListForDrop should have said no
+        return false;
+      }
+    }
     return true;
   } else {
     dump('NO DROP FOR YOU!\n');
@@ -347,7 +405,8 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
   var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
   
-  var totype = targetList.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+  var targettype = targetList.getProperty(SBProperties.customType);
+  var totype = targetList.library.getProperty(SBProperties.customType);
 
   if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
     dump('media list dropped\n');
@@ -357,7 +416,7 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     var list = context.list;
     
     // Metrics!
-    var fromtype = list.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+    var fromtype = list.library.getProperty(SBProperties.customType);
     metrics.metricsAdd("app.servicepane.copy", fromtype, totype, list.length);
     
     if (targetListIsLibrary) {
@@ -419,10 +478,17 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
       }
     };
 
-    // add all the items to the target list
-    targetList.beginUpdateBatch();
-    targetList.addSome(itemEnumerator);
-    targetList.endUpdateBatch();
+    if (targettype == "download") {
+      // XXX Mook: Special handling for dragging to download list, bug 4760
+      Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+        .getService(Ci.sbIDownloadDeviceHelper)
+        .downloadSome(itemEnumerator);
+    } else {
+      // add all the items to the target list
+      targetList.beginUpdateBatch();
+      targetList.addSome(itemEnumerator);
+      targetList.endUpdateBatch();
+    }
     
     dump('added\n');
 
@@ -433,10 +499,17 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
         TYPE_X_SB_TRANSFER_MEDIA_ITEM, Ci.sbISingleItemTransferContext);
     
     // add the item
-    targetList.add(context.item);
+    if (targettype == "download") {
+      // XXX Mook: Special handling for dragging to download list, bug 4760
+      Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+        .getService(Ci.sbIDownloadDeviceHelper)
+        .downloadItem(context.item);
+    } else {
+      targetList.add(context.item);
+    }
 
     // Metrics!
-    var fromtype = context.source.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+    var fromtype = context.source.library.getProperty(SBProperties.customType);
     metrics.metricsAdd("app.servicepane.copy", fromtype, totype, 1);
     
     dump('added\n');

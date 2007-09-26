@@ -3263,8 +3263,6 @@ sbLocalDatabaseLibrary::Clear()
 {
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
-
   sbMediaListArray lists;
   nsresult rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3307,6 +3305,8 @@ sbLocalDatabaseLibrary::Clear()
     rv = simple->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
 
   return NS_OK;
 }

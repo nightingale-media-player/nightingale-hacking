@@ -1134,8 +1134,10 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
   nsCOMPtr<sbISQLBuilderCriterion> criterionWT;
   nsCOMPtr<sbISQLBuilderCriterion> criterionIS;
   nsCOMPtr<sbISQLBuilderCriterion> criterionAND;
+
   nsCOMPtr<sbISQLUpdateBuilder> update =
     do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->SetTableName( aTableName );
   NS_ENSURE_SUCCESS(rv, rv);

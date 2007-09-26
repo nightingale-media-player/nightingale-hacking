@@ -315,7 +315,7 @@ public:
     NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_NOT_INITIALIZED);
 
     nsAutoMonitor mon(m_pQueueMonitor);
-    mon.Notify();
+    mon.NotifyAll();
 
     return NS_OK;
   }

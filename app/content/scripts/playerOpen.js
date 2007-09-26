@@ -727,6 +727,7 @@ function SBImportURLIntoMainLibrary(url) {
                                   
   var library = libraryManager.mainLibrary;
 
+  if (url instanceof Components.interfaces.nsIURI) url = url.spec;
   if (getPlatformString() == "Windows_NT") url = url.toLowerCase();
 
   

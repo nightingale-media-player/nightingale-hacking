@@ -69,6 +69,9 @@
 #endif
 
 #define USE_SQLITE_FULL_DISK_CACHING
+#define USE_SQLITE_LARGE_CACHE_SIZE
+#define USE_SQLITE_READ_UNCOMMITTED
+#define USE_SQLITE_MEMORY_TEMP_STORE
 #define USE_SQLITE_BUSY_TIMEOUT
 #define USE_SQLITE_SHARED_CACHE
 
@@ -730,12 +733,10 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   nsAutoString strFilename;
   GetDBStorePath(dbGUID, pQuery, strFilename);
 
-  // Kick sqlite in the pants
   PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open16 failed!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
-  // Remember what we just loaded
   ret  = sqlite3_create_collation(pHandle,
                                   "tree",
                                   SQLITE_UTF16BE,
@@ -761,10 +762,42 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
-  char *strErr = nsnull;
-  sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
-  if(strErr) {
-    sqlite3_free(strErr);
+  {
+    char *strErr = nsnull;
+    sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
+    if(strErr) {
+      sqlite3_free(strErr);
+    }
+  }
+#endif
+
+#if defined(USE_SQLITE_LARGE_CACHE_SIZE)
+  {
+    char *strErr = nsnull;
+    sqlite3_exec(pHandle, "PRAGMA cache_size = 6000", nsnull, nsnull, &strErr);
+    if(strErr) {
+      sqlite3_free(strErr);
+    }
+  }
+#endif
+
+#if defined(USE_SQLITE_READ_UNCOMMITTED)
+  {
+    char *strErr = nsnull;
+    sqlite3_exec(pHandle, "PRAGMA read_uncommitted = 1", nsnull, nsnull, &strErr);
+    if(strErr) {
+      sqlite3_free(strErr);
+    }
+  }
+#endif
+
+#if defined(USE_SQLITE_MEMORY_TEMP_STORE)
+  {
+    char *strErr = nsnull;
+    sqlite3_exec(pHandle, "PRAGMA temp_store = 2", nsnull, nsnull, &strErr);
+    if(strErr) {
+      sqlite3_free(strErr);
+    }
   }
 #endif
 
@@ -822,6 +855,8 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
   PRBool isExecuting = PR_FALSE;
   pQuery->IsExecuting(&isExecuting);
   if(isExecuting) {
+    //Release grip.
+    NS_RELEASE(pQuery);
     return 0;
   }
 
@@ -1137,6 +1172,8 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       const void *pzTail = nsnull;
 
       pQuery->GetQuery(currentQuery, strQuery);
+      pQuery->m_CurrentQuery = currentQuery;
+
       pParameters = pQuery->GetQueryParameters(currentQuery);
 
       if(bPersistent)
@@ -1188,6 +1225,10 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
       BEGIN_PERFORMANCE_LOG(strQuery, dbName);
 
+      LOG(("DBE: '%s' on '%s'\n",
+        NS_ConvertUTF16toUTF8(dbName).get(),
+        NS_ConvertUTF16toUTF8(strQuery).get()));
+
       // If we have parameters for this query, bind them
       PRUint32 len = pParameters->Length();
       for(PRUint32 i = 0; i < len; i++) {
@@ -1196,36 +1237,36 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         switch(p.type) {
           case ISNULL:
             sqlite3_bind_null(pStmt, i + 1);
+            LOG(("DBE: Parameter %d is 'NULL'", i));
             break;
           case UTF8STRING:
             sqlite3_bind_text(pStmt, i + 1,
               p.utf8StringValue.get(),
               p.utf8StringValue.Length(),
               SQLITE_TRANSIENT);
+            LOG(("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get()));
             break;
           case STRING:
             sqlite3_bind_text16(pStmt, i + 1,
               p.stringValue.get(),
               p.stringValue.Length() * 2,
               SQLITE_TRANSIENT);
+            LOG(("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get()));
             break;
           case DOUBLE:
             sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
+            LOG(("DBE: Parameter %d is '%f'", i, p.doubleValue));
             break;
           case INTEGER32:
             sqlite3_bind_int(pStmt, i + 1, p.int32Value);
+            LOG(("DBE: Parameter %d is '%d'", i, p.int32Value));
             break;
           case INTEGER64:
             sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
+            LOG(("DBE: Parameter %d is '%ld'", i, p.int64Value));
             break;
         }
       }
-
-      LOG(("DBE: '%s' on '%s'\n",
-        NS_ConvertUTF16toUTF8(dbName).get(),
-        NS_ConvertUTF16toUTF8(strQuery).get()));
-
-      pQuery->m_CurrentQuery = currentQuery;
 
       PRInt32 nRetryCount = 0;
       PRInt32 totalRows = 0;
@@ -1262,19 +1303,19 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
               std::vector<nsString> vColumnNames;
               vColumnNames.reserve(nCount);
 
-              int i = 0;
+              int j = 0;
               if(bPersistent)
               {
                 PR_Lock(pQuery->m_pSelectedRowIDsLock);
                 pQuery->m_SelectedRowIDs.clear();
                 PR_Unlock(pQuery->m_pSelectedRowIDsLock);
 
-                i = 1;
+                j = 1;
               }
 
-              for(; i < nCount; i++)
+              for(; j < nCount; j++)
               {
-                PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
+                PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, j);
                 nsString strColumnName;
 
                 if(p) {
@@ -1295,7 +1336,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
             TRACE(("DBE: Result row %d:", totalRows));
 
-            int i = 0;
+            int k = 0;
             if(bPersistent)
             {
               PRInt64 nRowID = sqlite3_column_int64(pStmt, 0);
@@ -1303,7 +1344,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
               pQuery->m_SelectedRowIDs.push_back(nRowID);
               PR_Unlock(pQuery->m_pSelectedRowIDsLock);
 
-              i = 1;
+              k = 1;
             }
 
             // If this is a rolling limit query, increment the rolling
@@ -1317,9 +1358,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
             // limit query, or if this is a rolling limit query and the
             // rolling sum has met or exceeded the limit
             if (rollingLimit == 0 || rollingSum >= rollingLimit) {
-              for(; i < nCount; i++)
+              for(; k < nCount; k++)
               {
-                PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
+                PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, k);
                 nsString strCellValue;
 
                 if(p) {
@@ -1330,7 +1371,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
                 }
 
                 vCellValues.push_back(strCellValue);
-                TRACE(("Column %d: '%s' ", i,
+                TRACE(("Column %d: '%s' ", k,
                   NS_ConvertUTF16toUTF8(strCellValue).get()));
               }
               totalRows++;
@@ -1498,6 +1539,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
     {
       nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
       pQuery->m_QueryHasCompleted = PR_TRUE;
+      
       mon.NotifyAll();
 
       LOG(("DBE: Notified query monitor."));

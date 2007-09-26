@@ -35,6 +35,8 @@
 var triggered = false; 
 var triggeredval = null;
 var refreshed = false;
+var initialized = false;
+var shutdown = false;
 
 var dummyNode = {
   QueryInterface  : function(iid) {
@@ -81,6 +83,7 @@ function testCommandsBuilder() {
   
   testAppendInsertRemove(builder, null);
   testSubmenus(builder, null, NUMRECURSE);
+  testInitShutdownCB(builder);
   testVisibleCB(builder);
   
   builder.shutdown();
@@ -431,6 +434,20 @@ function testAppendInsertRemove(builder, menuid) {
   builder.removeAllCommands(menuid);
 }
 
+function testInitShutdownCB(builder) {
+  builder.setInitCallback(cmds_init);
+  builder.setShutdownCallback(cmds_shutdown);
+  initialized = false;
+  shutdown = false;
+  var commands = builder
+                  .QueryInterface(Components.interfaces.sbIPlaylistCommands)
+                  .duplicate();
+  commands.initCommands("");
+  assertBool(initialized, "initCommands did not call init callback!");
+  commands.shutdownCommands();
+  assertBool(shutdown, "shutdownCommands did not call shutdown callback!");
+}
+
 function testVisibleCB(builder) {
   builder.setVisibleCallback(cmds_getvisible);
   var commands = builder.QueryInterface(Components.interfaces.sbIPlaylistCommands);
@@ -441,6 +458,36 @@ function testVisibleCB(builder) {
 // ============================================================================
 // COMMAND CALLBACKS
 // ============================================================================
+
+function cmds_init(context, host, data) {
+  var implementorContext = {
+    testString: "test",
+    toString: function() {
+      return this.testString;
+    },
+    QueryInterface: function(iid) {
+      if (iid.equals(Ci.nsISupportsString) ||
+          iid.equals(Ci.nsISupports))
+        return this;
+      throw Cr.NS_NOINTERFACE;
+    }
+  };
+  context.implementorContext = implementorContext;
+  initialized = true;
+}
+
+function cmds_shutdown(context, host, data) {
+  assertBool((context != null), "shutdown callback not provided context");
+  assertBool((context.implementorContext != null),
+             "shutdown callback not provided implementor context");
+  var testString =
+                context.implementorContext.QueryInterface(Ci.nsISupportsString);
+  assertValue(testString.toString(),
+              "test",
+              "shutdown callback implementor context invalid");
+  context.implementorContext = null;
+  shutdown = true;
+}
 
 function cmds_getvisible(context, host, data) {
   return false;

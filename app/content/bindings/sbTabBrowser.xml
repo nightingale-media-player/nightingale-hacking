@@ -1330,6 +1330,7 @@
           // make the splitter
           this._splitter = document.createElement('sb-smart-splitter');
           this._splitter.setAttribute('class', 'playlist_web_split');
+          this._splitter.setAttribute('stateid', 'playlist_web_split');
           this._splitter.setAttribute('hidden', 'true');
           this._splitter.setAttribute('state', 'open');
           this._splitter.setAttribute('resizebefore', 'closest');

@@ -43,8 +43,17 @@ function runTest(tester) {
     mainLib.length;
     mainLib.scanMediaOnCreation;
 
+    mainLib.scanMediaOnCreation = true;
+
     // media creation in the mainLibrary
-    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+                                   function(mediaList) { var test = tester;
+                                                         list = mediaList;
+                                                         test.testFinished();
+                                                         test.assertEqual(list.length, 4);
+                                                         test = null });
+    tester.testPending();
+    
     mainLib.createMediaList("simple");
     mainLib.createMediaList("dynamic");
     mainLib.createMediaItem(
@@ -63,7 +72,13 @@ function runTest(tester) {
     webLib.length;
 
     try {
-      webLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+      webLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+                                    function(mediaList) { var test = tester;
+                                                         list = mediaList;
+                                                         test.testFinished();
+                                                         test.assertEqual(list.length, 4);
+                                                         test = null });
+      test.testPending();
       tester.fail("did not throw: createMediaListFromURL('')");
     } catch (e) {}
 

@@ -57,12 +57,14 @@
             sbid="filter_splitter"
             class="horz_splitter"
             state="open"
+            orient="vertical"
             collapse="before"
             resizebefore="closest"
             resizeafter="closest"
             hidden="true"
             metricscategory="app"
             metricsid="collapse.library"
+            applydefault="true"
           >
             <grippy/>
           </sb-smart-splitter>
@@ -567,6 +569,7 @@
     // Create the filters based upon the cascadeFilterSet data.
     var cfs = this.mediaListView.cascadeFilterSet;
     var length = cfs.length;
+    var filters = [];
     for (var i = 0; i < length; i++) {
       // If this is a search then keep going.
       if (cfs.isSearch(i)) {
@@ -581,11 +584,12 @@
       
       parent.appendChild(filterlist);
       filterlist.bind(cfs, i);
+      filters.push(filterlist);
       
       if (i < length - 1) {
         var splitter = document.createElement("sb-smart-splitter");
         splitter.setAttribute("id", "filter_splitter" );
-        //splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
+        splitter.setAttribute("stateid", "filter_splitter_" + cfs.getProperty(i) + this.mediaListView.mediaList.guid );
         splitter.setAttribute("state", "open");
         splitter.setAttribute("resizebefore", "closest");
         splitter.setAttribute("resizeafter", "closest");
@@ -593,14 +597,21 @@
 
         var grippy = document.createElement( "grippy" );
         splitter.appendChild(grippy);
-        parent.appendChild(splitter);
-
-        splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
-        splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
-        splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
-
+        // do not appendChild now, wait until all filterlists have been created (see below)
         this._splitters.push(splitter);
       }
+    }
+    // once the filterlists have been created, insert the splitters are their appropriate spot.
+    // we do this now rather than during the filter creation loop because the splitters
+    // need to be able to find their before/after targets on construction (so as to be able
+    // to reload their positions correctly), so if we did do appendChild in the previous loop,
+    // the after target would never be found, and the positions would be wrong
+    for (var s=0;s<this._splitters.length;s++) {
+      var splitter = this._splitters[s];
+      parent.insertBefore(splitter, filters[s+1]);
+      splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
+      splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
+      splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
     }
   }
   
@@ -1500,16 +1511,16 @@
         var property = col.value.element.getAttribute("bind");
         var item = this.mediaListView.getItemByIndex(row.value);
 
-        function fireEvent() {
+        function fireEvent(aElement) {
           var event = document.createEvent("Events");
           event.initEvent("PlaylistCellClick", true, true);
           event.property = property;
           event.item     = item;
           event.row      = row.value;
           event.column   = col.value;
-          this._lastClickEvent = { property: property, item: item, __proto__: evt };
-          this.dispatchEvent(event);
-          this._lastClickEvent = null;
+          aElement._lastClickEvent = { property: property, item: item, __proto__: evt };
+          aElement.dispatchEvent(event);
+          aElement._lastClickEvent = null;
         }
 
         var info = this._pm.getPropertyInfo(property);
@@ -1541,7 +1552,7 @@
           }
 
           // Fire the click event
-          fireEvent();
+          fireEvent(this);
 
           // Get and assign the new value to the property
           try {
@@ -1575,7 +1586,7 @@
         }
         else {
           // Else just fire the event
-          fireEvent();
+          fireEvent(this);
         }
       }
     }
@@ -2439,9 +2450,13 @@
       // out) if all of the items to be sent are actually lists, so send
       // as items
       var context = {
-        items: treeView.selectedMediaItems,
+        items: null,
         source: ml,
         count: numRows,
+        reset: function sbMultipleItemTransferContext_reset() {
+          // fetch a new enumerator (reset it)
+          this.items = treeView.selectedMediaItems;
+        },
         QueryInterface : function(iid) {
           if (iid.equals(self._Ci.sbIMultipleItemTransferContext) ||
               iid.equals(self._Ci.nsISupports))
@@ -2449,6 +2464,8 @@
           throw self._Cr.NS_NOINTERFACE;
         }
       }
+      // initialize the context to have items
+      context.reset();
 
       var handle = dnd.registerSource(context);
       data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);

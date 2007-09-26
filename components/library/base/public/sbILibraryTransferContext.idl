@@ -114,5 +114,11 @@ interface sbIMultipleItemTransferContext : sbILibraryTransferContext
    *        may return a list of sbIMediaItem or a list of sbIMediaList
    */
   readonly attribute nsISimpleEnumerator items;
+  
+  /**
+   * \brief Reset the items enumerator above to re-start at the first item
+   * \sa nsIEnumerator.first()
+   */
+  void reset();
 };
 

@@ -164,7 +164,7 @@ class sbDownloadDevice : public nsIObserver,
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
      * mpDeviceLock             Lock for download device access.
-     * mState                   Current device state.
+     * mDeviceIdentifier        Download device identifier.
      */
 
     nsCOMPtr<sbIMediaList>      mpDownloadMediaList;
@@ -180,7 +180,7 @@ class sbDownloadDevice : public nsIObserver,
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
     PRMonitor                   *mpDeviceMonitor;
-    PRUint32                    mState;
+    nsString                    mDeviceIdentifier;
 
 
     /*
@@ -210,15 +210,14 @@ class sbDownloadDevice : public nsIObserver,
 
     nsresult ResumeTransfers();
 
-    nsresult ClearCompletedItems();
-
     nsresult SetTransferDestination(
         nsCOMPtr<sbIMediaItem>      pMediaItem);
 
     nsresult CancelSession();
 
     void SessionCompleted(
-        sbDownloadSession           *pDownloadSession);
+        sbDownloadSession           *apDownloadSession,
+        PRInt32                     aStatus);
 
 
     /*
@@ -291,9 +290,13 @@ class sbDownloadSession : public nsIWebProgressListener
 
     /*
      * mpMediaItem              Media item being downloaded.
+     * mSrcURISpec              Source URI spec string.
+     * mDstURISpec              Destination URI spec string.
      */
 
     nsCOMPtr<sbIMediaItem>      mpMediaItem;
+    nsString                    mSrcURISpec;
+    nsString                    mDstURISpec;
 
 
     /*

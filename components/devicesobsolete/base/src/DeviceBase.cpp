@@ -535,6 +535,33 @@ sbDeviceBase::DoDeviceDisconnectCallback(const nsAString& aDeviceString)
   }
 }
 
+void
+sbDeviceBase::DoStateChangedCallback(const nsAString& aDeviceString,
+                                     PRUint32 aState)
+{
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
+  mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
+
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+
+  for(PRUint32 i = 0; i < callbackCount; i++)
+  {
+    nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback) {
+      try {
+        callback->OnStateChanged(aDeviceString, aState);
+      }
+      catch(...) {
+        //Oops. Someone is being really bad.
+        NS_ERROR("pCallback->OnStateChanged threw an exception");
+      }
+    }
+  }
+}
+
 nsresult 
 sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                   nsIURI *aDeviceDatabaseURI,
@@ -854,7 +881,22 @@ sbDeviceBase::SetDeviceState(const nsAString& aDeviceIdentifier,
   NS_ENSURE_ARG(aDeviceState >= sbIDeviceBase::STATE_IDLE &&
                 aDeviceState <= sbIDeviceBase::STATE_DELETING);
 
+  PRUint32 currentState;
+  NS_ENSURE_TRUE(mDeviceStates.Get(aDeviceIdentifier, &currentState),
+                 NS_ERROR_INVALID_ARG);
   if(mDeviceStates.Put(aDeviceIdentifier, aDeviceState)) {
+    if (aDeviceState != currentState)
+      DoStateChangedCallback(aDeviceIdentifier, aDeviceState);
+    return NS_OK;
+  }
+
+  return NS_ERROR_OUT_OF_MEMORY;
+}
+
+nsresult
+sbDeviceBase::InitDeviceState(const nsAString& aDeviceIdentifier)
+{
+  if(mDeviceStates.Put(aDeviceIdentifier, sbIDeviceBase::STATE_IDLE)) {
     return NS_OK;
   }
 

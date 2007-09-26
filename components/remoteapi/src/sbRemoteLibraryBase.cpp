@@ -47,7 +47,6 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
-#include <sbIMetadataJob.h>
 #include <sbIMetadataJobManager.h>
 #include <sbIPlaylistReader.h>
 #include <sbIWrappedMediaItem.h>
@@ -133,9 +132,36 @@ public:
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
-      nsCOMPtr<sbIMetadataJob> job;
-      rv = metaJobManager->NewJob( mediaItems, 50, getter_AddRefs(job) );
-      NS_ENSURE_SUCCESS(rv, rv);
+      // We will most likely have to create a new job.
+      PRBool createJob = PR_TRUE;
+
+      // Already have a job, check completion status.
+      if (mMetadataJob) {
+        PRBool completed;
+        
+        rv = mMetadataJob->GetCompleted(&completed);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Job hasn't completed yet, attempt to append to it.
+        if (!completed) {
+          rv = mMetadataJob->Append( mediaItems );
+
+          // If the append succeeds, there is no need to create a new job.
+          if(NS_SUCCEEDED(rv)) {
+            createJob = PR_FALSE;
+          }
+        }
+      }
+
+      // Create a new metadata job if required.
+      if (createJob) {
+        nsCOMPtr<sbIMetadataJob> job;
+
+        rv = metaJobManager->NewJob( mediaItems, 150, getter_AddRefs(job) );
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mMetadataJob = job;
+      }
     }
 
     if (mCallback) {
@@ -155,6 +181,8 @@ private:
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbICreateMediaListCallback> mCallback;
   PRBool mShouldScan;
+
+  nsCOMPtr<sbIMetadataJob> mMetadataJob;
 };
 NS_IMPL_ISUPPORTS1( sbPlaylistReaderObserver, nsIObserver )
 
@@ -309,9 +337,36 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
       rv = mediaItems->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIMetadataJob> job;
-      rv = metaJobManager->NewJob(mediaItems, 50, getter_AddRefs(job));
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create metadata job!");
+      // We will most likely have to create a new job.
+      PRBool createJob = PR_TRUE;
+
+      // Already have a job, check completion status.
+      if (mMetadataJob) {
+        PRBool completed;
+
+        rv = mMetadataJob->GetCompleted(&completed);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Job hasn't completed yet, attempt to append to it.
+        if (!completed) {
+          rv = mMetadataJob->Append( mediaItems );
+
+          // If the append succeeds, there is no need to create a new job.
+          if(NS_SUCCEEDED(rv)) {
+            createJob = PR_FALSE;
+          }
+        }
+      }
+
+      // Create a new metadata job if required.
+      if (createJob) {
+        nsCOMPtr<sbIMetadataJob> job;
+
+        rv = metaJobManager->NewJob( mediaItems, 150, getter_AddRefs(job) );
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mMetadataJob = job;
+      }
     }
   }
 

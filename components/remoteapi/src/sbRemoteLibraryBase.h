@@ -40,6 +40,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
+#include <sbIMetadataJob.h>
 #include <sbIRemoteLibrary.h>
 #include <sbIRemoteMediaList.h>
 #include <sbIRemotePlayer.h>
@@ -107,6 +108,9 @@ protected:
   // For holding the results of sbIMediaList enumeration methods..
   nsCOMArray<sbIMediaItem> mEnumerationArray;
   nsresult mEnumerationResult;
+
+  // For holding onto the metadatajob so we can reuse it.
+  nsCOMPtr<sbIMetadataJob> mMetadataJob;
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

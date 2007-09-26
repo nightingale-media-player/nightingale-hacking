@@ -36,15 +36,6 @@ const DOWNLOAD_PREF = "songbird.library.download";
 
 function sbDownloadDeviceHelper()
 {
-  var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
-                 .getService(Ci.sbIDeviceManager);
-  if (devMgr) {
-    var downloadCat = "Songbird Download Device";
-    if (devMgr.hasDeviceForCategory(downloadCat)) {
-      this._downloadDevice = devMgr.getDeviceByCategory(downloadCat)
-                                   .QueryInterface(Ci.sbIDownloadDevice);
-    }
-  }
   this._mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Ci.sbILibraryManager).mainLibrary;
 }
@@ -62,6 +53,9 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 {
   if (!this._ensureDestination()) {
     return;
+  }
+  if (!this.downloadMediaList) {
+    throw Cr.NS_ERROR_FAILURE;
   }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
@@ -89,6 +83,9 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 {
   if (!this._ensureDestination()) {
     return;
+  }
+  if (!this.downloadMediaList) {
+    throw Cr.NS_ERROR_FAILURE;
   }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
@@ -125,6 +122,9 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
   if (!this._ensureDestination()) {
     return;
   }
+  if (!this.downloadMediaList) {
+    throw Cr.NS_ERROR_FAILURE;
+  }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
                              .createInstance(Ci.nsIMutableArray);
@@ -158,7 +158,18 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
 sbDownloadDeviceHelper.prototype.__defineGetter__("downloadMediaList",
 function sbDownloadDeviceHelper_getDownloadMediaList()
 {
-  return this._downloadDevice.downloadMediaList;
+  if (!this._downloadDevice) {
+    var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
+                   .getService(Ci.sbIDeviceManager);
+    if (devMgr) {
+      var downloadCat = "Songbird Download Device";
+      if (devMgr.hasDeviceForCategory(downloadCat)) {
+        this._downloadDevice = devMgr.getDeviceByCategory(downloadCat)
+                                     .QueryInterface(Ci.sbIDownloadDevice);
+      }
+    }
+  }
+  return this._downloadDevice ? this._downloadDevice.downloadMediaList : null ;
 });
 
 sbDownloadDeviceHelper.prototype._addItemToArrays =

@@ -93,6 +93,15 @@ interface sbIDeviceBaseCallback : nsISupports
   void onTransferComplete(in AString aSourceURL,
                           in AString aDestinationURL,
                           in PRInt32 aStatus);
+
+  /**
+   * \brief Called when the device state has changed.
+   *
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
+   * \param aState [in unsigned long] New device state.
+   */
+  void onStateChanged(in AString aDeviceIdentifier,
+                      in unsigned long aState);
 };
 
 

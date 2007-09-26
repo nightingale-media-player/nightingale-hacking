@@ -45,7 +45,7 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 const static char* sPublicWProperties[] =
   {
-    "library:scanMediaOnCreation"
+    "library_write:scanMediaOnCreation"
   };
 
 const static char* sPublicRProperties[] =

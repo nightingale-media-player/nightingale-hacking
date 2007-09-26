@@ -41,25 +41,15 @@
 
     <constructor>
       <![CDATA[
-        var onmouseevent= { 
-          _that: null, 
-          handleEvent: function( event ) { this._that.onMouseEvent(event); } 
-        } onmouseevent._that = this; 
-        this.addEventListener( "mousemove", onmouseevent, false);
-        this.addEventListener( "mouseup", onmouseevent, false);
-        this.addEventListener( "mousedown", onmouseevent, false);
-        
-        var onattrevent= { 
-          _that: null, 
-          handleEvent: function( event ) { this._that.onAttrModified(event); } 
-        } onattrevent._that = this; 
-        this.addEventListener( "DOMAttrModified", onmouseevent, false);
-
         this.restoreLastState();
         this.setAttribute("mousethrough", "never");
+        if (this.getAttribute("applydefault") == "true") {
+          setTimeout(function(obj) { obj.applyDefault(); }, 0, this);
+        }
       ]]>
     </constructor>
     <destructor>
+      this.savePosition();
     </destructor>
 
     <method name="onAttrModified">
@@ -76,8 +66,8 @@
       <body>
         <![CDATA[
           var keyword = this.getAttribute("resizebefore");
-          if (keyword == "farthest") return this.parentNode.firstChild;
-          if (keyword == "closest") return this.previousSibling;
+          if (keyword == "farthest") return this.walkNodes(this.parentNode.firstChild, 1);
+          if (keyword == "closest") return this.walkNodes(this.previousSibling, -1);
           return null;
         ]]>
       </body>
@@ -87,10 +77,27 @@
       <body>
         <![CDATA[
           var keyword = this.getAttribute("resizeafter");
-          if (keyword == "farthest") return this.parentNode.lastChild;
-          if (keyword == "closest") return this.nextSibling;
+          if (keyword == "farthest") return this.walkNodes(this.parentNode.lastChild, -1);
+          if (keyword == "closest") return this.walkNodes(this.nextSibling, 1);
           return null;
         ]]>
+      </body>
+    </method>
+    
+    <!-- if the start node is not an element (could be a comment),
+         continue searching for an element in the specified direction -->
+    <method name="walkNodes">
+      <parameter name="start"/>
+      <parameter name="direction"/>
+      <body>
+        const ELEMENT_NODE = 1;
+        var node = start;
+        while (node) {
+          if (node.nodeType == ELEMENT_NODE) return node;
+          if (direction > 0) node = node.nextSibling;
+          else node = node.previousSibling;
+        }
+        return null;
       </body>
     </method>
     
@@ -99,36 +106,18 @@
       <body>
         <![CDATA[
           var state = this.getAttribute( "state" );
-
-          var id = this.getAttribute("stateid");
-          if (!id || id == "") id = this.id;
-          
-          var root = "splitter." + id + ".";
-          if (this.isTargetBefore()) {
-            var resizebefore = this.getResizeBefore();
-            if (resizebefore) {
-              if (this.isVertical()) {
-                if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
-              } else {
-                if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
-              }
-            }
-          } else {
-            var resizeafter = this.getResizeAfter();
-            if (resizeafter) {
-              if (this.isVertical()) {
-                if (resizeafter.height != "") SBDataSetIntValue( root + "after.height", resizeafter.height );
-              } else {
-                if (resizeafter.width != "") SBDataSetIntValue( root + "after.width", resizeafter.width );
-              }
-            }
-          }
+          this.savePosition();
           this.doAutoShowHide();
 
           // Only record state change on mouse up, rather than
           // on every mousemove
           if (event.type == "mouseup")
           {
+            var id = this.getAttribute("stateid");
+            if (!id || id == "") id = this.id;
+            
+            var root = "splitter." + id + ".";
+
             var collapsed = (state == "collapsed");
             
             var metricsid = this.getAttribute("metricsid");
@@ -149,6 +138,70 @@
             this.dispatchEvent(e);
           }
           
+        ]]>
+      </body>
+    </method>
+    
+    <method name="savePosition">
+      <body>
+        var id = this.getAttribute("stateid");
+        if (!id || id == "") id = this.id;
+        
+        var root = "splitter." + id + ".";
+        var resizebefore = this.getResizeBefore();
+        if (resizebefore) {
+          if (this.isVertical()) {
+            if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
+          } else {
+            if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+          }
+        }
+        var resizeafter = this.getResizeAfter();
+        if (resizeafter) {
+          if (this.isVertical()) {
+            if (resizeafter.height != "") SBDataSetIntValue( root + "after.height", resizeafter.height );
+          } else {
+            if (resizeafter.width != "") SBDataSetIntValue( root + "after.width", resizeafter.width );
+          }
+        }
+      </body>
+    </method>
+
+    <method name="applyDefault">
+      <body>
+        <![CDATA[
+          var defaultbefore = -1;
+          var defaultafter = -1;
+
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          
+          var root = "splitter." + id + ".";
+          var resizebefore = this.getResizeBefore();
+          if (resizebefore) {
+            if (this.isVertical()) {
+              if (resizebefore.height == "") defaultbefore = resizebefore.boxObject.height;
+            } else {
+              if (resizebefore.width == "") defaultbefore = resizebefore.boxObject.width;
+            }
+          }
+          var resizeafter = this.getResizeAfter();
+          if (resizeafter) {
+            if (this.isVertical()) {
+              if (resizeafter.height == "") defaultafter = resizeafter.boxObject.height;
+            } else {
+              if (resizeafter.width == "") defaultafter = resizeafter.boxObject.width;
+            }
+          }
+          
+          if (resizebefore && defaultbefore != -1) {
+            if (this.isVertical()) resizebefore.height = defaultbefore;
+            else resizebefore.width = defaultbefore;
+          }
+          if (resizeafter && defaultafter != -1) {
+            if (this.isVertical()) resizeafter.height = defaultafter;
+            else resizeafter.width = defaultafter;
+          }
         ]]>
       </body>
     </method>
@@ -196,38 +249,31 @@
           var id = this.getAttribute("stateid");
           if (!id || id == "") id = this.id;
           var root = "splitter." + id + ".";
-          if (this.isTargetBefore()) {
-            var resizebefore = this.getResizeBefore();
-            if (resizebefore) {
-              if (this.isVertical()) {
-                var height = SBDataGetStringValue( root + "before.height" );
-                if ( height != "" ) {
-                  resizebefore.height = height;
-                  resizebefore.setAttribute("flex", "0");
-                }
-              } else {
-                var width = SBDataGetStringValue( root + "before.width" );
-                if ( width != "" ) {
-                  resizebefore.width = width;
-                  resizebefore.setAttribute("flex", "0");
-                }
+          var resizebefore = this.getResizeBefore();
+          if (resizebefore) {
+            if (this.isVertical()) {
+              var height = SBDataGetStringValue( root + "before.height" );
+              if ( height != "" ) {
+                resizebefore.height = height;
+              }
+            } else {
+              var width = SBDataGetStringValue( root + "before.width" );
+              if ( width != "" ) {
+                resizebefore.width = width;
               }
             }
-          } else {
-            var resizeafter = this.getResizeAfter();
-            if (resizeafter) {
-              if (this.isVertical()) {
-                var height = SBDataGetStringValue( root + "after.height" );
-                if ( height != "" ) {
-                  resizeafter.height = height;
-                  resizeafter.setAttribute("flex", "0");
-                }
-              } else {
-                var width = SBDataGetStringValue( root + "after.width" );
-                if ( width != "" ) {
-                  resizeafter.width = width;
-                  resizeafter.setAttribute("flex", "0");
-                }
+          }
+          var resizeafter = this.getResizeAfter(true);
+          if (resizeafter) {
+            if (this.isVertical()) {
+              var height = SBDataGetStringValue( root + "after.height" );
+              if ( height != "" ) {
+                resizeafter.height = height;
+              }
+            } else {
+              var width = SBDataGetStringValue( root + "after.width" );
+              if ( width != "" ) {
+                resizeafter.width = width;
               }
             }
           }
@@ -252,23 +298,15 @@
       </body>
     </method>
 
-    <method name="isTargetBefore">
-      <body>
-        <![CDATA[
-          var ret;
-          var target = this.getAttribute("target");
-          if (target == "after") ret = false;
-          else ret=true;
-          return ret;
-        ]]>
-      </body>
-    </method>
-    
    </implementation>
+
+   <handlers>
+     <handler event="mousemove" action="this.onMouseEvent(event);"/>
+     <handler event="mouseup" action="this.onMouseEvent(event);"/>
+     <handler event="mousedown" action="this.onMouseEvent(event);"/>
+     <handler event="DOMAttrModified" action="this.onAttrModified(event);"/>
+   </handlers>
  
   </binding>
 
 </bindings>
-
-
-

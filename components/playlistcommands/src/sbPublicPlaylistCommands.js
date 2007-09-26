@@ -35,6 +35,7 @@ Cu.import("resource://app/components/ArrayConverter.jsm");
 Cu.import("resource://app/components/sbProperties.jsm");
 Cu.import("resource://app/components/kPlaylistCommands.jsm");
 Cu.import("resource://app/components/sbAddToPlaylist.jsm");
+Cu.import("resource://app/components/sbLibraryUtils.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -86,6 +87,7 @@ PublicPlaylistCommands.prototype = {
   m_defaultCommands               : null,
   m_webPlaylistCommands           : null,
   m_downloadCommands              : null,
+  m_downloadToolbarCommands       : null,
   m_serviceTreeDefaultCommands    : null,
   m_mgr                           : null,
 
@@ -103,6 +105,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_ShowDownloadPlaylist      : null, // switch the outer playlist container to the download playlist
   m_cmd_ShowWebPlaylist           : null, // switch the outer playlist container to the web playlist
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
+  m_cmd_CleanUpDownloads          : null, // clean up completed download items
   m_cmd_BurnToCD                  : null, // burn selected tracks to CD
   m_cmd_CopyToDevice              : null, // copy selected tracks to device
 
@@ -399,6 +402,32 @@ PublicPlaylistCommands.prototype = {
                                                     plCmd_IsDownloadPaused);
 
     // --------------------------------------------------------------------------
+    // The CLEAN UP DOWNLOADS button
+    // --------------------------------------------------------------------------
+
+    this.m_cmd_CleanUpDownloads = new PlaylistCommandsBuilder();
+
+    this.m_cmd_CleanUpDownloads.appendAction
+                                      (null, 
+                                       "library_cmd_cleanupdownloads",
+                                       "&command.cleanupdownloads",
+                                       "&command.tooltip.cleanupdownloads",
+                                       plCmd_CleanUpDownloads_TriggerCallback);
+
+    this.m_cmd_CleanUpDownloads.setCommandShortcut
+                                (null,
+                                 "library_cmd_cleanupdownloads",
+                                 "&command.shortcut.key.cleanupdownloads",
+                                 "&command.shortcut.keycode.cleanupdownloads",
+                                 "&command.shortcut.modifiers.cleanupdownloads",
+                                 true);
+
+    this.m_cmd_CleanUpDownloads.setCommandEnabledCallback
+                                              (null,
+                                               "library_cmd_cleanupdownloads",
+                                               plCmd_DownloadHasCompletedItems);
+
+    // --------------------------------------------------------------------------
     // The SHOW WEB PLAYLIST button
     // --------------------------------------------------------------------------
 
@@ -523,6 +552,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
+    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
     
@@ -554,7 +584,7 @@ PublicPlaylistCommands.prototype = {
                                                   "library_cmdobj_device",
                                                   this.m_cmd_CopyToDevice);
 
-    this.m_defaultCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
+    this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
     
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
 
@@ -587,7 +617,7 @@ PublicPlaylistCommands.prototype = {
                                                       "library_cmdobj_showdlplaylist",
                                                       this.m_cmd_ShowDownloadPlaylist);
 
-    this.m_webPlaylistCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
+    this.m_webPlaylistCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST, this.m_webPlaylistCommands);
 
@@ -631,6 +661,36 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "", this.m_downloadCommands);
 
     // --------------------------------------------------------------------------
+    // Construct and publish the download toolbar commands
+    // --------------------------------------------------------------------------
+    
+    this.m_downloadToolbarCommands = new PlaylistCommandsBuilder();
+
+    this.m_downloadToolbarCommands.appendPlaylistCommands
+                                            (null, 
+                                             "library_cmdobj_cleanupdownloads",
+                                             this.m_cmd_CleanUpDownloads);
+    this.m_downloadToolbarCommands.appendPlaylistCommands
+                                          (null, 
+                                           "library_cmdobj_pauseresumedownload",
+                                           this.m_cmd_PauseResumeDownload);
+
+    this.m_downloadToolbarCommands.setVisibleCallback
+                                                    (plCmd_ShowForToolbarCheck);
+    this.m_downloadToolbarCommands.setInitCallback(plCmd_DownloadInit);
+    this.m_downloadToolbarCommands.setShutdownCallback(plCmd_DownloadShutdown);
+
+    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR,
+                       this.m_downloadToolbarCommands);
+
+    // Register these commands to the download playlist
+
+    this.m_mgr.registerPlaylistCommandsMediaItem
+                                              (downloadListGUID,
+                                               "",
+                                               this.m_downloadToolbarCommands);
+
+    // --------------------------------------------------------------------------
     // Construct and publish the service tree playlist commands
     // --------------------------------------------------------------------------
 
@@ -670,6 +730,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
 
@@ -681,6 +742,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST, this.m_webPlaylistCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST, this.m_downloadCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR, this.m_downloadToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
 
     // Un-register download playlist commands
@@ -692,6 +754,11 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, 
                                                    "",
                                                    this.m_downloadCommands);
+
+    this.m_mgr.unregisterPlaylistCommandsMediaItem
+                                              (downloadListGUID, 
+                                               "",
+                                               this.m_downloadToolbarCommands);
     
     g_downloadDevice = null;
     
@@ -726,6 +793,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_ShowDownloadPlaylist.shutdown();
     this.m_cmd_ShowWebPlaylist.shutdown();
     this.m_cmd_PauseResumeDownload.shutdown();
+    this.m_cmd_CleanUpDownloads.shutdown();
     this.m_cmd_BurnToCD.shutdown();
     this.m_cmd_CopyToDevice.shutdown();
     this.m_cmd_list_Remove.shutdown();
@@ -733,6 +801,7 @@ PublicPlaylistCommands.prototype = {
     this.m_defaultCommands.shutdown();
     this.m_webPlaylistCommands.shutdown();
     this.m_downloadCommands.shutdown();
+    this.m_downloadToolbarCommands.shutdown();
     this.m_serviceTreeDefaultCommands.shutdown();
 
     g_dataRemoteService = null;
@@ -936,8 +1005,17 @@ function plCmd_PauseResumeDownload_TriggerCallback(aContext, aSubMenuId, aComman
   {
     device.resumeTransfer('');
   }
-  // Since we changed state, update the command buttons.
-  unwrap(aContext.playlist).refreshCommands(); 
+  // Command buttons will update when device sends notification
+}
+
+// Called when the clean up downloads action is triggered
+function plCmd_CleanUpDownloads_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var device = getDownloadDevice();
+  if (!device) return;
+
+  device.clearCompletedItems();
+
+  // Command buttons will update when device sends notification
 }
 
 // Called when the "burn to cd" action is triggered
@@ -1056,6 +1134,13 @@ function plCmd_IsDownloadingOrNotActive(aContext, aSubMenuId, aCommandId, aHost)
         !plCmd_IsDownloadActive(aContext, aSubMenuId, aCommandId, aHost);
 }
 
+// Returns true if any completed download items exist
+function plCmd_DownloadHasCompletedItems(aContext, aSubMenuId, aCommandId, aHost) {
+  var device = getDownloadDevice();
+  if (!device) return false;
+  return (device.completedItemCount > 0);
+}
+
 // Returns true if the supplied context contains a gBrowser object
 function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
   var window = unwrap(aContext.window);
@@ -1089,6 +1174,8 @@ function getDownloadDevice() {
         if (deviceManager.hasDeviceForCategory(downloadCategory))
         {
           g_downloadDevice = deviceManager.getDeviceByCategory(downloadCategory);
+          g_downloadDevice = g_downloadDevice.QueryInterface
+                                      (Components.interfaces.sbIDownloadDevice);
         }
       }
     }
@@ -1098,12 +1185,105 @@ function getDownloadDevice() {
   return null;
 }
 
-function plCmd_HideForToolbarCheck(aContext, aHost) {
+function plCmd_ShowDefaultInToolbarCheck(aContext, aHost) {
   if (aHost == "toolbar") {
     if (dataRemote("commands.showdefaultintoolbar", null).boolValue) return true;
     return false;
   }
   return true;
+}
+
+function plCmd_HideForToolbarCheck(aContext, aHost) {
+  return (aHost != "toolbar");
+}
+
+function plCmd_ShowForToolbarCheck(aContext, aHost) {
+  return (aHost == "toolbar");
+}
+
+function plCmd_DownloadInit(aContext, aHost) {
+  var implementorContext = {
+    context: aContext,
+    batchHelper: new BatchHelper(),
+    needRefresh: false,
+
+    // sbIDeviceBaseCallback
+    onTransferComplete: function(aSourceURL, aDestinationURL, aStatus) {
+      this.refreshCommands();
+    },
+
+    onStateChanged: function(aDeviceIdentifier, aState) {
+      this.refreshCommands();
+    },
+
+    onDeviceConnect: function(aDeviceIdentifier) {},
+    onDeviceDisconnect: function(aDeviceIdentifier) {},
+    onTransferStart: function(aDeviceIdentifier) {},
+
+
+    // sbIMediaListListener
+    onAfterItemRemoved: function(aMediaList, aMediaItem) {
+      return this.onMediaListChanged();
+    },
+
+    onListCleared: function(aMediaList) {
+      return this.onMediaListChanged();
+    },
+
+    onBatchBegin: function(aMediaList) {
+      this.batchHelper.begin();
+    },
+
+    onBatchEnd: function(aMediaList) {
+      this.batchHelper.end();
+      if (!this.batchHelper.isActive() && this.needRefresh) {
+        this.refreshCommands();
+        this.needRefresh = false;
+      }
+    },
+
+    onItemAdded: function(aMediaList, aMediaItem) { return true; },
+    onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
+    onItemUpdated: function(aMediaList, aMediaItem) { return true; },
+
+
+    onMediaListChanged: function() {
+      if (this.batchHelper.isActive()) {
+        this.needRefresh = true;
+        return true;
+      }
+      this.refreshCommands();
+      return false;
+    },
+
+    refreshCommands: function() {
+      var playlist = unwrap(this.context.playlist);
+      if (playlist)
+        playlist.refreshCommands(); 
+    }
+  };
+
+  var device = getDownloadDevice();
+  if (!device) return false;
+  device.addCallback(implementorContext);
+  device.downloadMediaList.addListener
+                              (implementorContext,
+                               false,
+                               Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                               Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED |
+                               Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                               Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
+  aContext.implementorContext = implementorContext;
+}
+
+function plCmd_DownloadShutdown(aContext, aHost) {
+  var device = getDownloadDevice();
+  if (!device) return false;
+  if (aContext.implementorContext) {
+    device.removeCallback(aContext.implementorContext);
+    device.downloadMediaList.removeListener(aContext.implementorContext);
+  }
+  aContext.implementorContext = null;
 }
 
 var g_dataRemoteService = null;

@@ -74,8 +74,10 @@ PlaylistCommandsBuilder.prototype = {
     playlist        : null,
     window          : null,
     commands        : null,
+    implementorContext: null,
     QueryInterface  : function(iid) {
       if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
+          iid.equals(Components.interfaces.sbIPlaylistCommandsBuilderContext) ||
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -84,6 +86,8 @@ PlaylistCommandsBuilder.prototype = {
   
   m_menus             : null,
   m_root_commands     : null,
+  m_InitCallback      : null,
+  m_ShutdownCallback  : null,
   m_VisibleCallback   : null,
 
 /**
@@ -658,6 +662,18 @@ PlaylistCommandsBuilder.prototype = {
     this._setCommandProperties(aParentSubMenuId, aCommandId, props);
   },                             
 
+  setInitCallback: function 
+    PlaylistCommandsBuilder_setInitCallback(aInitCallback)
+  {
+    this.m_InitCallback = aInitCallback;
+  },
+
+  setShutdownCallback: function 
+    PlaylistCommandsBuilder_setShutdownCallback(aShutdownCallback)
+  {
+    this.m_ShutdownCallback = aShutdownCallback;
+  },
+
   setVisibleCallback: function 
     PlaylistCommandsBuilder_setVisibleCallback(aVisibleCallback)
   {
@@ -695,8 +711,9 @@ PlaylistCommandsBuilder.prototype = {
     // empty arrays, remove any remaining sbIPlaylistCommands reference
     // this also removes all references to item callback functions
     this.removeAllCommands();
-    // but one callback function reference remains, the one for the entire 
-    // command set, reset it too
+    // reset references for all callback functions for the entire command set
+    this.m_InitCallback = null;
+    this.m_ShutdownCallback = null;
     this.m_VisibleCallback = null;
     // and forget context
     this.m_Context = null;
@@ -1243,6 +1260,11 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
+    if (this.m_InitCallback &&
+        typeof(this.m_InitCallback) == "object" && 
+        this.m_InitCallback.handleCallback) {
+      this.m_InitCallback.handleCallback(this.m_Context, aHost, null);
+    }
   },
 
   shutdownCommands: function PlaylistCommandsBuilder_shutdownCommands() { 
@@ -1252,6 +1274,11 @@ PlaylistCommandsBuilder.prototype = {
           this.m_menus[i].m_Menu[j].m_CommandSubObject.shutdownCommands();
         }
       }
+    }
+    if (this.m_ShutdownCallback &&
+        typeof(this.m_ShutdownCallback) == "object" && 
+        this.m_ShutdownCallback.handleCallback) {
+      this.m_ShutdownCallback.handleCallback(this.m_Context, null, null);
     }
     this.shutdown();
   },

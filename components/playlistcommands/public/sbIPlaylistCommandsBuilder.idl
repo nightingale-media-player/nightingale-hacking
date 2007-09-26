@@ -623,6 +623,22 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
                                  in sbIPlaylistCommandsBuilderGetBoolCallback aVisibleCallback);
 
   /**
+  * \brief Assign a callback to the entire command set to perform initialization
+  *
+  * \param aInitCallback An interface or function to call to perform initialization
+  * \sa sbIPlaylistCommandsBuilderPCCallback
+  */
+  void setInitCallback(in sbIPlaylistCommandsBuilderPCCallback aInitCallback);
+
+  /**
+  * \brief Assign a callback to the entire command set to perform shutdown
+  *
+  * \param aInitCallback An interface or function to call to perform shutdown
+  * \sa sbIPlaylistCommandsBuilderPCCallback
+  */
+  void setShutdownCallback(in sbIPlaylistCommandsBuilderPCCallback aInitCallback);
+
+  /**
   * \brief Assign a callback to the entire command set to dynamically determine its visible status (affects all commands)
   *
   * \param aVisibleCallback An interface or function to call to determine the command set's visible status
@@ -659,6 +675,20 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
 // ----------------------------------------------------------------------------
 
 /**
+* \interface sbIPlaylistCommandsBuilderContext
+             sbIPlaylistCommandsBuilderContext.h
+* \brief The interface for giving context to playlist builder callbacks
+*/
+[scriptable, uuid(98c7d9d0-9cd6-4bbb-a408-3f202f4b49f6)]
+interface sbIPlaylistCommandsBuilderContext : sbIPlaylistCommandsContext
+{
+  /**
+  * \brief The commands builder implementor context.
+  */
+  attribute nsISupports implementorContext;
+};
+
+/**
 * \interface sbIPlaylistCommandsBuilderSimpleCallback sbIPlaylistCommandsBuilderSimpleCallback.h
 * \brief An interface used to receive generic callbacks from an sbIPlaylistCommandsBuilder object.
 *
@@ -678,7 +708,7 @@ interface sbIPlaylistCommandsBuilderSimpleCallback : nsISupports
   * \param aCommandId The id for this command
   * \param aHost The host type that instantiated this command
   */
-  void handleCallback(in sbIPlaylistCommandsContext aContext,
+  void handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                       in AString aSubMenuId,
                       in AString aCommandId,
                       in AString aHost);
@@ -706,7 +736,7 @@ interface sbIPlaylistCommandsBuilderGetStringCallback : nsISupports
   * \param aData A string describing the data being requested
   * \return The string data to return
   */
-  AString handleCallback(in sbIPlaylistCommandsContext aContext,
+  AString handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                          in AString aSubMenuId,
                          in AString aCommandId,
                          in AString aHost,
@@ -735,7 +765,7 @@ interface sbIPlaylistCommandsBuilderGetBoolCallback : nsISupports
   * \param aData A string describing the data being requested
   * \return The boolean data to return
   */
-  PRBool handleCallback(in sbIPlaylistCommandsContext aContext,
+  PRBool handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                         in AString aSubMenuId,
                         in AString aCommandId,
                         in AString aHost,
@@ -763,7 +793,7 @@ interface sbIPlaylistCommandsBuilderSetValueCallback : nsISupports
   * \param aHost The host type that instantiated this command
   * \param aValue The new string value
   */
-  void handleCallback(in sbIPlaylistCommandsContext aContext,
+  void handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                       in AString aSubMenuId,
                       in AString aCommandId,
                       in AString aHost,
@@ -792,7 +822,7 @@ interface sbIPlaylistCommandsBuilderInstantiationCallback : nsISupports
   * \param aParentDocument The parent document for the element to create
   * \return The DOM element to return
   */
-  nsIDOMNode handleCallback(in sbIPlaylistCommandsContext aContext,
+  nsIDOMNode handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                                in AString aSubMenuId,
                                in AString aCommandId,
                                in AString aHost,
@@ -820,7 +850,7 @@ interface sbIPlaylistCommandsBuilderRefreshCallback : nsISupports
   * \param aHost The host type that instantiated this command
   * \param aElement The custom DOM element 
   */
-  void handleCallback(in sbIPlaylistCommandsContext aContext,
+  void handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                                in AString aSubMenuId,
                                in AString aCommandId,
                                in AString aHost,
@@ -847,7 +877,7 @@ interface sbIPlaylistCommandsBuilderPCCallback : nsISupports
   * \param aData A string describing the data being requested
   * \return The boolean value to return
   */
-  PRBool handleCallback(in sbIPlaylistCommandsContext aContext, 
+  PRBool handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                         in AString aHost,
                         in AString aData);
 };

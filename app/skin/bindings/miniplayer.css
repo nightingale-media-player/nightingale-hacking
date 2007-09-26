@@ -283,7 +283,7 @@ MINI DASHBOARD
 }
 
 /* Artist and title, etc. */
-.mini-dash-text label
+label.mini-dash-text 
 {
   -moz-box-align: baseline;
   font-family: Arial, Helvetica, Sans-serif !important;
@@ -291,7 +291,7 @@ MINI DASHBOARD
   width: auto;
   height: 16px;
   margin: 0px;
-  padding: 0px;
+  padding: 1px 0px 0px 0px;
   overflow: hidden !important;
 }
 
@@ -302,7 +302,7 @@ sb-player-seek-slider.miniplayer
   height: 4px !important;
   width: auto !important;
   border: 0px !important;
-  margin: 14px 0px 0px 0px !important;
+  margin: 15px 0px 0px 0px !important;
 }
 thumb.sb-player-seek-slider.miniplayer
 {

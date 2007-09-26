@@ -313,6 +313,12 @@ public:
   /** 
    *
    */
+  void DoStateChangedCallback(const nsAString& aDeviceIdentifier,
+                              PRUint32 aState);
+
+  /** 
+   *
+   */
   nsresult GetDeviceState(const nsAString& aDeviceIdentifier, 
                           PRUint32* aDeviceState);
   /**
@@ -320,6 +326,11 @@ public:
    */
   nsresult SetDeviceState(const nsAString& aDeviceIdentifier,
                           PRUint32 aDeviceState);
+
+  /**
+   *
+   */
+  nsresult InitDeviceState(const nsAString& aDeviceIdentifier);
 
   nsresult SetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
                                        sbIMediaListListener *aMediaListListener);

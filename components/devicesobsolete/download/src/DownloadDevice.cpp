@@ -164,8 +164,7 @@ NS_IMPL_ISUPPORTS4(sbDownloadDevice,
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDeviceMonitor(nsnull),
-    mState(STATE_IDLE)
+    mpDeviceMonitor(nsnull)
 {
 }
 
@@ -243,6 +242,13 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
     /* Initialize the base services. */
     result = Init();
+
+    /* Set the download device identifier. */
+    mDeviceIdentifier = NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID);
+
+    /* Initialize the device state. */
+    if (NS_SUCCEEDED(result))
+        result = InitDeviceState(mDeviceIdentifier);
 
     /* Create the download device lock. */
     if (NS_SUCCEEDED(result))
@@ -345,7 +351,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
     /* Create the device transfer queue. */
     if (NS_SUCCEEDED(result))
-        result = CreateTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
+        result = CreateTransferQueue(mDeviceIdentifier);
 
     /* Create the download destination property. */
     if (NS_SUCCEEDED(result))
@@ -485,7 +491,7 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
         }
 
         /* Remove the device transfer queue. */
-        RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
+        RemoveTransferQueue(mDeviceIdentifier);
 
         /* Remove main library listener. */
         if (mpMainLibrary)
@@ -544,7 +550,7 @@ NS_IMETHODIMP sbDownloadDevice::GetLibrary(
     const nsAString             &aDeviceIdentifier,
     sbILibrary                  **aLibrary)
 {
-    return (GetLibraryForDevice(aDeviceIdentifier, aLibrary));
+    return (GetLibraryForDevice(mDeviceIdentifier, aLibrary));
 }
 
 
@@ -564,9 +570,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
     nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Return results. */
-    *aState = mState;
-
-    return (NS_OK);
+    return (sbDeviceBase::GetDeviceState(mDeviceIdentifier, aState));
 }
 
 
@@ -726,7 +730,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
         /* Remove the item from the transfer queue. */
         if (NS_SUCCEEDED(result))
         {
-            result1 = RemoveItemFromTransferQueue(aDeviceIdentifier,
+            result1 = RemoveItemFromTransferQueue(mDeviceIdentifier,
                                                   pMediaItem);
             if (NS_SUCCEEDED(result1))
                 itemCount++;
@@ -866,7 +870,7 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     PRUint32                    *aNumItems)
 {
     PRUint32                    numItems = 0;
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Validate arguments. */
     NS_ENSURE_ARG_POINTER(aNumItems);
@@ -877,18 +881,17 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     /* If there's a download session, suspend it. */
     if (mpDownloadSession)
     {
-        result = mpDownloadSession->Suspend();
-        if (NS_SUCCEEDED(result))
-        {
-            mState = STATE_DOWNLOAD_PAUSED;
-            numItems = 1;
-        }
+        rv = mpDownloadSession->Suspend();
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = SetDeviceState(mDeviceIdentifier, STATE_DOWNLOAD_PAUSED);
+        NS_ENSURE_SUCCESS(rv, rv);
+        numItems = 1;
     }
 
     /* Return results. */
     *aNumItems = numItems;
 
-    return (result);
+    return (NS_OK);
 }
 
 
@@ -907,7 +910,7 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
    PRUint32                     *aNumItems)
 {
     PRUint32                    numItems = 0;
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Validate arguments. */
     NS_ENSURE_ARG_POINTER(aNumItems);
@@ -918,18 +921,17 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
     /* If there's a download session, resume it. */
     if (mpDownloadSession)
     {
-        result = mpDownloadSession->Resume();
-        if (NS_SUCCEEDED(result))
-        {
-            mState = STATE_DOWNLOADING;
-            numItems = 1;
-        }
+        rv = mpDownloadSession->Resume();
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = SetDeviceState(mDeviceIdentifier, STATE_DOWNLOADING);
+        NS_ENSURE_SUCCESS(rv, rv);
+        numItems = 1;
     }
 
     /* Return results. */
     *aNumItems = numItems;
 
-    return (result);
+    return (NS_OK);
 }
 
 
@@ -1152,6 +1154,49 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceCount(
  *
  ******************************************************************************/
 
+/**
+ * \brief Clear all completed items from download device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::ClearCompletedItems()
+{
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    PRUint32                    itemCount;
+    PRInt32                     i;
+    nsresult                    rv;
+
+    /* Get the number of download items. */
+    rv = mpDownloadMediaList->GetLength(&itemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Add all the media items to the transfer queue.  If any  */
+    /* error occurs on an item, continue with remaining items. */
+    for (i = itemCount - 1; i >= 0; i--)
+    {
+        /* Get the next item.  Skip to next item on error. */
+        rv= mpDownloadMediaList->GetItemByIndex(i, getter_AddRefs(pMediaItem));
+        if (NS_FAILED(rv))
+            continue;
+
+        /* Remove item from download device library if complete. */
+        sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
+        if (   property.value->GetMode()
+            == sbDownloadButtonPropertyValue::eComplete)
+        {
+            mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
+            rv = mpDownloadMediaList->Remove(pMediaItem);
+            mpDeviceLibraryListener->SetIgnoreListener(PR_FALSE);
+
+            /* Warn if item could not be removed. */
+            if (NS_FAILED(rv))
+                NS_WARNING("Failed to remove completed download item.\n");
+        }
+    }
+
+    return (NS_OK);
+}
+
+
 /*
  * sbIDownloadDevice attribute getters/setters.
  */
@@ -1170,6 +1215,45 @@ NS_IMETHODIMP sbDownloadDevice::GetDownloadMediaList(
 
     /* Return results. */
     NS_ADDREF(*aDownloadMediaList = mpDownloadMediaList);
+
+    return (NS_OK);
+}
+
+NS_IMETHODIMP sbDownloadDevice::GetCompletedItemCount(
+    PRUint32                    *aCompletedItemCount)
+{
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    PRUint32                    itemCount;
+    PRUint32                    completedItemCount = 0;
+    PRUint32                    i;
+    nsresult                    rv;
+
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aCompletedItemCount);
+
+    /* Get the number of download items. */
+    rv = mpDownloadMediaList->GetLength(&itemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Count the number of completed items. */
+    /*XXXeps there must be a quicker way to do this. */
+    for (i = 0; i < itemCount; i++)
+    {
+        /* Get the next item. */
+        rv= mpDownloadMediaList->GetItemByIndex(i, getter_AddRefs(pMediaItem));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        /* Increment item completed count if item has completed. */
+        sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
+        if (   property.value->GetMode()
+            == sbDownloadButtonPropertyValue::eComplete)
+        {
+            completedItemCount++;
+        }
+    }
+
+    /* Return results. */
+    *aCompletedItemCount = completedItemCount;
 
     return (NS_OK);
 }
@@ -1391,8 +1475,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
         PRUint32                    itemCount;
 
         /* Ensure all items are deleted from device. */
-        rv = DeleteAllItems(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                            &itemCount);
+        rv = DeleteAllItems(mDeviceIdentifier, &itemCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
         /* Create the download media list. */
@@ -1403,8 +1486,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
     /* Create a download media list listener. */
     NS_NEWXPCOM(mpDeviceLibraryListener, sbDeviceBaseLibraryListener);
     NS_ENSURE_TRUE(mpDeviceLibraryListener, NS_ERROR_OUT_OF_MEMORY);
-    rv = mpDeviceLibraryListener->Init(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                       this);
+    rv = mpDeviceLibraryListener->Init(mDeviceIdentifier, this);
     NS_ENSURE_SUCCESS(rv, rv);
 
     /* Add the download device media list listener.*/
@@ -1416,7 +1498,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
                                  | sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                                  nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = SetListenerForDeviceLibrary(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+    rv = SetListenerForDeviceLibrary(mDeviceIdentifier,
                                      mpDeviceLibraryListener);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1571,8 +1653,7 @@ nsresult sbDownloadDevice::EnqueueItem(
     /* Add item to the transfer queue. */
     {
         nsAutoMonitor mon(mpDeviceMonitor);
-        rv = AddItemToTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                    apMediaItem);
+        rv = AddItemToTransferQueue(mDeviceIdentifier, apMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -1611,14 +1692,16 @@ nsresult sbDownloadDevice::RunTransferQueue()
         else
             initiated = PR_FALSE;
 
-        /* Set state to downloading. */
-        if (initiated)
-            mState = STATE_DOWNLOADING;
-
         /* Release the download session if not initiated. */
         if (!initiated && mpDownloadSession)
             mpDownloadSession = nsnull;
     }
+
+    /* Update device state. */
+    if (mpDownloadSession)
+        SetDeviceState(mDeviceIdentifier, STATE_DOWNLOADING);
+    else
+        SetDeviceState(mDeviceIdentifier, STATE_IDLE);
 
     return (result);
 }
@@ -1645,15 +1728,10 @@ PRBool sbDownloadDevice::GetNextTransferItem(
     nsresult                        result = NS_OK;
 
     /* Get the next media item to transfer. */
-    result = GetNextItemFromTransferQueue
-                                    (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     getter_AddRefs(pMediaItem));
+    result = GetNextItemFromTransferQueue(mDeviceIdentifier,
+                                          getter_AddRefs(pMediaItem));
     if (NS_SUCCEEDED(result))
-    {
-        result = RemoveItemFromTransferQueue
-                                    (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     pMediaItem);
-    }
+        result = RemoveItemFromTransferQueue(mDeviceIdentifier, pMediaItem);
 
     /* Return results. */
     if (NS_SUCCEEDED(result))
@@ -1697,12 +1775,11 @@ nsresult sbDownloadDevice::ResumeTransfers()
         sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
 
         /* Add item to transfer queue if not complete. */
-        if (property.value->GetMode() != sbDownloadButtonPropertyValue::eComplete) {
+        if (property.value->GetMode() !=
+            sbDownloadButtonPropertyValue::eComplete) {
 
             nsAutoMonitor mon(mpDeviceMonitor);
-            itemResult = AddItemToTransferQueue
-                            (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                             pMediaItem);
+            itemResult = AddItemToTransferQueue(mDeviceIdentifier, pMediaItem);
             if (NS_SUCCEEDED(itemResult))
                 queuedCount++;
         }
@@ -1712,53 +1789,6 @@ nsresult sbDownloadDevice::ResumeTransfers()
     /* Run the transfer queue if any items were queued. */
     if (queuedCount > 0)
         RunTransferQueue();
-
-    return (result);
-}
-
-
-/*
- * ClearCompletedItems
- *
- *   This function clears completed media items from the download device
- * library.
- */
-
-nsresult sbDownloadDevice::ClearCompletedItems()
-{
-    nsCOMPtr<sbIMediaItem>      pMediaItem;
-    PRUint32                    itemCount;
-    PRInt32                     i;
-    nsresult                    itemResult;
-    nsresult                    result = NS_OK;
-
-    result = mpDownloadMediaList->GetLength(&itemCount);
-
-    /* Remove each complete item in list. */
-    if (NS_SUCCEEDED(result))
-    {
-        for (i = itemCount - 1; i >= 0; i--)
-        {
-            /* Get the next item. */
-            itemResult = mpDownloadMediaList->GetItemByIndex
-                                                (i, getter_AddRefs(pMediaItem));
-            NS_ENSURE_SUCCESS(itemResult, itemResult);
-
-            sbAutoDownloadButtonPropertyValue property(pMediaItem, nsnull, PR_TRUE);
-            /* Remove item from download device library if complete. */
-            if (property.value->GetMode() == sbDownloadButtonPropertyValue::eComplete) {
-            {
-                mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
-                itemResult = mpDownloadMediaList->Remove(pMediaItem);
-                mpDeviceLibraryListener->SetIgnoreListener(PR_FALSE);
-            }
-
-                /* Warn if item could not be removed. */
-                if (NS_FAILED(itemResult))
-                    NS_WARNING("Failed to remove completed download item.\n");
-            }
-        }
-    }
 
     return (result);
 }
@@ -1858,25 +1888,30 @@ nsresult sbDownloadDevice::CancelSession()
 /*
  * SessionCompleted
  *
- *   --> pDownloadSession       Completed session.
+ *   --> apDownloadSession      Completed session.
+ *   --> aStatus                Final session status.
  *
  *   This function is called when the download session specified by
- * pDownloadSession completes.
+ * apDownloadSession completes with the final status specified by aStatus.
  */
 
 void sbDownloadDevice::SessionCompleted(
-    sbDownloadSession           *pDownloadSession)
+    sbDownloadSession           *apDownloadSession,
+    PRInt32                     aStatus)
 {
     /* Complete session. */
     {
         /* Lock the device. */
         nsAutoMonitor mon(mpDeviceMonitor);
 
-        /* Set state to idle. */
-        mState = STATE_IDLE;
+        /* Deliver transfer completion callbacks. */
+        DoTransferCompleteCallback(apDownloadSession->mSrcURISpec,
+                                   apDownloadSession->mDstURISpec,
+                                   aStatus);
 
         /* Release the download session. */
-        mpDownloadSession = nsnull;
+        if (apDownloadSession == mpDownloadSession)
+            mpDownloadSession = nsnull;
     }
 
     /* Run the transfer queue. */
@@ -2327,13 +2362,13 @@ nsresult sbDownloadSession::Initiate()
         nsCString srcSpec;
         result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
         if (NS_SUCCEEDED(result))
-        {
             result = pSrcURI->GetSpec(srcSpec);
-        }
         if (NS_SUCCEEDED(result))
         {
-            result = mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                              NS_ConvertUTF8toUTF16(srcSpec));
+            mSrcURISpec = NS_ConvertUTF8toUTF16(srcSpec);
+            result = mpMediaItem->SetProperty
+                                    (NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                     mSrcURISpec);
             NS_ASSERTION(NS_SUCCEEDED(result), \
               "Failed to set originURL, this item may be duplicated later \
                because it's origin cannot be tracked!");
@@ -2637,7 +2672,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
     /* Send notification of session completion.  Do this */
     /* outside of session lock to prevent deadlock.      */
-    mpDownloadDevice->SessionCompleted(this);
+    mpDownloadDevice->SessionCompleted(this, status);
 
     // Clean up
     mpRequest = nsnull;
@@ -2874,9 +2909,10 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         NS_ENSURE_SUCCESS(result, result);
 
         /* Set the destination property. */
+        mDstURISpec = NS_ConvertUTF8toUTF16(dstCSpec);
         result = mpMediaItem->SetProperty
-                                      (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
-                                      NS_ConvertUTF8toUTF16(dstCSpec));
+                                    (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
+                                     mDstURISpec);
         NS_ENSURE_SUCCESS(result, result);
     }
 
