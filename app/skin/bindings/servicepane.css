@@ -59,7 +59,7 @@ The Service Pane is the primary area for navigating through services and content
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-dynamic )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-dynplaylist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-linked-playlist.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( download )
@@ -127,7 +127,7 @@ sb-clickhold-button[id="file.new"]
 }
 
 .menuitem-iconic[id="file.remote"]{
-  list-style-image: url(chrome://songbird/skin/icons/icon-dynplaylist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-linked-playlist.png) ;
 }
 
                         

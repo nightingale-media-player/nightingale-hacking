@@ -153,11 +153,14 @@ function initFirstRun()
   }
 
   if (window.addEventListener) window.addEventListener("keydown", checkAltF4, true);
+  if (window.addEventListener) window.addEventListener("command", checkCustomClose, true);
   fillLanguageBox();
 }
 
 function shutdownFirstRun()
 {
+  if (window.addEventListener) window.removeEventListener("keydown", checkAltF4, true);
+  if (window.addEventListener) window.removeEventListener("command", checkCustomClose, true);
   firstrun_bundle.removeBundleDataListener(firstRunBundleCB);
   locales_bundle.removeBundleDataListener(localesBundleCB);
   continueStartup();
@@ -380,6 +383,13 @@ function checkAltF4(evt)
   if (evt.keyCode == VK_F4 && evt.altKey) 
   {
     evt.preventDefault();
+  }
+}
+
+function checkCustomClose(evt)
+{
+  if (evt.originalTarget.getAttribute("sbid") == "close") {
+    quitApp();
   }
 }
 

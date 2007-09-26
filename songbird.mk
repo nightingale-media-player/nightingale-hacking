@@ -1,24 +1,24 @@
 #
 # BEGIN SONGBIRD GPL
-# 
+#
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2007 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
-# 
-# Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
+#
 # END SONGBIRD GPL
 #
 
@@ -90,7 +90,7 @@ endif  # ifdef DEBUG
 # release build options
 ifndef DEBUG
 # release builds have jars by default, unless SB_DISABLE_JARS is set
-ifdef SB_DISABLE_JARS 
+ifdef SB_DISABLE_JARS
 CONFIGURE_ARGS += --disable-jars
 endif
 # release builds don't have tests by default
@@ -138,7 +138,7 @@ CREATE_OBJ_DIR_CMD = $(MKDIR) -p $(OBJDIR) $(DISTDIR) \
 # When calling configure we need to use a relative path so that it will spit
 # out relative paths for our makefiles.
 RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
-                    $(OBJDIR_DEPTH)/configure $(CONFIGURE_ARGS) \
+                    $(CONFIGURE) $(CONFIGURE_ARGS) \
                     $(NULL)
 
 CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \
@@ -153,7 +153,7 @@ BUILD_CMD = $(MAKE) -C $(OBJDIR) \
 
 CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
-                    $(NULL) 
+                    $(NULL)
 
 all : songbird_output build
 

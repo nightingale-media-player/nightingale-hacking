@@ -13,9 +13,6 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="firstrun"
  title="&setup.title;"
- buttons="cancel, accept"
- ondialogaccept="return doOK();"
- ondialogcancel="return doCancel();"
  onclose="return false;"
  hidechrome="true"
  windowtype="Songbird:Firstrun"
@@ -27,7 +24,7 @@
   
   <windowregion/>
   <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
-    <sb-sys-dialog-titlebar nobuttons="true"/>
+    <sb-sys-dialog-titlebar nobuttons="false"/>
     
     <hbox pack="center">
       <image class="firstrun-image" />
@@ -84,6 +81,7 @@
       
     <hbox>
       <spacer flex="1"/>
+      <button id="cancel_button" label="&window.cancel;"  oncommand="quitApp();"/>
       <button id="ok_button" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
     </hbox> 
   </sb-sys-outer-frame>
