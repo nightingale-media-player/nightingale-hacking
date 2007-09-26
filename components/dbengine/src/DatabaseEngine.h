@@ -175,6 +175,7 @@ public:
   QueryProcessorThread()
   : m_Shutdown(PR_FALSE)
   , m_IdleTime(0)
+  , m_pQueueMonitor(nsnull)
   , m_pQueueLock(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)

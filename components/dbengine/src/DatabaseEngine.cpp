@@ -905,6 +905,8 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDataba
     pThread = CreateThreadFromQuery(pQuery);
   }
 
+  NS_ENSURE_TRUE(pThread, nsnull);
+
   QueryProcessorThread *p = pThread.get();
   NS_ADDREF(p);
 
