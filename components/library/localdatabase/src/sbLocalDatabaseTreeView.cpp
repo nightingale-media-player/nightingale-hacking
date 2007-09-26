@@ -1748,7 +1748,8 @@ sbLocalDatabaseTreeView::GetLevel(PRInt32 row, PRInt32* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  *_retval = 0;
+  return NS_OK;
 }
 
 NS_IMETHODIMP

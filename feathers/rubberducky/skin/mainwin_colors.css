@@ -182,14 +182,16 @@ we should nix the painting of the selection.*/
 
 .servicepane_tree > treechildren::-moz-tree-row( dropOn ),
 .servicepane_tree > treechildren::-moz-tree-row( dropBefore ),
-.servicepane_tree > treechildren::-moz-tree-row( dropAfter ),
-.sb-playlist-tree > treechildren::-moz-tree-row( dropOn ),
-.sb-playlist-tree > treechildren::-moz-tree-row( dropBefore ),
-.sb-playlist-tree > treechildren::-moz-tree-row( dropAfter )
+.servicepane_tree > treechildren::-moz-tree-row( dropAfter )
 {
   background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
   background-position: center bottom !important;
   background-repeat: repeat-x !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropBefore )
+{
+  background-position: center top !important;
 }
 
 #frame_service_buttonbar button
@@ -515,6 +517,15 @@ treechildren::-moz-tree-column(insertbefore)
 {
   color: #B3BAAC !important; /** Light Color 1 */
 }
+
+.sb-playlist-tree > treechildren::-moz-tree-drop-feedback
+{
+  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png);
+  margin: 0;
+  /* the width must use absolute number of units here, no percentages */
+  width: 63360in;
+}
+
 /** 
 ***************************************************************************************************
 BUTTONS
