@@ -57,7 +57,7 @@
       <body>
         <![CDATA[
           if (event.attrName == "state")
-            doAutoShowHide();
+            this.doAutoShowHide();
         ]]>
       </body>
     </method>
