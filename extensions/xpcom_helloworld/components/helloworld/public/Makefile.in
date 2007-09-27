@@ -38,7 +38,7 @@ XPIDL_MODULE = sbHelloWorld.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 # and put it into the extension
-EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extras/xpcom_helloworld/.xpistage
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage
 
 # distribute the xpt into the components directory
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)

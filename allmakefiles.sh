@@ -67,6 +67,7 @@ app
 bindings
 components
 documentation
+extensions
 extras
 feathers
 installer

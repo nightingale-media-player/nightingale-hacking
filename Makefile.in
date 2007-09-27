@@ -57,6 +57,7 @@ SUBDIRS = build \
           components \
           feathers \
           locales \
+          extensions \
           $(NULL)
 
 SUBDIRDEPS = components : bindings

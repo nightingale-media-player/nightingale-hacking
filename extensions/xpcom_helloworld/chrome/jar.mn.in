@@ -12,4 +12,4 @@ xpcom_helloworld.jar:
 # apply an overlay to all Songbird main windows
 % overlay windowtype:Songbird:Main chrome://xpcom_helloworld/content/overlay.xul
 # include all the files in this jar
-@include_all_to /
+@include_all_to 

@@ -34,5 +34,3 @@ function testXPCOMHelloWorld() {
     alert("sbIHelloWorld.getMessage() ERROR: " + e.toString());
   }
 };
-
-setTimeout(testXPCOMHelloWorld, 1000);

@@ -39,7 +39,7 @@ CPP_SRCS = sbHelloWorldModule.cpp \
 
 # include the headers generated from our IDL, plus bits of the XULRunner SDK
 # that we're using
-CPP_INCLUDES = $(DEPTH)/extras/xpcom_helloworld/components/helloworld/public \
+CPP_INCLUDES = $(DEPTH)/extensions/xpcom_helloworld/components/helloworld/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -76,7 +76,7 @@ ifeq ($(SB_PLATFORM), macosx)
 endif
 
 # put this in our staging directory
-EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extras/xpcom_helloworld/.xpistage
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage
 
 # into components/ 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
