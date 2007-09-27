@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<title>Sample Music Store</title>
+		<script language="Javascript" src="musicstore.js"></script>	
+		<link href="default.css" rel="stylesheet" type="text/css" >	
+		<link rel="search" type="application/opensearchdescription+xml" title="Sample Music Store" href="search.xml">
+	</head>
+	<body onload="load();" onunload="unload();" >
+		<h1>Sample Music Store</h1>
+		<hr/>
+
+		<form id="search-box">
+			<input type="text" name="p"></input>
+			<input type="submit" name="Search" value="Search"></input>
+		</form>
+		
+		<div id="search-results">
+		<h2>Search Results for:
+		<script>
+			var query = window.location.search.substring(1);
+			var search = query.split('&')[0];
+			search = search.split('=')[1].replace(/\+/g, " ");
+			document.write(search);
+		</script>
+		</h2>
+		</div>
+
+		<script language="JavaScript">
+				/* 
+				 * Performs a seach against the local database. Not very usefull, just to demonstrate the process.
+				 */
+				var gResultsPlayList = null;
+
+				function load() {
+					gResultsPlayList = MusicStore.getSitePlayList(null);
+										
+					setSearchResults();
+				}
+
+
+				function setSearchResults() {
+					var searchScope = [
+						"http://songbirdnest.com/data/1.0#artistName",
+						"http://songbirdnest.com/data/1.0#albumName",
+						"http://songbirdnest.com/data/1.0#trackName"
+						];
+					
+					for (var i=0; i < searchScope.length; i++) {
+						var listener = {
+						   onEnumerationBegin: function() {
+						     return true;
+						   },
+						   onEnumeratedItem: function(list, item) {
+							gResultsPlayList.mediaList.add(item);
+							return true;
+						   },
+						   onEnumerationEnd: function() {
+						     return true;
+						   }
+						};
+						songbird.mainLibrary.enumerateItemsByProperty(searchScope[i], search, listener, 1);    		
+					}
+					gResultsPlayList.show();				
+					
+				}
+
+
+			    function unload() {
+				}
+
+
+		</script>
+	</body>
+</html>
