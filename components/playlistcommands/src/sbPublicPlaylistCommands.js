@@ -66,7 +66,6 @@ SelectionUnwrapper.prototype = {
 }
 
 function PublicPlaylistCommands() {
-  dump("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! new PublicPlaylistCommands\n");
   this.m_mgr = Components.
     classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
     .getService(Components.interfaces.sbIPlaylistCommandsManager);
