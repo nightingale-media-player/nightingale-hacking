@@ -38,7 +38,7 @@ try
 {
   // Parse through the document to get all the urls.
   
-  function CancelAsyncWebDocument(href_loop)
+  function CancelAsyncWebDocument(href_loop, newMediaListView)
   {
     if ( href_loop )
     {
@@ -46,11 +46,18 @@ try
       
       // Murder his whole family.
       for ( var i = 0; i < href_loop.childLoops.length; i++ )
-        CancelAsyncWebDocument( href_loop.childLoops[ i ] );
+        CancelAsyncWebDocument( href_loop.childLoops[ i ], newMediaListView );
 
-      // Make sure to clean up any medialists we have lying around.
+      // Make sure to clean up any medialists we have lying around as long as
+      // they're not the same as the new media list.
       var oldMediaList = href_loop.mediaList;
-      if (oldMediaList && !oldMediaList.length) {
+      var keepOldMediaList = false;
+      if (newMediaListView) {
+        var newMediaList = newMediaListView.mediaList;
+        if (newMediaList && oldMediaList.equals(newMediaList))
+          keepOldMediaList = true;
+      }
+      if (!keepOldMediaList && oldMediaList && !oldMediaList.length) {
         var library = oldMediaList.library;
         library.remove(oldMediaList);
       }
@@ -69,7 +76,7 @@ try
     const sbIMediaList = Components.interfaces.sbIMediaList;
     const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
     
-    CancelAsyncWebDocument(old_href_loop);
+    CancelAsyncWebDocument(old_href_loop, aMediaListView);
 
     var href_loop = new sbIAsyncForLoop
     ( // This is an argument list passed to the sbIAsyncForLoop constructor.
