@@ -921,7 +921,16 @@ PlaylistPlayback.prototype = {
       this._metadataURL.stringValue = spec;
       this._playURL.stringValue = spec;
       this._controlTriggered.stringValue = Date.now();
-      core.playURL(spec);
+      
+      try {
+        core.playURL(spec);      
+      }
+      catch(e) {
+        // XXXAus: SB_EXTERNAL_VIDEO_LAUNCH.
+        if(e.result == 0x80780001) {
+          return true;
+        }
+      }
 
       LOG( "playURL() '" + core.getId() + "'(" + this.position + "/" +
            this.length + ") - playing: " + this.playing +

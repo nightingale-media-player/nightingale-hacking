@@ -304,6 +304,48 @@ interface sbIRemotePlayer : nsISupports
   */
   readonly attribute sbIRemoteWebPlaylist webPlaylist;
 
+/*
+  Prop: mainLibrary
+
+  The main <Library> for Songbird. This will contain all the <MediaItem>s the
+  user has on their system.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var mainLib = songbird.mainLibrary;
+    (end code)
+
+  See Also:
+    <webLibrary>
+    <libraries()>
+    <siteLibrary()>
+  */
+  readonly attribute sbIRemoteLibrary mainLibrary;
+
+  /*
+  Prop: webLibrary
+
+  The web <Library> for Songbird. This will contain all the <MediaItem>s that
+  have been discovered on web pages the user has visited.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var webLib = songbird.webLibrary;
+    (end code)
+
+  See Also:
+    <mainLibrary>
+    <libraries()>
+    <siteLibrary()>
+  */
+  readonly attribute sbIRemoteLibrary webLibrary;
+
   /**
    * \brief Bind an observer to get called on changes to Songbird metadata/state
    */
@@ -736,48 +778,6 @@ interface sbIRemotePlayer : nsISupports
     <siteLibrary()>
   */
   sbIRemoteLibrary libraries(in AString aLibraryID);
-
-  /*
-  Prop: mainLibrary
-
-  The main <Library> for Songbird. This will contain all the <MediaItem>s the
-  user has on their system.
-
-  Type: 
-    <Library>
-
-  Example:
-    (start code)
-    var mainLib = songbird.mainLibrary;
-    (end code)
-
-  See Also:
-    <webLibrary>
-    <libraries()>
-    <siteLibrary()>
-  */
-  readonly attribute sbIRemoteLibrary mainLibrary;
-
-  /*
-  Prop: webLibrary
-
-  The web <Library> for Songbird. This will contain all the <MediaItem>s that
-  have been discovered on web pages the user has visited.
-
-  Type: 
-    <Library>
-
-  Example:
-    (start code)
-    var webLib = songbird.webLibrary;
-    (end code)
-
-  See Also:
-    <mainLibrary>
-    <libraries()>
-    <siteLibrary()>
-  */
-  readonly attribute sbIRemoteLibrary webLibrary;
 
   /**
    * \brief Fires the event to the webpage
