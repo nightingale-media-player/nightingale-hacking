@@ -62,7 +62,6 @@
 #endif
 
 !define ForceQuitMessage          "@SB_APPNAME@  is currently running and will be forced to quit."
-!define BackupMessage             "<TODO: Backup 0.2.5 messaging> Backing up Songbird 0.2.5 to $INSTDIR\legacy\0.2.5\Songbird"
-!define ShortBackupMessage        "<TODO: Backup 0.2.5 messaging> Backing up Songbird 0.2.5 to $INSTDIR\legacy\0.2.5\Songbird"
-!define ShortCleanupMessage       "<TODO: Cleanup of 0.2.5 backup messaging> Cleaning up temporary backup files"
+!define BackupMessage             "Your existing media library and user profile will not be migrated to Songbird 0.3.\n\nYou can continue to use your existing media library and user profile with your existing version of Songbird.  In addition to installing Songbird 0.3, would you like to keep your existing version of Songbird?"
+!define ShortBackupMessage        "Moving ${BrandShortName} ${AppOldVersion} to $INSTDIR\legacy\${AppOldVersion}\${BrandShortName}"
 !define UninstallMessage          "We found an older version of @SB_APPNAME@ present on this computer, do you wish to uninstall it before installing @SB_APPNAME@ ${AppVersion}?"

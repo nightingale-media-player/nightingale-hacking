@@ -98,8 +98,8 @@ InstallDir "${PreferredInstallDir}"
 
 BrandingText " "
 
-ShowInstDetails show
-ShowUninstDetails show
+ShowInstDetails hide
+ShowUninstDetails hide
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Modern User Interface Options
@@ -190,7 +190,7 @@ Section "-Application" Section1
   ; Check for old version
   Call CheckForOldVersion
   
-  ; If present, enable backup section of installer
+  ; If old version present, ask user if they want to back it up.
   ${If} $0 == "1"
     MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" IDYES 0 IDNO +1
     Call BackupOldVersion
@@ -274,8 +274,6 @@ Section "-Application" Section1
     
     CreateDirectory $3
     CopyFiles /silent "$BackupLocation\*.*" $3
-    
-    DetailPrint "${ShortCleanupMessage}"
     RMDir /r $BackupLocation
     
     ; Done with scary stuff, enable details.
