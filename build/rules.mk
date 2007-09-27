@@ -1270,7 +1270,7 @@ $(error You can only have one file specified by GUNZIP_SRC)
 endif
 
 gunzip_file:
-	$(CYGWIN_WRAPPER) $(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
+	$(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
 
 .PHONY : gunzip_file
 
