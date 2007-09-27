@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Songbird --> 
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.3pre</em:minVersion>
+        <em:maxVersion>0.3</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- the unique identifier for the extension - filled in by the 
+         build system -->
+    <em:id>@EXTENSION_UUID@</em:id>
+    <!-- the name of the extension - appears in Addons Manager -->
+    <em:name>Native Component Example</em:name>
+    <!-- a description of the extension - appears in Addons Manager -->
+    <em:description>An extension that contains a C++ Hello World component</em:description>
+    <!-- the creator of the extension - appears in the extension's About box -->
+    <em:creator>POTI</em:creator>
+    <!-- the home page of the extension - accessible from the Addons Manager -->
+    <em:homepageURL>http://www.songbirdnest.com/</em:homepageURL>
+    <!-- the version of the extension - used in extension updates -->
+    <em:version>1.0</em:version>
+
+    <!-- extensions are type 2 --> 
+    <em:type>2</em:type>
+    <!-- the architecture (operating system and CPU type) of the extension.
+         it will be filled in by the build system -->
+    <em:targetPlatform>@EXTENSION_ARCH@</em:targetPlatform>
+
+  </Description>
+
+</RDF>
