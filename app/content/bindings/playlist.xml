@@ -527,6 +527,8 @@
       self._dropOnTree(row, orientation);
     }
   };
+  
+  this.isSortable = mediaListView.mediaList.getProperty(SBProperties.isSortable);
 
   // Create whatever filters we think we need.
   this._generateFilters();
@@ -941,7 +943,7 @@
     treecol.setAttribute("hidden", "true");
   }
 
-  if (sort) {
+  if (sort && this.isSortable) {
     treecol.setAttribute("sortDirection", sort);
     treecol.setAttribute("sortActive", "true");
   }

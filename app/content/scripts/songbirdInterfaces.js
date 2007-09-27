@@ -370,3 +370,12 @@ const SB_PROPERTY_DOWNLOAD_STATUS_TARGET = SB_PROPERTY_PREFACE + "downloadStatus
  */
 const SB_PROPERTY_DOWNLOAD_DETAILS = SB_PROPERTY_PREFACE + "downloadDetails";
 
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_ISSORTABLE = SB_PROPERTY_PREFACE + "isSortable";
+
+
+

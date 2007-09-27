@@ -105,6 +105,15 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
                                    NS_LITERAL_STRING(SB_SIMPLE_MEDIALIST_METRICS_TYPE));
   }
 
+  // don't override sortable property
+  nsAutoString isSortable;
+  rv = newMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), isSortable);
+  if (isSortable.IsEmpty()) {
+    // Set default sortable property
+    rv = newMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE),
+                                   NS_LITERAL_STRING("1"));
+  }
+
   NS_ADDREF(*_retval = newMediaList);
   return NS_OK;
 }

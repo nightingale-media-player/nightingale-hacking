@@ -352,6 +352,10 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 
   rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
                             aCustomType);
+
+  rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), 
+                            NS_LITERAL_STRING("1"));
+
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

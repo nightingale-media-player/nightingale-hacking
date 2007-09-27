@@ -1569,6 +1569,12 @@ nsresult sbDownloadDevice::CreateDownloadMediaList()
     rv = mpDownloadMediaList->SetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                                  NS_LITERAL_STRING(SB_DOWNLOAD_CUSTOM_TYPE));
+
+    /* Set the sortable property to false. */
+    rv = mpDownloadMediaList->SetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE),
+                                 NS_LITERAL_STRING("0"));
+
     NS_ENSURE_SUCCESS(rv, rv);
 
     return (NS_OK);
@@ -3622,4 +3628,6 @@ sbAutoDownloadButtonPropertyValue::~sbAutoDownloadButtonPropertyValue()
   }
   MOZ_COUNT_DTOR(sbAutoDownloadButtonPropertyValue);
 }
+
+
 

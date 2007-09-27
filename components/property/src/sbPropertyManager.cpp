@@ -530,6 +530,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), EmptyString(),
+    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Download button
   nsRefPtr<sbDownloadButtonPropertyBuilder> dbBuilder =
     new sbDownloadButtonPropertyBuilder();

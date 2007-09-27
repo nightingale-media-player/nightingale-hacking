@@ -1404,6 +1404,16 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
     return NS_OK;
   }
 
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // If the list is not sortable, ignore the click
+  nsAutoString isSortable;
+  rv = mediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), isSortable);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isSortable.Equals(NS_LITERAL_STRING("0"))) return NS_OK;
+
   nsAutoString bind;
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);

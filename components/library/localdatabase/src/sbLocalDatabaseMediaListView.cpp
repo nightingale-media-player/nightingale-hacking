@@ -989,6 +989,11 @@ sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
   NS_ENSURE_ARG_POINTER(aSort);
 
   nsresult rv;
+  
+  nsAutoString isSortable;
+  rv = mMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), isSortable);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isSortable.Equals(NS_LITERAL_STRING("0"))) return NS_ERROR_FAILURE;
 
   rv = ClonePropertyArray(aSort, getter_AddRefs(mViewSort));
   NS_ENSURE_SUCCESS(rv, rv);
