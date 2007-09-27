@@ -153,6 +153,7 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#lyricistName - The name of the lyricist
     http://songbirdnest.com/data/1.0#lyrics - The lyrics of the media
     http://songbirdnest.com/data/1.0#originPage - The page this media was located on
+    http://songbirdnest.com/data/1.0#originPageTitle - The title of the page this media was located on
     http://songbirdnest.com/data/1.0#originURL - The URL this media was retrived from
     http://songbirdnest.com/data/1.0#playCount - The number of times this media has been played
     http://songbirdnest.com/data/1.0#producerName - The name of the producer
@@ -249,4 +250,5 @@ interface sbILibraryResource : nsISupports
    */
   boolean equals(in sbILibraryResource aOtherLibraryResource);
 };
+
 

@@ -56,6 +56,7 @@
 #define SB_PROPERTY_RATING                  "http://songbirdnest.com/data/1.0#rating"
 #define SB_PROPERTY_ORIGINURL               "http://songbirdnest.com/data/1.0#originURL"
 #define SB_PROPERTY_ORIGINPAGE              "http://songbirdnest.com/data/1.0#originPage"
+#define SB_PROPERTY_ORIGINPAGETITLE         "http://songbirdnest.com/data/1.0#originPageTitle"
 #define SB_PROPERTY_GUID                    "http://songbirdnest.com/data/1.0#GUID"
 #define SB_PROPERTY_HIDDEN                  "http://songbirdnest.com/data/1.0#hidden"
 #define SB_PROPERTY_ISLIST                  "http://songbirdnest.com/data/1.0#isList"

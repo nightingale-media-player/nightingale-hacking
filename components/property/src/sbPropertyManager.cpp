@@ -518,6 +518,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGETITLE),
+                    NS_LITERAL_STRING("property.origin_pagetitle"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Custom type (used for css and metrics reporting)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), EmptyString(),
     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,

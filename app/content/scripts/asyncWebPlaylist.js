@@ -59,7 +59,7 @@ try
     }
   }
   
-  function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context)
+  function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context, aTitle)
   {
     const CONTRACTID_ARRAY = "@mozilla.org/array;1";
     const CONTRACTID_METADATAJOBMANAGER =
@@ -141,7 +141,7 @@ try
           {
             var doc = this.frame_array[ this.i ].contentDocument;
             if ( doc ) {
-              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context );
+              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context, aTitle );
               newloop.child = true;
               this.childLoops.push( newloop );
             }
@@ -153,7 +153,7 @@ try
           {
             var doc = this.iframe_array[ this.i ].contentDocument;
             if ( doc ) {
-              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context );
+              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context, aTitle );
               newloop.child = true;
               this.childLoops.push( newloop );
             }
@@ -220,6 +220,7 @@ try
                 var propArray = [
                     [SBProperties.originPage, this.currentURL],
                     [SBProperties.originURL, url],
+                    [SBProperties.originPageTitle, this.currentTitle],
                     [SBProperties.downloadButton, "1|0|0"]
                   ];
                 // Add the track name if requested.
@@ -284,6 +285,7 @@ try
     href_loop.frame_array = aDocument.getElementsByTagName("FRAME");
     href_loop.iframe_array = aDocument.getElementsByTagName("IFRAME");
     href_loop.currentURL = aDocument.location;
+    href_loop.currentTitle = aTitle;
     href_loop.items = [];
     href_loop.seenURLs = [];
     href_loop.childLoops = [];

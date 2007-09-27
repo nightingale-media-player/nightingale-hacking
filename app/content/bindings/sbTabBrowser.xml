@@ -1563,7 +1563,8 @@
           
           if (!view) {
             var mediaList =
-              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec);
+              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec, 
+                                          this.linkedBrowser.contentTitle);
             view = mediaList.createView();
             if ( browser && entry && view instanceof Components.interfaces.sbIMediaListView )
               viewMap.setView(browser, entry, view);
@@ -1620,7 +1621,8 @@
           };
           this.scanProgress = 0;
           this._hrefLoop = AsyncWebDocument(this.linkedBrowser.contentDocument,
-                                            view, this._hrefLoop, context);
+                                            view, this._hrefLoop, context,
+                                            this.linkedBrowser.contentTitle); 
         ]]></body>
       </method>
       
@@ -1725,7 +1727,8 @@
                  "swappedPlaylistView!\n");
 
             var mediaList =
-              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec);
+              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec,
+                                          this.linkedBrowser.contentTitle);
             view = mediaList.createView();
           }
 
@@ -1757,6 +1760,7 @@
         
         <method name="_getWebMediaListForURL">
           <parameter name="aURL"/>
+          <parameter name="aTitle"/>
           <body><![CDATA[
             var listener = {
               foundList: null,
@@ -1789,10 +1793,13 @@
               return listener.foundList;
             }
             
+            var propArray = [
+                [SBProperties.originPage, aURL],
+                [SBProperties.originPageTitle, aTitle]
+              ];
+
             // Make a new list and set the originPage property.
-            var newList = webLibrary.createMediaList("simple");
-            
-            newList.setProperty(SBProperties.originPage, aURL);
+            var newList = webLibrary.createMediaList("simple", SBProperties.createArray(propArray));
             
             // XXXben Do this for now because the new AddToPlaylist code sweeps
             //        all non-hidden media lists from *all* libraries.
