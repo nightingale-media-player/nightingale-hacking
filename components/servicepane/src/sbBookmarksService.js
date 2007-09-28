@@ -382,10 +382,8 @@ function sbBookmarks_addFolderAt(aId, aTitle, aIconURL, aParent, aBefore) {
   fnode.properties = "folder " + aTitle;
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;
-  fnode.dndDragTypes = 'text/x-sb-toplevel';
-  fnode.dndAcceptNear = 'text/x-sb-toplevel';
   fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
-  fnode.editable = true; // folder names are editable
+  fnode.editable = false; // folder names are not editable
   
   return fnode;
 }
@@ -398,6 +396,11 @@ function sbBookmarks_bookmarkExists(aURL) {
 sbBookmarks.prototype.fillContextMenu =
 function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
   dump ('called fillContextMenu with node: '+aNode+'\n');
+
+  if (!aNode.editable) {
+    // not editable - don't add any items
+    return;
+  }
   
   if (aNode.contractid != CONTRACTID) {
     dump('or not...('+aNode.contractid+')\n');

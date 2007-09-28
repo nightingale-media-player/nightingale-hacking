@@ -138,6 +138,11 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
   var list = this.getLibraryResourceForNode(aNode);
   if (list) {
+    // the downloads playlist doesn't have anything.
+    if (list.getProperty(SBProperties.customType) == 'download') {
+      return;
+    }
+
     this._appendCommands(aContextMenu, list, aParentWindow);
 
     // Add menu items for a smart media list
@@ -1043,10 +1048,12 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.name = aLibrary.name;  
   node.url = this._getDisplayURL(aLibrary);
   node.contractid = CONTRACTID;
-  node.dndDragTypes = 'text/x-sb-toplevel';
-  node.dndAcceptNear = 'text/x-sb-toplevel';
-  node.editable = true;
-  if (aLibrary != this._libraryManager.mainLibrary) {
+  node.editable = false;
+  if (aLibrary == this._libraryManager.mainLibrary) {
+    // the main library uses a separate Playlists folder
+    this._ensurePlaylistFolderExists();
+  } else {
+    // other libraries store the palylists under them
     node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
   // Set properties for styling purposes
@@ -1099,12 +1106,19 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.name = aMediaList.name;  
   node.url = this._getDisplayURL(aMediaList);
   node.contractid = CONTRACTID;
-  node.editable = true;
+  if (aMediaList.getProperty(SBProperties.customType) == 'download') {
+    // the download media list isn't editable
+    node.editable = false;
+  } else {
+    // the rest are
+    node.editable = true;
+  }
   // Set properties for styling purposes
-  if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
+  if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
     node.properties = "medialist medialisttype-dynamic";
-  else
+  } else {
     node.properties = "medialist medialisttype-" + aMediaList.type;
+  }
   // Add the customType to the properties to encourage people to set it for CSS
   node.properties += " " + customType;
   // Save the type of media list so that we can group by type
@@ -1120,8 +1134,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   if (aMediaList.library == this._libraryManager.mainLibrary) {
     // a playlist in the main library is considered a toplevel node
-    node.dndDragTypes = 'text/x-sb-toplevel';
-    node.dndAcceptNear = 'text/x-sb-toplevel';
+    node.dndDragTypes = 'text/x-sb-playlist';
+    node.dndAcceptNear = 'text/x-sb-playlist';
   } else {
     // playlists in other libraries can only go into their libraries' nodes
     node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
@@ -1139,6 +1153,29 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.hidden = aMediaList.getProperty(PROP_ISHIDDEN) == "1";
       
   return node;
+}
+
+/**
+ * Get the service pane node for the Playlists folder (which contains all
+ * the playlists in the main library).
+ */
+sbLibraryServicePane.prototype._ensurePlaylistFolderExists =
+function sbLibraryServicePane__ensurePlaylistFolderExists() {
+  var fnode = this._servicePane.getNode('SB:Playlists');
+  if (!fnode) {
+    // make sure it exists
+    var fnode = this._servicePane.addNode('SB:Playlists', 
+        this._servicePane.root, true);
+    // FIXME: localize name
+    fnode.name = 'Playlists';
+    fnode.properties = 'folder Playlists';
+    fnode.hidden = false;
+    fnode.contractid = CONTRACTID;
+    fnode.dndAcceptIn = 'text/x-sb-playlist';
+    fnode.editable = false;
+    // FIXME: make sure it's in the right place
+  }
+  return fnode;
 }
 
 
@@ -1174,11 +1211,17 @@ sbLibraryServicePane.prototype._insertMediaListNode =
 function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   //logcall(arguments);
 
-  // If it is a main library media list, it belongs at 
-  // the top level
+  // If it is a main library media list, it belongs in the "Playlists" folder
   if (aMediaList.library == this._libraryManager.mainLibrary) 
-  {  
-    this._insertAfterLastOfSameType(aNode, this._servicePane.root);
+  {
+    // unless it's the download playlist
+    if (aMediaList.getProperty(SBProperties.customType) == 'download') {
+      // FIXME: put it right after the library
+      this._servicePane.root.appendChild(aNode);
+    } else {
+      var folder = this._ensurePlaylistFolderExists();
+      folder.appendChild(aNode);
+    }
   } 
   // If it is a secondary library playlist, it should be
   // added as a child of that library
