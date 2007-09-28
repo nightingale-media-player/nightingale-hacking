@@ -28,6 +28,8 @@
  * \brief Test file
  */
 
+// note that this test will fail if resource_properties.txt ends with a final \n
+
 function runTest () {
 
   var databaseGUID = "test_propertycache";
