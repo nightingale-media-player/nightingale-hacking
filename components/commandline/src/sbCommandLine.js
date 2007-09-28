@@ -52,8 +52,8 @@ function resolveURIInternal(aCmdLine, aArgument) {
 
 function checkUri(aURI, aURL) {
   try {
-    if (aURI instanceof Components.interfaces.nsIFileURL) 
-      if (aURI.file.exists()) 
+    if (aURI instanceof Components.interfaces.nsIFileURL)
+      if (aURI.file.exists())
         return aURI;
   }
   catch (e) {
@@ -100,19 +100,24 @@ sbCommandLineHandler.prototype = {
   // there are specific formatting guidelines for help test, see nsICommandLineHandler
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
              "                       optional comma-separated list of tests.\n" +
-             "                       If no tests are passed in ALL tests will be run.\n" +
+             "                       If no tests are passed in ALL tests will be run.\n\n" +
              "  [url|path]           Local path/filename to media items to import and play,\n" +
-             "                       or URL to load in the browser.\n",
-  itemHandlers: null,           
-  itemUriSpecs: null,           
-  flagHandlers: null,           
-  flags: null,           
+             "                       or URL to load in the browser.\n\n" +
+             "  -register-extensions Registers extensions and then quits.\n\n",
+  itemHandlers: null,
+  itemUriSpecs: null,
+  flagHandlers: null,
+  flags: null,
 
   handle : function (cmdLine) {
 
     var urilist = [];
     var oldlength = this.itemUriSpecs.length;
-    
+
+    if (cmdLine.handleFlag("register-extensions", false)) {
+      throw Components.results.NS_ERROR_ABORT;
+    }
+
     try {
       var ar;
       while ((ar = cmdLine.handleFlagWithParam("url", false))) {
@@ -122,7 +127,7 @@ sbCommandLineHandler.prototype = {
     catch (e) {
       Components.utils.reportError(e);
     }
-    
+
     var tests = null;
     var emptyParam = false;
     try {
@@ -171,7 +176,7 @@ sbCommandLineHandler.prototype = {
         throw Cr.NS_ERROR_ABORT;
       }
     }
-    
+
     // XXX bug 2186
     var count = cmdLine.length;
 
@@ -199,8 +204,8 @@ sbCommandLineHandler.prototype = {
         this.itemUriSpecs.push(urilist[uri].spec);
       }
     }
-    
-    if (this.itemUriSpecs.length > oldlength) 
+
+    if (this.itemUriSpecs.length > oldlength)
       this.dispatchItems();
 
     this.handleRemainingFlags(cmdLine);
@@ -217,7 +222,7 @@ sbCommandLineHandler.prototype = {
       this.dispatchItems();
     }
   },
-  
+
   handleRemainingFlags: function(cmdLine) {
     while (cmdLine.length) {
       var curarg = cmdLine.getArgument(0);
@@ -244,21 +249,21 @@ sbCommandLineHandler.prototype = {
           this.flags.push([flag, param]);
         }
       } else {
-        // this should really not occur, because the case should have 
+        // this should really not occur, because the case should have
         // been handled as a play item earlier. however, if for some reason
         // it does occur, not doing the following would cause an infinite loop,
         // so do it just in case.
         cmdLine.removeArguments(0, 0);
       }
-    } 
+    }
   },
-  
+
   addItemHandler: function (aHandler) {
     this.itemHandlers.push(aHandler);
     // dispatch unhandled items immediatly to this handler
     this.dispatchItemsToHandler(aHandler);
   },
-  
+
   removeItemHandler: function(aHandler) {
     var index = this.itemHandlers.indexOf(aHandler);
     if (index != -1) this.itemHandlers.splice(index, 1);
@@ -273,16 +278,16 @@ sbCommandLineHandler.prototype = {
       }
     }
   },
-  
+
   dispatchItems: function() {
-    // The last handler to get registered gets 
-    // priority over the first ones, so that if 
+    // The last handler to get registered gets
+    // priority over the first ones, so that if
     // there are several instances of the main window,
     // the items open in the one created last.
     for (var handleridx = this.itemHandlers.length-1; handleridx >= 0; handleridx--) {
       this.dispatchItemsToHandler(this.itemHandlers[handleridx]);
       if (this.itemUriSpecs.length == 0) break;
-    }  
+    }
   },
 
   addFlagHandler: function (aHandler, aFlag) {
@@ -291,7 +296,7 @@ sbCommandLineHandler.prototype = {
     // dispatch unhandled flags immediatly to this handler
     this.dispatchFlagsToHandler(entry);
   },
-  
+
   removeFlagHandler: function(aHandler, aFlag) {
     for (var i=this.flagHandlers.length-1;i>=0;i--) {
       var entry = this.flagHandlers[i];
@@ -315,14 +320,14 @@ sbCommandLineHandler.prototype = {
   },
 
   dispatchFlags: function() {
-    // The last handler to get registered gets 
-    // priority over the first ones, so that if 
+    // The last handler to get registered gets
+    // priority over the first ones, so that if
     // there are several instances of the main window,
     // the flags are handled by the one created last.
     for (var handleridx = this.flagHandlers.length-1; handleridx >= 0; handleridx--) {
       this.dispatchFlagsToHandler(this.flagHandlers[handleridx]);
       if (this.flags.length == 0) break;
-    }  
+    }
   },
 
   QueryInterface : function clh_QI(iid) {
@@ -399,4 +404,3 @@ function NSGetModule(comMgr, fileSpec)
 {
   return sbCommandLineHandlerModule;
 }
-
