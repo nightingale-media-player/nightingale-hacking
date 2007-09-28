@@ -423,7 +423,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
       // I think this is always a bad thing. It should represent calling of 
       // methods flagged as internal only being called by insecure code (not
       // using system principal)
-      LOG(( "sbSecurityMixin::GetPermissionForScopedName() -- AHHH!!! Asked for internal with codebase"));
+      NS_WARNING("sbSecurityMixin::GetPermissionForScopedName() -- AHHH!!! Asked for internal with codebase");
       return PR_FALSE;
     }
   }
@@ -460,7 +460,22 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
         allowed ? scope->allowed_notification : scope->blocked_notification;
     LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s",
           notification ));
-    if ( strcmp(notification, sNotificationNone) ) {
+
+    if ( strcmp(notification, sNotificationAlert) == 0 ) {
+      LOG(( "sbSecurityMixin::GetPermissionsForScopedName() - ALERT" ));
+      // Launch a prompt asking the user if they want to do this action.
+
+      allowed =
+        sbRemotePlayer::GetUserApprovalForHost( codebase,
+                            NS_LITERAL_STRING("rapi.media_add.request.title"),
+                            NS_LITERAL_STRING("rapi.media_add.request.message") );
+
+    }
+    else if ( strcmp(notification, sNotificationStatus) == 0 ) {
+      LOG(( "sbSecurityMixin::GetPermissionsForScopedName() - STATUS" ));
+    }
+    else if ( strcmp(notification, sNotificationHat) == 0 ) {
+      LOG(( "sbSecurityMixin::GetPermissionsForScopedName() - HAT" ));
       // notification is not "none"
       
       // we want to fire a notification, but does the user want a notification?

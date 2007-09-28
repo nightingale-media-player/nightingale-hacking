@@ -38,8 +38,8 @@ const static char* sPublicWProperties[] = { "" };
 const static char* sPublicRProperties[] =
 {
   // sbIIndexedMediaItem
-  "library_read:index",
-  "library_read:mediaItem",
+  "helper:index",
+  "helper:mediaItem",
 
   // nsIClassInfo
   "classinfo:classDescription",

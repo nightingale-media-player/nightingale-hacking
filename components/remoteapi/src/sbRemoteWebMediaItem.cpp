@@ -71,7 +71,6 @@ const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
   "site:getProperty",
-  "site:setProperty",
   "site:equals"
 
   // sbIMediaItem

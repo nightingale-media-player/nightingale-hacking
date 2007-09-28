@@ -1381,100 +1381,119 @@ sbRemotePlayer::ConfirmPlaybackControl() {
   rv = securityMixin->GetCodebase( getter_AddRefs(codebaseURI) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<nsPIDOMWindow> jsWindow = GetWindowFromJS();
+  // scope the principal push
+  {
+    // we can now push the new principal
+    sbAutoPrincipalPusher principal;
+    if (!principal) {
+      return NS_ERROR_FAILURE;
+    }
 
-  // we can now push the new principal
-  sbAutoPrincipalPusher principal;
-  if (!principal) {
-    return NS_ERROR_FAILURE;
-  }
+    rv = mGPPS->GetPlaying( &isPlaying );
+    NS_ENSURE_SUCCESS( rv, rv );
+  
+    if (!isPlaying) {
+      // The player is not playing, allow it
+      LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- not playing, allow"));
+      return NS_OK;
+    }
+  
+    // check to see if this page has control
+    nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
+      do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    PRBool hasPlaybackControl;
+    rv = remoteAPIService->HasPlaybackControl( codebaseURI, &hasPlaybackControl );
+    NS_ENSURE_SUCCESS( rv, rv );
+    if ( hasPlaybackControl ) {
+      LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- URI has control, allow"));
+      return NS_OK;
+    }
+  } // pop the principal
 
-  rv = mGPPS->GetPlaying( &isPlaying );
+  PRBool allowed =
+    GetUserApprovalForHost( codebaseURI,
+                            NS_LITERAL_STRING("rapi.playback_control.blocked.title"),
+                            NS_LITERAL_STRING("rapi.playback_control.blocked.message") );
+
+  return allowed ? NS_OK : NS_ERROR_ABORT ;
+}
+
+PRBool
+sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
+                                        const nsAString &aTitleKey,
+                                        const nsAString &aMessageKey )
+{
+  LOG(("sbRemotePlayer::GetUserApprovalForHost(URI)"));
+  NS_ENSURE_ARG_POINTER(aURI);
+  NS_ASSERTION(aTitleKey.IsEmpty(), "Title Key empty!!!!");
+  NS_ASSERTION(aMessageKey.IsEmpty(), "Message key empty!!!!");
+
+  nsCString hostUTF8;
+  nsresult rv = aURI->GetHost(hostUTF8);
   NS_ENSURE_SUCCESS( rv, rv );
-  
-  if (!isPlaying) {
-    // The player is not playing, allow it
-    LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- not playing, allow"));
-    return NS_OK;
+
+  if ( hostUTF8.IsEmpty() ) {
+    // no host (e.g. file:///); fall back to full URL
+    rv = aURI->GetSpec(hostUTF8);
+    NS_ENSURE_SUCCESS( rv, rv );
   }
-  
-  // check to see if this page has control
-  nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
-    do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-  PRBool hasPlaybackControl;
-  rv = remoteAPIService->HasPlaybackControl( codebaseURI, &hasPlaybackControl );
-  NS_ENSURE_SUCCESS( rv, rv );
-  if ( hasPlaybackControl ) {
-    LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- URI has control, allow"));
-    return NS_OK;
-  }
-  
-  // we're playing stuff from the user, prompt. eww.
+  NS_ConvertUTF8toUTF16 host(hostUTF8);
+
   nsCOMPtr<nsIStringBundleService> sbs =
     do_GetService( NS_STRINGBUNDLE_CONTRACTID, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   // get the branding...
   nsCOMPtr<nsIStringBundle> bundle;
   rv = sbs->CreateBundle( "chrome://branding/locale/brand.properties",
                           getter_AddRefs(bundle) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   nsString branding;
   rv = bundle->GetStringFromName( NS_LITERAL_STRING("brandShortName").get(),
                                   getter_Copies(branding) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
-  // ... and the host so the user has information to decide if this should be allowed
-  nsCString hostUTF8;
-  rv = codebaseURI->GetHost(hostUTF8);
-  NS_ENSURE_SUCCESS( rv, rv );
-  if ( hostUTF8.IsEmpty() ) {
-    // no host (e.g. file:///); fall back to full URL
-    rv = codebaseURI->GetSpec(hostUTF8);
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-  NS_ConvertUTF8toUTF16 host(hostUTF8);
-
   // and the prompt title and message
   rv = sbs->CreateBundle( "chrome://songbird/locale/songbird.properties",
                           getter_AddRefs(bundle) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   const PRUnichar *formatParams[2];
   formatParams[0] = branding.BeginReading();
   formatParams[1] = host.BeginReading();
 
   nsString message;
-  rv = bundle->FormatStringFromName( NS_LITERAL_STRING("rapi.playback_control.blocked.message").get(),
+  rv = bundle->FormatStringFromName( aMessageKey.BeginReading(),
                                      formatParams,
                                      NS_ARRAY_LENGTH(formatParams),
                                      getter_Copies(message) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   nsString title;
-  rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.playback_control.blocked.title").get(),
+  rv = bundle->GetStringFromName( aTitleKey.BeginReading(),
                                   getter_Copies(title) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   // now we can actually go for the prompt
   nsCOMPtr<nsIPromptService> promptService =
     do_GetService( "@mozilla.org/embedcomp/prompt-service;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // this is launched by the child window, tell Gecko about it.
+  nsCOMPtr<nsPIDOMWindow> jsWindow = GetWindowFromJS();
   nsCOMPtr<nsIDOMWindow> window = do_QueryInterface( jsWindow, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   PRBool allowed;
   rv = promptService->Confirm( window,
                                title.BeginReading(),
                                message.BeginReading(),
                                &allowed );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
-  return allowed ? NS_OK : NS_ERROR_ABORT ;
+  return allowed;
 }
 
 nsresult

@@ -103,6 +103,10 @@ public:
                                  PRBool aIsTrusted );
   sbRemoteNotificationManager* GetNotificationManager();
 
+  static PRBool GetUserApprovalForHost( nsIURI *aURI,
+                                        const nsAString &aTitleKey,
+                                        const nsAString &aMessageKey );
+
 protected:
   virtual ~sbRemotePlayer();
 
