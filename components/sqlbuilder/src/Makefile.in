@@ -49,8 +49,6 @@ CPP_INCLUDES = $(DEPTH)/components/sqlbuilder/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-IS_COMPONENT = 1
-
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
@@ -75,4 +73,3 @@ endif
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk
-

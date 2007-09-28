@@ -80,8 +80,6 @@ CPP_INCLUDES = $(DEPTH)/components/property/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-IS_COMPONENT = 1
-
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
@@ -104,19 +102,10 @@ endif
 DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_stringutils) \
                               $(NULL)
 
-ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s \
-				                        $(NULL)
-endif
-
-ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s \
-                                $(NULL)
-endif
-
-ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+ifneq (linux,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \

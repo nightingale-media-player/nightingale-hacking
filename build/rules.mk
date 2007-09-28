@@ -335,10 +335,10 @@ linker_flags = $(DYNAMIC_LIB_FLAGS)
 else
 
 ifeq (macosx,$(SB_PLATFORM))
-ifdef IS_COMPONENT
-LDFLAGS_DLL = -bundle
-else
+ifdef DYNAMIC_LIB_IS_NOT_COMPONENT
 LDFLAGS_DLL += -install_name @executable_path/$(DYNAMIC_LIB) -compatibility_version 1 -current_version 1
+else
+LDFLAGS_DLL += -bundle
 endif
 endif
 
