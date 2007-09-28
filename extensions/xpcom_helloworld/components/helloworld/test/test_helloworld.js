@@ -35,6 +35,11 @@
  
 function runTest () {
   dump("\n\n\n\nTesting HelloWorld component\n\n\n\n");
+  
+  if (!Components.classes["@songbirdnest.com/Songbird/HelloWorld;1"]) {
+    dump("\n\n\nWARNING:  The HelloWorld component is not installed.  Test aborted.\n\n\n");
+    return Components.results.NS_OK;
+  }
 
   var helloWorld = Components.classes["@songbirdnest.com/Songbird/HelloWorld;1"]
                    .createInstance(Components.interfaces.sbIHelloWorld);
