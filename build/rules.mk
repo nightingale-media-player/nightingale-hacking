@@ -1196,7 +1196,7 @@ ifdef MSMANIFEST_TOOL
 	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
     -OUTPUTRESOURCE:$(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))\;1
 endif # MSVC with manifest tool
-	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable)
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 
 #.PHONY : move_sb_stub_executable
 
