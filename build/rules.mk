@@ -338,7 +338,9 @@ ifeq (macosx,$(SB_PLATFORM))
 ifdef DYNAMIC_LIB_IS_NOT_COMPONENT
 LDFLAGS_DLL += -install_name @executable_path/$(DYNAMIC_LIB) -compatibility_version 1 -current_version 1
 else
-LDFLAGS_DLL += -bundle
+# Override LDFLAGS_DLL entirely. The makefile can still specify flags with the
+# LDFLAGS and DYNAMIC_LIB_EXTRA_FLAGS variables.
+LDFLAGS_DLL = -bundle
 endif
 endif
 
