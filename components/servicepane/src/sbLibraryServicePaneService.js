@@ -139,7 +139,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
   var list = this.getLibraryResourceForNode(aNode);
   if (list) {
     // the downloads playlist doesn't have anything.
-    if (list.getProperty(SBProperties.customType) == 'download') {
+    if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
       return;
     }
 
@@ -1053,7 +1053,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     // the main library uses a separate Playlists folder
     this._ensurePlaylistFolderExists();
   } else {
-    // other libraries store the palylists under them
+    // other libraries store the playlists under them
     node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
   // Set properties for styling purposes
@@ -1106,7 +1106,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.name = aMediaList.name;  
   node.url = this._getDisplayURL(aMediaList);
   node.contractid = CONTRACTID;
-  if (aMediaList.getProperty(SBProperties.customType) == 'download') {
+  if (customType == 'download') {
     // the download media list isn't editable
     node.editable = false;
   } else {
@@ -1215,7 +1215,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   if (aMediaList.library == this._libraryManager.mainLibrary) 
   {
     // unless it's the download playlist
-    if (aMediaList.getProperty(SBProperties.customType) == 'download') {
+    if (aMediaList.getAttributeNS(LSP, 'ListCustomType') == 'download') {
       // FIXME: put it right after the library
       this._servicePane.root.appendChild(aNode);
     } else {
