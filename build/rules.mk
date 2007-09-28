@@ -1184,27 +1184,17 @@ endif # XPI_NAME
 ifdef SONGBIRD_MAIN_APP
 
 ifeq (macosx,$(SB_PLATFORM))
-
-ifneq (,$(findstring *xulrunner*,$(SONGBIRD_MAIN_APP)))
-$(error You must specify the xulrunner-stub file here)
+sb_executable_dir = $(SONGBIRD_MACOS)
 else
-sb_executable = $(SONGBIRD_MACOS)/$(SB_APPNAME)$(BIN_SUFFIX)
-endif
-
-else
-
-ifneq (,$(findstring *xulrunner-stub*,$(SONGBIRD_MAIN_APP)))
-$(error You must specify the xulrunner-stub file here)
-else
-sb_executable = $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
-endif
+sb_executable_dir = $(SONGBIRD_DISTDIR)
 endif
 
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
-	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
+	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
 ifdef MSMANIFEST_TOOL
 	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
-		-OUTPUTRESOURCE:$(sb_executable)\;1
+    -OUTPUTRESOURCE:$(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))\;1
 endif # MSVC with manifest tool
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable)
 

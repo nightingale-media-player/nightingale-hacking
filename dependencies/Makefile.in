@@ -1,24 +1,24 @@
 #
 # BEGIN SONGBIRD GPL
-# 
+#
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2007 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
-# 
-# Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
+#
 # END SONGBIRD GPL
 #
 
@@ -29,22 +29,18 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SUBDIRS = vendor/mozilla
 
-SUBDIRS = vendor/mozilla \
-          $(NULL)
-
-
+SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 ifeq (windows,$(SB_PLATFORM))
 
-SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
-
 ifdef MEDIA_CORE_VLC
 VLC_PLUGIN = npvlc
-SONGBIRD_PLUGINS += $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) 
+SONGBIRD_PLUGINS += $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX)
 
 SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
                       $(NULL)
@@ -62,8 +58,6 @@ endif # _MSC_VER==1400
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-
-SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
 # non-existent variable, VLC no-worky on linux yet...
 ifdef (MEDIA_CORE_VLC)
@@ -89,8 +83,6 @@ all:: runtimelibs
 ifdef MEDIA_CORE_VLC
 all:: vlcplugin
 endif
-
-SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 
 runtimelibs::
 	$(MKDIR) -p $(SONGBIRD_MACOS)
