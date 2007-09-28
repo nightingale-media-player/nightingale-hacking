@@ -38,7 +38,7 @@ var mainLibraryList;
 
 function init() {
   mainLibrary = songbird.libraries("main");
-  siteLibrary = songbird.siteLibrary("127.0.0.1", "/");
+  siteLibrary = songbird.siteLibrary;
   siteItem = siteLibrary.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
 
   for (var i = 0; i < mainLibrary.length; i++) {

@@ -59,6 +59,7 @@ CPP_SRCS = sbRemoteAPIModule.cpp \
            sbRemoteWebMediaItem.cpp \
            sbRemoteWebMediaList.cpp \
            sbSecurityMixin.cpp \
+           sbURIChecker.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \

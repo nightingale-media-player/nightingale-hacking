@@ -34,6 +34,7 @@
 #include "sbRemoteWebLibrary.h"
 #include "sbRemoteWebPlaylist.h"
 #include "sbSecurityMixin.h"
+#include "sbURIChecker.h"
 #include <sbClassInfoUtils.h>
 #include <sbIDataRemote.h>
 #include <sbIDownloadDevice.h>
@@ -123,6 +124,7 @@ const static char* sPublicRProperties[] =
     "library_read:playlists",
     "library_read:webLibrary",
     "library_read:mainLibrary",
+    "site:siteLibrary",
     "site:webPlaylist",
     "playback_read:currentArtist",
     "playback_read:currentAlbum",
@@ -145,7 +147,7 @@ const static char* sPublicMethods[] =
     "library_write:downloadItem",
     "library_write:downloadList",
     "library_write:downloadSelected",
-    "site:siteLibrary",
+    "site:setSiteScope",
     "library_read:libraries",
     "playback_read:removeListener",
     "playback_read:addListener" };
@@ -391,7 +393,10 @@ sbRemotePlayer::Init()
 
   rv = mNotificationMgr->Init();
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
+  mScopeDomain.SetIsVoid(PR_TRUE);
+  mScopePath.SetIsVoid(PR_TRUE);
+  
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -480,17 +485,47 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
-                             const nsACString &aPath,
-                             sbIRemoteLibrary **aSiteLibrary )
+sbRemotePlayer::SetSiteScope(const nsACString & aDomain, const nsACString & aPath)
 {
-  LOG(( "sbRemotePlayer::SiteLibrary(%s)", aPath.BeginReading() ));
+  nsresult rv;
+  
+#if SB_DEBUG_RAPI
+  NS_WARNING("sbRemotePlayer::SetSiteScope() - skipping multiple site library checks");
+#else
+  NS_ENSURE_TRUE( mScopeDomain.IsVoid(), NS_ERROR_ALREADY_INITIALIZED );
+  NS_ENSURE_TRUE( mScopePath.IsVoid(), NS_ERROR_ALREADY_INITIALIZED );
+#endif /* SB_DEBUG_RAPI */
+  
+  nsCString domain(aDomain);
+  nsCString path(aPath);
+  nsCOMPtr<nsIURI> codebaseURI;
+  nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface( mSecurityMixin, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = mixin->GetCodebase( getter_AddRefs(codebaseURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  rv = sbURIChecker::CheckURI(domain, path, codebaseURI);
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  mScopeDomain = domain;
+  mScopePath = path;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetSiteLibrary(sbIRemoteLibrary * *aSiteLibrary)
+{
+  LOG(( "sbRemotePlayer::GetSiteLibrary(%s)", mScopePath.BeginReading() ));
 
   nsresult rv;
+  
+  // check if the site scope has beens set before; if not, set it implicitly
+  if ( mScopeDomain.IsVoid() || mScopePath.IsVoid() ) {
+    SetSiteScope( mScopeDomain, mScopePath );
+  }
 
   nsString siteLibraryFilename;
-  rv = sbRemoteSiteLibrary::GetFilenameForSiteLibrary( aDomain,
-                                                       aPath,
+  rv = sbRemoteSiteLibrary::GetFilenameForSiteLibrary( mScopeDomain,
+                                                       mScopePath,
                                                        siteLibraryFilename );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -505,7 +540,7 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
   rv = library->Init();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  rv = library->ConnectToSiteLibrary( aDomain, aPath );
+  rv = library->ConnectToSiteLibrary( mScopeDomain, mScopePath );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIRemoteLibrary> remoteLibrary(

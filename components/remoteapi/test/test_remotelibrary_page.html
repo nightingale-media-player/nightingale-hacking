@@ -31,7 +31,7 @@
 function runTest(tester) {
   try {
     // access to libraries
-    var siteLib = songbird.siteLibrary("127.0.0.1", "/");
+    var siteLib = songbird.siteLibrary;
     var mainLib = songbird.libraries("main");
     var webLib = songbird.libraries("web");
     mainLib = songbird.mainLibrary;
@@ -103,7 +103,7 @@ function runTest(tester) {
   tester.setNoAccess();
 
   try {
-    var siteLib = songbird.siteLibrary("127.0.0.1", "/");
+    var siteLib = songbird.siteLibrary;
 
     try {
       var mainLib = songbird.mainLibrary;

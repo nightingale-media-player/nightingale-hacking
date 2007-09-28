@@ -37,7 +37,7 @@
       // get a handle on the original medialist and set up the 'store'
       function load() {
 
-        siteLib = songbird.siteLibrary("", "/");
+        siteLib = songbird.siteLibrary;
         siteLib.name = "Site Lib";
         siteList = siteLib.createMediaList("simple");
         setPlaylist(siteList);

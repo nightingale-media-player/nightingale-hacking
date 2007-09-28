@@ -62,20 +62,9 @@ protected:
 
   // fetches the URI from the security mixin
   already_AddRefed<nsIURI> GetURI();
-  // validates aPath against aSiteURI, setting aPath if empty
-  nsresult CheckPath( nsACString &aPath, nsIURI *aSiteURI );
-  // validates aDomain against aSiteURI, setting aDomain if empty
-  nsresult CheckDomain( nsACString &aDomain, nsIURI *aSiteURI );
   // builds a path to the db file for the passed in domain and path
   already_AddRefed<nsIFile> GetSiteLibraryFile( const nsACString &aDomain,
                                                 const nsACString &aPath );
-  static nsresult FixupDomain( const nsACString& aDomain,
-                               nsACString& _retval );
-  static nsresult FixupPath( nsIURI* aURI,
-                             nsACString& _retval );
-  // calls the other version of FixupPath with a generated dummy URI
-  static nsresult FixupPath( const nsACString& aPath,
-                             nsACString& _retval );
   static nsresult GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
                                                      const nsACString& aPath,
                                                      PRBool aDoFixup,

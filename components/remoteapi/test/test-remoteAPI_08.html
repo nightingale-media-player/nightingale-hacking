@@ -30,7 +30,7 @@
   <head>
     <title>Remote API Test: 08</title>
     <script>
-      var domains = [ "",
+      var domains = [ null,
                       "file",
                       "file:",
                       "127.0.0.1",
@@ -38,22 +38,34 @@
                       "jgaunt.com",
                       "jgaunt.com.",
                       "gaunt.com",
-                      "svn.jgaunt.com" ];
+                      "svn.jgaunt.com",
+                      location.host,                                            // www.example.com
+                      location.host.replace(/^[^.]+\./, ''),                    // example.com
+                      location.host.replace(/^[^.]+\./, '') + ".",              // example.com.
+                      location.host.replace(/^[^.]+\../, ''),                   // xample.com
+                      "foo." + location.host.replace(/^[^.]+\./, '')];          // foo.example.com
 
-      var p = { one: [ "",
-                       "/",
-                       ".",
-                       "/staging/songbird_tests/",
-                       "/staging/songbird_tests/remote_api/",
-                       "/staging/songbird_tests/remote_api",
-                       "/staging/songbird_tests/foo/"],
-                two: [ "",
+      var p = { one: [ "",                                                    // /some/complicated/path/file.ext
                        "/",
                        ".",
                        "/builds/songbird/",
                        "/builds/songbird/trunk/components/remoteapi/test/",
                        "/builds/songbird/trunk/components/remoteapi/test",
-                       "/builds/mofo/"]
+                       "/builds/mofo/"],
+                two: [ null,
+                       "/",
+                       ".",
+                       location.pathname.replace(/(\/[^\/]+){2}$/, "/"),        // /some/complicated/
+                       location.pathname.replace(/\/[^\/]+$/, "/"),             // /some/complicated/path/
+                       location.pathname.replace(/\/[^\/]+$/, ""),              // /some/complicated/path
+                       location.pathname.replace(/(\/[^\/]+){2}$/, "/foo/")],   // /some/complicated/foo/
+                three: [ "",
+                         "/",
+                         ".",
+                         "/staging/songbird_tests/",
+                         "/staging/songbird_tests/remote_api/",
+                         "/staging/songbird_tests/remote_api",
+                         "/staging/songbird_tests/foo/"]
               };
 
       //
@@ -63,7 +75,17 @@
       // create a library and return the filename
       var getFilename = function ( domain, path ) {
         try {
-          var siteLib = songbird.siteLibrary( domain, path );
+          // backward compatibility hack
+          var siteLib = null;
+          if ("setSiteScope" in songbird ) {
+            songbird.setSiteScope( domain, path );
+            siteLib = songbird.siteLibrary;
+          } else {
+            // this is for builds without the changes from bug 4610
+            // this makes it easier to compare before/after behaviour, but
+            // should not be used in web pages in the wild.
+            siteLib = songbird.siteLibrary( domain, path );
+          }
         } catch (e) { }
         if (siteLib) {
           return siteLib.filename;
@@ -124,9 +146,14 @@
         <script> document.writeln(getTableContent(domains, p.one));</script>
     </table>
 
-    <p> This table should be more successful when the page is loaded from file:</p>
+    <p> This table should be more successful when the page is loaded from any http host</p>
     <table border="1">
         <script> document.writeln(getTableContent(domains, p.two));</script>
+    </table>
+
+    <p> This table should be more successful when the page is loaded from file:</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.three));</script>
     </table>
 
   </body>

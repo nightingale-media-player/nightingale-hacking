@@ -132,6 +132,11 @@ protected:
 
   // the remote impl for the playlist binding
   nsRefPtr<sbIPlaylistWidget> mWebPlaylistWidget;
+  
+  // the domain and path to use for scope
+  // @see setSiteScope()
+  nsCString mScopeDomain;
+  nsCString mScopePath;
 
   // Like the site libraries, this may want to be a collection
   // The commands registered by the page.

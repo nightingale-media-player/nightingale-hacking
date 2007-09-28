@@ -321,7 +321,7 @@ interface sbIRemotePlayer : nsISupports
   See Also:
     <webLibrary>
     <libraries()>
-    <siteLibrary()>
+    <siteLibrary>
   */
   readonly attribute sbIRemoteLibrary mainLibrary;
 
@@ -342,9 +342,31 @@ interface sbIRemotePlayer : nsISupports
   See Also:
     <mainLibrary>
     <libraries()>
-    <siteLibrary()>
+    <siteLibrary>
   */
   readonly attribute sbIRemoteLibrary webLibrary;
+
+  /*
+  Prop: siteLibrary
+
+  Access to a sitelibrary for the current scope (domain and path).  If you wish to
+  change the scope, use <setSiteScope()>.
+
+  If a library was already created for the scope, the existing library will be returned.
+  
+  Type:
+    <Library>
+
+  Example:
+    (start code)
+    //Access your site library
+    var library = songbird.siteLibrary;
+    (end)
+  
+  See Also:
+    <setSiteScope()>
+  */
+  readonly attribute sbIRemoteLibrary siteLibrary;
 
   /**
    * \brief Bind an observer to get called on changes to Songbird metadata/state
@@ -730,31 +752,37 @@ interface sbIRemotePlayer : nsISupports
   void previous();
 
   /*
-  Func: siteLibrary()
-
-  Access to a sitelibrary for the given domain and path. If you wish to create
-  your library with the default domain and path (which reflect your page's current domain and path)
-  use an empty string for the domain and the path.
-
-  If a library was already created for the domain and path, the existing library will be returned.
-
+  Func: setSiteScope()
+  
+  Set the scope for which to access site-specific privilegs such as the <siteLibrary>.
+  By default, the page's current domain and path is used.
+  Use an empty string for the domain and the path to use the default values.
+  
+  Note:
+    This may not be called more than once, and not after accessing the <siteLibrary>.
+    Accessing <siteLibrary> without calling <setSiteScope()> defaults to the most
+    restrictive scope possible (i.e. full host name, deepest path).
+  
   Prototype:
-    siteLibrary(String domain, String path)
-
+    setSiteScope(String domain, String path)
+  
   Parameters:
     domain - The domain name of the library. This may be an empty string.
     path - The path within the domain for the library. This may be an empty string.
 
-  Returns:
-    The requested <Library> object or null.
-
   Example:
     (start code)
-    //Create a library. This is the preferred way to create your site library.
-     var library = songbird.siteLibrary("", "");
+    // sets the site scope to TLD+1 (will throw unless the page was on *.example.com)
+    songbird.setSiteScope("example.com", "");
+    // sets the site scope to default values
+    // (will throw because it has already been set once)
+    songbird.setSiteScope("", "");
     (end)
+  
+  See Also:
+    <siteLibrary>
   */
-  sbIRemoteLibrary siteLibrary(in AUTF8String aDomain, in AUTF8String aPath);
+  void setSiteScope(in AUTF8String aDomain, in AUTF8String aPath);
 
   /*
   Func: libraries ()
@@ -775,7 +803,7 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <siteLibrary()>
+    <siteLibrary>
   */
   sbIRemoteLibrary libraries(in AString aLibraryID);
 

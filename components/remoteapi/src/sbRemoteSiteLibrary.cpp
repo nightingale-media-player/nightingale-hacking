@@ -49,6 +49,7 @@
 #include <prnetdb.h>
 #include <sbClassInfoUtils.h>
 #include <sbLocalDatabaseCID.h>
+#include "sbURIChecker.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -266,16 +267,12 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
   }
 
   nsCString domain(aDomain);
-  nsresult rv = CheckDomain( domain, siteURI );
-  if ( NS_FAILED(rv) ) {
-    LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED domain Check"));
-    return nsnull;
-  }
-
   nsCString path(aPath);
-  rv = CheckPath( path, siteURI );
+  nsresult rv = sbURIChecker::CheckURI(domain, path, siteURI);
   if ( NS_FAILED(rv) ) {
-    LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED path Check"));
+    // this should not be possible, sbRemotePlayer::SetSiteScope() should
+    // have done the exact same check already
+    LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED URI Check"));
     return nsnull;
   }
 
@@ -321,258 +318,6 @@ sbRemoteSiteLibrary::GetURI()
   return siteURI;
 }
 
-nsresult
-sbRemoteSiteLibrary::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
-{
-  // aDomain may be empty
-  NS_ENSURE_ARG_POINTER(aSiteURI);
-  LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)", aDomain.BeginReading() ));
-
-  // get host from URI
-  nsCString host;
-  nsresult rv = aSiteURI->GetHost(host);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCString fixedHost;
-  rv = sbRemoteSiteLibrary::FixupDomain( host, fixedHost );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  host.Assign(fixedHost);
-
-  if ( !aDomain.IsEmpty() ) {
-    LOG(("sbRemoteSiteLibrary::CheckDomain() -- Have a domain from the user"));
-    // remove trailing dots, lowercase it
-    nsCString fixedDomain;
-    rv = sbRemoteSiteLibrary::FixupDomain( aDomain, fixedDomain );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    aDomain.Assign(fixedDomain);
-
-    // Deal first with numerical ip addresses
-    PRNetAddr addr;
-    if ( PR_StringToNetAddr( host.get(), &addr ) == PR_SUCCESS ) {
-      // numerical ip address
-      LOG(("sbRemoteSiteLibrary::CheckDomain() -- Numerical Address "));
-      if ( !aDomain.Equals(host) ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED ip address check"));
-        return NS_ERROR_FAILURE;
-      }
-    } else {
-      // domain based host, check it against host from URI
-      LOG(("sbRemoteSiteLibrary::CheckDomain() -- Domain based host "));
-
-      // make sure the domain wasn't '.com' - it should have a dot in it
-      PRInt32 dot = aDomain.FindChar('.');
-      if ( dot == kNotFound ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED dot test "));
-        return NS_ERROR_FAILURE;
-      }
-
-      // prepend a dot so bar.com doesn't match foobar.com but does foo.bar.com
-      aDomain.Insert( NS_LITERAL_CSTRING("."), 0 );
-
-      PRInt32 domainLength = aDomain.Length();
-      PRInt32 lengthDiff = host.Length() - domainLength;
-      if ( lengthDiff == -1 ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- long domain check"));
-        // special case:  from user: .bar.com   vs. from URI:  bar.com
-        // XXXredfive - I actually think we'll see this most often because
-        //             of the prepending of the dot to the user supplied domain
-        if ( !Substring( aDomain, 1, domainLength - 1 ).Equals( host ) ) {
-          LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED long domain check"));
-          return NS_ERROR_FAILURE;
-        }
-      } else if ( lengthDiff == 0 ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- same length check"));
-        // same length better be the same strings
-        if ( !aDomain.Equals(host) ) {
-          LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED same length check"));
-          return NS_ERROR_FAILURE;
-        }
-      } else if ( lengthDiff > 0 ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- parent domain check"));
-        // normal case URI host is longer that host from user
-        //   from user: .bar.com   from URI:  foo.bar.com
-        if ( !aDomain.Equals( Substring( host, lengthDiff, domainLength ) ) ) {
-          LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED parent domain check"));
-          return NS_ERROR_FAILURE;
-        }
-      } else {
-        // domains are WAY off, the user domain is more than 1 char longer than
-        // the URI domain. ie: user: jgaunt.com URI: ""
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED, user domain is superset"));
-        return NS_ERROR_FAILURE;
-      }
-
-      // remove the leading dot we added
-      aDomain.Cut( 0, 1 );
-    }
-  } else {
-    LOG(( "sbRemoteSiteLibrary::CheckDomain() -- NO domain from the user"));
-    // If the user didn't specify a host
-    // if the URI host is empty, make sure we're file://
-    if ( host.IsEmpty() ) {
-      PRBool isFileURI;
-      rv = aSiteURI->SchemeIs( "file", &isFileURI );
-      NS_ENSURE_SUCCESS( rv, rv );
-
-      if (!isFileURI) {
-        // non-file URI without a host!!!
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED file scheme check"));
-        return NS_ERROR_FAILURE;
-      }
-    } else {
-      // no domain from the user but there is a domain from the URI
-      aDomain.Assign(host);
-    }
-  }
-
-  LOG(("sbRemoteSiteLibrary::CheckDomain() -- PASSED match test"));
-  return NS_OK;
-}
-
-nsresult
-sbRemoteSiteLibrary::CheckPath( nsACString &aPath, nsIURI *aSiteURI )
-{
-  // aPath may be empty
-  NS_ENSURE_ARG_POINTER(aSiteURI);
-  LOG(( "sbRemoteSiteLibrary::CheckPath(%s)", aPath.BeginReading() ));
-
-  nsresult rv;
-
-  nsCString fixedSitePath;
-  rv = sbRemoteSiteLibrary::FixupPath( aSiteURI, fixedSitePath );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  if ( aPath.IsEmpty() ) {
-    // If the path was empty we use aSiteURI that was retrieved from the system.
-    aPath.Assign(fixedSitePath);
-
-    // The rest of this function will ensure that the path is actually a subpath
-    // of aURI. If nothing was passed in aPath then we already know that this
-    // is true because we constructed aPath from aURI. Therefore we're done and
-    // can go ahead and return.
-    return NS_OK;
-  }
-
-  // Compare fixedPath to fixedSitePath to make sure that fixedPath is within
-  // fixedSitePath.
-  nsCString fixedPath;
-  rv = sbRemoteSiteLibrary::FixupPath( aPath, fixedPath );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Verify that this path is indeed part of the site URI.
-  if ( !StringBeginsWith( fixedSitePath, fixedPath ) ) {
-    LOG(("sbRemoteSiteLibrary::CheckPath() -- FAILED Path Prefix Check"));
-    return NS_ERROR_FAILURE;
-  }
-
-  LOG(("sbRemoteSiteLibrary::CheckPath() -- PASSED Path Prefix Check"));
-
-  aPath.Assign(fixedPath);
-  return NS_OK;
-}
-
-/* static */
-nsresult
-sbRemoteSiteLibrary::FixupDomain( const nsACString& aDomain,
-                                  nsACString& _retval )
-{
-  // aDomain may be empty
-  if ( aDomain.IsEmpty() ) {
-    _retval.Truncate();
-    return NS_OK;
-  }
-
-  nsCString domain(aDomain);
-
-  domain.Trim("./");
-  ToLowerCase(domain);
-
-  _retval.Assign(domain);
-  return NS_OK;
-}
-
-/* static */
-nsresult
-sbRemoteSiteLibrary::FixupPath( nsIURI* aURI,
-                                nsACString& _retval )
-{
-  NS_ASSERTION( aURI, "Don't you dare pass me a null pointer!" );
-
-  nsresult rv;
-  nsCOMPtr<nsIURL> url( do_QueryInterface( aURI, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // According to nsIURL the directory will always have a trailing slash (???).
-  // However, if the spec from aURI did *not* have a trailing slash then the
-  // fileName attribute of url may be set. If it is then we assume it is
-  // actually a directory as long as the fileExtension is empty. Thus the
-  // following transformations will result:
-  //
-  //    Original spec from aURI ---------> path
-  //
-  //    http://www.foo.com/bar/baz/ -----> /bar/baz/
-  //    http://www.foo.com/bar/baz ------> /bar/baz
-  //    http://www.foo.com/bar/baz.ext --> /bar/
-
-  nsCString path;
-  rv = url->GetDirectory(path);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCString fileName;
-  rv = url->GetFileName(fileName);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  if ( !fileName.IsEmpty() ) {
-    nsCString fileExt;
-    rv = url->GetFileExtension(fileExt);
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    if ( fileExt.IsEmpty() ) {
-      // If there is no file extension then assume it is actually a directory
-      // and append a trailing slash.
-      path.Append(fileName);
-      path.AppendLiteral("/");
-    }
-  }
-
-  _retval.Assign(path);
-  return NS_OK;
-}
-
-/* static */
-nsresult
-sbRemoteSiteLibrary::FixupPath( const nsACString& aPath,
-                                nsACString& _retval )
-{
-  // aPath may be empty
-  if ( aPath.IsEmpty() ) {
-    _retval.Truncate();
-    return NS_OK;
-  }
-
-  NS_NAMED_LITERAL_CSTRING( slashString, "/" );
-
-  // Construct a dummy URL that incorporates the path that the user passed in.
-  nsCString dummyURL("http://dummy.com");
-
-  // Make sure that aPath begins with a slash. Otherwise we could end up with
-  // something like "foo.combar" rather than "foo.com/bar".
-  if ( !StringBeginsWith( aPath, slashString ) ) {
-    dummyURL.Append(slashString);
-  }
-
-  dummyURL.Append(aPath);
-
-  nsCOMPtr<nsIURI> uri;
-  nsresult rv = NS_NewURI( getter_AddRefs(uri), dummyURL );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Hand off.
-  return sbRemoteSiteLibrary::FixupPath( uri, _retval );
-}
-
 /* static */
 nsresult
 sbRemoteSiteLibrary::GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
@@ -587,10 +332,10 @@ sbRemoteSiteLibrary::GetFilenameForSiteLibraryInternal( const nsACString& aDomai
   nsCString domain, path;
   if (aDoFixup) {
     // External callers will need to have these arguments validated.
-    rv = sbRemoteSiteLibrary::FixupDomain( aDomain, domain );
+    rv = sbURIChecker::FixupDomain( aDomain, domain );
     NS_ENSURE_SUCCESS( rv, rv );
 
-    rv = sbRemoteSiteLibrary::FixupPath( aPath, path );
+    rv = sbURIChecker::FixupPath( aPath, path );
     NS_ENSURE_SUCCESS( rv, rv );
   }
   else {
