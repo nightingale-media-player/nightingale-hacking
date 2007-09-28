@@ -29,12 +29,20 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+
+# Only install the unit test when in debug mode.
+# This is to keep the build farm happy, as the add-on
+# is only installed in debug builds.
+ifdef DEBUG
+
 # you can run this test with Songbird -test xpcom_helloworld
 SONGBIRD_TEST_COMPONENT = xpcom_helloworld
 
 # the tests are in test_helloworld.js
 SONGBIRD_TESTS = $(srcdir)/test_helloworld.js \
                  $(NULL)
+
+endif
 
 include $(topsrcdir)/build/rules.mk
 
