@@ -557,13 +557,16 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
                                       getter_AddRefs(info));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString sortableValue;
-        rv = info->MakeSortable(filter.values[0], sortableValue);
-        NS_ENSURE_SUCCESS(rv, rv);
+        PRUint32 valuesLength = filter.values.Length();
+        sbStringArray valueArray(valuesLength);
 
-        sbStringArray valueArray(1);
-        nsString* successString = valueArray.AppendElement(sortableValue);
-        NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
+        for(PRUint32 k = 0; k < valuesLength; k++) {
+          nsString sortableValue;
+          rv = info->MakeSortable(filter.values[k], sortableValue);
+          NS_ENSURE_SUCCESS(rv, rv);
+          nsString* successString = valueArray.AppendElement(sortableValue);
+          NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
+        }
 
         nsCOMPtr<nsIStringEnumerator> valueEnum =
           new sbTArrayStringEnumerator(&valueArray);

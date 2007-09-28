@@ -534,23 +534,24 @@ sbLocalDatabaseQuery::AddFilters()
         return NS_ERROR_INVALID_ARG;
       }
 
-      sbUint32Array* uint32Array;
-      PRBool arrayExists = searchTermToPropertyArray.Get(fs.values[0],
-                                                         &uint32Array);
-      if (!arrayExists) {
-        nsAutoPtr<sbUint32Array> newArray(new sbUint32Array());
-        NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
+      for (PRUint32 j = 0; j < fs.values.Length(); j++) {
+        sbUint32Array* uint32Array;
+        PRBool arrayExists = searchTermToPropertyArray.Get(fs.values[j],
+                                                           &uint32Array);
+        if (!arrayExists) {
+          nsAutoPtr<sbUint32Array> newArray(new sbUint32Array());
+          NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
+          success = searchTermToPropertyArray.Put(fs.values[j], newArray);  // we now use an array of terms
+                                                                            // instead of just one
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+          uint32Array = newArray.forget();
+        }
 
-        success = searchTermToPropertyArray.Put(fs.values[0], newArray);
-        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-        uint32Array = newArray.forget();
-      }
-
-      if (!fs.property.EqualsLiteral("*")) {
-        PRUint32* appended =
-          uint32Array->AppendElement(GetPropertyId(fs.property));
-        NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+        if (!fs.property.EqualsLiteral("*")) {
+          PRUint32* appended =
+            uint32Array->AppendElement(GetPropertyId(fs.property));
+          NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+        }
       }
 
       hasSearch = PR_TRUE;
@@ -558,23 +559,9 @@ sbLocalDatabaseQuery::AddFilters()
   }
 
   if (hasSearch) {
-
-    rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                           PROPERTIES_TABLE,
-                           NS_LITERAL_STRING("_s"),
-                           GUID_COLUMN,
-                           MEDIAITEMS_ALIAS,
-                           GUID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     sbAddJoinInfo info(mBuilder);
     searchTermToPropertyArray.EnumerateRead(AddJoinSubqueryForSearchCallback,
                                             &info);
-
-    NS_ASSERTION(info.criterion, "Have search but didn't get any criteria!");
-
-    rv = mBuilder->AddCriterion(info.criterion);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Add the filters as joins
@@ -705,6 +692,28 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
 
   nsCOMPtr<sbISQLSelectBuilder> builder(addJoinInfo->builder);
 
+  // Create the table name for this join
+  nsString tmpTableName;
+  tmpTableName.AssignLiteral("_s");
+  tmpTableName.AppendInt(addJoinInfo->joinCounter);
+  
+  // We are going to add a join with the following constraints:
+  // 1. _mi.guid = _s#.guid
+  // 2. _s#.property_id in (3, 2, 1)
+  // 3. _s#.obj_sortable like '%term%'
+  // Where # is index of join (joinCounter) and term is search term we are matching.
+  
+  // first add the guid match
+  nsCOMPtr<sbISQLBuilderCriterion> searchCriterion;
+  rv = builder->CreateMatchCriterionTable(tmpTableName,
+                                          GUID_COLUMN,
+                                          sbISQLSelectBuilder::MATCH_EQUALS,
+                                          NS_LITERAL_STRING("_mi"),
+                                          GUID_COLUMN,
+                                          getter_AddRefs(searchCriterion));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  // Fix up the searchTerm so we escape any % characters
   nsAutoString searchTerm;
   searchTerm.AppendLiteral("%");
   searchTerm.Append(aKey);
@@ -716,21 +725,14 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
   }
   searchTerm.AppendLiteral("%");
 
-  nsCOMPtr<sbISQLBuilderCriterion> searchCriterion;
-  rv = builder->CreateMatchCriterionString(NS_LITERAL_STRING("_s"),
-                                           OBJSORTABLE_COLUMN,
-                                           sbISQLSelectBuilder::MATCH_LIKE,
-                                           searchTerm,
-                                           getter_AddRefs(searchCriterion));
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
+  // Now add the property_id match (if we need to)
   // If any search properties were found, add the constraint here.  If there
   // are no search properties, we will do a full search by not adding any
   // constraint
   if (searchPropertyIds->Length() > 0) {
 
     nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-    rv = builder->CreateMatchCriterionIn(NS_LITERAL_STRING("_s"),
+    rv = builder->CreateMatchCriterionIn(tmpTableName,
                                          PROPERTYID_COLUMN,
                                          getter_AddRefs(inCriterion));
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
@@ -753,19 +755,33 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
     searchCriterion = propertyIdAndSearchCriteria;
   }
 
-  if (addJoinInfo->criterion) {
-    nsCOMPtr<sbISQLBuilderCriterion> previousOrNewCriteria;
-    rv = builder->CreateOrCriterion(addJoinInfo->criterion,
-                                    searchCriterion,
-                                    getter_AddRefs(previousOrNewCriteria));
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  // Now append the search term
+  nsCOMPtr<sbISQLBuilderCriterion> likeCriterion;
+  rv = builder->CreateMatchCriterionString(tmpTableName,
+                                           OBJSORTABLE_COLUMN,
+                                           sbISQLSelectBuilder::MATCH_LIKE,
+                                           searchTerm,
+                                           getter_AddRefs(likeCriterion));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-    addJoinInfo->criterion = previousOrNewCriteria;
-  }
-  else {
-    addJoinInfo->criterion = searchCriterion;
-  }
+  nsCOMPtr<sbISQLBuilderCriterion> guidAndLikeCriteria;
+  rv = builder->CreateAndCriterion(searchCriterion,
+                                   likeCriterion,
+                                   getter_AddRefs(guidAndLikeCriteria));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  searchCriterion = guidAndLikeCriteria;
 
+  NS_ASSERTION(searchCriterion, "Have search but didn't get any criteria!");
+
+  // Finally add the join that will search the media_items
+  rv = builder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
+                         PROPERTIES_TABLE,
+                         tmpTableName,
+                         searchCriterion);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  // Increment the join counter so the next join will not have the same table names.
+  addJoinInfo->joinCounter++;
   return PL_DHASH_NEXT;
 }
 

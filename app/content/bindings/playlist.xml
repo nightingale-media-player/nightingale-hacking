@@ -477,7 +477,8 @@
     filters.set(0, [], 0);
   }
   else {
-    filters.set(0, [val], 1);
+    var valArray = val.split(" ");
+    filters.set(0, valArray, valArray.length);
   }
   return val;  
 ]]>

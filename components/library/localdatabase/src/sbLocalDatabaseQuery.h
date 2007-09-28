@@ -61,11 +61,13 @@ public:
 private:
   struct sbAddJoinInfo {
     sbAddJoinInfo(sbISQLSelectBuilder* aBuilder) :
-      builder(aBuilder)
+      builder(aBuilder),
+      joinCounter(0)
     {
       NS_ASSERTION(aBuilder, "aBuilder is null");
     };
 
+    PRUint32 joinCounter;
     nsCOMPtr<sbISQLSelectBuilder> builder;
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
   };

@@ -51,6 +51,24 @@ function runTest () {
 
   view.clearSearch();
   assertEqual(view.length, 20);
+  
+  
+  // Test the search box
+  searchBoxTest("ac dc", 10);
+  searchBoxTest("you ace", 4);
+  searchBoxTest("of to the", 2);
+  
+}
+
+function searchBoxTest(searchTerm, resultViewLength) {
+  var library = createLibrary("test_searchBoxset");
+  var view = library.createView();
+  var cfs = view.cascadeFilterSet;
+
+  cfs.appendSearch(["*"], 1);
+  var searchArray = searchTerm.split(" ");  
+  cfs.set(0, searchArray, searchArray.length);
+  assertEqual(view.length, resultViewLength);
 }
 
 function createPropertyArray() {

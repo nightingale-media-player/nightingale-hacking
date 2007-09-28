@@ -231,7 +231,8 @@ try
             filter.set(0, [], 0);
           }
           else {
-            filter.set(0, [searchTerm], 1);
+            var valArray = searchTerm.split(" ");
+            filters.set(0, valArray, valArray.length);
           }
           
           var playlist = document.getElementById("sb-library-page-playlist");
