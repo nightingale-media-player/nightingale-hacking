@@ -359,7 +359,7 @@ Organize your collection with genre/artist/album filterlists.
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell
 {
-  border: 1px solid transparent !important; /** */
+  border: 1px solid transparent !important;
 }
 
 .sb-filterlist-tree > treechildren::-moz-tree-row
@@ -564,7 +564,6 @@ toolbarbutton:active
   border-right-color: #202220; /** Button Shadow */  
 }
 
-
 button
 {
   border: 1px solid;
@@ -574,7 +573,9 @@ button
   border-right-color: #202220; /** Button Shadow */ 
   -moz-border-radius: 5px;
   color: #B3BAAC; /* Light Color 1 */
+  background-color: #313131; /** color of the Main Window */
 }
+
 button:active
 {
   border-bottom-color: #797f76; /** Button Highlight */
@@ -603,9 +604,8 @@ button[disabled="true"]:active,
 button[disabled="true"]:hover
 {
   background-color: transparent;
-  border: 1px solid #8A8F84; /** Light Color 2 */
+  border: 1px dotted #474948; /** Rubber Highlight */
 }
-
 
 toolbarbutton[disabled="true"] > .toolbarbutton-text,
 toolbarbutton[disabled="true"]:active > .toolbarbutton-text,
@@ -614,7 +614,7 @@ button[disabled="true"] > hbox > label.button-text,
 button[disabled="true"]:active > hbox > label.button-text,
 button[disabled="true"]:hover > hbox > label.button-text
 {
-  color: #8A8F84 !important;
+  color: #474948 !important; /** Rubber Highlight */
 }
 
 /** 
@@ -733,6 +733,11 @@ PREFERENCES
   color: #B3BAAC !important; 
 }
 
+#viewGroup radio[selected="true"] > label /** In Preferences this inverts the selected label color under Add-ons */
+{
+  color: #0f100f !important; /** Groove */
+}
+
 /* Extensions */
 
 #extensionsBox > richlistbox
@@ -742,19 +747,32 @@ PREFERENCES
 
 #extensionsBox > richlistbox > richlistitem[selected="true"]
 {
-  background-color: #8A8F84 !important; /** Light Color 2 */
+  background-color: #202220 !important; /** Button Shadow */
+  border-right: 1px solid #0f100f !important; /** Groove */
+  border-top: 1px solid #0f100f !important; /** Groove */
+  border-bottom: 1px solid #0f100f !important; /** Groove */
+  border-left: 1px solid #0f100f !important; /** Groove */
 }
-
+#extensionsView:focus > richlistitem[selected="true"]
+{
+  background-image: none !important;
+}
 
 label.addonName,
 label.addonVersion,
 label.descriptionWrap,
 #error_noupdate_header
 {
-  color: #feffff !important; 
+  color: #B3BAAC !important; 
 }
 
-
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonVersion,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
+#extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
+{
+  color: #feffff !important; 
+}
 
 /** 
 ***************************************************************************************************
@@ -1139,7 +1157,6 @@ label
   border: 1px solid #202220; /** Button Shadow 3*/
   -moz-border-radius: 5px;
 }
-
 
 /* class for text with a 'link' appearance */
 .text-link
