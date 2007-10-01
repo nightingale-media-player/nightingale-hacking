@@ -36,10 +36,12 @@ var gLocalFiles = [
 ];
 var gLocalMediaItems = [];
 
+var PORT_NUMBER = getTestServerPortNumber();
+
 var gRemoteUrls = [
-  "http://download.songbirdnest.com/extensions/test/test1.mp3", // Temporary till publicsvn is back.
-  "http://download.songbirdnest.com/extensions/test/test2.mp3",
-  "http://download.songbirdnest.com/extensions/test/test3.mp3"
+  <>http://localhost:{PORT_NUMBER}/test1.mp3</>,
+  <>http://localhost:{PORT_NUMBER}/test2.mp3</>,
+  <>http://localhost:{PORT_NUMBER}/test3.mp3</>
 ];
 var gRemoteMediaItems = [];
 
@@ -56,11 +58,20 @@ var gTestInterval = null;
 
 var gNumTestItems = gLocalFiles.length;
 
+var gServer;
+
 
 function runTest () {
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
   var gTestMediaItems = Components.classes["@mozilla.org/array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
+
+  gServer = Cc["@mozilla.org/server/jshttp;1"]
+              .createInstance(Ci.nsIHttpServer);
+
+  gServer.start(PORT_NUMBER);
+  var file = newAppRelativeFile(gLocalFiles[0]).parent;
+  gServer.registerDirectory("/", file);
 
   // Make sure you didn't screw up your data entry.
   assertEqual( gNumTestItems, gRemoteUrls.length );
@@ -152,6 +163,8 @@ function onComplete(aSubject, aTopic, aData) {
   // So testing is complete
   gTestMetadataJobManager = null;
   gTestMetadataJob = null;
-
+  
+  gServer.stop();
+  
   testFinished(); // Complete the testing
 }

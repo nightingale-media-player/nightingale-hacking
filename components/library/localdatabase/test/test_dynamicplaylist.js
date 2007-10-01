@@ -40,7 +40,7 @@ function runTest () {
   testUpdate();
 }
 
-const PORT_NUMBER = getTestServerPortNumber()
+var PORT_NUMBER = getTestServerPortNumber()
 
 var playlist1 = <>
 #EXTM3U
