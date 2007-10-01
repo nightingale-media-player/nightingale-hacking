@@ -1,0 +1,52 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbIDOMEventWrapper.idl
+ * \brief An interface for wrapping a DOM event to attach extra payload
+ * \sa sbDOMEventWrapper.js
+ */
+
+#include "nsISupports.idl"
+#include "nsIDOMEvent.idl"
+
+[scriptable, uuid(5d2580ee-a154-4276-a070-640456d8f789)]
+interface sbIDOMEventWrapper: nsIDOMEvent {
+  
+  /**
+   * Initialize the event wrapper by giving it a base event to wrap
+   *
+   * \@param aBaseEvent the event to be wrapped
+   * \@param aData the payload to be passed as part of the event
+   */
+  void init(in nsIDOMEvent aBaseEvent, in nsISupports aData);
+  
+  /**
+   * The data passed in the second parameter of init()
+   */
+  readonly attribute nsISupports data;
+};
+
