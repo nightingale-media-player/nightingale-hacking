@@ -1,9 +1,0 @@
-This is a sample music store implemented using the Songbird web page api.
-
-Simply place the files on a web server and browse to the directory with Songbird.
-
-musicstore.js contains some convenience methods to facilitate access to the web page api. 
-albums.js represents track meta data that would be normally coming from a database backend.
-
-It also demonstrates integration with OpenSearch to add a custom search box in Songbird. 
-Edit the search.xml file to provide full url for your search location.
