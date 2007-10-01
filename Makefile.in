@@ -85,7 +85,7 @@ BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
 
 ifeq ($(SB_PLATFORM),windows)
 # we want to copy PDB files on Windows
-MAKE_SYM_STORE_ARGS := -c
+MAKE_SYM_STORE_ARGS := -c --vcs-info
 ifeq ($(_MSC_VER),1400)
 DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms.exe
 else
