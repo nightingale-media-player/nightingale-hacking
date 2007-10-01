@@ -35,7 +35,6 @@
  *  - handle errors more elegantly in bookmarks downloading
  *  - handle the adding of bookmarks before the defaults are downloaded
  *  - allow the server bookmarks list to remove stale entries [bug 2352]
- *  - move the bookmarks.xml from ian.mckellar.org to songbirdnest.com
  * PERHAPS:
  *  - move default bookmarks downloading to after first-run so we can have
  *  per-locale bookmarks?
