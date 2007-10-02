@@ -86,13 +86,18 @@ interface sbIPlaylistWidget : nsISupports
    * \param aColumnName - the name of the column to display
    */
   /*
-   Function: showColumn
+   Method: showColumn()
 
    Makes a column appear in the <WebPlaylist> UI. The column must
    already exist in the system.
 
    Arguments:
      aColumnName - The name of the column to display
+
+   See Also:
+    <addColumn()>
+    <showColumnBefore()>
+    <hideColumn()>
   */
   void showColumn( in AString aColumnName );
 
@@ -102,12 +107,17 @@ interface sbIPlaylistWidget : nsISupports
    * \param aColumnName - the name of the column to hide
    */
   /*
-   Function: hideColumn
+   Method: hideColumn()
 
    Makes a column disappear from view.
 
    Arguments:
      aColumnName - The name of the column to hide
+
+   See Also:
+    <addColumn()>
+    <showColumnBefore()>
+    <showColumn()>
   */
   void hideColumn( in AString aColumnName );
 
