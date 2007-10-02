@@ -915,7 +915,10 @@ PlaylistPlayback.prototype = {
         if (file.fileSize < MINIMUM_FILE_SIZE)
           throw Components.results.NS_ERROR_FILE_CORRUPTED;
       }
-            
+
+      var coreCanPlayURI;
+      core = this._selectCoreForURI(uri, coreCanPlayURI);
+
       var spec = uri.spec;
       
       this._metadataURL.stringValue = spec;
