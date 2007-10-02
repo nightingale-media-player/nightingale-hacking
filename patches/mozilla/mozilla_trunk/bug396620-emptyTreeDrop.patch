@@ -1,0 +1,105 @@
+Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
+retrieving revision 1.330
+diff -u -8 -p -r1.330 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	4 Sep 2007 09:08:15 -0000	1.330
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	19 Sep 2007 15:35:17 -0000
+@@ -1259,16 +1259,22 @@ nsTreeBodyFrame::GetRowAt(PRInt32 aX, PR
+   // Check if the coordinates are below our visible space (or within our visible
+   // space but below any row).
+   if (row > mTopRowIndex + mPageLength || row >= mRowCount)
+     return -1;
+ 
+   return row;
+ }
+ 
++PRBool
++nsTreeBodyFrame::IsInVisibleSpace(PRInt32 aX, PRInt32 aY)
++{
++  return (aY <= (mRowHeight * mPageLength));
++}
++
+ void
+ nsTreeBodyFrame::CheckTextForBidi(nsAutoString& aText)
+ {
+   // We could check to see whether the prescontext already has bidi enabled,
+   // but usually it won't, so it's probably faster to avoid the call to
+   // GetPresContext() when it's not needed.
+   const PRUnichar* text = aText.get();
+   PRUint32 length = aText.Length();
+@@ -2598,17 +2604,19 @@ nsTreeBodyFrame::HandleEvent(nsPresConte
+       }
+ 
+       if (mSlots->mTimer) {
+         // Timer is active but for a different row than the current one, kill it.
+         mSlots->mTimer->Cancel();
+         mSlots->mTimer = nsnull;
+       }
+ 
+-      if (mSlots->mDropRow >= 0) {
++      if ((mSlots->mDropRow >= 0) ||
++          ((mSlots->mDropRow == -1) &&
++           (mSlots->mDropOrient == nsITreeView::DROP_AFTER))) {
+         if (!mSlots->mTimer && mSlots->mDropOrient == nsITreeView::DROP_ON) {
+           // Either there wasn't a timer running or it was just killed above.
+           // If over a folder, start up a timer to open the folder.
+           PRBool isContainer = PR_FALSE;
+           mView->IsContainer(mSlots->mDropRow, &isContainer);
+           if (isContainer) {
+             PRBool isOpen = PR_FALSE;
+             mView->IsContainerOpen(mSlots->mDropRow, &isOpen);
+@@ -4225,16 +4233,24 @@ nsTreeBodyFrame::ComputeDropPosition(nsG
+     else {
+       // for a non-container use a 50%/50% breakdown
+       if (yOffset < mRowHeight / 2)
+         *aOrient = nsITreeView::DROP_BEFORE;
+       else
+         *aOrient = nsITreeView::DROP_AFTER;
+     }
+   }
++  else if (IsInVisibleSpace(xTwips, yTwips)) {
++    // Drop after last row.  Return with drop after even if there are no rows.
++    if (mRowCount > 0)
++      *aRow = mRowCount - 1;
++    else
++      *aRow = -1;
++    *aOrient = nsITreeView::DROP_AFTER;
++  }
+ 
+   if (CanAutoScroll(*aRow)) {
+     // Get the max value from the look and feel service.
+     PRInt32 scrollLinesMax = 0;
+     PresContext()->LookAndFeel()->
+       GetMetric(nsILookAndFeel::eMetric_TreeScrollLinesMax, scrollLinesMax);
+     scrollLinesMax--;
+     if (scrollLinesMax < 0)
+Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.h
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.h,v
+retrieving revision 1.121
+diff -u -8 -p -r1.121 nsTreeBodyFrame.h
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.h	23 Aug 2007 15:57:55 -0000	1.121
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	19 Sep 2007 15:35:18 -0000
+@@ -236,16 +236,21 @@ protected:
+   PRInt32 GetLastVisibleRow() {
+     return mTopRowIndex + mPageLength;
+   }
+ 
+   // An internal hit test.  aX and aY are expected to be in twips in the
+   // coordinate system of this frame.
+   PRInt32 GetRowAt(nscoord aX, nscoord aY);
+ 
++  // An internal visible hit test.  Returns true if coordinates are in visible
++  // space of frame, even if they're not in a tree row.  aX and aY are expected
++  // to be in app units in the coordinate system of this frame.
++  PRBool IsInVisibleSpace(nscoord aX, nscoord aY);
++
+   // Check for bidi characters in the text, and if there are any, ensure
+   // that the prescontext is in bidi mode.
+   void CheckTextForBidi(nsAutoString& aText);
+ 
+   void AdjustForCellText(nsAutoString& aText,
+                          PRInt32 aRowIndex,  nsTreeColumn* aColumn,
+                          nsIRenderingContext& aRenderingContext,
+                          nsRect& aTextRect);
