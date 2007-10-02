@@ -552,8 +552,10 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
       rv = mPropertyBag->GetProperty(name, value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = properties->AppendProperty(name, value);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (!value.IsVoid()) {
+        rv = properties->AppendProperty(name, value);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 

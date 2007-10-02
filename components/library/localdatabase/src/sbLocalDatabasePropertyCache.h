@@ -105,11 +105,11 @@ private:
   // the property ID for the property in the current library.
   nsCOMPtr<sbISQLInsertBuilder> mPropertiesTableInsert;
 
-  // Used to template the properties insert statement
+  // Property insert or replace statement
   nsString mPropertiesInsertOrReplace;
 
-  //Used to template the properties update statement
-  nsCOMPtr<sbISQLUpdateBuilder> mPropertiesUpdate;
+  // Property delete query
+  nsString mPropertiesDelete;
 
   // Used to template the media item property update statement
   nsDataHashtable<nsUint32HashKey, nsString> mMediaItemsUpdateQueries;

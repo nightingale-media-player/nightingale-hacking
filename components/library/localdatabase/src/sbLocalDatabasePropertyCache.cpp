@@ -256,41 +256,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
                                      6,
                                      NS_LITERAL_STRING("insert or replace"));
 
-  // Create property update query builder:
-  //   UPDATE resource_properties SET obj = ?, obj_sortable = ? WHERE guid = ? AND property_id = ?
-
-  mPropertiesUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesUpdate->SetTableName(NS_LITERAL_STRING("resource_properties"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesUpdate->AddAssignmentParameter(NS_LITERAL_STRING("obj"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesUpdate->AddAssignmentParameter(NS_LITERAL_STRING("obj_sortable"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterionLeft;
-  rv = mPropertiesUpdate->CreateMatchCriterionParameter(EmptyString(), 
-                                                        NS_LITERAL_STRING("guid"),
-                                                        sbISQLBuilder::MATCH_EQUALS,
-                                                        getter_AddRefs(criterionLeft));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterionRight;
-  rv = mPropertiesUpdate->CreateMatchCriterionParameter(EmptyString(),
-                                                        NS_LITERAL_STRING("property_id"),
-                                                        sbISQLBuilder::MATCH_EQUALS,
-                                                        getter_AddRefs(criterionRight));
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterionAnd;
-  rv = mPropertiesUpdate->CreateAndCriterion(criterionLeft, criterionRight, getter_AddRefs(criterionAnd));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesUpdate->AddCriterion(criterionAnd);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create media item property update queries, one for each static property
   PRBool success = mMediaItemsUpdateQueries.Init(sStaticPropertyCount);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -328,6 +293,34 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
     success = mMediaItemsUpdateQueries.Put(propertyId, sql);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
+
+  // Create media item property delete query
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("resource_properties"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("guid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("property_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mPropertiesDelete);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -526,18 +519,13 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
             rv = result->GetRowCell(row, i + 1, value);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            // XXXsteve UGH We don't want to add stuff into the propery bag
-            // for top level properties that are null.  However, the dbengine
-            // does not give us a way to determine if something is null so
-            // we shall test for empty for now.  We will probably fix this
-            // by using SetVoid/IsVoid, but that depends on bmo 380783
-            if (!value.IsEmpty()) {
+            if (!value.IsVoid()) {
 
               // XXXben FIX ME
               sbLocalDatabaseResourcePropertyBag* bagClassPtr =
                 static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
               rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
-  
+
               NS_ENSURE_SUCCESS(rv, rv);
             }
           }
@@ -727,13 +715,9 @@ sbLocalDatabasePropertyCache::Write()
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
         // XXXben Do we care if this fails?!
-        bagLocal->GetPropertyByID(dirtyProps[j], value);
-
-        nsCOMPtr<sbIPropertyInfo> propertyInfo;
-        rv = mPropertyManager->GetPropertyInfo(propertyName, 
-          getter_AddRefs(propertyInfo));
+        rv = bagLocal->GetPropertyByID(dirtyProps[j], value);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
         //Top level properties need to be treated differently, so check for them.
         if(SB_IsTopLevelPropertyID(dirtyProps[j])) {
 
@@ -751,24 +735,41 @@ sbLocalDatabasePropertyCache::Write()
           NS_ENSURE_SUCCESS(rv, rv);
         }
         else { //Regular properties all go in the same spot.
-          nsAutoString sortable;
-          rv = propertyInfo->MakeSortable(value, sortable);
-          NS_ENSURE_SUCCESS(rv, rv);
+          if (value.IsVoid()) {
+            rv = query->AddQuery(mPropertiesDelete);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = query->AddQuery(mPropertiesInsertOrReplace);
-          NS_ENSURE_SUCCESS(rv, rv);
+            rv = query->BindStringParameter(0, dirtyGuids[i]);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = query->BindStringParameter(0, dirtyGuids[i]);
-          NS_ENSURE_SUCCESS(rv, rv);
+            rv = query->BindInt32Parameter(1, dirtyProps[j]);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+          else {
+            nsCOMPtr<sbIPropertyInfo> propertyInfo;
+            rv = mPropertyManager->GetPropertyInfo(propertyName,
+                                                   getter_AddRefs(propertyInfo));
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = query->BindInt32Parameter(1, dirtyProps[j]);
-          NS_ENSURE_SUCCESS(rv, rv);
+            nsString sortable;
+            rv = propertyInfo->MakeSortable(value, sortable);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = query->BindStringParameter(2, value);
-          NS_ENSURE_SUCCESS(rv, rv);
+            rv = query->AddQuery(mPropertiesInsertOrReplace);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = query->BindStringParameter(3, sortable);
-          NS_ENSURE_SUCCESS(rv, rv);
+            rv = query->BindStringParameter(0, dirtyGuids[i]);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindInt32Parameter(1, dirtyProps[j]);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(2, value);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(3, sortable);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         }
       }
     }
