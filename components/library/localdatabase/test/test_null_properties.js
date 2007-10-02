@@ -35,7 +35,7 @@ function runTest () {
   var library = createLibrary("test_null_properties", null, false);
   library.clear();
 
-  testResource(library, library.guid);
+//  testResource(library, library.guid);
 
   var item = library.createMediaItem(newURI("http://foo.com/"));
   library.sync();
