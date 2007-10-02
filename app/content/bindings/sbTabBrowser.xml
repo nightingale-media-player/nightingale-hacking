@@ -436,35 +436,16 @@
       <method name="getTabForView">
         <parameter name="aView" />
         <body><![CDATA[
-          var parent = {}, page = {};
-          var viewMap =
-              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-              .getService(Components.interfaces.sbIMediaListViewMap);
-          viewMap.getContext(aView, parent, page );
-          
-          // find the tab
-          var tab = null;
-          var browser = null;
-          for (var i=0; i<this.browsers.length; i++) {
-            // iterate through the browsers
-            browser = this.browsers[i];
-            if (browser == parent.value) {
-              tab = this.tabContainer.childNodes[i];
-              break;
-            }
-          }
-          
-          // if we found a tab, lets see if the history entry we got back
-          if (tab) {
-            var history = browser.webNavigation.sessionHistory;
-            var entry = history.getEntryAtIndex(history.index, false);
-            page.value.QueryInterface(Components.interfaces.nsIHistoryEntry);
-            
-            // if the current history entry for the tab is the same as the
-            // history entry we got back from the view map then the tab should
-            // be currently showing the view map. Right?
-            if (page.value == entry) {
-              return tab;
+          // Search open tabs for a playlist that is showing the given view
+          var tabs = this.mTabContainer.childNodes;
+          for (var i = 0; i < tabs.length; i++) {
+            var contentDocument = tabs[i].linkedBrowser.contentDocument;
+            var playlist = contentDocument.getElementById("sb-library-page-playlist");
+            if (contentDocument.location.protocol == "chrome:" && playlist) {
+              playlist = playlist.wrappedJSObject;
+              if (playlist.getListView() == aView) {
+                return tabs[i];
+              }
             }
           }
           return null;
@@ -1199,6 +1180,29 @@
         
         theStatusText.stringValue = '';
       ]]></handler>
+      <handler event="unload" phase="capturing"><![CDATA[
+        // If we are about to unload a page that has a playlist, save its
+        // state
+        var contentDocument = event.target;
+        var playlist = contentDocument.getElementById("sb-library-page-playlist");
+        if (!(contentDocument.location.protocol == "chrome:" && playlist)) {
+          return;
+        }
+        
+        // Since we got this playlist from untrusted content, we need to
+        // unwrap it
+        playlist = playlist.wrappedJSObject;
+        var tab = this.getTabForDocument(contentDocument);
+        
+        var browser = tab.linkedBrowser;
+        var history = browser.webNavigation.sessionHistory;
+        var entry = history.getEntryAtIndex( history.index, false );
+        
+        var viewMap =
+          Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                    .getService(Components.interfaces.sbIMediaListViewMap);
+        viewMap.setView(browser, entry, playlist.getListView());
+      ]]></handler>
     </handlers>
   </binding>
 
@@ -1566,8 +1570,6 @@
               this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec, 
                                           this.linkedBrowser.contentTitle);
             view = mediaList.createView();
-            if ( browser && entry && view instanceof Components.interfaces.sbIMediaListView )
-              viewMap.setView(browser, entry, view);
           }
 
           // Otherwise, don't show the web playlist until we see some tracks.
@@ -1632,45 +1634,36 @@
         <body><![CDATA[ try {
           var playlist = this.innerPlaylist;
           playlist.outerWindow = window;
-          if ( playlist.mediaListView ) // New API
-          {
-            var viewMap =
-              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                        .getService(Components.interfaces.sbIMediaListViewMap);
-                        
-            // Now all I have to do is find something resembling a usefully unique key.
-            var browser = this.linkedBrowser;
-            var history = browser.webNavigation.sessionHistory;
-            var entry = history.getEntryAtIndex( history.index, false );
-            
-            // someone wants us to apply a view
-            if (this.viewForNextPlaylist) {
-              playlist.bind(this.viewForNextPlaylist, playlist.commands);
-              // save this mapping I guess 
-              if ( browser && entry && this.viewForNextPlaylist instanceof Components.interfaces.sbIMediaListView )
-                viewMap.setView(browser, entry, this.viewForNextPlaylist);
-              this.viewForNextPlaylist = null;
-            } else {
-              // Is there something to restore?
-              var restore = viewMap.getView( browser, entry );
-              if ( restore == null )
-              {
-                // Save the current view if there is nothing to restore
-                if ( browser && entry && playlist.mediaListView instanceof Components.interfaces.sbIMediaListView )
-                  viewMap.setView( browser, entry, playlist.mediaListView );
-                playlist.refreshCommands();
-              }
-              else
-              {
-                // Otherwise, restore it.
-                var commands = playlist.commands;
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
+                      
+          // Now all I have to do is find something resembling a usefully unique key.
+          var browser = this.linkedBrowser;
+          var history = browser.webNavigation.sessionHistory;
+          var entry = history.getEntryAtIndex( history.index, false );
+          
+          // someone wants us to apply a view
+          if (this.viewForNextPlaylist) {
+            playlist.bind(this.viewForNextPlaylist, playlist.commands);
+            this.viewForNextPlaylist = null;
+          } else {
+            // Is there something to restore?
+            var restore = viewMap.getView( browser, entry );
+            if ( restore == null )
+            {
+              playlist.refreshCommands();
+            }
+            else
+            {
+              // Otherwise, restore it.
+              var commands = playlist.commands;
 
-                // Must use setTimeout() here to prevent the playlist from
-                // binding while the page is still loading
-                setTimeout(function() {
-                  playlist.bind( restore.clone(), commands );
-                }, 0);
-              }
+              // Must use setTimeout() here to prevent the playlist from
+              // binding while the page is still loading
+              setTimeout(function() {
+                playlist.bind( restore, commands );
+              }, 0);
             }
           }
           

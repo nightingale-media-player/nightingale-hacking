@@ -27,6 +27,8 @@
 #include "sbPropertyArray.h"
 
 #include <nsIClassInfoImpl.h>
+#include <nsIObjectInputStream.h>
+#include <nsIObjectOutputStream.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <sbIPropertyManager.h>
@@ -49,10 +51,14 @@ NS_INTERFACE_MAP_BEGIN(sbPropertyArray)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsIArray, nsIMutableArray)
   NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
   NS_INTERFACE_MAP_ENTRY(nsIMutableArray)
+  NS_INTERFACE_MAP_ENTRY(nsISerializable)
 NS_INTERFACE_MAP_END
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbPropertyArray, nsIArray,
+static NS_DEFINE_CID(kPropertyArrayCID, SB_MUTABLEPROPERTYARRAY_CID);
+
+NS_IMPL_CI_INTERFACE_GETTER6(sbPropertyArray, nsIArray,
                                               nsIMutableArray,
+                                              nsISerializable,
                                               sbIPropertyArray,
                                               sbIMutablePropertyArray,
                                               nsIClassInfo)
@@ -60,12 +66,10 @@ sbPropertyArray::sbPropertyArray()
 : mArrayLock(nsnull),
   mStrict(PR_TRUE)
 {
-  MOZ_COUNT_CTOR(sbPropertyArray);
 }
 
 sbPropertyArray::~sbPropertyArray()
 {
-  MOZ_COUNT_DTOR(sbPropertyArray);
   if(mArrayLock) {
     nsAutoLock::DestroyLock(mArrayLock);
   }
@@ -519,6 +523,82 @@ sbPropertyArray::GetValidated(PRBool* aValidated)
   return GetStrict(aValidated);
 }
 
+// nsISerializable
+NS_IMETHODIMP
+sbPropertyArray::Read(nsIObjectInputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  nsAutoLock lock(mArrayLock);
+
+  rv = aStream->ReadBoolean(&mStrict);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length;
+  rv = aStream->Read32(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mArray.Clear();
+  for (PRUint32 i = 0; i < length; i++) {
+
+    nsString name;
+    rv = aStream->ReadString(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString value;
+    rv = aStream->ReadString(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIProperty> property = new sbSimpleProperty(name, value);
+    NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
+
+    PRBool success = mArray.AppendObject(property);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::Write(nsIObjectOutputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  nsAutoLock lock(mArrayLock);
+
+  rv = aStream->WriteBoolean(mStrict);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = mArray.Count();
+  rv = aStream->Write32(length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
+    NS_ENSURE_STATE(property);
+
+    nsString name;
+    rv = property->GetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString value;
+    rv = property->GetValue(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aStream->WriteWStringZ(name.BeginReading());
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aStream->WriteWStringZ(value.BeginReading());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 // nsIClassInfo
 NS_IMETHODIMP
 sbPropertyArray::GetInterfaces(PRUint32* count, nsIID*** array)
@@ -572,5 +652,8 @@ sbPropertyArray::GetFlags(PRUint32 *aFlags)
 NS_IMETHODIMP
 sbPropertyArray::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
-  return NS_ERROR_NOT_AVAILABLE;
+  NS_ENSURE_ARG_POINTER(aClassIDNoAlloc);
+  *aClassIDNoAlloc = kPropertyArrayCID;
+  return NS_OK;
 }
+

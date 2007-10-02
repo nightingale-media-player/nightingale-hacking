@@ -161,4 +161,47 @@ function runTest() {
   }
   assertEqual(newTestProperty, undefined);
   assertEqual(exception, true);
+
+  // Test serialize
+  var propertyArray =
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    createInstance(Ci.sbIMutablePropertyArray);
+
+  for (var index = 0; index < 10; index++) {
+    var name = "Property" + index;
+    var value = "Value" + index;
+    propertyArray.appendProperty(name, value);
+  }
+  var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
+  pipe.init(false, false, 0, 0xffffffff, null);
+
+  var oos = Cc["@mozilla.org/binaryoutputstream;1"]
+              .createInstance(Ci.nsIObjectOutputStream);
+  oos.setOutputStream(pipe.outputStream);
+  oos.writeObject(propertyArray, true);
+  oos.close();
+
+  var ois = Cc["@mozilla.org/binaryinputstream;1"]
+              .createInstance(Ci.nsIObjectInputStream);
+  ois.setInputStream(pipe.inputStream);
+  propertyArray = ois.readObject(true)
+  ois.close();
+
+  for (var index = 0; index < 10; index++) {
+    var property = propertyArray.queryElementAt(index, Ci.sbIProperty);
+    assertPropertyData(property, "Property" + index, "Value" + index);
+  }
 }
+
+function getTempFile(name) {
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("TmpD", Ci.nsIFile);
+  file.append(name);
+  file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0664);
+  var registerFileForDelete = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
+                                .getService(Ci.nsPIExternalAppLauncher);
+  registerFileForDelete.deleteTemporaryFileOnExit(file);
+  return file;
+}
+

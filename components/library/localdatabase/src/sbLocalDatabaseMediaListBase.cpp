@@ -962,7 +962,8 @@ sbLocalDatabaseMediaListBase::RemoveListener(sbIMediaListListener* aListener)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
+sbLocalDatabaseMediaListBase::CreateView(sbIMediaListViewState* aState,
+                                         sbIMediaListView** _retval)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;

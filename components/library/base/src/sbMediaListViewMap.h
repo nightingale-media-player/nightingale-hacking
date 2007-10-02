@@ -64,8 +64,8 @@ class sbILibraryLoader;
 struct nsModuleComponentInfo;
 
 class sbMediaListViewMap : public sbIMediaListViewMap,
-                         public nsIObserver,
-                         public nsSupportsWeakReference
+                           public nsIObserver,
+                           public nsSupportsWeakReference
 {
 
 public:
@@ -87,6 +87,29 @@ private:
   ~sbMediaListViewMap();
 
 private:
+  struct sbViewStateInfo {
+    sbViewStateInfo(const nsAString& aLibraryGuid,
+                    const nsAString& aListGuid,
+                    sbIMediaListViewState* aState)
+    : libraryGuid(aLibraryGuid),
+      listGuid(aListGuid),
+      state(aState)
+    {
+      MOZ_COUNT_CTOR(sbViewStateInfo);
+    }
+
+    ~sbViewStateInfo()
+    {
+      MOZ_COUNT_DTOR(sbViewStateInfo);
+    }
+
+    nsString libraryGuid;
+    nsString listGuid;
+    nsCOMPtr<sbIMediaListViewState> state;
+  };
+
+  typedef nsClassHashtableMT< nsISupportsHashKey, sbViewStateInfo > sbViewMapInner;
+  typedef nsClassHashtableMT< nsISupportsHashKey, sbViewMapInner > sbViewMap;
 
   static PLDHashOperator PR_CALLBACK
   ReleaseLookups( nsISupportsHashKey::KeyType aKey,
@@ -94,7 +117,7 @@ private:
                   void* aUserData );
 
 
-  nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > > mViewMap;
+  sbViewMap mViewMap;
   nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mParentLookup; // for getContext
   nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mPageLookup;   // for getContext
 };

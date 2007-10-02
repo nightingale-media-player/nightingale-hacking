@@ -32,10 +32,24 @@
 
 #include "nsISupports.idl"
 
+interface nsIMutableArray;
 interface nsITreeView;
 interface sbICascadeFilterSet;
 interface sbIMediaItem;
 interface sbIMediaList;
+interface sbIMutablePropertyArray;
+
+/**
+* \interface sbIMediaListViewState
+* \brief Saved state of a media list view
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(3635a8d5-3e36-49ea-9ca3-e8ddad962b34)]
+interface sbIMediaListViewState : nsISupports
+{
+  AString toString();
+};
 
 /**
 * \interface sbIMediaListView
@@ -115,5 +129,13 @@ interface sbIMediaListView : nsISupports
    * \return A clone of the media list view
    */
   sbIMediaListView clone();
+
+  /**
+   * \brief Returns a snapshot of the current state of this view.  Can later
+   *        be used to restore the state by passing the returned object as an
+   *        argument to sbIMediaList::CreateView()
+   * \return The state of this media list view
+   */
+  sbIMediaListViewState getState();
 };
 

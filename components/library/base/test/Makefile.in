@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = library-base
 
 SONGBIRD_TESTS = $(srcdir)/head_library-base.js \
+                 $(srcdir)/test_constraints.js \
                  $(srcdir)/test_librarymanager.js \
                  $(NULL)
 

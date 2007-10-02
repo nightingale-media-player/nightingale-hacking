@@ -1,0 +1,100 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryConstraints.idl
+ * \sa sbILibrary.idl
+ */
+
+#include "nsISupports.idl"
+
+%{C++
+#include "nsTArray.h"
+#include "nsStringGlue.h"
+%}
+
+[ptr] native StringArray(nsTArray<nsString>);
+
+/**
+ * \interface sbILibraryFilter
+ * \brief A filter that can be applied to a media list view
+ */
+[scriptable, uuid(31e0f6c8-c59e-4a58-b608-1b445719d5a5)]
+interface sbILibraryFilter : nsISupports
+{
+  void init(in AString aProperty,
+            in unsigned long aCount,
+            [array, size_is(aCount)] in wstring aValues);
+  [noscript] void initNative(in AString aProperty, in StringArray aValues);
+
+  readonly attribute AString property;
+
+  void getValues(out unsigned long count,
+                 [retval, array, size_is(count)] out wstring values);
+
+  [noscript] StringArray getValuesNative();
+
+  AString toString();
+};
+
+/**
+ * \interface sbILibrarySearch
+ * \brief A search that can be applied to a media list view
+ */
+[scriptable, uuid(ccc03dd2-5b8a-4148-a581-a4e3790b25ff)]
+interface sbILibrarySearch : nsISupports
+{
+  void init(in AString aProperty,
+            in boolean aIsAll,
+            in unsigned long count,
+            [array, size_is(count)] in wstring values);
+  [noscript] void initNative(in AString aProperty,
+                             in boolean aIsAll,
+                             in StringArray aValues);
+
+  readonly attribute AString property;
+  readonly attribute boolean isAll;
+  void getValues(out unsigned long count,
+                 [retval, array, size_is(count)] out wstring values);
+  [noscript] StringArray getValuesNative();
+
+  AString toString();
+};
+
+/**
+ * \interface sbILibrarySort
+ * \brief A sort that can be applied to a media list view
+ */
+[scriptable, uuid(d9655856-f518-43f1-b096-25f52b0b629e)]
+interface sbILibrarySort : nsISupports
+{
+  void init(in AString aProperty, in boolean aIsAscending);
+
+  readonly attribute AString property;
+  readonly attribute boolean isAscending;
+  AString toString();
+};
+

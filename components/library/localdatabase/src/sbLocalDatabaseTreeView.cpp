@@ -30,6 +30,8 @@
 #include <nsIAtomService.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIDOMElement.h>
+#include <nsIObjectOutputStream.h>
+#include <nsIObjectInputStream.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
@@ -40,6 +42,7 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILibrary.h>
+#include <sbILibraryConstraints.h>
 #include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
@@ -60,6 +63,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabaseMediaListView.h"
+#include <sbLibraryConstraints.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -158,6 +162,23 @@ sbLocalDatabaseTreeView::SelectionIndexEnumeratorCallback(PRUint32 aIndex,
   return NS_OK;
 }
 
+/* static*/ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseTreeView::CopySelectionListCallback(nsStringHashKey::KeyType aKey,
+                                                   nsString aEntry,
+                                                   void* aUserData)
+{
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  sbSelectionList* list =
+    static_cast<sbSelectionList*>(aUserData);
+  NS_ASSERTION(list, "Could not cast user data");
+
+  PRBool success = list->Put(aKey, aEntry);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseTreeView,
                    nsIClassInfo,
                    nsISupportsWeakReference,
@@ -214,17 +235,25 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 nsresult
 sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
                               sbILocalDatabaseAsyncGUIDArray* aArray,
-                              sbIPropertyArray* aCurrentSort)
+                              sbIPropertyArray* aCurrentSort,
+                              sbLocalDatabaseTreeViewState* aState)
 {
   NS_ENSURE_ARG_POINTER(aMediaListView);
   NS_ENSURE_ARG_POINTER(aArray);
-  NS_ENSURE_ARG_POINTER(aCurrentSort);
 
-  // Make sure we actually are getting a sort
-  PRUint32 arrayLength;
-  nsresult rv = aCurrentSort->GetLength(&arrayLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_STATE(arrayLength);
+  nsresult rv;
+
+  // Make sure we actually are getting a sort or a state
+  if (aCurrentSort) {
+    NS_ENSURE_TRUE(!aState, NS_ERROR_INVALID_ARG);
+    PRUint32 arrayLength;
+    rv = aCurrentSort->GetLength(&arrayLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_STATE(arrayLength);
+  }
+  else {
+    NS_ENSURE_ARG_POINTER(aState);
+  }
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -288,19 +317,44 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     }
   }
 
-  // Grab the top level sort property from the bag
-  nsCOMPtr<sbIProperty> property;
-  rv = aCurrentSort->GetPropertyAt(0, getter_AddRefs(property));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aState) {
+#ifdef DEBUG
+  {
+    nsString buff;
+    aState->ToString(buff);
+    LOG(("sbLocalDatabaseTreeView::Init[0x%.8x] - restoring %s",
+          this, NS_LossyConvertUTF16toASCII(buff).get()));
+  }
+#endif
+    rv = aState->mSort->GetProperty(mCurrentSortProperty);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = property->GetName(mCurrentSortProperty);
-  NS_ENSURE_SUCCESS(rv, rv);
+    PRBool isAscending;
+    rv = aState->mSort->GetIsAscending(&isAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mCurrentSortDirectionIsAscending = isAscending;
 
-  nsAutoString value;
-  rv = property->GetValue(value);
-  NS_ENSURE_SUCCESS(rv, rv);
+    mSelectionIsAll = aState->mSelectionIsAll;
+    if (!mSelectionIsAll) {
+      aState->mSelectionList.EnumerateRead(CopySelectionListCallback,
+                                           &mSelectionList);
+    }
+  }
+  else {
+    // Grab the top level sort property from the bag
+    nsCOMPtr<sbIProperty> property;
+    rv = aCurrentSort->GetPropertyAt(0, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mCurrentSortDirectionIsAscending = value.EqualsLiteral("a");
+    rv = property->GetName(mCurrentSortProperty);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString value;
+    rv = property->GetValue(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mCurrentSortDirectionIsAscending = value.EqualsLiteral("a");
+  }
 
   // Get our localized strings
   nsCOMPtr<nsIStringBundleService> bundleService =
@@ -561,14 +615,8 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
       // Try our dirty cache so we can show something
       if (mDirtyRowCache.Get(aIndex, getter_AddRefs(bag))) {
         nsString value;
-        rv = bag->GetProperty(bind, value);
+        rv = bag->GetProperty(bind, _retval);
         NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = info->Format(value, _retval);
-        if (NS_FAILED(rv)) {
-          _retval.Truncate();
-        }
-
       }
       else {
         _retval.Truncate();
@@ -860,6 +908,51 @@ sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseTreeView::GetState(sbLocalDatabaseTreeViewState** aState)
+{
+  NS_ENSURE_ARG_POINTER(aState);
+
+  nsresult rv;
+
+  nsRefPtr<sbLocalDatabaseTreeViewState> state =
+    new sbLocalDatabaseTreeViewState();
+  NS_ENSURE_TRUE(state, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = state->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  state->mSort = do_CreateInstance(SONGBIRD_LIBRARYSORT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = state->mSort->Init(mCurrentSortProperty,
+                          mCurrentSortDirectionIsAscending);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mSelectionIsAll) {
+    state->mSelectionIsAll = PR_TRUE;
+  }
+  else {
+    mSelectionList.EnumerateRead(CopySelectionListCallback,
+                                 &state->mSelectionList);
+    rv = EnumerateSelection(SelectionListSavingEnumeratorCallback,
+                            &state->mSelectionList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+#ifdef DEBUG
+  {
+    nsString buff;
+    state->ToString(buff);
+    LOG(("sbLocalDatabaseTreeView::GetState[0x%.8x] - returning %s",
+          this, NS_LossyConvertUTF16toASCII(buff).get()));
+  }
+#endif
+
+  NS_ADDREF(*aState = state);
+  return NS_OK;
+}
+
 // sbILocalDatabaseTreeView
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
@@ -1094,25 +1187,30 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
       NS_ASSERTION(boxObject, "No box object?! Fix bug 3533 correctly!");
 
       // Should this row be selected?
-      if (mSelectionList.Count() && boxObject) {
-        nsAutoString id;
-        rv = GetUniqueIdForIndex(index, id);
-        NS_ENSURE_SUCCESS(rv, rv);
+      if (boxObject &&
+          mRealSelection &&
+          (mSelectionIsAll || mSelectionList.Count())) {
 
-        nsAutoString selectedGuid;
-        if (mSelectionList.Get(id, &selectedGuid)) {
-          TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex() - "
-                 "restoring selection %s at %d", this,
-                 NS_ConvertUTF16toUTF8(id).get(), ArrayToTree(index)));
-
-          mSelectionList.Remove(id);
-          if (mRealSelection) {
-            mSelectionChanging = PR_TRUE;
-            PRInt32 row = ArrayToTree(index);
-            rv = mRealSelection->RangedSelect(row, row, PR_TRUE);
-            mSelectionChanging = PR_FALSE;
-            NS_ENSURE_SUCCESS(rv, rv);
+        PRBool shouldSelect = PR_FALSE;
+        if (mSelectionIsAll && !mFakeAllRow) {
+          shouldSelect = PR_TRUE;
+        }
+        else {
+          nsString id;
+          rv = GetUniqueIdForIndex(index, id);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (mSelectionList.Get(id, nsnull)) {
+            shouldSelect = PR_TRUE;
+            mSelectionList.Remove(id);
           }
+        }
+
+        if (shouldSelect) {
+          mSelectionChanging = PR_TRUE;
+          PRInt32 row = ArrayToTree(index);
+          rv = mRealSelection->RangedSelect(row, row, PR_TRUE);
+          mSelectionChanging = PR_FALSE;
+          NS_ENSURE_SUCCESS(rv, rv);
         }
       }
 
@@ -2673,14 +2771,17 @@ sbLocalDatabaseTreeSelection::SelectAll()
 {
   TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - SelectAll()", this));
 
-  nsresult rv = mSelection->SelectAll();
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
 
   // Simply tell the view that everything was selected
   mTreeView->SetSelectionIsAll(PR_TRUE);
 
   if (mAllRow) {
     rv = mSelection->Select(0);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mSelection->SelectAll();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -2727,10 +2828,6 @@ sbLocalDatabaseTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
     rv = this->SetCurrentIndex(-1);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  // This would affect our selection list, but the xul tree binding does not
-  // use this method so we won't bother implementing it for now.
-  // XXX: Not true, I think it gets called when the tree grows?
 
   return NS_OK;
 }
@@ -3020,3 +3117,125 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   mNextIndex++;
   return NS_OK;
 }
+
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseTreeViewState,
+                   nsISerializable);
+
+/* static*/ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseTreeViewState::SerializeSelectionListCallback(nsStringHashKey::KeyType aKey,
+                                                             nsString aEntry,
+                                                             void* aUserData)
+{
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsIObjectOutputStream* stream =
+    static_cast<nsIObjectOutputStream*>(aUserData);
+  NS_ASSERTION(stream, "Could not cast user data");
+
+  nsresult rv;
+  rv = stream->WriteWStringZ(aKey.BeginReading());
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = stream->WriteWStringZ(aEntry.BeginReading());
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+sbLocalDatabaseTreeViewState::sbLocalDatabaseTreeViewState() :
+  mSelectionIsAll(PR_FALSE)
+{
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeViewState::Read(nsIObjectInputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(mSort));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 selectionCount;
+  rv = aStream->Read32(&selectionCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < selectionCount; i++) {
+    nsString key;
+    nsString entry;
+
+    rv = aStream->ReadString(key);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aStream->ReadString(entry);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = mSelectionList.Put(key, entry);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  PRBool selectionIsAll;
+  rv = aStream->ReadBoolean(&selectionIsAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mSelectionIsAll = selectionIsAll;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeViewState::Write(nsIObjectOutputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  rv = aStream->WriteObject(mSort, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aStream->Write32(mSelectionList.Count());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mSelectionList.EnumerateRead(SerializeSelectionListCallback, aStream);
+
+  rv = aStream->WriteBoolean(mSelectionIsAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeViewState::Init()
+{
+  PRBool success = mSelectionList.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeViewState::ToString(nsAString& aStr)
+{
+  nsresult rv;
+  nsString buff;
+  nsString temp;
+
+  rv = mSort->ToString(temp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  buff.Assign(temp);
+
+  buff.AppendLiteral(" selection ");
+  if (mSelectionIsAll) {
+    buff.AppendLiteral("is all");
+  }
+  else {
+    buff.AppendInt(mSelectionList.Count());
+    buff.AppendLiteral(" items");
+  }
+
+  aStr = buff;
+
+  return NS_OK;
+}
+

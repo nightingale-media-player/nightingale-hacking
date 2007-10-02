@@ -63,18 +63,18 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
 
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
-#define SB_DECL_MEDIALISTBASE_OVERRIDES                                         \
-  NS_IMETHOD GetType(nsAString& aType);                                         \
-  NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);     \
-  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);               \
-  NS_IMETHOD Add(sbIMediaItem* aMediaItem);                                     \
-  NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                  \
-  NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                         \
-  NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                  \
-  NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                    \
-  NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                      \
-  NS_IMETHOD Clear();                                                           \
-  NS_IMETHOD CreateView(sbIMediaListView** _retval);                            \
+#define SB_DECL_MEDIALISTBASE_OVERRIDES                                             \
+  NS_IMETHOD GetType(nsAString& aType);                                             \
+  NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);         \
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);                   \
+  NS_IMETHOD Add(sbIMediaItem* aMediaItem);                                         \
+  NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                      \
+  NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                             \
+  NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                      \
+  NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                        \
+  NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                          \
+  NS_IMETHOD Clear();                                                               \
+  NS_IMETHOD CreateView(sbIMediaListViewState* aState, sbIMediaListView** _retval); \
   /* nothing */
 
 #define SB_DECL_SBIMEDIAITEM_OVERRIDES                                          \

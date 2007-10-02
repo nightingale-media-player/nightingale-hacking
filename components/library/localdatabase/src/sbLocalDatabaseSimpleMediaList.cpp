@@ -1140,7 +1140,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
+sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListViewState* aState,
+                                           sbIMediaListView** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -1160,7 +1161,7 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
                                           defaultSortProperty,
                                           mediaItemId));
   NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
-  rv = view->Init();
+  rv = view->Init(aState);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = view);

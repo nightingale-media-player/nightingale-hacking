@@ -123,7 +123,7 @@ sbRemoteWebLibrary::InitInternalMediaList()
   NS_ENSURE_TRUE( mediaList, NS_ERROR_FAILURE );
 
   nsCOMPtr<sbIMediaListView> mediaListView;
-  nsresult rv = mediaList->CreateView( getter_AddRefs(mediaListView) );
+  nsresult rv = mediaList->CreateView( nsnull, getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   mRemMediaList = new sbRemoteWebMediaList( mRemotePlayer,

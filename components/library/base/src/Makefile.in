@@ -34,9 +34,10 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = sbLibraryManager.cpp \
-           sbMediaListViewMap.cpp \
+CPP_SRCS = sbLibraryConstraints.cpp \
+           sbLibraryManager.cpp \
            sbLibraryManagerModule.cpp \
+           sbMediaListViewMap.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/base/public \

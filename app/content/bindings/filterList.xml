@@ -204,6 +204,7 @@
     return;
   }
 
+  var count = this.cfs.getValueCount(this.index, true);
   var sel = this.tree.view.selection;
   var values = [];
   var rangeCount = sel.getRangeCount();
@@ -219,8 +220,12 @@
     }
 
     for (var j = min.value; j <= max.value; j++) {
-      var value = this.cfs.getValueAt(this.index, j - 1);
-      values.push(value);
+      // The actual number of rows in the view can lag behind the number of
+      // rows in the tree, so make sure we don't select those
+      if (j < count) {
+        var value = this.cfs.getValueAt(this.index, j - 1);
+        values.push(value);
+      }
     }
   }
   this.cfs.set(this.index, values, values.length);
@@ -242,7 +247,6 @@
 <![CDATA[
   if (aIndex == this.index) {
     this._updateColumnLabel();
-    this.tree.view.selection.clearSelection();
   }
 ]]>
         </body>

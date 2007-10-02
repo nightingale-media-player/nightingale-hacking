@@ -42,6 +42,7 @@ interface sbILibrary;
 interface sbIMediaListEnumerationListener;
 interface sbIMediaListListener;
 interface sbIMediaListView;
+interface sbIMediaListViewState;
 interface sbIPropertyArray;
 
 /**
@@ -850,9 +851,10 @@ interface sbIMediaList : sbIMediaItem
 
   /**
    * \brief Create a new view for this list
+   * \param aState Optional initial state for the view
    * \return The new view
    */
-  sbIMediaListView createView();
+  sbIMediaListView createView([optional] in sbIMediaListViewState aState);
 
   /**
    * \brief Notify listeners that a batch update is about to begin.  Listeners

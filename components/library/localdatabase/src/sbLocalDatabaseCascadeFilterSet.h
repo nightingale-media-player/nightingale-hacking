@@ -27,9 +27,13 @@
 #ifndef __SBLOCALDATABASECASCADEFILTERSET_H__
 #define __SBLOCALDATABASECASCADEFILTERSET_H__
 
+#include "sbLocalDatabaseTreeView.h"
+
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsHashKeys.h>
+#include <nsISerializable.h>
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
@@ -41,15 +45,24 @@
 #include <sbIMediaListListener.h>
 #include <sbLibraryUtils.h>
 
+class nsIArray;
+class nsIMutableArray;
+class nsIObjectInputStream;
+class nsIObjectOutputStream;
 class sbLocalDatabaseLibrary;
 class sbLocalDatabaseMediaListView;
 class sbLocalDatabaseTreeView;
+class sbLocalDatabaseTreeViewState;
+class sbILibraryFilter;
+class sbILibrarySearch;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
 class sbIMutablePropertyArray;
 class sbLocalDatabaseCascadeFilterSetArrayListener;
+
+class sbLocalDatabaseCascadeFilterSetState;
 
 class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
                                         public sbICascadeFilterSet,
@@ -66,9 +79,8 @@ public:
   ~sbLocalDatabaseCascadeFilterSet();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
-                sbILocalDatabaseAsyncGUIDArray* aProtoArray);
-
-  nsresult CloneInto(sbLocalDatabaseCascadeFilterSet* aDest);
+                sbILocalDatabaseAsyncGUIDArray* aProtoArray,
+                sbLocalDatabaseCascadeFilterSetState* aState);
 
   nsresult AddConfiguration(sbILocalDatabaseGUIDArray* aArray);
 
@@ -84,6 +96,8 @@ public:
 
   nsresult OnGetLength(PRUint32 aIndex, PRUint32 aLength);
 
+  nsresult GetState(sbLocalDatabaseCascadeFilterSetState** aState);
+
 private:
   struct sbFilterSpec {
     PRBool isSearch;
@@ -98,6 +112,9 @@ private:
   };
 
   nsresult ConfigureArray(PRUint32 aIndex);
+
+  nsresult ConfigureFilterArray(sbFilterSpec* aSpec,
+                                const nsAString& aSortProperty);
 
   nsresult InvalidateFilter(sbFilterSpec& aFilter);
 
@@ -161,6 +178,26 @@ public:
 private:
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
   PRUint32 mNextIndex;
+};
+
+class sbLocalDatabaseCascadeFilterSetState : public nsISerializable
+{
+friend class sbLocalDatabaseCascadeFilterSet;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISERIALIZABLE
+
+  nsresult ToString(nsAString& aStr);
+
+  struct Spec {
+    PRBool isSearch;
+    nsCOMArray<sbILibrarySearch> searches;
+    nsCOMPtr<sbILibraryFilter> filter;
+    nsRefPtr<sbLocalDatabaseTreeViewState> treeViewState;
+  };
+
+protected:
+  nsTArray<Spec> mFilters;
 };
 
 #endif /* __SBLOCALDATABASECASCADEFILTERSET_H__ */

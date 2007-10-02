@@ -38,11 +38,14 @@
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsInterfaceHashtable.h>
+#include <nsISerializable.h>
 #include <nsClassHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsWeakReference.h>
 
+class nsIObjectInputStream;
+class nsIObjectOutputStream;
 class nsISupportsArray;
 class nsITreeBoxObject;
 class nsITreeColumn;
@@ -50,6 +53,7 @@ class nsITreeSelection;
 class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
 class sbILibrary;
+class sbILibrarySort;
 class sbIMediaList;
 class sbIMediaListView;
 class sbIPropertyArray;
@@ -57,6 +61,10 @@ class sbIPropertyInfo;
 class sbIPropertyManager;
 class sbITreeViewPropertyInfo;
 class sbLocalDatabaseMediaListView;
+
+class sbLocalDatabaseTreeViewState;
+
+typedef nsDataHashtable<nsStringHashKey, nsString> sbSelectionList;
 
 class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public nsIClassInfo,
@@ -67,7 +75,6 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public sbILocalDatabaseTreeView
 {
   friend class sbLocalDatabaseTreeSelection;
-  typedef nsDataHashtable<nsStringHashKey, nsString> sbSelectionList;
   typedef nsresult (*PR_CALLBACK sbSelectionEnumeratorCallbackFunc)
     (PRUint32 aIndex, const nsAString& aId, const nsAString& aGuid, void* aUserData);
 
@@ -86,11 +93,14 @@ public:
 
   nsresult Init(sbLocalDatabaseMediaListView* aListView,
                 sbILocalDatabaseAsyncGUIDArray* aArray,
-                sbIPropertyArray* aCurrentSort);
+                sbIPropertyArray* aCurrentSort,
+                sbLocalDatabaseTreeViewState* aState);
 
   nsresult Rebuild();
 
   void ClearMediaListView();
+
+  nsresult GetState(sbLocalDatabaseTreeViewState** aState);
 
 protected:
   nsresult TokenizeProperties(const nsAString& aProperties,
@@ -163,6 +173,11 @@ private:
                                      const nsAString& aId,
                                      const nsAString& aGuid,
                                      void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    CopySelectionListCallback(nsStringHashKey::KeyType aKey,
+                              nsString aEntry,
+                              void* aUserData);
 
   inline PRUint32 TreeToArray(PRInt32 aRow) {
     return (PRUint32) (mFakeAllRow ? aRow - 1 : aRow);
@@ -345,6 +360,32 @@ private:
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
   PRBool mInitalized;
+};
+
+class sbLocalDatabaseTreeViewState : public nsISerializable
+{
+friend class sbLocalDatabaseTreeView;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISERIALIZABLE
+
+  nsresult Init();
+  nsresult ToString(nsAString& aStr); 
+
+  sbLocalDatabaseTreeViewState();
+
+protected:
+  nsCOMPtr<sbILibrarySort> mSort;
+
+  sbSelectionList mSelectionList;
+
+  PRPackedBool mSelectionIsAll;
+
+private:
+  static PLDHashOperator PR_CALLBACK
+    SerializeSelectionListCallback(nsStringHashKey::KeyType aKey,
+                                   nsString aEntry,
+                                   void* aUserData);
 };
 
 #endif /* __SBLOCALDATABASETREEVIEW_H__ */

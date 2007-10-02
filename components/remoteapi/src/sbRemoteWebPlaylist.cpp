@@ -145,7 +145,7 @@ sbRemoteWebPlaylist::SetMediaList( sbIRemoteMediaList *aMediaList )
     nsCOMPtr<sbIMediaList> webMediaList = do_QueryInterface(aMediaList);
     NS_ENSURE_TRUE( webMediaList, NS_ERROR_INVALID_ARG );
 
-    rv = webMediaList->CreateView( getter_AddRefs(mediaListView) );
+    rv = webMediaList->CreateView( nsnull, getter_AddRefs(mediaListView) );
     NS_ENSURE_TRUE( mediaListView, NS_ERROR_FAILURE );
   }
 

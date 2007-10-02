@@ -26,32 +26,39 @@
 
 #include "sbLocalDatabaseCascadeFilterSet.h"
 
+#include "sbLocalDatabaseLibrary.h"
+#include "sbLocalDatabaseMediaListView.h"
+#include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseSchemaInfo.h"
+
+#include <nsArrayUtils.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIArray.h>
+#include <nsIMutableArray.h>
+#include <nsIObjectOutputStream.h>
+#include <nsIObjectInputStream.h>
 #include <nsISimpleEnumerator.h>
 #include <nsITreeView.h>
+#include <nsServiceManagerUtils.h>
+#include <prlog.h>
+
+#include <DatabaseQuery.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIFilterableMediaListView.h>
+#include <sbILibraryConstraints.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
-#include <sbISearchableMediaListView.h>
 #include <sbISQLBuilder.h>
-
-#include <DatabaseQuery.h>
-#include <nsComponentManagerUtils.h>
-#include <nsServiceManagerUtils.h>
-#include <prlog.h>
-#include "sbLocalDatabaseLibrary.h"
-#include "sbLocalDatabaseMediaListView.h"
-#include "sbLocalDatabasePropertyCache.h"
-#include "sbLocalDatabaseTreeView.h"
-#include "sbLocalDatabaseSchemaInfo.h"
+#include <sbISearchableMediaListView.h>
+#include <sbLibraryConstraints.h>
 #include <sbPropertiesCID.h>
-#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
+#include <sbStandardProperties.h>
 #include <sbTArrayStringEnumerator.h>
 
 /**
@@ -97,7 +104,8 @@ NS_IMPL_ISUPPORTS3(sbLocalDatabaseCascadeFilterSet,
 
 nsresult
 sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
-                                      sbILocalDatabaseAsyncGUIDArray* aProtoArray)
+                                      sbILocalDatabaseAsyncGUIDArray* aProtoArray,
+                                      sbLocalDatabaseCascadeFilterSetState* aState)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Init", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -128,6 +136,112 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
 
   rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // If there is any state to restore, restore it
+  if (aState) {
+#ifdef DEBUG
+    {
+      nsString buff;
+      aState->ToString(buff);
+      nsCOMPtr<nsISupports> supports = do_QueryInterface(aState);
+      TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - restoring state [0x%.8x] %s",
+             this, supports.get(), NS_LossyConvertUTF16toASCII(buff).get()));
+    }
+#endif
+    PRUint16 filterIndex;
+    nsTArray<nsString>* values;
+    for (PRUint32 i = 0; i < aState->mFilters.Length(); i++) {
+
+      sbLocalDatabaseCascadeFilterSetState::Spec& spec = aState->mFilters[i];
+
+      if (spec.isSearch) {
+        nsTArray<const PRUnichar*> propertyPtrs;
+        nsTArray<const PRUnichar*> valuePtrs;
+        PRBool isAll = PR_FALSE;
+        for (PRInt32 j = 0; j < spec.searches.Count(); j++) {
+          nsCOMPtr<sbILibrarySearch> search = spec.searches[j];
+
+          // A single search should be the combination of a list of searches,
+          // with each search ANDed with each other (and an individual search's
+          // values are ORed).  Until this is fixed, we will just use the value
+          // list from the first element
+          if (j == 0) {
+            rv = search->GetValuesNative(&values);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            for (PRUint32 k = 0; k < values->Length(); k++) {
+              const PRUnichar** success =
+                valuePtrs.AppendElement(values->ElementAt(k).BeginReading());
+              NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+            }
+          }
+
+          rv = search->GetIsAll(&isAll);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (isAll) {
+            break;
+          }
+
+          nsString property;
+          rv = search->GetProperty(property);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          const PRUnichar** success =
+            propertyPtrs.AppendElement(property.BeginReading());
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        }
+
+        if (isAll) {
+          const PRUnichar* all = NS_LITERAL_STRING("*").get();
+          rv = AppendSearch(&all, 1, &filterIndex);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+          rv = AppendSearch(propertyPtrs.Elements(),
+                            propertyPtrs.Length(),
+                            &filterIndex);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        rv = Set(filterIndex, valuePtrs.Elements(), valuePtrs.Length());
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        nsString property;
+        rv = spec.filter->GetProperty(property);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = spec.filter->GetValuesNative(&values);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = AppendFilter(property, &filterIndex);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsTArray<const PRUnichar*> valuePtrs;
+        for (PRUint32 j = 0; j < values->Length(); j++) {
+          const PRUnichar** success =
+            valuePtrs.AppendElement(values->ElementAt(j).BeginReading());
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        }
+
+        rv = Set(filterIndex, valuePtrs.Elements(), valuePtrs.Length());
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (spec.treeViewState) {
+          nsRefPtr<sbLocalDatabaseTreeView> treeView =
+            new sbLocalDatabaseTreeView();
+          NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
+
+          rv = treeView->Init(mMediaListView,
+                              mFilters[filterIndex].array,
+                              nsnull,
+                              spec.treeViewState);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          mFilters[filterIndex].treeView = treeView;
+        }
+      }
+    }
+  }
 
   return NS_OK;
 }
@@ -187,17 +301,7 @@ sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
   fs->invalidationPending = PR_FALSE;
   fs->cachedValueCount = 0;
 
-  rv = mProtoArray->CloneAsyncArray(getter_AddRefs(fs->array));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = fs->array->AddSort(aProperty, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_NEWXPCOM(fs->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
-  NS_ENSURE_TRUE(fs->arrayListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = fs->arrayListener->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = fs->array->AddAsyncListener(fs->arrayListener);
+  rv = ConfigureFilterArray(fs, aProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ConfigureArray(mFilters.Length() - 1);
@@ -241,18 +345,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
     }
   }
 
-  rv = mProtoArray->CloneAsyncArray(getter_AddRefs(fs->array));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = fs->array->AddSort(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
-                          PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_NEWXPCOM(fs->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
-  NS_ENSURE_TRUE(fs->arrayListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = fs->arrayListener->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = fs->array->AddAsyncListener(fs->arrayListener);
+  rv = ConfigureFilterArray(fs, NS_LITERAL_STRING(SB_PROPERTY_CREATED));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ConfigureArray(mFilters.Length() - 1);
@@ -331,7 +424,23 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
                                      const PRUnichar** aValueArray,
                                      PRUint32 aValueArrayCount)
 {
-  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Set", this));
+#ifdef DEBUG
+  {
+    nsString buff;
+    for (PRUint32 i = 0; i < aValueArrayCount && aValueArray; i++) {
+      buff.Append(aValueArray[i]);
+      if (i + 1 < aValueArrayCount) {
+        buff.AppendLiteral(", ");
+      }
+    }
+    if (!aValueArrayCount) {
+      buff.AssignLiteral("no values");
+    }
+    TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Set %d, %d [%s]",
+           this, aIndex, aValueArrayCount,
+           NS_LossyConvertUTF16toASCII(buff).get()));
+  }
+#endif
   if (aValueArrayCount) {
     NS_ENSURE_ARG_POINTER(aValueArray);
   }
@@ -449,13 +558,6 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
 
     nsresult rv;
 
-    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
-    rv = mLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = fs.array->SetPropertyCache(propertyCache);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsCOMPtr<sbIMutablePropertyArray> propArray =
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -470,7 +572,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
       new sbLocalDatabaseTreeView();
     NS_ENSURE_TRUE(newTreeView, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = newTreeView->Init(mMediaListView, fs.array, propArray);
+    rv = newTreeView->Init(mMediaListView, fs.array, propArray, nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
     fs.treeView = newTreeView;
@@ -680,44 +782,77 @@ sbLocalDatabaseCascadeFilterSet::ClearSearches()
   return NS_OK;
 }
 
-nsresult
-sbLocalDatabaseCascadeFilterSet::CloneInto(sbLocalDatabaseCascadeFilterSet* aDest)
-{
-  NS_ENSURE_ARG_POINTER(aDest);
-
-  nsresult rv;
-
-  PRUint32 numFilters = mFilters.Length();
-  for (PRUint32 i = 0; i < numFilters; i++) {
-    sbFilterSpec& source = mFilters[i];
-
-    sbFilterSpec* dest = aDest->mFilters.AppendElement();
-    NS_ENSURE_TRUE(dest, NS_ERROR_OUT_OF_MEMORY);
-
-    dest->isSearch = source.isSearch;
-    dest->property = source.property;
-    dest->invalidationPending = PR_FALSE;
-
-    nsString* success = dest->propertyList.AppendElements(source.propertyList);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-    success = dest->values.AppendElements(source.values);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = source.array->CloneAsyncArray(getter_AddRefs(dest->array));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = aDest->UpdateListener();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 void
 sbLocalDatabaseCascadeFilterSet::ClearMediaListView()
 {
   mMediaListView = nsnull;
+}
+
+nsresult
+sbLocalDatabaseCascadeFilterSet::GetState(sbLocalDatabaseCascadeFilterSetState** aState)
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetState", this));
+  NS_ASSERTION(aState, "aState is null");
+
+  nsRefPtr<sbLocalDatabaseCascadeFilterSetState> state =
+    new sbLocalDatabaseCascadeFilterSetState();
+  NS_ENSURE_TRUE(state, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv;
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    sbFilterSpec& fs = mFilters[i];
+
+    sbLocalDatabaseCascadeFilterSetState::Spec* spec =
+      state->mFilters.AppendElement();
+    NS_ENSURE_TRUE(spec, NS_ERROR_OUT_OF_MEMORY);
+
+    if (fs.isSearch) {
+      spec->isSearch = PR_TRUE;
+
+      for (PRUint32 j = 0; j < fs.propertyList.Length(); j++) {
+
+        nsCOMPtr<sbILibrarySearch> search =
+          do_CreateInstance(SONGBIRD_LIBRARYSEARCH_CONTRACTID, &rv);
+
+        rv = search->InitNative(fs.propertyList[j],
+                                fs.propertyList[j].EqualsLiteral("*"),
+                                &fs.values);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool success = spec->searches.AppendObject(search);
+        NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
+      }
+    }
+    else {
+      spec->isSearch = PR_FALSE;
+
+      spec->filter = do_CreateInstance(SONGBIRD_LIBRARYFILTER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = spec->filter->InitNative(fs.property, &fs.values);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (fs.treeView) {
+        rv = fs.treeView->GetState(getter_AddRefs(spec->treeViewState));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+
+  }
+
+#ifdef DEBUG
+    {
+      nsString buff;
+      state->ToString(buff);
+      nsCOMPtr<nsISupports> supports = do_QueryInterface(state);
+      TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - returning state [0x%.8x] %s",
+             this, supports.get(), NS_LossyConvertUTF16toASCII(buff).get()));
+    }
+#endif
+
+  NS_ADDREF(*aState = state);
+  return NS_OK;
 }
 
 nsresult
@@ -824,6 +959,37 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
       }
     }
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseCascadeFilterSet::ConfigureFilterArray(sbFilterSpec* aSpec,
+                                                      const nsAString& aSortProperty)
+{
+  NS_ASSERTION(aSpec, "aSpec is null");
+
+  nsresult rv;
+
+  rv = mProtoArray->CloneAsyncArray(getter_AddRefs(aSpec->array));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aSpec->array->AddSort(aSortProperty, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NEWXPCOM(aSpec->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
+  NS_ENSURE_TRUE(aSpec->arrayListener, NS_ERROR_OUT_OF_MEMORY);
+  rv = aSpec->arrayListener->Init(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aSpec->array->AddAsyncListener(aSpec->arrayListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+  rv = mLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aSpec->array->SetPropertyCache(propertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1192,3 +1358,155 @@ sbGUIDArrayPrimarySortEnumerator::GetNext(nsAString& _retval)
   mNextIndex++;
   return NS_OK;
 }
+
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseCascadeFilterSetState,
+                   nsISerializable);
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetState::Read(nsIObjectInputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  mFilters.Clear();
+
+  PRUint32 length;
+  rv = aStream->Read32(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    Spec* spec = mFilters.AppendElement();
+    NS_ENSURE_TRUE(spec, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = aStream->ReadBoolean(&spec->isSearch);
+    if (spec->isSearch) {
+      PRUint32 numSearches;
+      rv = aStream->Read32(&numSearches);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibrarySearch> search;
+      rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(search));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool success = spec->searches.AppendObject(search);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    }
+    else {
+      rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(spec->filter));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    PRBool hasTreeViewState;
+    rv = aStream->ReadBoolean(&hasTreeViewState);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (hasTreeViewState) {
+      spec->treeViewState = new sbLocalDatabaseTreeViewState();
+      NS_ENSURE_TRUE(spec->treeViewState, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = spec->treeViewState->Init();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = spec->treeViewState->Read(aStream);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSetState::Write(nsIObjectOutputStream* aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+
+  rv = aStream->Write32(mFilters.Length());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+    rv = aStream->WriteBoolean(mFilters[i].isSearch);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mFilters[i].isSearch) {
+      PRUint32 numSearches = mFilters[i].searches.Count();
+      rv = aStream->Write32(numSearches);
+      NS_ENSURE_SUCCESS(rv, rv);
+      for (PRUint32 j = 0; j < numSearches; j++) {
+        rv = aStream->WriteObject(mFilters[i].searches[j], PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    else {
+      rv = aStream->WriteObject(mFilters[i].filter, PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (mFilters[i].treeViewState) {
+      rv = aStream->WriteBoolean(PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mFilters[i].treeViewState->Write(aStream);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = aStream->WriteBoolean(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseCascadeFilterSetState::ToString(nsAString& aStr)
+{
+  nsresult rv;
+  nsString buff;
+
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+
+    if (mFilters[i].isSearch) {
+      PRUint32 numSearches = mFilters[i].searches.Count();
+      buff.AppendLiteral("search [");
+      for (PRUint32 j = 0; j < numSearches; j++) {
+        nsString tmp;
+        rv = mFilters[i].searches[j]->ToString(tmp);
+        NS_ENSURE_SUCCESS(rv, rv);
+        buff.Append(tmp);
+        if (j + 1 < numSearches) {
+          buff.AppendLiteral(", ");
+        }
+      }
+      buff.AppendLiteral("]");
+    }
+    else {
+      buff.AppendLiteral("filter [");
+      nsString tmp;
+      rv = mFilters[i].filter->ToString(tmp);
+      NS_ENSURE_SUCCESS(rv, rv);
+      buff.Append(tmp);
+      if (mFilters[i].treeViewState) {
+        buff.AppendLiteral(", ");
+        rv = mFilters[i].treeViewState->ToString(tmp);
+        NS_ENSURE_SUCCESS(rv, rv);
+        buff.Append(tmp);
+      }
+      buff.AppendLiteral("]");
+    }
+
+    if (i + 1 < numFilters) {
+      buff.AppendLiteral(", ");
+    }
+
+  }
+
+  aStr = buff;
+
+  return NS_OK;
+}
+

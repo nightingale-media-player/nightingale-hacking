@@ -104,9 +104,11 @@
 #define SHUTDOWN_ASYNC_GRANULARITY_MS 1000
 
 #define SB_ILIBRESOURCE_CAST(_ptr)                                             \
-  static_cast<sbILibraryResource*>(static_cast<sbILibrary*>(_ptr))
+  static_cast<sbILibraryResource*>(static_cast<sbIMediaItem*>(static_cast<sbLocalDatabaseMediaItem*>(_ptr)))
 #define SB_IMEDIALIST_CAST(_ptr)                                               \
-  static_cast<sbIMediaList*>(static_cast<sbILibrary*>(_ptr))
+  static_cast<sbIMediaList*>(static_cast<sbLocalDatabaseMediaListBase*>(_ptr))
+#define SB_IMEDIAITEM_CAST(_ptr)                                               \
+  static_cast<sbIMediaItem*>(static_cast<sbLocalDatabaseMediaItem*>(_ptr))
 
 #define DEFAULT_SORT_PROPERTY SB_PROPERTY_CREATED
 
@@ -370,7 +372,6 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
   mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
   mPreventAddedNotification(PR_FALSE)
 {
-  MOZ_COUNT_CTOR(sbLocalDatabaseLibrary);
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbLocalDatabaseLibrary");
@@ -382,7 +383,6 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Destructed", this));
-  MOZ_COUNT_DTOR(sbLocalDatabaseLibrary);
 }
 
 nsresult
@@ -2338,6 +2338,13 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
   nsresult rv;
   nsCOMPtr<sbIMediaItem> strongMediaItem;
 
+  // If the requested guid is the library, return ourselves
+  if (mGuid.Equals(aGUID)) {
+    nsCOMPtr<sbIMediaItem> item = SB_IMEDIAITEM_CAST(this);
+    NS_ADDREF(*_retval = item);
+    return NS_OK;
+  }
+
   sbMediaItemInfo* itemInfo;
   if (!mMediaItemTable.Get(aGUID, &itemInfo) ||
       !itemInfo->hasListType) {
@@ -3315,7 +3322,8 @@ sbLocalDatabaseLibrary::Clear()
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
+sbLocalDatabaseLibrary::CreateView(sbIMediaListViewState* aState,
+                                   sbIMediaListView** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -3328,7 +3336,7 @@ sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
     view(new sbLocalDatabaseMediaListView(this, this, prop, 0));
   NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = view->Init();
+  rv = view->Init(aState);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = view);

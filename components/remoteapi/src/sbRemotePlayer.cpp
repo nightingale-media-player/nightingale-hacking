@@ -1046,7 +1046,7 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
     nsCOMPtr<sbIMediaList> list( do_QueryInterface( aList, &rv ) );
     NS_ENSURE_SUCCESS( rv, rv );
 
-    rv = list->CreateView( getter_AddRefs(mediaListView) );
+    rv = list->CreateView( nsnull, getter_AddRefs(mediaListView) );
     NS_ENSURE_SUCCESS( rv, rv );
   }
 

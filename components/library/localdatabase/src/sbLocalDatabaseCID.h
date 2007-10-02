@@ -107,3 +107,15 @@
     { 0x87, 0xfd, 0xa6, 0xf0, 0xd0, 0xec, 0x08, 0x1f }               \
   }
 
+#define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_DESCRIPTION              \
+  "Local Database Media List View State"
+#define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CONTRACTID               \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/MediaListViewState;1"
+#define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID                      \
+  { /* 9a1a9305-ca11-4067-aa24-baeb64231dfa */                       \
+    0x9a1a9305,                                                      \
+    0xca11,                                                          \
+    0x4067,                                                          \
+    { 0xaa, 0x24, 0xba, 0xeb, 0x64, 0x23, 0x1d, 0xfa }               \
+  }
+

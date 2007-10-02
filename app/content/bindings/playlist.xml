@@ -567,6 +567,7 @@
   var parent =
     document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
   this._removeAllChildren(parent);
+  this._splitters = [];
   
   if (this.getAttribute("hidefilters") != "true") {
     // Create the filters based upon the cascadeFilterSet data.

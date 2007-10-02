@@ -77,6 +77,42 @@ function runTest () {
     assertEqual(cfs.getProperty(i), cloneCfs.getProperty(i));
     assertEqual(cfs.isSearch(i), cloneCfs.isSearch(i));
   }
+
+  var state = view.getState();
+  var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
+  pipe.init(false, false, 0, 0xffffffff, null);
+
+  var oos = Cc["@mozilla.org/binaryoutputstream;1"]
+              .createInstance(Ci.nsIObjectOutputStream);
+  oos.setOutputStream(pipe.outputStream);
+  oos.writeObject(state, true);
+  oos.close();
+
+  var ois = Cc["@mozilla.org/binaryinputstream;1"]
+              .createInstance(Ci.nsIObjectInputStream);
+  ois.setInputStream(pipe.inputStream);
+  var newState = ois.readObject(true)
+  ois.close();
+
+  var newView = library.createView(newState);
+  assertPropertyArray(newView.currentSort, SBProperties.createArray([
+    [SBProperties.artistName, "a"]
+  ]));
+  assertPropertyArray(newView.currentSearch, SBProperties.createArray([
+    ["*", "Beat"]
+  ]));
+  assertPropertyArray(newView.currentFilter, SBProperties.createArray([
+    [SBProperties.isList,      "0"],
+    [SBProperties.hidden,      "0"],
+    [SBProperties.genre,       "ROCK"], 
+    [SBProperties.artistName,  "The Beatles"]
+  ]));
+  var newCfs = newView.cascadeFilterSet;
+  assertEqual(cfs.length, newCfs.length);
+  for (let i = 0; i < cfs.length; i++) {
+    assertEqual(cfs.getProperty(i), newCfs.getProperty(i));
+    assertEqual(cfs.isSearch(i), newCfs.isSearch(i));
+  }
 }
 
 function assertPropertyArray(a1, a2) {

@@ -30,11 +30,15 @@
  */
 
 #include <nsIGenericFactory.h>
+#include "sbLibraryConstraints.h"
 #include "sbLibraryManager.h"
 #include "sbMediaListViewMap.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLibraryManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaListViewMap, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryFilter);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibrarySearch);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibrarySort);
 
 static nsModuleComponentInfo components[] =
 {
@@ -51,6 +55,24 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
     sbMediaListViewMapConstructor,
     sbMediaListViewMap::RegisterSelf
+  },
+  {
+    SONGBIRD_LIBRARYFILTER_CLASSNAME,
+    SONGBIRD_LIBRARYFILTER_CID,
+    SONGBIRD_LIBRARYFILTER_CONTRACTID,
+    sbLibraryFilterConstructor,
+  },
+  {
+    SONGBIRD_LIBRARYSEARCH_CLASSNAME,
+    SONGBIRD_LIBRARYSEARCH_CID,
+    SONGBIRD_LIBRARYSEARCH_CONTRACTID,
+    sbLibrarySearchConstructor,
+  },
+  {
+    SONGBIRD_LIBRARYSORT_CLASSNAME,
+    SONGBIRD_LIBRARYSORT_CID,
+    SONGBIRD_LIBRARYSORT_CONTRACTID,
+    sbLibrarySortConstructor,
   }
 };
 

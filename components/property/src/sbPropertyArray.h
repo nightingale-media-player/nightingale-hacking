@@ -35,12 +35,14 @@
 #include <nsIArray.h>
 #include <nsIClassInfo.h>
 #include <nsIMutableArray.h>
+#include <nsISerializable.h>
 
 class sbIProperty;
 class sbIPropertyManager;
 
 class sbPropertyArray : public sbIMutablePropertyArray,
                         public nsIMutableArray,
+                        public nsISerializable,
                         public nsIClassInfo
 {
 public:
@@ -48,6 +50,7 @@ public:
   NS_DECL_NSIARRAY
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIMUTABLEARRAY
+  NS_DECL_NSISERIALIZABLE
   NS_DECL_SBIPROPERTYARRAY
   NS_DECL_SBIMUTABLEPROPERTYARRAY
 

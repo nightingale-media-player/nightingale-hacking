@@ -92,7 +92,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 
   // Create the view for the list
   nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = aMediaList->CreateView( getter_AddRefs(mediaListView) );
+  rv = aMediaList->CreateView( nsnull, getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Find out if this is a default or site library

@@ -30,6 +30,8 @@
 */
 #include "sbMediaListViewMap.h"
 
+#include <sbILibraryManager.h>
+
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
@@ -134,39 +136,84 @@ sbMediaListViewMap::Init()
 }
 
 /* sbIMediaListView getView (in nsISupports aParentKey, in nsISupports aPageKey); */
-NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParentKey, nsISupports *aPageKey, sbIMediaListView **_retval)
+NS_IMETHODIMP
+sbMediaListViewMap::GetView(nsISupports *aParentKey,
+                            nsISupports *aPageKey,
+                            sbIMediaListView **_retval)
 {
+  TRACE(("sbMediaListViewMap[0x%x] - GetView", this));
+
   NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
   NS_ENSURE_ARG_POINTER( aParentKey );
   NS_ENSURE_ARG_POINTER( aPageKey );
   NS_ENSURE_ARG_POINTER( _retval );
-  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
-  sbIMediaListView *innerValue = nsnull;
+  sbViewMapInner *innerMap = nsnull;
+  sbViewStateInfo *innerValue = nsnull;
   *_retval = nsnull;
   if ( mViewMap.Get( aParentKey, &innerMap ) && innerMap && innerMap->Get( aPageKey, &innerValue ) )
   {
-    NS_IF_ADDREF( *_retval = innerValue );
+#ifdef DEBUG
+    {
+      nsString buff;
+      innerValue->state->ToString(buff);
+      TRACE(("sbMediaListViewMap[0x%x] - Restoring view %s %s %s", this,
+             NS_LossyConvertUTF16toASCII(innerValue->libraryGuid).get(),
+             NS_LossyConvertUTF16toASCII(innerValue->libraryGuid).get(),
+             NS_LossyConvertUTF16toASCII(buff).get()));
+    }
+#endif
+
+    nsresult rv;
+    nsCOMPtr<sbILibraryManager> lm =
+        do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsCOMPtr<sbILibrary> library;
+    rv = lm->GetLibrary( innerValue->libraryGuid, getter_AddRefs(library) );
+    if ( rv == NS_ERROR_NOT_AVAILABLE ) {
+      return NS_OK;
+    }
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsCOMPtr<sbIMediaItem> item;
+    rv = library->GetItemByGuid( innerValue->listGuid, getter_AddRefs(item) );
+    if ( rv == NS_ERROR_NOT_AVAILABLE ) {
+      return NS_OK;
+    }
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(item, &rv);
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    rv = list->CreateView(innerValue->state, _retval);
+    NS_ENSURE_SUCCESS( rv, rv );
   }
+
   // It's okay to return null on failure.
   return NS_OK;
 }
 
 /* void setView (in nsISupports aParentKey, in nsISupports aPageKey, in sbIMediaListView aView); */
-NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParentKey, nsISupports *aPageKey, sbIMediaListView *aView)
+NS_IMETHODIMP
+sbMediaListViewMap::SetView(nsISupports *aParentKey,
+                            nsISupports *aPageKey,
+                            sbIMediaListView *aView)
 {
-  return NS_OK;
+  TRACE(("sbMediaListViewMap[0x%x] - SetView", this));
+
   NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
   NS_ENSURE_ARG_POINTER( aParentKey );
   NS_ENSURE_ARG_POINTER( aPageKey );
   NS_ENSURE_ARG_POINTER( aView );
 
+  nsresult rv;
   PRBool success;
-  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
-  sbIMediaListView *innerValue = nsnull;
+  sbViewMapInner *innerMap = nsnull;
+
   // If our inner map does not yet exist, create and stash it
   if ( ! mViewMap.Get( aParentKey, &innerMap ) )
   {
-    innerMap = new nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView >;
+    innerMap = new sbViewMapInner;
     NS_ENSURE_TRUE(innerMap, NS_ERROR_OUT_OF_MEMORY);
     success = innerMap->Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -174,31 +221,50 @@ NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParentKey, nsISupports *
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
 
+  nsCOMPtr<sbIMediaList> list;
+  nsString listGuid;
+  rv = aView->GetMediaList(getter_AddRefs(list));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = list->GetGuid(listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  nsString libraryGuid;
+  rv = list->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = library->GetGuid(libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaListViewState> state;
+  rv = aView->GetState(getter_AddRefs(state));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef DEBUG
+  {
+    nsString buff;
+    state->ToString(buff);
+    TRACE(("sbMediaListViewMap[0x%x] - Saving view %s %s %s", this,
+           NS_LossyConvertUTF16toASCII(libraryGuid).get(),
+           NS_LossyConvertUTF16toASCII(libraryGuid).get(),
+           NS_LossyConvertUTF16toASCII(buff).get()));
+  }
+#endif
+
+  nsAutoPtr<sbViewStateInfo> si(
+    new sbViewStateInfo(libraryGuid, listGuid, state));
+  NS_ENSURE_TRUE(si, NS_ERROR_OUT_OF_MEMORY);
+
   // Put the view into the inner map
-  success = innerMap->Put( aPageKey, aView );
+  success = innerMap->Put( aPageKey, si );
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  si.forget();
 
   // And then into the reverse lookup maps
   success = mParentLookup.Put( aView, aParentKey );
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   success = mPageLookup.Put( aView, aPageKey );
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-  return NS_OK;
-}
-
-/* void getContext (in sbIMediaListView aView, out nsISupports aParentKey, out nsISupports aPageKey); */
-NS_IMETHODIMP sbMediaListViewMap::GetContext(sbIMediaListView *aView, nsISupports **aParentKey, nsISupports **aPageKey)
-{
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
-  NS_ENSURE_ARG_POINTER( aParentKey );
-  NS_ENSURE_ARG_POINTER( aPageKey );
-  NS_ENSURE_ARG_POINTER( aView );
-
-  if ( ! mParentLookup.Get( aView, aParentKey ) )
-    *aParentKey = nsnull;
-  if ( ! mPageLookup.Get( aView, aPageKey ) )
-    *aPageKey = nsnull;
-
   return NS_OK;
 }
 
@@ -227,11 +293,11 @@ NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParentKey)
   }
   else
   {
-    nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
+    sbViewMapInner *innerMap = nsnull;
     if ( mViewMap.Get( aParentKey, &innerMap ) )
     {
       // First we must release the reverse lookup entries
-      innerMap->Enumerate( (nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView >::EnumFunction)ReleaseLookups, this );
+      innerMap->Enumerate( (sbViewMapInner::EnumFunction)ReleaseLookups, this );
 
       // Then release the entire branch of the primary map.
       mViewMap.Remove( aParentKey ); // This line deletes the innerMap, automatically clearing it.  Supposedly.

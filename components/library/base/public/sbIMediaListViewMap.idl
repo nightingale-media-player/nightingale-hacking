@@ -60,15 +60,6 @@ interface sbIMediaListViewMap : nsISupports
   void setView( in nsISupports aParentKey, in nsISupports aPageKey, in sbIMediaListView aView );
 
   /**
-   * \brief Given a view, get the parent and page context of the saved view.
-   * \param aView The view for which context is requested.
-   * \param aParentKey The parent object of the view (usually a browser).
-   * \param aPageKey The page reference of the view (usually a history entry).
-   * \return sbIMediaListView The saved view, or null if none was ever saved.
-   */
-  void getContext( in sbIMediaListView aView, out nsISupports aParentKey, out nsISupports aPageKey );
-
-  /**
    * \brief Release all views held by a parent grouping.
    *
    *  Usually, the parent object will be the browser for an open tab.  When the tab is closed,
