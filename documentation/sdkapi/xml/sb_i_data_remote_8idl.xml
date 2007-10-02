@@ -90,6 +90,6 @@
 <codeline lineno="169"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="170"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl"/>
   </compounddef>
 </doxygen>

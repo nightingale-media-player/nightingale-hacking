@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/metrics/public/sbIMetrics.idl" line="54"/>
+        <location file="e:/Projects/songbird/trunk/components/metrics/public/sbIMetrics.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metrics_19be521ae50b0f4b8ec15fe470f800a30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/metrics/public/sbIMetrics.idl" line="67"/>
+        <location file="e:/Projects/songbird/trunk/components/metrics/public/sbIMetrics.idl" line="67"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metrics_1afd697b13697ec48768a27cc104bd860" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -119,14 +119,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/metrics/public/sbIMetrics.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/components/metrics/public/sbIMetrics.idl" line="81"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Metrics service interface This is an interface to the songbird metrics service, used to phone home and send metrics gathered since the last report was sent. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/metrics/public/sbIMetrics.idl" line="45" bodyfile="c:/projects/songbird/components/metrics/public/sbIMetrics.idl" bodystart="44" bodyend="82"/>
+    <location file="e:/Projects/songbird/trunk/components/metrics/public/sbIMetrics.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/metrics/public/sbIMetrics.idl" bodystart="44" bodyend="82"/>
     <listofallmembers>
       <member refid="interfacesb_i_metrics_12d9bf4ea51ecd1a24cc9217cddc909bc" prot="public" virt="non-virtual"><scope>sbIMetrics</scope><name>checkUploadMetrics</name></member>
       <member refid="interfacesb_i_metrics_1afd697b13697ec48768a27cc104bd860" prot="public" virt="non-virtual"><scope>sbIMetrics</scope><name>metricsAdd</name></member>

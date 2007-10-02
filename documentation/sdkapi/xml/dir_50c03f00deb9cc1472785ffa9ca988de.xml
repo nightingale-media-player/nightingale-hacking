@@ -17,6 +17,7 @@
     <innerdir refid="dir_3749693a662f99aa24debbe491ac1bc2">components/library/</innerdir>
     <innerdir refid="dir_c6fdb8b8b55e462577a3bc0ccc3eb48e">components/mediacore/</innerdir>
     <innerdir refid="dir_a0eda4fc68bc87409b776120bbc21f19">components/metrics/</innerdir>
+    <innerdir refid="dir_dccf5f8f52c78a8c7169856c9fcb48ab">components/moz/</innerdir>
     <innerdir refid="dir_58cac7b2a8c24daa6d2178c1f5e1f639">components/playlistcommands/</innerdir>
     <innerdir refid="dir_f4ad8264828983321b9e263c1fc3b0fb">components/playlistplayback/</innerdir>
     <innerdir refid="dir_d42d80ba4a5751a7f082c5d9804b5b9f">components/playlistreader/</innerdir>

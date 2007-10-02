@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="57" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="57" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="57" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_158bf8bed69f785e53c97e6d86524b94d" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="58" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="58" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_14021283a74afadb1272d52ce3524a446" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="59" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="59" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="59" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_198043e2caf30c127fd980803df0a2e3c" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="60" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="60" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_1a014f9227ed4acb647072301515e100f" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -71,7 +71,7 @@
 <para>The key used to find the state object. The key present is only a partial or leaf key. The complete key is composed of the various state objects that build the tree of state objects. For example, if the complete key to an object is &quot;metrics.playcount&quot;, two state objects are involved in constructing the tree. The root object would have the key &quot;metrics&quot; and contain a second </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="71" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="71" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="71" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_1ccdac5b6c31079813e7d1d0590ba4531" prot="public" static="no" mutable="no">
         <type>attribute nsIWritableVariant</type>
@@ -84,7 +84,7 @@
 <para>The value can be any primitive type or complex type that implements nsISupports. Please note that it is completely valid for a state object to not have any value set. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="79" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="79" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="79" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_129c75154f03ec8f0dd27d0a333eed7a3" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref></type>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="84" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="84" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="84" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_state_object_1523fa55a4c23710db21491556540f290" prot="public" static="no" mutable="no">
         <type>attribute nsIWritablePropertyBag2</type>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="89" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="89" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="89" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="89" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -190,7 +190,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="109"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="109"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_state_object_1537d890e88f681e99b797d901b0aa9ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -205,7 +205,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="120"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="120"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_state_object_1ad0b630e0221ab986989d501bfc24e69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -232,7 +232,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="128"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="128"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_state_object_12dcef7aecb0e0a5d0f82ceb8e987e79e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -259,7 +259,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="136"/>
+        <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="136"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -269,15 +269,15 @@
 <simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="660">
+      <node id="675">
         <label>sbIStateObject</label>
         <link refid="interfacesb_i_state_object"/>
-        <childnode refid="660" relation="usage">
+        <childnode refid="675" relation="usage">
           <edgelabel>parent</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/state/public/sbIStateObject.idl" line="52" bodyfile="c:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="51" bodyend="137"/>
+    <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/state/public/sbIStateObject.idl" bodystart="51" bodyend="137"/>
     <listofallmembers>
       <member refid="interfacesb_i_state_object_1ad0b630e0221ab986989d501bfc24e69" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>addObserver</name></member>
       <member refid="interfacesb_i_state_object_1523fa55a4c23710db21491556540f290" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>children</name></member>

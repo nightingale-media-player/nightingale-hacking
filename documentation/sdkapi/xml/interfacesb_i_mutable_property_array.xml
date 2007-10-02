@@ -15,7 +15,7 @@
 <para>Determines whether or not the appendProperty method will throw on invalid input (i.e. setting a value on a property whose <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> &apos;validate&apos; method fails on that input). Defaults to true.</para><para>An example of improper usage is setting non-numeric text in a property whose parent <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> is actually <ref refid="interfacesb_i_number_property_info" kindref="compound">sbINumberPropertyInfo</ref>.</para><para>Note that this property can only be set if the implementing array is empty. Any attempt to set this property after &apos;appendProperty&apos; has been called will throw NS_ERROR_FAILURE. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="118" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="118" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="118" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="104"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="104"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -69,30 +69,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="394">
+      <node id="395">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="393">
+      <node id="394">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="394" relation="public-inheritance">
+        <childnode refid="395" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="396">
+      <node id="397">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="395">
+      <node id="396">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="396" relation="public-inheritance">
+        <childnode refid="397" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="92" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="91" bodyend="119"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="92" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="91" bodyend="119"/>
     <listofallmembers>
       <member refid="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyAt</name></member>

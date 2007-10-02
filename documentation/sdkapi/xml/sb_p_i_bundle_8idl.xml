@@ -63,6 +63,6 @@
 <codeline lineno="65"><highlight class="normal"><sp/>sbIBundleDownloadListener<sp/>getInstallListener(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="66"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/bundle/public/sbPIBundle.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbPIBundle.idl"/>
   </compounddef>
 </doxygen>

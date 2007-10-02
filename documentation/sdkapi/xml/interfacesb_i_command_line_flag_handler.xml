@@ -38,14 +38,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/commandline/public/sbICommandLineFlagHandler.idl" line="55"/>
+        <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl" line="55"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Songbird Command line flag handler Interface. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/commandline/public/sbICommandLineFlagHandler.idl" line="46" bodyfile="c:/projects/songbird/components/commandline/public/sbICommandLineFlagHandler.idl" bodystart="45" bodyend="56"/>
+    <location file="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/commandline/public/sbICommandLineFlagHandler.idl" bodystart="45" bodyend="56"/>
     <listofallmembers>
       <member refid="interfacesb_i_command_line_flag_handler_1edcd16eed0f54c24fe72b3bb7641a57e" prot="public" virt="non-virtual"><scope>sbICommandLineFlagHandler</scope><name>handleFlag</name></member>
     </listofallmembers>

@@ -14,7 +14,7 @@
 <para><xrefsect id="todo_1_todo000004"><xreftitle>Todo</xreftitle><xrefdescription><para>Make &quot;SetPos()&quot; work past the end of the buffer. Right now, nothing is seekable. </para></xrefdescription></xrefsect></para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="55" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="55" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_channel_1eb31ddf794d8dd7f24e8e1deb9ac9a1e" prot="public" static="no" mutable="no">
         <type>readonly attribute PRUInt64</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="59" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="59" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="59" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_channel_113b0bde43d528e8ae0c12c56aa6e1b1c" prot="public" static="no" mutable="no">
         <type>readonly attribute PRUInt64</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="63" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="63" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="63" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_channel_131900ec93b36e8097b1165b6ebe5cde1" prot="public" static="no" mutable="no">
         <type>readonly attribute PRBool</type>
@@ -53,7 +53,7 @@
 <para><xrefsect id="todo_1_todo000005"><xreftitle>Todo</xreftitle><xrefdescription><para>Make &quot;GetSeekable()&quot; work. Right now, nothing is seekable. </para></xrefdescription></xrefsect></para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="68" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="68" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="68" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="68" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_channel_1dc3708c7b505097379eda3f07b3595b2" prot="public" static="no" mutable="no">
         <type>readonly attribute PRBool</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="72" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="72" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="72" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -104,7 +104,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="85"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_1d7a864d82d848f5feae6fd79624c155f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -117,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="89"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="89"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_1d0ce838a6c0bfef2f9882f077e9a6072" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -142,7 +142,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="94"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_17b931b8aea05a54a1f0f4ee17e1d87d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRUint32</type>
@@ -179,7 +179,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="101"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="101"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_176c6402a0c9c81a78b9795bdb3478669" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char</type>
@@ -193,7 +193,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="106"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="106"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_16948e056c34868f428edfdbe86ed3952" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -207,7 +207,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="111"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="111"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_channel_1619a8c0810859ed75568506fdf739a16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt64</type>
@@ -221,7 +221,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="116"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="116"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -229,7 +229,7 @@
     <detaileddescription>
 <para>Every time the channel reports it has data available (or a change in state) it will call the given <ref refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kindref="member">sbIMetadataHandler::onChannelData</ref> method.</para><para>This class provides buffered read methods for the handler to retrieve data.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="50" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="49" bodyend="117"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="49" bodyend="117"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_channel_1eb31ddf794d8dd7f24e8e1deb9ac9a1e" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>buf</name></member>
       <member refid="interfacesb_i_metadata_channel_1d7a864d82d848f5feae6fd79624c155f" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>close</name></member>

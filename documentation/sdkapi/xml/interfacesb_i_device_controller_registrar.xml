@@ -15,7 +15,7 @@
 <para>An enumeration of sbIDeviceControllers currently registered. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="53" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="53" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_controller_registrar_1c22aa71d3dd874707497c6f39fb9c747" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -28,7 +28,7 @@
 <para>The number of sbIDeviceControllers currently registered. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="58" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="58" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -47,7 +47,7 @@
 <para>Registers an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="43"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="43"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_registrar_163ef6f12a625b1e10f0e080ed40e8762" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,7 +64,7 @@
 <para>Unregisters an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="48"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="48"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_registrar_1b2095645bd9f79a0b26fc3ec185cb2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref></type>
@@ -81,14 +81,14 @@
 <para>Retrieve a registered controller. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="63"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="63"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="39" bodyfile="c:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="38" bodyend="64"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="39" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="38" bodyend="64"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_controller_registrar_1c22aa71d3dd874707497c6f39fb9c747" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>controllerCount</name></member>
       <member refid="interfacesb_i_device_controller_registrar_12fc9ba94b9593a2ae83f899ccec15e0d" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>controllers</name></member>

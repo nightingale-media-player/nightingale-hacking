@@ -2,6 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="dir_1729ad211d4efba14ed4a946e564232b" kind="dir">
     <compoundname>components/remoteapi/public/</compoundname>
+    <innerfile refid="sb_i_remote_a_p_i_service_8idl">sbIRemoteAPIService.idl</innerfile>
     <innerfile refid="sb_i_remote_commands_8idl">sbIRemoteCommands.idl</innerfile>
     <innerfile refid="sb_i_remote_library_8idl">sbIRemoteLibrary.idl</innerfile>
     <innerfile refid="sb_i_remote_media_list_8idl">sbIRemoteMediaList.idl</innerfile>

@@ -15,7 +15,7 @@
 <para>Number of filters in the set </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="64" bodyfile="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="64" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="64" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" bodystart="64" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -43,7 +43,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_14c9c13699e6d46e83d4bf388a7df9fa4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned short</type>
@@ -81,7 +81,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="82"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="82"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1b8c664b0441fb66e9d67bbcc4d22cc76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -106,7 +106,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="88"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="88"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1aedc21c8d4ae9515dd6e8c5bfefc2342" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -142,7 +142,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="95"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="95"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_17c5f6c345297156eae8a0bb10c9e4dcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -190,7 +190,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="108"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="108"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_150ee89f372646f684770cf63e9ec4f4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -203,7 +203,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="113"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="113"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_177fef30be97b844909e6616440561d96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -229,7 +229,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="120"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="120"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1aa9b6b3bb42777d92aae27e7ac6e5ca3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -266,7 +266,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="128"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="128"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_185d3be9ed13f6e5c2978712bf782de66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsITreeView</type>
@@ -292,16 +292,21 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="135"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="135"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1b2b3acc5b024ebf567d1e1057f98652e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_17355e9e85d3a62829de68c48a2cf6eb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
         <definition>unsigned long sbICascadeFilterSet::getValueCount</definition>
-        <argsstring>(in unsigned short aIndex)</argsstring>
+        <argsstring>(in unsigned short aIndex,[optional] in boolean aUseCache)</argsstring>
         <name>getValueCount</name>
         <param>
           <type>in unsigned short</type>
           <declname>aIndex</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in boolean</type>
+          <declname>aUseCache</declname>
         </param>
         <briefdescription>
 <para>Get the number of possible values for a filter. </para>        </briefdescription>
@@ -313,12 +318,19 @@
 <parameterdescription>
 <para>Index of the filter </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aUseCache</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, use a cached value if available. This may be used by listeners to get a new value count without forcing the count to be recalculated. The cached value may not be the most up-to-date value. The default is false. </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>The number of possible values for a filter </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="142"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="147"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_163d848f38fcfc6f7890c7c9aab117556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -344,7 +356,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="149"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="154"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_142dd508927a0893b0ee26d38562169bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -370,7 +382,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="156"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="161"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1659eba1779c8e80568ca7e1673e2c053" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -395,7 +407,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="162"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="167"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_11b1c4feed4717e7b4cde5678b31343b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -420,7 +432,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="168"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="173"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -428,7 +440,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="60" bodyfile="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="59" bodyend="169"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" bodystart="59" bodyend="174"/>
     <listofallmembers>
       <member refid="interfacesb_i_cascade_filter_set_1659eba1779c8e80568ca7e1673e2c053" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>addListener</name></member>
       <member refid="interfacesb_i_cascade_filter_set_11d80acdcc0567057e9fcdf53e909a609" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>appendFilter</name></member>
@@ -438,7 +450,7 @@
       <member refid="interfacesb_i_cascade_filter_set_163d848f38fcfc6f7890c7c9aab117556" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getProperty</name></member>
       <member refid="interfacesb_i_cascade_filter_set_185d3be9ed13f6e5c2978712bf782de66" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getTreeView</name></member>
       <member refid="interfacesb_i_cascade_filter_set_1aa9b6b3bb42777d92aae27e7ac6e5ca3" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValueAt</name></member>
-      <member refid="interfacesb_i_cascade_filter_set_1b2b3acc5b024ebf567d1e1057f98652e" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValueCount</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_17355e9e85d3a62829de68c48a2cf6eb9" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValueCount</name></member>
       <member refid="interfacesb_i_cascade_filter_set_177fef30be97b844909e6616440561d96" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValues</name></member>
       <member refid="interfacesb_i_cascade_filter_set_142dd508927a0893b0ee26d38562169bf" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>isSearch</name></member>
       <member refid="interfacesb_i_cascade_filter_set_15c6a7e2239bf4aab77d400eb8771cc70" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>length</name></member>

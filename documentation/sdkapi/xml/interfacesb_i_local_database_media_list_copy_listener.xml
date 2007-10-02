@@ -23,14 +23,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="48"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="48"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="46" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="45" bodyend="49"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="45" bodyend="49"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_media_list_copy_listener_19304713ea96b76bb96b08f13fd89b773" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaListCopyListener</scope><name>onItemCopied</name></member>
     </listofallmembers>

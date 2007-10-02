@@ -16,7 +16,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="53"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="53"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_min_max_callback_1a37d3f8bc8cb6411134945af7e1492d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -31,7 +31,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="62"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="62"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_min_max_callback_152847092ef6638d787cf333a2958717a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -46,7 +46,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_min_max_callback_180f733338d9de3eb25caf8dd47ccd626" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="80"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="80"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_window_min_max_callback_1f94d093c8f5a5739a717aaef1974f6ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -75,7 +75,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="88"/>
+        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="88"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -83,7 +83,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_window_min_max_callback" kindref="compound">sbIWindowMinMaxCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" line="45" bodyfile="c:/projects/songbird/components/integration/public/IWindowMinMax.idl" bodystart="44" bodyend="89"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl" bodystart="44" bodyend="89"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_min_max_callback_180f733338d9de3eb25caf8dd47ccd626" prot="public" virt="non-virtual"><scope>sbIWindowMinMaxCallback</scope><name>GetMaxHeight</name></member>
       <member refid="interfacesb_i_window_min_max_callback_152847092ef6638d787cf333a2958717a" prot="public" virt="non-virtual"><scope>sbIWindowMinMaxCallback</scope><name>GetMaxWidth</name></member>

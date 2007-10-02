@@ -4,14 +4,14 @@
     <compoundname>sbIRemoteCommands.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="396">
+      <node id="401">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="400">
         <label>components/remoteapi/public/sbIRemoteCommands.idl</label>
         <link refid="sbIRemoteCommands.idl"/>
-        <childnode refid="397" relation="include">
+        <childnode refid="401" relation="include">
         </childnode>
-      </node>
-      <node id="397">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_remote_commands" prot="public">sbIRemoteCommands</innerclass>
@@ -61,42 +61,46 @@
 <codeline lineno="51" refid="interfacesb_i_remote_commands" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_commands" kindref="compound" tooltip="An interface to specify playlist commands from remote web pages.">sbIRemoteCommands</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="52"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="54"><highlight class="comment"><sp/><sp/>Function:<sp/>addCommand</highlight></codeline>
-<codeline lineno="55"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>command.</highlight></codeline>
-<codeline lineno="56"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="57"><highlight class="comment"><sp/><sp/>Arguments:</highlight></codeline>
-<codeline lineno="58"><highlight class="comment"><sp/><sp/><sp/><sp/>type<sp/>-<sp/>The<sp/>type<sp/>of<sp/>the<sp/>command.<sp/><sp/>This<sp/>can<sp/>be<sp/>any<sp/>one<sp/>of</highlight></codeline>
-<codeline lineno="59"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;action&quot;,<sp/>&quot;separator&quot;,<sp/>&quot;value&quot;,<sp/>or<sp/>&quot;submenu&quot;.</highlight></codeline>
-<codeline lineno="60"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>id<sp/>of<sp/>the<sp/>command.</highlight></codeline>
-<codeline lineno="61"><highlight class="comment"><sp/><sp/><sp/><sp/>name<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>command.</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/><sp/>tooltip<sp/>-<sp/>The<sp/>tooltip<sp/>for<sp/>the<sp/>command.</highlight></codeline>
-<codeline lineno="63"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCommand(in<sp/>AString<sp/>aType,<sp/>in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aTooltip);</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="67"><highlight class="comment"><sp/><sp/>Function:<sp/>removeCommand</highlight></codeline>
-<codeline lineno="68"><highlight class="comment"><sp/><sp/>Remove<sp/>a<sp/>command.</highlight></codeline>
-<codeline lineno="69"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="70"><highlight class="comment"><sp/><sp/>Arguments:</highlight></codeline>
-<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>id<sp/>of<sp/>the<sp/>command.</highlight></codeline>
-<codeline lineno="72"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="73"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="74"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addCommand&gt;</highlight></codeline>
-<codeline lineno="75"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCommand(in<sp/>AString<sp/>aID);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Ew.<sp/>this<sp/>is<sp/>so<sp/>ugly.<sp/>I&apos;m<sp/>hoping<sp/>to<sp/>be<sp/>able<sp/>to<sp/>clean<sp/>this<sp/>up<sp/>with<sp/>nsIXPCScriptable</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCommandData(<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aNumCommands,</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aTypeArray,</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aIDArray,</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aNameArray,</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aTooltipArray);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>remotePlayer<sp/>sets<sp/>this<sp/>after<sp/>it<sp/>creates<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86" refid="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>attribute<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>owner;</highlight></codeline>
-<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/><sp/>Group:<sp/>Command<sp/>Methods</highlight></codeline>
+<codeline lineno="55"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="58"><highlight class="comment"><sp/><sp/>Method:<sp/>addCommand</highlight></codeline>
+<codeline lineno="59"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>command.</highlight></codeline>
+<codeline lineno="60"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/><sp/>type<sp/>-<sp/>The<sp/>type<sp/>of<sp/>the<sp/>command.<sp/><sp/>This<sp/>can<sp/>be<sp/>any<sp/>one<sp/>of</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;action&quot;,<sp/>&quot;separator&quot;,<sp/>&quot;value&quot;,<sp/>or<sp/>&quot;submenu&quot;.</highlight></codeline>
+<codeline lineno="64"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>id<sp/>of<sp/>the<sp/>command.</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"><sp/><sp/><sp/><sp/>name<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>command.</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/><sp/>tooltip<sp/>-<sp/>The<sp/>tooltip<sp/>for<sp/>the<sp/>command.</highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCommand(in<sp/>AString<sp/>aType,<sp/>in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aTooltip);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/>Method:<sp/>removeCommand</highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/>Remove<sp/>a<sp/>command.</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="74"><highlight class="comment"><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="75"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>id<sp/>of<sp/>the<sp/>command.</highlight></codeline>
+<codeline lineno="76"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="77"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="78"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addCommand&gt;</highlight></codeline>
+<codeline lineno="79"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCommand(in<sp/>AString<sp/>aID);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Ew.<sp/>this<sp/>is<sp/>so<sp/>ugly.<sp/>I&apos;m<sp/>hoping<sp/>to<sp/>be<sp/>able<sp/>to<sp/>clean<sp/>this<sp/>up<sp/>with<sp/>nsIXPCScriptable</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setCommandData(<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aNumCommands,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aTypeArray,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aIDArray,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aNameArray,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aNumCommands)]<sp/>in<sp/>wstring<sp/>aTooltipArray);</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>remotePlayer<sp/>sets<sp/>this<sp/>after<sp/>it<sp/>creates<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>attribute<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>owner;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl"/>
   </compounddef>
 </doxygen>

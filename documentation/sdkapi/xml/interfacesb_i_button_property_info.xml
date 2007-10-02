@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="443" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="443" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="453" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="453" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -23,7 +23,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="439" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="438" bodyend="444"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="449" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="448" bodyend="454"/>
     <listofallmembers>
       <member refid="interfacesb_i_button_property_info_100b8abfdf045141fbe8e50ef797254fa" prot="public" virt="non-virtual"><scope>sbIButtonPropertyInfo</scope><name>label</name></member>
     </listofallmembers>

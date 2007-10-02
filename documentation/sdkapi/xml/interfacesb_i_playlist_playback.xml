@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="65" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="65" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="65" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_123faa5a2cbbb59e2a049be8bdf546875" prot="public" static="no" mutable="no">
         <type>const short</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="69" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="69" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="69" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="69" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1f3a1c0c8e1e2b2e34985ef0950261b8b" prot="public" static="no" mutable="no">
         <type>const short</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="73" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="73" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="73" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1dbe1ce37c7027bb61b79948da98acb17" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref></type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="87" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="87" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="87" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="87" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_198953fa2afb7e2fd9cf9703cd7e7a7e3" prot="public" static="no" mutable="no">
         <type>attribute short</type>
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="93" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="93" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="93" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_12c6e186d951b95f40cc64952208af941" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="99" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="99" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="99" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="99" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_19a22d879a7f83ff18c9ba572ad19d961" prot="public" static="no" mutable="no">
         <type>attribute PRInt64</type>
@@ -96,7 +96,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="106" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="106" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="106" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="106" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_14d5f003c140083313523b461a11e3372" prot="public" static="no" mutable="no">
         <type>readonly attribute PRInt64</type>
@@ -109,7 +109,7 @@
 <para>/brief The length of the current track. Reported by the core. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="112" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="112" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="112" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="112" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_19c1b43840438ca39cf5dc7126d3b89f7" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -123,7 +123,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="119" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="119" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="119" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="119" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1a9d8868c0c6ba509a9dd0b9974f7da0a" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -137,7 +137,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="127" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="127" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="127" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1e00d5a1f97614cb4c473767f38878d9a" prot="public" static="no" mutable="no">
         <type>attribute short</type>
@@ -151,7 +151,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="141" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="141" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="141" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="141" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_11d02000aa3ee3049da3db4e5f6825299" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="146" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="146" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="146" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="146" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1ecf91b316f3ba1d3b01476617ed025ef" prot="public" static="no" mutable="no">
         <type>readonly attribute PRInt32</type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="152" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="152" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="152" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="152" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_173a46bee358df63419e7f3ddf8840afe" prot="public" static="no" mutable="no">
         <type>readonly attribute PRInt32</type>
@@ -191,7 +191,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="158" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="158" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="158" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="158" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_199fc99e76b4b271e219ce90131775750" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -205,7 +205,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="164" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="164" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="164" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="164" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1244bf5af2fe05920bb2b05aec2729749" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -219,7 +219,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="170" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="170" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="170" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="170" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1b474c491f7e8e4633843372338f65b98" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -232,7 +232,7 @@
 <para>Does this really need to be exposed through an interface? </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="178" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="178" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="178" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="178" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_playback_1af7e06e34078f49a755cf2305ce46f76" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
@@ -245,7 +245,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="183" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="183" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="183" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="183" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -284,7 +284,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="200"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="200"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_18ba11f526ece608120fcf29b94ba326c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -310,7 +310,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="208"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="208"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1ee7408cd7d2d62d2a146d83abe5acd6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -336,7 +336,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="218"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="218"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_11f753836239c83c49b88ac2d640baaa2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -358,7 +358,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="234"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="234"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_106c688bf56cd5354d78b55edac6ab65a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -380,7 +380,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="243"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="243"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_173cfaeb60327ced50c221a51da6a49e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -402,7 +402,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="253"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="253"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1e6f7bbccb8822bcf7531f8a3f2cc8a39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -424,7 +424,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="261"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="261"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_11216b0885012ee3e442edd059cbec100" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -446,7 +446,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="269"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="269"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1a5fa73c4990aeae8bb8cad5602b38014" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -468,7 +468,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="277"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="277"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_142d8906fd9160e75cb35df21462d6408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -490,7 +490,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="286"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="286"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_194d4972b4a355e0522d6b5d354fbc19e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -524,7 +524,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="296"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="296"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_148707fad9b0dd01d8257e1af78648945" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -576,7 +576,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="307"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="307"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1d21cb95118038ef1c3f51be7d6fbf6e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -624,7 +624,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="324"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="324"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_10876200cb49aa473e345cddf07ca3d24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -652,7 +652,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="333"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="333"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1fe49d1a9aeafe4a6c697ed4e395a8eb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -691,7 +691,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="343"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="343"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_152034b678ca53a540bea83645997fea2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -752,7 +752,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="358"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="358"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1c54bd378b48598fe690ced4a7c44626f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -820,7 +820,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="374"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="374"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1cab27efe13a85f45a7d4bb3dadca179b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -846,7 +846,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="390"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="390"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1d94771f3b5ef37d91b4b0a85e8e5f379" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -872,7 +872,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="401"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="401"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1443493bb9c9422ba7c4db510e6259abc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -898,7 +898,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="412"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="412"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1a02047a9651809af3b830e9abff0ccc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -912,7 +912,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="420"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="420"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1e02ca0130ec8807194dcde3f07775537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -938,7 +938,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="432"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="432"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1e5a04a116cecdc9bf36cfca4ddf9aefb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -964,7 +964,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="441"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="441"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_18f1124dc74b08581379b9f53df1b901d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -990,7 +990,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="450"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="450"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_1ce21c670be1140e364069a88c1cc835e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -1016,7 +1016,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="459"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="459"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1025,92 +1025,92 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref> An interface that describes the PlaylistPlayback Service </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="452">
+      <node id="467">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="453" relation="public-inheritance">
+        <childnode refid="468" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="449">
+      <node id="464">
         <label>sbIPlaylistPlayback</label>
         <link refid="interfacesb_i_playlist_playback"/>
-        <childnode refid="450" relation="usage">
+        <childnode refid="465" relation="usage">
           <edgelabel>core</edgelabel>
         </childnode>
-        <childnode refid="451" relation="usage">
+        <childnode refid="466" relation="usage">
           <edgelabel>playingView</edgelabel>
         </childnode>
       </node>
-      <node id="451">
+      <node id="466">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="452" relation="usage">
+        <childnode refid="467" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="460" relation="usage">
+        <childnode refid="475" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="450">
+      <node id="465">
         <label>sbICoreWrapper</label>
         <link refid="interfacesb_i_core_wrapper"/>
       </node>
-      <node id="459">
+      <node id="474">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="456">
+      <node id="471">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="457" relation="usage">
+        <childnode refid="472" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="459" relation="usage">
+        <childnode refid="474" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="455">
+      <node id="470">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="452" relation="public-inheritance">
+        <childnode refid="467" relation="public-inheritance">
         </childnode>
-        <childnode refid="456" relation="usage">
+        <childnode refid="471" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="458" relation="usage">
+        <childnode refid="473" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="460">
+      <node id="475">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="454">
+      <node id="469">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="453">
+      <node id="468">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="454" relation="public-inheritance">
+        <childnode refid="469" relation="public-inheritance">
         </childnode>
-        <childnode refid="455" relation="usage">
+        <childnode refid="470" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="457">
+      <node id="472">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="458" relation="usage">
+        <childnode refid="473" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="458">
+      <node id="473">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="58" bodyfile="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="57" bodyend="461"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="57" bodyend="461"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_playback_157b2697c1029d00279d841c57fa6dd77" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>addCore</name></member>
       <member refid="interfacesb_i_playlist_playback_18f1124dc74b08581379b9f53df1b901d" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>convertURLToDisplayName</name></member>

@@ -7,6 +7,7 @@
     <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_manager" prot="public">sbIPlaylistCommandsManager</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder" prot="public">sbIPlaylistCommandsBuilder</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_context" prot="public">sbIPlaylistCommandsBuilderContext</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_simple_callback" prot="public">sbIPlaylistCommandsBuilderSimpleCallback</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_get_string_callback" prot="public">sbIPlaylistCommandsBuilderGetStringCallback</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_get_bool_callback" prot="public">sbIPlaylistCommandsBuilderGetBoolCallback</innerclass>
@@ -18,6 +19,7 @@
     <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_manager" prot="public">sbIPlaylistCommandsManager</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder" prot="public">sbIPlaylistCommandsBuilder</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_builder_context" prot="public">sbIPlaylistCommandsBuilderContext</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_simple_callback" prot="public">sbIPlaylistCommandsBuilderSimpleCallback</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_get_string_callback" prot="public">sbIPlaylistCommandsBuilderGetStringCallback</innerclass>
     <innerclass refid="interfacesb_i_playlist_commands_builder_get_bool_callback" prot="public">sbIPlaylistCommandsBuilderGetBoolCallback</innerclass>

@@ -6,7 +6,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/testharness/public/sbILeakCanary.idl" line="30" bodyfile="c:/projects/songbird/components/testharness/public/sbILeakCanary.idl" bodystart="29" bodyend="31"/>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/sbILeakCanary.idl" line="30" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/sbILeakCanary.idl" bodystart="29" bodyend="31"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

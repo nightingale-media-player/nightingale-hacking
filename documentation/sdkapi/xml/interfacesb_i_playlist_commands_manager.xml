@@ -49,7 +49,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="439"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="439"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_14d7b3bd7eafd494e724aea3dc3d37909" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -97,7 +97,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="451"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="451"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1e0955c51878fae0a49d5f65ad3a5356d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -135,7 +135,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="468"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="468"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1c4861ebbacc2d3690b01ba3c245a9e0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -183,7 +183,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="486"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="486"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1f4f55b9bca19a4838b0243e8712d4453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -231,7 +231,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="497"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="497"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_1add075eaf8e161fa5dee7b37123a0eb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -269,7 +269,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="514"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="514"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_16d09e15101aba3e2f8e6a5d17c73c9be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -306,7 +306,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="527"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="527"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_122398c9895ed02233d68a829ddade0ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -343,7 +343,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="542"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="542"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_commands_manager_177c7b69bd536005897ab613fc6a913a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
@@ -370,14 +370,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="553"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="553"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The service used to register, unregister, and list playlist commands for a particular playlist guid or type. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="421" bodyfile="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="420" bodyend="554"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" line="421" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="420" bodyend="554"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_commands_manager_1e0955c51878fae0a49d5f65ad3a5356d" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsManager</scope><name>getPlaylistCommandsMediaItem</name></member>
       <member refid="interfacesb_i_playlist_commands_manager_1add075eaf8e161fa5dee7b37123a0eb6" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsManager</scope><name>getPlaylistCommandsMediaList</name></member>

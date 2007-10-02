@@ -4,13 +4,13 @@
     <compoundname>sbILibraryServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="424">
+      <node id="428">
         <label>components/servicepane/public/sbILibraryServicePaneService.idl</label>
         <link refid="sbILibraryServicePaneService.idl"/>
-        <childnode refid="425" relation="include">
+        <childnode refid="429" relation="include">
         </childnode>
       </node>
-      <node id="425">
+      <node id="429">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -85,6 +85,6 @@
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref><sp/>getLibraryResourceForNode<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl"/>
   </compounddef>
 </doxygen>

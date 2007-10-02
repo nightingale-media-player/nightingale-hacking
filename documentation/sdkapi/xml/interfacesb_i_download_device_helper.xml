@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="58" bodyfile="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="58" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="71" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="60"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="73"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_16518dcc046d6cd45dc6d07bb39b9c0f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -50,7 +50,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="62"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_1deccc18dc7e00f4189393a698e1e652e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="64"/>
+        <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="77"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -75,71 +75,71 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="134">
+      <node id="136">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="135" relation="public-inheritance">
+        <childnode refid="137" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="141">
+      <node id="143">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="138">
+      <node id="140">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="139" relation="usage">
+        <childnode refid="141" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="141" relation="usage">
+        <childnode refid="143" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="137">
+      <node id="139">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="134" relation="public-inheritance">
-        </childnode>
-        <childnode refid="138" relation="usage">
-          <edgelabel>device</edgelabel>
+        <childnode refid="136" relation="public-inheritance">
         </childnode>
         <childnode refid="140" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="142" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="136">
+      <node id="138">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="135">
+      <node id="137">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="136" relation="public-inheritance">
+        <childnode refid="138" relation="public-inheritance">
         </childnode>
-        <childnode refid="137" relation="usage">
+        <childnode refid="139" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="139">
+      <node id="141">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="140" relation="usage">
+        <childnode refid="142" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="133">
+      <node id="135">
         <label>sbIDownloadDeviceHelper</label>
         <link refid="interfacesb_i_download_device_helper"/>
-        <childnode refid="134" relation="usage">
+        <childnode refid="136" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="140">
+      <node id="142">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="57" bodyfile="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="56" bodyend="65"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="70" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="69" bodyend="78"/>
     <listofallmembers>
       <member refid="interfacesb_i_download_device_helper_1deccc18dc7e00f4189393a698e1e652e" prot="public" virt="non-virtual"><scope>sbIDownloadDeviceHelper</scope><name>downloadAll</name></member>
       <member refid="interfacesb_i_download_device_helper_15c37e0c431209e2fb339749af4892e82" prot="public" virt="non-virtual"><scope>sbIDownloadDeviceHelper</scope><name>downloadItem</name></member>

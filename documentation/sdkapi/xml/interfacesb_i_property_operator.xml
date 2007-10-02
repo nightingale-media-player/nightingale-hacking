@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="103" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="103" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="103" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="103" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_operator_1ff61810d7bc89c81dcc005b14c711647" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="109" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="109" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="109" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="109" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -52,14 +52,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="115"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="115"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to represent an operator that may act upon a property. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="99" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="98" bodyend="116"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="99" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="98" bodyend="116"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_operator_19a1618c4ce32a4618d22b811f124d75f" prot="public" virt="non-virtual"><scope>sbIPropertyOperator</scope><name>Init</name></member>
       <member refid="interfacesb_i_property_operator_1655cf614c5ada820482e2286943267ff" prot="public" virt="non-virtual"><scope>sbIPropertyOperator</scope><name>operator</name></member>

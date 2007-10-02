@@ -60,6 +60,6 @@
 <codeline lineno="69"><highlight class="normal"><sp/><sp/>PRBool<sp/>isCloaked(in<sp/>nsIDOMWindow<sp/>aDOMWindow);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/integration/public/IWindowCloak.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowCloak.idl"/>
   </compounddef>
 </doxygen>

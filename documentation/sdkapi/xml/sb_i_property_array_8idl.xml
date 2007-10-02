@@ -5,18 +5,18 @@
     <includes local="yes">nsIArray.idl</includes>
     <includes local="yes">nsIMutableArray.idl</includes>
     <incdepgraph>
-      <node id="378">
+      <node id="382">
         <label>nsIArray.idl</label>
       </node>
-      <node id="379">
+      <node id="383">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="377">
+      <node id="381">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="378" relation="include">
+        <childnode refid="382" relation="include">
         </childnode>
-        <childnode refid="379" relation="include">
+        <childnode refid="383" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -86,6 +86,6 @@
 <codeline lineno="118" refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>strict;</highlight></codeline>
 <codeline lineno="119"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/property/public/sbIPropertyArray.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl"/>
   </compounddef>
 </doxygen>

@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_base_8idl" local="yes">sbIDeviceBase.idl</includes>
     <incdepgraph>
+      <node id="118">
+        <label>sbIDeviceBase.idl</label>
+        <link refid="sb_i_device_base_8idl"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+      </node>
       <node id="116">
         <label>components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
         <link refid="sbIDownloadDevice.idl"/>
         <childnode refid="117" relation="include">
         </childnode>
         <childnode refid="118" relation="include">
-        </childnode>
-      </node>
-      <node id="118">
-        <label>sbIDeviceBase.idl</label>
-        <link refid="sb_i_device_base_8idl"/>
-        <childnode refid="117" relation="include">
         </childnode>
       </node>
       <node id="117">
@@ -66,22 +66,26 @@
 <codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_download_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_download_device" kindref="compound" tooltip="Songbird DownloadDevice Interface.">sbIDownloadDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref></highlight></codeline>
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_download_device_1c0735875642e9ce9ced23209641da2df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>downloadMediaList;</highlight></codeline>
-<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]</highlight></codeline>
-<codeline lineno="56" refid="interfacesb_i_download_device_helper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_download_device_helper" kindref="compound">sbIDownloadDeviceHelper</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="58" refid="interfacesb_i_download_device_helper_1783b4967e880d3a27a30fbde951b0ce9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>downloadMediaList;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadItem(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
+<codeline lineno="55" refid="interfacesb_i_download_device_1c0735875642e9ce9ced23209641da2df" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>downloadMediaList;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_download_device_1d366c873bd3ea46b61cb5526febfd331" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>completedItemCount;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadSome(in<sp/>nsISimpleEnumerator<sp/>aMediaItems);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadAll(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
-<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearCompletedItems();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">[scriptable,<sp/>uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]</highlight></codeline>
+<codeline lineno="69" refid="interfacesb_i_download_device_helper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_download_device_helper" kindref="compound">sbIDownloadDeviceHelper</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_download_device_helper_1783b4967e880d3a27a30fbde951b0ce9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>downloadMediaList;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadItem(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadSome(in<sp/>nsISimpleEnumerator<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadAll(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl"/>
   </compounddef>
 </doxygen>

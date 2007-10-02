@@ -6,23 +6,23 @@
     <includes local="yes">nsIObserver.idl</includes>
     <includes local="yes">nsIStringEnumerator.idl</includes>
     <incdepgraph>
-      <node id="362">
+      <node id="366">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="359">
-        <label>components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
-        <link refid="sbIPlaylistPlayback.idl"/>
-        <childnode refid="360" relation="include">
-        </childnode>
-        <childnode refid="361" relation="include">
-        </childnode>
-        <childnode refid="362" relation="include">
-        </childnode>
-      </node>
-      <node id="361">
+      <node id="365">
         <label>nsIObserver.idl</label>
       </node>
-      <node id="360">
+      <node id="363">
+        <label>components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
+        <link refid="sbIPlaylistPlayback.idl"/>
+        <childnode refid="364" relation="include">
+        </childnode>
+        <childnode refid="365" relation="include">
+        </childnode>
+        <childnode refid="366" relation="include">
+        </childnode>
+      </node>
+      <node id="364">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -177,6 +177,6 @@
 <codeline lineno="462"><highlight class="normal"></highlight></codeline>
 <codeline lineno="463"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl"/>
   </compounddef>
 </doxygen>

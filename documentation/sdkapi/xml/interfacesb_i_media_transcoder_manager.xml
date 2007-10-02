@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="276"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="276"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_transcoder_manager_19191aaf95d9303a572f02a8085853f76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -108,7 +108,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="287"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="287"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_transcoder_manager_15b2b22f846059ac0697a11582d8786d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -145,7 +145,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="298"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="298"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -153,7 +153,7 @@
     <detaileddescription>
 <para>This service is retrieved by user code that calls its <ref refid="interfacesb_i_media_transcoder_manager_1a78272abe7b09d0d25dfbc98f04dd934" kindref="member">transcode()</ref> method.</para><para>This code is responsible for iterating through all available <ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref> instances, finding one that supports the requested transcode operation, and calling its <ref refid="interfacesb_i_media_transcoder_1506580255574f461491292e2c5a75872" kindref="member">sbIMediaTranscoder::transcode()</ref> method.</para><para><xrefsect id="todo_1_todo000014"><xreftitle>Todo</xreftitle><xrefdescription><para>Stub interface. Currently unimplemented. </para></xrefdescription></xrefsect><simplesect kind="see"><para><ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref>, <ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref>, <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="256" bodyfile="c:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="255" bodyend="299"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="256" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="255" bodyend="299"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_transcoder_manager_19191aaf95d9303a572f02a8085853f76" prot="public" virt="non-virtual"><scope>sbIMediaTranscoderManager</scope><name>getSupportedInputMediaTypes</name></member>
       <member refid="interfacesb_i_media_transcoder_manager_15b2b22f846059ac0697a11582d8786d9" prot="public" virt="non-virtual"><scope>sbIMediaTranscoderManager</scope><name>getSupportedOutputMediaTypes</name></member>

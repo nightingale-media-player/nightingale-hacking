@@ -3,13 +3,13 @@
   <compounddef id="interfacesb_i_playlist_commands_builder_instantiation_callback" kind="interface" prot="public">
     <compoundname>sbIPlaylistCommandsBuilderInstantiationCallback</compoundname>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_instantiation_callback_1543fccae40ef40feadab7d3b0a454414" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_builder_instantiation_callback_1d477bf14b2fc394e861ff98cd756476b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIDOMNode</type>
         <definition>nsIDOMNode sbIPlaylistCommandsBuilderInstantiationCallback::handleCallback</definition>
-        <argsstring>(in sbIPlaylistCommandsContext aContext, in AString aSubMenuId, in AString aCommandId, in AString aHost, in nsIDOMDocument aParentDocument)</argsstring>
+        <argsstring>(in sbIPlaylistCommandsBuilderContext aContext, in AString aSubMenuId, in AString aCommandId, in AString aHost, in nsIDOMDocument aParentDocument)</argsstring>
         <name>handleCallback</name>
         <param>
-          <type>in <ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref></type>
+          <type>in <ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound">sbIPlaylistCommandsBuilderContext</ref></type>
           <declname>aContext</declname>
         </param>
         <param>
@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="799"/>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="829"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -79,9 +79,9 @@
     <detaileddescription>
 <para>This interface may be replaced by a javascript function in any of the <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> functions that take it as a parameter.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref>, <ref refid="interfacesb_i_playlist_commands_builder_refresh_callback" kindref="compound">sbIPlaylistCommandsBuilderRefreshCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="784" bodyfile="c:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="783" bodyend="800"/>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="814" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="813" bodyend="830"/>
     <listofallmembers>
-      <member refid="interfacesb_i_playlist_commands_builder_instantiation_callback_1543fccae40ef40feadab7d3b0a454414" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderInstantiationCallback</scope><name>handleCallback</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_instantiation_callback_1d477bf14b2fc394e861ff98cd756476b" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderInstantiationCallback</scope><name>handleCallback</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

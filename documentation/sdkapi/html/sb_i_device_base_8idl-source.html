@@ -62,115 +62,118 @@
 <a name="l00093"></a>00093   <span class="keywordtype">void</span> onTransferComplete(in AString aSourceURL,
 <a name="l00094"></a>00094                           in AString aDestinationURL,
 <a name="l00095"></a>00095                           in PRInt32 aStatus);
-<a name="l00096"></a>00096 };
-<a name="l00097"></a>00097 
-<a name="l00098"></a>00098 
-<a name="l00120"></a>00120 [scriptable, uuid(2e67cb89-e971-4bdc-b801-de7d250513ea)]
-<a name="l00121"></a><a class="code" href="interfacesb_i_device_base.html">00121</a> interface <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a> : nsISupports
-<a name="l00122"></a>00122 {
-<a name="l00131"></a><a class="code" href="interfacesb_i_device_base.html#d8e1c0a343f0a9949218dd87e4bc0b9b">00131</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_UNDEFINED = 9999;
-<a name="l00132"></a><a class="code" href="interfacesb_i_device_base.html#3286b4156bc7451864e06484ab9d6600">00132</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_WAV       = 0;
-<a name="l00133"></a><a class="code" href="interfacesb_i_device_base.html#a4c7914066a37e1c8fb771d24d93896b">00133</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_MP3       = 1;
-<a name="l00134"></a><a class="code" href="interfacesb_i_device_base.html#094f8d16b220839a90bfd6ab4c53d6c8">00134</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_WMA       = 2;
-<a name="l00135"></a>00135 
-<a name="l00146"></a><a class="code" href="interfacesb_i_device_base.html#e9feaccdd1f099e418ef48879e761d72">00146</a>   <span class="keyword">const</span> PRUint32 STATE_IDLE            = 0;
-<a name="l00147"></a><a class="code" href="interfacesb_i_device_base.html#9563aa24bd30658cdd2f1d339619fd7d">00147</a>   <span class="keyword">const</span> PRUint32 STATE_BUSY            = 1;
-<a name="l00148"></a><a class="code" href="interfacesb_i_device_base.html#34a17329aa4a0a8e888507c9fc4f30c3">00148</a>   <span class="keyword">const</span> PRUint32 STATE_DOWNLOADING     = 2;
-<a name="l00149"></a><a class="code" href="interfacesb_i_device_base.html#a6969d443210062597ade048e9e69d7f">00149</a>   <span class="keyword">const</span> PRUint32 STATE_UPLOADING       = 3;
-<a name="l00150"></a><a class="code" href="interfacesb_i_device_base.html#9eff91237d93732d42842125c4a32f6a">00150</a>   <span class="keyword">const</span> PRUint32 STATE_DOWNLOAD_PAUSED = 4;
-<a name="l00151"></a><a class="code" href="interfacesb_i_device_base.html#8952d8d70d804a5354b95957b8fe3de4">00151</a>   <span class="keyword">const</span> PRUint32 STATE_UPLOAD_PAUSED   = 5;
-<a name="l00152"></a><a class="code" href="interfacesb_i_device_base.html#cef379b0fd2bef8df90b67989b53f5be">00152</a>   <span class="keyword">const</span> PRUint32 STATE_DELETING        = 6;
-<a name="l00153"></a>00153 
-<a name="l00158"></a><a class="code" href="interfacesb_i_device_base.html#e26cd7e75266b587e32c6b8942d269bc">00158</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_UPLOAD    = 1;
-<a name="l00159"></a><a class="code" href="interfacesb_i_device_base.html#e67faa584ca5efb87b9e88cb8ecba30d">00159</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_DOWNLOAD  = 2;
-<a name="l00160"></a><a class="code" href="interfacesb_i_device_base.html#5068f6c42f4055969b6ccd5f4dc0bd1c">00160</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_MOVE      = 3;
-<a name="l00161"></a>00161   
-<a name="l00165"></a><a class="code" href="interfacesb_i_device_base.html#8dba3d8a4a2f5556a4881bfee0e43029">00165</a>         attribute AString name;
-<a name="l00166"></a>00166 
-<a name="l00170"></a>00170   <span class="keywordtype">void</span> initialize();
-<a name="l00171"></a>00171 
-<a name="l00178"></a>00178   <span class="keywordtype">void</span> finalize();
-<a name="l00179"></a>00179 
-<a name="l00188"></a>00188   <span class="keywordtype">void</span> addCallback(in <a class="code" href="interfacesb_i_device_base_callback.html" title="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</a> aCallback);
-<a name="l00189"></a>00189 
-<a name="l00195"></a>00195   <span class="keywordtype">void</span> removeCallback(in <a class="code" href="interfacesb_i_device_base_callback.html" title="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</a> aCallback);
-<a name="l00196"></a>00196 
-<a name="l00200"></a><a class="code" href="interfacesb_i_device_base.html#0822a294b0931fcc6decf3dfce99eb18">00200</a>         readonly attribute AString deviceCategory;
-<a name="l00201"></a>00201 
-<a name="l00206"></a><a class="code" href="interfacesb_i_device_base.html#a0b2aa200a8ba41a6b59aa4dc266d533">00206</a>         readonly attribute nsIStringEnumerator deviceIdentifiers;
-<a name="l00207"></a>00207 
-<a name="l00211"></a><a class="code" href="interfacesb_i_device_base.html#84f2266170fa22c6978b003964d3419a">00211</a>         readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deviceCount;
-<a name="l00212"></a>00212 
-<a name="l00220"></a>00220   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> getLibrary(in AString aDeviceIdentifier);
+<a name="l00096"></a>00096 
+<a name="l00103"></a>00103   <span class="keywordtype">void</span> onStateChanged(in AString aDeviceIdentifier,
+<a name="l00104"></a>00104                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aState);
+<a name="l00105"></a>00105 };
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107 
+<a name="l00129"></a>00129 [scriptable, uuid(2e67cb89-e971-4bdc-b801-de7d250513ea)]
+<a name="l00130"></a><a class="code" href="interfacesb_i_device_base.html">00130</a> interface <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a> : nsISupports
+<a name="l00131"></a>00131 {
+<a name="l00140"></a><a class="code" href="interfacesb_i_device_base.html#d8e1c0a343f0a9949218dd87e4bc0b9b">00140</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_UNDEFINED = 9999;
+<a name="l00141"></a><a class="code" href="interfacesb_i_device_base.html#3286b4156bc7451864e06484ab9d6600">00141</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_WAV       = 0;
+<a name="l00142"></a><a class="code" href="interfacesb_i_device_base.html#a4c7914066a37e1c8fb771d24d93896b">00142</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_MP3       = 1;
+<a name="l00143"></a><a class="code" href="interfacesb_i_device_base.html#094f8d16b220839a90bfd6ab4c53d6c8">00143</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_WMA       = 2;
+<a name="l00144"></a>00144 
+<a name="l00155"></a><a class="code" href="interfacesb_i_device_base.html#e9feaccdd1f099e418ef48879e761d72">00155</a>   <span class="keyword">const</span> PRUint32 STATE_IDLE            = 0;
+<a name="l00156"></a><a class="code" href="interfacesb_i_device_base.html#9563aa24bd30658cdd2f1d339619fd7d">00156</a>   <span class="keyword">const</span> PRUint32 STATE_BUSY            = 1;
+<a name="l00157"></a><a class="code" href="interfacesb_i_device_base.html#34a17329aa4a0a8e888507c9fc4f30c3">00157</a>   <span class="keyword">const</span> PRUint32 STATE_DOWNLOADING     = 2;
+<a name="l00158"></a><a class="code" href="interfacesb_i_device_base.html#a6969d443210062597ade048e9e69d7f">00158</a>   <span class="keyword">const</span> PRUint32 STATE_UPLOADING       = 3;
+<a name="l00159"></a><a class="code" href="interfacesb_i_device_base.html#9eff91237d93732d42842125c4a32f6a">00159</a>   <span class="keyword">const</span> PRUint32 STATE_DOWNLOAD_PAUSED = 4;
+<a name="l00160"></a><a class="code" href="interfacesb_i_device_base.html#8952d8d70d804a5354b95957b8fe3de4">00160</a>   <span class="keyword">const</span> PRUint32 STATE_UPLOAD_PAUSED   = 5;
+<a name="l00161"></a><a class="code" href="interfacesb_i_device_base.html#cef379b0fd2bef8df90b67989b53f5be">00161</a>   <span class="keyword">const</span> PRUint32 STATE_DELETING        = 6;
+<a name="l00162"></a>00162 
+<a name="l00167"></a><a class="code" href="interfacesb_i_device_base.html#e26cd7e75266b587e32c6b8942d269bc">00167</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_UPLOAD    = 1;
+<a name="l00168"></a><a class="code" href="interfacesb_i_device_base.html#e67faa584ca5efb87b9e88cb8ecba30d">00168</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_DOWNLOAD  = 2;
+<a name="l00169"></a><a class="code" href="interfacesb_i_device_base.html#5068f6c42f4055969b6ccd5f4dc0bd1c">00169</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> OP_MOVE      = 3;
+<a name="l00170"></a>00170   
+<a name="l00174"></a><a class="code" href="interfacesb_i_device_base.html#8dba3d8a4a2f5556a4881bfee0e43029">00174</a>         attribute AString name;
+<a name="l00175"></a>00175 
+<a name="l00179"></a>00179   <span class="keywordtype">void</span> initialize();
+<a name="l00180"></a>00180 
+<a name="l00187"></a>00187   <span class="keywordtype">void</span> finalize();
+<a name="l00188"></a>00188 
+<a name="l00197"></a>00197   <span class="keywordtype">void</span> addCallback(in <a class="code" href="interfacesb_i_device_base_callback.html" title="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</a> aCallback);
+<a name="l00198"></a>00198 
+<a name="l00204"></a>00204   <span class="keywordtype">void</span> removeCallback(in <a class="code" href="interfacesb_i_device_base_callback.html" title="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</a> aCallback);
+<a name="l00205"></a>00205 
+<a name="l00209"></a><a class="code" href="interfacesb_i_device_base.html#0822a294b0931fcc6decf3dfce99eb18">00209</a>         readonly attribute AString deviceCategory;
+<a name="l00210"></a>00210 
+<a name="l00215"></a><a class="code" href="interfacesb_i_device_base.html#a0b2aa200a8ba41a6b59aa4dc266d533">00215</a>         readonly attribute nsIStringEnumerator deviceIdentifiers;
+<a name="l00216"></a>00216 
+<a name="l00220"></a><a class="code" href="interfacesb_i_device_base.html#84f2266170fa22c6978b003964d3419a">00220</a>         readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deviceCount;
 <a name="l00221"></a>00221 
-<a name="l00229"></a>00229   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getDeviceState(in AString aDeviceIdentifier);
+<a name="l00229"></a>00229   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> getLibrary(in AString aDeviceIdentifier);
 <a name="l00230"></a>00230 
-<a name="l00242"></a>00242   nsIURI getTransferLocation(in AString aDeviceIdentifier,
-<a name="l00243"></a>00243                              in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00244"></a>00244 
-<a name="l00267"></a>00267   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> transferItems(in AString aDeviceIdentifier,
-<a name="l00268"></a>00268                               in nsIArray aMediaItems, 
-<a name="l00269"></a>00269                               in nsIURI aDestionationPath, 
-<a name="l00270"></a>00270                               in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDeviceOperation,
-<a name="l00271"></a>00271                               in <span class="keywordtype">boolean</span> aBeginTransferNow,
-<a name="l00272"></a>00272                               in <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> aDestinationLibrary);
-<a name="l00273"></a>00273 
-<a name="l00277"></a>00277   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> updateItems(in AString aDeviceIdentifier,
-<a name="l00278"></a>00278                             in nsIArray aMediaItems);
-<a name="l00279"></a>00279 
-<a name="l00288"></a>00288   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deleteItems(in AString aDeviceIdentifier,
-<a name="l00289"></a>00289                             in nsIArray aMediaItems);
-<a name="l00290"></a>00290 
-<a name="l00291"></a>00291   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deleteAllItems(in AString aDeviceIdentifier);
-<a name="l00292"></a>00292 
-<a name="l00297"></a>00297   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> beginTransfer(in AString aDeviceIdentifier);
-<a name="l00298"></a>00298 
-<a name="l00309"></a>00309   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> cancelTransfer(in AString aDeviceIdentifier,
-<a name="l00310"></a>00310                                in nsIArray aMediaItems);
-<a name="l00311"></a>00311 
-<a name="l00321"></a>00321   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> suspendTransfer(in AString aDeviceIdentifier);
-<a name="l00322"></a>00322 
-<a name="l00332"></a>00332   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> resumeTransfer(in AString aDeviceIdentifier);
-<a name="l00333"></a>00333 
-<a name="l00341"></a>00341   <span class="keywordtype">long</span> <span class="keywordtype">long</span> getUsedSpace(in AString aDeviceIdentifier);
+<a name="l00238"></a>00238   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getDeviceState(in AString aDeviceIdentifier);
+<a name="l00239"></a>00239 
+<a name="l00251"></a>00251   nsIURI getTransferLocation(in AString aDeviceIdentifier,
+<a name="l00252"></a>00252                              in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00253"></a>00253 
+<a name="l00276"></a>00276   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> transferItems(in AString aDeviceIdentifier,
+<a name="l00277"></a>00277                               in nsIArray aMediaItems, 
+<a name="l00278"></a>00278                               in nsIURI aDestionationPath, 
+<a name="l00279"></a>00279                               in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDeviceOperation,
+<a name="l00280"></a>00280                               in <span class="keywordtype">boolean</span> aBeginTransferNow,
+<a name="l00281"></a>00281                               in <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> aDestinationLibrary);
+<a name="l00282"></a>00282 
+<a name="l00286"></a>00286   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> updateItems(in AString aDeviceIdentifier,
+<a name="l00287"></a>00287                             in nsIArray aMediaItems);
+<a name="l00288"></a>00288 
+<a name="l00297"></a>00297   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deleteItems(in AString aDeviceIdentifier,
+<a name="l00298"></a>00298                             in nsIArray aMediaItems);
+<a name="l00299"></a>00299 
+<a name="l00300"></a>00300   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> deleteAllItems(in AString aDeviceIdentifier);
+<a name="l00301"></a>00301 
+<a name="l00306"></a>00306   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> beginTransfer(in AString aDeviceIdentifier);
+<a name="l00307"></a>00307 
+<a name="l00318"></a>00318   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> cancelTransfer(in AString aDeviceIdentifier,
+<a name="l00319"></a>00319                                in nsIArray aMediaItems);
+<a name="l00320"></a>00320 
+<a name="l00330"></a>00330   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> suspendTransfer(in AString aDeviceIdentifier);
+<a name="l00331"></a>00331 
+<a name="l00341"></a>00341   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> resumeTransfer(in AString aDeviceIdentifier);
 <a name="l00342"></a>00342 
-<a name="l00350"></a>00350         <span class="keywordtype">long</span> <span class="keywordtype">long</span> getAvailableSpace(in AString aDeviceIdentifier);
+<a name="l00350"></a>00350   <span class="keywordtype">long</span> <span class="keywordtype">long</span> getUsedSpace(in AString aDeviceIdentifier);
 <a name="l00351"></a>00351 
-<a name="l00361"></a>00361         nsIArray getSupportedFormats(in AString aDeviceIdentifier);
-<a name="l00362"></a>00362 
-<a name="l00370"></a>00370         <span class="keywordtype">boolean</span> isDownloadSupported(in AString aDeviceIdentifier);
+<a name="l00359"></a>00359         <span class="keywordtype">long</span> <span class="keywordtype">long</span> getAvailableSpace(in AString aDeviceIdentifier);
+<a name="l00360"></a>00360 
+<a name="l00370"></a>00370         nsIArray getSupportedFormats(in AString aDeviceIdentifier);
 <a name="l00371"></a>00371 
-<a name="l00381"></a>00381         <span class="keywordtype">boolean</span> isUploadSupported(in AString aDeviceIdentifier);
-<a name="l00382"></a>00382 
-<a name="l00390"></a>00390         <span class="keywordtype">boolean</span> isDeleteSupported(in AString aDeviceIdentifier);
+<a name="l00379"></a>00379         <span class="keywordtype">boolean</span> isDownloadSupported(in AString aDeviceIdentifier);
+<a name="l00380"></a>00380 
+<a name="l00390"></a>00390         <span class="keywordtype">boolean</span> isUploadSupported(in AString aDeviceIdentifier);
 <a name="l00391"></a>00391 
-<a name="l00402"></a>00402         <span class="keywordtype">boolean</span> isUpdateSupported(in AString aDeviceIdentifier);
-<a name="l00403"></a>00403 
-<a name="l00411"></a>00411         <span class="keywordtype">boolean</span> isEjectSupported(in AString aDeviceIdentifier);
+<a name="l00399"></a>00399         <span class="keywordtype">boolean</span> isDeleteSupported(in AString aDeviceIdentifier);
+<a name="l00400"></a>00400 
+<a name="l00411"></a>00411         <span class="keywordtype">boolean</span> isUpdateSupported(in AString aDeviceIdentifier);
 <a name="l00412"></a>00412 
-<a name="l00420"></a>00420   <span class="keywordtype">boolean</span> ejectDevice(in AString aDeviceIdentifier);
-<a name="l00421"></a>00421 };
-<a name="l00422"></a>00422 
-<a name="l00423"></a>00423 <span class="comment">// XXXben These are left here for the time being so the world doesn't break</span>
-<a name="l00424"></a>00424 <span class="comment">// XXXmig When these are left at the top, doxygen breaks.</span>
-<a name="l00425"></a>00425 %{ C++
-<a name="l00426"></a>00426 <span class="comment">// File format constants</span>
-<a name="l00427"></a>00427 <span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1</span>
-<a name="l00428"></a>00428 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_WAV        0</span>
-<a name="l00429"></a>00429 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_MP3        1</span>
-<a name="l00430"></a>00430 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_WMA        2</span>
-<a name="l00431"></a>00431 <span class="preprocessor"></span>
-<a name="l00432"></a>00432 <span class="comment">// Device State constants</span>
-<a name="l00433"></a>00433 <span class="preprocessor">#define kSB_DEVICE_STATE_IDLE             0</span>
-<a name="l00434"></a>00434 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_BUSY             1</span>
-<a name="l00435"></a>00435 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DOWNLOADING      2</span>
-<a name="l00436"></a>00436 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_UPLOADING        3</span>
-<a name="l00437"></a>00437 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4</span>
-<a name="l00438"></a>00438 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5</span>
-<a name="l00439"></a>00439 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DELETING         6</span>
-<a name="l00440"></a>00440 <span class="preprocessor"></span>%}
-<a name="l00441"></a>00441 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
+<a name="l00420"></a>00420         <span class="keywordtype">boolean</span> isEjectSupported(in AString aDeviceIdentifier);
+<a name="l00421"></a>00421 
+<a name="l00429"></a>00429   <span class="keywordtype">boolean</span> ejectDevice(in AString aDeviceIdentifier);
+<a name="l00430"></a>00430 };
+<a name="l00431"></a>00431 
+<a name="l00432"></a>00432 <span class="comment">// XXXben These are left here for the time being so the world doesn't break</span>
+<a name="l00433"></a>00433 <span class="comment">// XXXmig When these are left at the top, doxygen breaks.</span>
+<a name="l00434"></a>00434 %{ C++
+<a name="l00435"></a>00435 <span class="comment">// File format constants</span>
+<a name="l00436"></a>00436 <span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1</span>
+<a name="l00437"></a>00437 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_WAV        0</span>
+<a name="l00438"></a>00438 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_MP3        1</span>
+<a name="l00439"></a>00439 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_FILE_FORMAT_WMA        2</span>
+<a name="l00440"></a>00440 <span class="preprocessor"></span>
+<a name="l00441"></a>00441 <span class="comment">// Device State constants</span>
+<a name="l00442"></a>00442 <span class="preprocessor">#define kSB_DEVICE_STATE_IDLE             0</span>
+<a name="l00443"></a>00443 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_BUSY             1</span>
+<a name="l00444"></a>00444 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DOWNLOADING      2</span>
+<a name="l00445"></a>00445 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_UPLOADING        3</span>
+<a name="l00446"></a>00446 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4</span>
+<a name="l00447"></a>00447 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5</span>
+<a name="l00448"></a>00448 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DELETING         6</span>
+<a name="l00449"></a>00449 <span class="preprocessor"></span>%}
+<a name="l00450"></a>00450 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="63" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="63" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="63" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -43,7 +43,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="70"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="70"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10d5e606226d2e8e935257b50edb9fdb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -56,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="75"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1291e6fe131f286efca62db025255c759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="82"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="82"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1cc4acb7d7c2e349b54c0c3cf98d74dad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="89"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="89"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10f7663fb96eceddce0796b671c39ec23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="96"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="96"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1703c262b9951487bca0308d2de2c20c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -136,7 +136,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="101"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="101"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -153,7 +153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="106"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="106"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="111"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="111"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -179,19 +179,19 @@
 <para>Methods and attributes that are specific to the simple media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="279">
+      <node id="280">
         <label>sbILocalDatabaseMediaListCopyListener</label>
         <link refid="interfacesb_i_local_database_media_list_copy_listener"/>
       </node>
-      <node id="278">
+      <node id="279">
         <label>sbILocalDatabaseSimpleMediaList</label>
         <link refid="interfacesb_i_local_database_simple_media_list"/>
-        <childnode refid="279" relation="usage">
+        <childnode refid="280" relation="usage">
           <edgelabel>copyListener</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="62" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="61" bodyend="112"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="62" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="61" bodyend="112"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_simple_media_list_19ab4500c07ac7424d962babcdf3a8364" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>copyListener</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_1018bb1f9eca511b23dcda5a1081863f3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>getIndexByOrdinal</name></member>

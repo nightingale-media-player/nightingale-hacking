@@ -24,7 +24,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="141" bodyfile="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="141" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="141" bodyfile="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" bodystart="141" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_data_remote_1b112f0b93b2639f84e0ae6ea315fb911" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -46,7 +46,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="154" bodyfile="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="154" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="154" bodyfile="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_data_remote_193eaaccaa59c47a88fb0b78889acbfa9" prot="public" static="no" mutable="no">
         <type>attribute long long</type>
@@ -68,7 +68,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="167" bodyfile="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="167" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="167" bodyfile="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" bodystart="167" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -122,7 +122,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_data_remote_185a4c38fc8804c46e3f8af8e22b1929e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -143,7 +143,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="80"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="80"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_data_remote_1d67aec2d271f35864e1cc5742bbcb57f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -188,7 +188,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="92"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="92"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_data_remote_19dbca184a6614cf49cce720b6cdf454d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -260,7 +260,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="110"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="110"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_data_remote_1dd8c1462647c5694b3d59aed441af7e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -340,7 +340,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="128"/>
+        <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="128"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -348,7 +348,7 @@
     <detaileddescription>
 <para>This interface defines the ability to set key-value pairs into a global data-store, and to observe changes in the value of the data. The observer can be bound to the data in one of three different ways. A callback object can be bound as an nsIObserver, or a DOM element can bind the value of an attribute or a property to the value of the data.</para><para>The attribute and property bindings can be done as string, integer or boolean, and in the case of boolean binding the value can be the inverse of the data value. In addition the actual value for the attribute or property can be defined by additional script executed in the notification step.</para><para><simplesect kind="see"><para>DataRemote </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="59" bodyfile="c:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="58" bodyend="169"/>
+    <location file="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" line="59" bodyfile="e:/Projects/songbird/trunk/components/dataremote/public/sbIDataRemote.idl" bodystart="58" bodyend="169"/>
     <listofallmembers>
       <member refid="interfacesb_i_data_remote_1dd8c1462647c5694b3d59aed441af7e0" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>bindAttribute</name></member>
       <member refid="interfacesb_i_data_remote_1d67aec2d271f35864e1cc5742bbcb57f" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>bindObserver</name></member>

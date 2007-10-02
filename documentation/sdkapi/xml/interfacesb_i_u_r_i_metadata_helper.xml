@@ -18,14 +18,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="35"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="35"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="34" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" bodystart="33" bodyend="36"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="34" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" bodystart="33" bodyend="36"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_metadata_helper_16336650f02edbda93a00bd0f2c636035" prot="public" virt="non-virtual"><scope>sbIURIMetadataHelper</scope><name>getFileSize</name></member>
     </listofallmembers>

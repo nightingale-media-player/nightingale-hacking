@@ -47,27 +47,64 @@
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>;
 <a name="l00038"></a>00038 interface <a class="code" href="interfacesb_i_playlist_click_event.html" title="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</a>;
 <a name="l00039"></a>00039 
-<a name="l00044"></a>00044 [scriptable, uuid(7a33d37c-34a3-4fe0-8d8d-5eb6e680457a)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_playlist_widget.html">00045</a> interface <a class="code" href="interfacesb_i_playlist_widget.html">sbIPlaylistWidget</a> : nsISupports
-<a name="l00046"></a>00046 {
-<a name="l00047"></a>00047   <span class="keywordtype">void</span> rescanCommands();
-<a name="l00048"></a>00048   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> getListView();
-<a name="l00049"></a>00049   <span class="keywordtype">void</span> bind( in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> mediaListView,
-<a name="l00050"></a>00050              in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> commands,
-<a name="l00051"></a>00051              in <span class="keywordtype">boolean</span> resize,
-<a name="l00052"></a>00052              in <span class="keywordtype">boolean</span> collapse );
-<a name="l00053"></a>00053   <span class="keywordtype">void</span> showColumn( in AString aColumnName );
-<a name="l00054"></a>00054   <span class="keywordtype">void</span> hideColumn( in AString aColumnName );
-<a name="l00055"></a>00055   <span class="keywordtype">void</span> moveColumnBefore( in AString aColumnName,
-<a name="l00056"></a>00056                          in AString aBeforeColumnName );
-<a name="l00057"></a>00057   <span class="keywordtype">void</span> insertColumn( in <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> aPropInfo,
-<a name="l00058"></a>00058                      in <span class="keywordtype">boolean</span> aIsHidden,
-<a name="l00059"></a>00059                      in <span class="keywordtype">long</span> aWidth,
-<a name="l00060"></a>00060                      in AString aSortOrder,
-<a name="l00061"></a>00061                      in AString aBeforeCol );
-<a name="l00062"></a><a class="code" href="interfacesb_i_playlist_widget.html#c023582f73fbed84eb3b1b63609487a8">00062</a>   readonly attribute <a class="code" href="interfacesb_i_playlist_click_event.html" title="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</a> lastClickEvent;
-<a name="l00063"></a>00063 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
+<a name="l00040"></a>00040 <span class="comment">/*</span>
+<a name="l00041"></a>00041 <span class="comment"> Class PlaylistWidget</span>
+<a name="l00042"></a>00042 <span class="comment"> */</span>
+<a name="l00047"></a>00047 [scriptable, uuid(7a33d37c-34a3-4fe0-8d8d-5eb6e680457a)]
+<a name="l00048"></a><a class="code" href="interfacesb_i_playlist_widget.html">00048</a> interface <a class="code" href="interfacesb_i_playlist_widget.html">sbIPlaylistWidget</a> : nsISupports
+<a name="l00049"></a>00049 {
+<a name="l00059"></a>00059   <span class="keywordtype">void</span> rescanCommands();
+<a name="l00060"></a>00060 
+<a name="l00066"></a>00066   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> getListView();
+<a name="l00067"></a>00067 
+<a name="l00078"></a>00078   <span class="keywordtype">void</span> bind( in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> mediaListView,
+<a name="l00079"></a>00079              in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> commands,
+<a name="l00080"></a>00080              in <span class="keywordtype">boolean</span> resize,
+<a name="l00081"></a>00081              in <span class="keywordtype">boolean</span> collapse );
+<a name="l00082"></a>00082 
+<a name="l00088"></a>00088   <span class="comment">/*</span>
+<a name="l00089"></a>00089 <span class="comment">   Method: showColumn()</span>
+<a name="l00090"></a>00090 <span class="comment"></span>
+<a name="l00091"></a>00091 <span class="comment">   Makes a column appear in the &lt;WebPlaylist&gt; UI. The column must</span>
+<a name="l00092"></a>00092 <span class="comment">   already exist in the system.</span>
+<a name="l00093"></a>00093 <span class="comment"></span>
+<a name="l00094"></a>00094 <span class="comment">   Arguments:</span>
+<a name="l00095"></a>00095 <span class="comment">     aColumnName - The name of the column to display</span>
+<a name="l00096"></a>00096 <span class="comment"></span>
+<a name="l00097"></a>00097 <span class="comment">   See Also:</span>
+<a name="l00098"></a>00098 <span class="comment">    &lt;addColumn()&gt;</span>
+<a name="l00099"></a>00099 <span class="comment">    &lt;showColumnBefore()&gt;</span>
+<a name="l00100"></a>00100 <span class="comment">    &lt;hideColumn()&gt;</span>
+<a name="l00101"></a>00101 <span class="comment">  */</span>
+<a name="l00102"></a>00102   <span class="keywordtype">void</span> showColumn( in AString aColumnName );
+<a name="l00103"></a>00103 
+<a name="l00109"></a>00109   <span class="comment">/*</span>
+<a name="l00110"></a>00110 <span class="comment">   Method: hideColumn()</span>
+<a name="l00111"></a>00111 <span class="comment"></span>
+<a name="l00112"></a>00112 <span class="comment">   Makes a column disappear from view.</span>
+<a name="l00113"></a>00113 <span class="comment"></span>
+<a name="l00114"></a>00114 <span class="comment">   Arguments:</span>
+<a name="l00115"></a>00115 <span class="comment">     aColumnName - The name of the column to hide</span>
+<a name="l00116"></a>00116 <span class="comment"></span>
+<a name="l00117"></a>00117 <span class="comment">   See Also:</span>
+<a name="l00118"></a>00118 <span class="comment">    &lt;addColumn()&gt;</span>
+<a name="l00119"></a>00119 <span class="comment">    &lt;showColumnBefore()&gt;</span>
+<a name="l00120"></a>00120 <span class="comment">    &lt;showColumn()&gt;</span>
+<a name="l00121"></a>00121 <span class="comment">  */</span>
+<a name="l00122"></a>00122   <span class="keywordtype">void</span> hideColumn( in AString aColumnName );
+<a name="l00123"></a>00123 
+<a name="l00131"></a>00131   <span class="keywordtype">void</span> moveColumnBefore( in AString aColumnName,
+<a name="l00132"></a>00132                          in AString aBeforeColumnName );
+<a name="l00133"></a>00133 
+<a name="l00144"></a>00144   <span class="keywordtype">void</span> insertColumn( in <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> aPropInfo,
+<a name="l00145"></a>00145                      in <span class="keywordtype">boolean</span> aIsHidden,
+<a name="l00146"></a>00146                      in <span class="keywordtype">long</span> aWidth,
+<a name="l00147"></a>00147                      in AString aSortOrder,
+<a name="l00148"></a>00148                      in AString aBeforeCol );
+<a name="l00149"></a>00149 
+<a name="l00156"></a><a class="code" href="interfacesb_i_playlist_widget.html#c023582f73fbed84eb3b1b63609487a8">00156</a>   readonly attribute <a class="code" href="interfacesb_i_playlist_click_event.html" title="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</a> lastClickEvent;
+<a name="l00157"></a>00157 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

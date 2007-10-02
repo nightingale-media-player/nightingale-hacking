@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="54" bodyfile="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="54" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="68" bodyfile="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="68" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="68" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="68" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -56,7 +56,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="63"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_192e5c9cb2901adedb0466442d399e06f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -81,7 +81,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="77"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_1169715190bfec71b715d78658c98978d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -106,7 +106,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="86"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="86"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_19330e445792fd2bf2005ccabfa3ea729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -131,7 +131,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="94"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_filterable_media_list_view_15233089e4c7a557240bd1ed350696426" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="99"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -153,19 +153,19 @@
 <para>Media lists that implement this interface declare themselves as filterable. The filter is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="159">
+      <node id="161">
         <label>sbIFilterableMediaListView</label>
         <link refid="interfacesb_i_filterable_media_list_view"/>
-        <childnode refid="160" relation="usage">
+        <childnode refid="162" relation="usage">
           <edgelabel>currentFilter</edgelabel>
         </childnode>
       </node>
-      <node id="160">
+      <node id="162">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" line="49" bodyfile="c:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="48" bodyend="100"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl" bodystart="48" bodyend="100"/>
     <listofallmembers>
       <member refid="interfacesb_i_filterable_media_list_view_15233089e4c7a557240bd1ed350696426" prot="public" virt="non-virtual"><scope>sbIFilterableMediaListView</scope><name>clearFilters</name></member>
       <member refid="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" prot="public" virt="non-virtual"><scope>sbIFilterableMediaListView</scope><name>currentFilter</name></member>

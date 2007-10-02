@@ -38,7 +38,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="52"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_orderable_media_list_14eb562dfa30c119feaf9f0b8617eb010" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,7 +74,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="60"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_orderable_media_list_147d79a513540df547f301495f136b823" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -99,7 +99,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="66"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_orderable_media_list_10c0aac6ef9babcbd8034476d6266087f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -135,7 +135,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="74"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="74"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_orderable_media_list_15bba55352a9f2106b76bd7d6b16e6a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -176,7 +176,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="83"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="83"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_orderable_media_list_12617d02dd25f317ea1a3751f2caf075b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -206,7 +206,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="90"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="90"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -214,7 +214,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="45" bodyfile="c:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" bodystart="44" bodyend="91"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl" bodystart="44" bodyend="91"/>
     <listofallmembers>
       <member refid="interfacesb_i_orderable_media_list_1eaa73fb344244fd8a307e1d660bace65" prot="public" virt="non-virtual"><scope>sbIOrderableMediaList</scope><name>insertBefore</name></member>
       <member refid="interfacesb_i_orderable_media_list_10c0aac6ef9babcbd8034476d6266087f" prot="public" virt="non-virtual"><scope>sbIOrderableMediaList</scope><name>insertSomeBefore</name></member>

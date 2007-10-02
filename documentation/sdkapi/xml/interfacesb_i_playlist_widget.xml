@@ -9,12 +9,12 @@
         <argsstring></argsstring>
         <name>lastClickEvent</name>
         <briefdescription>
-        </briefdescription>
+<para>The last click even that occured on this &lt;WebPlaylist&gt;. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>This is used only during the propogation of the PlaylistClickEvent event and will only be non-null for a very brief time during that flow. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="62" bodyfile="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" bodystart="62" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="156" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="156" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -24,12 +24,12 @@
         <argsstring>()</argsstring>
         <name>rescanCommands</name>
         <briefdescription>
-        </briefdescription>
+<para>Cause the commands to be re-fetched. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>This will cause the playlist to fetch the list of commands again so that any newly added commands will appear in the UI for the playlist</para><para>NOTE - Not callable from web pages. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="47"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="59"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_139986e570cddb5d1932acc6f0a647e0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
@@ -37,12 +37,13 @@
         <argsstring>()</argsstring>
         <name>getListView</name>
         <briefdescription>
-        </briefdescription>
+<para>Get the view being displayed in the &lt;WebPlaylist&gt;. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><simplesect kind="return"><para>A medialist view for the currently displayed medialist </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="48"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -66,12 +67,41 @@
           <declname>collapse</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Attach the &lt;WebPlaylist&gt; to the view passed in. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mediaListView</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the ordered, sorted, selected grouping of tracks to display in the UI </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>commands</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the commands to be used </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>resize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- boolean, if true the playlist will look up the resize_height attribute for the size to resize to. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>collapse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- apparently no longer used </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="52"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_11c7b3baeb159a3dc6fa5b8b73432ccba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -83,12 +113,20 @@
           <declname>aColumnName</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Make a column show up in the UI. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the name of the column to display </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="53"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="102"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1b54636b919d480ad5d9ed7a56df4902f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -100,12 +138,20 @@
           <declname>aColumnName</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Make a column disappear from the UI. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the name of the column to hide </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="54"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="122"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_12c7775c5b1d348cad166898abc1bd3e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -121,12 +167,27 @@
           <declname>aBeforeColumnName</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Make the named column move before the second. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The column to move </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The column that will be after (to the right of) the first column </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="56"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="132"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1f541b89c267cecbf3fd0d3ee3426b033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -154,12 +215,48 @@
           <declname>aBeforeCol</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>Add a column indicated by the propertyInfo into the UI. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the propertyInfo that defines the column data </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsHidden</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- if the column should be visible </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the width of the column </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSortOrder</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- What direction the sort should be in </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforeCol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The column name that the added column should be inserted before </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="61"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="148"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -167,78 +264,78 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="481">
+      <node id="496">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="478" relation="public-inheritance">
+        <childnode refid="493" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="485">
+      <node id="500">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="482">
+      <node id="497">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="483" relation="usage">
+        <childnode refid="498" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="485" relation="usage">
+        <childnode refid="500" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="480">
+      <node id="495">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="481" relation="public-inheritance">
+        <childnode refid="496" relation="public-inheritance">
         </childnode>
-        <childnode refid="482" relation="usage">
+        <childnode refid="497" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="484" relation="usage">
+        <childnode refid="499" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="479">
+      <node id="494">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="478">
+      <node id="493">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="479" relation="public-inheritance">
+        <childnode refid="494" relation="public-inheritance">
         </childnode>
-        <childnode refid="480" relation="usage">
+        <childnode refid="495" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="483">
+      <node id="498">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="484" relation="usage">
+        <childnode refid="499" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="484">
+      <node id="499">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="477">
+      <node id="492">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="478" relation="usage">
+        <childnode refid="493" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="476">
+      <node id="491">
         <label>sbIPlaylistWidget</label>
         <link refid="interfacesb_i_playlist_widget"/>
-        <childnode refid="477" relation="usage">
+        <childnode refid="492" relation="usage">
           <edgelabel>lastClickEvent</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="46" bodyfile="c:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" bodystart="45" bodyend="63"/>
+    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="49" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="48" bodyend="157"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>bind</name></member>
       <member refid="interfacesb_i_playlist_widget_139986e570cddb5d1932acc6f0a647e0f" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>getListView</name></member>

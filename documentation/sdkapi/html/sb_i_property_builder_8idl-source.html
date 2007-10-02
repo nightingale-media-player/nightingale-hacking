@@ -55,36 +55,40 @@
 <a name="l00049"></a>00049 
 <a name="l00050"></a><a class="code" href="interfacesb_i_property_builder.html#2c18bb192ca734fd2b393b200c848fc9">00050</a>   attribute AString displayNameKey;
 <a name="l00051"></a>00051 
-<a name="l00052"></a>00052   <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> <span class="keyword">get</span>();
-<a name="l00053"></a>00053 };
-<a name="l00054"></a>00054 
-<a name="l00059"></a>00059 [scriptable, uuid(bd71935f-697f-424d-9721-6477f4e34556)]
-<a name="l00060"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html">00060</a> interface <a class="code" href="interfacesb_i_simple_button_property_builder.html">sbISimpleButtonPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
-<a name="l00061"></a>00061 {
-<a name="l00062"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html#64f1d4142a5d1ce718903f3febcb978c">00062</a>   attribute AString label;
-<a name="l00063"></a>00063 
-<a name="l00064"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html#11df9b29a667e52891a2fb76f7417222">00064</a>   attribute AString labelKey;
-<a name="l00065"></a>00065 };
-<a name="l00066"></a>00066 
-<a name="l00071"></a>00071 [scriptable, uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]
-<a name="l00072"></a><a class="code" href="interfacesb_i_download_button_property_builder.html">00072</a> interface <a class="code" href="interfacesb_i_download_button_property_builder.html">sbIDownloadButtonPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
-<a name="l00073"></a>00073 {
-<a name="l00074"></a><a class="code" href="interfacesb_i_download_button_property_builder.html#ae1fba82bad46f7ddcc9c9a7ca770062">00074</a>   attribute AString label;
-<a name="l00075"></a>00075 
-<a name="l00076"></a><a class="code" href="interfacesb_i_download_button_property_builder.html#4f7fe4ff0c89129ca14d6cf4608c151a">00076</a>   attribute AString labelKey;
-<a name="l00077"></a>00077 };
-<a name="l00078"></a>00078 
-<a name="l00083"></a>00083 [scriptable, uuid(7b68af5c-3443-4c5b-9c65-44efe3781510)]
-<a name="l00084"></a><a class="code" href="interfacesb_i_image_property_builder.html">00084</a> interface <a class="code" href="interfacesb_i_image_property_builder.html">sbIImagePropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
-<a name="l00085"></a>00085 {
-<a name="l00086"></a>00086 };
-<a name="l00087"></a>00087 
-<a name="l00092"></a>00092 [scriptable, uuid(10f69629-3e74-448a-b627-7ea734644715)]
-<a name="l00093"></a><a class="code" href="interfacesb_i_rating_property_builder.html">00093</a> interface <a class="code" href="interfacesb_i_rating_property_builder.html">sbIRatingPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
-<a name="l00094"></a>00094 {
-<a name="l00095"></a>00095 };
-<a name="l00096"></a>00096 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
+<a name="l00052"></a><a class="code" href="interfacesb_i_property_builder.html#2e89cc3b9d6b58de39b95e13ede3e14b">00052</a>   attribute <span class="keywordtype">boolean</span> remoteReadable;
+<a name="l00053"></a>00053 
+<a name="l00054"></a><a class="code" href="interfacesb_i_property_builder.html#dae9d9d3a0c2b0cef82a46914e3bc25a">00054</a>   attribute <span class="keywordtype">boolean</span> remoteWritable;
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056   <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> <span class="keyword">get</span>();
+<a name="l00057"></a>00057 };
+<a name="l00058"></a>00058 
+<a name="l00063"></a>00063 [scriptable, uuid(bd71935f-697f-424d-9721-6477f4e34556)]
+<a name="l00064"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html">00064</a> interface <a class="code" href="interfacesb_i_simple_button_property_builder.html">sbISimpleButtonPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
+<a name="l00065"></a>00065 {
+<a name="l00066"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html#64f1d4142a5d1ce718903f3febcb978c">00066</a>   attribute AString label;
+<a name="l00067"></a>00067 
+<a name="l00068"></a><a class="code" href="interfacesb_i_simple_button_property_builder.html#11df9b29a667e52891a2fb76f7417222">00068</a>   attribute AString labelKey;
+<a name="l00069"></a>00069 };
+<a name="l00070"></a>00070 
+<a name="l00075"></a>00075 [scriptable, uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]
+<a name="l00076"></a><a class="code" href="interfacesb_i_download_button_property_builder.html">00076</a> interface <a class="code" href="interfacesb_i_download_button_property_builder.html">sbIDownloadButtonPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
+<a name="l00077"></a>00077 {
+<a name="l00078"></a><a class="code" href="interfacesb_i_download_button_property_builder.html#ae1fba82bad46f7ddcc9c9a7ca770062">00078</a>   attribute AString label;
+<a name="l00079"></a>00079 
+<a name="l00080"></a><a class="code" href="interfacesb_i_download_button_property_builder.html#4f7fe4ff0c89129ca14d6cf4608c151a">00080</a>   attribute AString labelKey;
+<a name="l00081"></a>00081 };
+<a name="l00082"></a>00082 
+<a name="l00087"></a>00087 [scriptable, uuid(7b68af5c-3443-4c5b-9c65-44efe3781510)]
+<a name="l00088"></a><a class="code" href="interfacesb_i_image_property_builder.html">00088</a> interface <a class="code" href="interfacesb_i_image_property_builder.html">sbIImagePropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
+<a name="l00089"></a>00089 {
+<a name="l00090"></a>00090 };
+<a name="l00091"></a>00091 
+<a name="l00096"></a>00096 [scriptable, uuid(10f69629-3e74-448a-b627-7ea734644715)]
+<a name="l00097"></a><a class="code" href="interfacesb_i_rating_property_builder.html">00097</a> interface <a class="code" href="interfacesb_i_rating_property_builder.html">sbIRatingPropertyBuilder</a> : <a class="code" href="interfacesb_i_property_builder.html">sbIPropertyBuilder</a>
+<a name="l00098"></a>00098 {
+<a name="l00099"></a>00099 };
+<a name="l00100"></a>00100 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

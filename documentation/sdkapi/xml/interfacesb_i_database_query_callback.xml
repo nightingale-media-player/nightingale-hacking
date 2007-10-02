@@ -50,7 +50,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="103"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="103"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_callback_112c2f896c036f7ac7583aefb2937d2cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -87,7 +87,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="114"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="114"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_callback_17dccd3e4927479623b8a201c8cc87215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -135,7 +135,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="126"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="126"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_database_query_callback_197c3fc44d86572c56c676eb2493633e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -183,7 +183,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="138"/>
+        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="138"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -191,7 +191,7 @@
     <detaileddescription>
 <para>This interface is meant to be implemented as a callback by client code.</para><para>Clients that simply need to be informed when a query has completed may implement this interface and pass it to <ref refid="interfacesb_i_database_query_10be34c86138def567ec7d89002b9c037" kindref="member">sbIDatabaseQuery::addCallback()</ref>.</para><para>For persistent queries, the callback will be called every time the system detects that the queried table has been changed and has executed the query again.</para><para>NOTE: The callback methods are called from a database thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref>, <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" line="92" bodyfile="c:/projects/songbird/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="91" bodyend="139"/>
+    <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" line="92" bodyfile="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl" bodystart="91" bodyend="139"/>
     <listofallmembers>
       <member refid="interfacesb_i_database_query_callback_197c3fc44d86572c56c676eb2493633e9" prot="public" virt="non-virtual"><scope>sbIDatabaseQueryCallback</scope><name>onQueryEnd</name></member>
       <member refid="interfacesb_i_database_query_callback_142250f2f1e4a5acc8e9ff3868a841ef8" prot="public" virt="non-virtual"><scope>sbIDatabaseQueryCallback</scope><name>onQueryError</name></member>

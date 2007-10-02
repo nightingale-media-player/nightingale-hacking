@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="401">
+      <node id="405">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="400" relation="include">
+        <childnode refid="404" relation="include">
         </childnode>
       </node>
-      <node id="399">
+      <node id="403">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sbIRemoteLibrary.idl"/>
-        <childnode refid="400" relation="include">
+        <childnode refid="404" relation="include">
         </childnode>
-        <childnode refid="401" relation="include">
+        <childnode refid="405" relation="include">
         </childnode>
       </node>
-      <node id="400">
+      <node id="404">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -78,237 +78,302 @@
 <codeline lineno="50"><highlight class="comment">It<sp/>is<sp/>possible<sp/>to<sp/>create<sp/>a<sp/>&lt;Library&gt;<sp/>using<sp/>the<sp/>&lt;Songbird::siteLibrary&gt;</highlight></codeline>
 <codeline lineno="51"><highlight class="comment">function.</highlight></codeline>
 <codeline lineno="52"><highlight class="comment"></highlight></codeline>
-<codeline lineno="53"><highlight class="comment">Example:</highlight></codeline>
-<codeline lineno="54"><highlight class="comment"><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="55"><highlight class="comment"><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
-<codeline lineno="56"><highlight class="comment"><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
-<codeline lineno="57"><highlight class="comment"></highlight></codeline>
-<codeline lineno="58"><highlight class="comment"><sp/><sp/>//Create<sp/>a<sp/>medialist<sp/>using<sp/>the<sp/>library.</highlight></codeline>
-<codeline lineno="59"><highlight class="comment"><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
+<codeline lineno="53"><highlight class="comment">Inherits:</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/><sp/>&lt;MediaList&gt;<sp/>&lt;MediaItem&gt;<sp/></highlight></codeline>
+<codeline lineno="55"><highlight class="comment"></highlight></codeline>
+<codeline lineno="56"><highlight class="comment">Example:</highlight></codeline>
+<codeline lineno="57"><highlight class="comment"><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="58"><highlight class="comment"><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="59"><highlight class="comment"><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
 <codeline lineno="60"><highlight class="comment"></highlight></codeline>
-<codeline lineno="61"><highlight class="comment"><sp/><sp/>//Create<sp/>some<sp/>mediaitems<sp/>and<sp/>add<sp/>them<sp/>to<sp/>the<sp/>medialist.</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/>var<sp/>itemURLs<sp/>=<sp/>[&quot;http://path/to/song.mp3&quot;,<sp/>&quot;http://path/to/another/song.mp3&quot;];</highlight></codeline>
-<codeline lineno="63"><highlight class="comment"><sp/><sp/>for(var<sp/>url<sp/>in<sp/>itemURLs)<sp/>{</highlight></codeline>
-<codeline lineno="64"><highlight class="comment"></highlight></codeline>
-<codeline lineno="65"><highlight class="comment"><sp/><sp/><sp/><sp/>//Calling<sp/>createMediaItem<sp/>may<sp/>throw<sp/>an<sp/>exception<sp/>when<sp/>it<sp/>fails</highlight></codeline>
-<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/><sp/>//to<sp/>create<sp/>the<sp/>mediaitem.</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/><sp/>//Create<sp/>a<sp/>medialist<sp/>using<sp/>the<sp/>library.</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"></highlight></codeline>
+<codeline lineno="64"><highlight class="comment"><sp/><sp/>//Create<sp/>some<sp/>mediaitems<sp/>and<sp/>add<sp/>them<sp/>to<sp/>the<sp/>medialist.</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"><sp/><sp/>var<sp/>itemURLs<sp/>=<sp/>[&quot;http://path/to/song.mp3&quot;,<sp/>&quot;http://path/to/another/song.mp3&quot;];</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/>for(var<sp/>url<sp/>in<sp/>itemURLs)<sp/>{</highlight></codeline>
 <codeline lineno="67"><highlight class="comment"></highlight></codeline>
-<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/><sp/>try<sp/>{</highlight></codeline>
-<codeline lineno="69"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>var<sp/>mediaItem<sp/>=<sp/>library.createMediaItem(url);</highlight></codeline>
-<codeline lineno="70"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>mediaList.add(mediaItem);</highlight></codeline>
-<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/><sp/>catch(e)<sp/>{</highlight></codeline>
-<codeline lineno="73"><highlight class="comment"></highlight></codeline>
-<codeline lineno="74"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Dump<sp/>it.</highlight></codeline>
-<codeline lineno="75"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>dump(&quot;Failed<sp/>creation<sp/>of<sp/>mediaitem:<sp/>&quot;<sp/>+<sp/>e);</highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/><sp/>//Calling<sp/>createMediaItem<sp/>may<sp/>throw<sp/>an<sp/>exception<sp/>when<sp/>it<sp/>fails</highlight></codeline>
+<codeline lineno="69"><highlight class="comment"><sp/><sp/><sp/><sp/>//to<sp/>create<sp/>the<sp/>mediaitem.</highlight></codeline>
+<codeline lineno="70"><highlight class="comment"></highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/><sp/>try<sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>var<sp/>mediaItem<sp/>=<sp/>library.createMediaItem(url);</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>mediaList.add(mediaItem);</highlight></codeline>
+<codeline lineno="74"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="comment"><sp/><sp/><sp/><sp/>catch(e)<sp/>{</highlight></codeline>
 <codeline lineno="76"><highlight class="comment"></highlight></codeline>
-<codeline lineno="77"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Or<sp/>alert<sp/>it.</highlight></codeline>
-<codeline lineno="78"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;Failed<sp/>creation<sp/>of<sp/>mediaitem:<sp/>&quot;<sp/>+<sp/>e);</highlight></codeline>
+<codeline lineno="77"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Dump<sp/>it.</highlight></codeline>
+<codeline lineno="78"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>dump(&quot;Failed<sp/>creation<sp/>of<sp/>mediaitem:<sp/>&quot;<sp/>+<sp/>e);</highlight></codeline>
 <codeline lineno="79"><highlight class="comment"></highlight></codeline>
-<codeline lineno="80"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Oops<sp/>the<sp/>URL<sp/>was<sp/>not<sp/>valid.</highlight></codeline>
-<codeline lineno="81"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>if(e.result<sp/>==<sp/>Components.results.NS_ERROR_INVALID_ARG)<sp/>{</highlight></codeline>
-<codeline lineno="82"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;The<sp/>URL:<sp/>&quot;<sp/>+<sp/>url<sp/>+<sp/>&quot;<sp/>was<sp/>not<sp/>valid.&quot;);</highlight></codeline>
-<codeline lineno="83"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="84"><highlight class="comment"></highlight></codeline>
-<codeline lineno="85"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="86"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="87"><highlight class="comment"><sp/><sp/>(end<sp/>code)</highlight></codeline>
-<codeline lineno="88"><highlight class="comment"></highlight></codeline>
-<codeline lineno="89"><highlight class="comment">See<sp/>Also:</highlight></codeline>
-<codeline lineno="90"><highlight class="comment"><sp/><sp/>&lt;Songbird&gt;</highlight></codeline>
-<codeline lineno="91"><highlight class="comment"><sp/><sp/>&lt;MediaItem&gt;</highlight></codeline>
-<codeline lineno="92"><highlight class="comment"><sp/><sp/>&lt;MediaList&gt;</highlight></codeline>
-<codeline lineno="93"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal">[scriptable,<sp/>uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]</highlight></codeline>
-<codeline lineno="107" refid="interfacesb_i_remote_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="108"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="120"><highlight class="comment"><sp/><sp/>Prop:<sp/>scanMediaOnCreation</highlight></codeline>
-<codeline lineno="121"><highlight class="comment"></highlight></codeline>
-<codeline lineno="122"><highlight class="comment"><sp/><sp/>Set<sp/>this<sp/>property<sp/>to<sp/>true<sp/>if<sp/>you<sp/>wish<sp/>all<sp/>new<sp/>&lt;MediaItems&gt;</highlight></codeline>
-<codeline lineno="123"><highlight class="comment"><sp/><sp/>created<sp/>to<sp/>be<sp/>scanned<sp/>for<sp/>metadata.</highlight></codeline>
-<codeline lineno="124"><highlight class="comment"></highlight></codeline>
-<codeline lineno="125"><highlight class="comment"><sp/><sp/>Set<sp/>this<sp/>property<sp/>to<sp/>false<sp/>if<sp/>you<sp/>wish<sp/>to<sp/>skip<sp/>scanning</highlight></codeline>
-<codeline lineno="126"><highlight class="comment"><sp/><sp/>for<sp/>metadata<sp/>when<sp/>&lt;MediaItems&gt;<sp/>are<sp/>created.</highlight></codeline>
-<codeline lineno="127"><highlight class="comment"></highlight></codeline>
-<codeline lineno="128"><highlight class="comment"><sp/><sp/>If<sp/>you<sp/>are<sp/>attempting<sp/>to<sp/>set<sp/>all<sp/>of<sp/>your<sp/>own<sp/>metadata<sp/>for<sp/>&lt;MediaItems&gt;</highlight></codeline>
-<codeline lineno="129"><highlight class="comment"><sp/><sp/>you<sp/>create,<sp/>you<sp/>may<sp/>set<sp/>this<sp/>to<sp/>false<sp/>to<sp/>prevent<sp/>your<sp/>metadata</highlight></codeline>
-<codeline lineno="130"><highlight class="comment"><sp/><sp/>from<sp/>being<sp/>overwritten.</highlight></codeline>
-<codeline lineno="131"><highlight class="comment"></highlight></codeline>
-<codeline lineno="132"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
-<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/>This<sp/>property<sp/>defaults<sp/>to<sp/>_true_.</highlight></codeline>
-<codeline lineno="134"><highlight class="comment"></highlight></codeline>
-<codeline lineno="135"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
-<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/>Boolean</highlight></codeline>
-<codeline lineno="137"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138" refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>scanMediaOnCreation;</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"></highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="152"><highlight class="comment"><sp/><sp/>Func:<sp/>createMediaItem()</highlight></codeline>
-<codeline lineno="153"><highlight class="comment"></highlight></codeline>
-<codeline lineno="154"><highlight class="comment"><sp/><sp/>Create<sp/>a<sp/>&lt;MediaItem&gt;<sp/>from<sp/>a<sp/>URL.<sp/>You<sp/>may<sp/>pass<sp/>in</highlight></codeline>
-<codeline lineno="155"><highlight class="comment"><sp/><sp/>http<sp/>and<sp/>https<sp/>URLs.<sp/>Local<sp/>file<sp/>URLs<sp/>are<sp/>not<sp/>permitted.</highlight></codeline>
-<codeline lineno="156"><highlight class="comment"></highlight></codeline>
-<codeline lineno="157"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="158"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem&gt;<sp/>createMediaItem(String<sp/>url)</highlight></codeline>
-<codeline lineno="159"><highlight class="comment"></highlight></codeline>
-<codeline lineno="160"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="161"><highlight class="comment"><sp/><sp/><sp/><sp/>url<sp/>-<sp/>A<sp/>URL<sp/>referring<sp/>to<sp/>a<sp/>media<sp/>file.</highlight></codeline>
-<codeline lineno="162"><highlight class="comment"></highlight></codeline>
-<codeline lineno="163"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
-<codeline lineno="164"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>newly<sp/>created<sp/>&lt;MediaItem&gt;.</highlight></codeline>
+<codeline lineno="80"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Or<sp/>alert<sp/>it.</highlight></codeline>
+<codeline lineno="81"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;Failed<sp/>creation<sp/>of<sp/>mediaitem:<sp/>&quot;<sp/>+<sp/>e);</highlight></codeline>
+<codeline lineno="82"><highlight class="comment"></highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Oops<sp/>the<sp/>URL<sp/>was<sp/>not<sp/>valid.</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>if(e.result<sp/>==<sp/>Components.results.NS_ERROR_INVALID_ARG)<sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;The<sp/>URL:<sp/>&quot;<sp/>+<sp/>url<sp/>+<sp/>&quot;<sp/>was<sp/>not<sp/>valid.&quot;);</highlight></codeline>
+<codeline lineno="86"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"></highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="comment"><sp/><sp/>(end<sp/>code)</highlight></codeline>
+<codeline lineno="91"><highlight class="comment"></highlight></codeline>
+<codeline lineno="92"><highlight class="comment">See<sp/>Also:</highlight></codeline>
+<codeline lineno="93"><highlight class="comment"><sp/><sp/>&lt;Songbird&gt;</highlight></codeline>
+<codeline lineno="94"><highlight class="comment"><sp/><sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="95"><highlight class="comment"><sp/><sp/>&lt;MediaList&gt;</highlight></codeline>
+<codeline lineno="96"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal">[scriptable,<sp/>uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]</highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_remote_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="124"><highlight class="comment"><sp/><sp/>Group:<sp/>Library<sp/>Properties</highlight></codeline>
+<codeline lineno="125"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/>Prop:<sp/>scanMediaOnCreation</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"></highlight></codeline>
+<codeline lineno="130"><highlight class="comment"><sp/><sp/>Set<sp/>this<sp/>property<sp/>to<sp/>true<sp/>if<sp/>you<sp/>wish<sp/>all<sp/>new<sp/>&lt;MediaItems&gt;</highlight></codeline>
+<codeline lineno="131"><highlight class="comment"><sp/><sp/>created<sp/>to<sp/>be<sp/>scanned<sp/>for<sp/>metadata.</highlight></codeline>
+<codeline lineno="132"><highlight class="comment"></highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/>Set<sp/>this<sp/>property<sp/>to<sp/>false<sp/>if<sp/>you<sp/>wish<sp/>to<sp/>skip<sp/>scanning</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"><sp/><sp/>for<sp/>metadata<sp/>when<sp/>&lt;MediaItems&gt;<sp/>are<sp/>created.</highlight></codeline>
+<codeline lineno="135"><highlight class="comment"></highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/>If<sp/>you<sp/>are<sp/>attempting<sp/>to<sp/>set<sp/>all<sp/>of<sp/>your<sp/>own<sp/>metadata<sp/>for<sp/>&lt;MediaItems&gt;</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/>you<sp/>create,<sp/>you<sp/>may<sp/>set<sp/>this<sp/>to<sp/>false<sp/>to<sp/>prevent<sp/>your<sp/>metadata</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"><sp/><sp/>from<sp/>being<sp/>overwritten.</highlight></codeline>
+<codeline lineno="139"><highlight class="comment"></highlight></codeline>
+<codeline lineno="140"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
+<codeline lineno="141"><highlight class="comment"><sp/><sp/><sp/><sp/>This<sp/>property<sp/>defaults<sp/>to<sp/>_true_.</highlight></codeline>
+<codeline lineno="142"><highlight class="comment"></highlight></codeline>
+<codeline lineno="143"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="144"><highlight class="comment"><sp/><sp/><sp/><sp/>Boolean</highlight></codeline>
+<codeline lineno="145"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>scanMediaOnCreation;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="160"><highlight class="comment"><sp/><sp/>Group:<sp/>Library<sp/>Methods</highlight></codeline>
+<codeline lineno="161"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="164"><highlight class="comment"><sp/><sp/>Method:<sp/>createMediaItem()</highlight></codeline>
 <codeline lineno="165"><highlight class="comment"></highlight></codeline>
-<codeline lineno="166"><highlight class="comment"><sp/><sp/>Throws:</highlight></codeline>
-<codeline lineno="167"><highlight class="comment"><sp/><sp/><sp/><sp/>Invalid<sp/>Argument<sp/>(Components.results.NS_ERROR_INVALID_ARG)</highlight></codeline>
-<codeline lineno="168"><highlight class="comment"><sp/><sp/><sp/><sp/>if<sp/>the<sp/>URL<sp/>isn&apos;t<sp/>http<sp/>or<sp/>https.</highlight></codeline>
-<codeline lineno="169"><highlight class="comment"></highlight></codeline>
-<codeline lineno="170"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="172"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
-<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"><sp/><sp/>Create<sp/>a<sp/>&lt;MediaItem&gt;<sp/>from<sp/>a<sp/>URL.<sp/>You<sp/>may<sp/>pass<sp/>in</highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/><sp/>http<sp/>and<sp/>https<sp/>URLs.<sp/>Local<sp/>file<sp/>URLs<sp/>are<sp/>not<sp/>permitted.</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"></highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="170"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem&gt;<sp/>createMediaItem(String<sp/>url)</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"></highlight></codeline>
+<codeline lineno="172"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/><sp/>url<sp/>-<sp/>A<sp/>URL<sp/>referring<sp/>to<sp/>a<sp/>media<sp/>file.</highlight></codeline>
 <codeline lineno="174"><highlight class="comment"></highlight></codeline>
-<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>the<sp/>mediaitem<sp/>from<sp/>a<sp/>url<sp/>pointing<sp/>to<sp/>a<sp/>media<sp/>file.</highlight></codeline>
-<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaItem<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>newly<sp/>created<sp/>&lt;MediaItem&gt;.</highlight></codeline>
 <codeline lineno="177"><highlight class="comment"></highlight></codeline>
-<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>function<sp/>may<sp/>throw<sp/>if<sp/>it<sp/>fails<sp/>to<sp/>create<sp/>the<sp/>item<sp/>because</highlight></codeline>
-<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/><sp/>//the<sp/>URL<sp/>is<sp/>invalid.</highlight></codeline>
-<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/><sp/>try<sp/>{</highlight></codeline>
-<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>mediaItem<sp/>=<sp/>library.createMediaItem(&quot;http://path/to/file.mp3&quot;);</highlight></codeline>
-<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="183"><highlight class="comment"><sp/><sp/><sp/><sp/>catch(e)<sp/>{</highlight></codeline>
-<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Oops,<sp/>bad<sp/>URL.</highlight></codeline>
-<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>if(e.result<sp/>==<sp/>Components.results.NS_ERROR_INVALID_ARG)<sp/>{</highlight></codeline>
-<codeline lineno="186"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;Oops,<sp/>the<sp/>URL<sp/>was<sp/>not<sp/>valid.&quot;);</highlight></codeline>
-<codeline lineno="187"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="188"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="189"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="190"><highlight class="comment"></highlight></codeline>
-<codeline lineno="191"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="192"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
-<codeline lineno="193"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
-<codeline lineno="194"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="195"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>createMediaItem(in<sp/>AString<sp/>aURL);</highlight></codeline>
-<codeline lineno="196"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="209"><highlight class="comment"><sp/><sp/>Func:<sp/>createMediaList()</highlight></codeline>
-<codeline lineno="210"><highlight class="comment"></highlight></codeline>
-<codeline lineno="211"><highlight class="comment"><sp/><sp/>Create<sp/>an<sp/>empty<sp/>&lt;MediaList&gt;<sp/>of<sp/>a<sp/>certain<sp/>type.</highlight></codeline>
-<codeline lineno="212"><highlight class="comment"></highlight></codeline>
-<codeline lineno="213"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>createMediaList(String<sp/>type)</highlight></codeline>
-<codeline lineno="215"><highlight class="comment"></highlight></codeline>
-<codeline lineno="216"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/><sp/>type<sp/>-<sp/>The<sp/>type<sp/>of<sp/>&lt;MediaList&gt;<sp/>to<sp/>create.</highlight></codeline>
-<codeline lineno="218"><highlight class="comment"></highlight></codeline>
-<codeline lineno="219"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
-<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>newly<sp/>created<sp/>&lt;MediaList&gt;<sp/>or<sp/>null.</highlight></codeline>
-<codeline lineno="221"><highlight class="comment"></highlight></codeline>
-<codeline lineno="222"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
-<codeline lineno="223"><highlight class="comment"><sp/><sp/><sp/><sp/>Currently<sp/>only<sp/>the<sp/>type<sp/>&quot;simple&quot;<sp/>is<sp/>supported.</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/>Throws:</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/><sp/>Invalid<sp/>Argument<sp/>(Components.results.NS_ERROR_INVALID_ARG)</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/><sp/>if<sp/>the<sp/>URL<sp/>isn&apos;t<sp/>http<sp/>or<sp/>https.</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"></highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="186"><highlight class="comment"></highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>the<sp/>mediaitem<sp/>from<sp/>a<sp/>url<sp/>pointing<sp/>to<sp/>a<sp/>media<sp/>file.</highlight></codeline>
+<codeline lineno="188"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaItem<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="189"><highlight class="comment"></highlight></codeline>
+<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>function<sp/>may<sp/>throw<sp/>if<sp/>it<sp/>fails<sp/>to<sp/>create<sp/>the<sp/>item<sp/>because</highlight></codeline>
+<codeline lineno="191"><highlight class="comment"><sp/><sp/><sp/><sp/>//the<sp/>URL<sp/>is<sp/>invalid.</highlight></codeline>
+<codeline lineno="192"><highlight class="comment"><sp/><sp/><sp/><sp/>try<sp/>{</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>mediaItem<sp/>=<sp/>library.createMediaItem(&quot;http://path/to/file.mp3&quot;);</highlight></codeline>
+<codeline lineno="194"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/><sp/>catch(e)<sp/>{</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//Oops,<sp/>bad<sp/>URL.</highlight></codeline>
+<codeline lineno="197"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>if(e.result<sp/>==<sp/>Components.results.NS_ERROR_INVALID_ARG)<sp/>{</highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;Oops,<sp/>the<sp/>URL<sp/>was<sp/>not<sp/>valid.&quot;);</highlight></codeline>
+<codeline lineno="199"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="202"><highlight class="comment"></highlight></codeline>
+<codeline lineno="203"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="204"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>createMediaItem(in<sp/>AString<sp/>aURL);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/><sp/>Method:<sp/>createMediaList()</highlight></codeline>
+<codeline lineno="222"><highlight class="comment"></highlight></codeline>
+<codeline lineno="223"><highlight class="comment"><sp/><sp/>Create<sp/>an<sp/>empty<sp/>&lt;MediaList&gt;<sp/>of<sp/>a<sp/>certain<sp/>type.</highlight></codeline>
 <codeline lineno="224"><highlight class="comment"></highlight></codeline>
-<codeline lineno="225"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="226"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="227"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
-<codeline lineno="228"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
-<codeline lineno="229"><highlight class="comment"></highlight></codeline>
-<codeline lineno="230"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>an<sp/>empty<sp/>medialist.</highlight></codeline>
-<codeline lineno="231"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
-<codeline lineno="232"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="225"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="226"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>createMediaList(String<sp/>type)</highlight></codeline>
+<codeline lineno="227"><highlight class="comment"></highlight></codeline>
+<codeline lineno="228"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="229"><highlight class="comment"><sp/><sp/><sp/><sp/>type<sp/>-<sp/>The<sp/>type<sp/>of<sp/>&lt;MediaList&gt;<sp/>to<sp/>create.</highlight></codeline>
+<codeline lineno="230"><highlight class="comment"></highlight></codeline>
+<codeline lineno="231"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="232"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>newly<sp/>created<sp/>&lt;MediaList&gt;<sp/>or<sp/>null.</highlight></codeline>
 <codeline lineno="233"><highlight class="comment"></highlight></codeline>
-<codeline lineno="234"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="235"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
-<codeline lineno="236"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
-<codeline lineno="237"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>createMediaList(in<sp/>AString<sp/>aType);</highlight></codeline>
-<codeline lineno="239"><highlight class="normal"></highlight></codeline>
-<codeline lineno="255"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="256"><highlight class="comment"><sp/><sp/>Func:<sp/>createMediaListFromURL()</highlight></codeline>
-<codeline lineno="257"><highlight class="comment"></highlight></codeline>
-<codeline lineno="258"><highlight class="comment"><sp/><sp/>Create<sp/>a<sp/>&lt;MediaList&gt;<sp/>from<sp/>a<sp/>URL.<sp/>The<sp/>URL<sp/>may<sp/>point<sp/>to<sp/>an</highlight></codeline>
-<codeline lineno="259"><highlight class="comment"><sp/><sp/>m3u,<sp/>pls,<sp/>rss<sp/>or<sp/>html<sp/>file.<sp/>After<sp/>being<sp/>created,<sp/>the<sp/>&lt;MediaList&gt;</highlight></codeline>
-<codeline lineno="260"><highlight class="comment"><sp/><sp/>will<sp/>contain<sp/>all<sp/>valid<sp/>&lt;MediaItems&gt;<sp/>it<sp/>could<sp/>create<sp/>from<sp/>the<sp/>URLs</highlight></codeline>
-<codeline lineno="261"><highlight class="comment"><sp/><sp/>it<sp/>found<sp/>in<sp/>the<sp/>file.</highlight></codeline>
-<codeline lineno="262"><highlight class="comment"></highlight></codeline>
-<codeline lineno="263"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="264"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>createMediaListFromURL(String<sp/>url,<sp/>Function<sp/>callback)</highlight></codeline>
-<codeline lineno="265"><highlight class="comment"></highlight></codeline>
-<codeline lineno="266"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="267"><highlight class="comment"><sp/><sp/><sp/><sp/>url<sp/>-<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>file<sp/>to<sp/>use<sp/>for<sp/>creating<sp/>the<sp/>&lt;MediaList&gt;.</highlight></codeline>
-<codeline lineno="268"><highlight class="comment"><sp/><sp/><sp/><sp/>callback<sp/>-<sp/>The<sp/>optional<sp/>function<sp/>that<sp/>gets<sp/>called<sp/>when<sp/>the<sp/>load<sp/>is<sp/>complete.</highlight></codeline>
-<codeline lineno="269"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>function<sp/>is<sp/>passed<sp/>a<sp/>single<sp/>argument<sp/>that<sp/>is<sp/>the<sp/>newly</highlight></codeline>
-<codeline lineno="270"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>created<sp/>list.</highlight></codeline>
-<codeline lineno="271"><highlight class="comment"></highlight></codeline>
-<codeline lineno="272"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="273"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="274"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
-<codeline lineno="275"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
-<codeline lineno="276"><highlight class="comment"></highlight></codeline>
-<codeline lineno="277"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>the<sp/>medialist<sp/>from<sp/>a<sp/>url<sp/>pointing<sp/>to<sp/>a<sp/>file.</highlight></codeline>
-<codeline lineno="278"><highlight class="comment"><sp/><sp/><sp/><sp/>library.createMediaListFromURL(&quot;http://path/to/file.m3u&quot;,<sp/>function(list)<sp/>{</highlight></codeline>
-<codeline lineno="279"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;loaded<sp/>&quot;<sp/>+<sp/>list.length<sp/>+<sp/>&quot;<sp/>items!&quot;);</highlight></codeline>
-<codeline lineno="280"><highlight class="comment"><sp/><sp/><sp/><sp/>});</highlight></codeline>
-<codeline lineno="281"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="282"><highlight class="comment"></highlight></codeline>
-<codeline lineno="283"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="284"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
-<codeline lineno="285"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
-<codeline lineno="286"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createMediaListFromURL(in<sp/>AString<sp/>aURL,</highlight></codeline>
-<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_create_media_list_callback" kindref="compound">sbICreateMediaListCallback</ref><sp/>aCallback);</highlight></codeline>
-<codeline lineno="289"><highlight class="normal"></highlight></codeline>
-<codeline lineno="298"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connectToDefaultLibrary(in<sp/>AString<sp/>aLibName);</highlight></codeline>
-<codeline lineno="299"><highlight class="normal"></highlight></codeline>
-<codeline lineno="306"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="307"><highlight class="comment"><sp/><sp/>Func:<sp/>getMediaListByName()</highlight></codeline>
-<codeline lineno="308"><highlight class="comment"></highlight></codeline>
-<codeline lineno="309"><highlight class="comment"><sp/><sp/>Get<sp/>the<sp/>site<sp/>media<sp/>list<sp/>with<sp/>the<sp/>given<sp/>name.<sp/><sp/>Note<sp/>that<sp/>to<sp/>compare<sp/>for</highlight></codeline>
-<codeline lineno="310"><highlight class="comment"><sp/><sp/>identity<sp/>one<sp/>must<sp/>compare<sp/>the<sp/>guid<sp/>(instead<sp/>of<sp/>JS<sp/>object<sp/>comparisions).</highlight></codeline>
-<codeline lineno="311"><highlight class="comment"></highlight></codeline>
-<codeline lineno="312"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="313"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>getMediaListByName(String<sp/>name)</highlight></codeline>
-<codeline lineno="314"><highlight class="comment"></highlight></codeline>
-<codeline lineno="315"><highlight class="comment"><sp/><sp/>Paramters:</highlight></codeline>
-<codeline lineno="316"><highlight class="comment"><sp/><sp/><sp/><sp/>name<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>media<sp/>list<sp/>to<sp/>fetch</highlight></codeline>
-<codeline lineno="317"><highlight class="comment"></highlight></codeline>
-<codeline lineno="318"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
-<codeline lineno="319"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>corresponding<sp/>media<sp/>list,<sp/>or<sp/>null<sp/>if<sp/>not<sp/>found</highlight></codeline>
-<codeline lineno="320"><highlight class="comment"></highlight></codeline>
-<codeline lineno="321"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="322"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="323"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
-<codeline lineno="324"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="234"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
+<codeline lineno="235"><highlight class="comment"><sp/><sp/><sp/><sp/>Currently<sp/>only<sp/>the<sp/>type<sp/>&quot;simple&quot;<sp/>is<sp/>supported.</highlight></codeline>
+<codeline lineno="236"><highlight class="comment"></highlight></codeline>
+<codeline lineno="237"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="238"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="239"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="240"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="241"><highlight class="comment"></highlight></codeline>
+<codeline lineno="242"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>an<sp/>empty<sp/>medialist.</highlight></codeline>
+<codeline lineno="243"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
+<codeline lineno="244"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="245"><highlight class="comment"></highlight></codeline>
+<codeline lineno="246"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="247"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
+<codeline lineno="248"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
+<codeline lineno="249"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>createMediaList(in<sp/>AString<sp/>aType);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="268"><highlight class="comment"><sp/><sp/>Method:<sp/>createMediaListFromURL()</highlight></codeline>
+<codeline lineno="269"><highlight class="comment"></highlight></codeline>
+<codeline lineno="270"><highlight class="comment"><sp/><sp/>Create<sp/>a<sp/>&lt;MediaList&gt;<sp/>from<sp/>a<sp/>URL.<sp/>The<sp/>URL<sp/>may<sp/>point<sp/>to<sp/>an</highlight></codeline>
+<codeline lineno="271"><highlight class="comment"><sp/><sp/>m3u,<sp/>pls,<sp/>rss<sp/>or<sp/>html<sp/>file.<sp/>After<sp/>being<sp/>created,<sp/>the<sp/>&lt;MediaList&gt;</highlight></codeline>
+<codeline lineno="272"><highlight class="comment"><sp/><sp/>will<sp/>contain<sp/>all<sp/>valid<sp/>&lt;MediaItems&gt;<sp/>it<sp/>could<sp/>create<sp/>from<sp/>the<sp/>URLs</highlight></codeline>
+<codeline lineno="273"><highlight class="comment"><sp/><sp/>it<sp/>found<sp/>in<sp/>the<sp/>file.</highlight></codeline>
+<codeline lineno="274"><highlight class="comment"></highlight></codeline>
+<codeline lineno="275"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="276"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>createMediaListFromURL(String<sp/>url,<sp/>Function<sp/>callback)</highlight></codeline>
+<codeline lineno="277"><highlight class="comment"></highlight></codeline>
+<codeline lineno="278"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="279"><highlight class="comment"><sp/><sp/><sp/><sp/>url<sp/>-<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>file<sp/>to<sp/>use<sp/>for<sp/>creating<sp/>the<sp/>&lt;MediaList&gt;.</highlight></codeline>
+<codeline lineno="280"><highlight class="comment"><sp/><sp/><sp/><sp/>callback<sp/>-<sp/>The<sp/>optional<sp/>function<sp/>that<sp/>gets<sp/>called<sp/>when<sp/>the<sp/>load<sp/>is<sp/>complete.</highlight></codeline>
+<codeline lineno="281"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>function<sp/>is<sp/>passed<sp/>a<sp/>single<sp/>argument<sp/>that<sp/>is<sp/>the<sp/>newly</highlight></codeline>
+<codeline lineno="282"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>created<sp/>list.</highlight></codeline>
+<codeline lineno="283"><highlight class="comment"></highlight></codeline>
+<codeline lineno="284"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="285"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="286"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="287"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="288"><highlight class="comment"></highlight></codeline>
+<codeline lineno="289"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>the<sp/>medialist<sp/>from<sp/>a<sp/>url<sp/>pointing<sp/>to<sp/>a<sp/>file.</highlight></codeline>
+<codeline lineno="290"><highlight class="comment"><sp/><sp/><sp/><sp/>library.createMediaListFromURL(&quot;http://path/to/file.m3u&quot;,<sp/></highlight></codeline>
+<codeline lineno="291"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>function(list)<sp/>{</highlight></codeline>
+<codeline lineno="292"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>alert(&quot;loaded<sp/>&quot;<sp/>+<sp/>list.length<sp/>+<sp/>&quot;<sp/>items!&quot;);</highlight></codeline>
+<codeline lineno="293"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="294"><highlight class="comment"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="295"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="296"><highlight class="comment"></highlight></codeline>
+<codeline lineno="297"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="298"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
+<codeline lineno="299"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="300"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createMediaListFromURL(in<sp/>AString<sp/>aURL,</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_create_media_list_callback" kindref="compound">sbICreateMediaListCallback</ref><sp/>aCallback);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connectToDefaultLibrary(in<sp/>AString<sp/>aLibName);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="321"><highlight class="comment"><sp/><sp/>Method:<sp/>getMediaListByName()</highlight></codeline>
+<codeline lineno="322"><highlight class="comment"></highlight></codeline>
+<codeline lineno="323"><highlight class="comment"><sp/><sp/>Get<sp/>the<sp/>site<sp/>media<sp/>list<sp/>with<sp/>the<sp/>given<sp/>name.<sp/><sp/>Note<sp/>that<sp/>to<sp/>compare<sp/>for</highlight></codeline>
+<codeline lineno="324"><highlight class="comment"><sp/><sp/>identity<sp/>one<sp/>must<sp/>compare<sp/>the<sp/>guid<sp/>(instead<sp/>of<sp/>JS<sp/>object<sp/>comparisions).</highlight></codeline>
 <codeline lineno="325"><highlight class="comment"></highlight></codeline>
-<codeline lineno="326"><highlight class="comment"><sp/><sp/><sp/><sp/>//Fetch<sp/>the<sp/>shopping<sp/>cart<sp/>media<sp/>list</highlight></codeline>
-<codeline lineno="327"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.getMediaListByName(&quot;Shopping<sp/>Cart&quot;);</highlight></codeline>
-<codeline lineno="328"><highlight class="comment"></highlight></codeline>
-<codeline lineno="329"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>comparisons<sp/>for<sp/>equality<sp/>must<sp/>be<sp/>done<sp/>on<sp/>the<sp/>guid</highlight></codeline>
-<codeline lineno="330"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>cart<sp/>=<sp/>library.getMediaListByName(&quot;Shopping<sp/>Cart&quot;);</highlight></codeline>
-<codeline lineno="331"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(mediaList.guid<sp/>==<sp/>cart.guid);</highlight></codeline>
-<codeline lineno="332"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="333"><highlight class="comment"></highlight></codeline>
-<codeline lineno="334"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="335"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
-<codeline lineno="336"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="337"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>getMediaListByName(<sp/>in<sp/>AString<sp/>aName<sp/>);</highlight></codeline>
-<codeline lineno="338"><highlight class="normal"></highlight></codeline>
-<codeline lineno="339"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getArtists();</highlight></codeline>
-<codeline lineno="340"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getAlbums();</highlight></codeline>
-<codeline lineno="341"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getGenres();</highlight></codeline>
-<codeline lineno="342"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getYears();</highlight></codeline>
-<codeline lineno="343"><highlight class="normal"></highlight></codeline>
-<codeline lineno="344"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylists();</highlight></codeline>
-<codeline lineno="345"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="346"><highlight class="normal"></highlight></codeline>
-<codeline lineno="358"><highlight class="normal">[scriptable,<sp/>uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]</highlight></codeline>
-<codeline lineno="359" refid="interfacesb_i_remote_site_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_site_library" kindref="compound" tooltip="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref></highlight></codeline>
-<codeline lineno="360"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="365" refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>filename;</highlight></codeline>
-<codeline lineno="366"><highlight class="normal"></highlight></codeline>
-<codeline lineno="392"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connectToSiteLibrary(in<sp/>AUTF8String<sp/>aDomain,</highlight></codeline>
-<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aPath);</highlight></codeline>
-<codeline lineno="394"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="326"><highlight class="comment"><sp/><sp/>Note:<sp/></highlight></codeline>
+<codeline lineno="327"><highlight class="comment"><sp/><sp/><sp/><sp/>This<sp/>method<sp/>will<sp/>not<sp/>work<sp/>with<sp/>the<sp/>main<sp/>library,<sp/>it<sp/>is<sp/>only<sp/>for</highlight></codeline>
+<codeline lineno="328"><highlight class="comment"><sp/><sp/><sp/><sp/>use<sp/>with<sp/>the<sp/>Site<sp/>Library.</highlight></codeline>
+<codeline lineno="329"><highlight class="comment"></highlight></codeline>
+<codeline lineno="330"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="331"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaList&gt;<sp/>getMediaListByName(String<sp/>name)</highlight></codeline>
+<codeline lineno="332"><highlight class="comment"></highlight></codeline>
+<codeline lineno="333"><highlight class="comment"><sp/><sp/>Paramters:</highlight></codeline>
+<codeline lineno="334"><highlight class="comment"><sp/><sp/><sp/><sp/>name<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>media<sp/>list<sp/>to<sp/>fetch</highlight></codeline>
+<codeline lineno="335"><highlight class="comment"></highlight></codeline>
+<codeline lineno="336"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="337"><highlight class="comment"><sp/><sp/><sp/><sp/>The<sp/>corresponding<sp/>media<sp/>list,<sp/>or<sp/>null<sp/>if<sp/>not<sp/>found</highlight></codeline>
+<codeline lineno="338"><highlight class="comment"></highlight></codeline>
+<codeline lineno="339"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="340"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="341"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="342"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="343"><highlight class="comment"></highlight></codeline>
+<codeline lineno="344"><highlight class="comment"><sp/><sp/><sp/><sp/>//Fetch<sp/>the<sp/>shopping<sp/>cart<sp/>media<sp/>list</highlight></codeline>
+<codeline lineno="345"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.getMediaListByName(&quot;Shopping<sp/>Cart&quot;);</highlight></codeline>
+<codeline lineno="346"><highlight class="comment"></highlight></codeline>
+<codeline lineno="347"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>comparisons<sp/>for<sp/>equality<sp/>must<sp/>be<sp/>done<sp/>on<sp/>the<sp/>guid</highlight></codeline>
+<codeline lineno="348"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>cart<sp/>=<sp/>library.getMediaListByName(&quot;Shopping<sp/>Cart&quot;);</highlight></codeline>
+<codeline lineno="349"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(mediaList.guid<sp/>==<sp/>cart.guid);</highlight></codeline>
+<codeline lineno="350"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="351"><highlight class="comment"></highlight></codeline>
+<codeline lineno="352"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="353"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="354"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>getMediaListByName(<sp/>in<sp/>AString<sp/>aName<sp/>);</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="358"><highlight class="comment"><sp/><sp/>Method:<sp/>getArtists()</highlight></codeline>
+<codeline lineno="359"><highlight class="comment"></highlight></codeline>
+<codeline lineno="360"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="361"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getAlbums()&gt;</highlight></codeline>
+<codeline lineno="362"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getGenres()&gt;</highlight></codeline>
+<codeline lineno="363"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getYears()&gt;</highlight></codeline>
+<codeline lineno="364"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getPlaylists()&gt;</highlight></codeline>
+<codeline lineno="365"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getArtists();</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"></highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="369"><highlight class="comment"><sp/><sp/>Method:<sp/>getAlbums()</highlight></codeline>
+<codeline lineno="370"><highlight class="comment"></highlight></codeline>
+<codeline lineno="371"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="372"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getArtists()&gt;</highlight></codeline>
+<codeline lineno="373"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getGenres()&gt;</highlight></codeline>
+<codeline lineno="374"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getYears()&gt;</highlight></codeline>
+<codeline lineno="375"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getPlaylists()&gt;</highlight></codeline>
+<codeline lineno="376"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getAlbums();</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="380"><highlight class="comment"><sp/><sp/>Method:<sp/>getGenres()</highlight></codeline>
+<codeline lineno="381"><highlight class="comment"></highlight></codeline>
+<codeline lineno="382"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="383"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getArtists()&gt;</highlight></codeline>
+<codeline lineno="384"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getAlbums()&gt;</highlight></codeline>
+<codeline lineno="385"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getYears()&gt;</highlight></codeline>
+<codeline lineno="386"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getPlaylists()&gt;</highlight></codeline>
+<codeline lineno="387"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getGenres();</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="391"><highlight class="comment"><sp/><sp/>Method:<sp/>getYears()</highlight></codeline>
+<codeline lineno="392"><highlight class="comment"></highlight></codeline>
+<codeline lineno="393"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="394"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getArtists()&gt;</highlight></codeline>
+<codeline lineno="395"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getAlbums()&gt;</highlight></codeline>
+<codeline lineno="396"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getGenres()&gt;</highlight></codeline>
+<codeline lineno="397"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getPlaylists()&gt;</highlight></codeline>
+<codeline lineno="398"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getYears();</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"></highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="402"><highlight class="comment"><sp/><sp/>Method:<sp/>getPlaylists()</highlight></codeline>
+<codeline lineno="403"><highlight class="comment"></highlight></codeline>
+<codeline lineno="404"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="405"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getArtists()&gt;</highlight></codeline>
+<codeline lineno="406"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getAlbums()&gt;</highlight></codeline>
+<codeline lineno="407"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getGenres()&gt;</highlight></codeline>
+<codeline lineno="408"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getYears()&gt;</highlight></codeline>
+<codeline lineno="409"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylists();</highlight></codeline>
+<codeline lineno="411"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"></highlight></codeline>
+<codeline lineno="424"><highlight class="normal">[scriptable,<sp/>uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]</highlight></codeline>
+<codeline lineno="425" refid="interfacesb_i_remote_site_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_site_library" kindref="compound" tooltip="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref></highlight></codeline>
+<codeline lineno="426"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="431" refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>filename;</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connectToSiteLibrary(in<sp/>AUTF8String<sp/>aDomain,</highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aPath);</highlight></codeline>
+<codeline lineno="460"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl"/>
   </compounddef>
 </doxygen>

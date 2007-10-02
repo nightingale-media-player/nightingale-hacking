@@ -70,20 +70,22 @@
 <a name="l00068"></a>00068 [scriptable, uuid(b1e017b3-6417-4f37-9685-3d3a09efbe99)]
 <a name="l00069"></a><a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html">00069</a> interface <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</a> : <a class="code" href="interfacesb_i_local_database_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseGUIDArray</a>
 <a name="l00070"></a>00070 {
-<a name="l00071"></a><a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html#61cbd59fde56dbaa17ebd787176670b5">00071</a>   attribute <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</a> asyncListener;
+<a name="l00071"></a>00071   <span class="keywordtype">void</span> addAsyncListener(in <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</a> aListener);
 <a name="l00072"></a>00072 
-<a name="l00073"></a>00073   <span class="keywordtype">void</span> getLengthAsync();
+<a name="l00073"></a>00073   <span class="keywordtype">void</span> removeAsyncListener(in <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</a> aListener);
 <a name="l00074"></a>00074 
-<a name="l00075"></a>00075   <span class="keywordtype">void</span> getGuidByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00075"></a>00075   <span class="keywordtype">void</span> getLengthAsync();
 <a name="l00076"></a>00076 
-<a name="l00077"></a>00077   <span class="keywordtype">void</span> getSortPropertyValueByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00077"></a>00077   <span class="keywordtype">void</span> getGuidByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
 <a name="l00078"></a>00078 
-<a name="l00079"></a>00079   <span class="keywordtype">void</span> getMediaItemIdByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00079"></a>00079   <span class="keywordtype">void</span> getSortPropertyValueByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
 <a name="l00080"></a>00080 
-<a name="l00081"></a>00081   <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</a> cloneAsyncArray();
-<a name="l00082"></a>00082 };
-<a name="l00083"></a>00083 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
+<a name="l00081"></a>00081   <span class="keywordtype">void</span> getMediaItemIdByIndexAsync(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083   <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</a> cloneAsyncArray();
+<a name="l00084"></a>00084 };
+<a name="l00085"></a>00085 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:46 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

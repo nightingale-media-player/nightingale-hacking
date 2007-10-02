@@ -15,7 +15,7 @@
 <para>Unique identifier for the controller </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="45" bodyfile="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" bodystart="45" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_controller_170a279c0b18655cdfe6e00ce8024fef8" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
 <para>A human readable name, optional? </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="50" bodyfile="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" bodystart="50" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_controller_1b4e08f7acb552c77597b814f376be74f" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIDPtr</type>
@@ -41,7 +41,7 @@
 <para>The nsID of an <ref refid="interfacesb_i_device_marshall" kindref="compound">sbIDeviceMarshall</ref> implementor that the controller wishes to use. This must be valid or the controller will never be instantiated! </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="56" bodyfile="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" bodystart="56" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="61"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_146609acbb9cf7460a2f7a1fd10665956" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
@@ -77,7 +77,7 @@
 <para>Constructs a device based on the given parameters. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="66"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_1e4caf411ad3526ebd494deb2c904db4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -94,7 +94,7 @@
 <para>Determines if a device is currently controlled by the controller </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_14119e926b7d763e1a83c490547197ca1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -107,7 +107,7 @@
 <para>Connects all devices. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="76"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_165fed25c1a1727c16f7cf1b8a4670ece" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -120,7 +120,7 @@
 <para>Disconnects all devices. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_1ff638c47fe68e18ac48b0d69fcb87707" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -137,7 +137,7 @@
 <para>Called when the controller should release a single device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="86"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="86"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_136fc3ac9ae56a6b09adeb4178c08171a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -150,14 +150,14 @@
 <para>Called when the controller should release all registered devices. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="91"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="91"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="41" bodyfile="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" bodystart="40" bodyend="92"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" bodystart="40" bodyend="92"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_controller_14119e926b7d763e1a83c490547197ca1" prot="public" virt="non-virtual"><scope>sbIDeviceController</scope><name>connectDevices</name></member>
       <member refid="interfacesb_i_device_controller_1e4caf411ad3526ebd494deb2c904db4d" prot="public" virt="non-virtual"><scope>sbIDeviceController</scope><name>controlsDevice</name></member>

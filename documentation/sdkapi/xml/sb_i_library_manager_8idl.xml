@@ -4,14 +4,14 @@
     <compoundname>sbILibraryManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="201">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="200">
         <label>components/library/base/public/sbILibraryManager.idl</label>
         <link refid="sbILibraryManager.idl"/>
         <childnode refid="201" relation="include">
         </childnode>
-      </node>
-      <node id="201">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_library_manager" prot="public">sbILibraryManager</innerclass>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="119"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="119"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_10f811f5ded3cc58d75023dbd5401f95e" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC</name>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="123"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="123"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_1df9ef3e803a63291142cdf5b358c7d66" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC</name>
@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="127"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="127"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -134,6 +134,6 @@
 <codeline lineno="128"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="129"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/library/base/public/sbILibraryManager.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl"/>
   </compounddef>
 </doxygen>

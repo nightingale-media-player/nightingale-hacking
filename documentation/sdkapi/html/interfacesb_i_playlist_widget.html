@@ -23,19 +23,306 @@
 </div>
 <h1>sbIPlaylistWidget Interface Reference</h1><!-- doxytag: class="sbIPlaylistWidget" --><a href="interfacesb_i_playlist_widget-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c023582f73fbed84eb3b1b63609487a8"></a><!-- doxytag: member="sbIPlaylistWidget::lastClickEvent" ref="c023582f73fbed84eb3b1b63609487a8" args="" -->
-readonly attribute <a class="el" href="interfacesb_i_playlist_click_event.html">sbIPlaylistClickEvent</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#c023582f73fbed84eb3b1b63609487a8">lastClickEvent</a></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#fd3292f2b9571292155841e07adcb567">rescanCommands</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cause the commands to be re-fetched.  <a href="#fd3292f2b9571292155841e07adcb567"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#39986e570cddb5d1932acc6f0a647e0f">getListView</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the view being displayed in the &lt;WebPlaylist&gt;.  <a href="#39986e570cddb5d1932acc6f0a647e0f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#176ef603697f7ce4d52f2bb8bc455cef">bind</a> (in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> mediaListView, in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> commands, in boolean resize, in boolean collapse)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attach the &lt;WebPlaylist&gt; to the view passed in.  <a href="#176ef603697f7ce4d52f2bb8bc455cef"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#1c7b3baeb159a3dc6fa5b8b73432ccba">showColumn</a> (in AString aColumnName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make a column show up in the UI.  <a href="#1c7b3baeb159a3dc6fa5b8b73432ccba"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#b54636b919d480ad5d9ed7a56df4902f">hideColumn</a> (in AString aColumnName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make a column disappear from the UI.  <a href="#b54636b919d480ad5d9ed7a56df4902f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#2c7775c5b1d348cad166898abc1bd3e4">moveColumnBefore</a> (in AString aColumnName, in AString aBeforeColumnName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make the named column move before the second.  <a href="#2c7775c5b1d348cad166898abc1bd3e4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#f541b89c267cecbf3fd0d3ee3426b033">insertColumn</a> (in <a class="el" href="interfacesb_i_property_info.html">sbIPropertyInfo</a> aPropInfo, in boolean aIsHidden, in long aWidth, in AString aSortOrder, in AString aBeforeCol)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a column indicated by the propertyInfo into the UI.  <a href="#f541b89c267cecbf3fd0d3ee3426b033"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute <a class="el" href="interfacesb_i_playlist_click_event.html">sbIPlaylistClickEvent</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_widget.html#c023582f73fbed84eb3b1b63609487a8">lastClickEvent</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The last click even that occured on this &lt;WebPlaylist&gt;.  <a href="#c023582f73fbed84eb3b1b63609487a8"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_widget_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_playlist_widget_8idl-source.html">sbIPlaylistWidget.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_playlist_widget_8idl-source.html#l00048">48</a> of file <a class="el" href="sb_i_playlist_widget_8idl-source.html">sbIPlaylistWidget.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="fd3292f2b9571292155841e07adcb567"></a><!-- doxytag: member="sbIPlaylistWidget::rescanCommands" ref="fd3292f2b9571292155841e07adcb567" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::rescanCommands           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Cause the commands to be re-fetched. 
+<p>
+This will cause the playlist to fetch the list of commands again so that any newly added commands will appear in the UI for the playlist<p>
+NOTE - Not callable from web pages. 
+</div>
+</div><p>
+<a class="anchor" name="39986e570cddb5d1932acc6f0a647e0f"></a><!-- doxytag: member="sbIPlaylistWidget::getListView" ref="39986e570cddb5d1932acc6f0a647e0f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> sbIPlaylistWidget::getListView           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the view being displayed in the &lt;WebPlaylist&gt;. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A medialist view for the currently displayed medialist </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="176ef603697f7ce4d52f2bb8bc455cef"></a><!-- doxytag: member="sbIPlaylistWidget::bind" ref="176ef603697f7ce4d52f2bb8bc455cef" args="(in sbIMediaListView mediaListView, in sbIPlaylistCommands commands, in boolean resize, in boolean collapse)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::bind           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td>
+          <td class="paramname"> <em>mediaListView</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td>
+          <td class="paramname"> <em>commands</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>resize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>collapse</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Attach the &lt;WebPlaylist&gt; to the view passed in. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mediaListView</em>&nbsp;</td><td>- the ordered, sorted, selected grouping of tracks to display in the UI </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>commands</em>&nbsp;</td><td>- the commands to be used </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>resize</em>&nbsp;</td><td>- boolean, if true the playlist will look up the resize_height attribute for the size to resize to. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>collapse</em>&nbsp;</td><td>- apparently no longer used </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="1c7b3baeb159a3dc6fa5b8b73432ccba"></a><!-- doxytag: member="sbIPlaylistWidget::showColumn" ref="1c7b3baeb159a3dc6fa5b8b73432ccba" args="(in AString aColumnName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::showColumn           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumnName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Make a column show up in the UI. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aColumnName</em>&nbsp;</td><td>- the name of the column to display </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b54636b919d480ad5d9ed7a56df4902f"></a><!-- doxytag: member="sbIPlaylistWidget::hideColumn" ref="b54636b919d480ad5d9ed7a56df4902f" args="(in AString aColumnName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::hideColumn           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumnName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Make a column disappear from the UI. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aColumnName</em>&nbsp;</td><td>- the name of the column to hide </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="2c7775c5b1d348cad166898abc1bd3e4"></a><!-- doxytag: member="sbIPlaylistWidget::moveColumnBefore" ref="2c7775c5b1d348cad166898abc1bd3e4" args="(in AString aColumnName, in AString aBeforeColumnName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::moveColumnBefore           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumnName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aBeforeColumnName</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Make the named column move before the second. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aColumnName</em>&nbsp;</td><td>- The column to move </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aBeforeColumnName</em>&nbsp;</td><td>- The column that will be after (to the right of) the first column </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="f541b89c267cecbf3fd0d3ee3426b033"></a><!-- doxytag: member="sbIPlaylistWidget::insertColumn" ref="f541b89c267cecbf3fd0d3ee3426b033" args="(in sbIPropertyInfo aPropInfo, in boolean aIsHidden, in long aWidth, in AString aSortOrder, in AString aBeforeCol)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWidget::insertColumn           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_property_info.html">sbIPropertyInfo</a>&nbsp;</td>
+          <td class="paramname"> <em>aPropInfo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aIsHidden</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in long&nbsp;</td>
+          <td class="paramname"> <em>aWidth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aSortOrder</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aBeforeCol</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a column indicated by the propertyInfo into the UI. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aPropInfo</em>&nbsp;</td><td>- the propertyInfo that defines the column data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIsHidden</em>&nbsp;</td><td>- if the column should be visible </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aWidth</em>&nbsp;</td><td>- the width of the column </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSortOrder</em>&nbsp;</td><td>- What direction the sort should be in </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aBeforeCol</em>&nbsp;</td><td>- The column name that the added column should be inserted before </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="c023582f73fbed84eb3b1b63609487a8"></a><!-- doxytag: member="sbIPlaylistWidget::lastClickEvent" ref="c023582f73fbed84eb3b1b63609487a8" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute <a class="el" href="interfacesb_i_playlist_click_event.html">sbIPlaylistClickEvent</a> <a class="el" href="interfacesb_i_playlist_widget.html#c023582f73fbed84eb3b1b63609487a8">sbIPlaylistWidget::lastClickEvent</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The last click even that occured on this &lt;WebPlaylist&gt;. 
+<p>
+This is used only during the propogation of the PlaylistClickEvent event and will only be non-null for a very brief time during that flow. 
+<p>
+Definition at line <a class="el" href="sb_i_playlist_widget_8idl-source.html#l00156">156</a> of file <a class="el" href="sb_i_playlist_widget_8idl-source.html">sbIPlaylistWidget.idl</a>.
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>bindings/public/<a class="el" href="sb_i_playlist_widget_8idl-source.html">sbIPlaylistWidget.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:47 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:53 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

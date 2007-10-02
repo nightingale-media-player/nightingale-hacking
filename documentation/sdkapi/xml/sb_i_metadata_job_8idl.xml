@@ -68,6 +68,6 @@
 <codeline lineno="103"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
   </compounddef>
 </doxygen>

@@ -74,6 +74,6 @@
 <codeline lineno="116"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/faceplate/public/sbIFaceplatePane.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplatePane.idl"/>
   </compounddef>
 </doxygen>

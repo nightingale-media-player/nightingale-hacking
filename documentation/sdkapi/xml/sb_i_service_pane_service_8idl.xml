@@ -4,13 +4,13 @@
     <compoundname>sbIServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="427">
+      <node id="431">
         <label>components/servicepane/public/sbIServicePaneService.idl</label>
         <link refid="sbIServicePaneService.idl"/>
-        <childnode refid="428" relation="include">
+        <childnode refid="432" relation="include">
         </childnode>
       </node>
-      <node id="428">
+      <node id="432">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -155,158 +155,160 @@
 <codeline lineno="168"><highlight class="normal"></highlight></codeline>
 <codeline lineno="172" refid="interfacesb_i_service_pane_service_18b14dfafc737d1cb552c64f7a03043b9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>root;</highlight></codeline>
 <codeline lineno="173"><highlight class="normal"></highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>node<sp/>to<sp/>the<sp/>tree</highlight></codeline>
-<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Create<sp/>a<sp/>new<sp/>node<sp/>and<sp/>add<sp/>it<sp/>as<sp/>a<sp/>child<sp/>of<sp/>the<sp/>specified<sp/>parent.<sp/>If<sp/>a</highlight></codeline>
-<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/>*<sp/>child<sp/>with<sp/>the<sp/>given<sp/>id<sp/>already<sp/>exists<sp/>then<sp/>do<sp/>not<sp/>create<sp/>it,<sp/>and<sp/>return</highlight></codeline>
-<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/>*<sp/>null.<sp/>Otherwise<sp/>return<sp/>a<sp/>node<sp/>object.</highlight></codeline>
-<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>an<sp/>URN<sp/>to<sp/>use<sp/>as<sp/>the<sp/>ID,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>should<sp/>be<sp/>anonymous</highlight></codeline>
-<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParent<sp/>the<sp/>desired<sp/>parent<sp/>node</highlight></codeline>
-<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContainer<sp/>should<sp/>the<sp/>new<sp/>node<sp/>be<sp/>a<sp/>container</highlight></codeline>
-<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>the<sp/>node<sp/>couldn&apos;t<sp/>be<sp/>created</highlight></codeline>
-<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="183"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addNode(in<sp/>AString<sp/>aId,</highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aParent,</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aContainer);</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Remove<sp/>a<sp/>node<sp/>and<sp/>all<sp/>its<sp/>children</highlight></codeline>
-<codeline lineno="188"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Remove<sp/>a<sp/>node<sp/>from<sp/>the<sp/>tree<sp/>and<sp/>all<sp/>its<sp/>children<sp/>and<sp/>all<sp/>their<sp/>childen<sp/>and</highlight></codeline>
-<codeline lineno="189"><highlight class="comment"><sp/><sp/><sp/>*<sp/>so<sp/>on.</highlight></codeline>
-<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>to<sp/>remove</highlight></codeline>
-<codeline lineno="191"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeNode(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode);</highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Get<sp/>the<sp/>node<sp/>object<sp/>for<sp/>the<sp/>given<sp/>id</highlight></codeline>
-<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>ID<sp/>of<sp/>the<sp/>desired<sp/>node</highlight></codeline>
-<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>couldn&apos;t<sp/>be<sp/>found</highlight></codeline>
-<codeline lineno="197"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>getNode(in<sp/>AString<sp/>aId);</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"></highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Get<sp/>the<sp/>first<sp/>node<sp/>object<sp/>for<sp/>the<sp/>given<sp/>url</highlight></codeline>
-<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>the<sp/>url<sp/>of<sp/>the<sp/>desired<sp/>node</highlight></codeline>
-<codeline lineno="202"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>couldn&apos;t<sp/>be<sp/>found</highlight></codeline>
-<codeline lineno="203"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="204"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>getNodeForURL(in<sp/>AString<sp/>aURL);</highlight></codeline>
-<codeline lineno="205"><highlight class="normal"></highlight></codeline>
-<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Save<sp/>the<sp/>state<sp/>of<sp/>the<sp/>tree<sp/>to<sp/>disk.</highlight></codeline>
-<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>should<sp/>go<sp/>away<sp/>and<sp/>be<sp/>handled<sp/>magically</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init();</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>node<sp/>to<sp/>the<sp/>tree</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Create<sp/>a<sp/>new<sp/>node<sp/>and<sp/>add<sp/>it<sp/>as<sp/>a<sp/>child<sp/>of<sp/>the<sp/>specified<sp/>parent.<sp/>If<sp/>a</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/>*<sp/>child<sp/>with<sp/>the<sp/>given<sp/>id<sp/>already<sp/>exists<sp/>then<sp/>do<sp/>not<sp/>create<sp/>it,<sp/>and<sp/>return</highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/>*<sp/>null.<sp/>Otherwise<sp/>return<sp/>a<sp/>node<sp/>object.</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>an<sp/>URN<sp/>to<sp/>use<sp/>as<sp/>the<sp/>ID,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>should<sp/>be<sp/>anonymous</highlight></codeline>
+<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParent<sp/>the<sp/>desired<sp/>parent<sp/>node</highlight></codeline>
+<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContainer<sp/>should<sp/>the<sp/>new<sp/>node<sp/>be<sp/>a<sp/>container</highlight></codeline>
+<codeline lineno="186"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>the<sp/>node<sp/>couldn&apos;t<sp/>be<sp/>created</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addNode(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aParent,</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aContainer);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Remove<sp/>a<sp/>node<sp/>and<sp/>all<sp/>its<sp/>children</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Remove<sp/>a<sp/>node<sp/>from<sp/>the<sp/>tree<sp/>and<sp/>all<sp/>its<sp/>children<sp/>and<sp/>all<sp/>their<sp/>childen<sp/>and</highlight></codeline>
+<codeline lineno="194"><highlight class="comment"><sp/><sp/><sp/>*<sp/>so<sp/>on.</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>to<sp/>remove</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeNode(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Get<sp/>the<sp/>node<sp/>object<sp/>for<sp/>the<sp/>given<sp/>id</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>ID<sp/>of<sp/>the<sp/>desired<sp/>node</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>couldn&apos;t<sp/>be<sp/>found</highlight></codeline>
+<codeline lineno="202"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>getNode(in<sp/>AString<sp/>aId);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Get<sp/>the<sp/>first<sp/>node<sp/>object<sp/>for<sp/>the<sp/>given<sp/>url</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>the<sp/>url<sp/>of<sp/>the<sp/>desired<sp/>node</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>couldn&apos;t<sp/>be<sp/>found</highlight></codeline>
 <codeline lineno="208"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>save();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>getNodeForURL(in<sp/>AString<sp/>aURL);</highlight></codeline>
 <codeline lineno="210"><highlight class="normal"></highlight></codeline>
-<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
-<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node</highlight></codeline>
-<codeline lineno="213"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
-<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
-<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/>AString<sp/>aId,</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>a<sp/>menu<sp/>with<sp/>menuitems<sp/>to<sp/>create<sp/>new<sp/>tree<sp/>nodes</highlight></codeline>
-<codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node<sp/>or<sp/>null<sp/>for<sp/>the<sp/>click<sp/>and<sp/>hold<sp/>menu</highlight></codeline>
-<codeline lineno="222"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
-<codeline lineno="223"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
-<codeline lineno="224"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillNewItemMenu(in<sp/>AString<sp/>aId,</highlight></codeline>
-<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
-<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="229"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Selection<sp/>changes<sp/>notification</highlight></codeline>
-<codeline lineno="230"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node<sp/>that<sp/>is<sp/>now<sp/>selected</highlight></codeline>
-<codeline lineno="231"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContainer<sp/>The<sp/>container<sp/>object<sp/>that<sp/>implements<sp/>the<sp/>selection</highlight></codeline>
-<codeline lineno="232"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
-<codeline lineno="233"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSelectionChanged(in<sp/>AString<sp/>aId,</highlight></codeline>
-<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMNode<sp/>aContainer,</highlight></codeline>
-<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>I<sp/>think<sp/>we&apos;ll<sp/>need<sp/>to<sp/>have<sp/>this<sp/>interface<sp/>too:</highlight></codeline>
-<codeline lineno="239"><highlight class="comment"><sp/><sp/>nsITreeView<sp/>wrapTreeView(in<sp/>nsITreeView<sp/>aTreeView);</highlight></codeline>
-<codeline lineno="240"><highlight class="comment"><sp/><sp/>it<sp/>will<sp/>take<sp/>an<sp/>existing<sp/>tree-builder<sp/>tree<sp/>view<sp/>and<sp/>add<sp/>some</highlight></codeline>
-<codeline lineno="241"><highlight class="comment"><sp/><sp/>functionality<sp/>that<sp/>we<sp/>want<sp/>to<sp/>have</highlight></codeline>
-<codeline lineno="242"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="244"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>drag<sp/>and<sp/>drop<sp/>support<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="245"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
-<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
-<codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
-<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
-<codeline lineno="251"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/>AString<sp/>aID,</highlight></codeline>
-<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
-<codeline lineno="253"><highlight class="normal"></highlight></codeline>
-<codeline lineno="254"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>a<sp/>node<sp/>is<sp/>renamed<sp/>by<sp/>the<sp/>user,<sp/>allows</highlight></codeline>
-<codeline lineno="255"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>the<sp/>node<sp/>owner<sp/>to<sp/>accept<sp/>the<sp/>action<sp/>by<sp/>setting<sp/>the</highlight></codeline>
-<codeline lineno="256"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node<sp/>name<sp/>to<sp/>the<sp/>given<sp/>value.</highlight></codeline>
-<codeline lineno="257"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>ID<sp/>of<sp/>the<sp/>node<sp/>being<sp/>renamed</highlight></codeline>
-<codeline lineno="258"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNewName<sp/>new<sp/>name<sp/>entered<sp/>by<sp/>the<sp/>user</highlight></codeline>
-<codeline lineno="259"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="260"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRename(in<sp/>AString<sp/>aID,</highlight></codeline>
-<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewName);</highlight></codeline>
-<codeline lineno="262"><highlight class="normal"></highlight></codeline>
-<codeline lineno="263"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="264"><highlight class="normal"></highlight></codeline>
-<codeline lineno="265"><highlight class="normal"></highlight></codeline>
-<codeline lineno="270"><highlight class="normal">[scriptable,<sp/>uuid(9c87f9d3-164d-4786-b044-9f72472a95b2)]</highlight></codeline>
-<codeline lineno="271" refid="interfacesb_i_service_pane_module" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_module" kindref="compound" tooltip="The interface exposed by the service pane backends.">sbIServicePaneModule</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="272"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Initialize<sp/>this<sp/>service<sp/>pane<sp/>module</highlight></codeline>
-<codeline lineno="274"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>is<sp/>where<sp/>the<sp/>module<sp/>should<sp/>set<sp/>itself<sp/>up<sp/>in<sp/>the<sp/>tree<sp/>if<sp/>it<sp/>hasn&apos;t</highlight></codeline>
-<codeline lineno="275"><highlight class="comment"><sp/><sp/><sp/>*<sp/>before.</highlight></codeline>
-<codeline lineno="276"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aServicePaneService<sp/>the<sp/>service<sp/>pane<sp/>service<sp/>instance</highlight></codeline>
-<codeline lineno="277"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>servicePaneInit(in<sp/><ref refid="interfacesb_i_service_pane_service" kindref="compound" tooltip="The interface exposed by the service pane service.">sbIServicePaneService</ref><sp/>aServicePaneService);</highlight></codeline>
-<codeline lineno="279"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
-<codeline lineno="281"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>was<sp/>context-clicked<sp/>on</highlight></codeline>
-<codeline lineno="282"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
-<codeline lineno="283"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
-<codeline lineno="284"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
-<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="288"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="289"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillNewItemMenu(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
-<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="292"><highlight class="normal"></highlight></codeline>
-<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Selection<sp/>changes<sp/>notification</highlight></codeline>
-<codeline lineno="294"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>is<sp/>now<sp/>selected</highlight></codeline>
-<codeline lineno="295"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
-<codeline lineno="296"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSelectionChanged(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMNode<sp/>aContainer,</highlight></codeline>
-<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
-<codeline lineno="300"><highlight class="normal"></highlight></codeline>
-<codeline lineno="301"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
-<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
-<codeline lineno="304"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
-<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
-<codeline lineno="307"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
-<codeline lineno="309"><highlight class="normal"></highlight></codeline>
-<codeline lineno="310"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>a<sp/>node<sp/>is<sp/>renamed<sp/>by<sp/>the<sp/>user,<sp/>allows</highlight></codeline>
-<codeline lineno="311"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>the<sp/>module<sp/>to<sp/>accept<sp/>the<sp/>action<sp/>by<sp/>setting<sp/>the</highlight></codeline>
-<codeline lineno="312"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node<sp/>name<sp/>to<sp/>the<sp/>given<sp/>value.</highlight></codeline>
-<codeline lineno="313"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>was<sp/>renamed</highlight></codeline>
-<codeline lineno="314"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNewName<sp/>new<sp/>name<sp/>entered<sp/>by<sp/>the<sp/>user</highlight></codeline>
-<codeline lineno="315"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="316"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRename(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
-<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewName);</highlight></codeline>
-<codeline lineno="318"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="319"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>optional<sp/>URI<sp/>of<sp/>stringbundle<sp/>to<sp/>use<sp/>to<sp/>localize<sp/>names<sp/>of<sp/>nodes</highlight></codeline>
-<codeline lineno="320"><highlight class="comment"><sp/><sp/><sp/><sp/>associated<sp/>with<sp/>this<sp/>module<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="321" refid="interfacesb_i_service_pane_module_102cd17a11048533bc10b693b119b276c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>stringbundle;</highlight></codeline>
-<codeline lineno="322"><highlight class="normal"></highlight></codeline>
-<codeline lineno="323"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>service<sp/>pane<sp/>service<sp/>is<sp/>shutting<sp/>down</highlight></codeline>
-<codeline lineno="324"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shutdown();</highlight></codeline>
-<codeline lineno="326"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Save<sp/>the<sp/>state<sp/>of<sp/>the<sp/>tree<sp/>to<sp/>disk.</highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>should<sp/>go<sp/>away<sp/>and<sp/>be<sp/>handled<sp/>magically</highlight></codeline>
+<codeline lineno="213"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>save();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node</highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
+<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>a<sp/>menu<sp/>with<sp/>menuitems<sp/>to<sp/>create<sp/>new<sp/>tree<sp/>nodes</highlight></codeline>
+<codeline lineno="226"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node<sp/>or<sp/>null<sp/>for<sp/>the<sp/>click<sp/>and<sp/>hold<sp/>menu</highlight></codeline>
+<codeline lineno="227"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
+<codeline lineno="228"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="229"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillNewItemMenu(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Selection<sp/>changes<sp/>notification</highlight></codeline>
+<codeline lineno="235"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node<sp/>that<sp/>is<sp/>now<sp/>selected</highlight></codeline>
+<codeline lineno="236"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContainer<sp/>The<sp/>container<sp/>object<sp/>that<sp/>implements<sp/>the<sp/>selection</highlight></codeline>
+<codeline lineno="237"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="238"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSelectionChanged(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMNode<sp/>aContainer,</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>I<sp/>think<sp/>we&apos;ll<sp/>need<sp/>to<sp/>have<sp/>this<sp/>interface<sp/>too:</highlight></codeline>
+<codeline lineno="244"><highlight class="comment"><sp/><sp/>nsITreeView<sp/>wrapTreeView(in<sp/>nsITreeView<sp/>aTreeView);</highlight></codeline>
+<codeline lineno="245"><highlight class="comment"><sp/><sp/>it<sp/>will<sp/>take<sp/>an<sp/>existing<sp/>tree-builder<sp/>tree<sp/>view<sp/>and<sp/>add<sp/>some</highlight></codeline>
+<codeline lineno="246"><highlight class="comment"><sp/><sp/>functionality<sp/>that<sp/>we<sp/>want<sp/>to<sp/>have</highlight></codeline>
+<codeline lineno="247"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>drag<sp/>and<sp/>drop<sp/>support<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>a<sp/>node<sp/>is<sp/>renamed<sp/>by<sp/>the<sp/>user,<sp/>allows</highlight></codeline>
+<codeline lineno="260"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>the<sp/>node<sp/>owner<sp/>to<sp/>accept<sp/>the<sp/>action<sp/>by<sp/>setting<sp/>the</highlight></codeline>
+<codeline lineno="261"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node<sp/>name<sp/>to<sp/>the<sp/>given<sp/>value.</highlight></codeline>
+<codeline lineno="262"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>ID<sp/>of<sp/>the<sp/>node<sp/>being<sp/>renamed</highlight></codeline>
+<codeline lineno="263"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNewName<sp/>new<sp/>name<sp/>entered<sp/>by<sp/>the<sp/>user</highlight></codeline>
+<codeline lineno="264"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRename(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewName);</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal">[scriptable,<sp/>uuid(9c87f9d3-164d-4786-b044-9f72472a95b2)]</highlight></codeline>
+<codeline lineno="276" refid="interfacesb_i_service_pane_module" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_module" kindref="compound" tooltip="The interface exposed by the service pane backends.">sbIServicePaneModule</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="277"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Initialize<sp/>this<sp/>service<sp/>pane<sp/>module</highlight></codeline>
+<codeline lineno="279"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>is<sp/>where<sp/>the<sp/>module<sp/>should<sp/>set<sp/>itself<sp/>up<sp/>in<sp/>the<sp/>tree<sp/>if<sp/>it<sp/>hasn&apos;t</highlight></codeline>
+<codeline lineno="280"><highlight class="comment"><sp/><sp/><sp/>*<sp/>before.</highlight></codeline>
+<codeline lineno="281"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aServicePaneService<sp/>the<sp/>service<sp/>pane<sp/>service<sp/>instance</highlight></codeline>
+<codeline lineno="282"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>servicePaneInit(in<sp/><ref refid="interfacesb_i_service_pane_service" kindref="compound" tooltip="The interface exposed by the service pane service.">sbIServicePaneService</ref><sp/>aServicePaneService);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
+<codeline lineno="286"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>was<sp/>context-clicked<sp/>on</highlight></codeline>
+<codeline lineno="287"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
+<codeline lineno="288"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="289"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillNewItemMenu(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Selection<sp/>changes<sp/>notification</highlight></codeline>
+<codeline lineno="299"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>is<sp/>now<sp/>selected</highlight></codeline>
+<codeline lineno="300"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="301"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSelectionChanged(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMNode<sp/>aContainer,</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>a<sp/>node<sp/>is<sp/>renamed<sp/>by<sp/>the<sp/>user,<sp/>allows</highlight></codeline>
+<codeline lineno="316"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>the<sp/>module<sp/>to<sp/>accept<sp/>the<sp/>action<sp/>by<sp/>setting<sp/>the</highlight></codeline>
+<codeline lineno="317"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node<sp/>name<sp/>to<sp/>the<sp/>given<sp/>value.</highlight></codeline>
+<codeline lineno="318"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>was<sp/>renamed</highlight></codeline>
+<codeline lineno="319"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNewName<sp/>new<sp/>name<sp/>entered<sp/>by<sp/>the<sp/>user</highlight></codeline>
+<codeline lineno="320"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRename(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewName);</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>optional<sp/>URI<sp/>of<sp/>stringbundle<sp/>to<sp/>use<sp/>to<sp/>localize<sp/>names<sp/>of<sp/>nodes</highlight></codeline>
+<codeline lineno="325"><highlight class="comment"><sp/><sp/><sp/><sp/>associated<sp/>with<sp/>this<sp/>module<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="326" refid="interfacesb_i_service_pane_module_102cd17a11048533bc10b693b119b276c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>stringbundle;</highlight></codeline>
 <codeline lineno="327"><highlight class="normal"></highlight></codeline>
-<codeline lineno="328"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Called<sp/>when<sp/>service<sp/>pane<sp/>service<sp/>is<sp/>shutting<sp/>down</highlight></codeline>
+<codeline lineno="329"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shutdown();</highlight></codeline>
+<codeline lineno="331"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl"/>
   </compounddef>
 </doxygen>

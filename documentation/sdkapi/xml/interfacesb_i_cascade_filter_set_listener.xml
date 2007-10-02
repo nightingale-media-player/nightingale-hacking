@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="47"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="47"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_cascade_filter_set_listener_1abf1f4b671d10f3a108228d11b1d9d8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="49"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="49"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -40,7 +40,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="46" bodyfile="c:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="45" bodyend="50"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbICascadeFilterSet.idl" bodystart="45" bodyend="50"/>
     <listofallmembers>
       <member refid="interfacesb_i_cascade_filter_set_listener_1e215eaa7d97b715041b80c3c61b0c7bd" prot="public" virt="non-virtual"><scope>sbICascadeFilterSetListener</scope><name>onChange</name></member>
       <member refid="interfacesb_i_cascade_filter_set_listener_1abf1f4b671d10f3a108228d11b1d9d8b" prot="public" virt="non-virtual"><scope>sbICascadeFilterSetListener</scope><name>onValuesChanged</name></member>

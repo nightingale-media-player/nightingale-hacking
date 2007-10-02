@@ -4,13 +4,13 @@
     <compoundname>sbIClickablePropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="374">
+      <node id="378">
         <label>components/property/public/sbIClickablePropertyInfo.idl</label>
         <link refid="sbIClickablePropertyInfo.idl"/>
-        <childnode refid="375" relation="include">
+        <childnode refid="379" relation="include">
         </childnode>
       </node>
-      <node id="375">
+      <node id="379">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -71,6 +71,6 @@
 <codeline lineno="72"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/property/public/sbIClickablePropertyInfo.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIClickablePropertyInfo.idl"/>
   </compounddef>
 </doxygen>

@@ -11,15 +11,6 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="196">
-        <label>nsServiceManagerUtils.h</label>
-      </node>
-      <node id="197">
-        <label>nsStringGlue.h</label>
-      </node>
-      <node id="192">
-        <label>nsICategoryManager.h</label>
-      </node>
       <node id="190">
         <label>components/library/base/public/sbILibraryLoader.idl</label>
         <link refid="sbILibraryLoader.idl"/>
@@ -39,6 +30,15 @@
         </childnode>
         <childnode refid="198" relation="include">
         </childnode>
+      </node>
+      <node id="196">
+        <label>nsServiceManagerUtils.h</label>
+      </node>
+      <node id="197">
+        <label>nsStringGlue.h</label>
+      </node>
+      <node id="192">
+        <label>nsICategoryManager.h</label>
       </node>
       <node id="194">
         <label>nsIFile.h</label>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="78"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="78"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_loader_8idl_11adc5a90e3e680cca3d9fb039668da40" prot="public" static="no">
         <name>SB_LIBRARY_LOADER_REGISTRATION</name>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="144"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="144"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -185,6 +185,6 @@
 <codeline lineno="144"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="145"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/library/base/public/sbILibraryLoader.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl"/>
   </compounddef>
 </doxygen>

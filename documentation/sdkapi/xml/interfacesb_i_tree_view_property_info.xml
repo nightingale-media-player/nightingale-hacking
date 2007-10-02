@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="42" bodyfile="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="42" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="42" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="44"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="44"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tree_view_property_info_1e18c6c5dd98b51d961112aa9a280c270" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="46"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="46"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tree_view_property_info_102e82568a08a328f2a67ec4b149e54de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="48"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="48"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tree_view_property_info_121a13ba52c4c5c54a4f869f5c0ceed77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="50"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tree_view_property_info_1ada7f3dabbc31f6913bc62d219f78f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="52"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tree_view_property_info_10b33407322a62ae9256bbc86ace095cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="54"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="54"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -127,7 +127,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" line="41" bodyfile="c:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="40" bodyend="55"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl" bodystart="40" bodyend="55"/>
     <listofallmembers>
       <member refid="interfacesb_i_tree_view_property_info_1905d0aa95122f0331479b9aa338b842c" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>columnType</name></member>
       <member refid="interfacesb_i_tree_view_property_info_10b33407322a62ae9256bbc86ace095cf" prot="public" virt="non-virtual"><scope>sbITreeViewPropertyInfo</scope><name>getCellProperties</name></member>

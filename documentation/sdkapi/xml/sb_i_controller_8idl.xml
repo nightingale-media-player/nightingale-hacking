@@ -4,14 +4,14 @@
     <compoundname>sbIController.idl</compoundname>
     <includes local="yes">nsIController.idl</includes>
     <incdepgraph>
-      <node id="34">
-        <label>nsIController.idl</label>
-      </node>
       <node id="33">
         <label>components/controller/public/sbIController.idl</label>
         <link refid="sbIController.idl"/>
         <childnode refid="34" relation="include">
         </childnode>
+      </node>
+      <node id="34">
+        <label>nsIController.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_controller" prot="public">sbIController</innerclass>
@@ -54,6 +54,6 @@
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/controller/public/sbIController.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/controller/public/sbIController.idl"/>
   </compounddef>
 </doxygen>

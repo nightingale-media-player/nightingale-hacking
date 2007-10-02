@@ -87,6 +87,6 @@
 <codeline lineno="86"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl"/>
   </compounddef>
 </doxygen>

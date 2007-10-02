@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="58" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="58" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_library_1de539f77d028fb1d3f41c2c16118e7b2" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIURI</type>
@@ -28,7 +28,7 @@
 <para>This can be null to indicate that the library lives in the default location </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="65" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="65" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="65" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_library_1c68f0abbb486674751a8442b73851b00" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_local_database_property_cache" kindref="compound">sbILocalDatabasePropertyCache</ref></type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="67" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="67" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="67" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="67" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_library_151048be46119bcc652d4cfd1f06191a9" prot="public" static="no" mutable="no">
         <type>readonly attribute sbLocalDatabaseLibrary</type>
@@ -54,7 +54,7 @@
 <para>Oh My. We need this here to avoid a static cast in sbLocalDatabaseSimpleMediaListFactory where we need a sbLocalDatabaseLibrary class pointer to construct the simple media list. This is better than the static cast since it explicitly requires the implementing class to be able to return a sbLocalDatabaseLibrary pointer. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="85" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="85" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="85" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="85" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="69"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_library_1742d1b96a1a6483c46ba25163a7d683c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="71"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="71"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_library_1e7ba3baf8a067bc3d93de479e189a53a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="74"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="74"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref></type>
@@ -124,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="76"/>
+        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="76"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -132,19 +132,19 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="263">
+      <node id="264">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="262">
+      <node id="263">
         <label>sbILocalDatabaseLibrary</label>
         <link refid="interfacesb_i_local_database_library"/>
-        <childnode refid="263" relation="usage">
+        <childnode refid="264" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="57" bodyfile="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="56" bodyend="86"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="56" bodyend="86"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>createQuery</name></member>
       <member refid="interfacesb_i_local_database_library_127b7e647416d05c9c7cedd830ac78836" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>databaseGuid</name></member>

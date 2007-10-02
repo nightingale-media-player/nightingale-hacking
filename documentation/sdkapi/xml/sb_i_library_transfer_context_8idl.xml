@@ -79,9 +79,11 @@
 <codeline lineno="110" refid="interfacesb_i_multiple_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_multiple_item_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a collection of media items and/or media...">sbIMultipleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
 <codeline lineno="111"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="116" refid="interfacesb_i_multiple_item_transfer_context_1c62397ab39e4531e7a3c80c0193819d2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>items;</highlight></codeline>
-<codeline lineno="117"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reset();</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl"/>
   </compounddef>
 </doxygen>

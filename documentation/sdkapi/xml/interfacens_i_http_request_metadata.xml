@@ -15,7 +15,7 @@
 <para>The request type for this request (see RFC 2616, section 5.1.1). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="213" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="213" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="213" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="213" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_1b506c4ca676904b02fcc53ffe234c0d0" prot="public" static="no" mutable="no">
         <type>readonly attribute string</type>
@@ -28,7 +28,7 @@
 <para>The host of the data being requested (e.g. &quot;localhost&quot; for the <ulink url="http://localhost:8080/file">http://localhost:8080/file</ulink> resource). Note that the relevant port on the host is specified in this.port. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="220" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="220" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="220" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="220" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_1b92290e3606856f1e4f4408e4939015f" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -41,7 +41,7 @@
 <para>The port on the server on which the request was received. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="225" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="225" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="225" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="225" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_194799613ea43b992c9e77413330ad9a2" prot="public" static="no" mutable="no">
         <type>readonly attribute string</type>
@@ -54,7 +54,7 @@
 <para>The requested path, without any query string (e.g. &quot;/dir/file.txt&quot;). It is guaranteed to begin with a &quot;/&quot;. This string is in the </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="231" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="231" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="231" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="231" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_1bba9381df6833faaf422e8eb7efe2193" prot="public" static="no" mutable="no">
         <type>readonly attribute string</type>
@@ -67,7 +67,7 @@
 <para>The URL-encoded query string associated with this request, not including the initial &quot;?&quot;. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="237" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="237" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="237" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="237" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_1f5140947a19ec5957de10e121be28213" prot="public" static="no" mutable="no">
         <type>readonly attribute string</type>
@@ -80,7 +80,7 @@
 <para>A string containing the HTTP version of the request (i.e., &quot;1.1&quot;). Leading zeros for either component of the version will be omitted. (In other words, if the request contains the version &quot;1.01&quot;, this attribute will be &quot;1.1&quot;; see RFC 2616, section 3.1.) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="245" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="245" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="245" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="245" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacens_i_http_request_metadata_175b4ddb79c439774ec39c4ef149f6ccb" prot="public" static="no" mutable="no">
         <type>readonly attribute nsISimpleEnumerator</type>
@@ -93,7 +93,7 @@
 <para>An nsISimpleEnumerator over the names of the headers in this request. The header field names in the enumerator may not necessarily have the same case as they do in the request itself. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="284" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="284" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="284" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="284" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -136,7 +136,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="264"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="264"/>
       </memberdef>
       <memberdef kind="function" id="interfacens_i_http_request_metadata_1fa0027a86b80d01cfb6e59fe63c13713" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -169,14 +169,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="277"/>
+        <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="277"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface that represents the data included in an HTTP request. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" line="209" bodyfile="c:/projects/songbird/components/testharness/public/nsIHttpServer.idl" bodystart="208" bodyend="287"/>
+    <location file="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" line="209" bodyfile="e:/Projects/songbird/trunk/components/testharness/public/nsIHttpServer.idl" bodystart="208" bodyend="287"/>
     <listofallmembers>
       <member refid="interfacens_i_http_request_metadata_127b89fa6edfe7fcdbdb1821ccc16c934" prot="public" virt="non-virtual"><scope>nsIHttpRequestMetadata</scope><name>getHeader</name></member>
       <member refid="interfacens_i_http_request_metadata_1fa0027a86b80d01cfb6e59fe63c13713" prot="public" virt="non-virtual"><scope>nsIHttpRequestMetadata</scope><name>hasHeader</name></member>

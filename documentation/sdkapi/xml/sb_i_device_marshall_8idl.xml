@@ -19,9 +19,6 @@
       <node id="102">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="99">
-        <label>nsCOMPtr.h</label>
-      </node>
       <node id="97">
         <label>components/devices/marshall/public/sbIDeviceMarshall.idl</label>
         <link refid="sbIDeviceMarshall.idl"/>
@@ -39,6 +36,9 @@
         </childnode>
         <childnode refid="104" relation="include">
         </childnode>
+      </node>
+      <node id="99">
+        <label>nsCOMPtr.h</label>
       </node>
       <node id="100">
         <label>nsIComponentManager.h</label>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="70"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="70"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_marshall_8idl_1cda9bdf097eaae0d4a3a074569429d2b" prot="public" static="no">
         <name>SB_DEVICE_MARSHALL_REGISTERSELF</name>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="104"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="104"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_marshall_8idl_1ced4ac49c995d91c3545d7e9ea84088a" prot="public" static="no">
         <name>SB_DEVICE_MARSHALL_REGISTERSELF_IMPL</name>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl" line="159"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="159"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -222,6 +222,6 @@
 <codeline lineno="159"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="160"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/devices/marshall/public/sbIDeviceMarshall.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl"/>
   </compounddef>
 </doxygen>

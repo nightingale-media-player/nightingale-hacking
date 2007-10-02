@@ -98,6 +98,6 @@
 <codeline lineno="102"><highlight class="normal"></highlight></codeline>
 <codeline lineno="103"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl"/>
   </compounddef>
 </doxygen>

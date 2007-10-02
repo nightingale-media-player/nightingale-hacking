@@ -16,6 +16,9 @@
       <node id="83">
         <label>nsICategoryManager.h</label>
       </node>
+      <node id="84">
+        <label>nsIServiceManager.h</label>
+      </node>
       <node id="79">
         <label>components/devices/controller/public/sbIDeviceController.idl</label>
         <link refid="sbIDeviceController.idl"/>
@@ -33,9 +36,6 @@
         </childnode>
         <childnode refid="86" relation="include">
         </childnode>
-      </node>
-      <node id="84">
-        <label>nsIServiceManager.h</label>
       </node>
       <node id="81">
         <label>nsCOMPtr.h</label>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="105"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="105"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_controller_8idl_12be89c6024a0cfcd556fa0bc6b308f8d" prot="public" static="no">
         <name>SB_DEVICE_CONTROLLER_REGISTERSELF</name>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="139"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="139"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_device_controller_8idl_10add4ea1d57e8da9d2039c9acd482376" prot="public" static="no">
         <name>SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL</name>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl" line="194"/>
+        <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl" line="194"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -239,6 +239,6 @@
 <codeline lineno="194"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="195"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/devices/controller/public/sbIDeviceController.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/devices/controller/public/sbIDeviceController.idl"/>
   </compounddef>
 </doxygen>

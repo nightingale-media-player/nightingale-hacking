@@ -57,9 +57,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsITreeView&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#85d3be9ed13f6e5c2978712bf782de66">getTreeView</a> (in unsigned short aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get a nsITreeView to display the specified filter's contents.  <a href="#85d3be9ed13f6e5c2978712bf782de66"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#b2b3acc5b024ebf567d1e1057f98652e">getValueCount</a> (in unsigned short aIndex)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#7355e9e85d3a62829de68c48a2cf6eb9">getValueCount</a> (in unsigned short aIndex,[optional] in boolean aUseCache)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of possible values for a filter.  <a href="#b2b3acc5b024ebf567d1e1057f98652e"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of possible values for a filter.  <a href="#7355e9e85d3a62829de68c48a2cf6eb9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#63d848f38fcfc6f7890c7c9aab117556">getProperty</a> (in unsigned short aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the property for a filter by index.  <a href="#63d848f38fcfc6f7890c7c9aab117556"></a><br></td></tr>
@@ -354,7 +354,7 @@ Get a nsITreeView to display the specified filter's contents.
 
 </div>
 </div><p>
-<a class="anchor" name="b2b3acc5b024ebf567d1e1057f98652e"></a><!-- doxytag: member="sbICascadeFilterSet::getValueCount" ref="b2b3acc5b024ebf567d1e1057f98652e" args="(in unsigned short aIndex)" -->
+<a class="anchor" name="7355e9e85d3a62829de68c48a2cf6eb9"></a><!-- doxytag: member="sbICascadeFilterSet::getValueCount" ref="7355e9e85d3a62829de68c48a2cf6eb9" args="(in unsigned short aIndex,[optional] in boolean aUseCache)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -362,9 +362,18 @@ Get a nsITreeView to display the specified filter's contents.
           <td class="memname">unsigned long sbICascadeFilterSet::getValueCount           </td>
           <td>(</td>
           <td class="paramtype">in unsigned short&nbsp;</td>
-          <td class="paramname"> <em>aIndex</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aUseCache</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -376,6 +385,7 @@ Get the number of possible values for a filter.
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>Index of the filter </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aUseCache</em>&nbsp;</td><td>If true, use a cached value if available. This may be used by listeners to get a new value count without forcing the count to be recalculated. The cached value may not be the most up-to-date value. The default is false. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of possible values for a filter </dd></dl>
@@ -512,7 +522,7 @@ Definition at line <a class="el" href="sb_i_cascade_filter_set_8idl-source.html#
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:46 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:48 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

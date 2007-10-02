@@ -60,6 +60,6 @@
 <codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref><sp/>aSkin);</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl"/>
+    <location file="e:/Projects/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl"/>
   </compounddef>
 </doxygen>

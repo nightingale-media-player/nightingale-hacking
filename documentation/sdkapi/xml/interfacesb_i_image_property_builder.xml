@@ -10,18 +10,6 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="174">
-        <label>sbIPropertyBuilder</label>
-        <link refid="interfacesb_i_property_builder"/>
-      </node>
-      <node id="173">
-        <label>sbIImagePropertyBuilder</label>
-        <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="174" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="176">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
@@ -32,13 +20,27 @@
         <childnode refid="176" relation="public-inheritance">
         </childnode>
       </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="178">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="177">
+        <label>sbIImagePropertyBuilder</label>
+        <link refid="interfacesb_i_image_property_builder"/>
+        <childnode refid="178" relation="public-inheritance">
+        </childnode>
+      </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="85" bodyfile="c:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="84" bodyend="86"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="89" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="88" bodyend="90"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayNameKey</name></member>
       <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>get</name></member>
       <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>propertyName</name></member>
+      <member refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteReadable</name></member>
+      <member refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteWritable</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -61,237 +61,302 @@
 <a name="l00050"></a>00050 <span class="comment">It is possible to create a &lt;Library&gt; using the &lt;Songbird::siteLibrary&gt;</span>
 <a name="l00051"></a>00051 <span class="comment">function.</span>
 <a name="l00052"></a>00052 <span class="comment"></span>
-<a name="l00053"></a>00053 <span class="comment">Example:</span>
-<a name="l00054"></a>00054 <span class="comment">  (start code)</span>
-<a name="l00055"></a>00055 <span class="comment">  //Create or get a library.</span>
-<a name="l00056"></a>00056 <span class="comment">  var library = songbird.siteLibrary("", "");</span>
-<a name="l00057"></a>00057 <span class="comment"></span>
-<a name="l00058"></a>00058 <span class="comment">  //Create a medialist using the library.</span>
-<a name="l00059"></a>00059 <span class="comment">  var mediaList = library.createMediaList("simple");</span>
+<a name="l00053"></a>00053 <span class="comment">Inherits:</span>
+<a name="l00054"></a>00054 <span class="comment">  &lt;MediaList&gt; &lt;MediaItem&gt; </span>
+<a name="l00055"></a>00055 <span class="comment"></span>
+<a name="l00056"></a>00056 <span class="comment">Example:</span>
+<a name="l00057"></a>00057 <span class="comment">  (start code)</span>
+<a name="l00058"></a>00058 <span class="comment">  //Create or get a library.</span>
+<a name="l00059"></a>00059 <span class="comment">  var library = songbird.siteLibrary("", "");</span>
 <a name="l00060"></a>00060 <span class="comment"></span>
-<a name="l00061"></a>00061 <span class="comment">  //Create some mediaitems and add them to the medialist.</span>
-<a name="l00062"></a>00062 <span class="comment">  var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];</span>
-<a name="l00063"></a>00063 <span class="comment">  for(var url in itemURLs) {</span>
-<a name="l00064"></a>00064 <span class="comment"></span>
-<a name="l00065"></a>00065 <span class="comment">    //Calling createMediaItem may throw an exception when it fails</span>
-<a name="l00066"></a>00066 <span class="comment">    //to create the mediaitem.</span>
+<a name="l00061"></a>00061 <span class="comment">  //Create a medialist using the library.</span>
+<a name="l00062"></a>00062 <span class="comment">  var mediaList = library.createMediaList("simple");</span>
+<a name="l00063"></a>00063 <span class="comment"></span>
+<a name="l00064"></a>00064 <span class="comment">  //Create some mediaitems and add them to the medialist.</span>
+<a name="l00065"></a>00065 <span class="comment">  var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];</span>
+<a name="l00066"></a>00066 <span class="comment">  for(var url in itemURLs) {</span>
 <a name="l00067"></a>00067 <span class="comment"></span>
-<a name="l00068"></a>00068 <span class="comment">    try {</span>
-<a name="l00069"></a>00069 <span class="comment">      var mediaItem = library.createMediaItem(url);</span>
-<a name="l00070"></a>00070 <span class="comment">      mediaList.add(mediaItem);</span>
-<a name="l00071"></a>00071 <span class="comment">    }</span>
-<a name="l00072"></a>00072 <span class="comment">    catch(e) {</span>
-<a name="l00073"></a>00073 <span class="comment"></span>
-<a name="l00074"></a>00074 <span class="comment">      //Dump it.</span>
-<a name="l00075"></a>00075 <span class="comment">      dump("Failed creation of mediaitem: " + e);</span>
+<a name="l00068"></a>00068 <span class="comment">    //Calling createMediaItem may throw an exception when it fails</span>
+<a name="l00069"></a>00069 <span class="comment">    //to create the mediaitem.</span>
+<a name="l00070"></a>00070 <span class="comment"></span>
+<a name="l00071"></a>00071 <span class="comment">    try {</span>
+<a name="l00072"></a>00072 <span class="comment">      var mediaItem = library.createMediaItem(url);</span>
+<a name="l00073"></a>00073 <span class="comment">      mediaList.add(mediaItem);</span>
+<a name="l00074"></a>00074 <span class="comment">    }</span>
+<a name="l00075"></a>00075 <span class="comment">    catch(e) {</span>
 <a name="l00076"></a>00076 <span class="comment"></span>
-<a name="l00077"></a>00077 <span class="comment">      //Or alert it.</span>
-<a name="l00078"></a>00078 <span class="comment">      alert("Failed creation of mediaitem: " + e);</span>
+<a name="l00077"></a>00077 <span class="comment">      //Dump it.</span>
+<a name="l00078"></a>00078 <span class="comment">      dump("Failed creation of mediaitem: " + e);</span>
 <a name="l00079"></a>00079 <span class="comment"></span>
-<a name="l00080"></a>00080 <span class="comment">      //Oops the URL was not valid.</span>
-<a name="l00081"></a>00081 <span class="comment">      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {</span>
-<a name="l00082"></a>00082 <span class="comment">        alert("The URL: " + url + " was not valid.");</span>
-<a name="l00083"></a>00083 <span class="comment">      }</span>
-<a name="l00084"></a>00084 <span class="comment"></span>
-<a name="l00085"></a>00085 <span class="comment">    }</span>
-<a name="l00086"></a>00086 <span class="comment">  }</span>
-<a name="l00087"></a>00087 <span class="comment">  (end code)</span>
-<a name="l00088"></a>00088 <span class="comment"></span>
-<a name="l00089"></a>00089 <span class="comment">See Also:</span>
-<a name="l00090"></a>00090 <span class="comment">  &lt;Songbird&gt;</span>
-<a name="l00091"></a>00091 <span class="comment">  &lt;MediaItem&gt;</span>
-<a name="l00092"></a>00092 <span class="comment">  &lt;MediaList&gt;</span>
-<a name="l00093"></a>00093 <span class="comment">*/</span>
-<a name="l00094"></a>00094 
-<a name="l00106"></a>00106 [scriptable, uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]
-<a name="l00107"></a><a class="code" href="interfacesb_i_remote_library.html">00107</a> interface <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> : nsISupports
-<a name="l00108"></a>00108 {
-<a name="l00119"></a>00119   <span class="comment">/*</span>
-<a name="l00120"></a>00120 <span class="comment">  Prop: scanMediaOnCreation</span>
-<a name="l00121"></a>00121 <span class="comment"></span>
-<a name="l00122"></a>00122 <span class="comment">  Set this property to true if you wish all new &lt;MediaItems&gt;</span>
-<a name="l00123"></a>00123 <span class="comment">  created to be scanned for metadata.</span>
-<a name="l00124"></a>00124 <span class="comment"></span>
-<a name="l00125"></a>00125 <span class="comment">  Set this property to false if you wish to skip scanning</span>
-<a name="l00126"></a>00126 <span class="comment">  for metadata when &lt;MediaItems&gt; are created.</span>
-<a name="l00127"></a>00127 <span class="comment"></span>
-<a name="l00128"></a>00128 <span class="comment">  If you are attempting to set all of your own metadata for &lt;MediaItems&gt;</span>
-<a name="l00129"></a>00129 <span class="comment">  you create, you may set this to false to prevent your metadata</span>
-<a name="l00130"></a>00130 <span class="comment">  from being overwritten.</span>
-<a name="l00131"></a>00131 <span class="comment"></span>
-<a name="l00132"></a>00132 <span class="comment">  Note:</span>
-<a name="l00133"></a>00133 <span class="comment">    This property defaults to _true_.</span>
-<a name="l00134"></a>00134 <span class="comment"></span>
-<a name="l00135"></a>00135 <span class="comment">  Type:</span>
-<a name="l00136"></a>00136 <span class="comment">    Boolean</span>
-<a name="l00137"></a>00137 <span class="comment">  */</span>
-<a name="l00138"></a><a class="code" href="interfacesb_i_remote_library.html#8783b89122efb3690cf58336b78598af">00138</a>   attribute <span class="keywordtype">boolean</span> scanMediaOnCreation;
-<a name="l00139"></a>00139 
-<a name="l00151"></a>00151   <span class="comment">/*</span>
-<a name="l00152"></a>00152 <span class="comment">  Func: createMediaItem()</span>
-<a name="l00153"></a>00153 <span class="comment"></span>
-<a name="l00154"></a>00154 <span class="comment">  Create a &lt;MediaItem&gt; from a URL. You may pass in</span>
-<a name="l00155"></a>00155 <span class="comment">  http and https URLs. Local file URLs are not permitted.</span>
-<a name="l00156"></a>00156 <span class="comment"></span>
-<a name="l00157"></a>00157 <span class="comment">  Prototype:</span>
-<a name="l00158"></a>00158 <span class="comment">    &lt;MediaItem&gt; createMediaItem(String url)</span>
-<a name="l00159"></a>00159 <span class="comment"></span>
-<a name="l00160"></a>00160 <span class="comment">  Parameters:</span>
-<a name="l00161"></a>00161 <span class="comment">    url - A URL referring to a media file.</span>
-<a name="l00162"></a>00162 <span class="comment"></span>
-<a name="l00163"></a>00163 <span class="comment">  Returns:</span>
-<a name="l00164"></a>00164 <span class="comment">    The newly created &lt;MediaItem&gt;.</span>
+<a name="l00080"></a>00080 <span class="comment">      //Or alert it.</span>
+<a name="l00081"></a>00081 <span class="comment">      alert("Failed creation of mediaitem: " + e);</span>
+<a name="l00082"></a>00082 <span class="comment"></span>
+<a name="l00083"></a>00083 <span class="comment">      //Oops the URL was not valid.</span>
+<a name="l00084"></a>00084 <span class="comment">      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {</span>
+<a name="l00085"></a>00085 <span class="comment">        alert("The URL: " + url + " was not valid.");</span>
+<a name="l00086"></a>00086 <span class="comment">      }</span>
+<a name="l00087"></a>00087 <span class="comment"></span>
+<a name="l00088"></a>00088 <span class="comment">    }</span>
+<a name="l00089"></a>00089 <span class="comment">  }</span>
+<a name="l00090"></a>00090 <span class="comment">  (end code)</span>
+<a name="l00091"></a>00091 <span class="comment"></span>
+<a name="l00092"></a>00092 <span class="comment">See Also:</span>
+<a name="l00093"></a>00093 <span class="comment">  &lt;Songbird&gt;</span>
+<a name="l00094"></a>00094 <span class="comment">  &lt;MediaItem&gt;</span>
+<a name="l00095"></a>00095 <span class="comment">  &lt;MediaList&gt;</span>
+<a name="l00096"></a>00096 <span class="comment">*/</span>
+<a name="l00097"></a>00097 
+<a name="l00109"></a>00109 [scriptable, uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]
+<a name="l00110"></a><a class="code" href="interfacesb_i_remote_library.html">00110</a> interface <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a> : nsISupports
+<a name="l00111"></a>00111 {
+<a name="l00123"></a>00123   <span class="comment">/*</span>
+<a name="l00124"></a>00124 <span class="comment">  Group: Library Properties</span>
+<a name="l00125"></a>00125 <span class="comment">  */</span>
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127   <span class="comment">/*</span>
+<a name="l00128"></a>00128 <span class="comment">  Prop: scanMediaOnCreation</span>
+<a name="l00129"></a>00129 <span class="comment"></span>
+<a name="l00130"></a>00130 <span class="comment">  Set this property to true if you wish all new &lt;MediaItems&gt;</span>
+<a name="l00131"></a>00131 <span class="comment">  created to be scanned for metadata.</span>
+<a name="l00132"></a>00132 <span class="comment"></span>
+<a name="l00133"></a>00133 <span class="comment">  Set this property to false if you wish to skip scanning</span>
+<a name="l00134"></a>00134 <span class="comment">  for metadata when &lt;MediaItems&gt; are created.</span>
+<a name="l00135"></a>00135 <span class="comment"></span>
+<a name="l00136"></a>00136 <span class="comment">  If you are attempting to set all of your own metadata for &lt;MediaItems&gt;</span>
+<a name="l00137"></a>00137 <span class="comment">  you create, you may set this to false to prevent your metadata</span>
+<a name="l00138"></a>00138 <span class="comment">  from being overwritten.</span>
+<a name="l00139"></a>00139 <span class="comment"></span>
+<a name="l00140"></a>00140 <span class="comment">  Note:</span>
+<a name="l00141"></a>00141 <span class="comment">    This property defaults to _true_.</span>
+<a name="l00142"></a>00142 <span class="comment"></span>
+<a name="l00143"></a>00143 <span class="comment">  Type:</span>
+<a name="l00144"></a>00144 <span class="comment">    Boolean</span>
+<a name="l00145"></a>00145 <span class="comment">  */</span>
+<a name="l00146"></a><a class="code" href="interfacesb_i_remote_library.html#8783b89122efb3690cf58336b78598af">00146</a>   attribute <span class="keywordtype">boolean</span> scanMediaOnCreation;
+<a name="l00147"></a>00147 
+<a name="l00159"></a>00159   <span class="comment">/*</span>
+<a name="l00160"></a>00160 <span class="comment">  Group: Library Methods</span>
+<a name="l00161"></a>00161 <span class="comment">  */</span>
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163   <span class="comment">/*</span>
+<a name="l00164"></a>00164 <span class="comment">  Method: createMediaItem()</span>
 <a name="l00165"></a>00165 <span class="comment"></span>
-<a name="l00166"></a>00166 <span class="comment">  Throws:</span>
-<a name="l00167"></a>00167 <span class="comment">    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)</span>
-<a name="l00168"></a>00168 <span class="comment">    if the URL isn't http or https.</span>
-<a name="l00169"></a>00169 <span class="comment"></span>
-<a name="l00170"></a>00170 <span class="comment">  Example:</span>
-<a name="l00171"></a>00171 <span class="comment">    (start code)</span>
-<a name="l00172"></a>00172 <span class="comment">    //Create or get a library.</span>
-<a name="l00173"></a>00173 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00166"></a>00166 <span class="comment">  Create a &lt;MediaItem&gt; from a URL. You may pass in</span>
+<a name="l00167"></a>00167 <span class="comment">  http and https URLs. Local file URLs are not permitted.</span>
+<a name="l00168"></a>00168 <span class="comment"></span>
+<a name="l00169"></a>00169 <span class="comment">  Prototype:</span>
+<a name="l00170"></a>00170 <span class="comment">    &lt;MediaItem&gt; createMediaItem(String url)</span>
+<a name="l00171"></a>00171 <span class="comment"></span>
+<a name="l00172"></a>00172 <span class="comment">  Parameters:</span>
+<a name="l00173"></a>00173 <span class="comment">    url - A URL referring to a media file.</span>
 <a name="l00174"></a>00174 <span class="comment"></span>
-<a name="l00175"></a>00175 <span class="comment">    //Create the mediaitem from a url pointing to a media file.</span>
-<a name="l00176"></a>00176 <span class="comment">    var mediaItem = null;</span>
+<a name="l00175"></a>00175 <span class="comment">  Returns:</span>
+<a name="l00176"></a>00176 <span class="comment">    The newly created &lt;MediaItem&gt;.</span>
 <a name="l00177"></a>00177 <span class="comment"></span>
-<a name="l00178"></a>00178 <span class="comment">    //This function may throw if it fails to create the item because</span>
-<a name="l00179"></a>00179 <span class="comment">    //the URL is invalid.</span>
-<a name="l00180"></a>00180 <span class="comment">    try {</span>
-<a name="l00181"></a>00181 <span class="comment">      mediaItem = library.createMediaItem("http://path/to/file.mp3");</span>
-<a name="l00182"></a>00182 <span class="comment">    }</span>
-<a name="l00183"></a>00183 <span class="comment">    catch(e) {</span>
-<a name="l00184"></a>00184 <span class="comment">      //Oops, bad URL.</span>
-<a name="l00185"></a>00185 <span class="comment">      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {</span>
-<a name="l00186"></a>00186 <span class="comment">        alert("Oops, the URL was not valid.");</span>
-<a name="l00187"></a>00187 <span class="comment">      }</span>
-<a name="l00188"></a>00188 <span class="comment">    }</span>
-<a name="l00189"></a>00189 <span class="comment">    (end)</span>
-<a name="l00190"></a>00190 <span class="comment"></span>
-<a name="l00191"></a>00191 <span class="comment">  See Also:</span>
-<a name="l00192"></a>00192 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00193"></a>00193 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
-<a name="l00194"></a>00194 <span class="comment">  */</span>
-<a name="l00195"></a>00195   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in AString aURL);
-<a name="l00196"></a>00196 
-<a name="l00208"></a>00208   <span class="comment">/*</span>
-<a name="l00209"></a>00209 <span class="comment">  Func: createMediaList()</span>
-<a name="l00210"></a>00210 <span class="comment"></span>
-<a name="l00211"></a>00211 <span class="comment">  Create an empty &lt;MediaList&gt; of a certain type.</span>
-<a name="l00212"></a>00212 <span class="comment"></span>
-<a name="l00213"></a>00213 <span class="comment">  Prototype:</span>
-<a name="l00214"></a>00214 <span class="comment">    &lt;MediaList&gt; createMediaList(String type)</span>
-<a name="l00215"></a>00215 <span class="comment"></span>
-<a name="l00216"></a>00216 <span class="comment">  Parameters:</span>
-<a name="l00217"></a>00217 <span class="comment">    type - The type of &lt;MediaList&gt; to create.</span>
-<a name="l00218"></a>00218 <span class="comment"></span>
-<a name="l00219"></a>00219 <span class="comment">  Returns:</span>
-<a name="l00220"></a>00220 <span class="comment">    The newly created &lt;MediaList&gt; or null.</span>
-<a name="l00221"></a>00221 <span class="comment"></span>
-<a name="l00222"></a>00222 <span class="comment">  Note:</span>
-<a name="l00223"></a>00223 <span class="comment">    Currently only the type "simple" is supported.</span>
+<a name="l00178"></a>00178 <span class="comment">  Throws:</span>
+<a name="l00179"></a>00179 <span class="comment">    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)</span>
+<a name="l00180"></a>00180 <span class="comment">    if the URL isn't http or https.</span>
+<a name="l00181"></a>00181 <span class="comment"></span>
+<a name="l00182"></a>00182 <span class="comment">  Example:</span>
+<a name="l00183"></a>00183 <span class="comment">    (start code)</span>
+<a name="l00184"></a>00184 <span class="comment">    //Create or get a library.</span>
+<a name="l00185"></a>00185 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00186"></a>00186 <span class="comment"></span>
+<a name="l00187"></a>00187 <span class="comment">    //Create the mediaitem from a url pointing to a media file.</span>
+<a name="l00188"></a>00188 <span class="comment">    var mediaItem = null;</span>
+<a name="l00189"></a>00189 <span class="comment"></span>
+<a name="l00190"></a>00190 <span class="comment">    //This function may throw if it fails to create the item because</span>
+<a name="l00191"></a>00191 <span class="comment">    //the URL is invalid.</span>
+<a name="l00192"></a>00192 <span class="comment">    try {</span>
+<a name="l00193"></a>00193 <span class="comment">      mediaItem = library.createMediaItem("http://path/to/file.mp3");</span>
+<a name="l00194"></a>00194 <span class="comment">    }</span>
+<a name="l00195"></a>00195 <span class="comment">    catch(e) {</span>
+<a name="l00196"></a>00196 <span class="comment">      //Oops, bad URL.</span>
+<a name="l00197"></a>00197 <span class="comment">      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {</span>
+<a name="l00198"></a>00198 <span class="comment">        alert("Oops, the URL was not valid.");</span>
+<a name="l00199"></a>00199 <span class="comment">      }</span>
+<a name="l00200"></a>00200 <span class="comment">    }</span>
+<a name="l00201"></a>00201 <span class="comment">    (end)</span>
+<a name="l00202"></a>00202 <span class="comment"></span>
+<a name="l00203"></a>00203 <span class="comment">  See Also:</span>
+<a name="l00204"></a>00204 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00205"></a>00205 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
+<a name="l00206"></a>00206 <span class="comment">  */</span>
+<a name="l00207"></a>00207   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in AString aURL);
+<a name="l00208"></a>00208 
+<a name="l00220"></a>00220   <span class="comment">/*</span>
+<a name="l00221"></a>00221 <span class="comment">  Method: createMediaList()</span>
+<a name="l00222"></a>00222 <span class="comment"></span>
+<a name="l00223"></a>00223 <span class="comment">  Create an empty &lt;MediaList&gt; of a certain type.</span>
 <a name="l00224"></a>00224 <span class="comment"></span>
-<a name="l00225"></a>00225 <span class="comment">  Example:</span>
-<a name="l00226"></a>00226 <span class="comment">    (start code)</span>
-<a name="l00227"></a>00227 <span class="comment">    //Create or get a library.</span>
-<a name="l00228"></a>00228 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00229"></a>00229 <span class="comment"></span>
-<a name="l00230"></a>00230 <span class="comment">    //Create an empty medialist.</span>
-<a name="l00231"></a>00231 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
-<a name="l00232"></a>00232 <span class="comment">    (end)</span>
+<a name="l00225"></a>00225 <span class="comment">  Prototype:</span>
+<a name="l00226"></a>00226 <span class="comment">    &lt;MediaList&gt; createMediaList(String type)</span>
+<a name="l00227"></a>00227 <span class="comment"></span>
+<a name="l00228"></a>00228 <span class="comment">  Parameters:</span>
+<a name="l00229"></a>00229 <span class="comment">    type - The type of &lt;MediaList&gt; to create.</span>
+<a name="l00230"></a>00230 <span class="comment"></span>
+<a name="l00231"></a>00231 <span class="comment">  Returns:</span>
+<a name="l00232"></a>00232 <span class="comment">    The newly created &lt;MediaList&gt; or null.</span>
 <a name="l00233"></a>00233 <span class="comment"></span>
-<a name="l00234"></a>00234 <span class="comment">  See Also:</span>
-<a name="l00235"></a>00235 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00236"></a>00236 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
-<a name="l00237"></a>00237 <span class="comment">  */</span>
-<a name="l00238"></a>00238   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> createMediaList(in AString aType);
-<a name="l00239"></a>00239 
-<a name="l00255"></a>00255   <span class="comment">/*</span>
-<a name="l00256"></a>00256 <span class="comment">  Func: createMediaListFromURL()</span>
-<a name="l00257"></a>00257 <span class="comment"></span>
-<a name="l00258"></a>00258 <span class="comment">  Create a &lt;MediaList&gt; from a URL. The URL may point to an</span>
-<a name="l00259"></a>00259 <span class="comment">  m3u, pls, rss or html file. After being created, the &lt;MediaList&gt;</span>
-<a name="l00260"></a>00260 <span class="comment">  will contain all valid &lt;MediaItems&gt; it could create from the URLs</span>
-<a name="l00261"></a>00261 <span class="comment">  it found in the file.</span>
-<a name="l00262"></a>00262 <span class="comment"></span>
-<a name="l00263"></a>00263 <span class="comment">  Prototype:</span>
-<a name="l00264"></a>00264 <span class="comment">    &lt;MediaList&gt; createMediaListFromURL(String url, Function callback)</span>
-<a name="l00265"></a>00265 <span class="comment"></span>
-<a name="l00266"></a>00266 <span class="comment">  Parameters:</span>
-<a name="l00267"></a>00267 <span class="comment">    url - The URL of the file to use for creating the &lt;MediaList&gt;.</span>
-<a name="l00268"></a>00268 <span class="comment">    callback - The optional function that gets called when the load is complete.</span>
-<a name="l00269"></a>00269 <span class="comment">               This function is passed a single argument that is the newly</span>
-<a name="l00270"></a>00270 <span class="comment">               created list.</span>
-<a name="l00271"></a>00271 <span class="comment"></span>
-<a name="l00272"></a>00272 <span class="comment">  Example:</span>
-<a name="l00273"></a>00273 <span class="comment">    (start code)</span>
-<a name="l00274"></a>00274 <span class="comment">    //Create or get a library.</span>
-<a name="l00275"></a>00275 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00276"></a>00276 <span class="comment"></span>
-<a name="l00277"></a>00277 <span class="comment">    //Create the medialist from a url pointing to a file.</span>
-<a name="l00278"></a>00278 <span class="comment">    library.createMediaListFromURL("http://path/to/file.m3u", function(list) {</span>
-<a name="l00279"></a>00279 <span class="comment">      alert("loaded " + list.length + " items!");</span>
-<a name="l00280"></a>00280 <span class="comment">    });</span>
-<a name="l00281"></a>00281 <span class="comment">    (end)</span>
-<a name="l00282"></a>00282 <span class="comment"></span>
-<a name="l00283"></a>00283 <span class="comment">  See Also:</span>
-<a name="l00284"></a>00284 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00285"></a>00285 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00286"></a>00286 <span class="comment">  */</span>
-<a name="l00287"></a>00287   <span class="keywordtype">void</span> createMediaListFromURL(in AString aURL,
-<a name="l00288"></a>00288                               [optional] in <a class="code" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a> aCallback);
-<a name="l00289"></a>00289 
-<a name="l00298"></a>00298   [noscript] <span class="keywordtype">void</span> connectToDefaultLibrary(in AString aLibName);
-<a name="l00299"></a>00299 
-<a name="l00306"></a>00306   <span class="comment">/*</span>
-<a name="l00307"></a>00307 <span class="comment">  Func: getMediaListByName()</span>
-<a name="l00308"></a>00308 <span class="comment"></span>
-<a name="l00309"></a>00309 <span class="comment">  Get the site media list with the given name.  Note that to compare for</span>
-<a name="l00310"></a>00310 <span class="comment">  identity one must compare the guid (instead of JS object comparisions).</span>
-<a name="l00311"></a>00311 <span class="comment"></span>
-<a name="l00312"></a>00312 <span class="comment">  Prototype:</span>
-<a name="l00313"></a>00313 <span class="comment">    &lt;MediaList&gt; getMediaListByName(String name)</span>
-<a name="l00314"></a>00314 <span class="comment"></span>
-<a name="l00315"></a>00315 <span class="comment">  Paramters:</span>
-<a name="l00316"></a>00316 <span class="comment">    name - The name of the media list to fetch</span>
-<a name="l00317"></a>00317 <span class="comment"></span>
-<a name="l00318"></a>00318 <span class="comment">  Returns:</span>
-<a name="l00319"></a>00319 <span class="comment">    The corresponding media list, or null if not found</span>
-<a name="l00320"></a>00320 <span class="comment"></span>
-<a name="l00321"></a>00321 <span class="comment">  Example:</span>
-<a name="l00322"></a>00322 <span class="comment">    (start code)</span>
-<a name="l00323"></a>00323 <span class="comment">    //Create or get a library.</span>
-<a name="l00324"></a>00324 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00234"></a>00234 <span class="comment">  Note:</span>
+<a name="l00235"></a>00235 <span class="comment">    Currently only the type "simple" is supported.</span>
+<a name="l00236"></a>00236 <span class="comment"></span>
+<a name="l00237"></a>00237 <span class="comment">  Example:</span>
+<a name="l00238"></a>00238 <span class="comment">    (start code)</span>
+<a name="l00239"></a>00239 <span class="comment">    //Create or get a library.</span>
+<a name="l00240"></a>00240 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00241"></a>00241 <span class="comment"></span>
+<a name="l00242"></a>00242 <span class="comment">    //Create an empty medialist.</span>
+<a name="l00243"></a>00243 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00244"></a>00244 <span class="comment">    (end)</span>
+<a name="l00245"></a>00245 <span class="comment"></span>
+<a name="l00246"></a>00246 <span class="comment">  See Also:</span>
+<a name="l00247"></a>00247 <span class="comment">    &lt;createMediaItem()&gt;</span>
+<a name="l00248"></a>00248 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
+<a name="l00249"></a>00249 <span class="comment">  */</span>
+<a name="l00250"></a>00250   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> createMediaList(in AString aType);
+<a name="l00251"></a>00251 
+<a name="l00267"></a>00267   <span class="comment">/*</span>
+<a name="l00268"></a>00268 <span class="comment">  Method: createMediaListFromURL()</span>
+<a name="l00269"></a>00269 <span class="comment"></span>
+<a name="l00270"></a>00270 <span class="comment">  Create a &lt;MediaList&gt; from a URL. The URL may point to an</span>
+<a name="l00271"></a>00271 <span class="comment">  m3u, pls, rss or html file. After being created, the &lt;MediaList&gt;</span>
+<a name="l00272"></a>00272 <span class="comment">  will contain all valid &lt;MediaItems&gt; it could create from the URLs</span>
+<a name="l00273"></a>00273 <span class="comment">  it found in the file.</span>
+<a name="l00274"></a>00274 <span class="comment"></span>
+<a name="l00275"></a>00275 <span class="comment">  Prototype:</span>
+<a name="l00276"></a>00276 <span class="comment">    &lt;MediaList&gt; createMediaListFromURL(String url, Function callback)</span>
+<a name="l00277"></a>00277 <span class="comment"></span>
+<a name="l00278"></a>00278 <span class="comment">  Parameters:</span>
+<a name="l00279"></a>00279 <span class="comment">    url - The URL of the file to use for creating the &lt;MediaList&gt;.</span>
+<a name="l00280"></a>00280 <span class="comment">    callback - The optional function that gets called when the load is complete.</span>
+<a name="l00281"></a>00281 <span class="comment">               This function is passed a single argument that is the newly</span>
+<a name="l00282"></a>00282 <span class="comment">               created list.</span>
+<a name="l00283"></a>00283 <span class="comment"></span>
+<a name="l00284"></a>00284 <span class="comment">  Example:</span>
+<a name="l00285"></a>00285 <span class="comment">    (start code)</span>
+<a name="l00286"></a>00286 <span class="comment">    //Create or get a library.</span>
+<a name="l00287"></a>00287 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00288"></a>00288 <span class="comment"></span>
+<a name="l00289"></a>00289 <span class="comment">    //Create the medialist from a url pointing to a file.</span>
+<a name="l00290"></a>00290 <span class="comment">    library.createMediaListFromURL("http://path/to/file.m3u", </span>
+<a name="l00291"></a>00291 <span class="comment">      function(list) {</span>
+<a name="l00292"></a>00292 <span class="comment">        alert("loaded " + list.length + " items!");</span>
+<a name="l00293"></a>00293 <span class="comment">      }</span>
+<a name="l00294"></a>00294 <span class="comment">    );</span>
+<a name="l00295"></a>00295 <span class="comment">    (end)</span>
+<a name="l00296"></a>00296 <span class="comment"></span>
+<a name="l00297"></a>00297 <span class="comment">  See Also:</span>
+<a name="l00298"></a>00298 <span class="comment">    &lt;createMediaItem()&gt;</span>
+<a name="l00299"></a>00299 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00300"></a>00300 <span class="comment">  */</span>
+<a name="l00301"></a>00301   <span class="keywordtype">void</span> createMediaListFromURL(in AString aURL,
+<a name="l00302"></a>00302                               [optional] in <a class="code" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a> aCallback);
+<a name="l00303"></a>00303 
+<a name="l00312"></a>00312   [noscript] <span class="keywordtype">void</span> connectToDefaultLibrary(in AString aLibName);
+<a name="l00313"></a>00313 
+<a name="l00320"></a>00320   <span class="comment">/*</span>
+<a name="l00321"></a>00321 <span class="comment">  Method: getMediaListByName()</span>
+<a name="l00322"></a>00322 <span class="comment"></span>
+<a name="l00323"></a>00323 <span class="comment">  Get the site media list with the given name.  Note that to compare for</span>
+<a name="l00324"></a>00324 <span class="comment">  identity one must compare the guid (instead of JS object comparisions).</span>
 <a name="l00325"></a>00325 <span class="comment"></span>
-<a name="l00326"></a>00326 <span class="comment">    //Fetch the shopping cart media list</span>
-<a name="l00327"></a>00327 <span class="comment">    var mediaList = library.getMediaListByName("Shopping Cart");</span>
-<a name="l00328"></a>00328 <span class="comment"></span>
-<a name="l00329"></a>00329 <span class="comment">    // comparisons for equality must be done on the guid</span>
-<a name="l00330"></a>00330 <span class="comment">    var cart = library.getMediaListByName("Shopping Cart");</span>
-<a name="l00331"></a>00331 <span class="comment">    alert(mediaList.guid == cart.guid);</span>
-<a name="l00332"></a>00332 <span class="comment">    (end)</span>
-<a name="l00333"></a>00333 <span class="comment"></span>
-<a name="l00334"></a>00334 <span class="comment">  See Also:</span>
-<a name="l00335"></a>00335 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00336"></a>00336 <span class="comment">  */</span>
-<a name="l00337"></a>00337   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> getMediaListByName( in AString aName );
-<a name="l00338"></a>00338 
-<a name="l00339"></a>00339   nsIStringEnumerator getArtists();
-<a name="l00340"></a>00340   nsIStringEnumerator getAlbums();
-<a name="l00341"></a>00341   nsIStringEnumerator getGenres();
-<a name="l00342"></a>00342   nsIStringEnumerator getYears();
-<a name="l00343"></a>00343 
-<a name="l00344"></a>00344   nsISimpleEnumerator getPlaylists();
-<a name="l00345"></a>00345 };
-<a name="l00346"></a>00346 
-<a name="l00358"></a>00358 [scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
-<a name="l00359"></a><a class="code" href="interfacesb_i_remote_site_library.html">00359</a> interface <a class="code" href="interfacesb_i_remote_site_library.html" title="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</a> : <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a>
-<a name="l00360"></a>00360 {
-<a name="l00365"></a><a class="code" href="interfacesb_i_remote_site_library.html#8418b4b73c9f73bf2ff32d192fb8ba04">00365</a>   readonly attribute AString filename;
-<a name="l00366"></a>00366 
-<a name="l00392"></a>00392   [noscript] <span class="keywordtype">void</span> connectToSiteLibrary(in AUTF8String aDomain,
-<a name="l00393"></a>00393                                        in AUTF8String aPath);
-<a name="l00394"></a>00394 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Sep 11 18:42:45 2007 for Songbird by&nbsp;
+<a name="l00326"></a>00326 <span class="comment">  Note: </span>
+<a name="l00327"></a>00327 <span class="comment">    This method will not work with the main library, it is only for</span>
+<a name="l00328"></a>00328 <span class="comment">    use with the Site Library.</span>
+<a name="l00329"></a>00329 <span class="comment"></span>
+<a name="l00330"></a>00330 <span class="comment">  Prototype:</span>
+<a name="l00331"></a>00331 <span class="comment">    &lt;MediaList&gt; getMediaListByName(String name)</span>
+<a name="l00332"></a>00332 <span class="comment"></span>
+<a name="l00333"></a>00333 <span class="comment">  Paramters:</span>
+<a name="l00334"></a>00334 <span class="comment">    name - The name of the media list to fetch</span>
+<a name="l00335"></a>00335 <span class="comment"></span>
+<a name="l00336"></a>00336 <span class="comment">  Returns:</span>
+<a name="l00337"></a>00337 <span class="comment">    The corresponding media list, or null if not found</span>
+<a name="l00338"></a>00338 <span class="comment"></span>
+<a name="l00339"></a>00339 <span class="comment">  Example:</span>
+<a name="l00340"></a>00340 <span class="comment">    (start code)</span>
+<a name="l00341"></a>00341 <span class="comment">    //Create or get a library.</span>
+<a name="l00342"></a>00342 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00343"></a>00343 <span class="comment"></span>
+<a name="l00344"></a>00344 <span class="comment">    //Fetch the shopping cart media list</span>
+<a name="l00345"></a>00345 <span class="comment">    var mediaList = library.getMediaListByName("Shopping Cart");</span>
+<a name="l00346"></a>00346 <span class="comment"></span>
+<a name="l00347"></a>00347 <span class="comment">    // comparisons for equality must be done on the guid</span>
+<a name="l00348"></a>00348 <span class="comment">    var cart = library.getMediaListByName("Shopping Cart");</span>
+<a name="l00349"></a>00349 <span class="comment">    alert(mediaList.guid == cart.guid);</span>
+<a name="l00350"></a>00350 <span class="comment">    (end)</span>
+<a name="l00351"></a>00351 <span class="comment"></span>
+<a name="l00352"></a>00352 <span class="comment">  See Also:</span>
+<a name="l00353"></a>00353 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00354"></a>00354 <span class="comment">  */</span>
+<a name="l00355"></a>00355   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> getMediaListByName( in AString aName );
+<a name="l00356"></a>00356 
+<a name="l00357"></a>00357   <span class="comment">/*</span>
+<a name="l00358"></a>00358 <span class="comment">  Method: getArtists()</span>
+<a name="l00359"></a>00359 <span class="comment"></span>
+<a name="l00360"></a>00360 <span class="comment">  See Also:</span>
+<a name="l00361"></a>00361 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00362"></a>00362 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00363"></a>00363 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00364"></a>00364 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00365"></a>00365 <span class="comment">  */</span>
+<a name="l00366"></a>00366   nsIStringEnumerator getArtists();
+<a name="l00367"></a>00367 
+<a name="l00368"></a>00368   <span class="comment">/*</span>
+<a name="l00369"></a>00369 <span class="comment">  Method: getAlbums()</span>
+<a name="l00370"></a>00370 <span class="comment"></span>
+<a name="l00371"></a>00371 <span class="comment">  See Also:</span>
+<a name="l00372"></a>00372 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00373"></a>00373 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00374"></a>00374 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00375"></a>00375 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00376"></a>00376 <span class="comment">  */</span>
+<a name="l00377"></a>00377   nsIStringEnumerator getAlbums();
+<a name="l00378"></a>00378 
+<a name="l00379"></a>00379   <span class="comment">/*</span>
+<a name="l00380"></a>00380 <span class="comment">  Method: getGenres()</span>
+<a name="l00381"></a>00381 <span class="comment"></span>
+<a name="l00382"></a>00382 <span class="comment">  See Also:</span>
+<a name="l00383"></a>00383 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00384"></a>00384 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00385"></a>00385 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00386"></a>00386 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00387"></a>00387 <span class="comment">  */</span>
+<a name="l00388"></a>00388   nsIStringEnumerator getGenres();
+<a name="l00389"></a>00389 
+<a name="l00390"></a>00390   <span class="comment">/*</span>
+<a name="l00391"></a>00391 <span class="comment">  Method: getYears()</span>
+<a name="l00392"></a>00392 <span class="comment"></span>
+<a name="l00393"></a>00393 <span class="comment">  See Also:</span>
+<a name="l00394"></a>00394 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00395"></a>00395 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00396"></a>00396 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00397"></a>00397 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00398"></a>00398 <span class="comment">  */</span>
+<a name="l00399"></a>00399   nsIStringEnumerator getYears();
+<a name="l00400"></a>00400 
+<a name="l00401"></a>00401   <span class="comment">/*</span>
+<a name="l00402"></a>00402 <span class="comment">  Method: getPlaylists()</span>
+<a name="l00403"></a>00403 <span class="comment"></span>
+<a name="l00404"></a>00404 <span class="comment">  See Also:</span>
+<a name="l00405"></a>00405 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00406"></a>00406 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00407"></a>00407 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00408"></a>00408 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00409"></a>00409 <span class="comment">  */</span>
+<a name="l00410"></a>00410   nsISimpleEnumerator getPlaylists();
+<a name="l00411"></a>00411 };
+<a name="l00412"></a>00412 
+<a name="l00424"></a>00424 [scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
+<a name="l00425"></a><a class="code" href="interfacesb_i_remote_site_library.html">00425</a> interface <a class="code" href="interfacesb_i_remote_site_library.html" title="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</a> : <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a>
+<a name="l00426"></a>00426 {
+<a name="l00431"></a><a class="code" href="interfacesb_i_remote_site_library.html#8418b4b73c9f73bf2ff32d192fb8ba04">00431</a>   readonly attribute AString filename;
+<a name="l00432"></a>00432 
+<a name="l00458"></a>00458   [noscript] <span class="keywordtype">void</span> connectToSiteLibrary(in AUTF8String aDomain,
+<a name="l00459"></a>00459                                        in AUTF8String aPath);
+<a name="l00460"></a>00460 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:47 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

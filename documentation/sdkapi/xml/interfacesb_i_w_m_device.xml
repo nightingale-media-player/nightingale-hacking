@@ -10,30 +10,30 @@
 <para>&lt;TODO: Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="702">
+      <node id="717">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="703" relation="public-inheritance">
+        <childnode refid="718" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="703">
+      <node id="718">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="704">
+      <node id="719">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="705" relation="public-inheritance">
+        <childnode refid="720" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="705">
+      <node id="720">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </collaborationgraph>
-    <location file="c:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl" line="47" bodyfile="c:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl" bodystart="46" bodyend="48"/>
+    <location file="e:/Projects/songbird/trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/devicesobsolete/wm/public/sbIWMDevice.idl" bodystart="46" bodyend="48"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_base_13a3b485ed518478bc1f63728b06c8f4e" prot="public" virt="non-virtual"><scope>sbIWMDevice</scope><name>addCallback</name></member>
       <member refid="interfacesb_i_device_base_191632809139d1f9860b035efc2ee5b8e" prot="public" virt="non-virtual"><scope>sbIWMDevice</scope><name>beginTransfer</name></member>

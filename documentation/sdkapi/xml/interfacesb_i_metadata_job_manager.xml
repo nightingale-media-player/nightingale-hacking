@@ -45,7 +45,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="87"/>
+        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="87"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -68,7 +68,7 @@
 <listitem><para><ulink url="file://.">file://.</ulink></para></listitem></itemizedlist>
 </para><para>Remote media is scanned from the main thread using timer based workers.</para><para>An nsIArray of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> are passed to this interface to begin a metadata scan task. An <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> element will be returned to the calling interface.</para><para>The Metadata Job Manager is a service and should be called via do_GetService. Because it relies upon starting timers into the main thread, <ref refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" kindref="member">newJob()</ref> may only be called from the main thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>, <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>, <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="60" bodyfile="c:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="59" bodyend="88"/>
+    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="59" bodyend="88"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>newJob</name></member>
       <member refid="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>stop</name></member>
