@@ -35,14 +35,14 @@ ifeq (windows,$(SB_PLATFORM))
 
 TOOLSDIR = $(topsrcdir)/tools/win32
 
-DOXYGEN_INPUTDIRS = $(topsrcdir)/components \
-                    $(topsrcdir)/bindings \
+DOXYGEN_INPUTDIRS = $(DEPTH)/../components \
+                    $(DEPTH)/../bindings \
                     $(NULL)
                     
-DOXYGEN_OUTPUTDIR = $(topsrcdir)/documentation/sdkapi \
+DOXYGEN_OUTPUTDIR = $(DEPTH)/../documentation/sdkapi \
                     $(NULL)
 
-DOXYGEN_STRIP_TOPSRCDIR = $(topsrcdir) \
+DOXYGEN_STRIP_TOPSRCDIR = $(DEPTH)/.. \
                           $(NULL)
 
 SONGBIRD_DOCUMENTATION = songbird.dox.in \

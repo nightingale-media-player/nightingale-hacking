@@ -19,4 +19,4 @@ topsrcdir="$1"
 toolsdir="$2"
 
 # Run Doxygen
-$workingdir/$toolsdir/doxygen/bin/doxygen $topsrcdir/compiled/documentation/songbird.dox
+$toolsdir/doxygen/bin/doxygen songbird.dox

@@ -13,7 +13,7 @@ fi
 workingdir=`pwd`
 
 # Trunk top level directory
-topsrcdir="$workingdir/$1"
+topsrcdir="$1"
 
 # Scripts directory
 scriptsdir="$topsrcdir/tools/scripts"
