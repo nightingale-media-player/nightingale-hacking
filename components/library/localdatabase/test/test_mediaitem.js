@@ -28,11 +28,10 @@
  * \brief Test file
  */
  
-var URL_AVAILABLE = "http://download.songbirdnest.com/extensions/test/test1.mp3";
-var URL_NOT_AVAILABLE = "http://download.songbirdnest.com/extensions/poo/poo.mp3";
 var TEST_STRING = "The quick brown fox jumps over the lazy dog.  Bitches."
 
-
+var gServerPort = getTestServerPortNumber();
+var gServer;
 
 function read_stream(stream, count) {
   /* assume stream has non-ASCII data */
@@ -165,9 +164,13 @@ function testIsAvailable( ioItem ) {
   // Async tests of availability for a (supposedly!) known url.
   testAvailable( testlib, ioItem.contentSrc.spec, "true", 
     function() {
-      testAvailable( testlib, URL_NOT_AVAILABLE, "false", 
+      testAvailable( testlib, "http://localhost:" + gServerPort + "/test_not_available.mp3", "false", 
         function() {
-          testAvailable( testlib, URL_AVAILABLE, "true" );
+          testAvailable( testlib, "http://localhost:" + gServerPort + "/test1.mp3", "true", 
+            function() {
+              gServer.stop();
+            }
+          );
         }
       );
     }
@@ -223,12 +226,15 @@ function testAsyncRead(ioItem) {
 
 function runTest () {
 
+  gServer = Cc["@mozilla.org/server/jshttp;1"]
+                 .createInstance(Ci.nsIHttpServer);
+
   var databaseGUID = "test_mediaitem";
   var testlib = createLibrary(databaseGUID);
   
   // Get an item
   var item = testlib.getMediaItem("3E586C1A-AD99-11DB-9321-C22AB7121F49");
-  
+
   // Basic tests on retrieving its info...
   testGet( item, "library", testlib );  
   testGet( item, "isMutable", true );  
@@ -268,8 +274,19 @@ function runTest () {
   assertEqual(out.value, TEST_STRING);
   inputStream.close();
   
-  // Async test, pauses the test system.
-  testAsyncRead(ioItem);
-  // This passes control to testIsAvailable() when it completes.
+  try {
+    gServer.start(gServerPort);
+    gServer.registerDirectory("/", getFile("."));
+    
+    // Async test, pauses the test system.
+    // This passes control to testIsAvailable() when it completes.
+    testAsyncRead(ioItem);
+    
+    // Shouldn't take more than 5 seconds to test all files.
+    sleep(5000);
+  }
+  finally {
+    gServer.stop();
+  }
 }
 
