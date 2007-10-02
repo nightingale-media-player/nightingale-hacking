@@ -182,8 +182,8 @@ Language: SQL
    Enum Values: Global
    Function Prototype Enders: , ; ) as As AS is Is IS
    Variable Prototype Enders: , ; ) := default Default DEFAULT
-   Database Trigger Prototype Enders: begin Begin BEGIN as As AS
    Database Index Prototype Enders: , ; )
+   Database Trigger Prototype Enders: begin Begin BEGIN as As AS
    Perl Package: NaturalDocs::Languages::PLSQL
 
 
