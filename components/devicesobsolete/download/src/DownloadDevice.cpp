@@ -2304,7 +2304,6 @@ nsresult sbDownloadSession::Initiate()
     nsCString                   fileName;
     nsCOMPtr<nsIURI>            pURI;
     nsCOMPtr<nsIStandardURL>    pStandardURL;
-    nsCOMPtr<nsIURL>            pURL;
     nsresult                    result = NS_OK;
 
     /* Get the IO and file protocol services. */
@@ -2866,7 +2865,14 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     nsresult                    result = NS_OK;
     PRBool                      bIsDirectory;
 
+    /* Check if the destination is a directory.  If the destination */
+    /* does not exist, assume it's a file about to be created.      */
     result = mpDstFile->IsDirectory(&bIsDirectory);
+    if (result == NS_ERROR_FILE_NOT_FOUND)
+    {
+        bIsDirectory = PR_FALSE;
+        result = NS_OK;
+    }
     NS_ENSURE_SUCCESS(result, result);
 
     if (bIsDirectory)
