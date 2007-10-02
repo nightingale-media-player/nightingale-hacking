@@ -1,0 +1,134 @@
+<?xml version="1.0"?> 
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<overlay id="ovScriptsMini"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- scripts for main window -->
+
+  <window>
+    <!-- Load the main window data bindings -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/mainWinInit.js" />
+
+    <!-- Load the Mozilla helpers -->
+    <script type="application/x-javascript"   
+    src="chrome://global/content/dialogOverlay.js" />
+
+    <!-- Drag and drop -->
+    <script type="application/x-javascript" 
+    src="chrome://global/content/nsDragAndDrop.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://global/content/nsTransferable.js"/>
+    <script type="application/x-javascript"  
+    src="chrome://songbird/content/scripts/dragAndDrop.js" />
+    <script type="application/x-javascript"  
+    src="chrome://songbird/content/scripts/dndSourceTracker.js" />
+
+    <!-- Command line -->
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/commandLine.js"/>
+
+    <!-- Load the interface code -->
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/playerOpen.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/asyncForLoop.js"/>
+
+    <!-- Load the Songbird stuff -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/windowUtils.js" />
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/deviceTEMP.js" />
+
+    <!-- Firefox compatibility functions -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/browserUtilities.js" />
+
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/searchHandler.js" />
+
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/serviceTreeXBLTEMP.js" />
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
+
+    <!-- Load the locale switcher -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/switchLocale.js" />
+
+    <!-- Generic message box -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/messageBox.js" />
+    <!-- Generic restart box -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/restartBox.js" />
+    <!-- Metrics functions -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/metrics.js" />
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/jumpToFile.js" />
+
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/json.js" />
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/bookmarks.js" />
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/bookmarksProxy.js" />
+
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/balloonTip.js" />
+
+    <!-- Extension Overlay Support -->
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/overlayLoader.js" />
+
+  </window>
+  
+</overlay>
+
+

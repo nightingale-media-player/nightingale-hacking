@@ -39,6 +39,9 @@
 %songbirdDTD;
 ]>
 
+<!-- Include this to automatically import the standard scripts for the miniplayer window -->
+<?xul-overlay href="chrome://songbird/content/xul/miniScriptsOverlay.xul"?>
+
 <!-- Include this to automatically populate a menubar -->
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
 
@@ -88,44 +91,4 @@
     <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
   </keyset>
 
-  <!-- Load the interface code -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/playerOpen.js"/>
-   
-  <!-- This should be put in the menubarOverlay.xul? -->
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
-
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/miniPlayer.js" />
-
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/jumpToFile.js" />
-  
-  <!-- Drag and drop -->
-  <script type="application/x-javascript" 
-   src="chrome://global/content/nsDragAndDrop.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://global/content/nsTransferable.js"/>
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/dragAndDrop.js" />
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/dndSourceTracker.js" />
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
-
-  <!-- Helpers -->
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/windowUtils.js" />
-   
-  <!-- Extension Overlay Support -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/overlayLoader.js" />
-   
 </window>
