@@ -89,8 +89,10 @@ $scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl 
 $scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIWrappedMediaItem.h
 $scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIWrappedMediaItem.h
 
-# Merge SiteLibrary with LibraryResource
-$scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIRemoteLibrary.idl
+# Merge SiteLibrary with MediaList, MediaItem, LibraryResource
+$scriptsdir/extract.pl sbILibraryResource created updated < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIRemoteLibrary.idl
+$scriptsdir/extract.pl sbIMediaItem mediaCreated mediaUpdated contentLength < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIRemoteLibrary.idl
+$scriptsdir/extract.pl sbIMediaList < $docstempdir/sbIMediaList.idl >> $docstempdir/sbIRemoteLibrary.idl
 
 # Merge RemoteWebPlaylist with PlaylistWidget
 $scriptsdir/extract.pl sbIPlaylistWidget < $docstempdir/sbIPlaylistWidget.idl >> $docstempdir/sbIRemoteWebPlaylist.idl
