@@ -73,6 +73,10 @@ http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStanda
 interface sbIRemoteWebPlaylist : nsISupports
 {
   /*
+  Group: WebPlaylist Properties
+  */
+
+  /*
   Prop: mediaList
 
   The <MediaList> associated with this <WebPlaylist> instance.
@@ -100,6 +104,10 @@ interface sbIRemoteWebPlaylist : nsISupports
     var selectedMediaItems = webPlaylist.selection;
 
     //Go through all the selected mediaitems.
+    
+    //The hasMoreElements method will return true until there are
+    //no more elements left to get using the getNext method.
+    
     while(selectedMediaItems.hasMoreElements()) {
       var mediaItem = selectedMediaItems.getNext();
 
@@ -109,12 +117,16 @@ interface sbIRemoteWebPlaylist : nsISupports
     (end)
 
   See Also:
-    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
   */
   readonly attribute nsISimpleEnumerator selection;
 
   /*
-  Func: setSelectionByIndex()
+  Group: WebPlaylist Methods
+  */
+
+  /*
+  Method: setSelectionByIndex()
 
   Set the selection in the <WebPlaylist>.
 
@@ -143,7 +155,7 @@ interface sbIRemoteWebPlaylist : nsISupports
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 
   /*
-  Func: addColumn()
+  Method: addColumn()
 
   Add a column of data to the <WebPlaylist>. If the column already exists in
   the system and the hidden is false then the column will be shown before the
@@ -212,7 +224,9 @@ interface sbIRemoteWebPlaylist : nsISupports
     (end)
 
   See Also:
+    <showColumn()>
     <showColumnBefore()>
+    <hideColumn()>
   */
   void addColumn( in AString aColumnType,
                   in AString aColumnName,
@@ -226,7 +240,7 @@ interface sbIRemoteWebPlaylist : nsISupports
                   in unsigned long aWidth );
 
   /*
-  Func: showColumnBefore()
+  Method: showColumnBefore()
 
   Show a column before another column. This enables you to move
   columns around visually as well as specify where you might want your own
@@ -246,6 +260,8 @@ interface sbIRemoteWebPlaylist : nsISupports
 
   See Also:
     <addColumn()>
+    <showColumn()>
+    <hideColumn()>
   */
   void showColumnBefore( in AString aColumnName,
                          in AString aBeforeColumnName );

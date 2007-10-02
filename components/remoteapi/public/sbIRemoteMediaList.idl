@@ -36,8 +36,13 @@ interface sbIMediaListView;
 
 /*
 Class: MediaList
+
 A <MediaList> is a list of <MediaItems>. A <MediaList> is also itself a <MediaItem> 
 and can be used as a parameter to functions that take a <MediaItem>.
+
+Inherits:
+  <MediaItem> 
+
 */
 
 /**

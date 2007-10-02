@@ -99,6 +99,10 @@ See Also:
 [scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
 interface sbIRemotePlayer : nsISupports
 {
+  /*
+  Group: Properties
+  */
+
   /**
    * \brief The name of the player
    */
@@ -368,12 +372,15 @@ interface sbIRemotePlayer : nsISupports
   */
   readonly attribute sbIRemoteLibrary siteLibrary;
 
+  /*
+  Group: Methods
+  */
+
   /**
    * \brief Bind an observer to get called on changes to Songbird metadata/state
    */
-
   /*
-  Func: addListener()
+  Method: addListener()
 
   Add a listener to get notified of changes to Songbird metadata and state.
 
@@ -421,7 +428,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: removeListener()
+  Method: removeListener()
 
   Remove a listener that was previously added using <addListener>.
 
@@ -453,7 +460,7 @@ interface sbIRemotePlayer : nsISupports
    * \brief Download the item passed in
    */
   /*
-  Func: downloadItem()
+  Method: downloadItem()
 
   Download a <MediaItem>. <MediaList>s and <Library>ies not allowed.
 
@@ -486,7 +493,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: downloadList()
+  Method: downloadList()
 
   Download a <MediaList>. As <Library>ies are <MediaList>s they are
   allowed here.
@@ -526,7 +533,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: downloadSelected()
+  Method: downloadSelected()
 
   Download the <MediaItems> selected by the user in a <WebPlaylist>.
 
@@ -555,7 +562,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: play()
+  Method: play()
 
   Prototype:
     play()
@@ -578,7 +585,7 @@ interface sbIRemotePlayer : nsISupports
   void play();
 
   /*
-  Func: playMediaList()
+  Method: playMediaList()
 
   Begin playback of a <MediaList> at the specified index in the list.
 
@@ -613,7 +620,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: playURL()
+  Method: playURL()
 
   Begin playback of a URL.
 
@@ -643,7 +650,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: stop()
+  Method: stop()
 
   Stop playback.
 
@@ -670,7 +677,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: pause()
+  Method: pause()
 
   Pause playback.
 
@@ -697,7 +704,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: next()
+  Method: next()
 
   Skip to the next item, if there is one, and begin playing.
 
@@ -727,7 +734,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: previous()
+  Method: previous()
 
   Skip to the previous item, if there is one, and begin playing.
 
@@ -752,7 +759,7 @@ interface sbIRemotePlayer : nsISupports
   void previous();
 
   /*
-  Func: setSiteScope()
+  Method: setSiteScope()
   
   Set the scope for which to access site-specific privilegs such as the <siteLibrary>.
   By default, the page's current domain and path is used.
@@ -785,7 +792,7 @@ interface sbIRemotePlayer : nsISupports
   void setSiteScope(in AUTF8String aDomain, in AUTF8String aPath);
 
   /*
-  Func: libraries ()
+  Method: libraries()
 
   Access to any library in the system via path or 'magic' keyword.
 

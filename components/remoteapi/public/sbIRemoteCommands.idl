@@ -51,7 +51,11 @@ when <Commands> are modified, the modifications are scoped to the media list.
 interface sbIRemoteCommands : nsISupports
 {
   /*
-  Function: addCommand
+  Group: Command Methods
+  */
+
+  /*
+  Method: addCommand
   Add a command.
   
   Arguments:
@@ -64,7 +68,7 @@ interface sbIRemoteCommands : nsISupports
   void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
 
   /*
-  Function: removeCommand
+  Method: removeCommand
   Remove a command.
   
   Arguments:

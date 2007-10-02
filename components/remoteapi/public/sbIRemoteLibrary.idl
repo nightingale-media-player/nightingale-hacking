@@ -50,6 +50,9 @@ A <Library> is a collection of <MediaItems> and <MediaLists>.
 It is possible to create a <Library> using the <Songbird::siteLibrary>
 function.
 
+Inherits:
+  <MediaList> <MediaItem> 
+
 Example:
   (start code)
   //Create or get a library.
@@ -116,6 +119,11 @@ interface sbIRemoteLibrary : nsISupports
    *   been scanned, that metadata will show up automatically ( for instance
    *   for 2 items created from the same URL ).
    */
+
+  /*
+  Group: Library Properties
+  */
+
   /*
   Prop: scanMediaOnCreation
 
@@ -149,7 +157,11 @@ interface sbIRemoteLibrary : nsISupports
    */
 
   /*
-  Func: createMediaItem()
+  Group: Library Methods
+  */
+
+  /*
+  Method: createMediaItem()
 
   Create a <MediaItem> from a URL. You may pass in
   http and https URLs. Local file URLs are not permitted.
@@ -206,7 +218,7 @@ interface sbIRemoteLibrary : nsISupports
    */
 
   /*
-  Func: createMediaList()
+  Method: createMediaList()
 
   Create an empty <MediaList> of a certain type.
 
@@ -253,7 +265,7 @@ interface sbIRemoteLibrary : nsISupports
    */
 
   /*
-  Func: createMediaListFromURL()
+  Method: createMediaListFromURL()
 
   Create a <MediaList> from a URL. The URL may point to an
   m3u, pls, rss or html file. After being created, the <MediaList>
@@ -275,9 +287,11 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
 
     //Create the medialist from a url pointing to a file.
-    library.createMediaListFromURL("http://path/to/file.m3u", function(list) {
-      alert("loaded " + list.length + " items!");
-    });
+    library.createMediaListFromURL("http://path/to/file.m3u", 
+      function(list) {
+        alert("loaded " + list.length + " items!");
+      }
+    );
     (end)
 
   See Also:
@@ -304,13 +318,14 @@ interface sbIRemoteLibrary : nsISupports
    * \sa createMediaList
    */
   /*
-  Func: getMediaListByName()
+  Method: getMediaListByName()
 
   Get the site media list with the given name.  Note that to compare for
   identity one must compare the guid (instead of JS object comparisions).
 
-  NOTE: This method will not work with the main library, it is only for
-  use with the Site Library.
+  Note: 
+    This method will not work with the main library, it is only for
+    use with the Site Library.
 
   Prototype:
     <MediaList> getMediaListByName(String name)
@@ -339,11 +354,59 @@ interface sbIRemoteLibrary : nsISupports
   */
   sbIRemoteMediaList getMediaListByName( in AString aName );
 
+  /*
+  Method: getArtists()
+
+  See Also:
+    <getAlbums()>
+    <getGenres()>
+    <getYears()>
+    <getPlaylists()>
+  */
   nsIStringEnumerator getArtists();
+
+  /*
+  Method: getAlbums()
+
+  See Also:
+    <getArtists()>
+    <getGenres()>
+    <getYears()>
+    <getPlaylists()>
+  */
   nsIStringEnumerator getAlbums();
+
+  /*
+  Method: getGenres()
+
+  See Also:
+    <getArtists()>
+    <getAlbums()>
+    <getYears()>
+    <getPlaylists()>
+  */
   nsIStringEnumerator getGenres();
+
+  /*
+  Method: getYears()
+
+  See Also:
+    <getArtists()>
+    <getAlbums()>
+    <getGenres()>
+    <getPlaylists()>
+  */
   nsIStringEnumerator getYears();
 
+  /*
+  Method: getPlaylists()
+
+  See Also:
+    <getArtists()>
+    <getAlbums()>
+    <getGenres()>
+    <getYears()>
+  */
   nsISimpleEnumerator getPlaylists();
 };
 
