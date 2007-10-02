@@ -486,6 +486,7 @@ function loadMockDatabase() {
   var a = data.split("\n");
 
   var sp = [
+    "http://songbirdnest.com/data/1.0#GUID",
     "http://songbirdnest.com/data/1.0#created",
     "http://songbirdnest.com/data/1.0#updated",
     "http://songbirdnest.com/data/1.0#contentURL",
@@ -507,13 +508,13 @@ function loadMockDatabase() {
 
     for(var j = 0; j < sp.length; j++) {
       if (sp[j] == "http://songbirdnest.com/data/1.0#isList") {
-        if (!b[j + 2] || b[j + 2] == "0")
+        if (!b[j + 1] || b[j + 1] == "0")
           item[sp[j]] = "";
         else
           item[sp[j]] = "1";
       }
       else {
-        item[sp[j]] = b[j + 2];
+        item[sp[j]] = b[j + 1];
       }
     }
   }

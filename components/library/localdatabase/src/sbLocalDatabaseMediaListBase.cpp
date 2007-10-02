@@ -267,7 +267,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   NS_NAMED_LITERAL_STRING(contentURLProperty, SB_PROPERTY_CONTENTURL);
   NS_NAMED_LITERAL_STRING(createdProperty,    SB_PROPERTY_CREATED);
   NS_NAMED_LITERAL_STRING(updatedProperty,    SB_PROPERTY_UPDATED);
-
+  NS_NAMED_LITERAL_STRING(guidProperty,       SB_PROPERTY_GUID);
 
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIProperty> property;
@@ -281,7 +281,8 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     // We never want these properties to be copied to a new item
     if (name.Equals(contentURLProperty) ||
         name.Equals(createdProperty) ||
-        name.Equals(updatedProperty)) {
+        name.Equals(updatedProperty) ||
+        name.Equals(guidProperty)) {
       continue;
     }
 

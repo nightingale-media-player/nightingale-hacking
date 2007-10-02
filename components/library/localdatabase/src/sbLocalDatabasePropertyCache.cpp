@@ -714,6 +714,11 @@ sbLocalDatabasePropertyCache::Write()
         PRBool success = GetPropertyName(dirtyProps[j], propertyName);
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
+        // Never change the guid
+        if (propertyName.EqualsLiteral(SB_PROPERTY_GUID)) {
+          continue;
+        }
+
         // XXXben Do we care if this fails?!
         rv = bagLocal->GetPropertyByID(dirtyProps[j], value);
         NS_ENSURE_SUCCESS(rv, rv);

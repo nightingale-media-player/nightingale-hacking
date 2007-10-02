@@ -414,6 +414,13 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
+  // XXXsk Don't let the GUID property to be set.  We shouldn't need this
+  // if it were a read only property, so remvoe this when bug 3099 is fixed.
+  if (aName.EqualsLiteral(SB_PROPERTY_GUID)) {
+    NS_WARNING("Attempt to set a read-only property!");
+    return NS_ERROR_INVALID_ARG;
+  }
+
   // Create a property array to hold the changed properties and their old
   // values
   nsresult rv;
@@ -459,6 +466,23 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   PRUint32 propertyCount;
   rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXsk Don't let the GUID property to be set.  We shouldn't need this
+  // if it were a read only property, so remvoe this when bug 3099 is fixed.
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    nsCOMPtr<sbIProperty> property;
+    rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (propertyName.EqualsLiteral(SB_PROPERTY_GUID)) {
+      NS_WARNING("Attempt to set a read-only property!");
+      return NS_ERROR_INVALID_ARG;
+    }
+  }
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);

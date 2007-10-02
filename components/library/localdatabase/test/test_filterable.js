@@ -30,12 +30,15 @@
 
 function runTest () {
 
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+
   var library = createLibrary("test_filterable");
 
   // Tests with view media list
   var list = library;
   var view = list.createView();
-  var e = view.getFilterValues("http://songbirdnest.com/data/1.0#albumName");
+
+  var e = view.getFilterValues(SBProperties.albumName);
 
   var array = [];
   while(e.hasMore()) {
@@ -44,70 +47,86 @@ function runTest () {
   assertArray(array, "data_filterable_view_album.txt");
 
   var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  pa.appendProperty(SBProperties.artistName, "AC/DC");
   view.setFilters(pa);
   assertEqual(view.length, 10);
 
   // shows replace
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "Accept");
+  pa.appendProperty(SBProperties.artistName, "Accept");
   view.setFilters(pa);
   assertEqual(view.length, 15);
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "Accept");
+  pa.appendProperty(SBProperties.artistName, "AC/DC");
+  pa.appendProperty(SBProperties.artistName, "Accept");
   view.setFilters(pa);
   assertEqual(view.length, 25);
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a-ha");
+  pa.appendProperty(SBProperties.artistName, "a-ha");
   view.updateFilters(pa);
   assertEqual(view.length, 35);
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Back in Black");
+  pa.appendProperty(SBProperties.albumName, "Back in Black");
   view.updateFilters(pa);
   assertEqual(view.length, 10);
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Restless and Wild/Balls to the Wall");
+  pa.appendProperty(SBProperties.albumName, "Restless and Wild/Balls to the Wall");
   view.updateFilters(pa);
   assertEqual(view.length, 25);
 
   view.removeFilters(pa);
   assertEqual(view.length, 10);
 
+  view.clearFilters(pa);
+  assertEqual(view.length, list.length);
+
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.GUID, "3E3A8948-AD99-11DB-9321-C22AB7121F49"]
+  ]));
+  assertEqual(view.length, 1);
+  assertEqual(view.getItemByIndex(0).guid, "3E3A8948-AD99-11DB-9321-C22AB7121F49");
+
   // Test with simple media list
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   view = list.createView();
-  var e = view.getFilterValues("http://songbirdnest.com/data/1.0#albumName");
+  var e = view.getFilterValues(SBProperties.albumName);
   array = [];
   while(e.hasMore()) {
     array.push(e.getNext());
   }
   assertArray(array, "data_filterable_sml101_album.txt");
 
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.GUID, "3E586C1A-AD99-11DB-9321-C22AB7121F49"]
+  ]));
+  assertEqual(view.length, 1);
+  assertEqual(view.getItemByIndex(0).guid, "3E586C1A-AD99-11DB-9321-C22AB7121F49");
+  view.clearFilters();
+
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  pa.appendProperty(SBProperties.artistName, "AC/DC");
   view.setFilters(pa);
   assertEqual(view.length, 10);
 
   // test get
   var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a-ha");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Back in Black");
+  pa.appendProperty(SBProperties.artistName, "AC/DC");
+  pa.appendProperty(SBProperties.artistName, "a-ha");
+  pa.appendProperty(SBProperties.albumName, "Back in Black");
   view.setFilters(pa);
 
   var filters = view.currentFilter;
   assertEqual(filters.length, 3);
 
-  assertEqual(filters.getPropertyAt(0).name, "http://songbirdnest.com/data/1.0#artistName");
+  assertEqual(filters.getPropertyAt(0).name, SBProperties.artistName);
   assertEqual(filters.getPropertyAt(0).value, "AC/DC");
-  assertEqual(filters.getPropertyAt(1).name, "http://songbirdnest.com/data/1.0#artistName");
+  assertEqual(filters.getPropertyAt(1).name, SBProperties.artistName);
   assertEqual(filters.getPropertyAt(1).value, "a-ha");
-  assertEqual(filters.getPropertyAt(2).name, "http://songbirdnest.com/data/1.0#albumName");
+  assertEqual(filters.getPropertyAt(2).name, SBProperties.albumName);
   assertEqual(filters.getPropertyAt(2).value, "Back in Black");
 }
 
