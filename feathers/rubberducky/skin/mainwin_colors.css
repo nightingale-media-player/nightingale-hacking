@@ -100,27 +100,6 @@ sb-sys-hide-button
   background-color: transparent !important;
 }
 
-.sb-sys-outer-frame-chrome-bkgd,
-.sb-sys-outer-frame-chrome-e,
-.sb-sys-outer-frame-chrome-w,
-.sb-sys-outer-frame-chrome-nw,
-.sb-sys-outer-frame-chrome-n,
-.sb-sys-outer-frame-chrome-ne,
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr,
-.sb-sys-outer-frame-resizer-b,
-.sb-sys-outer-frame-resizer-bl,
-.sb-sys-outer-frame-resizer-br,
-.sb-sys-outer-frame-resizer-lt,
-.sb-sys-outer-frame-resizer-l,
-.sb-sys-outer-frame-resizer-lb,
-.sb-sys-outer-frame-resizer-rt,
-.sb-sys-outer-frame-resizer-r,
-.sb-sys-outer-frame-resizer-rb
-{  
-  background-color: transparent;
-}
 /* END WINDOW CHROME **/
 
 /** 
@@ -319,25 +298,6 @@ treecol[insertafter="true"]
 treecol > label
 {
   color: #8A8F84; /** Light Color 2 */
-}
-
-/** 
-Commenting out the hover states for column headers.  Called "distracting" in bug 4636.
-tree treecol:hover
-{
-  border-top: 1px solid #797f76; 
-}
-treecol:hover > label
-{
-  color: #feffff !important; 
-}
-*/
-
-/* column picker **/
-.tree-columnpicker-icon
-{
-  border: 1px solid transparent;
-  background-color: transparent !important;
 }
 
 

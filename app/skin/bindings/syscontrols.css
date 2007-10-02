@@ -26,15 +26,28 @@
 
 
 /** 
-TITLE BAR
-There are two different title bars for Songbird.  One for Windows, one for Mac OS.
+*******************************************************************************
+SYSTEM CONTROLS
+
+Applies image and layout styles to the window chrome widgets 
+in app/bindings/sysControls.xml.
+
+Use these styles to paint image graphics around the edge of the player
+and modify the custom titlebar and window controls
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+
+/** 
+*******************************************************************************
+WINDOWS TITLE BAR
+*******************************************************************************
 */
 
-
-
-/**
-Windows Title Bar
-*/
 
 /*  Topbar Icon */
 sb-sys-icon
@@ -133,9 +146,13 @@ sb-player-jumpto-button
   list-style-image: url(chrome://songbird/skin/icons/icon-lib.png); /* Design Note, use the library icon to let the user know how to access it while in mini-mode */
 }
 
+
 /** 
-Mac OS Title Bar
+*******************************************************************************
+MAC OSX TITLE BAR
+*******************************************************************************
 */
+
 sb-sys-osx-buttons > sb-sys-maximize-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png);
@@ -228,31 +245,60 @@ sb-sys-osx-feathers > sb-feathers-toggle-button[disabled="true"]
 
 
 /** 
-************************************************************************************************************************************************
+*******************************************************************************
 RESIZERS
-************************************************************************************************************************************************
+*******************************************************************************
 */ 
 
-
-.sb-sys-outer-frame-resizer-b,
-.sb-sys-outer-frame-resizer-bl,
-.sb-sys-outer-frame-resizer-br,
-.sb-sys-outer-frame-resizer-lt,
-.sb-sys-outer-frame-resizer-l,
-.sb-sys-outer-frame-resizer-lb,
-.sb-sys-outer-frame-resizer-rt,
-.sb-sys-outer-frame-resizer-r,
-.sb-sys-outer-frame-resizer-rb
+.sb-sys-outer-frame-resizer
 {
-  height: 5px !important;
-  width: 5px !important;
+  height: 5px;
+  width: 5px;
+}
+.sb-sys-outer-frame-resizer-top,
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright
+{
+  height: 1px;
+  width: 1px;
 }
 
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr
-{
-  height: 1px !important;
-  width: 1px !important;
+.sb-sys-outer-frame-chrome-background,
+.sb-sys-outer-frame-chrome,
+.sb-sys-outer-frame-resizer
+{  
+  background-color: transparent;
 }
+
+/** Prevent the resizers from being pushed out of the viewable window area **/
+.sb-sys-outer-frame-chrome-background {
+  overflow: hidden !important;
+}
+
+/** Set resizer mouse cursors (why doesn't XULRunner provide this?) **/
+.sb-sys-outer-frame-resizer[dir="topleft"] {
+  cursor: nw-resize;
+}
+.sb-sys-outer-frame-resizer[dir="top"] {
+  cursor: n-resize;
+}
+.sb-sys-outer-frame-resizer[dir="topright"] {
+  cursor: ne-resize;
+}
+.sb-sys-outer-frame-resizer[dir="left"] {
+  cursor: w-resize;
+}
+.sb-sys-outer-frame-resizer[dir="right"] {
+  cursor: e-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottomleft"] {
+  cursor: sw-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottom"] {
+  cursor: s-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottomright"] {
+  cursor: se-resize;
+}
+
 

@@ -132,7 +132,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,linked-playlist-button,urlbar-container,search_splitter,searchbar-container,spinner-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,linked-playlist-button,urlbar-container,search_splitter,searchbar-container"
              flex="1">            
     </toolbar>
     

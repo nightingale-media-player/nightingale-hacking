@@ -27,15 +27,15 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 FACEPLATE
-***************************************************************************************************
+
+Applies image and layout styles to the LCD faceplate screen.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */
 
-#main_faceplate
-{
-  min-width: 420px;
-}
 
 /** Rounded corners for the faceplate **/
 .faceplate-left-spacer,
@@ -53,12 +53,14 @@ FACEPLATE
 {
   background-image: url(chrome://songbird/skin/faceplate/faceplate-right.png);
 }
+
+
 /*  Sample for how to style the faceplate based upon the showing pane.
 .faceplate-left-spacer[currentId="songbird-intro"],
 .faceplate-right-spacer[currentId="songbird-intro"],
 .faceplate-bkgd-box[currentId="songbird-intro"]
 {
-  opacity: 0.5;  // Opacity is slooooow
+  opacity: 0.5; 
 }
 */
 
@@ -76,13 +78,10 @@ FACEPLATE
   list-style-image: url(chrome://songbird-branding/skin/faceplate.png);
 }
 
+/** Seekbar **/
 
-.faceplate-seekbar-box
-{
- padding-left: 10px;
- padding-right: 10px;
-}
 
+/** Text **/
 .faceplate-text
 {
   font-family: Arial, Helvetica, Sans-serif !important;
@@ -92,7 +91,23 @@ sb-player-artist-label.faceplate-text
 {
   font-size: 14px !important;
 }
+
+.faceplate-album-box,
+.faceplate-artist-box
+{
+  height: 14px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.faceplate-artist-box:hover > .faceplate-text,
+.faceplate-album-box:hover > .faceplate-text
+{
+  text-decoration: underline !important;
+}  
   
+
+/* the seekbar slider */
 
 .faceplate-progressmeter,
 .faceplate-seekbar
@@ -102,9 +117,12 @@ sb-player-artist-label.faceplate-text
   width: auto;
 }
 
+.faceplate-seekbar-box
+{
+ padding-left: 10px;
+ padding-right: 10px;
+}
 
-
-/* the seekbar slider */
 slider.sb-player-seek-slider,
 progressmeter.sb-player-seek-slider
 {
@@ -134,20 +152,6 @@ progressmeter.sb-player-seek-slider > .progress-remainder
   background-image: none;
 }
 
-
-.faceplate-album-box,
-.faceplate-artist-box
-{
-  height: 14px;
-  padding: 0px;
-  margin: 0px;
-}
-
-.faceplate-artist-box:hover > .faceplate-text,
-.faceplate-album-box:hover > .faceplate-text
-{
-  text-decoration: underline !important;
-}
 
 /* shuffle and repeat */
 .faceplate-shuffle

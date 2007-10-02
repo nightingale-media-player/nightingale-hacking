@@ -25,10 +25,17 @@
  */
 
 /** 
-************************************************************************************************************************************************
-SERVICE PANE - a.k.a the Left Pane
-The Service Pane is the primary area for navigating through services and content. It serves as the primary GUI entry point to content and services.
-************************************************************************************************************************************************
+*******************************************************************************
+
+SERVICE PANE 
+
+Applies images and layout for the left pane in the main window. 
+The Service Pane is the primary area for navigating through services and 
+content. It serves as the primary GUI entry point to content and services.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */ 
 
 /* Twisty and Shouty **/
@@ -90,13 +97,13 @@ The Service Pane is the primary area for navigating through services and content
 
 
 /** 
-************************************************************************************************************************************************
+*******************************************************************************
 THE SERVICE TREE TOOLBAR
 Currently a single clickhold button below the service tree
-************************************************************************************************************************************************
+*******************************************************************************
 */
 
-/** TODO REMOVE THESE IDs **/
+/** TODO Either clean up these styles or kill the bar completely **/
 
 #frame_service_buttonbar button
 {
@@ -110,11 +117,6 @@ Currently a single clickhold button below the service tree
 {
  margin-left: 8px;
 }
-
-
-
-
-/** TODO This needs to be cleaned up / removed **/
 
 /** Bind images to the button and button-popup on the Service Pane */
 /** NOTE: IDs containing periods are bad... */

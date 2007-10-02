@@ -30,7 +30,7 @@
 *******************************************************************************
 WEB TOOLBAR IMAGES
 
-Applies images to the toolbar buttons in browserToolbarOverlay.xul.  
+Applies images to the toolbar items in browserToolbarOverlay.xul.  
 Imported by bindings.css or directly into feathers.
 
 *******************************************************************************
@@ -180,10 +180,76 @@ Imported by bindings.css or directly into feathers.
   -moz-image-region: rect(32px 112px 48px 96px);
 }
 
+
+
 /** 
-***************************************************************************************************
+*******************************************************************************
+LOCATION TEXTBOX
+*******************************************************************************
+*/
+
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox
+{
+  max-height: 26px;
+  min-height: 26px;
+  margin: 1px 0px 1px 2px;
+  padding: 0px 0px 1px 0px;
+}
+
+
+.locationbar-image
+{
+  list-style-image: url("chrome://songbird/skin/icons/small-globe-sunken.png");
+  background-color: transparent;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 3px 5px 3px 5px;
+}
+
+
+/** Convert the favicon into a spinner animation when
+    the browser is loading **/ 
+.locationbar-textbox[loading="true"] > .locationbar-image {
+  background-image: url(chrome://songbird/skin/icons/spinner-spin.png) !important;
+  width:16px;
+  height:16px;
+  padding-top:100px;
+  overflow:hidden;
+}
+
+
+/** 
+************************************************************************************************************************************************
+SPINNER 
+Used to indicate that the system is busy doing something
+************************************************************************************************************************************************
+*/
+
+sb-browser-spinner
+{
+  background-color: transparent;
+  padding: 2px;
+}
+.browser-spinner-image
+{
+  list-style-image: url(chrome://songbird/skin/icons/spinner-stopped.png) ;  
+}
+.browser-spinner-image[spinning="true"]
+{
+  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.png) ;
+}
+
+
+/** 
+*******************************************************************************
 GENERAL RULES
-***************************************************************************************************
+*******************************************************************************
 */
 
 #navigator-toolbox > toolbar > toolbarbutton,
@@ -218,6 +284,7 @@ GENERAL RULES
 #navigator-toolbox > toolbar
 {
 }
+
 
 
 

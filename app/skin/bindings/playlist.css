@@ -26,46 +26,27 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE PLAYLIST
-***************************************************************************************************
+
+Applies images and layout to playlist.xml and sbPlaylistPage.xul.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */ 
 
 
 
-playlist
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-playlist > stack > vbox
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-.sb-playlist-tree
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-.sb-commands-toolbar-bkg
-{
-  height: 25px !important;
-  padding: 1px;
-}
-
+playlist,
+playlist > stack > vbox,
+.sb-playlist-tree,
 .sb-playlist-tree > treechildren::-moz-tree-row
 {
+  border: none !important;
   margin: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  border: 0px solid !important;
+  padding: 0px !important;
 }
+
 
 .sb-playlist-tree > treechildren::-moz-tree-cell
 {
@@ -89,6 +70,14 @@ playlist > stack > vbox
   font-weight: normal;
 }
 
+
+
+/** 
+*******************************************************************************
+Tree Progress Meter
+*******************************************************************************
+*/
+
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
   border: none !important;
@@ -102,22 +91,18 @@ playlist > stack > vbox
   border: none !important;
 }
 
-.sb-playlist-popup
-{
-  min-width: 160px !important;
-}
-
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( rating )
 {
   color: transparent !important;
 }
 
+/** Show rating states by repositioning a large background image.
+    This prevents flickering on state change **/
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating )
 {
   background-repeat: no-repeat;
   background-image: url(chrome://songbird/skin/tree/ratings.png);
 }
-
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0 )
@@ -175,6 +160,13 @@ playlist > stack > vbox
   background-position:4px -198px;
 }
 
+
+/** 
+*******************************************************************************
+In-cell Buttons
+*******************************************************************************
+*/
+
 /* button default state and baseline */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button )
 {
@@ -227,6 +219,13 @@ playlist > stack > vbox
        background-position:100% -54px;
 }
 
+
+/** 
+*******************************************************************************
+In-cell Clickable Images
+*******************************************************************************
+*/
+
 /* clickable image */
 .sb-playlist-tree > treechildren::-moz-tree-cell( image )
 {
@@ -246,6 +245,12 @@ playlist > stack > vbox
 }
 
 
+/** 
+*******************************************************************************
+In-cell Download Buttons
+*******************************************************************************
+*/
+
 .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton )
 {
        padding:0 ! important;
@@ -255,7 +260,7 @@ playlist > stack > vbox
 {
        background-image:url(chrome://songbird/skin/tree/download/remain.png);
        border: none !important;
-       background-color:none !important;
+       background-color: transparent !important;
        padding:0 ! important;
        margin:5px 0 ! important;
 }
@@ -287,3 +292,22 @@ playlist > stack > vbox
       background-image: none;
 }
 
+
+/** 
+*******************************************************************************
+Playlist Commands
+*******************************************************************************
+*/
+
+/** Playlist commands toolbar **/
+.sb-commands-toolbar-bkg
+{
+  height: 25px !important;
+  padding: 1px;
+}
+
+/** Playlist commands context menu **/
+.sb-playlist-popup
+{
+  min-width: 160px !important;
+}

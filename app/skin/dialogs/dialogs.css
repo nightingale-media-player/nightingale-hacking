@@ -57,22 +57,6 @@ DIALOG BOXES and their buttons
 RESIZERS
 ************************************************************************************************************************************************
 */ 
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr,
-.sb-sys-outer-frame-resizer-b,
-.sb-sys-outer-frame-resizer-bl,
-.sb-sys-outer-frame-resizer-br,
-.sb-sys-outer-frame-resizer-lt,
-.sb-sys-outer-frame-resizer-l,
-.sb-sys-outer-frame-resizer-lb,
-.sb-sys-outer-frame-resizer-rt,
-.sb-sys-outer-frame-resizer-r,
-.sb-sys-outer-frame-resizer-rb
-{  
-  background-image: none !important;
-  list-style-image: none !important;
-}
 
 #resize
 {
@@ -236,11 +220,6 @@ VIDEO WINDOW
   min-height: 240px;
 }
 
-#video_chrome_bkgd
-{
-  background-image: url(chrome://songbird/skin/default//chrm_bkgd.png) !important;
-  background-position: 0px -15px !important;
-}
 
 iframe#video_controls
 {

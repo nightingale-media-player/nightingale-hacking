@@ -26,10 +26,16 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE PLAYLIST COMMANDS
-Playlist toolbar and context menu items.
-***************************************************************************************************
+
+Provides images for the default playlist commands, which can be 
+programmatically generated as either playlist toolbar or context 
+menu items.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */ 
 
 

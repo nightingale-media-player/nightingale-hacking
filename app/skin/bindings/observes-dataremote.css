@@ -27,12 +27,18 @@
  
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 DATAREMOTE OBSERVER 
+
+See app/bindings/observesDataRemote.xml
+
 By default commands, broadcaster, and observers have display:none, which prevents
 XBL instantiation.  If you are having trouble getting observes to work below
 a node, check to see if display:none is somewhere in the chain.
-***************************************************************************************************
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */
 
 commandset,

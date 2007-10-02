@@ -415,14 +415,14 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 
 .treecol-sortdirection[sortDirection="ascending"]
 {
- -moz-appearance: none !important; /* grrrr! */
+ -moz-appearance: none;
  background-image: none !important;
  list-style-image:  url("chrome://songbird/skin/arrow/arrow-up.png");
  padding: 0px 5px 0px 0px !important;
 } 
 .treecol-sortdirection[sortDirection="descending"]
 {
- -moz-appearance: none !important; /* grrrr! */
+ -moz-appearance: none;
  background-image: none !important;
  list-style-image:  url("chrome://songbird/skin/arrow/arrow-down.png");
  padding: 0px 5px 0px 0px !important;
@@ -431,30 +431,32 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 
 tree
 { 
-  -moz-appearance: none !important; /* grrrr! */
+  -moz-appearance: none;
   background-image: none !important;
   list-style-image: none !important;
 }
 
 .treecol-image
 {
-  -moz-appearance: none !important; /* grrrr! */
-  margin: 0px 0px 0px 0px !important;
+  -moz-appearance: none;
+  margin: 0px !important;
   padding: 0px !important;
   border: none;
 }
 
 .tree-columnpicker-icon
 {
-  -moz-appearance: none !important; /* grrrr! */
-  margin: 0px 0px 0px 0px !important;
+  -moz-appearance: none;
+  margin: 0px !important;
   padding: 0px !important;
-  border: none !important;
+  border: 1px solid transparent;
+  background-color: transparent !important;
+  list-style-image: url(chrome://songbird/skin/tree/column-picker.png);
 }
 
 treecol
 {
-  -moz-appearance: none !important; /* grrrr! */
+  -moz-appearance: none;
   margin: 0px;
   padding: 0px 0px 0px 5px;
   height: 20px;

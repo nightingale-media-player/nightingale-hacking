@@ -370,61 +370,61 @@
 
         <xul:vbox flex="1">
           <xul:hbox>
-              <xul:image sbid="c1" class="sb-sys-outer-frame-chrome-nw"/>
-              <xul:image sbid="c2" class="sb-sys-outer-frame-chrome-n" flex="1"/>
-              <xul:image sbid="c3" class="sb-sys-outer-frame-chrome-ne"/>
+              <xul:image sbid="c1" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-topleft"/>
+              <xul:image sbid="c2" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-top" flex="1"/>
+              <xul:image sbid="c3" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-topright"/>
           </xul:hbox>
           <xul:hbox flex="1">
-              <xul:image sbid="c4" class="sb-sys-outer-frame-chrome-w"/>
+              <xul:image sbid="c4" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-left"/>
               <xul:spacer flex="1"/>
-              <xul:image sbid="c5" class="sb-sys-outer-frame-chrome-e"/>
+              <xul:image sbid="c5" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-right"/>
           </xul:hbox>
           <xul:hbox>
-              <xul:image sbid="c6" class="sb-sys-outer-frame-chrome-sw"/>
-              <xul:image sbid="c7" class="sb-sys-outer-frame-chrome-s" flex="1"/>
-              <xul:image sbid="c8" class="sb-sys-outer-frame-chrome-se"/>
+              <xul:image sbid="c6" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomleft"/>
+              <xul:image sbid="c7" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottom" flex="1"/>
+              <xul:image sbid="c8" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomright"/>
           </xul:hbox>
         </xul:vbox>
         
         <xul:vbox flex="1">
           <xul:hbox>
-            <xul:resizer hidden="true" sbid="r1" class="sb-sys-outer-frame-resizer-tl" dir="topleft" style="cursor: nw-resize;"/>
-            <xul:spacer hidden="true" sbid="x1" class="sb-sys-outer-frame-resizer-tl"/>
-            <xul:resizer hidden="true" sbid="r2" class="sb-sys-outer-frame-resizer-t" dir="top" style="cursor: n-resize;" flex="1"/>
-            <xul:spacer hidden="true" sbid="x2" class="sb-sys-outer-frame-resizer-t" flex="1"/>
-            <xul:resizer hidden="true" sbid="r3" class="sb-sys-outer-frame-resizer-tr" dir="topright" style="cursor: ne-resize;"/>
-            <xul:spacer hidden="true" sbid="x3" class="sb-sys-outer-frame-resizer-tr"/>
+            <xul:resizer hidden="true" sbid="r1" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topleft" dir="topleft" />
+            <xul:spacer hidden="true" sbid="x1" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topleft"/>
+            <xul:resizer hidden="true" sbid="r2" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-top" dir="top" flex="1" />
+            <xul:spacer hidden="true" sbid="x2" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-top" flex="1"/>
+            <xul:resizer hidden="true" sbid="r3" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topright" dir="topright" />
+            <xul:spacer hidden="true" sbid="x3" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topright"/>
           </xul:hbox>
           <xul:hbox flex="1">
             <xul:vbox>
-              <xul:resizer hidden="true" sbid="r4" class="sb-sys-outer-frame-resizer-lt" dir="topleft" style="cursor: nw-resize;"/>
-              <xul:spacer hidden="true" sbid="x4" class="sb-sys-outer-frame-resizer-lt"/>
-              <xul:resizer hidden="true" sbid="r5" class="sb-sys-outer-frame-resizer-l" dir="left" style="cursor: w-resize;" flex="1"/>
-              <xul:spacer hidden="true" sbid="x5" class="sb-sys-outer-frame-resizer-l" flex="1"/>
-              <xul:resizer hidden="true" sbid="r6" class="sb-sys-outer-frame-resizer-lb" dir="bottomleft" style="cursor: sw-resize;"/>
-              <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
+              <xul:resizer hidden="true" sbid="r4" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-lefttop" dir="topleft" />
+              <xul:spacer hidden="true" sbid="x4" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-lefttop"/>
+              <xul:resizer hidden="true" sbid="r5" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-left" dir="left" flex="1"/>
+              <xul:spacer hidden="true" sbid="x5" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-left" flex="1"/>
+              <xul:resizer hidden="true" sbid="r6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom" dir="bottomleft" />
+              <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom"/>
             </xul:vbox>
 
-            <xul:draggable id="sb-sys-outer-frame-children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
+            <xul:draggable id="sb-sys-outer-frame-children" sbid="children" class="sb-sys-outer-frame-chrome-background" flex="1" >
               <children/>
             </xul:draggable>
                   
             <xul:vbox>
-              <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer-rt" dir="topright" style="cursor: ne-resize;"/>
-              <xul:spacer hidden="true" sbid="x7" class="sb-sys-outer-frame-resizer-rt"/>
-              <xul:resizer hidden="true" sbid="r8" class="sb-sys-outer-frame-resizer-r" dir="right" style="cursor: e-resize;" flex="1"/>
-              <xul:spacer hidden="true" sbid="x8" class="sb-sys-outer-frame-resizer-r" flex="1"/>
-              <xul:resizer hidden="true" sbid="r9" class="sb-sys-outer-frame-resizer-rb" dir="bottomright" style="cursor: se-resize;"/>
-              <xul:spacer hidden="true" sbid="x9" class="sb-sys-outer-frame-resizer-rb"/>
+              <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop" dir="topright" />
+              <xul:spacer hidden="true" sbid="x7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop"/>
+              <xul:resizer hidden="true" sbid="r8" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-right" dir="right"  flex="1"/>
+              <xul:spacer hidden="true" sbid="x8" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-right" flex="1"/>
+              <xul:resizer hidden="true" sbid="r9" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-rightbottom" dir="bottomright" />
+              <xul:spacer hidden="true" sbid="x9" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-rightbottom"/>
             </xul:vbox>
           </xul:hbox>
           <xul:hbox>
-            <xul:resizer hidden="true" sbid="r10" class="sb-sys-outer-frame-resizer-bl" dir="bottomleft" style="cursor: sw-resize;"/>
-            <xul:spacer hidden="true" sbid="x10" class="sb-sys-outer-frame-resizer-bl"/>
-            <xul:resizer hidden="true" sbid="r11" class="sb-sys-outer-frame-resizer-b" dir="bottom" style="cursor: s-resize;" flex="1"/>
-            <xul:spacer hidden="true" sbid="x11" class="sb-sys-outer-frame-resizer-b" flex="1"/>
-            <xul:resizer hidden="true" sbid="r12" class="sb-sys-outer-frame-resizer-br" dir="bottomright" style="cursor: se-resize;"/>
-            <xul:spacer hidden="true" sbid="x12" class="sb-sys-outer-frame-resizer-br"/>
+            <xul:resizer hidden="true" sbid="r10" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomleft" dir="bottomleft" />
+            <xul:spacer hidden="true" sbid="x10" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomleft"/>
+            <xul:resizer hidden="true" sbid="r11" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottom" dir="bottom" flex="1"/>
+            <xul:spacer hidden="true" sbid="x11" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottom" flex="1"/>
+            <xul:resizer hidden="true" sbid="r12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright" dir="bottomright" />
+            <xul:spacer hidden="true" sbid="x12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright"/>
           </xul:hbox>
         </xul:vbox>
 

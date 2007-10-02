@@ -25,7 +25,7 @@
  */
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
 = Songbird Widget Styles =
 
@@ -39,13 +39,13 @@ We assume that most feathers will want the same layout, padding, and
 image rules for the Songbird widgets, and have therefore placed these
 styles in a common chrome://songbird-bindings/skin/ package.  To override
 these rules, supply an alternate provider for this package (using your 
-chrome.manifest), or selectively import the style sheets into your feather.
+chrome.manifest), or selectively import the style sheets into your feathers.
 
 For more information, see:
 TODO: Add a link to the developer site
  *  http://developer.mozilla.org/en/docs/Chrome_Registration - Chrome.manifest details
 
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 
@@ -54,7 +54,6 @@ TODO: Add a link to the developer site
 
 @import url(faceplate.css); 
 @import url(filterlist.css); 
-@import url(locationbar.css); 
 @import url(observes-dataremote.css); 
 @import url(player_controls.css); 
 @import url(miniplayer.css); 
@@ -63,10 +62,8 @@ TODO: Add a link to the developer site
 @import url(search.css); 
 @import url(servicepane.css); 
 @import url(smartsplitter.css); 
-@import url(spinner.css); 
 @import url(statusbar.css); 
 @import url(syscontrols.css); 
-@import url(tree.css); 
 @import url(browsertoolbar.css); 
 @import url(tabbrowser.css);
 @import url(preferences.css); 

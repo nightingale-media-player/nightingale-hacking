@@ -64,7 +64,8 @@
         // set up dataremotes
         this._dataText = SBDataBindElementProperty("browser.url.text", this._textbox, "value");
         this._dataImage = SBDataBindElementProperty("browser.url.image", this._image, "src");
-        
+        this._dataLoading = SBDataBindElementAttribute( "faceplate.loading", this._textbox, "loading", true );
+
         
         /* we want to do some initialization after the window has loaded */
         var self = this;
@@ -77,6 +78,9 @@
       ]]></constructor>
       <destructor><![CDATA[
         this.browser.removeProgressListener(this);
+        this._dataText.unbind();
+        this._dataImage.unbind();
+        this._dataLoading.unbind();
       ]]></destructor>
       
       <field name="_browser">null</field>

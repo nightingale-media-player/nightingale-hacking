@@ -26,15 +26,19 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
-= The Songbird web & internal search box. =
+THE SEARCH BOX 
+
+Applies images and layout to the Songbird library and web search widget.
 
 Note that this widget inherits from the FireFox binding.
 See dependencies/vendor/mozilla/browser/components/search/content/search.xml
 and app/content/bindings/search.xml
 
-***************************************************************************************************
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
 */ 
 
 /* Make the search bar match the general textbox style */
