@@ -144,6 +144,8 @@ function CoreVLC()
   this._paused = false;
   this._fakePosition = false;
   this._ignorePrefChange = false;
+  
+  this._lastVolume = 25;
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
                               "wma", "wmv", "asf", "avi",  "mov", "mpg",
@@ -566,13 +568,9 @@ CoreVLC.prototype.handleAudioOutChange = function CoreVLC_handleAudioOutChange(p
 
 CoreVLC.prototype.destroyCoreVLC = function() 
 {
-  var prefsService = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefService);
-
-  var prefBranch = prefsService.getBranch("songbird.mediacore.")
-                    .QueryInterface(Ci.nsIPrefBranch2);
-
-  prefBranch.removeObserver("audioOut", this);
+  var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                  .getService(Ci.nsIPrefBranch2);
+  prefBranch.removeObserver("songbird.mediacore.", this);
 };
 
 CoreVLC.prototype.playURL = function (aURL)
@@ -753,8 +751,9 @@ CoreVLC.prototype.setVolume = function(volume)
   var scaledVolume = Math.round(volume / 255 * 49);
   
   this._object.audio.volume = scaledVolume;
+  this._lastVolume = scaledVolume;
 };
-  
+
 CoreVLC.prototype.getLength = function() 
 {
   this._verifyObject();
@@ -1001,6 +1000,19 @@ CoreVLC.prototype.activate = function ()
   }
   catch (err) { }
   
+  // Super hack to wait until the VLC plugin has fully loaded.
+  if (!this._object.playlist) {
+    var threadManager = Cc["@mozilla.org/thread-manager;1"].
+                        getService(Ci.nsIThreadManager);
+    var mainThread = threadManager.mainThread;
+    while (!this._object.playlist) {
+      mainThread.processNextEvent(true);
+    }
+  }
+
+  // Fix the volume.
+  this._object.audio.volume = this._lastVolume;
+
   this._active = true;
 };
 
@@ -1009,13 +1021,11 @@ CoreVLC.prototype.deactivate = function ()
   if (!this._active)
     return;
   
-//  this.stop();
-  
   var videoElement =
     this._object.QueryInterface(Components.interfaces.nsIDOMElement);
   // hide the containing <hbox> because that has a flex= set
   videoElement.parentNode.hidden = true;
-  
+
   this._active = false;
 };
 
