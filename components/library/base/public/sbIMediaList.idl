@@ -56,6 +56,91 @@ interface sbIPropertyArray;
 [scriptable, uuid(3cb74885-8dd7-4261-a300-740da293e339)]
 interface sbIMediaList : sbIMediaItem
 {
+  /*
+  Group: MediaList Constants
+  */
+
+  /**
+   * \brief This flag means that the list being enumerated is a copy that may
+   *        become out of date.
+   *
+   * Use this flag if you don't care whether or not other threads change the
+   * list's contents. The listener may make changes to the list at any time but
+   * those changes will not be reflected in the enumeration sequence.
+   */
+
+  /*
+  Const: ENUMERATIONTYPE_SNAPSHOT
+
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()>, the EnumerationListener will recieve 
+  a copy of the <MediaItem> instead of the <MediaItem> present in 
+  the <MediaList>.
+
+  Note:
+    This is the *suggested* constant to be used when calling <enumerateAllItems()>
+    or <enumerateItemsByProperty()>.
+
+    Any properties changed on the copy of the <MediaItem> will also be
+    reflected in the <MediaItem> present in the list.
+
+  Example:
+    (start code)
+    //This example assumes you already have a medialist in the variable named "mediaList".
+    //It also assumes that you have an enumeration listener in the variable named "enumListener".
+
+    mediaList.enumerateAllItems(enumListener, 0);
+    (end)
+
+  See Also:
+    <ENUMERATIONTYPE_LOCKING>
+    <enumerateAllItems()>
+    <enumerateItemsByProperty()>
+  */
+  const unsigned short ENUMERATIONTYPE_SNAPSHOT = 0;
+
+  /**
+   * \brief This flag means that the list is protected from changes by other
+   *        threads during the enumeration.
+   *
+   * Use this flag if you need to be certain that the contents of the list are
+   * not changed during enumeration. Note that all other threads will block
+   * until the enumeration is complete. Furthermore, changes made to list from
+   * the listener are not permitted until the listener has received the
+   * onEnumerationEnd notification.
+   */
+
+  /*
+  Const: ENUMERATIONTYPE_LOCKING
+
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()> the EnumerationListener will recieve 
+  the actual <MediaItem> from the <MediaList>.
+
+  Note:
+    This is the _suggested_ constant to use when attempting to change a lot of properties
+    on <MediaItems>, or when you need to process them individually without calling any other 
+    functions on the <MediaList> during enumeration.
+
+  Example:
+    (start code)
+    //This example assumes you already have a medialist in the variable named "mediaList".
+    //It also assumes that you have an enumeration listener in the variable named "enumListener".
+
+    mediaList.enumerateAllItems(enumListener, 1);
+    (end)
+
+  See Also:
+    <ENUMERATIONTYPE_SNAPSHOT>
+    <enumerateAllItems()>
+    <enumerateItemsByProperty()>
+  */
+  const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
+
+  /*
+  Group: MediaList Properties
+  */
+
   /**
    * \brief The name of the media list
    */
@@ -182,6 +267,10 @@ interface sbIMediaList : sbIMediaItem
   */
   readonly attribute boolean isEmpty;
 
+  /*
+  Group: MediaList Methods
+  */
+
   /**
    * \brief Get a media item in the list by guid
    * \param aGuid Guid of the media item
@@ -189,7 +278,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: getItemByGuid()
+  Method: getItemByGuid()
 
   Get a <MediaItem> from the <MediaList> by using it's <MediaItem::guid>.
 
@@ -239,7 +328,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: getItemByIndex()
+  Method: getItemByIndex()
 
   Get a <MediaItem> from the <MediaList> by using it's index in the <MediaList>.
 
@@ -284,83 +373,6 @@ interface sbIMediaList : sbIMediaItem
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
-   * \brief This flag means that the list being enumerated is a copy that may
-   *        become out of date.
-   *
-   * Use this flag if you don't care whether or not other threads change the
-   * list's contents. The listener may make changes to the list at any time but
-   * those changes will not be reflected in the enumeration sequence.
-   */
-
-  /*
-  Const: ENUMERATIONTYPE_SNAPSHOT
-
-  If this constant is specified when calling <enumerateAllItems()> or 
-  <enumerateItemsByProperty()>, the EnumerationListener will recieve 
-  a copy of the <MediaItem> instead of the <MediaItem> present in 
-  the <MediaList>.
-
-  Note:
-    This is the *suggested* constant to be used when calling <enumerateAllItems()>
-    or <enumerateItemsByProperty()>.
-
-    Any properties changed on the copy of the <MediaItem> will also be
-    reflected in the <MediaItem> present in the list.
-
-  Example:
-    (start code)
-    //This example assumes you already have a medialist in the variable named "mediaList".
-    //It also assumes that you have an enumeration listener in the variable named "enumListener".
-
-    mediaList.enumerateAllItems(enumListener, 0);
-    (end)
-
-  See Also:
-    <ENUMERATIONTYPE_LOCKING>
-    <enumerateAllItems()>
-    <enumerateItemsByProperty()>
-  */
-  const unsigned short ENUMERATIONTYPE_SNAPSHOT = 0;
-
-  /**
-   * \brief This flag means that the list is protected from changes by other
-   *        threads during the enumeration.
-   *
-   * Use this flag if you need to be certain that the contents of the list are
-   * not changed during enumeration. Note that all other threads will block
-   * until the enumeration is complete. Furthermore, changes made to list from
-   * the listener are not permitted until the listener has received the
-   * onEnumerationEnd notification.
-   */
-
-  /*
-  Const: ENUMERATIONTYPE_LOCKING
-
-  If this constant is specified when calling <enumerateAllItems()> or 
-  <enumerateItemsByProperty()> the EnumerationListener will recieve 
-  the actual <MediaItem> from the <MediaList>.
-
-  Note:
-    This is the _suggested_ constant to use when attempting to change a lot of properties
-    on <MediaItems>, or when you need to process them individually without calling any other 
-    functions on the <MediaList> during enumeration.
-
-  Example:
-    (start code)
-    //This example assumes you already have a medialist in the variable named "mediaList".
-    //It also assumes that you have an enumeration listener in the variable named "enumListener".
-
-    mediaList.enumerateAllItems(enumListener, 1);
-    (end)
-
-  See Also:
-    <ENUMERATIONTYPE_SNAPSHOT>
-    <enumerateAllItems()>
-    <enumerateItemsByProperty()>
-  */
-  const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
-
-  /**
    * \brief Enumerate all items in the list.
    *
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
@@ -368,7 +380,7 @@ interface sbIMediaList : sbIMediaItem
    */
   
   /*
-  Func: enumerateAllItems()
+  Method: enumerateAllItems()
 
   Enumerate all <MediaItems> in the <MediaList>.
   
@@ -403,7 +415,7 @@ interface sbIMediaList : sbIMediaItem
    */
   
   /*
-  Func: enumerateItemsByProperty()
+  Method: enumerateItemsByProperty()
 
   Enumerate the <MediaItems> in the <MediaList> that have a certain property
   and value match.
@@ -456,7 +468,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: indexOf()
+  Method: indexOf()
 
   Get the index for a <MediaItem> present in the <MediaList>.
 
@@ -510,7 +522,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: lastIndexOf()
+  Method: lastIndexOf()
 
   Get the *last* index for a <MediaItem> present in the <MediaList>.
 
@@ -562,7 +574,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: contains()
+  Method: contains()
 
   Verify that this <MediaList> contains the requested <MediaItem>.
 
@@ -608,7 +620,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: add()
+  Method: add()
 
   Add a <MediaItem> to this <MediaList>.
 
@@ -647,7 +659,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: addAll()
+  Method: addAll()
 
   Add all the <MediaItems> from a <MediaList> into this <MediaList>.
 
@@ -680,7 +692,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: remove()
+  Method: remove()
 
   Remove the first occurrence of the given <MediaItem> from this <MediaList>.
 
@@ -724,7 +736,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: removeByIndex()
+  Method: removeByIndex()
 
   Remove a <MediaItem> from the <MediaList> using it's index.
 
@@ -775,7 +787,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: clear()
+  Method: clear()
 
   Clear the <MediaList>. This will remove all <MediaItems> from this <MediaList>.
 
@@ -875,7 +887,7 @@ interface sbIMediaList : sbIMediaItem
    */
 
   /*
-  Func: getDistinctValuesForProperty()
+  Method: getDistinctValuesForProperty()
 
   Get all distinct (unique) values in this <MediaList> for a given property.
 

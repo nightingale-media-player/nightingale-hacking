@@ -53,6 +53,10 @@ interface sbILibrary;
 [scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
 interface sbIMediaItem : sbILibraryResource
 {
+  /*
+  Group: MediaItem Properties
+  */
+
   /**
    * \brief The library that this media item is contained in
    */
@@ -154,9 +158,6 @@ interface sbIMediaItem : sbILibraryResource
     This property is never filled currently.
   */
   attribute AString contentType;
-
-
-// Useful Functions
 
   /**
    * \brief Test if this media item is available for playback

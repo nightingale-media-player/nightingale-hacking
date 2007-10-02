@@ -52,6 +52,10 @@ interface sbILibraryResource : nsISupports
    */
 
   /*
+  Group: Resource Properties
+  */
+
+  /*
   Prop: guid
 
   The global unique identifier of this Library object.
@@ -117,7 +121,11 @@ interface sbILibraryResource : nsISupports
    */
 
   /*
-  Func: getProperty()
+  Group: Resource Methods
+  */
+
+  /*
+  Method: getProperty()
 
   Get the value of a property for this library object.
 
@@ -177,7 +185,7 @@ interface sbILibraryResource : nsISupports
    */
 
   /*
-  Func: setProperty()
+  Method: setProperty()
 
   Set the value of a property for this library object.
 
