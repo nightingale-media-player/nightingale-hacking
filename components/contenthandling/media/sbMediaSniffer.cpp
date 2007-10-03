@@ -66,24 +66,24 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
   NS_ENSURE_ARG_POINTER(aRequest);
 
   nsresult rv;
+
   // This won't always succeed, so don't warn for this expected failure.
   nsCOMPtr<nsIHttpChannel> httpChannel = do_QueryInterface(aRequest, &rv);
-  if (NS_FAILED(rv)) {
-    aSniffedType.Truncate();
-    return NS_OK;
+
+  if (NS_SUCCEEDED(rv)) {
+    nsCAutoString requestMethod;
+    rv = httpChannel->GetRequestMethod(requestMethod);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!requestMethod.EqualsLiteral("GET") &&
+        !requestMethod.EqualsLiteral("POST")) {
+        aSniffedType.Truncate();
+        return NS_OK;
+    }
   }
 
-  nsCAutoString requestMethod;
-  rv = httpChannel->GetRequestMethod(requestMethod);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (!requestMethod.EqualsLiteral("GET") &&
-      !requestMethod.EqualsLiteral("POST")) {
-    aSniffedType.Truncate();
-    return NS_OK;
-  }
-
-  nsCOMPtr<nsIChannel> channel = do_QueryInterface(httpChannel, &rv);
+  nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // There are apparently problems with 'view-source'... See nsFeedSniffer.
