@@ -56,7 +56,7 @@ Imported by bindings.css or directly into feathers.
 
 .servicepane_tree > treechildren::-moz-tree-image( web library )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-scnd-media.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( medialist )
