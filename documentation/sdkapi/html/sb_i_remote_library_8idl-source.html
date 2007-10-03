@@ -178,332 +178,336 @@
 <a name="l00200"></a>00200 <span class="comment">    }</span>
 <a name="l00201"></a>00201 <span class="comment">    (end)</span>
 <a name="l00202"></a>00202 <span class="comment"></span>
-<a name="l00203"></a>00203 <span class="comment">  See Also:</span>
-<a name="l00204"></a>00204 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00205"></a>00205 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
-<a name="l00206"></a>00206 <span class="comment">  */</span>
-<a name="l00207"></a>00207   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in AString aURL);
-<a name="l00208"></a>00208 
-<a name="l00220"></a>00220   <span class="comment">/*</span>
-<a name="l00221"></a>00221 <span class="comment">  Method: createMediaList()</span>
-<a name="l00222"></a>00222 <span class="comment"></span>
-<a name="l00223"></a>00223 <span class="comment">  Create an empty &lt;MediaList&gt; of a certain type.</span>
-<a name="l00224"></a>00224 <span class="comment"></span>
-<a name="l00225"></a>00225 <span class="comment">  Prototype:</span>
-<a name="l00226"></a>00226 <span class="comment">    &lt;MediaList&gt; createMediaList(String type)</span>
+<a name="l00203"></a>00203 <span class="comment">  Note:</span>
+<a name="l00204"></a>00204 <span class="comment">    Metadata for the &lt;MediaItems&gt; may get updated and overwritten during playback.</span>
+<a name="l00205"></a>00205 <span class="comment">    See &lt;Metadata Updates&gt; for more details about cases where metadata may </span>
+<a name="l00206"></a>00206 <span class="comment">    get updated.</span>
+<a name="l00207"></a>00207 <span class="comment"></span>
+<a name="l00208"></a>00208 <span class="comment">  See Also:</span>
+<a name="l00209"></a>00209 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00210"></a>00210 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
+<a name="l00211"></a>00211 <span class="comment">  */</span>
+<a name="l00212"></a>00212   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in AString aURL);
+<a name="l00213"></a>00213 
+<a name="l00225"></a>00225   <span class="comment">/*</span>
+<a name="l00226"></a>00226 <span class="comment">  Method: createMediaList()</span>
 <a name="l00227"></a>00227 <span class="comment"></span>
-<a name="l00228"></a>00228 <span class="comment">  Parameters:</span>
-<a name="l00229"></a>00229 <span class="comment">    type - The type of &lt;MediaList&gt; to create.</span>
-<a name="l00230"></a>00230 <span class="comment"></span>
-<a name="l00231"></a>00231 <span class="comment">  Returns:</span>
-<a name="l00232"></a>00232 <span class="comment">    The newly created &lt;MediaList&gt; or null.</span>
-<a name="l00233"></a>00233 <span class="comment"></span>
-<a name="l00234"></a>00234 <span class="comment">  Note:</span>
-<a name="l00235"></a>00235 <span class="comment">    Currently only the type "simple" is supported.</span>
-<a name="l00236"></a>00236 <span class="comment"></span>
-<a name="l00237"></a>00237 <span class="comment">  Example:</span>
-<a name="l00238"></a>00238 <span class="comment">    (start code)</span>
-<a name="l00239"></a>00239 <span class="comment">    //Create or get a library.</span>
-<a name="l00240"></a>00240 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00228"></a>00228 <span class="comment">  Create an empty &lt;MediaList&gt; of a certain type.</span>
+<a name="l00229"></a>00229 <span class="comment"></span>
+<a name="l00230"></a>00230 <span class="comment">  Prototype:</span>
+<a name="l00231"></a>00231 <span class="comment">    &lt;MediaList&gt; createMediaList(String type)</span>
+<a name="l00232"></a>00232 <span class="comment"></span>
+<a name="l00233"></a>00233 <span class="comment">  Parameters:</span>
+<a name="l00234"></a>00234 <span class="comment">    type - The type of &lt;MediaList&gt; to create.</span>
+<a name="l00235"></a>00235 <span class="comment"></span>
+<a name="l00236"></a>00236 <span class="comment">  Returns:</span>
+<a name="l00237"></a>00237 <span class="comment">    The newly created &lt;MediaList&gt; or null.</span>
+<a name="l00238"></a>00238 <span class="comment"></span>
+<a name="l00239"></a>00239 <span class="comment">  Note:</span>
+<a name="l00240"></a>00240 <span class="comment">    Currently only the type "simple" is supported.</span>
 <a name="l00241"></a>00241 <span class="comment"></span>
-<a name="l00242"></a>00242 <span class="comment">    //Create an empty medialist.</span>
-<a name="l00243"></a>00243 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
-<a name="l00244"></a>00244 <span class="comment">    (end)</span>
-<a name="l00245"></a>00245 <span class="comment"></span>
-<a name="l00246"></a>00246 <span class="comment">  See Also:</span>
-<a name="l00247"></a>00247 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00248"></a>00248 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
-<a name="l00249"></a>00249 <span class="comment">  */</span>
-<a name="l00250"></a>00250   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> createMediaList(in AString aType);
-<a name="l00251"></a>00251 
-<a name="l00267"></a>00267   <span class="comment">/*</span>
-<a name="l00268"></a>00268 <span class="comment">  Method: createMediaListFromURL()</span>
-<a name="l00269"></a>00269 <span class="comment"></span>
-<a name="l00270"></a>00270 <span class="comment">  Create a &lt;MediaList&gt; from a URL. The URL may point to an</span>
-<a name="l00271"></a>00271 <span class="comment">  m3u, pls, rss or html file. After being created, the &lt;MediaList&gt;</span>
-<a name="l00272"></a>00272 <span class="comment">  will contain all valid &lt;MediaItems&gt; it could create from the URLs</span>
-<a name="l00273"></a>00273 <span class="comment">  it found in the file.</span>
+<a name="l00242"></a>00242 <span class="comment">  Example:</span>
+<a name="l00243"></a>00243 <span class="comment">    (start code)</span>
+<a name="l00244"></a>00244 <span class="comment">    //Create or get a library.</span>
+<a name="l00245"></a>00245 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00246"></a>00246 <span class="comment"></span>
+<a name="l00247"></a>00247 <span class="comment">    //Create an empty medialist.</span>
+<a name="l00248"></a>00248 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00249"></a>00249 <span class="comment">    (end)</span>
+<a name="l00250"></a>00250 <span class="comment"></span>
+<a name="l00251"></a>00251 <span class="comment">  See Also:</span>
+<a name="l00252"></a>00252 <span class="comment">    &lt;createMediaItem()&gt;</span>
+<a name="l00253"></a>00253 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
+<a name="l00254"></a>00254 <span class="comment">  */</span>
+<a name="l00255"></a>00255   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> createMediaList(in AString aType);
+<a name="l00256"></a>00256 
+<a name="l00272"></a>00272   <span class="comment">/*</span>
+<a name="l00273"></a>00273 <span class="comment">  Method: createMediaListFromURL()</span>
 <a name="l00274"></a>00274 <span class="comment"></span>
-<a name="l00275"></a>00275 <span class="comment">  Prototype:</span>
-<a name="l00276"></a>00276 <span class="comment">    &lt;MediaList&gt; createMediaListFromURL(String url, Function callback)</span>
-<a name="l00277"></a>00277 <span class="comment"></span>
-<a name="l00278"></a>00278 <span class="comment">  Parameters:</span>
-<a name="l00279"></a>00279 <span class="comment">    url - The URL of the file to use for creating the &lt;MediaList&gt;.</span>
-<a name="l00280"></a>00280 <span class="comment">    callback - The optional function that gets called when the load is complete.</span>
-<a name="l00281"></a>00281 <span class="comment">               This function is passed a single argument that is the newly</span>
-<a name="l00282"></a>00282 <span class="comment">               created list.</span>
-<a name="l00283"></a>00283 <span class="comment"></span>
-<a name="l00284"></a>00284 <span class="comment">  Example:</span>
-<a name="l00285"></a>00285 <span class="comment">    (start code)</span>
-<a name="l00286"></a>00286 <span class="comment">    //Create or get a library.</span>
-<a name="l00287"></a>00287 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00275"></a>00275 <span class="comment">  Create a &lt;MediaList&gt; from a URL. The URL may point to an</span>
+<a name="l00276"></a>00276 <span class="comment">  m3u, pls, rss or html file. After being created, the &lt;MediaList&gt;</span>
+<a name="l00277"></a>00277 <span class="comment">  will contain all valid &lt;MediaItems&gt; it could create from the URLs</span>
+<a name="l00278"></a>00278 <span class="comment">  it found in the file.</span>
+<a name="l00279"></a>00279 <span class="comment"></span>
+<a name="l00280"></a>00280 <span class="comment">  Prototype:</span>
+<a name="l00281"></a>00281 <span class="comment">    &lt;MediaList&gt; createMediaListFromURL(String url, Function callback)</span>
+<a name="l00282"></a>00282 <span class="comment"></span>
+<a name="l00283"></a>00283 <span class="comment">  Parameters:</span>
+<a name="l00284"></a>00284 <span class="comment">    url - The URL of the file to use for creating the &lt;MediaList&gt;.</span>
+<a name="l00285"></a>00285 <span class="comment">    callback - The optional function that gets called when the load is complete.</span>
+<a name="l00286"></a>00286 <span class="comment">               This function is passed a single argument that is the newly</span>
+<a name="l00287"></a>00287 <span class="comment">               created list.</span>
 <a name="l00288"></a>00288 <span class="comment"></span>
-<a name="l00289"></a>00289 <span class="comment">    //Create the medialist from a url pointing to a file.</span>
-<a name="l00290"></a>00290 <span class="comment">    library.createMediaListFromURL("http://path/to/file.m3u", </span>
-<a name="l00291"></a>00291 <span class="comment">      function(list) {</span>
-<a name="l00292"></a>00292 <span class="comment">        alert("loaded " + list.length + " items!");</span>
-<a name="l00293"></a>00293 <span class="comment">      }</span>
-<a name="l00294"></a>00294 <span class="comment">    );</span>
-<a name="l00295"></a>00295 <span class="comment">    (end)</span>
-<a name="l00296"></a>00296 <span class="comment"></span>
-<a name="l00297"></a>00297 <span class="comment">  See Also:</span>
-<a name="l00298"></a>00298 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00299"></a>00299 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00300"></a>00300 <span class="comment">  */</span>
-<a name="l00301"></a>00301   <span class="keywordtype">void</span> createMediaListFromURL(in AString aURL,
-<a name="l00302"></a>00302                               [optional] in <a class="code" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a> aCallback);
-<a name="l00303"></a>00303 
-<a name="l00312"></a>00312   [noscript] <span class="keywordtype">void</span> connectToDefaultLibrary(in AString aLibName);
-<a name="l00313"></a>00313 
-<a name="l00320"></a>00320   <span class="comment">/*</span>
-<a name="l00321"></a>00321 <span class="comment">  Method: getMediaListByName()</span>
-<a name="l00322"></a>00322 <span class="comment"></span>
-<a name="l00323"></a>00323 <span class="comment">  Get the site media list with the given name.  Note that to compare for</span>
-<a name="l00324"></a>00324 <span class="comment">  identity one must compare the guid (instead of JS object comparisions).</span>
-<a name="l00325"></a>00325 <span class="comment"></span>
-<a name="l00326"></a>00326 <span class="comment">  Note: </span>
-<a name="l00327"></a>00327 <span class="comment">    This method will not work with the main library, it is only for</span>
-<a name="l00328"></a>00328 <span class="comment">    use with the Site Library.</span>
-<a name="l00329"></a>00329 <span class="comment"></span>
-<a name="l00330"></a>00330 <span class="comment">  Prototype:</span>
-<a name="l00331"></a>00331 <span class="comment">    &lt;MediaList&gt; getMediaListByName(String name)</span>
-<a name="l00332"></a>00332 <span class="comment"></span>
-<a name="l00333"></a>00333 <span class="comment">  Paramters:</span>
-<a name="l00334"></a>00334 <span class="comment">    name - The name of the media list to fetch</span>
-<a name="l00335"></a>00335 <span class="comment"></span>
-<a name="l00336"></a>00336 <span class="comment">  Returns:</span>
-<a name="l00337"></a>00337 <span class="comment">    The corresponding media list, or null if not found</span>
-<a name="l00338"></a>00338 <span class="comment"></span>
-<a name="l00339"></a>00339 <span class="comment">  Example:</span>
-<a name="l00340"></a>00340 <span class="comment">    (start code)</span>
-<a name="l00341"></a>00341 <span class="comment">    //Create or get a library.</span>
-<a name="l00342"></a>00342 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00289"></a>00289 <span class="comment">  Example:</span>
+<a name="l00290"></a>00290 <span class="comment">    (start code)</span>
+<a name="l00291"></a>00291 <span class="comment">    //Create or get a library.</span>
+<a name="l00292"></a>00292 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00293"></a>00293 <span class="comment"></span>
+<a name="l00294"></a>00294 <span class="comment">    //Create the medialist from a url pointing to a file.</span>
+<a name="l00295"></a>00295 <span class="comment">    library.createMediaListFromURL("http://path/to/file.m3u", </span>
+<a name="l00296"></a>00296 <span class="comment">      function(list) {</span>
+<a name="l00297"></a>00297 <span class="comment">        alert("loaded " + list.length + " items!");</span>
+<a name="l00298"></a>00298 <span class="comment">      }</span>
+<a name="l00299"></a>00299 <span class="comment">    );</span>
+<a name="l00300"></a>00300 <span class="comment">    (end)</span>
+<a name="l00301"></a>00301 <span class="comment"></span>
+<a name="l00302"></a>00302 <span class="comment">  See Also:</span>
+<a name="l00303"></a>00303 <span class="comment">    &lt;createMediaItem()&gt;</span>
+<a name="l00304"></a>00304 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00305"></a>00305 <span class="comment">  */</span>
+<a name="l00306"></a>00306   <span class="keywordtype">void</span> createMediaListFromURL(in AString aURL,
+<a name="l00307"></a>00307                               [optional] in <a class="code" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a> aCallback);
+<a name="l00308"></a>00308 
+<a name="l00317"></a>00317   [noscript] <span class="keywordtype">void</span> connectToDefaultLibrary(in AString aLibName);
+<a name="l00318"></a>00318 
+<a name="l00325"></a>00325   <span class="comment">/*</span>
+<a name="l00326"></a>00326 <span class="comment">  Method: getMediaListByName()</span>
+<a name="l00327"></a>00327 <span class="comment"></span>
+<a name="l00328"></a>00328 <span class="comment">  Get the site media list with the given name.  Note that to compare for</span>
+<a name="l00329"></a>00329 <span class="comment">  identity one must compare the guid (instead of JS object comparisions).</span>
+<a name="l00330"></a>00330 <span class="comment"></span>
+<a name="l00331"></a>00331 <span class="comment">  Note: </span>
+<a name="l00332"></a>00332 <span class="comment">    This method will not work with the main library, it is only for</span>
+<a name="l00333"></a>00333 <span class="comment">    use with the Site Library.</span>
+<a name="l00334"></a>00334 <span class="comment"></span>
+<a name="l00335"></a>00335 <span class="comment">  Prototype:</span>
+<a name="l00336"></a>00336 <span class="comment">    &lt;MediaList&gt; getMediaListByName(String name)</span>
+<a name="l00337"></a>00337 <span class="comment"></span>
+<a name="l00338"></a>00338 <span class="comment">  Paramters:</span>
+<a name="l00339"></a>00339 <span class="comment">    name - The name of the media list to fetch</span>
+<a name="l00340"></a>00340 <span class="comment"></span>
+<a name="l00341"></a>00341 <span class="comment">  Returns:</span>
+<a name="l00342"></a>00342 <span class="comment">    The corresponding media list, or null if not found</span>
 <a name="l00343"></a>00343 <span class="comment"></span>
-<a name="l00344"></a>00344 <span class="comment">    //Fetch the shopping cart media list</span>
-<a name="l00345"></a>00345 <span class="comment">    var mediaList = library.getMediaListByName("Shopping Cart");</span>
-<a name="l00346"></a>00346 <span class="comment"></span>
-<a name="l00347"></a>00347 <span class="comment">    // comparisons for equality must be done on the guid</span>
-<a name="l00348"></a>00348 <span class="comment">    var cart = library.getMediaListByName("Shopping Cart");</span>
-<a name="l00349"></a>00349 <span class="comment">    alert(mediaList.guid == cart.guid);</span>
-<a name="l00350"></a>00350 <span class="comment">    (end)</span>
+<a name="l00344"></a>00344 <span class="comment">  Example:</span>
+<a name="l00345"></a>00345 <span class="comment">    (start code)</span>
+<a name="l00346"></a>00346 <span class="comment">    //Create or get a library.</span>
+<a name="l00347"></a>00347 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00348"></a>00348 <span class="comment"></span>
+<a name="l00349"></a>00349 <span class="comment">    //Fetch the shopping cart media list</span>
+<a name="l00350"></a>00350 <span class="comment">    var mediaList = library.getMediaListByName("Shopping Cart");</span>
 <a name="l00351"></a>00351 <span class="comment"></span>
-<a name="l00352"></a>00352 <span class="comment">  See Also:</span>
-<a name="l00353"></a>00353 <span class="comment">    &lt;createMediaList()&gt;</span>
-<a name="l00354"></a>00354 <span class="comment">  */</span>
-<a name="l00355"></a>00355   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> getMediaListByName( in AString aName );
-<a name="l00356"></a>00356 
-<a name="l00357"></a>00357   <span class="comment">/*</span>
-<a name="l00358"></a>00358 <span class="comment">  Method: getArtists()</span>
-<a name="l00359"></a>00359 <span class="comment"></span>
-<a name="l00360"></a>00360 <span class="comment">  Get a StringEnumerator containing all of the unique artist names in the &lt;Library&gt;.</span>
-<a name="l00361"></a>00361 <span class="comment"></span>
-<a name="l00362"></a>00362 <span class="comment">  Prototype:</span>
-<a name="l00363"></a>00363 <span class="comment">    StringEnumerator getArtists()</span>
+<a name="l00352"></a>00352 <span class="comment">    // comparisons for equality must be done on the guid</span>
+<a name="l00353"></a>00353 <span class="comment">    var cart = library.getMediaListByName("Shopping Cart");</span>
+<a name="l00354"></a>00354 <span class="comment">    alert(mediaList.guid == cart.guid);</span>
+<a name="l00355"></a>00355 <span class="comment">    (end)</span>
+<a name="l00356"></a>00356 <span class="comment"></span>
+<a name="l00357"></a>00357 <span class="comment">  See Also:</span>
+<a name="l00358"></a>00358 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00359"></a>00359 <span class="comment">  */</span>
+<a name="l00360"></a>00360   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> getMediaListByName( in AString aName );
+<a name="l00361"></a>00361 
+<a name="l00362"></a>00362   <span class="comment">/*</span>
+<a name="l00363"></a>00363 <span class="comment">  Method: getArtists()</span>
 <a name="l00364"></a>00364 <span class="comment"></span>
-<a name="l00365"></a>00365 <span class="comment">  Returns:</span>
-<a name="l00366"></a>00366 <span class="comment">    A StringEnumerator containing all of the </span>
-<a name="l00367"></a>00367 <span class="comment">    unique artist names that exist in the &lt;Library&gt;.</span>
-<a name="l00368"></a>00368 <span class="comment"></span>
-<a name="l00369"></a>00369 <span class="comment">  Example:</span>
-<a name="l00370"></a>00370 <span class="comment">    (start code)</span>
-<a name="l00371"></a>00371 <span class="comment">    //Create or get a library.</span>
-<a name="l00372"></a>00372 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00365"></a>00365 <span class="comment">  Get a StringEnumerator containing all of the unique artist names in the &lt;Library&gt;.</span>
+<a name="l00366"></a>00366 <span class="comment"></span>
+<a name="l00367"></a>00367 <span class="comment">  Prototype:</span>
+<a name="l00368"></a>00368 <span class="comment">    StringEnumerator getArtists()</span>
+<a name="l00369"></a>00369 <span class="comment"></span>
+<a name="l00370"></a>00370 <span class="comment">  Returns:</span>
+<a name="l00371"></a>00371 <span class="comment">    A StringEnumerator containing all of the </span>
+<a name="l00372"></a>00372 <span class="comment">    unique artist names that exist in the &lt;Library&gt;.</span>
 <a name="l00373"></a>00373 <span class="comment"></span>
-<a name="l00374"></a>00374 <span class="comment">    //Get unique artists.</span>
-<a name="l00375"></a>00375 <span class="comment">    var artists = library.getArtists();</span>
-<a name="l00376"></a>00376 <span class="comment"></span>
-<a name="l00377"></a>00377 <span class="comment">    while(artists.hasMore()) {</span>
-<a name="l00378"></a>00378 <span class="comment">      //The artist name (ie. "Justice")</span>
-<a name="l00379"></a>00379 <span class="comment">      var artist = artists.getNext();</span>
-<a name="l00380"></a>00380 <span class="comment">      </span>
-<a name="l00381"></a>00381 <span class="comment">      //Do something with the artist name</span>
-<a name="l00382"></a>00382 <span class="comment">      ...</span>
-<a name="l00383"></a>00383 <span class="comment">    }</span>
-<a name="l00384"></a>00384 <span class="comment">    (end)</span>
-<a name="l00385"></a>00385 <span class="comment"></span>
-<a name="l00386"></a>00386 <span class="comment">  See Also:</span>
-<a name="l00387"></a>00387 <span class="comment">    &lt;getAlbums()&gt;</span>
-<a name="l00388"></a>00388 <span class="comment">    &lt;getGenres()&gt;</span>
-<a name="l00389"></a>00389 <span class="comment">    &lt;getYears()&gt;</span>
-<a name="l00390"></a>00390 <span class="comment">    &lt;getPlaylists()&gt;</span>
-<a name="l00391"></a>00391 <span class="comment"></span>
-<a name="l00392"></a>00392 <span class="comment"></span>
-<a name="l00393"></a>00393 <span class="comment">  External Reference:</span>
-<a name="l00394"></a>00394 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
-<a name="l00395"></a>00395 <span class="comment">  */</span>
-<a name="l00396"></a>00396   nsIStringEnumerator getArtists();
-<a name="l00397"></a>00397 
-<a name="l00398"></a>00398   <span class="comment">/*</span>
-<a name="l00399"></a>00399 <span class="comment">  Method: getAlbums()</span>
-<a name="l00400"></a>00400 <span class="comment"></span>
-<a name="l00401"></a>00401 <span class="comment">  Get a StringEnumerator containing all of the unique album names in the &lt;Library&gt;.</span>
-<a name="l00402"></a>00402 <span class="comment"></span>
-<a name="l00403"></a>00403 <span class="comment">  Prototype:</span>
-<a name="l00404"></a>00404 <span class="comment">    StringEnumerator getAlbums()</span>
-<a name="l00405"></a>00405 <span class="comment"></span>
-<a name="l00406"></a>00406 <span class="comment">  Returns:</span>
-<a name="l00407"></a>00407 <span class="comment">    A StringEnumerator containing all of the </span>
-<a name="l00408"></a>00408 <span class="comment">    unique album names that exist in the &lt;Library&gt;.</span>
+<a name="l00374"></a>00374 <span class="comment">  Example:</span>
+<a name="l00375"></a>00375 <span class="comment">    (start code)</span>
+<a name="l00376"></a>00376 <span class="comment">    //Create or get a library.</span>
+<a name="l00377"></a>00377 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00378"></a>00378 <span class="comment"></span>
+<a name="l00379"></a>00379 <span class="comment">    //Get unique artists.</span>
+<a name="l00380"></a>00380 <span class="comment">    var artists = library.getArtists();</span>
+<a name="l00381"></a>00381 <span class="comment"></span>
+<a name="l00382"></a>00382 <span class="comment">    while(artists.hasMore()) {</span>
+<a name="l00383"></a>00383 <span class="comment">      //The artist name (ie. "Justice")</span>
+<a name="l00384"></a>00384 <span class="comment">      var artist = artists.getNext();</span>
+<a name="l00385"></a>00385 <span class="comment">      </span>
+<a name="l00386"></a>00386 <span class="comment">      //Do something with the artist name</span>
+<a name="l00387"></a>00387 <span class="comment">      ...</span>
+<a name="l00388"></a>00388 <span class="comment">    }</span>
+<a name="l00389"></a>00389 <span class="comment">    (end)</span>
+<a name="l00390"></a>00390 <span class="comment"></span>
+<a name="l00391"></a>00391 <span class="comment">  See Also:</span>
+<a name="l00392"></a>00392 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00393"></a>00393 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00394"></a>00394 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00395"></a>00395 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00396"></a>00396 <span class="comment"></span>
+<a name="l00397"></a>00397 <span class="comment">  External Reference:</span>
+<a name="l00398"></a>00398 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
+<a name="l00399"></a>00399 <span class="comment">  */</span>
+<a name="l00400"></a>00400   nsIStringEnumerator getArtists();
+<a name="l00401"></a>00401 
+<a name="l00402"></a>00402   <span class="comment">/*</span>
+<a name="l00403"></a>00403 <span class="comment">  Method: getAlbums()</span>
+<a name="l00404"></a>00404 <span class="comment"></span>
+<a name="l00405"></a>00405 <span class="comment">  Get a StringEnumerator containing all of the unique album names in the &lt;Library&gt;.</span>
+<a name="l00406"></a>00406 <span class="comment"></span>
+<a name="l00407"></a>00407 <span class="comment">  Prototype:</span>
+<a name="l00408"></a>00408 <span class="comment">    StringEnumerator getAlbums()</span>
 <a name="l00409"></a>00409 <span class="comment"></span>
-<a name="l00410"></a>00410 <span class="comment">  Example:</span>
-<a name="l00411"></a>00411 <span class="comment">    (start code)</span>
-<a name="l00412"></a>00412 <span class="comment">    //Create or get a library.</span>
-<a name="l00413"></a>00413 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00414"></a>00414 <span class="comment"></span>
-<a name="l00415"></a>00415 <span class="comment">    //Get unique albums.</span>
-<a name="l00416"></a>00416 <span class="comment">    var albums = library.getAlbums();</span>
-<a name="l00417"></a>00417 <span class="comment"></span>
-<a name="l00418"></a>00418 <span class="comment">    while(albums.hasMore()) {</span>
-<a name="l00419"></a>00419 <span class="comment">      //The album name (ie. "Cross")</span>
-<a name="l00420"></a>00420 <span class="comment">      var album = albums.getNext();</span>
-<a name="l00421"></a>00421 <span class="comment">      </span>
-<a name="l00422"></a>00422 <span class="comment">      //Do something with the album name</span>
-<a name="l00423"></a>00423 <span class="comment">      ...</span>
-<a name="l00424"></a>00424 <span class="comment">    }</span>
-<a name="l00425"></a>00425 <span class="comment">    (end)</span>
-<a name="l00426"></a>00426 <span class="comment"></span>
-<a name="l00427"></a>00427 <span class="comment">  See Also:</span>
-<a name="l00428"></a>00428 <span class="comment">    &lt;getArtists()&gt;</span>
-<a name="l00429"></a>00429 <span class="comment">    &lt;getGenres()&gt;</span>
-<a name="l00430"></a>00430 <span class="comment">    &lt;getYears()&gt;</span>
-<a name="l00431"></a>00431 <span class="comment">    &lt;getPlaylists()&gt;</span>
-<a name="l00432"></a>00432 <span class="comment"></span>
-<a name="l00433"></a>00433 <span class="comment"></span>
-<a name="l00434"></a>00434 <span class="comment">  External Reference:</span>
-<a name="l00435"></a>00435 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
-<a name="l00436"></a>00436 <span class="comment">  */</span>
-<a name="l00437"></a>00437   nsIStringEnumerator getAlbums();
-<a name="l00438"></a>00438 
-<a name="l00439"></a>00439   <span class="comment">/*</span>
-<a name="l00440"></a>00440 <span class="comment">  Method: getGenres()</span>
-<a name="l00441"></a>00441 <span class="comment"></span>
-<a name="l00442"></a>00442 <span class="comment">  Get a StringEnumerator containing all of the unique genres in the &lt;Library&gt;.</span>
-<a name="l00443"></a>00443 <span class="comment"></span>
-<a name="l00444"></a>00444 <span class="comment">  Prototype:</span>
-<a name="l00445"></a>00445 <span class="comment">    StringEnumerator getGenres()</span>
-<a name="l00446"></a>00446 <span class="comment"></span>
-<a name="l00447"></a>00447 <span class="comment">  Returns:</span>
-<a name="l00448"></a>00448 <span class="comment">    A StringEnumerator containing all of the </span>
-<a name="l00449"></a>00449 <span class="comment">    unique genres that exist in the &lt;Library&gt;.</span>
+<a name="l00410"></a>00410 <span class="comment">  Returns:</span>
+<a name="l00411"></a>00411 <span class="comment">    A StringEnumerator containing all of the </span>
+<a name="l00412"></a>00412 <span class="comment">    unique album names that exist in the &lt;Library&gt;.</span>
+<a name="l00413"></a>00413 <span class="comment"></span>
+<a name="l00414"></a>00414 <span class="comment">  Example:</span>
+<a name="l00415"></a>00415 <span class="comment">    (start code)</span>
+<a name="l00416"></a>00416 <span class="comment">    //Create or get a library.</span>
+<a name="l00417"></a>00417 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00418"></a>00418 <span class="comment"></span>
+<a name="l00419"></a>00419 <span class="comment">    //Get unique albums.</span>
+<a name="l00420"></a>00420 <span class="comment">    var albums = library.getAlbums();</span>
+<a name="l00421"></a>00421 <span class="comment"></span>
+<a name="l00422"></a>00422 <span class="comment">    while(albums.hasMore()) {</span>
+<a name="l00423"></a>00423 <span class="comment">      //The album name (ie. "Cross")</span>
+<a name="l00424"></a>00424 <span class="comment">      var album = albums.getNext();</span>
+<a name="l00425"></a>00425 <span class="comment">      </span>
+<a name="l00426"></a>00426 <span class="comment">      //Do something with the album name</span>
+<a name="l00427"></a>00427 <span class="comment">      ...</span>
+<a name="l00428"></a>00428 <span class="comment">    }</span>
+<a name="l00429"></a>00429 <span class="comment">    (end)</span>
+<a name="l00430"></a>00430 <span class="comment"></span>
+<a name="l00431"></a>00431 <span class="comment">  See Also:</span>
+<a name="l00432"></a>00432 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00433"></a>00433 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00434"></a>00434 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00435"></a>00435 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00436"></a>00436 <span class="comment"></span>
+<a name="l00437"></a>00437 <span class="comment"></span>
+<a name="l00438"></a>00438 <span class="comment">  External Reference:</span>
+<a name="l00439"></a>00439 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
+<a name="l00440"></a>00440 <span class="comment">  */</span>
+<a name="l00441"></a>00441   nsIStringEnumerator getAlbums();
+<a name="l00442"></a>00442 
+<a name="l00443"></a>00443   <span class="comment">/*</span>
+<a name="l00444"></a>00444 <span class="comment">  Method: getGenres()</span>
+<a name="l00445"></a>00445 <span class="comment"></span>
+<a name="l00446"></a>00446 <span class="comment">  Get a StringEnumerator containing all of the unique genres in the &lt;Library&gt;.</span>
+<a name="l00447"></a>00447 <span class="comment"></span>
+<a name="l00448"></a>00448 <span class="comment">  Prototype:</span>
+<a name="l00449"></a>00449 <span class="comment">    StringEnumerator getGenres()</span>
 <a name="l00450"></a>00450 <span class="comment"></span>
-<a name="l00451"></a>00451 <span class="comment">  Example:</span>
-<a name="l00452"></a>00452 <span class="comment">    (start code)</span>
-<a name="l00453"></a>00453 <span class="comment">    //Create or get a library.</span>
-<a name="l00454"></a>00454 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00455"></a>00455 <span class="comment"></span>
-<a name="l00456"></a>00456 <span class="comment">    //Get unique genres.</span>
-<a name="l00457"></a>00457 <span class="comment">    var genres = library.getGenres();</span>
-<a name="l00458"></a>00458 <span class="comment"></span>
-<a name="l00459"></a>00459 <span class="comment">    while(genres.hasMore()) {</span>
-<a name="l00460"></a>00460 <span class="comment">      //The genre (ie. "Electronic")</span>
-<a name="l00461"></a>00461 <span class="comment">      var genre = genres.getNext();</span>
-<a name="l00462"></a>00462 <span class="comment">      </span>
-<a name="l00463"></a>00463 <span class="comment">      //Do something with the genre</span>
-<a name="l00464"></a>00464 <span class="comment">      ...</span>
-<a name="l00465"></a>00465 <span class="comment">    }</span>
-<a name="l00466"></a>00466 <span class="comment"></span>
-<a name="l00467"></a>00467 <span class="comment">    (end)</span>
-<a name="l00468"></a>00468 <span class="comment"></span>
-<a name="l00469"></a>00469 <span class="comment">  See Also:</span>
-<a name="l00470"></a>00470 <span class="comment">    &lt;getArtists()&gt;</span>
-<a name="l00471"></a>00471 <span class="comment">    &lt;getAlbums()&gt;</span>
-<a name="l00472"></a>00472 <span class="comment">    &lt;getYears()&gt;</span>
-<a name="l00473"></a>00473 <span class="comment">    &lt;getPlaylists()&gt;</span>
-<a name="l00474"></a>00474 <span class="comment"></span>
-<a name="l00475"></a>00475 <span class="comment">  External Reference:</span>
-<a name="l00476"></a>00476 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
-<a name="l00477"></a>00477 <span class="comment">  */</span>
-<a name="l00478"></a>00478   nsIStringEnumerator getGenres();
-<a name="l00479"></a>00479 
-<a name="l00480"></a>00480   <span class="comment">/*</span>
-<a name="l00481"></a>00481 <span class="comment">  Method: getYears()</span>
-<a name="l00482"></a>00482 <span class="comment"></span>
-<a name="l00483"></a>00483 <span class="comment">  Get a StringEnumerator containing all of the unique years in the &lt;Library&gt;.</span>
-<a name="l00484"></a>00484 <span class="comment"></span>
-<a name="l00485"></a>00485 <span class="comment">  Prototype:</span>
-<a name="l00486"></a>00486 <span class="comment">    StringEnumerator getYears()</span>
-<a name="l00487"></a>00487 <span class="comment"></span>
-<a name="l00488"></a>00488 <span class="comment">  Returns:</span>
-<a name="l00489"></a>00489 <span class="comment">    A StringEnumerator containing all of the </span>
-<a name="l00490"></a>00490 <span class="comment">    unique years that exist in the &lt;Library&gt;.</span>
+<a name="l00451"></a>00451 <span class="comment">  Returns:</span>
+<a name="l00452"></a>00452 <span class="comment">    A StringEnumerator containing all of the </span>
+<a name="l00453"></a>00453 <span class="comment">    unique genres that exist in the &lt;Library&gt;.</span>
+<a name="l00454"></a>00454 <span class="comment"></span>
+<a name="l00455"></a>00455 <span class="comment">  Example:</span>
+<a name="l00456"></a>00456 <span class="comment">    (start code)</span>
+<a name="l00457"></a>00457 <span class="comment">    //Create or get a library.</span>
+<a name="l00458"></a>00458 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00459"></a>00459 <span class="comment"></span>
+<a name="l00460"></a>00460 <span class="comment">    //Get unique genres.</span>
+<a name="l00461"></a>00461 <span class="comment">    var genres = library.getGenres();</span>
+<a name="l00462"></a>00462 <span class="comment"></span>
+<a name="l00463"></a>00463 <span class="comment">    while(genres.hasMore()) {</span>
+<a name="l00464"></a>00464 <span class="comment">      //The genre (ie. "Electronic")</span>
+<a name="l00465"></a>00465 <span class="comment">      var genre = genres.getNext();</span>
+<a name="l00466"></a>00466 <span class="comment">      </span>
+<a name="l00467"></a>00467 <span class="comment">      //Do something with the genre</span>
+<a name="l00468"></a>00468 <span class="comment">      ...</span>
+<a name="l00469"></a>00469 <span class="comment">    }</span>
+<a name="l00470"></a>00470 <span class="comment"></span>
+<a name="l00471"></a>00471 <span class="comment">    (end)</span>
+<a name="l00472"></a>00472 <span class="comment"></span>
+<a name="l00473"></a>00473 <span class="comment">  See Also:</span>
+<a name="l00474"></a>00474 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00475"></a>00475 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00476"></a>00476 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00477"></a>00477 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00478"></a>00478 <span class="comment"></span>
+<a name="l00479"></a>00479 <span class="comment">  External Reference:</span>
+<a name="l00480"></a>00480 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
+<a name="l00481"></a>00481 <span class="comment">  */</span>
+<a name="l00482"></a>00482   nsIStringEnumerator getGenres();
+<a name="l00483"></a>00483 
+<a name="l00484"></a>00484   <span class="comment">/*</span>
+<a name="l00485"></a>00485 <span class="comment">  Method: getYears()</span>
+<a name="l00486"></a>00486 <span class="comment"></span>
+<a name="l00487"></a>00487 <span class="comment">  Get a StringEnumerator containing all of the unique years in the &lt;Library&gt;.</span>
+<a name="l00488"></a>00488 <span class="comment"></span>
+<a name="l00489"></a>00489 <span class="comment">  Prototype:</span>
+<a name="l00490"></a>00490 <span class="comment">    StringEnumerator getYears()</span>
 <a name="l00491"></a>00491 <span class="comment"></span>
-<a name="l00492"></a>00492 <span class="comment">  Example:</span>
-<a name="l00493"></a>00493 <span class="comment">    (start code)</span>
-<a name="l00494"></a>00494 <span class="comment">    //Create or get a library.</span>
-<a name="l00495"></a>00495 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00496"></a>00496 <span class="comment"></span>
-<a name="l00497"></a>00497 <span class="comment">    //Get unique years.</span>
-<a name="l00498"></a>00498 <span class="comment">    var years = library.getYears();</span>
-<a name="l00499"></a>00499 <span class="comment"></span>
-<a name="l00500"></a>00500 <span class="comment">    while(years.hasMore()) {</span>
-<a name="l00501"></a>00501 <span class="comment">      //The year (ie. "2007")</span>
-<a name="l00502"></a>00502 <span class="comment">      var year = years.getNext();</span>
-<a name="l00503"></a>00503 <span class="comment">      </span>
-<a name="l00504"></a>00504 <span class="comment">      //Do something with the year</span>
-<a name="l00505"></a>00505 <span class="comment">      ...</span>
-<a name="l00506"></a>00506 <span class="comment">    }</span>
-<a name="l00507"></a>00507 <span class="comment">    (end)</span>
-<a name="l00508"></a>00508 <span class="comment"></span>
-<a name="l00509"></a>00509 <span class="comment">  See Also:</span>
-<a name="l00510"></a>00510 <span class="comment">    &lt;getArtists()&gt;</span>
-<a name="l00511"></a>00511 <span class="comment">    &lt;getAlbums()&gt;</span>
-<a name="l00512"></a>00512 <span class="comment">    &lt;getGenres()&gt;</span>
-<a name="l00513"></a>00513 <span class="comment">    &lt;getPlaylists()&gt;</span>
-<a name="l00514"></a>00514 <span class="comment"></span>
-<a name="l00515"></a>00515 <span class="comment">  External Reference:</span>
-<a name="l00516"></a>00516 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
-<a name="l00517"></a>00517 <span class="comment">  */</span>
-<a name="l00518"></a>00518   nsIStringEnumerator getYears();
-<a name="l00519"></a>00519 
-<a name="l00520"></a>00520   <span class="comment">/*</span>
-<a name="l00521"></a>00521 <span class="comment">  Method: getPlaylists()</span>
-<a name="l00522"></a>00522 <span class="comment"></span>
-<a name="l00523"></a>00523 <span class="comment">  Get an Enumerator containing all of the &lt;MediaLists&gt; in the &lt;Library&gt;.</span>
-<a name="l00524"></a>00524 <span class="comment"></span>
-<a name="l00525"></a>00525 <span class="comment">  Prototype:</span>
-<a name="l00526"></a>00526 <span class="comment">    Enumerator getPlaylists()</span>
-<a name="l00527"></a>00527 <span class="comment"></span>
-<a name="l00528"></a>00528 <span class="comment">  Returns:</span>
-<a name="l00529"></a>00529 <span class="comment">    An Enumerator containing all of the </span>
-<a name="l00530"></a>00530 <span class="comment">    &lt;MediaLists&gt; present in the &lt;Library&gt;.</span>
+<a name="l00492"></a>00492 <span class="comment">  Returns:</span>
+<a name="l00493"></a>00493 <span class="comment">    A StringEnumerator containing all of the </span>
+<a name="l00494"></a>00494 <span class="comment">    unique years that exist in the &lt;Library&gt;.</span>
+<a name="l00495"></a>00495 <span class="comment"></span>
+<a name="l00496"></a>00496 <span class="comment">  Example:</span>
+<a name="l00497"></a>00497 <span class="comment">    (start code)</span>
+<a name="l00498"></a>00498 <span class="comment">    //Create or get a library.</span>
+<a name="l00499"></a>00499 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00500"></a>00500 <span class="comment"></span>
+<a name="l00501"></a>00501 <span class="comment">    //Get unique years.</span>
+<a name="l00502"></a>00502 <span class="comment">    var years = library.getYears();</span>
+<a name="l00503"></a>00503 <span class="comment"></span>
+<a name="l00504"></a>00504 <span class="comment">    while(years.hasMore()) {</span>
+<a name="l00505"></a>00505 <span class="comment">      //The year (ie. "2007")</span>
+<a name="l00506"></a>00506 <span class="comment">      var year = years.getNext();</span>
+<a name="l00507"></a>00507 <span class="comment">      </span>
+<a name="l00508"></a>00508 <span class="comment">      //Do something with the year</span>
+<a name="l00509"></a>00509 <span class="comment">      ...</span>
+<a name="l00510"></a>00510 <span class="comment">    }</span>
+<a name="l00511"></a>00511 <span class="comment">    (end)</span>
+<a name="l00512"></a>00512 <span class="comment"></span>
+<a name="l00513"></a>00513 <span class="comment">  See Also:</span>
+<a name="l00514"></a>00514 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00515"></a>00515 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00516"></a>00516 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00517"></a>00517 <span class="comment">    &lt;getPlaylists()&gt;</span>
+<a name="l00518"></a>00518 <span class="comment"></span>
+<a name="l00519"></a>00519 <span class="comment">  External Reference:</span>
+<a name="l00520"></a>00520 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html&gt; for nsIStringEnumerator interface reference.</span>
+<a name="l00521"></a>00521 <span class="comment">  */</span>
+<a name="l00522"></a>00522   nsIStringEnumerator getYears();
+<a name="l00523"></a>00523 
+<a name="l00524"></a>00524   <span class="comment">/*</span>
+<a name="l00525"></a>00525 <span class="comment">  Method: getPlaylists()</span>
+<a name="l00526"></a>00526 <span class="comment"></span>
+<a name="l00527"></a>00527 <span class="comment">  Get an Enumerator containing all of the &lt;MediaLists&gt; in the &lt;Library&gt;.</span>
+<a name="l00528"></a>00528 <span class="comment"></span>
+<a name="l00529"></a>00529 <span class="comment">  Prototype:</span>
+<a name="l00530"></a>00530 <span class="comment">    Enumerator getPlaylists()</span>
 <a name="l00531"></a>00531 <span class="comment"></span>
-<a name="l00532"></a>00532 <span class="comment">  Example:</span>
-<a name="l00533"></a>00533 <span class="comment">    (start code)</span>
-<a name="l00534"></a>00534 <span class="comment">    //Create or get a library.</span>
-<a name="l00535"></a>00535 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00536"></a>00536 <span class="comment">    </span>
-<a name="l00537"></a>00537 <span class="comment">    //Get all MediaLists.</span>
-<a name="l00538"></a>00538 <span class="comment">    var mediaLists = library.getPlaylists();</span>
-<a name="l00539"></a>00539 <span class="comment"></span>
-<a name="l00540"></a>00540 <span class="comment">    while(mediaLists.hasMoreElements()) {</span>
-<a name="l00541"></a>00541 <span class="comment">      var mediaList = mediaLists.getNext();</span>
-<a name="l00542"></a>00542 <span class="comment"></span>
-<a name="l00543"></a>00543 <span class="comment">      //Do something with the MediaList</span>
-<a name="l00544"></a>00544 <span class="comment">      alert(mediaList.name);</span>
-<a name="l00545"></a>00545 <span class="comment">    }</span>
-<a name="l00546"></a>00546 <span class="comment">    (end)</span>
-<a name="l00547"></a>00547 <span class="comment"></span>
-<a name="l00548"></a>00548 <span class="comment">  See Also:</span>
-<a name="l00549"></a>00549 <span class="comment">    &lt;getArtists()&gt;</span>
-<a name="l00550"></a>00550 <span class="comment">    &lt;getAlbums()&gt;</span>
-<a name="l00551"></a>00551 <span class="comment">    &lt;getGenres()&gt;</span>
-<a name="l00552"></a>00552 <span class="comment">    &lt;getYears()&gt;</span>
-<a name="l00553"></a>00553 <span class="comment"></span>
-<a name="l00554"></a>00554 <span class="comment">  External Reference:</span>
-<a name="l00555"></a>00555 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html&gt; for nsISimpleEnumerator interface reference.</span>
-<a name="l00556"></a>00556 <span class="comment">  */</span>
-<a name="l00557"></a>00557   nsISimpleEnumerator getPlaylists();
-<a name="l00558"></a>00558 };
-<a name="l00559"></a>00559 
-<a name="l00571"></a>00571 [scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
-<a name="l00572"></a><a class="code" href="interfacesb_i_remote_site_library.html">00572</a> interface <a class="code" href="interfacesb_i_remote_site_library.html" title="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</a> : <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a>
-<a name="l00573"></a>00573 {
-<a name="l00578"></a><a class="code" href="interfacesb_i_remote_site_library.html#8418b4b73c9f73bf2ff32d192fb8ba04">00578</a>   readonly attribute AString filename;
-<a name="l00579"></a>00579 
-<a name="l00605"></a>00605   [noscript] <span class="keywordtype">void</span> connectToSiteLibrary(in AUTF8String aDomain,
-<a name="l00606"></a>00606                                        in AUTF8String aPath);
-<a name="l00607"></a>00607 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:18:51 2007 for Songbird by&nbsp;
+<a name="l00532"></a>00532 <span class="comment">  Returns:</span>
+<a name="l00533"></a>00533 <span class="comment">    An Enumerator containing all of the </span>
+<a name="l00534"></a>00534 <span class="comment">    &lt;MediaLists&gt; present in the &lt;Library&gt;.</span>
+<a name="l00535"></a>00535 <span class="comment"></span>
+<a name="l00536"></a>00536 <span class="comment">  Example:</span>
+<a name="l00537"></a>00537 <span class="comment">    (start code)</span>
+<a name="l00538"></a>00538 <span class="comment">    //Create or get a library.</span>
+<a name="l00539"></a>00539 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00540"></a>00540 <span class="comment">    </span>
+<a name="l00541"></a>00541 <span class="comment">    //Get all MediaLists.</span>
+<a name="l00542"></a>00542 <span class="comment">    var mediaLists = library.getPlaylists();</span>
+<a name="l00543"></a>00543 <span class="comment"></span>
+<a name="l00544"></a>00544 <span class="comment">    while(mediaLists.hasMoreElements()) {</span>
+<a name="l00545"></a>00545 <span class="comment">      var mediaList = mediaLists.getNext();</span>
+<a name="l00546"></a>00546 <span class="comment"></span>
+<a name="l00547"></a>00547 <span class="comment">      //Do something with the MediaList</span>
+<a name="l00548"></a>00548 <span class="comment">      alert(mediaList.name);</span>
+<a name="l00549"></a>00549 <span class="comment">    }</span>
+<a name="l00550"></a>00550 <span class="comment">    (end)</span>
+<a name="l00551"></a>00551 <span class="comment"></span>
+<a name="l00552"></a>00552 <span class="comment">  See Also:</span>
+<a name="l00553"></a>00553 <span class="comment">    &lt;getArtists()&gt;</span>
+<a name="l00554"></a>00554 <span class="comment">    &lt;getAlbums()&gt;</span>
+<a name="l00555"></a>00555 <span class="comment">    &lt;getGenres()&gt;</span>
+<a name="l00556"></a>00556 <span class="comment">    &lt;getYears()&gt;</span>
+<a name="l00557"></a>00557 <span class="comment"></span>
+<a name="l00558"></a>00558 <span class="comment">  External Reference:</span>
+<a name="l00559"></a>00559 <span class="comment">    Please see &lt;http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html&gt; for nsISimpleEnumerator interface reference.</span>
+<a name="l00560"></a>00560 <span class="comment">  */</span>
+<a name="l00561"></a>00561   nsISimpleEnumerator getPlaylists();
+<a name="l00562"></a>00562 };
+<a name="l00563"></a>00563 
+<a name="l00575"></a>00575 [scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
+<a name="l00576"></a><a class="code" href="interfacesb_i_remote_site_library.html">00576</a> interface <a class="code" href="interfacesb_i_remote_site_library.html" title="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</a> : <a class="code" href="interfacesb_i_remote_library.html" title="An interface to control a media library from remote web pages.">sbIRemoteLibrary</a>
+<a name="l00577"></a>00577 {
+<a name="l00582"></a><a class="code" href="interfacesb_i_remote_site_library.html#8418b4b73c9f73bf2ff32d192fb8ba04">00582</a>   readonly attribute AString filename;
+<a name="l00583"></a>00583 
+<a name="l00609"></a>00609   [noscript] <span class="keywordtype">void</span> connectToSiteLibrary(in AUTF8String aDomain,
+<a name="l00610"></a>00610                                        in AUTF8String aPath);
+<a name="l00611"></a>00611 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 3 16:29:54 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

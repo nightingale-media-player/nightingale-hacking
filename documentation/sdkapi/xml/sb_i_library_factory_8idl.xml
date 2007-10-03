@@ -59,8 +59,8 @@
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59" refid="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>contractID;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>createLibrary(in<sp/>nsIPropertyBag2<sp/>aCreationParameters);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>createLibrary(in<sp/>nsIPropertyBag2<sp/>aCreationParameters);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl"/>
   </compounddef>

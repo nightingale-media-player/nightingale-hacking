@@ -44,7 +44,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="207"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="212"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
@@ -70,7 +70,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="250"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="255"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1f49eeaaea6d0735699b3b22f6a590e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -107,7 +107,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="302"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="307"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -132,7 +132,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="312"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="317"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
@@ -159,7 +159,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="355"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="360"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="396"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="400"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -185,7 +185,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="437"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="441"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="478"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="482"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_101044d10e08f514db0ce7bbac52ef472" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -211,7 +211,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="518"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="522"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_13062b2b86e74ad3251b43cf707b8ab29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -224,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="557"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="561"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -243,7 +243,7 @@
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </inheritancegraph>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="111" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="110" bodyend="558"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="111" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="110" bodyend="562"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>connectToDefaultLibrary</name></member>
       <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaItem</name></member>

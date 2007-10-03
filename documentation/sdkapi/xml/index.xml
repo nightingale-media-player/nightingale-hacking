@@ -1404,6 +1404,7 @@
     <member refid="interfacesb_i_remote_player_122def0e35e5c89b9c5841ee5b97331a8" kind="variable"><name>mainLibrary</name></member>
     <member refid="interfacesb_i_remote_player_193af9fadef3eac3ca4335c5664874b2d" kind="variable"><name>webLibrary</name></member>
     <member refid="interfacesb_i_remote_player_15ecb84cdd19955ecb121d2f69bac91ea" kind="variable"><name>siteLibrary</name></member>
+    <member refid="interfacesb_i_remote_player_12ab865e69b14c085b34d27952ba4494f" kind="variable"><name>downloadMediaList</name></member>
     <member refid="interfacesb_i_remote_player_1bd522fc6038ff7711fd69341104e1690" kind="function"><name>addListener</name></member>
     <member refid="interfacesb_i_remote_player_16468a05a52df347ec61c1e9a1b172873" kind="function"><name>removeListener</name></member>
     <member refid="interfacesb_i_remote_player_1c2e5e455db8388de96978e32a8988d85" kind="function"><name>downloadItem</name></member>
@@ -1420,6 +1421,14 @@
     <member refid="interfacesb_i_remote_player_1ae78604f44c7a50b11b6441758ec81bd" kind="function"><name>libraries</name></member>
     <member refid="interfacesb_i_remote_player_1d07ad92b9624b860ab2d5c522d61f35e" kind="function"><name>fireEventToContent</name></member>
     <member refid="interfacesb_i_remote_player_12696499c3a08b3353c6f9773a3eeaf8a" kind="function"><name>onCommandsChanged</name></member>
+    <member refid="interfacesb_i_remote_player_14a01374c58b31277f592fe4b70619b3b" kind="function"><name>createTextProperty</name></member>
+    <member refid="interfacesb_i_remote_player_1fdd1d68de42b22d3fbe853b975fca76d" kind="function"><name>createDateTimeProperty</name></member>
+    <member refid="interfacesb_i_remote_player_1356f6c0c455a75259823384d42a6d10e" kind="function"><name>createURIProperty</name></member>
+    <member refid="interfacesb_i_remote_player_1c4b37d879d9d7e90bcf3e7aa3339da29" kind="function"><name>createNumberProperty</name></member>
+    <member refid="interfacesb_i_remote_player_155790ac50f5ba36e484d973fcceb30fc" kind="function"><name>createImageProperty</name></member>
+    <member refid="interfacesb_i_remote_player_10d4b7d587b3f9733b1ebad2a0c2eb70b" kind="function"><name>createRatingsProperty</name></member>
+    <member refid="interfacesb_i_remote_player_127df08bfe96a6983e18ecc3a3db09515" kind="function"><name>createButtonProperty</name></member>
+    <member refid="interfacesb_i_remote_player_1184069ade6be68f93e3be8681066d097" kind="function"><name>createDownloadButtonProperty</name></member>
   </compound>
   <compound refid="interfacesb_i_remote_site_library" kind="interface"><name>sbIRemoteSiteLibrary</name>
     <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" kind="variable"><name>filename</name></member>

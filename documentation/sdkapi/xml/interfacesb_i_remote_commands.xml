@@ -137,6 +137,9 @@ siteLibrary</edgelabel>
         <childnode refid="559" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
+        <childnode refid="560" relation="usage">
+          <edgelabel>downloadMediaList</edgelabel>
+        </childnode>
       </node>
       <node id="559">
         <label>sbIRemoteWebPlaylist</label>

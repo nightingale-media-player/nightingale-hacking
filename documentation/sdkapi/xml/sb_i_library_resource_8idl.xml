@@ -192,64 +192,74 @@
 <codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#trackNumber<sp/>-<sp/>The<sp/>track<sp/>number<sp/>of<sp/>this<sp/>media<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
 <codeline lineno="174"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#year<sp/>-<sp/>The<sp/>year<sp/>the<sp/>media<sp/>was<sp/>released</highlight></codeline>
 <codeline lineno="175"><highlight class="comment"></highlight></codeline>
-<codeline lineno="176"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;setProperty()&gt;</highlight></codeline>
-<codeline lineno="178"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/>AString<sp/>getProperty(in<sp/>AString<sp/>aName);</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="188"><highlight class="comment"><sp/><sp/>Method:<sp/>setProperty()</highlight></codeline>
-<codeline lineno="189"><highlight class="comment"></highlight></codeline>
-<codeline lineno="190"><highlight class="comment"><sp/><sp/>Set<sp/>the<sp/>value<sp/>of<sp/>a<sp/>property<sp/>for<sp/>this<sp/>library<sp/>object.</highlight></codeline>
-<codeline lineno="191"><highlight class="comment"></highlight></codeline>
-<codeline lineno="192"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="193"><highlight class="comment"><sp/><sp/><sp/><sp/>setProperty(String<sp/>name,<sp/>String<sp/>value)</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/><sp/>Metadata<sp/>for<sp/>the<sp/>&lt;MediaItems&gt;<sp/>may<sp/>get<sp/>updated<sp/>and<sp/>overwritten<sp/>during<sp/>playback.</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Metadata<sp/>Updates&gt;<sp/>for<sp/>more<sp/>details<sp/>about<sp/>cases<sp/>where<sp/>metadata<sp/>may<sp/></highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/><sp/>get<sp/>updated.</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"></highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;setProperty()&gt;</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>AString<sp/>getProperty(in<sp/>AString<sp/>aName);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"><sp/><sp/>Method:<sp/>setProperty()</highlight></codeline>
 <codeline lineno="194"><highlight class="comment"></highlight></codeline>
-<codeline lineno="195"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="197"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created<sp/></highlight></codeline>
-<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/>Set<sp/>the<sp/>value<sp/>of<sp/>a<sp/>property<sp/>for<sp/>this<sp/>library<sp/>object.</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"></highlight></codeline>
+<codeline lineno="197"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/><sp/>setProperty(String<sp/>name,<sp/>String<sp/>value)</highlight></codeline>
 <codeline lineno="199"><highlight class="comment"></highlight></codeline>
-<codeline lineno="200"><highlight class="comment"><sp/><sp/><sp/><sp/>//Set<sp/>the<sp/>albumName<sp/>property<sp/>from<sp/>a<sp/>mediaitem.</highlight></codeline>
-<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaItem.setProperty(&quot;http://songbirdnest.com/data/1.0#albumName&quot;,<sp/>&quot;Let<sp/>Us<sp/>Play&quot;);</highlight></codeline>
-<codeline lineno="202"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="203"><highlight class="comment"></highlight></codeline>
-<codeline lineno="204"><highlight class="comment"><sp/><sp/>Standard<sp/>Properties:</highlight></codeline>
-<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#albumArtURL<sp/>-<sp/>The<sp/>address<sp/>of<sp/>the<sp/>album<sp/>art</highlight></codeline>
-<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#albumName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>album</highlight></codeline>
-<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#artistName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>artist</highlight></codeline>
-<codeline lineno="208"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#columnSpec<sp/>-<sp/>Column<sp/>display<sp/>data</highlight></codeline>
-<codeline lineno="209"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#composerName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>composer</highlight></codeline>
-<codeline lineno="210"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#defaultColumnSpec<sp/>-<sp/>Default<sp/>column<sp/>display<sp/>data</highlight></codeline>
-<codeline lineno="211"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#discNumber<sp/>-<sp/>The<sp/>number<sp/>of<sp/>disc<sp/>this<sp/>media<sp/>appears<sp/>on<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
-<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#downloadDetails<sp/>-<sp/>Download<sp/>state<sp/>and<sp/>progress</highlight></codeline>
-<codeline lineno="213"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>milliseconds</highlight></codeline>
-<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#genre<sp/>-<sp/>The<sp/>genre<sp/>of<sp/>this<sp/>media</highlight></codeline>
-<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#hidden<sp/>-<sp/>Whether<sp/>this<sp/>item<sp/>should<sp/>be<sp/>hidden<sp/>from<sp/>the<sp/>user</highlight></codeline>
-<codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#isPartOfCompilation<sp/>-<sp/>Whether<sp/>this<sp/>media<sp/>is<sp/>part<sp/>of<sp/>a<sp/>compilation</highlight></codeline>
-<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#lyricistName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>lyricist</highlight></codeline>
-<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#lyrics<sp/>-<sp/>The<sp/>lyrics<sp/>of<sp/>the<sp/>media</highlight></codeline>
-<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#producerName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>producer</highlight></codeline>
-<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#recordLabelName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>record<sp/>label</highlight></codeline>
-<codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#totalDiscs<sp/>-<sp/>The<sp/>total<sp/>number<sp/>of<sp/>discs<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
-<codeline lineno="222"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#totalTracks<sp/>-<sp/>The<sp/>total<sp/>number<sp/>of<sp/>tracks<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
-<codeline lineno="223"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#trackName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>track</highlight></codeline>
-<codeline lineno="224"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#trackNumber<sp/>-<sp/>The<sp/>track<sp/>number<sp/>of<sp/>this<sp/>media<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
-<codeline lineno="225"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#year<sp/>-<sp/>The<sp/>year<sp/>the<sp/>media<sp/>was<sp/>released</highlight></codeline>
-<codeline lineno="226"><highlight class="comment"></highlight></codeline>
-<codeline lineno="227"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="228"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getProperty()&gt;</highlight></codeline>
-<codeline lineno="229"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="230"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
-<codeline lineno="231"><highlight class="normal"></highlight></codeline>
-<codeline lineno="240"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>getProperties([optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyNames);</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="202"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created<sp/></highlight></codeline>
+<codeline lineno="203"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="204"><highlight class="comment"></highlight></codeline>
+<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/><sp/>//Set<sp/>the<sp/>albumName<sp/>property<sp/>from<sp/>a<sp/>mediaitem.</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaItem.setProperty(&quot;http://songbirdnest.com/data/1.0#albumName&quot;,<sp/>&quot;Let<sp/>Us<sp/>Play&quot;);</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="208"><highlight class="comment"></highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/><sp/>Standard<sp/>Properties:</highlight></codeline>
+<codeline lineno="210"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#albumArtURL<sp/>-<sp/>The<sp/>address<sp/>of<sp/>the<sp/>album<sp/>art</highlight></codeline>
+<codeline lineno="211"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#albumName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>album</highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#artistName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>artist</highlight></codeline>
+<codeline lineno="213"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#columnSpec<sp/>-<sp/>Column<sp/>display<sp/>data</highlight></codeline>
+<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#composerName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>composer</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#defaultColumnSpec<sp/>-<sp/>Default<sp/>column<sp/>display<sp/>data</highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#discNumber<sp/>-<sp/>The<sp/>number<sp/>of<sp/>disc<sp/>this<sp/>media<sp/>appears<sp/>on<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#downloadDetails<sp/>-<sp/>Download<sp/>state<sp/>and<sp/>progress</highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>milliseconds</highlight></codeline>
+<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#genre<sp/>-<sp/>The<sp/>genre<sp/>of<sp/>this<sp/>media</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#hidden<sp/>-<sp/>Whether<sp/>this<sp/>item<sp/>should<sp/>be<sp/>hidden<sp/>from<sp/>the<sp/>user</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#isPartOfCompilation<sp/>-<sp/>Whether<sp/>this<sp/>media<sp/>is<sp/>part<sp/>of<sp/>a<sp/>compilation</highlight></codeline>
+<codeline lineno="222"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#lyricistName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>lyricist</highlight></codeline>
+<codeline lineno="223"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#lyrics<sp/>-<sp/>The<sp/>lyrics<sp/>of<sp/>the<sp/>media</highlight></codeline>
+<codeline lineno="224"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#producerName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>producer</highlight></codeline>
+<codeline lineno="225"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#recordLabelName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>record<sp/>label</highlight></codeline>
+<codeline lineno="226"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#totalDiscs<sp/>-<sp/>The<sp/>total<sp/>number<sp/>of<sp/>discs<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
+<codeline lineno="227"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#totalTracks<sp/>-<sp/>The<sp/>total<sp/>number<sp/>of<sp/>tracks<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
+<codeline lineno="228"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#trackName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>track</highlight></codeline>
+<codeline lineno="229"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#trackNumber<sp/>-<sp/>The<sp/>track<sp/>number<sp/>of<sp/>this<sp/>media<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
+<codeline lineno="230"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#year<sp/>-<sp/>The<sp/>year<sp/>the<sp/>media<sp/>was<sp/>released</highlight></codeline>
+<codeline lineno="231"><highlight class="comment"></highlight></codeline>
+<codeline lineno="232"><highlight class="comment"><sp/><sp/>Note:</highlight></codeline>
+<codeline lineno="233"><highlight class="comment"><sp/><sp/><sp/><sp/>Metadata<sp/>for<sp/>the<sp/>&lt;MediaItems&gt;<sp/>may<sp/>get<sp/>updated<sp/>and<sp/>overwritten<sp/>during<sp/>playback.</highlight></codeline>
+<codeline lineno="234"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Metadata<sp/>Updates&gt;<sp/>for<sp/>more<sp/>details<sp/>about<sp/>cases<sp/>where<sp/>metadata<sp/>may<sp/></highlight></codeline>
+<codeline lineno="235"><highlight class="comment"><sp/><sp/><sp/><sp/>get<sp/>updated.</highlight></codeline>
+<codeline lineno="236"><highlight class="comment"></highlight></codeline>
+<codeline lineno="237"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="238"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getProperty()&gt;</highlight></codeline>
+<codeline lineno="239"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
 <codeline lineno="241"><highlight class="normal"></highlight></codeline>
-<codeline lineno="254"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperties(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
-<codeline lineno="255"><highlight class="normal"></highlight></codeline>
-<codeline lineno="259"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>equals(in<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref><sp/>aOtherLibraryResource);</highlight></codeline>
-<codeline lineno="260"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="261"><highlight class="normal"></highlight></codeline>
-<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>getProperties([optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyNames);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperties(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>equals(in<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref><sp/>aOtherLibraryResource);</highlight></codeline>
+<codeline lineno="270"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl"/>
   </compounddef>

@@ -84,7 +84,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="179"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="184"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -120,7 +120,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="230"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="240"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
@@ -147,7 +147,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="240"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="250"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -173,7 +173,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="254"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="264"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -190,7 +190,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="259"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="269"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -234,7 +234,7 @@
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="48" bodyend="260"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl" bodystart="48" bodyend="270"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>created</name></member>
       <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>equals</name></member>
