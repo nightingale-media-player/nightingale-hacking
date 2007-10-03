@@ -170,7 +170,6 @@ const static char* sPublicMetadata[] =
     "metadata.title",
     "metadata.album",
     "metadata.genre",
-    "metadata.url",
     "metadata.position",
     "metadata.length",
     "metadata.position.str",
