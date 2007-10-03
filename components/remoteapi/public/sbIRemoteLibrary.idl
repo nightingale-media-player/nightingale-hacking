@@ -357,55 +357,202 @@ interface sbIRemoteLibrary : nsISupports
   /*
   Method: getArtists()
 
+  Get a StringEnumerator containing all of the unique artist names in the <Library>.
+
+  Prototype:
+    StringEnumerator getArtists()
+
+  Returns:
+    A StringEnumerator containing all of the 
+    unique artist names that exist in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique artists.
+    var artists = library.getArtists();
+
+    while(artists.hasMore()) {
+      //The artist name (ie. "Justice")
+      var artist = artists.getNext();
+      
+      //Do something with the artist name
+      ...
+    }
+    (end)
+
   See Also:
     <getAlbums()>
     <getGenres()>
     <getYears()>
     <getPlaylists()>
+
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html> for nsIStringEnumerator interface reference.
   */
   nsIStringEnumerator getArtists();
 
   /*
   Method: getAlbums()
 
+  Get a StringEnumerator containing all of the unique album names in the <Library>.
+
+  Prototype:
+    StringEnumerator getAlbums()
+
+  Returns:
+    A StringEnumerator containing all of the 
+    unique album names that exist in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique albums.
+    var albums = library.getAlbums();
+
+    while(albums.hasMore()) {
+      //The album name (ie. "Cross")
+      var album = albums.getNext();
+      
+      //Do something with the album name
+      ...
+    }
+    (end)
+
   See Also:
     <getArtists()>
     <getGenres()>
     <getYears()>
     <getPlaylists()>
+
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html> for nsIStringEnumerator interface reference.
   */
   nsIStringEnumerator getAlbums();
 
   /*
   Method: getGenres()
 
+  Get a StringEnumerator containing all of the unique genres in the <Library>.
+
+  Prototype:
+    StringEnumerator getGenres()
+
+  Returns:
+    A StringEnumerator containing all of the 
+    unique genres that exist in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique genres.
+    var genres = library.getGenres();
+
+    while(genres.hasMore()) {
+      //The genre (ie. "Electronic")
+      var genre = genres.getNext();
+      
+      //Do something with the genre
+      ...
+    }
+
+    (end)
+
   See Also:
     <getArtists()>
     <getAlbums()>
     <getYears()>
     <getPlaylists()>
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html> for nsIStringEnumerator interface reference.
   */
   nsIStringEnumerator getGenres();
 
   /*
   Method: getYears()
 
+  Get a StringEnumerator containing all of the unique years in the <Library>.
+
+  Prototype:
+    StringEnumerator getYears()
+
+  Returns:
+    A StringEnumerator containing all of the 
+    unique years that exist in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique years.
+    var years = library.getYears();
+
+    while(years.hasMore()) {
+      //The year (ie. "2007")
+      var year = years.getNext();
+      
+      //Do something with the year
+      ...
+    }
+    (end)
+
   See Also:
     <getArtists()>
     <getAlbums()>
     <getGenres()>
     <getPlaylists()>
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html> for nsIStringEnumerator interface reference.
   */
   nsIStringEnumerator getYears();
 
   /*
   Method: getPlaylists()
 
+  Get an Enumerator containing all of the <MediaLists> in the <Library>.
+
+  Prototype:
+    Enumerator getPlaylists()
+
+  Returns:
+    An Enumerator containing all of the 
+    <MediaLists> present in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Get all MediaLists.
+    var mediaLists = library.getPlaylists();
+
+    while(mediaLists.hasMoreElements()) {
+      var mediaList = mediaLists.getNext();
+
+      //Do something with the MediaList
+      alert(mediaList.name);
+    }
+    (end)
+
   See Also:
     <getArtists()>
     <getAlbums()>
     <getGenres()>
     <getYears()>
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
   */
   nsISimpleEnumerator getPlaylists();
 };

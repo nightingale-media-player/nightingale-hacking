@@ -555,8 +555,8 @@ interface sbIMediaList : sbIMediaItem
     mediaList.add(mediaItem);
     mediaList.add(mediaItem);
 
-    //Get the first occurrence of mediaItem.
-    //The returned value in this case will be 0.
+    //Get the last occurrence of mediaItem.
+    //The returned value in this case will be 1.
     var index = mediaList.lastIndexOf(mediaItem, 0);
     (end)
 
@@ -785,7 +785,6 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Clear the list
    */
-
   /*
   Method: clear()
 
