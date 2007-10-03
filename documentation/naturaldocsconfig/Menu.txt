@@ -55,6 +55,7 @@ Group: UI Objects  {
 
 File: Events  (/cygdrive/e/Projects/songbird/trunk/documentation/lists/RemoteAPIEvents.txt)
 File: Listener Topics  (/cygdrive/e/Projects/songbird/trunk/documentation/lists/ListenerTopics.txt)
+File: Metadata Updates  (/cygdrive/e/Projects/songbird/trunk/documentation/lists/MetadataOverwrite.txt)
 
 Group: Index  {
 
