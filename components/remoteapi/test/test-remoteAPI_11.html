@@ -30,18 +30,32 @@
   <head>
     <title>Remote API Test: 11 (downloading)</title>
     <script>
-      var mainLib;
       var siteLib;
       var myDiv;
       var origWebPlaylist;
 
-      var init = function init() {
-        mainLib = songbird.libraries("main");
+      function load() {
         siteLib = songbird.siteLibrary;
+
+        var list = siteLib.createMediaList("simple");
+        var item = siteLib.createMediaItem("http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3");
+        list.add(item);
+        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+        list.add(item);
+
+        songbird.webPlaylist.mediaList = list;
+
         myDiv = document.getElementById("output");
       }
 
-      var downloadList = function downloadList() {
+      function showDownloadList() {
+        if (!origWebPlaylist)
+          origWebPlaylist = songbird.webPlaylist.mediaList;
+
+        songbird.webPlaylist.mediaList = songbird.downloadMediaList;
+      }
+
+      function downloadList() {
         if (!origWebPlaylist)
           origWebPlaylist = songbird.webPlaylist.mediaList;
 
@@ -49,7 +63,7 @@
         songbird.downloadList(origWebPlaylist);
       }
 
-      var downloadItem = function downloadItem() {
+      function downloadItem() {
         if (!origWebPlaylist)
           origWebPlaylist = songbird.webPlaylist.mediaList;
 
@@ -57,28 +71,42 @@
         songbird.downloadItem( origWebPlaylist.getItemByIndex(1) );
       }
 
-      var downloadSelected = function downloadSelected() {
+      function downloadSelected() {
         // pass the web playlist into the songbird object to download
         songbird.downloadSelected(songbird.webPlaylist);
+      }
+
+      function addToDLList() {
+        if (!origWebPlaylist)
+          origWebPlaylist = songbird.webPlaylist.mediaList;
+
+        var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+        songbird.downloadMediaList.add(item);
+
+        songbird.webPlaylist.mediaList = songbird.downloadMediaList;
       }
 
     </script>
   </head>
 
-  <body onload="init();">
+  <body onload="load();">
     <h1>Download track to the users library.</h1>
     
-    <p> Force a web playlist to appear. <br />
-      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
-      <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
+    <p>
     <form>
-      <input type="button" id="download_button" value="downloadList"
+      <input type="button" id="show_download_button" value="Show Download List"
+             onclick="showDownloadList();" /> 
+      <br />
+      <input type="button" id="addToList_button" value="Add To DL List"
+             onclick="addToDLList();" /> 
+      <br />
+      <input type="button" id="download_list_button" value="downloadList"
              onclick="downloadList();" /> 
       <br />
-      <input type="button" id="download_button" value="downloadItem"
+      <input type="button" id="download_item_button" value="downloadItem"
              onclick="downloadItem();" /> 
       <br />
-      <input type="button" id="download_button" value="downloadSelected"
+      <input type="button" id="download_selected_button" value="downloadSelected"
              onclick="downloadSelected();" /> 
       <br />
     </form>

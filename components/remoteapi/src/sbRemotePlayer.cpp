@@ -26,6 +26,7 @@
 
 #include "sbRemotePlayer.h"
 
+#include "sbRemoteAPIUtils.h"
 #include "sbRemoteCommands.h"
 #include "sbRemoteLibrary.h"
 #include "sbRemoteLibraryBase.h"
@@ -126,6 +127,7 @@ const static char* sPublicRProperties[] =
     "library_read:mainLibrary",
     "site:siteLibrary",
     "site:webPlaylist",
+    "site:downloadMediaList",
     "playback_read:currentArtist",
     "playback_read:currentAlbum",
     "playback_read:currentTrack",
@@ -655,6 +657,65 @@ sbRemotePlayer::GetWebPlaylist( sbIRemoteWebPlaylist **aWebPlaylist )
   NS_ENSURE_SUCCESS( rv, rv );
 
   NS_ADDREF( *aWebPlaylist = remotePlaylist );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetDownloadMediaList( sbIRemoteMediaList **aDownloadMediaList )
+{
+  LOG(("sbRemotePlayer::GetDownloadMediaList()"));
+  NS_ENSURE_ARG_POINTER(aDownloadMediaList);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> downloadMediaList(
+                                    do_QueryReferent(mWeakDownloadMediaList) );
+  if (!downloadMediaList) {
+    // get the main library
+    nsCOMPtr<sbILibraryManager> libManager(
+      do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsCOMPtr<sbILibrary> mainLibrary;
+    rv = libManager->GetMainLibrary( getter_AddRefs(mainLibrary) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // go to prefs and get the GUID for the download list
+    nsCOMPtr<nsIPrefBranch> prefService =
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    // I question the value of storing magic GUIDs in prefs,
+    //    accessed by magic strings
+    nsCOMPtr<nsISupportsString> prefValue;
+    rv = prefService->GetComplexValue( "songbird.library.download",
+                                       NS_GET_IID(nsISupportsString),
+                                       getter_AddRefs(prefValue) );
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    // convert the GUID into a string we can use
+    nsString downloadListGUID;
+    prefValue->ToString( getter_Copies(downloadListGUID) );
+    LOG(( "sbRemotePlayer::GetDownloadMediaList() -- GUID: %s",
+      NS_LossyConvertUTF16toASCII(downloadListGUID).get() ));
+
+    // get the download list from the main library
+    nsCOMPtr<sbIMediaItem> item;
+    rv = mainLibrary->GetMediaItem( downloadListGUID,
+                                    getter_AddRefs(item) );
+    NS_ENSURE_SUCCESS( rv, rv ); 
+
+    // put it in the comptr to be wrapped
+    downloadMediaList = do_QueryInterface( item, &rv );
+    NS_ENSURE_SUCCESS( rv, rv ); 
+
+    // store it as a weak ref
+    mWeakDownloadMediaList = do_GetWeakReference( downloadMediaList, &rv );
+    NS_ENSURE_SUCCESS( rv, rv ); 
+  }
+
+  rv = SB_WrapMediaList( this, downloadMediaList, aDownloadMediaList );
+  NS_ENSURE_SUCCESS( rv, rv ); 
+
   return NS_OK;
 }
 

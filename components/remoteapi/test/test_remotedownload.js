@@ -34,7 +34,7 @@ function runTest () {
 
   setTempDownloadDir();
 
-  beginRemoteAPITest("test_remoteplayer_page.html", startTesting);
+  beginRemoteAPITest("test_remotedownload_page.html", startTesting);
 
 }
 

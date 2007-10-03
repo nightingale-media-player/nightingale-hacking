@@ -125,6 +125,7 @@ protected:
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+  nsCOMPtr<nsIWeakReference> mWeakDownloadMediaList;
 
   // The documents for the web page and for the tabbrowser
   nsCOMPtr<nsIDOMDocument> mContentDoc;

@@ -99,6 +99,7 @@ See Also:
 [scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
 interface sbIRemotePlayer : nsISupports
 {
+
   /*
   Group: Properties
   */
@@ -371,6 +372,34 @@ interface sbIRemotePlayer : nsISupports
     <setSiteScope()>
   */
   readonly attribute sbIRemoteLibrary siteLibrary;
+
+
+  /**
+   * \brief 
+   */
+  /*
+  Prop: downloadMediaList
+
+  This <MediaList> is the list that gets all the <MediaItems>s that get
+  added throught the 3 download methods. If the user has enabled downloading,
+  tracks can be added to this playlist directly in order to begin downloads.
+
+  Type:
+    <MediaList>
+
+  Example:
+    (start code)
+    // Get the download media list
+    var dlList = songbird.downloadMediaList;
+    (end)
+  
+  See Also:
+    <downloadItem()>
+    <downloadList()>
+    <downloadSelected()>
+  */
+
+  readonly attribute sbIRemoteMediaList downloadMediaList;
 
   /*
   Group: Methods

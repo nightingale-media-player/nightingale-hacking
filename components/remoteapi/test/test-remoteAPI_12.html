@@ -28,7 +28,7 @@
 
 <html>
   <head>
-    <title>Remote API Test: 12 (button demo)</title>
+    <title>Remote API Test: 12 Column Adding</title>
     <script>
       var siteLib;
       var originalWeb;
@@ -38,21 +38,17 @@
       function load() {
 
         siteLib = songbird.siteLibrary;
-        siteLib.name = "Site Lib";
         siteList = siteLib.createMediaList("simple");
-        setPlaylist(siteList);
 
+        songbird.webPlaylist.mediaList = siteList;
         addDemoColumns();
         populateList();
+
       }
 
       function unload() {
         if (siteLib && siteList)
           siteLib.remove(siteList);
-      }
-
-      function setPlaylist(aMediaList) {
-        songbird.webPlaylist.mediaList = aMediaList;
       }
 
       function showColumns() {
@@ -205,6 +201,16 @@
                                           "Logo",
                                           "Logo",
                                           "http://songbirdnest.com/data/1.0#trackName",
+                                          false,
+                                          true,
+                                          false,
+                                          0,
+                                          50 ); 
+          songbird.webPlaylist.addColumn( "text",
+                                          "http://songbirdnest.com/data/1.0#trackName",
+                                          "NotTrackName",
+                                          "NotTrackName",
+                                          "http://songbirdnest.com/data/1.0#genre",
                                           false,
                                           true,
                                           false,

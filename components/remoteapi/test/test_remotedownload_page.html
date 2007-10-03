@@ -1,0 +1,92 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+function runTest(tester) {
+  try {
+
+    var siteLib = songbird.siteLibrary;
+
+    var dlList = songbird.downloadMediaList;
+    tester.log("Clearing the download list...");
+    dlList.clear();
+
+    // downloading - set in test_ file to go to tmpD/remoteapi_test/
+    var item = siteLib.createMediaItem(
+              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    var list = siteLib.createMediaList("simple");
+    list.add(item);
+    item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/" +
+            "presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+    list.add(item);
+
+    tester.log("Downloading an item...");
+    songbird.downloadItem(item); 
+
+    tester.assertEqual(dlList.length, 1);
+    tester.log("Clearing the download list...");
+    dlList.clear();
+
+    tester.log("Downloading a list...");
+    songbird.downloadList(list); 
+
+    tester.assertEqual(dlList.length, 2);
+    tester.log("Clearing the download list...");
+    dlList.clear();
+
+    // test additions to the list
+    item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/" +
+            "presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+
+    tester.log("Adding an item to the download medialist...");
+    dlList.add(item);
+
+    tester.assertEqual(dlList.length, 1);
+    tester.log("Clearing the download list...");
+    dlList.clear();
+
+    // We need to do this to give the web browser persists component a chance
+    // to tidy up, otherwise it will leak
+    tester.sleep(2000);
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_remotedownload_page.html</body>
+</html>
+

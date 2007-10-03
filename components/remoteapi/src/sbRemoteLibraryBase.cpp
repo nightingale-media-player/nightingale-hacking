@@ -318,6 +318,9 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
     }
   }
 
+  // We use PR_TRUE here so that 2 sites can create a media item to the same
+  // URI and get 2 different objects in the database and don't overwrite
+  // each other.
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = mLibrary->CreateMediaItem(uri,
                                  nsnull,
