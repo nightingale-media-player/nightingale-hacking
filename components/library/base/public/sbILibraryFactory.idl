@@ -62,7 +62,12 @@ interface sbILibraryFactory : nsISupports
    * \brief Create a new instance of a library.
    *
    * \param aCreationParameters - A collection of properties that will be used
-   *                              to create the library.
+   *                              to create the library.  The accepted parameters
+   *                              vary for each library implementation.
+   *                              
+   *                              - For the localdatabase implementation, a \c databaseFile
+   *                              parameter containing a nsILocalFile to store the
+   *                              database in is required.
    *
    * \return A new library instance.
    */

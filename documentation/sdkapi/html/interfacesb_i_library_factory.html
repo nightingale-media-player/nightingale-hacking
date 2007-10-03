@@ -73,16 +73,19 @@ Create a new instance of a library.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aCreationParameters</em>&nbsp;</td><td>- A collection of properties that will be used to create the library.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCreationParameters</em>&nbsp;</td><td>- A collection of properties that will be used to create the library. The accepted parameters vary for each library implementation.</td></tr>
   </table>
 </dl>
+<ul>
+<li>For the localdatabase implementation, a <code>databaseFile</code> parameter containing a nsILocalFile to store the database in is required.</li></ul>
+<p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>A new library instance. </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_library_factory_8idl-source.html">sbILibraryFactory.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:18:55 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 3 14:27:33 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>
