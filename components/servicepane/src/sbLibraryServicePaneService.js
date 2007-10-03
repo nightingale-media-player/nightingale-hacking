@@ -1215,7 +1215,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   if (aMediaList.library == this._libraryManager.mainLibrary) 
   {
     // unless it's the download playlist
-    if (aMediaList.getAttributeNS(LSP, 'ListCustomType') == 'download') {
+    if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
       // FIXME: put it right after the library
       this._servicePane.root.appendChild(aNode);
     } else {
