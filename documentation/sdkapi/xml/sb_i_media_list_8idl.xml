@@ -507,8 +507,8 @@
 <codeline lineno="555"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaList.add(mediaItem);</highlight></codeline>
 <codeline lineno="556"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaList.add(mediaItem);</highlight></codeline>
 <codeline lineno="557"><highlight class="comment"></highlight></codeline>
-<codeline lineno="558"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>the<sp/>first<sp/>occurrence<sp/>of<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="559"><highlight class="comment"><sp/><sp/><sp/><sp/>//The<sp/>returned<sp/>value<sp/>in<sp/>this<sp/>case<sp/>will<sp/>be<sp/>0.</highlight></codeline>
+<codeline lineno="558"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>the<sp/>last<sp/>occurrence<sp/>of<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="559"><highlight class="comment"><sp/><sp/><sp/><sp/>//The<sp/>returned<sp/>value<sp/>in<sp/>this<sp/>case<sp/>will<sp/>be<sp/>1.</highlight></codeline>
 <codeline lineno="560"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>index<sp/>=<sp/>mediaList.lastIndexOf(mediaItem,<sp/>0);</highlight></codeline>
 <codeline lineno="561"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
 <codeline lineno="562"><highlight class="comment"></highlight></codeline>
