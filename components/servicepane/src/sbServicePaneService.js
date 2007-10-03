@@ -481,13 +481,34 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   if (!birdhouse) {
     birdhouse = this.addNode('http://birdhouse.songbirdnest.com/',
       this._root, false);
-    birdhouse.url = 'http://birdhouse.songbirdnest.com/';
-    birdhouse.name = 'Birdhouse';
-    //birdhouse.name = '&servicesource.welcome';
-    birdhouse.hidden = false;
-    birdhouse.editable = false;
-    birdhouse.properties = 'birdhouse';
   }
+  birdhouse.url = 'http://birdhouse.songbirdnest.com/';
+  birdhouse.name = 'Birdhouse';
+  //birdhouse.name = '&servicesource.welcome';
+  birdhouse.hidden = false;
+  birdhouse.editable = false;
+  birdhouse.properties = 'birdhouse';
+  birdhouse.setAttributeNS(SP, 'Weight', -5);
+
+  // HACK ALERT
+  // now, let's sort the top-level nodes by their weight.
+  // this idea of node weight is stolen from Drupal menus
+  var node = this._root.firstChild;
+  while (node) {
+    var value = parseInt(node.getAttributeNS(SP, 'Weight'));
+    while (node.previousSibling) {
+      var prev_value = 
+          parseInt(node.previousSibling.getAttributeNS(SP, 'Weight'));
+      if (prev_value > value) {
+        this._root.insertBefore(node, node.previousSibling);
+      } else {
+        break;
+      }
+    }
+ 
+    node = node.nextSibling; 
+  }
+
   DEBUG('ServicePaneService.init() ends');
 }
 

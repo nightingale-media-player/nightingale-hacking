@@ -52,6 +52,7 @@ const ROOTNODE = "SB:Bookmarks"
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
 const MOZ_URL_DRAG_TYPE = 'text/x-moz-url';
 const BSP = 'http://songbirdnest.com/rdf/bookmarks#';
+const SP='http://songbirdnest.com/rdf/servicepane#';
 
 function SB_NewDataRemote(a,b) {
   return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
@@ -90,6 +91,9 @@ function sbBookmarks_servicePaneInit(sps) {
     this._bookmarkNode = this.addFolderAt('SB:Bookmarks',
         '&servicesource.bookmarks', null, sps.root, null);
   }
+
+  // set the weight of the bookmarks node
+  this._bookmarkNode.setAttributeNS(SP, 'Weight', 4);
     
   // if the bookmark node doesn't have the Imported attribute set, lets do an import
   if (this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {

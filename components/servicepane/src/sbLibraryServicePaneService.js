@@ -48,6 +48,7 @@ const URN_PREFIX_LIBRARY = 'urn:library:';
 const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
 
 const LSP = 'http://songbirdnest.com/rdf/library-servicepane#';
+const SP='http://songbirdnest.com/rdf/servicepane#';
 
 
 const TYPE_X_SB_TRANSFER_MEDIA_ITEM = "application/x-sb-transfer-media-item";
@@ -1052,6 +1053,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   if (aLibrary == this._libraryManager.mainLibrary) {
     // the main library uses a separate Playlists folder
     this._ensurePlaylistFolderExists();
+    // Set the weight of the main library
+    node.setAttributeNS(SP, 'Weight', -4);
+  } if (customType == 'web') {
+    // Set the weight of the web library
+    node.setAttributeNS(SP, 'Weight', 5);
   } else {
     // other libraries store the playlists under them
     node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
@@ -1109,6 +1115,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   if (customType == 'download') {
     // the download media list isn't editable
     node.editable = false;
+    // set the weight of the downloads list
+    node.setAttributeNS(SP, 'Weight', -3);
   } else {
     // the rest are
     node.editable = true;
@@ -1166,15 +1174,15 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
     // make sure it exists
     var fnode = this._servicePane.addNode('SB:Playlists', 
         this._servicePane.root, true);
-    // FIXME: localize name
-    fnode.name = 'Playlists';
-    fnode.properties = 'folder Playlists';
-    fnode.hidden = false;
-    fnode.contractid = CONTRACTID;
-    fnode.dndAcceptIn = 'text/x-sb-playlist';
-    fnode.editable = false;
-    // FIXME: make sure it's in the right place
   }
+  // FIXME: localize name
+  fnode.name = 'Playlists';
+  fnode.properties = 'folder Playlists';
+  fnode.hidden = false;
+  fnode.contractid = CONTRACTID;
+  fnode.dndAcceptIn = 'text/x-sb-playlist';
+  fnode.editable = false;
+  fnode.setAttributeNS(SP, 'Weight', 3);
   return fnode;
 }
 
