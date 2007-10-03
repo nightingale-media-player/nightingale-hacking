@@ -38,6 +38,12 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */  
 
+/* HACKS-R-US
+ * see: http://bugzilla.songbirdnest.com/show_bug.cgi?id=4846
+ * Force the miniplayer menubar to be hidden. This should be revisited once
+ * the XUL changes settle down, but this works for 0.3
+ */
+window#mini #songbird_menu { display: none !important }
 
 /** 
 *******************************************************************************
