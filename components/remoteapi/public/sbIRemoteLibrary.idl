@@ -200,6 +200,11 @@ interface sbIRemoteLibrary : nsISupports
     }
     (end)
 
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
   See Also:
     <createMediaList()>
     <createMediaListFromURL()>
@@ -388,7 +393,6 @@ interface sbIRemoteLibrary : nsISupports
     <getGenres()>
     <getYears()>
     <getPlaylists()>
-
 
   External Reference:
     Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsIStringEnumerator.html> for nsIStringEnumerator interface reference.

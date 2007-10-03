@@ -173,6 +173,11 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#trackNumber - The track number of this media in a compilation
     http://songbirdnest.com/data/1.0#year - The year the media was released
 
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
   See Also:
     <setProperty()>
   */
@@ -223,6 +228,11 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#trackName - The name of the track
     http://songbirdnest.com/data/1.0#trackNumber - The track number of this media in a compilation
     http://songbirdnest.com/data/1.0#year - The year the media was released
+
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
 
   See Also:
     <getProperty()>

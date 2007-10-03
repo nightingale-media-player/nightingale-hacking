@@ -1,4 +1,4 @@
-This is a list of listener topics.  See sPublicMetadata in sbRemotePlayer.cpp
+This is a list of listener topics.  See sbPublicMetadata in sbRemotePlayer.cpp
 for the canonical list.
 
 File: Listener Topics

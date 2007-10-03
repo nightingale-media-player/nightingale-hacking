@@ -603,6 +603,11 @@ interface sbIRemotePlayer : nsISupports
     songbird.play();
     (end)
 
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
   See Also:
     <playURL()>
     <playMediaList()>
@@ -632,6 +637,11 @@ interface sbIRemotePlayer : nsISupports
 
     player.playMediaList(mediaList, 2);
     (end)
+
+  Note:
+    Metadata for <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
 
   See Also:
     <play()>
@@ -663,6 +673,11 @@ interface sbIRemotePlayer : nsISupports
     (start code)
     songbird.playURL("http://path/to/item.mp3");
     (end)
+
+  Note:
+    Metadata for the <MediaItem> associated with this URL may get updated 
+    and overwritten during playback. See <Metadata Updates> for more details 
+    about cases where metadata may get updated.
 
   See Also:
     <play()>
