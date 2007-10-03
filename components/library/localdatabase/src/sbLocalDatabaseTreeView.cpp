@@ -959,6 +959,18 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 {
   nsresult rv;
 
+  nsCOMPtr<sbIMediaList> list;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(list));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString isSortable;
+  rv = list->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), isSortable);
+
+  if (isSortable.Equals(NS_LITERAL_STRING("0"))) {
+    // list is not sortable
+    return NS_ERROR_FAILURE;
+  }
+
   // If we are linked to a media list view, use its interfaces to manage
   // the sort
   if (mListType != eDistinct) {
@@ -986,6 +998,7 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   else {
     rv = mArray->ClearSorts();
     NS_ENSURE_SUCCESS(rv, rv);
+
     rv = mArray->AddSort(aProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
 
