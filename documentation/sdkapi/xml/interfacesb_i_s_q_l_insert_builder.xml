@@ -140,40 +140,40 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="648">
+      <node id="656">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="647">
+      <node id="655">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="648" relation="public-inheritance">
+        <childnode refid="656" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="652">
+      <node id="660">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="650" relation="public-inheritance">
+        <childnode refid="658" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="650">
+      <node id="658">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="651">
+      <node id="659">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="652" relation="public-inheritance">
+        <childnode refid="660" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="649">
+      <node id="657">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="650" relation="public-inheritance">
+        <childnode refid="658" relation="public-inheritance">
         </childnode>
-        <childnode refid="651" relation="usage">
+        <childnode refid="659" relation="usage">
           <edgelabel>select</edgelabel>
         </childnode>
       </node>

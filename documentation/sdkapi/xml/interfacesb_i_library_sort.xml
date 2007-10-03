@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_sort" kind="interface" prot="public">
+    <compoundname>sbILibrarySort</compoundname>
+    <includes refid="sb_i_library_constraints_8idl" local="no">sbILibraryConstraints.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_sort_11606b948ab5b0f26bd0c8800367043bd" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibrarySort::property</definition>
+        <argsstring></argsstring>
+        <name>property</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="96" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_sort_1bca8933474440ea38abdc2a5f1f72f9b" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILibrarySort::isAscending</definition>
+        <argsstring></argsstring>
+        <name>isAscending</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="97" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_sort_1cfb24783c0f81528fe1d75827ceac550" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibrarySort::init</definition>
+        <argsstring>(in AString aProperty, in boolean aIsAscending)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsAscending</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="94"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_sort_13ff7470b7c27b454cf7c0b57804ed6cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibrarySort::toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="98"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A sort that can be applied to a media list view. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="93" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="92" bodyend="99"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_sort_1cfb24783c0f81528fe1d75827ceac550" prot="public" virt="non-virtual"><scope>sbILibrarySort</scope><name>init</name></member>
+      <member refid="interfacesb_i_library_sort_1bca8933474440ea38abdc2a5f1f72f9b" prot="public" virt="non-virtual"><scope>sbILibrarySort</scope><name>isAscending</name></member>
+      <member refid="interfacesb_i_library_sort_11606b948ab5b0f26bd0c8800367043bd" prot="public" virt="non-virtual"><scope>sbILibrarySort</scope><name>property</name></member>
+      <member refid="interfacesb_i_library_sort_13ff7470b7c27b454cf7c0b57804ed6cd" prot="public" virt="non-virtual"><scope>sbILibrarySort</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -35,9 +35,6 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view_map.html#e453b9bc0c50321d1b25fcc0d90bcf39">setView</a> (in nsISupports aParentKey, in nsISupports aPageKey, in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> aView)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given parent and pagekey objects, save the given view.  <a href="#e453b9bc0c50321d1b25fcc0d90bcf39"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view_map.html#9b566c063c09c601cc92eafecb516a0a">getContext</a> (in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> aView, out nsISupports aParentKey, out nsISupports aPageKey)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a view, get the parent and page context of the saved view.  <a href="#9b566c063c09c601cc92eafecb516a0a"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view_map.html#07ee9e978222b8e5c4d8b2d849a75947">releaseViews</a> (in nsISupports aParentKey)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release all views held by a parent grouping.  <a href="#07ee9e978222b8e5c4d8b2d849a75947"></a><br></td></tr>
@@ -133,51 +130,6 @@ Given parent and pagekey objects, save the given view.
 
 </div>
 </div><p>
-<a class="anchor" name="9b566c063c09c601cc92eafecb516a0a"></a><!-- doxytag: member="sbIMediaListViewMap::getContext" ref="9b566c063c09c601cc92eafecb516a0a" args="(in sbIMediaListView aView, out nsISupports aParentKey, out nsISupports aPageKey)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaListViewMap::getContext           </td>
-          <td>(</td>
-          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td>
-          <td class="paramname"> <em>aView</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">out nsISupports&nbsp;</td>
-          <td class="paramname"> <em>aParentKey</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">out nsISupports&nbsp;</td>
-          <td class="paramname"> <em>aPageKey</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Given a view, get the parent and page context of the saved view. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aView</em>&nbsp;</td><td>The view for which context is requested. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aParentKey</em>&nbsp;</td><td>The parent object of the view (usually a browser). </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aPageKey</em>&nbsp;</td><td>The page reference of the view (usually a history entry). </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd><a class="el" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> The saved view, or null if none was ever saved. </dd></dl>
-
-</div>
-</div><p>
 <a class="anchor" name="07ee9e978222b8e5c4d8b2d849a75947"></a><!-- doxytag: member="sbIMediaListViewMap::releaseViews" ref="07ee9e978222b8e5c4d8b2d849a75947" args="(in nsISupports aParentKey)" -->
 <div class="memitem">
 <div class="memproto">
@@ -208,7 +160,7 @@ Usually, the parent object will be the browser for an open tab. When the tab is 
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_view_map_8idl-source.html">sbIMediaListViewMap.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:51 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:02:48 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

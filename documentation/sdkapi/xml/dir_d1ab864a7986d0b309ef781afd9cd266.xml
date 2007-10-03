@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_d1ab864a7986d0b309ef781afd9cd266" kind="dir">
+    <compoundname>components/moz/domevents/</compoundname>
+    <innerdir refid="dir_6c6caebe13ce0b31f173611dfd492412">components/moz/domevents/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/moz/domevents/"/>
+  </compounddef>
+</doxygen>

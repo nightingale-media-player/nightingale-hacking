@@ -5,6 +5,7 @@
     <innerfile refid="sb_i_cascade_filter_set_8idl">sbICascadeFilterSet.idl</innerfile>
     <innerfile refid="sb_i_filterable_media_list_view_8idl">sbIFilterableMediaListView.idl</innerfile>
     <innerfile refid="sb_i_library_8idl">sbILibrary.idl</innerfile>
+    <innerfile refid="sb_i_library_constraints_8idl">sbILibraryConstraints.idl</innerfile>
     <innerfile refid="sb_i_library_factory_8idl">sbILibraryFactory.idl</innerfile>
     <innerfile refid="sb_i_library_loader_8idl">sbILibraryLoader.idl</innerfile>
     <innerfile refid="sb_i_library_manager_8idl">sbILibraryManager.idl</innerfile>

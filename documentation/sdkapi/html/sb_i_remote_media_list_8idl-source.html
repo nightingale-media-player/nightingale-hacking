@@ -52,7 +52,7 @@
 <a name="l00041"></a>00041 <span class="comment">and can be used as a parameter to functions that take a &lt;MediaItem&gt;.</span>
 <a name="l00042"></a>00042 <span class="comment"></span>
 <a name="l00043"></a>00043 <span class="comment">Inherits:</span>
-<a name="l00044"></a>00044 <span class="comment">  &lt;MediaList&gt; &lt;MediaItem&gt; </span>
+<a name="l00044"></a>00044 <span class="comment">  &lt;MediaItem&gt; </span>
 <a name="l00045"></a>00045 <span class="comment"></span>
 <a name="l00046"></a>00046 <span class="comment">*/</span>
 <a name="l00047"></a>00047 
@@ -74,12 +74,12 @@
 <a name="l00070"></a>00070 <span class="preprocessor">  NS_IMETHOD Clear(void) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;Clear(); } \</span>
 <a name="l00071"></a>00071 <span class="preprocessor">  NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \</span>
 <a name="l00072"></a>00072 <span class="preprocessor">  NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;RemoveListener(aListener); } \</span>
-<a name="l00073"></a>00073 <span class="preprocessor">  NS_IMETHOD CreateView(sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;CreateView(_retval); } \</span>
+<a name="l00073"></a>00073 <span class="preprocessor">  NS_IMETHOD CreateView(sbIMediaListViewState *aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;CreateView(aState, _retval); } \</span>
 <a name="l00074"></a>00074 <span class="preprocessor">  NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;BeginUpdateBatch(); } \</span>
 <a name="l00075"></a>00075 <span class="preprocessor">  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;EndUpdateBatch(); } \</span>
 <a name="l00076"></a>00076 <span class="preprocessor">%}</span>
 <a name="l00077"></a>00077 <span class="preprocessor"></span>
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:47 2007 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:02:42 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -52,39 +52,39 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="685">
+      <node id="693">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="686">
+      <node id="694">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="684" relation="public-inheritance">
+        <childnode refid="692" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="684">
+      <node id="692">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="685" relation="public-inheritance">
+        <childnode refid="693" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="688">
+      <node id="696">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="689" relation="usage">
+        <childnode refid="697" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="689">
+      <node id="697">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="687">
+      <node id="695">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="688" relation="public-inheritance">
+        <childnode refid="696" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

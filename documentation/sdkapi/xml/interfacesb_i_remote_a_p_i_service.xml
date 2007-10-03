@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_remote_a_p_i_service" kind="interface" prot="public">
+    <compoundname>sbIRemoteAPIService</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_a_p_i_service_11344a5a945e0416a926cc5bdb249db72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIRemoteAPIService::hasPlaybackControl</definition>
+        <argsstring>(in nsIURI aURI)</argsstring>
+        <name>hasPlaybackControl</name>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aURI</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if the given URI is allowed to control playback <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURI</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the URI to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the URI should be allowed to control playback </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="44"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_a_p_i_service_1b30cfb1304be793313740d524f92ed74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIURI</type>
+        <definition>nsIURI sbIRemoteAPIService::takePlaybackControl</definition>
+        <argsstring>(in nsIURI aURI)</argsstring>
+        <name>takePlaybackControl</name>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aURI</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the URI which is allowed to control playback <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURI</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the new URI to be allowed to control playback </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the previous URI that had control (or possibly null) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="51"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="38" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" bodystart="38" bodyend="52"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_a_p_i_service_11344a5a945e0416a926cc5bdb249db72" prot="public" virt="non-virtual"><scope>sbIRemoteAPIService</scope><name>hasPlaybackControl</name></member>
+      <member refid="interfacesb_i_remote_a_p_i_service_1b30cfb1304be793313740d524f92ed74" prot="public" virt="non-virtual"><scope>sbIRemoteAPIService</scope><name>takePlaybackControl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

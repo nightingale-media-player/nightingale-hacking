@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_6c6caebe13ce0b31f173611dfd492412" kind="dir">
+    <compoundname>components/moz/domevents/public/</compoundname>
+    <innerfile refid="sb_i_d_o_m_event_wrapper_8idl">sbIDOMEventWrapper.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/"/>
+  </compounddef>
+</doxygen>

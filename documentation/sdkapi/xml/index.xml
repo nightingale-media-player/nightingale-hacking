@@ -651,6 +651,14 @@
     <member refid="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" kind="variable"><name>contractID</name></member>
     <member refid="interfacesb_i_library_factory_1f013d89e9b09b5c6a1f708a58ec9b267" kind="function"><name>createLibrary</name></member>
   </compound>
+  <compound refid="interfacesb_i_library_filter" kind="interface"><name>sbILibraryFilter</name>
+    <member refid="interfacesb_i_library_filter_15dc0d0b6dc8d2e97054cea0d98615f08" kind="variable"><name>property</name></member>
+    <member refid="interfacesb_i_library_filter_1b5ff844d1ee8f3d75f8d25d7a4189404" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_library_filter_1d73490b359045a2a343ac861409f0fc2" kind="function"><name>initNative</name></member>
+    <member refid="interfacesb_i_library_filter_1d61c1fefa9d9ccd91bdfd42af7cdc18c" kind="function"><name>getValues</name></member>
+    <member refid="interfacesb_i_library_filter_1fe14ad2bcd1fbc0baf743c1f94c6886e" kind="function"><name>getValuesNative</name></member>
+    <member refid="interfacesb_i_library_filter_15e59d4dcf892f429f853d3d69735da17" kind="function"><name>toString</name></member>
+  </compound>
   <compound refid="interfacesb_i_library_loader" kind="interface"><name>sbILibraryLoader</name>
     <member refid="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" kind="function"><name>onRegisterStartupLibraries</name></member>
     <member refid="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" kind="function"><name>onLibraryStartupModified</name></member>
@@ -683,10 +691,25 @@
     <member refid="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" kind="function"><name>setProperties</name></member>
     <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" kind="function"><name>equals</name></member>
   </compound>
+  <compound refid="interfacesb_i_library_search" kind="interface"><name>sbILibrarySearch</name>
+    <member refid="interfacesb_i_library_search_13c239ffc5087011ff9457007cf0fc72e" kind="variable"><name>property</name></member>
+    <member refid="interfacesb_i_library_search_1470cc669678033c6e56c6ac560ae4879" kind="variable"><name>isAll</name></member>
+    <member refid="interfacesb_i_library_search_1887412c767689cdc5606b8cccfef23e3" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_library_search_16a16b72606a4341b6cc1ff4dca85d97a" kind="function"><name>initNative</name></member>
+    <member refid="interfacesb_i_library_search_14a5153911ff6cd7617e7d272e6fd9b3d" kind="function"><name>getValues</name></member>
+    <member refid="interfacesb_i_library_search_1315c6db0b3aef6e7d91cc484780e5079" kind="function"><name>getValuesNative</name></member>
+    <member refid="interfacesb_i_library_search_1381d5edb6b46f1d80b663e28f58f159a" kind="function"><name>toString</name></member>
+  </compound>
   <compound refid="interfacesb_i_library_service_pane_service" kind="interface"><name>sbILibraryServicePaneService</name>
     <member refid="interfacesb_i_library_service_pane_service_14c1ecd7837c0614171076ecbba3da6f2" kind="function"><name>suggestLibraryForNewList</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" kind="function"><name>getNodeForLibraryResource</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" kind="function"><name>getLibraryResourceForNode</name></member>
+  </compound>
+  <compound refid="interfacesb_i_library_sort" kind="interface"><name>sbILibrarySort</name>
+    <member refid="interfacesb_i_library_sort_11606b948ab5b0f26bd0c8800367043bd" kind="variable"><name>property</name></member>
+    <member refid="interfacesb_i_library_sort_1bca8933474440ea38abdc2a5f1f72f9b" kind="variable"><name>isAscending</name></member>
+    <member refid="interfacesb_i_library_sort_1cfb24783c0f81528fe1d75827ceac550" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_library_sort_13ff7470b7c27b454cf7c0b57804ed6cd" kind="function"><name>toString</name></member>
   </compound>
   <compound refid="interfacesb_i_library_transfer_context" kind="interface"><name>sbILibraryTransferContext</name>
     <member refid="interfacesb_i_library_transfer_context_1b1d4eaa3e8801a81998da228b7355acf" kind="variable"><name>source</name></member>
@@ -883,7 +906,7 @@
     <member refid="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" kind="function"><name>clear</name></member>
     <member refid="interfacesb_i_media_list_1f8515c51ec7849141b2682696ebfb5de" kind="function"><name>addListener</name></member>
     <member refid="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" kind="function"><name>removeListener</name></member>
-    <member refid="interfacesb_i_media_list_138a86561b73c8baa844137ff8b5259b4" kind="function"><name>createView</name></member>
+    <member refid="interfacesb_i_media_list_194596861a47fd029591cb920bdd1d1d0" kind="function"><name>createView</name></member>
     <member refid="interfacesb_i_media_list_1264d18266761aa0f89480455e38e8db2" kind="function"><name>beginUpdateBatch</name></member>
     <member refid="interfacesb_i_media_list_1aadcef397cc4dd700ff92eb65b5c8586" kind="function"><name>endUpdateBatch</name></member>
     <member refid="interfacesb_i_media_list_123962e1790fe0801d67c827159988d45" kind="function"><name>getDistinctValuesForProperty</name></member>
@@ -918,12 +941,15 @@
     <member refid="interfacesb_i_media_list_view_1ef081e769938e55da2a7d7651922d9f1" kind="function"><name>getViewItemUIDForIndex</name></member>
     <member refid="interfacesb_i_media_list_view_1fa7d01d0813d145a01b4763d2e8065bc" kind="function"><name>getIndexForViewItemUID</name></member>
     <member refid="interfacesb_i_media_list_view_148af8a8f54219b72f876c72b86b6abf9" kind="function"><name>clone</name></member>
+    <member refid="interfacesb_i_media_list_view_1b5977daa0e5a454727f4ddf42e5525da" kind="function"><name>getState</name></member>
   </compound>
   <compound refid="interfacesb_i_media_list_view_map" kind="interface"><name>sbIMediaListViewMap</name>
     <member refid="interfacesb_i_media_list_view_map_1082a4ac99fe46acb6348767b269d78fc" kind="function"><name>getView</name></member>
     <member refid="interfacesb_i_media_list_view_map_1e453b9bc0c50321d1b25fcc0d90bcf39" kind="function"><name>setView</name></member>
-    <member refid="interfacesb_i_media_list_view_map_19b566c063c09c601cc92eafecb516a0a" kind="function"><name>getContext</name></member>
     <member refid="interfacesb_i_media_list_view_map_107ee9e978222b8e5c4d8b2d849a75947" kind="function"><name>releaseViews</name></member>
+  </compound>
+  <compound refid="interfacesb_i_media_list_view_state" kind="interface"><name>sbIMediaListViewState</name>
+    <member refid="interfacesb_i_media_list_view_state_16373a76055896e01599585ca03d483b2" kind="function"><name>toString</name></member>
   </compound>
   <compound refid="interfacesb_i_media_list_view_tree_view" kind="interface"><name>sbIMediaListViewTreeView</name>
     <member refid="interfacesb_i_media_list_view_tree_view_1b316c18c48998564603a239d58719553" kind="variable"><name>observer</name></member>
@@ -1836,6 +1862,8 @@
   <compound refid="sb_i_filterable_media_list_view_8idl" kind="file"><name>sbIFilterableMediaListView.idl</name>
   </compound>
   <compound refid="sb_i_library_8idl" kind="file"><name>sbILibrary.idl</name>
+  </compound>
+  <compound refid="sb_i_library_constraints_8idl" kind="file"><name>sbILibraryConstraints.idl</name>
   </compound>
   <compound refid="sb_i_library_factory_8idl" kind="file"><name>sbILibraryFactory.idl</name>
   </compound>

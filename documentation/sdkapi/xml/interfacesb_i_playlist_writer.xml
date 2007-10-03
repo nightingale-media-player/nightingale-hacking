@@ -193,14 +193,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="502">
+      <node id="510">
         <label>sbIPlaylistWriter</label>
         <link refid="interfacesb_i_playlist_writer"/>
-        <childnode refid="503" relation="usage">
+        <childnode refid="511" relation="usage">
           <edgelabel>writerListener</edgelabel>
         </childnode>
       </node>
-      <node id="503">
+      <node id="511">
         <label>sbIPlaylistWriterListener</label>
         <link refid="interfacesb_i_playlist_writer_listener"/>
       </node>

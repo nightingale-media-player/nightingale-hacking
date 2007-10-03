@@ -89,9 +89,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#37a3275d1ea302a95b706a31413e3084">removeListener</a> (in <a class="el" href="interfacesb_i_media_list_listener.html">sbIMediaListListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a listener from this media list.  <a href="#37a3275d1ea302a95b706a31413e3084"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#38a86561b73c8baa844137ff8b5259b4">createView</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#94596861a47fd029591cb920bdd1d1d0">createView</a> ([optional] in <a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a> aState)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a new view for this list.  <a href="#38a86561b73c8baa844137ff8b5259b4"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a new view for this list.  <a href="#94596861a47fd029591cb920bdd1d1d0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="264d18266761aa0f89480455e38e8db2"></a><!-- doxytag: member="sbIMediaList::beginUpdateBatch" ref="264d18266761aa0f89480455e38e8db2" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#264d18266761aa0f89480455e38e8db2">beginUpdateBatch</a> ()</td></tr>
 
@@ -158,7 +158,7 @@ A detailed description of this interface<p>
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="6ab593212150bf9bf55b0a05207867a7"></a><!-- doxytag: member="sbIMediaList::getItemByGuid" ref="6ab593212150bf9bf55b0a05207867a7" args="(in AString aGuid)" -->
 <div class="memitem">
 <div class="memproto">
@@ -691,14 +691,15 @@ Remove a listener from this media list.
 
 </div>
 </div><p>
-<a class="anchor" name="38a86561b73c8baa844137ff8b5259b4"></a><!-- doxytag: member="sbIMediaList::createView" ref="38a86561b73c8baa844137ff8b5259b4" args="()" -->
+<a class="anchor" name="94596861a47fd029591cb920bdd1d1d0"></a><!-- doxytag: member="sbIMediaList::createView" ref="94596861a47fd029591cb920bdd1d1d0" args="([optional] in sbIMediaListViewState aState)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> sbIMediaList::createView           </td>
           <td>(</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a>&nbsp;</td>
+          <td class="paramname"> <em>aState</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
         </tr>
@@ -709,6 +710,11 @@ Remove a listener from this media list.
 <p>
 Create a new view for this list. 
 <p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aState</em>&nbsp;</td><td>Optional initial state for the view </td></tr>
+  </table>
+</dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The new view </dd></dl>
 
 </div>
@@ -730,7 +736,7 @@ This flag means that the list being enumerated is a copy that may become out of 
 <p>
 Use this flag if you don't care whether or not other threads change the list's contents. The listener may make changes to the list at any time but those changes will not be reflected in the enumeration sequence. 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00099">99</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.
+Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00100">100</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="c06c5fe198ada5d24ee62f7930038e1c"></a><!-- doxytag: member="sbIMediaList::ENUMERATIONTYPE_LOCKING" ref="c06c5fe198ada5d24ee62f7930038e1c" args="" -->
@@ -749,12 +755,12 @@ This flag means that the list is protected from changes by other threads during 
 <p>
 Use this flag if you need to be certain that the contents of the list are not changed during enumeration. Note that all other threads will block until the enumeration is complete. Furthermore, changes made to list from the listener are not permitted until the listener has received the onEnumerationEnd notification. 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00137">137</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.
+Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00138">138</a> of file <a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:51 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:02:48 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

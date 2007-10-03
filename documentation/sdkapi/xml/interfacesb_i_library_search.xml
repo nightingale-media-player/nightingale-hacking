@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_search" kind="interface" prot="public">
+    <compoundname>sbILibrarySearch</compoundname>
+    <includes refid="sb_i_library_constraints_8idl" local="no">sbILibraryConstraints.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_search_13c239ffc5087011ff9457007cf0fc72e" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibrarySearch::property</definition>
+        <argsstring></argsstring>
+        <name>property</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="78" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_search_1470cc669678033c6e56c6ac560ae4879" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILibrarySearch::isAll</definition>
+        <argsstring></argsstring>
+        <name>isAll</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="79" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_search_1887412c767689cdc5606b8cccfef23e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibrarySearch::init</definition>
+        <argsstring>(in AString aProperty, in boolean aIsAll, in unsigned long count,[array, size_is(count)] in wstring values)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsAll</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(count)]</attributes>
+          <type>in wstring</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="73"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_search_16a16b72606a4341b6cc1ff4dca85d97a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibrarySearch::initNative</definition>
+        <argsstring>(in AString aProperty, in boolean aIsAll, in StringArray aValues)</argsstring>
+        <name>initNative</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsAll</declname>
+        </param>
+        <param>
+          <type>in StringArray</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="76"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_search_14a5153911ff6cd7617e7d272e6fd9b3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibrarySearch::getValues</definition>
+        <argsstring>(out unsigned long count,[retval, array, size_is(count)] out wstring values)</argsstring>
+        <name>getValues</name>
+        <param>
+          <type>out unsigned long</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <attributes>[retval, array, size_is(count)]</attributes>
+          <type>out wstring</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="81"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_search_1315c6db0b3aef6e7d91cc484780e5079" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>StringArray</type>
+        <definition>StringArray sbILibrarySearch::getValuesNative</definition>
+        <argsstring>()</argsstring>
+        <name>getValuesNative</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="82"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_search_1381d5edb6b46f1d80b663e28f58f159a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibrarySearch::toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A search that can be applied to a media list view. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="69" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="68" bodyend="85"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_search_14a5153911ff6cd7617e7d272e6fd9b3d" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>getValues</name></member>
+      <member refid="interfacesb_i_library_search_1315c6db0b3aef6e7d91cc484780e5079" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>getValuesNative</name></member>
+      <member refid="interfacesb_i_library_search_1887412c767689cdc5606b8cccfef23e3" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>init</name></member>
+      <member refid="interfacesb_i_library_search_16a16b72606a4341b6cc1ff4dca85d97a" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>initNative</name></member>
+      <member refid="interfacesb_i_library_search_1470cc669678033c6e56c6ac560ae4879" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>isAll</name></member>
+      <member refid="interfacesb_i_library_search_13c239ffc5087011ff9457007cf0fc72e" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>property</name></member>
+      <member refid="interfacesb_i_library_search_1381d5edb6b46f1d80b663e28f58f159a" prot="public" virt="non-virtual"><scope>sbILibrarySearch</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

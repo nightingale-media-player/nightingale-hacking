@@ -4,13 +4,13 @@
     <compoundname>sbIMediaTranscoder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="341">
+      <node id="346">
         <label>components/mediacore/transcoding/public/sbIMediaTranscoder.idl</label>
         <link refid="sbIMediaTranscoder.idl"/>
-        <childnode refid="342" relation="include">
+        <childnode refid="347" relation="include">
         </childnode>
       </node>
-      <node id="342">
+      <node id="347">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -10,25 +10,25 @@
 <para>&lt;TODO: Detail&gt;.</para><para><simplesect kind="see"><para><ref refid="sb_i_device_base_8idl" kindref="compound">sbIDeviceBase.idl</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="717">
+      <node id="725">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="718" relation="public-inheritance">
+        <childnode refid="726" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="718">
+      <node id="726">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="719">
+      <node id="727">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="720" relation="public-inheritance">
+        <childnode refid="728" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="720">
+      <node id="728">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>

@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyBuilder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="385">
+      <node id="390">
         <label>components/property/public/sbIPropertyBuilder.idl</label>
         <link refid="sbIPropertyBuilder.idl"/>
-        <childnode refid="386" relation="include">
+        <childnode refid="391" relation="include">
         </childnode>
       </node>
-      <node id="386">
+      <node id="391">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

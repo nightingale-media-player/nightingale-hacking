@@ -76,14 +76,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="296">
+      <node id="302">
         <label>sbIPropertyOperator</label>
         <link refid="interfacesb_i_property_operator"/>
       </node>
-      <node id="295">
+      <node id="301">
         <label>sbILocalDatabaseSmartMediaListCondition</label>
         <link refid="interfacesb_i_local_database_smart_media_list_condition"/>
-        <childnode refid="296" relation="usage">
+        <childnode refid="302" relation="usage">
           <edgelabel>operator</edgelabel>
         </childnode>
       </node>

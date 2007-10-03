@@ -509,7 +509,7 @@
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>created</name></member>
       <member refid="interfacesb_i_library_1a9fe98d3fedb5e8dd8ed597829b8ce56" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>createMediaItem</name></member>
       <member refid="interfacesb_i_library_162f2e88db6d62e1778ee96fbffc7dd1c" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>createMediaList</name></member>
-      <member refid="interfacesb_i_media_list_138a86561b73c8baa844137ff8b5259b4" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>createView</name></member>
+      <member refid="interfacesb_i_media_list_194596861a47fd029591cb920bdd1d1d0" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>createView</name></member>
       <member refid="interfacesb_i_library_1283d3a82ec0021cfc02928330bd99cac" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>creationParameters</name></member>
       <member refid="interfacesb_i_library_1219c7f4ce3a62c36c374df24cb267d61" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>device</name></member>
       <member refid="interfacesb_i_media_list_1aadcef397cc4dd700ff92eb65b5c8586" prot="public" virt="non-virtual"><scope>sbILibrary</scope><name>endUpdateBatch</name></member>

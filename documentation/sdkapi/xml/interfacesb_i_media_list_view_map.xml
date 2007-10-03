@@ -88,54 +88,6 @@
         </inbodydescription>
         <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="60"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_media_list_view_map_19b566c063c09c601cc92eafecb516a0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIMediaListViewMap::getContext</definition>
-        <argsstring>(in sbIMediaListView aView, out nsISupports aParentKey, out nsISupports aPageKey)</argsstring>
-        <name>getContext</name>
-        <param>
-          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
-          <declname>aView</declname>
-        </param>
-        <param>
-          <type>out nsISupports</type>
-          <declname>aParentKey</declname>
-        </param>
-        <param>
-          <type>out nsISupports</type>
-          <declname>aPageKey</declname>
-        </param>
-        <briefdescription>
-<para>Given a view, get the parent and page context of the saved view. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aView</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The view for which context is requested. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aParentKey</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The parent object of the view (usually a browser). </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aPageKey</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The page reference of the view (usually a history entry). </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> The saved view, or null if none was ever saved. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="69"/>
-      </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_map_107ee9e978222b8e5c4d8b2d849a75947" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIMediaListViewMap::releaseViews</definition>
@@ -159,7 +111,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="79"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="70"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -167,9 +119,8 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" bodystart="44" bodyend="80"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl" bodystart="44" bodyend="71"/>
     <listofallmembers>
-      <member refid="interfacesb_i_media_list_view_map_19b566c063c09c601cc92eafecb516a0a" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>getContext</name></member>
       <member refid="interfacesb_i_media_list_view_map_1082a4ac99fe46acb6348767b269d78fc" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>getView</name></member>
       <member refid="interfacesb_i_media_list_view_map_107ee9e978222b8e5c4d8b2d849a75947" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>releaseViews</name></member>
       <member refid="interfacesb_i_media_list_view_map_1e453b9bc0c50321d1b25fcc0d90bcf39" prot="public" virt="non-virtual"><scope>sbIMediaListViewMap</scope><name>setView</name></member>

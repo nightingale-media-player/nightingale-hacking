@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListViewTreeView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="243">
+      <node id="248">
         <label>components/library/base/public/sbIMediaListViewTreeView.idl</label>
         <link refid="sbIMediaListViewTreeView.idl"/>
-        <childnode refid="244" relation="include">
+        <childnode refid="249" relation="include">
         </childnode>
       </node>
-      <node id="244">
+      <node id="249">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -1093,14 +1093,14 @@
 <para>This interface is meant to be implemented by user code.</para><para>Implementors that create their own specific database libraries and playlists (eg: <ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref>) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object&apos;s purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.</para><para>These objects ought to be created in javascript. When a new playlist is created, it will query <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> for command objects, and the playlist source will call <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> on the objects it has stored and return the newly duplicated objects.</para><para>See documentation on <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> for more information.</para><para><simplesect kind="see"><para>playlist.xml, sbLibraryPage.xul, <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="415">
+      <node id="423">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="416">
+      <node id="424">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="415" relation="public-inheritance">
+        <childnode refid="423" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_d_o_m_event_wrapper" kind="interface" prot="public">
+    <compoundname>sbIDOMEventWrapper</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_d_o_m_event_wrapper_1cdb7a49537df0d5b6e1e252cf68c29c1" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISupports</type>
+        <definition>readonly attribute nsISupports sbIDOMEventWrapper::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The data passed in the second parameter of <ref refid="interfacesb_i_d_o_m_event_wrapper_157fdbf53ef18474265eb6ef053823bbf" kindref="member">init()</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_d_o_m_event_wrapper_157fdbf53ef18474265eb6ef053823bbf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDOMEventWrapper::init</definition>
+        <argsstring>(in nsIDOMEvent aBaseEvent, in nsISupports aData)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in nsIDOMEvent</type>
+          <declname>aBaseEvent</declname>
+        </param>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize the event wrapper by giving it a base event to wrap</para><para>@param aBaseEvent the event to be wrapped @param aData the payload to be passed as part of the event </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="37" bodyfile="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="37" bodyend="51"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_d_o_m_event_wrapper_1cdb7a49537df0d5b6e1e252cf68c29c1" prot="public" virt="non-virtual"><scope>sbIDOMEventWrapper</scope><name>data</name></member>
+      <member refid="interfacesb_i_d_o_m_event_wrapper_157fdbf53ef18474265eb6ef053823bbf" prot="public" virt="non-virtual"><scope>sbIDOMEventWrapper</scope><name>init</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

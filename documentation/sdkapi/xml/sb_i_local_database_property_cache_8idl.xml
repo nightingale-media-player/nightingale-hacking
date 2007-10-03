@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabasePropertyCache.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="272">
+      <node id="277">
         <label>components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl</label>
         <link refid="sbILocalDatabasePropertyCache.idl"/>
-        <childnode refid="273" relation="include">
+        <childnode refid="278" relation="include">
         </childnode>
       </node>
-      <node id="273">
+      <node id="278">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

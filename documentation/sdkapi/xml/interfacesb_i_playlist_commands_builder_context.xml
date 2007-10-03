@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_playlist_commands_builder_context" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommandsBuilderContext</compoundname>
+    <basecompoundref refid="interfacesb_i_playlist_commands_context" prot="public" virt="non-virtual">sbIPlaylistCommandsContext</basecompoundref>
+    <includes refid="sb_i_playlist_commands_builder_8idl" local="no">sbIPlaylistCommandsBuilder.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_builder_context_17b532de30f9236707fa827804a62775f" prot="public" static="no" mutable="no">
+        <type>attribute nsISupports</type>
+        <definition>attribute nsISupports sbIPlaylistCommandsBuilderContext::implementorContext</definition>
+        <argsstring></argsstring>
+        <name>implementorContext</name>
+        <briefdescription>
+<para>The commands builder implementor context. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="688" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="688" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The interface for giving context to playlist builder callbacks. </para>    </briefdescription>
+    <detaileddescription>
+<para>sbIPlaylistCommandsBuilderContext.h </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="431">
+        <label>sbIPlaylistCommandsContext</label>
+        <link refid="interfacesb_i_playlist_commands_context"/>
+      </node>
+      <node id="430">
+        <label>sbIPlaylistCommandsBuilderContext</label>
+        <link refid="interfacesb_i_playlist_commands_builder_context"/>
+        <childnode refid="431" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="442">
+        <label>sbIPlaylistCommands</label>
+        <link refid="interfacesb_i_playlist_commands"/>
+      </node>
+      <node id="437">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="434" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="441">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="433">
+        <label>sbIPlaylistCommandsContext</label>
+        <link refid="interfacesb_i_playlist_commands_context"/>
+        <childnode refid="434" relation="usage">
+          <edgelabel>medialist</edgelabel>
+        </childnode>
+        <childnode refid="442" relation="usage">
+          <edgelabel>commands</edgelabel>
+        </childnode>
+      </node>
+      <node id="438">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="439" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="441" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="436">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="437" relation="public-inheritance">
+        </childnode>
+        <childnode refid="438" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="440" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="432">
+        <label>sbIPlaylistCommandsBuilderContext</label>
+        <link refid="interfacesb_i_playlist_commands_builder_context"/>
+        <childnode refid="433" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="435">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="434">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="435" relation="public-inheritance">
+        </childnode>
+        <childnode refid="436" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="439">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="440" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="440">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" line="684" bodyfile="e:/Projects/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl" bodystart="683" bodyend="689"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_context_11d8e53e9b4ad2510701628472a36643f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderContext</scope><name>commands</name></member>
+      <member refid="interfacesb_i_playlist_commands_builder_context_17b532de30f9236707fa827804a62775f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderContext</scope><name>implementorContext</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderContext</scope><name>medialist</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderContext</scope><name>playlist</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsBuilderContext</scope><name>window</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

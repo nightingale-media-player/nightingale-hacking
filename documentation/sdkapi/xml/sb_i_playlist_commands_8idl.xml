@@ -5,24 +5,24 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_playlist_commands_builder_8idl" local="yes">components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</includedby>
     <incdepgraph>
-      <node id="352">
+      <node id="357">
         <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
-        <childnode refid="353" relation="include">
+        <childnode refid="358" relation="include">
         </childnode>
       </node>
-      <node id="353">
+      <node id="358">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="354">
+      <node id="359">
         <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
-        <childnode refid="355" relation="include">
+        <childnode refid="360" relation="include">
         </childnode>
       </node>
-      <node id="355">
+      <node id="360">
         <label>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
         <link refid="sb_i_playlist_commands_builder_8idl-source"/>
       </node>

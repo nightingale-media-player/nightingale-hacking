@@ -4,13 +4,13 @@
     <compoundname>sbITagLibChannelFileIOManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="294">
+      <node id="299">
         <label>components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl</label>
         <link refid="sbITagLibChannelFileIOManager.idl"/>
-        <childnode refid="295" relation="include">
+        <childnode refid="300" relation="include">
         </childnode>
       </node>
-      <node id="295">
+      <node id="300">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

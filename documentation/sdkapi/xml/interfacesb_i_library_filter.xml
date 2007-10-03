@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_filter" kind="interface" prot="public">
+    <compoundname>sbILibraryFilter</compoundname>
+    <includes refid="sb_i_library_constraints_8idl" local="no">sbILibraryConstraints.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_filter_15dc0d0b6dc8d2e97054cea0d98615f08" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibraryFilter::property</definition>
+        <argsstring></argsstring>
+        <name>property</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_filter_1b5ff844d1ee8f3d75f8d25d7a4189404" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryFilter::init</definition>
+        <argsstring>(in AString aProperty, in unsigned long aCount,[array, size_is(aCount)] in wstring aValues)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_filter_1d73490b359045a2a343ac861409f0fc2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryFilter::initNative</definition>
+        <argsstring>(in AString aProperty, in StringArray aValues)</argsstring>
+        <name>initNative</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in StringArray</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="51"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_filter_1d61c1fefa9d9ccd91bdfd42af7cdc18c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryFilter::getValues</definition>
+        <argsstring>(out unsigned long count,[retval, array, size_is(count)] out wstring values)</argsstring>
+        <name>getValues</name>
+        <param>
+          <type>out unsigned long</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <attributes>[retval, array, size_is(count)]</attributes>
+          <type>out wstring</type>
+          <declname>values</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="56"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_filter_1fe14ad2bcd1fbc0baf743c1f94c6886e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>StringArray</type>
+        <definition>StringArray sbILibraryFilter::getValuesNative</definition>
+        <argsstring>()</argsstring>
+        <name>getValuesNative</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_filter_15e59d4dcf892f429f853d3d69735da17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibraryFilter::toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="60"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A filter that can be applied to a media list view. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="46" bodyend="61"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_filter_1d61c1fefa9d9ccd91bdfd42af7cdc18c" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>getValues</name></member>
+      <member refid="interfacesb_i_library_filter_1fe14ad2bcd1fbc0baf743c1f94c6886e" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>getValuesNative</name></member>
+      <member refid="interfacesb_i_library_filter_1b5ff844d1ee8f3d75f8d25d7a4189404" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>init</name></member>
+      <member refid="interfacesb_i_library_filter_1d73490b359045a2a343ac861409f0fc2" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>initNative</name></member>
+      <member refid="interfacesb_i_library_filter_15dc0d0b6dc8d2e97054cea0d98615f08" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>property</name></member>
+      <member refid="interfacesb_i_library_filter_15e59d4dcf892f429f853d3d69735da17" prot="public" virt="non-virtual"><scope>sbILibraryFilter</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

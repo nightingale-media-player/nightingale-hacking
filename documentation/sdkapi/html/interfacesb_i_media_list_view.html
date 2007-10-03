@@ -47,6 +47,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#48af8a8f54219b72f876c72b86b6abf9">clone</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a clone of this view. This will return a copy with the same search, filter, sort, and cascade filter set as the original.  <a href="#48af8a8f54219b72f876c72b86b6abf9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#b5977daa0e5a454727f4ddf42e5525da">getState</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a snapshot of the current state of this view. Can later be used to restore the state by passing the returned object as an argument to sbIMediaList::CreateView().  <a href="#b5977daa0e5a454727f4ddf42e5525da"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0c728825b5bc85265d000a68d22d56a9"></a><!-- doxytag: member="sbIMediaListView::mediaList" ref="0c728825b5bc85265d000a68d22d56a9" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">mediaList</a></td></tr>
@@ -74,7 +77,7 @@ A distinct view on a given media list.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00047">47</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00061">61</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="845aa28b17e2eab43b1ea8b08811d247"></a><!-- doxytag: member="sbIMediaListView::getItemByIndex" ref="845aa28b17e2eab43b1ea8b08811d247" args="(in unsigned long aIndex)" -->
 <div class="memitem">
 <div class="memproto">
@@ -242,9 +245,31 @@ Create a clone of this view. This will return a copy with the same search, filte
 
 </div>
 </div><p>
+<a class="anchor" name="b5977daa0e5a454727f4ddf42e5525da"></a><!-- doxytag: member="sbIMediaListView::getState" ref="b5977daa0e5a454727f4ddf42e5525da" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a> sbIMediaListView::getState           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns a snapshot of the current state of this view. Can later be used to restore the state by passing the returned object as an argument to sbIMediaList::CreateView(). 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The state of this media list view </dd></dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 14:33:51 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 2 17:02:48 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>
