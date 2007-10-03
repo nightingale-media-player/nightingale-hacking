@@ -120,7 +120,14 @@ protected:
   nsresult ConfirmPlaybackControl();
   nsresult GetBrowser( nsIDOMElement** aElement );
   nsresult TakePlaybackControl( nsIURI* aURI );
-
+  nsresult CreateProperty( const nsAString& aPropertyType,
+                           const nsAString& aPropertyID,
+                           const nsAString& aDisplayName,
+                           const nsAString& aButtonLabel,
+                           PRBool aUserViewable,
+                           PRBool aUserEditable,
+                           PRUint32 aNullSort );
+                           
   // Data members
   PRBool mInitialized;
   PRBool mUseDefaultCommands;

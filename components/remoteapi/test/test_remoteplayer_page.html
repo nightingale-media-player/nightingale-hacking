@@ -101,6 +101,16 @@ function runTest(tester) {
     //songbird.next();
     //songbird.previous();
 
+    // Test the adding of properties
+    songbird.createTextProperty("Test_1_Text", "Test_Text", true, true, 0);
+    songbird.createDateTimeProperty("Test_1_DateTime", "Test_DateTime", true, true, 0);
+    songbird.createURIProperty("Test_1_URI", "Test_URI", true, true, 0);
+    songbird.createNumberProperty("Test_1_Number", "Test_Number", true, true, 0);
+    songbird.createImageProperty("Test_1_Image", "Test_Image", true, true, 0);
+    songbird.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
+    songbird.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
+    songbird.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
+    
     // We need to do this to give the web browser persists component a chance
     // to tidy up, otherwise it will leak
     tester.sleep(2000);
