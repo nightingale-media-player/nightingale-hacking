@@ -474,6 +474,20 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
       DEBUG('ERROR CREATING SERVICE PANE MODULE: '+e);
     }
   }
+
+  // ensure we have a birdhouse node
+  // this is kind of a hack
+  var birdhouse = this.getNode('http://birdhouse.songbirdnest.com/');
+  if (!birdhouse) {
+    birdhouse = this.addNode('http://birdhouse.songbirdnest.com/',
+      this._root, false);
+    birdhouse.url = 'http://birdhouse.songbirdnest.com/';
+    birdhouse.name = 'Birdhouse';
+    //birdhouse.name = '&servicesource.welcome';
+    birdhouse.hidden = false;
+    birdhouse.editable = false;
+    birdhouse.properties = 'birdhouse';
+  }
   DEBUG('ServicePaneService.init() ends');
 }
 
