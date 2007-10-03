@@ -54,6 +54,11 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
 }
 
+.servicepane_tree > treechildren::-moz-tree-image( birdhouse )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon-birdhouse.png) ;
+}
+
 .servicepane_tree > treechildren::-moz-tree-image( web library )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
