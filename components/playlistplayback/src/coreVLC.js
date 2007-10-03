@@ -721,8 +721,10 @@ CoreVLC.prototype.setMute = function(mute)
 
   if (this._muted != mute) 
   {
+    if (this._object.audio) {
+      this._object.audio.mute = mute;
+    }
     this._muted = mute;
-    this._object.audio.mute = mute;
   }
 };
 
@@ -736,10 +738,12 @@ CoreVLC.prototype.getVolume = function()
   * If you going beyond 49 VLC will amplify the signal.
   * And it does so poorly, without clipping or compressing the signal.
   */
-  var scaledVolume = this._object.audio.volume;
-  var retVolume = Math.round(scaledVolume / 49 * 255);
+  if (this._object.audio) {
+    var scaledVolume = this._object.audio.volume;
+    return Math.round(scaledVolume / 49 * 255);
+  }
   
-  return retVolume;
+  return this._lastVolume;
 };
 
 CoreVLC.prototype.setVolume = function(volume) 
@@ -750,7 +754,9 @@ CoreVLC.prototype.setVolume = function(volume)
     
   var scaledVolume = Math.round(volume / 255 * 49);
   
-  this._object.audio.volume = scaledVolume;
+  if (this._object.audio) {
+    this._object.audio.volume = scaledVolume;
+  }
   this._lastVolume = scaledVolume;
 };
 
@@ -1011,8 +1017,9 @@ CoreVLC.prototype.activate = function ()
   }
 
   // Fix the volume.
+  this._object.audio.mute = this._muted;
   this._object.audio.volume = this._lastVolume;
-
+  
   this._active = true;
 };
 
