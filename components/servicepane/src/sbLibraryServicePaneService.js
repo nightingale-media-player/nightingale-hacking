@@ -1175,8 +1175,7 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
     var fnode = this._servicePane.addNode('SB:Playlists', 
         this._servicePane.root, true);
   }
-  // FIXME: localize name
-  fnode.name = 'Playlists';
+  fnode.name = '&servicesource.playlists';
   fnode.properties = 'folder Playlists';
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;

@@ -483,8 +483,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
       this._root, false);
   }
   birdhouse.url = 'http://birdhouse.songbirdnest.com/';
-  birdhouse.name = 'Birdhouse';
-  //birdhouse.name = '&servicesource.welcome';
+  birdhouse.name = '&servicesource.welcome';
   birdhouse.hidden = false;
   birdhouse.editable = false;
   birdhouse.properties = 'birdhouse';
