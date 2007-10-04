@@ -1164,7 +1164,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
     pQuery->SetLastError(SQLITE_ERROR);
     pQuery->GetQueryCount(&nQueryCount);
 
-    for(PRUint32 currentQuery = 0; currentQuery < nQueryCount && !pQuery->m_IsAborting; currentQuery++)
+    for(PRUint32 currentQuery = 0; currentQuery < nQueryCount && !pQuery->m_IsAborting; ++currentQuery)
     {
       int retDB = 0;
       sqlite3_stmt *pStmt = nsnull;
