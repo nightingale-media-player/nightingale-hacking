@@ -597,23 +597,33 @@ AC_SUBST(SB_DEPENDENCIES_DIR)
 #
 # Check for media cores to enable
 #
+
+MEDIA_CORE_VLC=
+MEDIA_CORE_WMP=
+MEDIA_CORE_GST=
+MEDIA_CORE_QT=
+
 AC_ARG_WITH(media-core,
             [  --with-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to enable],
             [ SB_MEDIA_CORES=$withval ],
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     if test "$option" = "default"; then
-        MEDIA_CORE_VLC=1
-        MEDIA_CORE_WMP=1
-        MEDIA_CORE_GST=1
-        MEDIA_CORE_QT=1
+        if test "$SB_PLATFORM" = "linux"; then
+            MEDIA_CORE_GST=1
+        elif test "$SB_PLATFORM" = "windows"; then
+            MEDIA_CORE_VLC=1
+            MEDIA_CORE_WMP=1 
+            MEDIA_CORE_QT=1
+        elif test "$SB_PLATFORM" = "macosx"; then
+            MEDIA_CORE_VLC=1
+            MEDIA_CORE_QT=1
+        fi
     elif test "$option" = "none"; then
-        MEDIA_CORE_VLC=
-        MEDIA_CORE_WMP=
-        MEDIA_CORE_GST=
-        MEDIA_CORE_QT=
+        # Nothing needs to be set here
+        true
     elif test "$option" = "vlc"; then
-        MEDIA_CORE_VLC=1
+        MEDIA_CORE_VLC=1                                   
     elif test "$option" = "windowsmedia"; then
         MEDIA_CORE_WMP=1
     elif test "$option" = "gstreamer"; then
