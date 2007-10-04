@@ -268,8 +268,14 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
                                                         (urlSpec,
                                                          getter_AddRefs(pFile));
         }
-        if (NS_SUCCEEDED(result))
-            result = pFile->GetNativePath(mMetadataPath);
+        
+        if (NS_SUCCEEDED(result)) {
+          
+          nsAutoString path;
+          result = pFile->GetPath(path);
+
+          mMetadataPath = NS_ConvertUTF16toUTF8(path);
+        }
 
         /* Read the metadata. */
         if (NS_SUCCEEDED(result))
