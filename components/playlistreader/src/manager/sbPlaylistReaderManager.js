@@ -104,12 +104,13 @@ CPlaylistReaderManager.prototype =
 
   getFileExtension: function(aPath)
   {
-    var pos = aPath.lastIndexOf(".");
-    if (pos >= 0) {
-      return aPath.substr(pos + 1);
-    }
-
-    return null;
+    // find the file extension
+    var m = aPath.match(/\.([^\.\/]+)$/);
+    if (m) {
+      return m[1];
+    } else {
+      return null;
+    } 
   },
 
   //sbIPlaylistReaderManager
