@@ -31,15 +31,18 @@
 #include <sbILocalDatabasePropertyCache.h>
 
 #include <nsClassHashtable.h>
+#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
+#include <nsIThread.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
 
 struct PRLock;
+struct PRMonitor;
 
 class nsIURI;
 class sbIDatabaseQuery;
@@ -124,6 +127,18 @@ private:
   // Dirty GUID's
   PRLock* mDirtyLock;
   nsTHashtable<nsStringHashKey> mDirty;
+  
+  // flushing on a background thread
+  struct FlushQueryData {
+    nsCOMPtr<sbIDatabaseQuery> query;
+    PRUint32 dirtyGuidCount;
+  };
+  void RunFlushThread();
+
+  PRBool mIsShuttingDown;
+  nsTArray<FlushQueryData> mUnflushedQueries;
+  nsCOMPtr<nsIThread> mFlushThread;
+  PRMonitor* mFlushThreadMonitor;
 
   // Backstage pass to our parent library. Can't use an nsRefPtr because the
   // library owns us and that would create a cycle.
