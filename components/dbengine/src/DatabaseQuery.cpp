@@ -53,6 +53,8 @@
 #include <nsPrintfCString.h>
 #endif
 
+#define DATABASEQUERY_MAX_WAIT_TIME (50)
+
 // CLASSES ====================================================================
 //=============================================================================
 // CDatabaseQuery Class
@@ -597,7 +599,7 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     while (!m_QueryHasCompleted)
-      mon.Wait();
+      mon.Wait( PR_MillisecondsToInterval(DATABASEQUERY_MAX_WAIT_TIME) );
   }
   *_retval = NS_OK;
   return NS_OK;
