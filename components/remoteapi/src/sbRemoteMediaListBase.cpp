@@ -104,15 +104,18 @@ sbRemoteMediaListBase::~sbRemoteMediaListBase()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
+already_AddRefed<sbIMediaItem>
 sbRemoteMediaListBase::GetMediaItem()
 {
-  sbIMediaItem* item = mMediaList;
-  NS_ADDREF(item);
-  return item;
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(mMediaList, &rv);
+  NS_ASSERTION(mediaItem, "Could not QI list to item");
+
+  return mediaItem.forget() ;
 }
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaList>)
+already_AddRefed<sbIMediaList>
 sbRemoteMediaListBase::GetMediaList()
 {
   sbIMediaList* list = mMediaList;

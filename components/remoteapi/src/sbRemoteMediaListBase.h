@@ -94,8 +94,8 @@ public:
                                           nsIStringEnumerator **_retval);
 
   // sbIWrappedMediaList
-  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
-  NS_IMETHOD_(already_AddRefed<sbIMediaList>) GetMediaList();
+  virtual already_AddRefed<sbIMediaItem> GetMediaItem();
+  virtual already_AddRefed<sbIMediaList> GetMediaList();
 
   sbRemoteMediaListBase(sbRemotePlayer* aRemotePlayer,
                         sbIMediaList* aMediaList,

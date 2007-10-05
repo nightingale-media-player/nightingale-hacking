@@ -50,7 +50,7 @@ public:
 
   NS_DECLARE_STATIC_IID_ACCESSOR(SB_IWRAPPEDMEDIAITEM_IID)
 
-  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem()=0;
+  virtual already_AddRefed<sbIMediaItem> GetMediaItem()=0;
 };
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbIWrappedMediaItem,

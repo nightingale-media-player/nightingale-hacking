@@ -30,6 +30,7 @@
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
 #include <nsAutoPtr.h>
+#include <nsMemory.h>
 #include "sbSecurityMixin.h"
 
 #ifndef LOG
@@ -57,6 +58,7 @@ _class::Init()                                                                \
                     sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),  \
                     sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );\
   NS_ENSURE_SUCCESS( rv, rv );                                                \
+  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(iidCount, iids);                      \
   mSecurityMixin = do_QueryInterface(                                         \
     NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );                     \
   NS_ENSURE_SUCCESS( rv, rv );                                                \

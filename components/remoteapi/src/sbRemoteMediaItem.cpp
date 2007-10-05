@@ -116,7 +116,7 @@ sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
 #endif
 }
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
+already_AddRefed<sbIMediaItem>
 sbRemoteMediaItem::GetMediaItem()
 {
   sbIMediaItem* item = mMediaItem;

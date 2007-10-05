@@ -64,7 +64,7 @@ public:
   NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
 
   // sbIWrappedMediaItem interface
-  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
+  virtual already_AddRefed<sbIMediaItem> GetMediaItem();
 
   sbRemoteMediaItem( sbRemotePlayer* aRemotePlayer,
                      sbIMediaItem* aMediaItem );
