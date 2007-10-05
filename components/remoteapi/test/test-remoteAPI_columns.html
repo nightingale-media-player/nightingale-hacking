@@ -1,0 +1,215 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: Columns</title>
+    <script>
+var siteLib;
+var siteList;
+
+function load() {
+  var output = document.getElementById("output");
+
+  var SB_NS = "http://songbirdnest.com/data/1.0#";
+  var SBProperties = {
+    artistName: SB_NS + "artistName",
+    albumName:  SB_NS + "albumName",
+    trackName:  SB_NS + "trackName",
+    year:       SB_NS + "year",
+    genre:      SB_NS + "genre"
+  };
+
+  siteLib = songbird.siteLibrary;
+  siteLib.name = "Site Lib";
+  siteLib.scanMediaOnCreation = false;
+  siteList = siteLib.createMediaList("simple");
+  songbird.webPlaylist.mediaList = siteList;
+
+  try {
+    var originalCount = songbird.webPlaylist.getColumnCount();
+
+    songbird.webPlaylist.clearColumns();
+    assertTrue(songbird.webPlaylist.getColumnCount() == 0, "clear");
+
+    // insert into empty list
+    var a = [SBProperties.year];
+    songbird.webPlaylist.insertColumnBefore(SBProperties.year);
+    assertColumns(a, "insert 1");
+
+    // try to append a duplicate
+    songbird.webPlaylist.insertColumnBefore(SBProperties.year);
+    assertColumns(a, "insert 2");
+
+    // append to end of list
+    a = [SBProperties.year, SBProperties.artistName];
+    songbird.webPlaylist.insertColumnBefore(SBProperties.artistName);
+    assertColumns(a, "insert 3");
+
+    // insert between two columns
+    a = [SBProperties.year, SBProperties.albumName, SBProperties.artistName];
+    songbird.webPlaylist.insertColumnBefore(SBProperties.albumName, SBProperties.artistName);
+    assertColumns(a, "insert 4");
+
+    // insert first
+    a = [SBProperties.trackName, SBProperties.year, SBProperties.albumName, SBProperties.artistName];
+    songbird.webPlaylist.insertColumnBefore(SBProperties.trackName, SBProperties.year);
+    assertColumns(a, "insert 5");
+
+    // insert last
+    a = [SBProperties.trackName, SBProperties.year, SBProperties.albumName, SBProperties.artistName, SBProperties.genre];
+    songbird.webPlaylist.insertColumnBefore(SBProperties.genre);
+    assertColumns(a, "insert 6");
+
+    // remove middle
+    a = [SBProperties.trackName, SBProperties.year, SBProperties.artistName, SBProperties.genre];
+    songbird.webPlaylist.removeColumn(SBProperties.albumName);
+    assertColumns(a, "remove 1");
+
+    // remove first
+    a = [SBProperties.year, SBProperties.artistName, SBProperties.genre];
+    songbird.webPlaylist.removeColumn(SBProperties.trackName);
+    assertColumns(a, "remove 2");
+
+    // remove last
+    a = [SBProperties.year, SBProperties.artistName];
+    songbird.webPlaylist.removeColumn(SBProperties.genre);
+    assertColumns(a, "remove 3");
+
+    // remove rest
+    a = [];
+    songbird.webPlaylist.removeColumn(SBProperties.year);
+    songbird.webPlaylist.removeColumn(SBProperties.artistName);
+    assertColumns(a, "remove 4");
+
+    // remove something not added
+    a = [];
+    songbird.webPlaylist.removeColumn(SBProperties.year);
+    assertColumns(a, "remove 5");
+
+  }
+  catch(e) {
+    output.innerHTML = "Failure on line " + e.lineNumber + ": " + e;
+    return;
+  }
+
+  songbird.webPlaylist.insertColumnBefore(SBProperties.artistName);
+  songbird.webPlaylist.insertColumnBefore(SBProperties.albumName);
+
+  var item1 = siteLib.createMediaItem("http://example.com/1.mp3");
+  item1.setProperty(SBProperties.artistName, "a");
+  item1.setProperty(SBProperties.albumName, "z");
+  siteList.add(item1);
+
+  var item2 = siteLib.createMediaItem("http://example.com/2.mp3");
+  item2.setProperty(SBProperties.artistName, "b");
+  item2.setProperty(SBProperties.albumName, "y");
+  siteList.add(item2);
+
+  var item3 = siteLib.createMediaItem("http://example.com/3.mp3");
+  item3.setProperty(SBProperties.artistName, "c");
+  item3.setProperty(SBProperties.albumName, "x");
+  siteList.add(item3);
+
+  // Need this settimeout because the tree is not quite ready to have its
+  // selection set
+  setTimeout(function() {
+
+    try {
+      songbird.webPlaylist.setSortColumn(SBProperties.artistName, true);
+      assertTrue(item1.equals(getFirstItem()), "sort 1");
+
+      songbird.webPlaylist.setSortColumn(SBProperties.artistName, false);
+      assertTrue(item3.equals(getFirstItem()), "sort 2");
+
+      songbird.webPlaylist.setSortColumn(SBProperties.albumName, true);
+      assertTrue(item3.equals(getFirstItem()), "sort 3");
+
+      songbird.webPlaylist.setSortColumn(SBProperties.albumName, false);
+      assertTrue(item1.equals(getFirstItem()), "sort 4");
+
+      output.innerHTML = "Test passed!";
+    }
+    catch(e) {
+      output.innerHTML = "Failure on line " + e.lineNumber + ": " + e;
+    }
+  }, 10);
+}
+
+function assertColumns(a, error) {
+  var same = true;
+  var cols = [];
+  if (a.length == songbird.webPlaylist.getColumnCount()) {
+    for (var i = 0; i < songbird.webPlaylist.getColumnCount(); i++) {
+      cols.push(songbird.webPlaylist.getColumnPropertyIDByIndex(i));
+      if (songbird.webPlaylist.getColumnPropertyIDByIndex(i) != a[i]) {
+        same = false;
+      }
+    }
+  }
+  else {
+    same = false;
+  }
+
+  if (!same) {
+    throw new Error(error + ": columns don't match: array = " + a + ", cols = " + cols);
+  }
+
+}
+
+function assertTrue(b, error) {
+
+  if (!b) {
+    throw new Error(error + ": assertTrue failed");
+  }
+}
+
+function getFirstItem() {
+
+  songbird.webPlaylist.setSelectionByIndex(0, true);
+  songbird.webPlaylist.setSelectionByIndex(1, false);
+  songbird.webPlaylist.setSelectionByIndex(2, false);
+  var selection = songbird.webPlaylist.selection;
+  var first = selection.getNext();
+  return first.mediaItem;
+}
+
+function unload() {
+  if (siteList)
+    siteLib.remove(siteList);
+}
+    </script>
+  </head>
+
+  <body onload="load();" onunload="unload();">
+    <h1>Columns</h1>
+    <div id="output"/>
+  </body>
+
+</html>
+

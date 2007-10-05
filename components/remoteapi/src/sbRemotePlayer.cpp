@@ -519,6 +519,8 @@ sbRemotePlayer::SetSiteScope(const nsACString & aDomain, const nsACString & aPat
   
   mScopeDomain = domain;
   mScopePath = path;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP

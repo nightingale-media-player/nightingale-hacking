@@ -855,6 +855,11 @@ sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
 {
   nsresult rv;
 
+  if (!mTreeBoxObject) {
+    NS_WARNING("Unable to update column sort attributes, no box object!");
+    return NS_OK;
+  }
+
   nsCOMPtr<nsITreeColumns> columns;
   rv = mTreeBoxObject->GetColumns(getter_AddRefs(columns));
   NS_ENSURE_SUCCESS(rv, rv);

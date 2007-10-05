@@ -362,6 +362,26 @@
         </getter>
       </property>
 
+      <field name="__suppressColumnSpecSave">false</field>
+      <property name="_suppressColumnSpecSave">
+        <getter>
+<![CDATA[
+  return this.__suppressColumnSpecSave;
+]]>
+        </getter>
+        <setter>
+<![CDATA[
+  if (!val && this.__suppressColumnSpecSave) {
+    this.__suppressColumnSpecSave = val;
+    this._saveColumnSpec();
+  }
+  else {
+    this.__suppressColumnSpecSave = val;
+  }
+]]>
+        </setter>
+      </property>
+
       <!-- Last click time and row index.  This is used to time the slow click
            to inline edit -->
       <field name="_lastClickIndex">0</field>
@@ -689,10 +709,8 @@
   
   var columnMap = [];
   var medialist = this.mediaListView.mediaList;
-  
   columnMap = this._getColumnMap(medialist.getProperty(SBProperties.columnSpec),
                                  1);
-  
   if (!columnMap.length) {
     columnMap = this._getColumnMap
                         (medialist.getProperty(SBProperties.defaultColumnSpec),
@@ -881,7 +899,7 @@
         </body>
       </method>
 
-      <!-- sbIPlaylistWidget -->
+      <!-- sbIPlaylistWidget -->  
       <method name="insertColumn">
         <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
@@ -921,6 +939,248 @@
     if (this.tree.columns) {
       this.tree.columns.invalidateColumns();
     }
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getColumnCount">
+        <body>
+<![CDATA[
+  // Get the number of visible columns
+  return this._getVisibleColumnArray().length;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="clearColumns">
+        <body>
+<![CDATA[
+  try {
+    this._suppressColumnSpecSave = true;
+
+    // Hide all visible columns
+    this._getVisibleColumnArray().forEach(function(column) {
+      column.element.setAttribute("hidden", "true");
+    });
+  }
+  finally {
+    this._suppressColumnSpecSave = false;
+  }
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="insertColumnBefore">
+        <parameter name="aPropertyID"/>
+        <parameter name="aBeforePropertyID"/>
+        <body>
+<![CDATA[
+  // Find some important indexes
+  var columnIndex       = -1;
+  var beforeColumnIndex = -1;
+  var lastVisibleIndex  = -1;
+
+  var columns = this._getSortedColumnArray();
+  for (var i = 0; i < columns.length; i++) {
+    var col = columns[i];
+    var bind = col.element.getAttribute("bind");
+    if (bind == aPropertyID) {
+      columnIndex = i;
+    }
+    if (aBeforePropertyID && bind == aBeforePropertyID) {
+      beforeColumnIndex = i;
+    }
+    if (col.element.getAttribute("hidden") == "false") {
+      lastVisibleIndex = i;
+    }
+  }
+
+  // If the column or the before column was not found, throw
+  if (columnIndex < 0 || (aBeforePropertyID && beforeColumnIndex < 0)) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+
+  this._suppressColumnSpecSave = true;
+  try {
+    var mover;
+
+    // If no columns are visible, just move this column to the front
+    if (lastVisibleIndex < 0) {
+      mover = this._moveColumnBefore(columns, columnIndex, 0);
+    }
+    else {
+      // If a before column was specified, splice the mover into the array
+      // before that column
+      if (aBeforePropertyID) {
+        mover = this._moveColumnBefore(columns, columnIndex, beforeColumnIndex);
+      }
+      else {
+        // If no before column was specified, splice the mover into the array
+        // after the last visible column
+        if (lastVisibleIndex < columns.length) {
+          mover = this._moveColumnBefore(columns, columnIndex, lastVisibleIndex + 1);
+        }
+        else {
+          mover = this._moveLast(columns, columnIndex);
+        }
+      }
+    }
+
+    mover.element.setAttribute("hidden", "false");
+  }
+  finally {
+    this._suppressColumnSpecSave = false;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_moveColumnBefore">
+        <parameter name="aColumns"/>
+        <parameter name="aFromIndex"/>
+        <parameter name="aToIndex"/>
+        <body>
+<![CDATA[
+  var mover = aColumns.splice(aFromIndex, 1)[0];
+  if (aFromIndex < aToIndex) {
+    aToIndex--;
+  }
+  aColumns.splice(aToIndex, 0, mover);
+
+  aColumns.forEach(function(column, i) {
+    column.element.setAttribute("ordinal", (i * 2) + 1);
+  });
+
+  return mover;
+]]>
+        </body>
+      </method>
+
+      <method name="_moveColumnLast">
+        <parameter name="aColumns"/>
+        <parameter name="aFromIndex"/>
+        <body>
+<![CDATA[
+  var mover = aColumns.splice(aFromIndex, 1)[0];
+  aColumns.push(mover);
+
+  aColumns.forEach(function(column, i) {
+    column.element.setAttribute("ordinal", (i * 2) + 1);
+  });
+
+  return mover;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="removeColumn">
+        <parameter name="aPropertyID"/>
+        <body>
+<![CDATA[
+  // Find some important indexes
+  var columnIndex       = -1;
+  var firstHiddenIndex  = -1;
+
+  var columns = this._getSortedColumnArray();
+  for (var i = 0; i < columns.length; i++) {
+    var col = columns[i];
+    if (col.element.getAttribute("bind") == aPropertyID) {
+      columnIndex = i;
+    }
+    if (firstHiddenIndex < 0 && col.element.getAttribute("hidden") == "true") {
+      firstHiddenIndex = i;
+    }
+  }
+
+  if (columnIndex < 0) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+
+  this._suppressColumnSpecSave = true;
+  try {
+    var mover;
+    if (firstHiddenIndex < 0) {
+      mover = this._moveColumnLast(columns, columnIndex);
+    }
+    else {
+      mover = this._moveColumnBefore(columns, columnIndex, firstHiddenIndex);
+    }
+    mover.element.setAttribute("hidden", "true");
+  }
+  finally {
+    this._suppressColumnSpecSave = false;
+  }
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getColumnPropertyIDByIndex">
+        <parameter name="aIndex"/>
+        <body>
+<![CDATA[
+  var columns = this._getVisibleColumnArray();
+  if (aIndex < 0 || aIndex >= columns.length) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+  return columns[aIndex].element.getAttribute("bind");
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="setSortColumn">
+        <parameter name="aPropertyID"/>
+        <parameter name="aIsAscending"/>
+        <body>
+<![CDATA[
+  var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+  ldtv.setSort(aPropertyID, aIsAscending);
+]]>
+        </body>
+      </method>
+
+      <method name="_getVisibleColumnArray">
+        <body>
+<![CDATA[
+  var columns = this.tree.columns;
+  var a = [];
+  for (var i = 0; i < columns.length; i++) {
+    var column = columns.getColumnAt(i);
+    if (column.element.getAttribute("hidden") != "true") {
+      a.push(column);
+    }
+  }
+
+  a.sort(function(a, b) {
+    var o1 = parseInt(a.element.getAttribute("ordinal"));
+    var o2 = parseInt(b.element.getAttribute("ordinal"));
+    return o1 - o2;
+  });
+  return a;
+]]>
+        </body>
+      </method>
+
+      <method name="_getSortedColumnArray">
+        <body>
+<![CDATA[
+  var columns = this.tree.columns;
+  var a = [];
+  for (var i = 0; i < columns.length; i++) {
+    a.push(columns.getColumnAt(i));
+  }
+
+  a.sort(function(a, b) {
+    var o1 = parseInt(a.element.getAttribute("ordinal"));
+    var o2 = parseInt(b.element.getAttribute("ordinal"));
+    return o1 - o2;
+  });
+  return a;
 ]]>
         </body>
       </method>
@@ -984,6 +1244,10 @@
       <method name="_saveColumnSpec">
         <body>
 <![CDATA[
+  if (this._suppressColumnSpecSave) {
+    return;
+  }
+
   var columns = [];
 
   var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,

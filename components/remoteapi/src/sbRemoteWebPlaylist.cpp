@@ -85,6 +85,12 @@ const static char* sPublicMethods[] =
   // sbIPlaylistWidget
   "site:showColumn",
   "site:hideColumn",
+  "site:getColumnCount",
+  "site:clearColumns",
+  "site:insertColumnBefore",
+  "site:removeColumn",
+  "site:getColumnPropertyIDByIndex",
+  "site:setSortColumn",
   "internal:getView"
 };
 
@@ -245,7 +251,8 @@ sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
   nsresult rv = GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<nsITreeView> treeView ( do_QueryInterface( mediaListView, &rv ) );
+  nsCOMPtr<nsITreeView> treeView;
+  rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<nsITreeSelection> treeSelection;

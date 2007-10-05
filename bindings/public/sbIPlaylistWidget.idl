@@ -148,6 +148,115 @@ interface sbIPlaylistWidget : nsISupports
                      in AString aBeforeCol );
 
   /**
+   * \brief Get the total number of columns in the web playlist
+   * \returns The number of columns in the web playlist
+   */
+  /*
+   Method: getColumnCount()
+
+   Get the total number of columns in the web playlist
+
+   See Also:
+    <clearColumns()>
+    <insertColumnBefore()>
+    <removeColumn()>
+  */
+  unsigned long getColumnCount();
+
+  /**
+   * \brief Clear all columns from the web playlist
+   */
+  /*
+   Method: clearColumns()
+
+   Clear all columns from the web playlist
+  */
+  void clearColumns( );
+
+  /**
+   * \brief Insert a column into the web playlist
+   *
+   * \param aPropertyID - The ID of the property you want to add as a column
+   * \param aBeforePropertyID - If specified, the new column will appear before
+   *        the column that is bound to the specified property.  If not
+   *        specified, the column will be added to the end of the list.
+   */
+  /*
+   Method: insertColumnBefore()
+
+   Insert a column into the web playlist
+
+   Arguments:
+     aPropertyID - The ID of the property you want to add as a column
+     aBeforePropertyID - If specified, the new column will appear before the
+       column that is bound to the specified property.  If not specified, the
+       column will be added to the end of the list.
+  */
+  void insertColumnBefore( in AString aPropertyID,
+                           [optional] in AString aBeforePropertyID );
+
+  /**
+   * \brief Remove a column from the playlist
+   *
+   * \param aPropertyID - The ID of the property that is bound to the column
+   *        you wish to remove.
+   */
+  /*
+   Method: removeColumn()
+
+   Remove a column from the playlist
+
+   Arguments:
+     aPropertyID - The ID of the property that is bound to the column you wish
+       to remove.
+  */
+  void removeColumn( in AString aPropertyID );
+
+  /**
+   * \brief Get the property ID bould to a particular column at a given
+   *        index
+   *
+   * \param aIndex - The index of the column from which you want to retrieve
+   *        the bound property
+   * \returns The ID of the property bound to the specified column
+   */
+  /*
+   Method: getColumnPropertyIDByIndex()
+
+   Get the property ID bould to a particular column at a given index
+
+   Arguments:
+     aIndex - The index of the column from which you want to retrieve the bound
+       property
+
+   Returns:
+     The ID of the property bound to the specified column
+  */
+  AString getColumnPropertyIDByIndex( in unsigned long aIndex );
+
+  /**
+   * \brief Set the sort of the web playlist
+   *
+   * \param aPropertyID - The ID of the property that is bound to the column
+   *        you wish to sort.
+   * \param aIsAscending - True if the sort should be ascending, false if the
+   *        sort should be descending.
+   */
+  /*
+   Method: setSortColumn()
+
+   Set the sort of the web playlist
+
+   Arguments:
+     aPropertyID - The ID of the property that is bound to the column you wish
+       to sort.
+     aIsAscending - True if the sort should be ascending, false if the sort
+       should be descending.
+  */
+  void setSortColumn( in AString aPropertyID,
+                      in boolean aIsAscending );
+
+  /**
    * \brief The last click even that occured on this <WebPlaylist>
    *
    * This is used only during the propogation of the PlaylistClickEvent event
