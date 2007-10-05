@@ -78,7 +78,6 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
   /* nothing */
 
 #define SB_DECL_SBIMEDIAITEM_OVERRIDES                                          \
-  NS_IMETHOD GetContentSrc(nsIURI** aContentSrc);                               \
   NS_IMETHOD SetContentSrc(nsIURI* aContentSrc);                                \
   /* nothing */
 
@@ -89,6 +88,7 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
   NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return _to SetMediaCreated(aMediaCreated); } \
   NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return _to GetMediaUpdated(aMediaUpdated); } \
   NS_IMETHOD SetMediaUpdated(PRInt64 aMediaUpdated) { return _to SetMediaUpdated(aMediaUpdated); } \
+  NS_IMETHOD GetContentSrc(nsIURI **aContentSrc) { return _to GetContentSrc(aContentSrc); } \
   NS_IMETHOD GetContentLength(PRInt64 *aContentLength) { return _to GetContentLength(aContentLength); } \
   NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return _to SetContentLength(aContentLength); } \
   NS_IMETHOD GetContentType(nsAString & aContentType) { return _to GetContentType(aContentType); } \

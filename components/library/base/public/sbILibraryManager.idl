@@ -102,6 +102,11 @@ interface sbILibraryManager : nsISupports
   boolean getLibraryLoadsAtStartup(in sbILibrary aLibrary);
 
   /**
+   * \brief Returns whether or not a library has been registered
+   */
+  boolean hasLibrary(in sbILibrary aLibrary);
+
+  /**
    * \brief Adds a listener.
    */
   void addListener(in sbILibraryManagerListener aListener);

@@ -66,7 +66,8 @@ public:
   // This is public so that it can be used with nsAutoPtr and friends.
   ~sbLocalDatabasePropertyCache();
 
-  nsresult Init(sbLocalDatabaseLibrary* aLibrary);
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary,
+                const nsAString& aLibraryResourceGUID);
   nsresult Shutdown();
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
@@ -117,6 +118,9 @@ private:
   // Used to template the media item property update statement
   nsDataHashtable<nsUint32HashKey, nsString> mMediaItemsUpdateQueries;
 
+  // Used to template the library media item property update statement
+  nsDataHashtable<nsUint32HashKey, nsString> mLibraryMediaItemUpdateQueries;
+
   // Used to template the query used to verify if we need to insert or
   // update a peculiar property.
   nsCOMPtr<sbISQLSelectBuilder> mPropertyInsertSelect;
@@ -124,7 +128,7 @@ private:
   // Cache for GUID -> property bag
   nsInterfaceHashtableMT<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
 
-  // Dirty GUID's
+  // Dirty GUIDs
   PRLock* mDirtyLock;
   nsTHashtable<nsStringHashKey> mDirty;
   
@@ -134,6 +138,9 @@ private:
     PRUint32 dirtyGuidCount;
   };
   void RunFlushThread();
+
+  // The GUID of the library resource
+  nsString mLibraryResourceGUID;
 
   PRBool mIsShuttingDown;
   nsTArray<FlushQueryData> mUnflushedQueries;

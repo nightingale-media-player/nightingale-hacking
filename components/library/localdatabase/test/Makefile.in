@@ -66,6 +66,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_allowduplicates.js \
                  $(srcdir)/test_guid_property.js \
                  $(srcdir)/test_null_properties.js \
+                 $(srcdir)/test_library_properties.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \

@@ -418,7 +418,7 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Create a resource guid for this database.
   nsCOMPtr<nsIUUIDGenerator> uuidGen =
@@ -467,7 +467,62 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  PRUint64 now = PR_Now() / PR_USEC_PER_MSEC;
+  nsCString uriSpec;
+  rv = fileURI->GetSpec(uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the default library media item properties
+  insert = do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("library_media_item"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueString(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("created"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueLong(now);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("updated"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueLong(now);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("content_url"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueString(NS_ConvertUTF8toUTF16(uriSpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("hidden"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueLong(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

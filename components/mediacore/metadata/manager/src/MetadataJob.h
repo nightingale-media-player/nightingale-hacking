@@ -76,6 +76,7 @@
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
+class sbILibrary;
 class sbIMediaItem;
 class sbIURIMetadataHelper;
 class sbIMutablePropertyArray;
@@ -167,6 +168,7 @@ protected:
   static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem );
   static nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );
   static nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aName, const nsAString& aValue);
+  static nsresult GetJobLibrary( sbIDatabaseQuery *aQuery, const nsAString& aTableName, sbILibrary **_retval );
 
   void IncrementDataRemote();
   void DecrementDataRemote();
@@ -185,6 +187,7 @@ protected:
   nsCOMPtr<sbMetadataJobProcessorThread> mMetadataJobProcessor;
   nsCOMPtr<nsIObserver>         mObserver;
   nsCOMPtr<sbIURIMetadataHelper> mURIMetadataHelper;
+  nsCOMPtr<sbILibrary>          mLibrary;
   PRBool                        mCompleted;
   PRBool                        mInitCompleted;
   PRBool                        mInitExecuted;

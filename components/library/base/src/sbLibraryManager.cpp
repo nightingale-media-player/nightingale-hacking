@@ -808,6 +808,26 @@ sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
  * See sbILibraryManager.idl
  */
 NS_IMETHODIMP
+sbLibraryManager::HasLibrary(sbILibrary* aLibrary,
+                             PRBool* _retval)
+{
+  TRACE(("sbLibraryManager[0x%x] - HasLibrary", this));
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsString libraryGUID;
+  nsresult rv = aLibrary->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mLock);
+  *_retval = mLibraryTable.Get(libraryGUID, nsnull);
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryManager.idl
+ */
+NS_IMETHODIMP
 sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 {
   TRACE(("sbLibraryManager[0x%x] - AddListener", this));

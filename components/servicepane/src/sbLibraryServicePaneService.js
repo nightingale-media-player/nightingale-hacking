@@ -742,7 +742,7 @@ function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
 
 /**
  * Hide this node and any nodes below it that belong to
- * the libary service pane service
+ * the library service pane service
  */
 sbLibraryServicePane.prototype._hideLibraryNodes =
 function sbLibraryServicePane__hideLibraryNodes(aNode) {
@@ -1050,6 +1050,8 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.url = this._getDisplayURL(aLibrary);
   node.contractid = CONTRACTID;
   node.editable = false;
+  node.hidden = aLibrary.getProperty(SBProperties.hidden) == "1";
+
   if (aLibrary == this._libraryManager.mainLibrary) {
     // the main library uses a separate Playlists folder
     this._ensurePlaylistFolderExists();
@@ -1080,9 +1082,6 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     this._insertLibraryNode(node, aLibrary);
   }
     
-  // Make sure the node is visible, since we hide all library nodes on startup
-  node.hidden = false;
-
   return node;
 }
 

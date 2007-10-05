@@ -323,6 +323,11 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
+  // Determine what library is associated with this job.  We may not be able
+  // to determine this if there are no items in the queue
+  rv = GetJobLibrary( mMainThreadQuery, aTableName, getter_AddRefs(mLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update any old items that were scanned but not written
   rv = ResetUnwritten( mMainThreadQuery, mTableName );
   NS_ENSURE_SUCCESS(rv, rv);
@@ -365,11 +370,36 @@ NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
   rv = aMediaItemsArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Determine the library this job is associated with
+  if (!mLibrary && length > 0) {
+    nsCOMPtr<sbIMediaItem> mediaItem =
+      do_QueryElementAt(aMediaItemsArray, 0, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mediaItem->GetLibrary(getter_AddRefs(mLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Break out the media items into a useful array
   nsCOMArray<sbIMediaItem> appendArray;
+  nsCOMPtr<sbILibrary> library;
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Ensure that all of the items in thie job are from the same library
+    nsCOMPtr<sbILibrary> otherLibrary;
+    rv = mediaItem->GetLibrary(getter_AddRefs(otherLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool equals;
+    rv = otherLibrary->Equals(mLibrary, &equals);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!equals) {
+      NS_ERROR("Not all items from the same library");
+      return NS_ERROR_INVALID_ARG;
+    }
+
     PRBool success = appendArray.AppendObject( mediaItem );
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
@@ -430,18 +460,9 @@ nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &
 {
   nsresult rv;
 
-  nsCOMPtr<sbILibraryManager> libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  nsCOMPtr<sbIMediaList> libraryMediaList = do_QueryInterface(mLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbILibrary> library;
-  rv = libraryManager->GetMainLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // XXXsteve This assumes that we are loading into the main library,
-  // but I think we make this assumption all over :(
-  sbMetadataBatchHelper batchHelper(list);
+  sbMetadataBatchHelper batchHelper(libraryMediaList);
 
   rv = mMainThreadQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -639,10 +660,11 @@ nsresult sbMetadataJob::CancelTimer()
 nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 {
   nsresult rv;
+  NS_ENSURE_STATE(mLibrary);
 
-  nsCOMPtr<sbILibrary> library; // To be able to call Write()
-  nsCOMPtr<sbIMediaList> mediaList; // To be able to call BeginUpdateBatch()
-  sbMetadataBatchHelper batchHelper;
+  nsCOMPtr<sbIMediaList> libraryMediaList = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbMetadataBatchHelper batchHelper(libraryMediaList);
 
   nsString aTableName = mTableName;
 
@@ -678,19 +700,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
     TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
-
-    if ( !library )
-    {
-      nsCOMPtr<sbILibraryManager> libraryManager;
-      libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = libraryManager->GetLibrary( item->library_guid, getter_AddRefs(library) );
-      NS_ENSURE_SUCCESS(rv, rv);
-      mediaList = do_QueryInterface( library, &rv ); 
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      batchHelper.SetList( mediaList );
-    }
 
     // Get ready to launch a handler
     rv = SetItemIsCurrent( mMainThreadQuery, mTableName, item );
@@ -754,12 +763,9 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     PR_Sleep( PR_MillisecondsToInterval( mSleepMS ) );
   }
 
-  if ( library )
-  {
-    // Flush the written bits.
-    rv = SetItemsAreWritten( WorkerThreadQuery, aTableName, writePending );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // Flush the written bits.
+  rv = SetItemsAreWritten( WorkerThreadQuery, aTableName, writePending );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Thread ends when the function returns.
   return NS_OK;
@@ -1079,6 +1085,70 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
     NS_ENSURE_SUCCESS(rv, rv);
  }
 
+}
+
+nsresult
+sbMetadataJob::GetJobLibrary( sbIDatabaseQuery *aQuery,
+                              const nsAString& aTableName,
+                              sbILibrary **_retval )
+{
+  NS_ASSERTION( aQuery, "aQuery is null" );
+  NS_ASSERTION( _retval, "_retval is null" );
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibraryManager> libraryManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> select =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = select->SetBaseTableName( aTableName );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = select->AddColumn( aTableName, NS_LITERAL_STRING("library_guid") );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = select->SetLimit( 1 );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString sql;
+  rv = select->ToString( sql );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->AddQuery( sql );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 error;
+  rv = aQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr< sbIDatabaseResult > pResult;
+  rv = aQuery->GetResultObject( getter_AddRefs(pResult) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = pResult->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(rowCount == 1, "Empty job table");
+  if (rowCount == 1) {
+    nsString libraryGuid;
+    rv = pResult->GetRowCellByColumn( 0,
+                                      NS_LITERAL_STRING( "library_guid" ),
+                                      libraryGuid );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = libraryManager->GetLibrary(libraryGuid, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  *_retval = nsnull;
+  return NS_OK;
 }
 
 nsresult sbMetadataJob::SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )

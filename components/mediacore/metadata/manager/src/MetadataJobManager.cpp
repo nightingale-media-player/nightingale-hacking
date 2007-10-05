@@ -37,9 +37,12 @@
 #include <nsComponentManagerUtils.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsIObserverService.h>
+#include <nsArrayUtils.h>
 
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
+#include <sbIMediaItem.h>
+#include <sbILibrary.h>
 
 #include <sbIDataRemote.h>
 
@@ -99,11 +102,50 @@ sbMetadataJobManager::~sbMetadataJobManager()
   MOZ_COUNT_DTOR(sbMetadataJobManager);
 }
 
-/* sbIMetadataJob newJob (in nsIArray aMediaItemsArray); */
 NS_IMETHODIMP 
-sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIMetadataJob **_retval)
+sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
+                             PRUint32 aSleepMS,
+                             sbIMetadataJob **_retval)
 {
+  NS_ENSURE_ARG_POINTER(aMediaItemsArray);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
+
+  // Ensure that all of the items are from the same library
+  PRUint32 length;
+  rv = aMediaItemsArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (length > 0) {
+    nsCOMPtr<sbIMediaItem> mediaItem =
+      do_QueryElementAt(aMediaItemsArray, 0, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibrary> library;
+    rv = mediaItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 1; i < length; i++) {
+      mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibrary> otherLibrary;
+      rv = mediaItem->GetLibrary(getter_AddRefs(otherLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool equals;
+      rv = otherLibrary->Equals(library, &equals);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!equals) {
+        NS_ERROR("Not all items from the same library");
+        return NS_ERROR_INVALID_ARG;
+      }
+    }
+
+  }
+
   nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 

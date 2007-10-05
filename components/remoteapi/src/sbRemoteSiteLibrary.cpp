@@ -49,6 +49,7 @@
 #include <prnetdb.h>
 #include <sbClassInfoUtils.h>
 #include <sbLocalDatabaseCID.h>
+#include <sbStandardProperties.h>
 #include "sbURIChecker.h"
 
 /*
@@ -211,6 +212,24 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
   // Create the library
   rv = libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
   NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = mLibrary->SetProperty( NS_LITERAL_STRING( SB_PROPERTY_HIDDEN ),
+                              NS_LITERAL_STRING( "1" ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Register the library
+  nsCOMPtr<sbILibraryManager> libraryManager =
+    do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  PRBool hasLibrary;
+  rv = libraryManager->HasLibrary( mLibrary, &hasLibrary );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if (!hasLibrary) {
+    rv = libraryManager->RegisterLibrary( mLibrary, PR_FALSE );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
 
   rv = InitInternalMediaList();
   NS_ENSURE_SUCCESS( rv, rv );

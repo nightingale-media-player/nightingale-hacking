@@ -103,6 +103,7 @@
 // NS_ProcessPendingEvents.
 #define SHUTDOWN_ASYNC_GRANULARITY_MS 1000
 
+// These macros need to stay in sync with the QueryInterface macro
 #define SB_ILIBRESOURCE_CAST(_ptr)                                             \
   static_cast<sbILibraryResource*>(static_cast<sbIMediaItem*>(static_cast<sbLocalDatabaseMediaItem*>(_ptr)))
 #define SB_IMEDIALIST_CAST(_ptr)                                               \
@@ -396,54 +397,17 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_ARG_POINTER(aCreationParameters);
   NS_ENSURE_ARG_POINTER(aFactory);
 
+  nsresult rv;
+
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
 
-  mDatabaseGuid.Assign(aDatabaseGuid);
-
+  mDatabaseGuid = aDatabaseGuid;
   mCreationParameters = aCreationParameters;
-
   mFactory = aFactory;
 
   // This may be null.
   mDatabaseLocation = aDatabaseLocation;
-
-  nsresult rv;
-
-  nsRefPtr<sbLocalDatabasePropertyCache>
-    propCache(new sbLocalDatabasePropertyCache());
-  NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = propCache->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mPropertyCache = propCache;
-
-  mFullArray = new sbLocalDatabaseGUIDArray();
-  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = mFullArray->SetDatabaseGUID(aDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mDatabaseLocation) {
-    rv = mFullArray->SetDatabaseLocation(aDatabaseLocation);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFullArray->AddSort(NS_LITERAL_STRING(DEFAULT_SORT_PROPERTY), PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFullArray->SetPropertyCache(mPropertyCache);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = CreateQueries();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Find our resource GUID. This identifies us within the library (as opposed
   // to the database file used by the DBEngine).
@@ -497,6 +461,42 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   nsAutoString guid;
   rv = result->GetRowCell(0, 0, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up our property cache
+  nsRefPtr<sbLocalDatabasePropertyCache>
+    propCache(new sbLocalDatabasePropertyCache());
+  NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = propCache->Init(this, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mPropertyCache = propCache;
+
+  mFullArray = new sbLocalDatabaseGUIDArray();
+  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mFullArray->SetDatabaseGUID(aDatabaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mDatabaseLocation) {
+    rv = mFullArray->SetDatabaseLocation(aDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFullArray->AddSort(NS_LITERAL_STRING(DEFAULT_SORT_PROPERTY), PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFullArray->SetPropertyCache(mPropertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize our base classes.  Note that we tell sbLocalDatabaseMediaListBase
@@ -2897,7 +2897,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     sbAutoBatchHelper batchHelper(this);
     sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
 
-    map.EnumerateRead(NotifyListsBeforeItemRemoved, this);
+    map.EnumerateRead(NotifyListsBeforeItemRemoved, SB_IMEDIALIST_CAST(this));
 
     for (PRUint32 i = 0; i < count; i++) {
       sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(SB_IMEDIALIST_CAST(this),
@@ -2924,7 +2924,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     }
 
     // Notify simple media lists after removal
-    map.EnumerateRead(NotifyListsAfterItemRemoved, this);
+    map.EnumerateRead(NotifyListsAfterItemRemoved, SB_IMEDIALIST_CAST(this));
 
     // Notify our listeners of after removal
     for (PRUint32 i = 0; i < count; i++) {
@@ -2989,27 +2989,6 @@ sbLocalDatabaseLibrary::GetNativeLibrary(sbLocalDatabaseLibrary** aLocalDatabase
 /**
  * See sbIMediaItem
  */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContentSrc(nsIURI** aContentSrc)
-{
-  NS_ENSURE_ARG_POINTER(aContentSrc);
-
-  if (!mContentSrc) {
-    nsString guid;
-    nsresult rv = GetGuid(guid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCString url("songbird-library://");
-    url.Append(NS_ConvertUTF16toUTF8(guid));
-
-    rv = NS_NewURI(getter_AddRefs(mContentSrc), url);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_ADDREF(*aContentSrc = mContentSrc);
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::SetContentSrc(nsIURI* aContentSrc)
 {
