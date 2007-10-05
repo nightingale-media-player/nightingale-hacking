@@ -652,7 +652,11 @@ popup > menu:hover > label
   color: #feffff !important; /** Light Color Brightest */ 
 }
 
-
+.menu-accel,
+.menu-iconic-accel
+{
+  color: #5c5f58 !important; /** Selected Focus Row */
+}
 /** 
 ***************************************************************************************************
 PREFERENCES
