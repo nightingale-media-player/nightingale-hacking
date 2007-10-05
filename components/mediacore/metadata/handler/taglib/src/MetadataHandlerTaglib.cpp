@@ -59,6 +59,7 @@
 #include <prlog.h>
 #include <prprf.h>
 #include <unicharutil/nsUnicharUtils.h>
+#include <nsMemory.h>
 
 /* Taglib imports. */
 #include <fileref.h>
@@ -73,6 +74,10 @@
 /* C++ std imports. */
 #include <sstream>
 
+/* Windows Specific */
+#if defined(XP_WIN)
+  #include <windows.h>
+#endif
 
 /*******************************************************************************
  *
@@ -1262,11 +1267,46 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     if (value == TagLib::String::null)
         return (result);
 
+#if defined(XP_WIN)
+    // Attempt to convert using local code page.
+    const char *str = value.toCString(true);
+    size_t len = strlen(str);
+
+    int size = MultiByteToWideChar( CP_UTF8, 0, str, len, nsnull, 0 );
+    PRUnichar *wstr = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+    NS_ENSURE_TRUE(wstr, NS_ERROR_OUT_OF_MEMORY);
+
+    int read = MultiByteToWideChar( CP_UTF8, 0, str, len, wstr, size );
+    NS_ASSERTION(size == read, "Win32 UTF-8 conversion failed.");
+
+    if(size != read) {
+      nsMemory::Free( wstr );
+
+      int size = MultiByteToWideChar( CP_ACP, 0, str, len, nsnull, 0 );
+      PRUnichar *wstr = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+      NS_ENSURE_TRUE(wstr, NS_ERROR_OUT_OF_MEMORY);
+
+      int read = MultiByteToWideChar( CP_ACP, 0, str, len, wstr, size );
+      NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
+    }
+
+    wstr[ size ] = 0;
+    nsAutoString strValue( wstr );
+    nsMemory::Free( wstr );
+
+    /* Add the metadata value. */
+    result = mpMetadataValues->SetValue
+                                (NS_ConvertUTF8toUTF16(name),
+                                 strValue,
+                                 0);
+
+#else
     /* Add the metadata value. */
     result = mpMetadataValues->SetValue
                                 (NS_ConvertUTF8toUTF16(name),
                                  NS_ConvertUTF8toUTF16(value.toCString(true)),
                                  0);
+#endif
 
     return (result);
 }
