@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/configure,v
 retrieving revision 1.1911
 diff -u -r1.1911 configure
 --- configure	28 Sep 2007 00:21:03 -0000	1.1911
-+++ configure	28 Sep 2007 00:23:40 -0000
++++ configure	5 Oct 2007 01:02:30 -0000
 @@ -95,6 +95,8 @@
    --with-embedding-profile=default|basic|minimal
                         see http://wiki.mozilla.org/Gecko:Small_Device_Support"
