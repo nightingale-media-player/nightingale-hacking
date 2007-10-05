@@ -1290,4 +1290,30 @@ interface sbIRemotePlayer : nsISupports
                                      in boolean userViewable,
                                      in boolean userEditable,
                                      in unsigned long nullSort );
+
+  /**
+   * \brief Check if the code has access to a category
+   */
+  /*
+  Method: hasAccess()
+
+  Check if the code has access to a category.
+
+  Prototype:
+    boolean hasAccess( String Category )
+
+  Parameters:
+    Category - The category to check for access to.
+
+  Example:
+    (start code)
+    ...
+    if (songbird.hasAccess('Read Current'))
+    {
+      var artist = songbird.currentArtist;
+    }
+    ...
+    (end)
+  */
+  boolean hasAccess( in AString aRemotePermCataegory );
 };

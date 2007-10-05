@@ -161,7 +161,8 @@ const static char* sPublicMethods[] =
     "site:createImageProperty",
     "site:createRatingsProperty",
     "site:createButtonProperty",
-    "site:createDownloadButtonProperty" };
+    "site:createDownloadButtonProperty",
+    "site:hasAccess" };
 
 // dataremotes keys that can be listened to
 // when you change this, please update /documentation/ListenerTopics.txt thanks!
@@ -180,6 +181,17 @@ const static char* sPublicMetadata[] =
     "faceplate.mute",
     "faceplate.playing",
     "faceplate.paused" };
+
+// This is a lookup table for converting the human readable catagory names
+// into our internal names (see sbSecurityMinin.cpp:sScopes).
+// The first entry is the javascript text, and the second one is for internal,
+// we add a : at the end of the internal one because that is what is compared.
+const static char* sPublicCategoryConversions[][2] =
+  { { "Control Playback", "playback_control:" },
+    { "Read Current", "playback_read:" },
+    { "Read Library", "library_read:" },
+    { "Add Media", "library_write:" },
+    { "Create Medialists", "library_create:" } };
 
 // needs to be in nsEventDispatcher.cpp
 #define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
@@ -2078,3 +2090,33 @@ sbRemotePlayer::CreateDownloadButtonProperty( const nsAString& aPropertyID,
                          aUserEditable, aNullSort );
 }
 
+NS_IMETHODIMP
+sbRemotePlayer::HasAccess( const nsAString& aRemotePermCategory,
+                           PRBool *_retval )
+{
+  nsCOMPtr<sbISecurityMixin> mixin;
+  mixin = do_QueryInterface(mSecurityMixin);
+
+  // Here we are going to look up the aRemotePermCategory in our
+  // sPublicCategoryConversions table to convert the more readable version
+  // into our internal version.
+  PRInt32 iIndex = -1;
+  for ( PRUint32 i=0; iIndex < 0 && i < NS_ARRAY_LENGTH(sPublicCategoryConversions); i++ ) {
+    if ( StringBeginsWith( aRemotePermCategory, NS_ConvertASCIItoUTF16( sPublicCategoryConversions[i][0] ) ) ) {
+      // Set iIndex which will drop us out of the loop
+      iIndex = i;
+    }
+  }
+
+  // Check that we found a matching catagory, and return false if not.
+  if (iIndex == -1)
+  {
+    *_retval = false;
+    return NS_OK;
+  }
+  
+  // Now grab the internal category name and get the permissions
+  nsString mCategory;
+  mCategory.AssignLiteral(sPublicCategoryConversions[iIndex][1]);
+  return mixin->GetPermissionForScopedNameWrapper( mCategory, _retval );
+}

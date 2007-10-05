@@ -80,5 +80,20 @@ interface sbISecurityMixin : nsISupports
    * \brief the DOM document to send notification events to
    */
   [noscript] attribute nsIDOMDocument notificationDocument;
+
+  /**
+   * \brief Get the permissions for a category.
+   *
+   * \param aRemotePermCategory - String representation of the category to check.
+   *    "Control Playback"
+   *    "Read Current"
+   *    "Read Library"
+   *    "Add Media"
+   *    "Create Medialists"
+   * \param _retval - True if site has permissions in category, False if site
+   *                  does not have permissions in category.
+   * \return NS_OK
+   */
+  [noscript] boolean getPermissionForScopedNameWrapper(in AString aRemotePermCategory);
 };
 

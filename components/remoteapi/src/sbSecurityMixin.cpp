@@ -73,6 +73,8 @@ struct Scope {
   const char* allowed_notification;
 };
 
+// Note: If you change the catagory names here then please change them in
+// sbRemotePlayer.cpp in the sPublicCatagoryConversions array as well
 static const Scope sScopes[] = {
   { "playback_control", sNotificationHat, sNotificationNone, },
   { "playback_read", sNotificationHat, sNotificationNone, },
@@ -407,7 +409,8 @@ sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
 }
 
 PRBool
-sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
+sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
+                                            PRBool disableNotificationCheck)
 {
   LOG(( "sbSecurityMixin::GetPermissionForScopedName()"));
   PRBool allowed = PR_FALSE;
@@ -455,7 +458,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
   
   // if we found additional info about the scope, work out if there's a
   // notification to fire
-  if ( scope ) {
+  if ( scope && !disableNotificationCheck ) {
     const char* notification =
         allowed ? scope->allowed_notification : scope->blocked_notification;
     LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s",
@@ -679,3 +682,11 @@ inline char* SB_CloneAllAccess()
   return ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
 }
 
+NS_IMETHODIMP
+sbSecurityMixin::GetPermissionForScopedNameWrapper( const nsAString& aRemotePermCategory,
+                                                    PRBool *_retval )
+{
+  // We need to prevent the notification from appearing when calling
+  *_retval = GetPermissionForScopedName( aRemotePermCategory, PR_TRUE );
+  return NS_OK;
+}
