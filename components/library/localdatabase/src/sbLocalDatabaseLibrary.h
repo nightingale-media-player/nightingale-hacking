@@ -188,6 +188,8 @@ public:
                 sbILibraryFactory* aFactory,
                 nsIURI* aDatabaseLocation = nsnull);
 
+  static inline void GetNowString(nsAString& _retval);
+
   /**
    * \brief Bulk removes the selected items specified in aSelection from the
    *        view aView
@@ -200,8 +202,6 @@ private:
 
   inline nsresult MakeStandardQuery(sbIDatabaseQuery** _retval,
                                     PRBool aRunAsync = PR_FALSE);
-
-  inline void GetNowString(nsAString& _retval);
 
   nsresult AddNewItemQuery(sbIDatabaseQuery* aQuery,
                            const PRUint32 aMediaItemTypeID,
