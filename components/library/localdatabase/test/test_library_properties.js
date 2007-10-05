@@ -58,9 +58,15 @@ function runTest () {
                   get("ProfD", Ci.nsIFile);
   directory.append("db");
 
+  var dest = directory.clone();
+  dest.append("test_library_properties2.db");
+  if (dest.exists()) {
+    dest.remove(false);
+  }
+
   var src = directory.clone();
   src.append("test_library_properties.db");
-  src.copyTo(directory, "test_library_properties2.db");
+  src.copyTo(directory, dest.leafName);
 
   var library2 = createLibrary("test_library_properties2", null, false);
   assertTrue(library2.created > 0);
