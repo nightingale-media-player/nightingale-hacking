@@ -21,7 +21,7 @@
  *
  * Contributor(s):
  *   Joe Hewitt (hewitt@netscape.com)
- *   Kevin Gerich (webmail@kmgerich.com)
+ *   Pamela Greene (pamg.bugs@gmail.com)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -48,11 +48,19 @@
 
 textbox {
   cursor: default;
+  padding: 0;
 }
 
 /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 textbox.padded {
-  padding: 1px 0px 1px 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  -moz-padding-start: 2px;
+  -moz-padding-end: 0px;
+}
+
+.autocomplete-textbox-container {
+  -moz-box-align: center;
 }
 
 .textbox-input-box {
@@ -64,31 +72,120 @@ textbox.padded {
 
 .autocomplete-history-dropmarker {
   -moz-appearance: none !important;
-  border: none !important;
-  background-color: transparent !important;
-  padding: 0px;
-  list-style-image: url("chrome://global/skin/icons/autocomplete-dropmarker.png");
+  height: 20px;
   margin: 0px;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: 1px solid !important;
+  -moz-border-left-colors: ThreeDShadow !important;
+  border-right: none !important;
+  padding: 0 !important;
+  list-style-image: url("chrome://global/skin/icons/autocomplete-dropmark-arrow.png") !important;
+  -moz-image-region: rect(0px, 16px, 20px, 0px) !important;
+}
+
+.autocomplete-history-dropmarker[enablehistory="true"] {
+  -moz-binding: url("chrome://global/skin/globalBindings.xml#history-dropmarker")
+}
+
+textbox[chromedir="rtl"] .autocomplete-history-dropmarker {
+  border-left: none !important;
+  border-right: 1px solid !important;
+  -moz-border-right-colors: ThreeDShadow !important;
+}
+
+.autocomplete-history-dropmarker:hover {
+  -moz-image-region: rect(0px, 32px, 20px, 16px) !important;
+}
+
+.autocomplete-history-dropmarker:active {
+  -moz-image-region: rect(0px, 64px, 20px, 48px) !important;
+}
+
+.autocomplete-dropmarker-bkgnd-top {
+  list-style-image: url("chrome://global/skin/icons/autocomplete-dropmark-bkgnd.png");
+  -moz-image-region: rect(0px, 16px, 9px, 0px);
+  height: 9px;
+}
+
+/* GTK does not stretch image regions properly, so use background images instead.
+   See bugs 351764 and 254659. */
+.autocomplete-dropmarker-bkgnd-mid-top {
+  background-image: url("chrome://global/skin/icons/autocomplete-dropmark-bkgnd-mid-top.png");
+  background-repeat: repeat;
+  -moz-background-clip: padding;
+}
+
+.autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-image: url("chrome://global/skin/icons/autocomplete-dropmark-bkgnd-mid-bottom.png");
+  background-repeat: repeat;
+  -moz-background-clip: padding;
+  list-style-image: none;
+}
+
+.autocomplete-dropmarker-bkgnd-bottom {
+  list-style-image: url("chrome://global/skin/icons/autocomplete-dropmark-bkgnd.png");
+  -moz-image-region: rect(11px, 16px, 20px, 0px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-top {
+  -moz-image-region: rect(0px, 32px, 9px, 16px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-mid-top {
+  background-position: -16px 0px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-position: -16px 0px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-bottom {
+  -moz-image-region: rect(11px, 32px, 20px, 16px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-top {
+  -moz-image-region: rect(0px, 64px, 9px, 48px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-mid-top {
+  background-position: -48px 0px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-position: -48px 0px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-bottom {
+  -moz-image-region: rect(11px, 64px, 20px, 48px);
+  height: 9px;
 }
 
 /* ::::: autocomplete popups ::::: */
 
-popup[type="autocomplete"],
+panel[type="autocomplete"],
 .autocomplete-history-popup {
-  padding: 0px !important;
-  background-color: #0f100f; /** Groove */
-  font: icon;
   -moz-appearance: none;
+  border-width: 1px;
+  -moz-border-top-colors: ThreeDDarkShadow;
+  -moz-border-right-colors: ThreeDDarkShadow;
+  -moz-border-bottom-colors: ThreeDDarkShadow;
+  -moz-border-left-colors: ThreeDDarkShadow;
+  padding: 0;
+  background-color: -moz-Field !important;
 }
 
-popup[type="autocomplete"] > tree > treecols > hbox
+panel[type="autocomplete"] > tree > treecols > hbox
 {
   height: 0px;
 }
 
 .autocomplete-history-popup {
   max-height: 180px;
-  border-top: 1px solid #C3C3C3 !important;
 }
 
 /* ::::: tree ::::: */
@@ -107,15 +204,15 @@ popup[type="autocomplete"] > tree > treecols > hbox
 }
 
 .autocomplete-treebody::-moz-tree-cell-text {
-  padding-left: 2px;
+  -moz-padding-start: 8px;
 }
 
 treechildren.autocomplete-treebody::-moz-tree-row(selected) {
- background-color: -moz-mac-alternateprimaryhighlight;
+ background-color: Highlight;
 }
 
 treechildren.autocomplete-treebody::-moz-tree-cell-text(selected) {
-  color: #FFFFFF !important;
+  color: HighlightText !important;
 }
 
 /* ::::: textboxes inside toolbarpaletteitems ::::: */
@@ -127,3 +224,4 @@ toolbarpaletteitem > toolbaritem > textbox > hbox > hbox > html|*.textbox-input 
 toolbarpaletteitem > toolbaritem > * > textbox > hbox > hbox > html|*.textbox-input {
   visibility: hidden;
 }
+

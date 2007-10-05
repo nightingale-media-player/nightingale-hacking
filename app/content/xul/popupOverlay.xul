@@ -57,6 +57,8 @@
     <popup id="service_edit_popup"  ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
       <textbox id="service_edit" multiline="false" wrap="off" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
     </popup>
+	
+	<panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
   </popupset>
 
 </overlay>

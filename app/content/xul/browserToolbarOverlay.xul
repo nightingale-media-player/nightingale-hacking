@@ -58,7 +58,7 @@
     TODO Make this toolbar user customizable.
     -->
   <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons" 
-            defaultmode="icons" iconsize="small">
+            defaultmode="icons" iconsize="small" mousethrough="never">
     <toolbarpalette id="BrowserToolbarPalette">
     
       <!-- IDs and classes match FireFox in order to make porting 
@@ -110,9 +110,6 @@
                                 flex="1" align="center" />  
       </toolbaritem>
       
-      <splitter id="search_splitter">
-        <grippy/>
-      </splitter> 
 
       <!-- SEARCH WIDGET -->
       <toolbaritem id="searchbar-container" align="center" flex="6"
@@ -132,7 +129,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,linked-playlist-button,urlbar-container,search_splitter,searchbar-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,linked-playlist-button,urlbar-container,splitter,searchbar-container"
              flex="1">            
     </toolbar>
     

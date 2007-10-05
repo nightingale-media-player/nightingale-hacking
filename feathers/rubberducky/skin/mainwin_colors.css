@@ -1268,6 +1268,27 @@ treechildren::-moz-tree-progressmeter( selected, focus )
 }
 
 
+/** 
+***********************************************************************
+AUTOCOMPLETE POPUPS
+**********************************************************************
+*/
+
+.autocomplete-treebody::-moz-tree-row( odd )
+{
+  background-color: #202220; /** Button Shadow */
+}
+
+.autocomplete-treebody::-moz-tree-row( even )
+{
+  background-color: #202220; /** Button Shadow */
+}
+
+.autocomplete-treebody::-moz-tree-cell
+{
+  border-right: 0px !important; 
+}
+
 
 /** 
 ***********************************************************************
