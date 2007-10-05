@@ -98,10 +98,10 @@
                      command="cmd_bm_newbookmark"
                      tooltiptext="&tooltip.browser.bookmark;"/>
 
-      <toolbarbutton id="linked-playlist-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
-                     label="&tooltip.browser.linked-playlist;"
-                     command="cmd_bm_newlinkedplaylist"
-                     tooltiptext="&tooltip.browser.linked-playlist;"/>
+      <toolbarbutton id="subscription-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.subscription;"
+                     command="cmd_bm_newsubscription"
+                     tooltiptext="&tooltip.browser.subscription;"/>
 
       <!-- ADDRESS BOX -->                 
       <toolbaritem id="urlbar-container" align="center" flex="6"
@@ -129,7 +129,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,linked-playlist-button,urlbar-container,splitter,searchbar-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,splitter,searchbar-container"
              flex="1">            
     </toolbar>
     

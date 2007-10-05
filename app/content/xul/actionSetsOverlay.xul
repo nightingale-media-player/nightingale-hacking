@@ -78,9 +78,9 @@
                 inverted="true" />
     </command>
 
-    <command id="cmd_bm_newlinkedplaylist"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
+    <command id="cmd_bm_newsubscription"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
       <observes type="dataremote"
-                key="browser.canlinkedplaylist" 
+                key="browser.cansubscription" 
                 attribute="disabled" 
                 boolean="true"
                 inverted="true" />  

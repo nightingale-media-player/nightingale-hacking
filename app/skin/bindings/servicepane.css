@@ -76,7 +76,7 @@ Imported by bindings.css or directly into feathers.
 
 .servicepane_tree > treechildren::-moz-tree-image( medialisttype-dynamic )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-linked-playlist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
 .servicepane_tree > treechildren::-moz-tree-image( download )
@@ -139,7 +139,7 @@ sb-clickhold-button[id="file.new"]
 }
 
 .menuitem-iconic[id="file.remote"]{
-  list-style-image: url(chrome://songbird/skin/icons/icon-linked-playlist.png) ;
+  list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
                         

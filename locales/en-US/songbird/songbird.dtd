@@ -115,7 +115,7 @@
 <!ENTITY tooltip.browser.home     "Home" >
 <!ENTITY tooltip.browser.refresh  "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bookmark" >
-<!ENTITY tooltip.browser.linked-playlist "Create Linked Playlist" >
+<!ENTITY tooltip.browser.subscription "Create Subscription" >
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
 
