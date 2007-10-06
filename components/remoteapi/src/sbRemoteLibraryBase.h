@@ -85,8 +85,8 @@ public:
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
 
   // sbIWrappedMediaList
-  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
-  NS_IMETHOD_(already_AddRefed<sbIMediaList>) GetMediaList();
+  virtual already_AddRefed<sbIMediaItem> GetMediaItem();
+  virtual already_AddRefed<sbIMediaList> GetMediaList();
 
   // Gets the GUID for the built in libraries: main, web, download
   static nsresult GetLibraryGUID( const nsAString &aLibraryID,

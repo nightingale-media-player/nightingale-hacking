@@ -598,13 +598,13 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
+already_AddRefed<sbIMediaItem>
 sbRemoteLibraryBase::GetMediaItem()
 {
   return mRemMediaList->GetMediaItem();
 }
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaList>)
+already_AddRefed<sbIMediaList>
 sbRemoteLibraryBase::GetMediaList()
 {
   return mRemMediaList->GetMediaList();

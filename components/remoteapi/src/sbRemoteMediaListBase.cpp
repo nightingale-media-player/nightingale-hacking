@@ -112,7 +112,7 @@ sbRemoteMediaListBase::GetMediaItem()
   nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(mMediaList, &rv);
   NS_ASSERTION(mediaItem, "Could not QI list to item");
 
-  return mediaItem.forget() ;
+  return mediaItem.forget();
 }
 
 already_AddRefed<sbIMediaList>
