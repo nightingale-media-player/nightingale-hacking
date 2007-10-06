@@ -849,7 +849,7 @@ sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval,
 /**
  * \brief Make a string of the current time in milliseconds.
  */
-/* static inline */ void
+/* static */ void
 sbLocalDatabaseLibrary::GetNowString(nsAString& _retval) {
   char buf[30];
   PRUint32 len = PR_snprintf(buf, sizeof(buf), "%lld",

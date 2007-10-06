@@ -188,7 +188,7 @@ public:
                 sbILibraryFactory* aFactory,
                 nsIURI* aDatabaseLocation = nsnull);
 
-  static inline void GetNowString(nsAString& _retval);
+  static void GetNowString(nsAString& _retval);
 
   /**
    * \brief Bulk removes the selected items specified in aSelection from the
