@@ -1174,7 +1174,10 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       const void *pzTail = nsnull;
 
       pQuery->GetQuery(currentQuery, strQuery);
+      
+      PR_Lock(pQuery->m_CurrentQueryLock);
       pQuery->m_CurrentQuery = currentQuery;
+      PR_Unlock(pQuery->m_CurrentQueryLock);
 
       pParameters = pQuery->GetQueryParameters(currentQuery);
 
@@ -1534,14 +1537,18 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       delete pParameters;
     }
 
+    PR_Lock(pQuery->m_StateLock);
     pQuery->m_IsExecuting = PR_FALSE;
+    PR_Unlock(pQuery->m_StateLock);
+    
     pQuery->m_IsAborting = PR_FALSE;
+
 
     //Whatever happened, the query is done running now.
     {
       nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
+
       pQuery->m_QueryHasCompleted = PR_TRUE;
-      
       mon.NotifyAll();
 
       LOG(("DBE: Notified query monitor."));

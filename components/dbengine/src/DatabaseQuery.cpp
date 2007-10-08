@@ -70,10 +70,13 @@ CDatabaseQuery::CDatabaseQuery()
 , m_PersistExecOnInsert(PR_TRUE)
 , m_PersistExecOnUpdate(PR_TRUE)
 , m_PersistExecOnDelete(PR_TRUE)
+, m_StateLock(nsnull)
 , m_IsAborting(PR_FALSE)
 , m_IsExecuting(PR_FALSE)
 , m_AsyncQuery(PR_FALSE)
 , m_PersistentQuery(PR_FALSE)
+, m_CurrentQueryLock(nsnull)
+, m_CurrentQuery(-1)
 , m_LastError(0)
 , m_DatabaseGUID(NS_LITERAL_STRING("").get())
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
@@ -84,6 +87,8 @@ CDatabaseQuery::CDatabaseQuery()
 , m_RollingLimitResult(0)
 {
   m_pLocationURILock = PR_NewLock();
+  m_StateLock = PR_NewLock();
+  m_CurrentQueryLock = PR_NewLock();
   m_pPersistentQueryTableLock = PR_NewLock();
   m_pQueryResultLock = PR_NewLock();
   m_pDatabaseGUIDLock = PR_NewLock();
@@ -99,6 +104,8 @@ CDatabaseQuery::CDatabaseQuery()
   m_pRollingLimitLock = PR_NewLock();
 
   NS_ASSERTION(m_pLocationURILock, "CDatabaseQuery.m_pLocationURILock failed");
+  NS_ASSERTION(m_StateLock, "CDatabaseQuery.m_StateLock failed");
+  NS_ASSERTION(m_CurrentQueryLock, "CDatabaseQuery.m_CurrentQueryLock failed");
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
   NS_ASSERTION(m_pDatabaseGUIDLock, "CDatabaseQuery.m_pDatabaseGUIDLock failed");
@@ -148,6 +155,12 @@ CDatabaseQuery::~CDatabaseQuery()
 
   if (m_pLocationURILock)
     PR_DestroyLock(m_pLocationURILock);
+
+  if (m_StateLock)
+    PR_DestroyLock(m_StateLock);
+
+  if (m_CurrentQueryLock)
+    PR_DestroyLock(m_CurrentQueryLock);
 
   if (m_pPersistentQueryTableLock)
     PR_DestroyLock(m_pPersistentQueryTableLock);
@@ -644,7 +657,11 @@ NS_IMETHODIMP CDatabaseQuery::RemoveCallback(sbIDatabaseQueryCallback *dbCallbac
 NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  
+  PR_Lock(m_StateLock);
   *_retval = m_IsExecuting;
+  PR_Unlock(m_StateLock);
+
   return NS_OK;
 } //IsExecuting
 
@@ -653,7 +670,11 @@ NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+
+  PR_Lock(m_CurrentQueryLock);
   *_retval = m_CurrentQuery;
+  PR_Unlock(m_CurrentQueryLock);
+
   return NS_OK;
 } //CurrentQuery
 

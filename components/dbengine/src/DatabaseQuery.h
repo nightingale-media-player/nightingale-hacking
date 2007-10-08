@@ -130,13 +130,16 @@ protected:
   PRLock* m_pPersistentQueryTableLock;
   nsCString m_PersistentQueryTable;
 
+  PRLock* m_StateLock;
   PRBool m_IsAborting;
   PRBool m_IsExecuting;
   
   PRBool m_AsyncQuery;
   PRBool m_PersistentQuery;
 
+  PRLock*  m_CurrentQueryLock;
   PRUint32 m_CurrentQuery;
+
   PRInt32 m_LastError;
 
   PRLock* m_pQueryResultLock;

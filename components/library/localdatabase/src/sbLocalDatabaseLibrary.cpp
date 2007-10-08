@@ -3569,6 +3569,10 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
   }
 
   // Check to see if the query is complete.
+  PRBool isExecuting = PR_FALSE;
+  rv = mQuery->IsExecuting(&isExecuting);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 currentQuery;
   rv = mQuery->CurrentQuery(&currentQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3576,7 +3580,8 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
   currentQuery++;
   NS_ASSERTION(currentQuery <= mQueryCount, "Invalid position!");
 
-  if (mQueryCount != currentQuery) {
+  if (mQueryCount != currentQuery &&
+      isExecuting) {
     // Notify listener of progress.
     PRUint32 itemIndex;
     PRBool success = mQueryToIndexMap.Get(currentQuery, &itemIndex);
