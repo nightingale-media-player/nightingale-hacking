@@ -1141,8 +1141,14 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   if (aMediaList.library == this._libraryManager.mainLibrary) {
     // a playlist in the main library is considered a toplevel node
-    node.dndDragTypes = 'text/x-sb-playlist';
-    node.dndAcceptNear = 'text/x-sb-playlist';
+    if (customType == 'download') {
+      // unless its the download playlist
+      node.dndDragTypes = '';
+      node.dndAcceptNear = '';
+    } else {
+      node.dndDragTypes = 'text/x-sb-playlist';
+      node.dndAcceptNear = 'text/x-sb-playlist';
+    }
   } else {
     // playlists in other libraries can only go into their libraries' nodes
     node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
