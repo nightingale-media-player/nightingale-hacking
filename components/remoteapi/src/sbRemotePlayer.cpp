@@ -1855,15 +1855,22 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
                                 const nsAString& aPropertyID,
                                 const nsAString& aDisplayName,
                                 const nsAString& aButtonLabel,
-                                PRBool aUserViewable,
-                                PRBool aUserEditable,
+                                PRInt32 aTimeType,
+                                PRBool aReadonly,
+                                PRBool aHidden,
                                 PRUint32 aNullSort )
 {
-  LOG(( "sbRemotePlayer::CreateProperty(%s, %s, %s, %s)",
+#ifdef PR_LOGGING
+  nsCString hid = aHidden? NS_LITERAL_CSTRING("TRUE") : NS_LITERAL_CSTRING("FALSE");
+  nsCString readonly = aReadonly? NS_LITERAL_CSTRING("TRUE") : NS_LITERAL_CSTRING("FALSE");
+  LOG(( "sbRemotePlayer::CreateProperty(%s, %s, %s, %s, hid:%s, :reado%s)",
         NS_LossyConvertUTF16toASCII(aPropertyType).get(),
         NS_LossyConvertUTF16toASCII(aPropertyID).get(),
         NS_LossyConvertUTF16toASCII(aDisplayName).get(),
-        NS_LossyConvertUTF16toASCII(aButtonLabel).get() ));
+        NS_LossyConvertUTF16toASCII(aButtonLabel).get(),
+        hid.get(),
+        readonly.get() ));
+#endif
 
   nsresult rv;
   nsCOMPtr<sbIPropertyManager> propMngr( 
@@ -1872,7 +1879,7 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 
   PRBool hasProp;
   nsCOMPtr<sbIPropertyInfo> info;
-  propMngr->HasProperty( aPropertyType, &hasProp );
+  propMngr->HasProperty( aPropertyID, &hasProp );
 
   if (!hasProp) {
     // property doesn't exist, add it.
@@ -1886,6 +1893,14 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
         info = do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
       } else if ( aPropertyType.EqualsLiteral("datetime") ) {
         info = do_CreateInstance( SB_DATETIMEPROPERTYINFO_CONTRACTID, &rv );
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        nsCOMPtr<sbIDatetimePropertyInfo> dtInfo( do_QueryInterface( info, &rv ) );
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        rv = dtInfo->SetTimeType(aTimeType);
+        NS_ENSURE_SUCCESS( rv, rv );
+
       } else if ( aPropertyType.EqualsLiteral("uri") ) {
         info = do_CreateInstance( SB_URIPROPERTYINFO_CONTRACTID, &rv );
       } else if ( aPropertyType.EqualsLiteral("number") ) {
@@ -1895,13 +1910,13 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 
       if (info) {
         // set the data on the propinfo
-        rv = info->SetName(aPropertyType);
+        rv = info->SetName(aPropertyID);
         NS_ENSURE_SUCCESS( rv, rv );
         rv = info->SetDisplayName(aDisplayName);
         NS_ENSURE_SUCCESS( rv, rv );
-        rv = info->SetUserViewable(aUserViewable);
+        rv = info->SetUserViewable(aHidden ? PR_FALSE : PR_TRUE);
         NS_ENSURE_SUCCESS( rv, rv );
-        rv = info->SetUserEditable(aUserEditable);
+        rv = info->SetUserEditable(aReadonly ? PR_FALSE : PR_TRUE);
         NS_ENSURE_SUCCESS( rv, rv );
         rv = info->SetNullSort(aNullSort);
         NS_ENSURE_SUCCESS( rv, rv );
@@ -1955,7 +1970,7 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 
       // set all the common properties together
       if (builder) {
-        rv = builder->SetPropertyName(aPropertyType);
+        rv = builder->SetPropertyName(aPropertyID);
         NS_ENSURE_SUCCESS(rv, rv);
         rv = builder->SetDisplayName(aDisplayName);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -1997,99 +2012,140 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 NS_IMETHODIMP
 sbRemotePlayer::CreateTextProperty( const nsAString& aPropertyID,
                                     const nsAString& aDisplayName,
-                                    PRBool aUserViewable,
-                                    PRBool aUserEditable,
+                                    PRBool aReadonly,
+                                    PRBool aHidden,
                                     PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("text"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("text"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         0,
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateDateTimeProperty( const nsAString& aPropertyID,
                                         const nsAString& aDisplayName,
-                                        PRBool aUserViewable,
-                                        PRBool aUserEditable,
+                                        PRInt32 aTimeType,
+                                        PRBool aReadonly,
+                                        PRBool aHidden,
                                         PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("datetime"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("datetime"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         aTimeType,
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateURIProperty( const nsAString& aPropertyID,
                                    const nsAString& aDisplayName,
-                                   PRBool aUserViewable,
-                                   PRBool aUserEditable,
+                                   PRBool aReadonly,
+                                   PRBool aHidden,
                                    PRUint32 aNullSort)
 {
-  return CreateProperty( NS_LITERAL_STRING("uri"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("uri"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         0,
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateNumberProperty( const nsAString& aPropertyID,
                                       const nsAString& aDisplayName,
-                                      PRBool aUserViewable,
-                                      PRBool aUserEditable,
+                                      PRBool aReadonly,
+                                      PRBool aHidden,
                                       PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("number"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("number"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         0, 
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateImageProperty( const nsAString& aPropertyID,
                                      const nsAString& aDisplayName,
-                                     PRBool aUserViewable,
-                                     PRBool aUserEditable,
+                                     PRBool aReadonly,
+                                     PRBool aHidden,
                                      PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("image"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("image"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         0, 
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateRatingsProperty( const nsAString& aPropertyID,
                                        const nsAString& aDisplayName,
-                                       PRBool aUserViewable,
-                                       PRBool aUserEditable,
+                                       PRBool aReadonly,
+                                       PRBool aHidden,
                                        PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("rating"), aPropertyID, aDisplayName,
-                         NS_LITERAL_STRING(""), aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("rating"),
+                         aPropertyID,
+                         aDisplayName,
+                         EmptyString(),
+                         0, 
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateButtonProperty( const nsAString& aPropertyID,
                                       const nsAString& aDisplayName,
                                       const nsAString& aButtonLabel,
-                                      PRBool aUserViewable,
-                                      PRBool aUserEditable,
+                                      PRBool aReadonly,
+                                      PRBool aHidden,
                                       PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("button"), aPropertyID, aDisplayName,
-                         aButtonLabel, aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("button"),
+                         aPropertyID,
+                         aDisplayName,
+                         aButtonLabel,
+                         0, 
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::CreateDownloadButtonProperty( const nsAString& aPropertyID,
                                               const nsAString& aDisplayName,
                                               const nsAString& aButtonLabel,
-                                              PRBool aUserViewable,
-                                              PRBool aUserEditable,
+                                              PRBool aReadonly,
+                                              PRBool aHidden,
                                               PRUint32 aNullSort )
 {
-  return CreateProperty( NS_LITERAL_STRING("downloadbutton"), aPropertyID,
-                         aDisplayName, aButtonLabel, aUserViewable,
-                         aUserEditable, aNullSort );
+  return CreateProperty( NS_LITERAL_STRING("downloadbutton"),
+                         aPropertyID,
+                         aDisplayName,
+                         aButtonLabel,
+                         0,
+                         aReadonly,
+                         aHidden,
+                         aNullSort );
 }
 
 NS_IMETHODIMP

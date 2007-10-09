@@ -31,9 +31,75 @@
     <title>Remote API Test: Custom Buttons</title>
     <script>
       var siteLib;
-      var originalWeb;
-      var myDiv;
       var siteList;
+
+      const isSongbird = ( typeof(songbird) != "undefined" );
+
+      if (isSongbird) {
+        siteLib = songbird.siteLibrary;
+        siteList = siteLib.createMediaList("simple");
+        songbird.webPlaylist.mediaList = siteList;
+
+        createProperties();
+
+        populateList();
+
+        showColumns();
+      }
+      
+      function createProperties() {
+        songbird.createButtonProperty(
+                         "http://example.com/button1",  // name
+                         "Button1",                     // display name
+                         "label1",                      // button label name
+                         false,                         // readonly
+                         false,                         // hidden
+                         0 );                           // nullSort
+        songbird.createImageProperty(
+                         "http://example.com/logo1",
+                         "Logo",
+                         true,
+                         false,
+                         0 ); 
+        songbird.createDownloadButtonProperty(
+                         "http://example.com/downloadButton1,
+                         "Download1",
+                         "Download",               // button label - Must be set here or button looks wrong.
+                         true,
+                         false,
+                         0 );
+        songbird.createRatingsProperty(
+                         "http://example.com/ratings1",
+                         "Rating",
+                         false,
+                         false,
+                         0 ); 
+      }
+
+      function populateList() {
+        var tracks = ["http://ccmixter.org/people/teru/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
+                      "http://ccmixter.org/people/omnivista/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3" ];
+        for each ( var track in tracks ) {
+          var item = siteLib.createMediaItem(track);
+          item.setProperty("http://example.com/text", "sample text"); 
+          item.setProperty("http://example.com/dateTime", 352000000); // time in microseconds 5:52
+          item.setProperty("http://example.com/URI", "http://example.com"); 
+          item.setProperty("http://example.com/number", "6"); 
+          item.setProperty("http://example.com/image", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
+          item.setProperty("http://example.com/ratings", "3"); 
+          item.setProperty("http://example.com/buttonDefault", "pushDef");
+          item.setProperty("http://example.com/button", "push"); 
+          item.setProperty("http://example.com/downloadButton", "1|10|0"); 
+          siteList.add(item);
+
+      }
+
+      function showColumns() {
+        songbird.webPlaylist.insertColumnBefore("http://example.com/logo1", "http://songbirdnest.com/data/1.0#artistName");
+        songbird.webPlaylist.appendColumn("http://example.com/ratings1");
+        songbird.webPlaylist.appendColumn("http://example.com/button1");
+        songbird.webPlaylist.appendColumn("http://example.com/downloadButton1");
+      }
 
 function load() {
 
@@ -41,13 +107,8 @@ function load() {
     alert("boom " + event.property + " " + event.item.getProperty("http://songbirdnest.com/data/1.0#contentURL"));
   }, false);
 
-  //songbird.setSiteScope("127.0.0.1", "/");
-  siteLib = songbird.siteLibrary;
-  siteLib.name = "Site Lib";
-  siteList = siteLib.createMediaList("simple");
-  songbird.webPlaylist.mediaList = siteList;
 
-  songbird.webPlaylist.addColumn( "text",
+  songbird.webPlaylist.appendColumn( "text",
                                   "buttonDemoText",
                                   "FOO",
                                   "",
@@ -58,7 +119,7 @@ function load() {
                                   0,
                                   150 ); 
 
-  songbird.webPlaylist.addColumn( "button",
+  songbird.webPlaylist.appendColumn( "button",
                                   "buttonDemoBuy",
                                   "Get it!",
                                   "FOO",
@@ -69,7 +130,7 @@ function load() {
                                   0,
                                   150 ); 
 
-  songbird.webPlaylist.addColumn( "image",
+  songbird.webPlaylist.appendColumn( "image",
                                   "buttonDemoImage",
                                   "My Logo",
                                   "Foo",    // won't appear on image columns
@@ -80,7 +141,7 @@ function load() {
                                   0,
                                   150 ); 
 
-  songbird.webPlaylist.addColumn( "downloadbutton",
+  songbird.webPlaylist.appendColumn( "downloadbutton",
                                   "buttonDemoDownloadButton",
                                   "Download it!!",
                                   "Download",
@@ -91,7 +152,7 @@ function load() {
                                   0,
                                   150 ); 
 
-  songbird.webPlaylist.addColumn( "rating",
+  songbird.webPlaylist.appendColumn( "rating",
                                   "demoRating",
                                   "Rate Me!!",
                                   "",

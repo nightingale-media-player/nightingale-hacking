@@ -46,7 +46,7 @@ and setting of the <MediaList> that serves as the data for the UI.
 Columns:
 A note about columns. All the columns in the UI are driven by the existance
 of global level properties in Songbird. There are a number of types available
-to the developer ( see addColumn() ). Each column must have a unique name and
+to the developer ( see appendColumn() ). Each column must have a unique name and
 there are a number system default names we use to get the default set of
 columns. They are set when Songbird starts. When a column name is required as a
 parameter to a function the default names can be used provided the operation
@@ -69,13 +69,9 @@ http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStanda
  * TODO: Write this documentation
  *
  */
-[scriptable, uuid(6aa00573-1aaa-4ff9-9080-fbd172669997)]
+[scriptable, uuid(fb29d038-9c71-40ab-9362-c5e728766d0d)]
 interface sbIRemoteWebPlaylist : nsISupports
 {
-  /*
-  Group: WebPlaylist Properties
-  */
-
   /*
   Prop: mediaList
 
@@ -154,116 +150,5 @@ interface sbIRemoteWebPlaylist : nsISupports
   */
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 
-  /*
-  Method: addColumn()
-
-  Add a column of data to the <WebPlaylist>. If the column already exists in
-  the system and the hidden is false then the column will be shown before the
-  column name passed in but no other settings will be adjusted.
-
-  If you want to set the values of new columns for each track you must add
-  the column before calling setProperty on each track. Otherwise the system
-  will automatically add the property to the system as type text and it
-  won't have the setting you set through this call.
-
-  Prototype:
-    addColumn(String columnType, 
-              String columnName,  
-              String displayName, 
-              String buttonLabel, 
-              String beforeColumn, 
-              Boolean hidden, 
-              Boolean viewable, 
-              Boolean editable,
-              Number nullSort,
-              Number width)
-
-  Parameters:
-    columnType - The type of column.
-    columnName - The name of the column.
-    displayName - The displayed name of the column.
-    buttonLabel - The label for a button, if of type simple/download button
-    beforeColumn - Insert the new column before the column with this name. 
-                   If an empty string is specified, the column is appended 
-                   to the end of the existing columns.
-    hidden - Hidden column by default.
-    viewable - Column can be viewed by the user.
-    editable - Column row cell values can be edited by the user.
-    nullsort - The type of null sorting desired.
-    width - The default width of the column when displayed.
-
-  Column Types:
-    text - Plain text.
-    datetime - A time interval.
-    uri - A URI (web address).
-    number - A number.
-    button - A clickable button.
-    image - A picture.
-    downloadbutton - A button which, when clicked, initiates a download.
-    rating - 5 stars representing the value
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    // add a text column to the web playlist
-    songbird.webPlaylist.addColumn( "text",
-                                    "http://domain.com/colname1",  // make sure it's unique
-                                    "column heading goes here",
-                                    "", // nothing needed for type text
-                                    "", // add at the end
-                                    false, // not hidden
-                                    true, // can be viewed
-                                    false, // read-only
-                                    0,
-                                    150); // pixels
-    (end)
-
-  See Also:
-    <showColumn()>
-    <showColumnBefore()>
-    <hideColumn()>
-  */
-  void addColumn( in AString aColumnType,
-                  in AString aColumnName,
-                  in AString aDisplayName,
-                  in AString aButtonLabel,
-                  in AString aBeforeColumnName,
-                  in boolean aHidden,
-                  in boolean aUserViewable,
-                  in boolean aUserEditable,
-                  in unsigned long aNullSort,
-                  in unsigned long aWidth );
-
-  /*
-  Method: showColumnBefore()
-
-  Show a column before another column. This enables you to move
-  columns around visually as well as specify where you might want your own
-  column to be shown.
-
-  Prototype:
-    showColumnBefore(String columnName, String beforeColumn)
-
-  Parameters:
-    columnName - The name of column to move.
-    beforeColumn - Show the column with columnName 
-                   before the column with beforeColumn.
-
-  Example:
-    (start code)
-    (end)
-
-  See Also:
-    <addColumn()>
-    <showColumn()>
-    <hideColumn()>
-  */
-  void showColumnBefore( in AString aColumnName,
-                         in AString aBeforeColumnName );
 };
 

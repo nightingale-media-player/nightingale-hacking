@@ -124,8 +124,9 @@ protected:
                            const nsAString& aPropertyID,
                            const nsAString& aDisplayName,
                            const nsAString& aButtonLabel,
-                           PRBool aUserViewable,
-                           PRBool aUserEditable,
+                           PRInt32 aTimeType,
+                           PRBool aReadonly,
+                           PRBool aHidden,
                            PRUint32 aNullSort );
                            
   // Data members

@@ -112,6 +112,26 @@ function load() {
     songbird.webPlaylist.removeColumn(SBProperties.year);
     assertColumns(a, "remove 5");
 
+    // append to empty
+    a = [SBProperties.trackName];
+    songbird.webPlaylist.appendColumn(SBProperties.trackName);
+    assertColumns(a, "append 1");
+
+    // append to existing
+    a = [SBProperties.trackName, SBProperties.year];
+    songbird.webPlaylist.appendColumn(SBProperties.year);
+    assertColumns(a, "append 2");
+
+    // append duplicate
+    a = [SBProperties.trackName, SBProperties.year];
+    songbird.webPlaylist.appendColumn(SBProperties.year);
+    assertColumns(a, "append 3");
+
+    // append duplicate - moves the column to the end
+    a = [SBProperties.year, SBProperties.trackName];
+    songbird.webPlaylist.appendColumn(SBProperties.trackName);
+    assertColumns(a, "append 4");
+
   }
   catch(e) {
     output.innerHTML = "Failure on line " + e.lineNumber + ": " + e;

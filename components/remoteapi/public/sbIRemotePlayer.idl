@@ -868,6 +868,17 @@ interface sbIRemotePlayer : nsISupports
    */
   [noscript] void onCommandsChanged();
 
+  /* Group: Property Creation
+
+  This applies to ALL the Create***Property() methods
+  Parameters:
+    ID - A unique text id of the new property.
+    displayName - The displayed name of the property
+    readOnly - property values can NOT be edited by the user. Optional - default to false
+    hidden - property can NOT be viewed by the user. Optional - default to false
+    nullSort - The type of null sorting desired. Optional - defaults to 0
+  */
+  
   /*
   Func: createTextProperty()
 
@@ -875,16 +886,18 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createTextProperty(in AString ID, in AString displayName,
-                       in boolean userViewable, in boolean userEditable,
-                       in unsigned long nullSort)
+    createTextProperty(in AString ID,
+                       in AString displayName,
+                       [optional] in boolean readOnly = false,
+                       [optional] in boolean hidden = false,
+                       [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
-    nullSort - The type of null sorting desired.
+    readOnly - property values can NOT be edited by the user. Optional - default to false
+    hidden - property can NOT be viewed by the user. Optional - default to false
+    nullSort - The type of null sorting desired. Optional - defaults to 0
 
   Null Sorting Types:
     0 - Null values are infinitely small.  This is the default.
@@ -915,9 +928,9 @@ interface sbIRemotePlayer : nsISupports
   */
   void createTextProperty( in AString ID,
                            in AString displayName,
-                           in boolean userViewable,
-                           in boolean userEditable,
-                           in unsigned long nullSort );
+                           [optional] in boolean readOnly,
+                           [optional] in boolean hidden,
+                           [optional] in unsigned long nullSort );
 
   /*
   Func: createDateTimeProperty()
@@ -927,15 +940,18 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createDateTimeProperty(in AString ID, in AString displayName,
-                           in boolean userViewable, in boolean userEditable,
-                           in unsigned long nullSort)
+    createDateTimeProperty(in AString ID,
+                           in AString displayName,
+                           [optional] in boolean readOnly = false,
+                           [optional] in boolean hidden = false,
+                           [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    timeType - Determines the formatting of the datetime string
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -943,6 +959,15 @@ interface sbIRemotePlayer : nsISupports
     1 - Null values are infinitely large.
     2 - Null values are always first (regardless of sort direction)
     3 - Null values are always last
+
+  timeType value:
+   -1 - Unintialized
+    0 - 2007-03-28 , in localized format
+    1 - HH:mm:ss.ms, in localized format. Limited to 24 hour days.
+    2 - Long date format, 2007-03-28 12:33:01 , no milliseconds.
+    3 - Duration, represented in HH:mm:ss.ms, in localized format. May exceed 24 hours
+    4 - Timestamp format, respects unix time, microsecond format. Also internal
+        storage type.
 
   Example:
     (start code)
@@ -967,9 +992,10 @@ interface sbIRemotePlayer : nsISupports
   */
   void createDateTimeProperty( in AString ID,
                                in AString displayName,
-                               in boolean userViewable,
-                               in boolean userEditable,
-                               in unsigned long nullSort );
+                               in PRInt32 timeType,
+                               [optional] in boolean readOnly,
+                               [optional] in boolean hidden,
+                               [optional] in unsigned long nullSort );
 
   /*
   Func: createURIProperty()
@@ -978,15 +1004,17 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createURIProperty(in AString ID, in AString displayName,
-                      in boolean userViewable, in boolean userEditable,
-                      in unsigned long nullSort)
+    createURIProperty(in AString ID,
+                      in AString displayName,
+                      [optional] in boolean readOnly = false,
+                      [optional] in boolean hidden = false,
+                      [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1018,9 +1046,9 @@ interface sbIRemotePlayer : nsISupports
   */
   void createURIProperty( in AString ID,
                           in AString displayName,
-                          in boolean userViewable,
-                          in boolean userEditable,
-                          in unsigned long nullSort );
+                          [optional] in boolean readOnly,
+                          [optional] in boolean hidden,
+                          [optional] in unsigned long nullSort );
 
   /*
   Func: createNumberProperty()
@@ -1030,15 +1058,17 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createNumberProperty(in AString ID, in AString displayName,
-                         in boolean userViewable, in boolean userEditable,
-                         in unsigned long nullSort)
+    createNumberProperty(in AString ID,
+                         in AString displayName,
+                         [optional] in boolean readOnly = false,
+                         [optional] in boolean hidden = false,
+                         [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1070,9 +1100,9 @@ interface sbIRemotePlayer : nsISupports
   */
   void createNumberProperty(in AString ID,
                             in AString displayName,
-                            in boolean userViewable,
-                            in boolean userEditable,
-                            in unsigned long nullSort);
+                            [optional] in boolean readOnly,
+                            [optional] in boolean hidden,
+                            [optional] in unsigned long nullSort);
 
   /*
   Func: createImageProperty()
@@ -1082,15 +1112,17 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createImageProperty(in AString ID, in AString displayName,
-                        in boolean userViewable, in boolean userEditable,
-                        in unsigned long nullSort)
+    createImageProperty(in AString ID,
+                        in AString displayName,
+                        [optional] in boolean readOnly = false,
+                        [optional] in boolean hidden = false,
+                        [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1122,9 +1154,9 @@ interface sbIRemotePlayer : nsISupports
   */
   void createImageProperty( in AString ID,
                             in AString displayName,
-                            in boolean userViewable,
-                            in boolean userEditable,
-                            in unsigned long nullSort );
+                            [optional] in boolean readOnly,
+                            [optional] in boolean hidden,
+                            [optional] in unsigned long nullSort );
 
   /*
   Func: createRatingsProperty()
@@ -1134,15 +1166,17 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createRatingsProperty(in AString ID, in AString displayName,
-                          in boolean userViewable, in boolean userEditable,
-                          in unsigned long nullSort)
+    createRatingsProperty(in AString ID,
+                          in AString displayName,
+                          [optional] in boolean readOnly = false,
+                          [optional] in boolean hidden = false,
+                          [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1174,9 +1208,9 @@ interface sbIRemotePlayer : nsISupports
   */
   void createRatingsProperty( in AString ID,
                               in AString displayName,
-                              in boolean userViewable,
-                              in boolean userEditable,
-                              in unsigned long nullSort );
+                              [optional] in boolean readOnly,
+                              [optional] in boolean hidden,
+                              [optional] in unsigned long nullSort );
 
   /*
   Func: createButtonProperty()
@@ -1186,16 +1220,19 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createButtonProperty(in AString ID, in AString displayName,
-                         in AString buttonLabel, in boolean userViewable,
-                         in boolean userEditable, in unsigned long nullSort)
+    createButtonProperty(in AString ID,
+                         in AString displayName,
+                         in AString buttonLabel,
+                         [optional] in boolean readOnly = false,
+                         [optional] in boolean hidden = false,
+                         [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
     buttonLabel - The text displayed on the download button
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1229,9 +1266,9 @@ interface sbIRemotePlayer : nsISupports
   void createButtonProperty( in AString ID,
                              in AString displayName,
                              in AString buttonLabel,
-                             in boolean userViewable,
-                             in boolean userEditable,
-                             in unsigned long nullSort );
+                             [optional] in boolean readOnly,
+                             [optional] in boolean hidden,
+                             [optional] in unsigned long nullSort );
 
   /*
   Func: createDownloadButtonProperty()
@@ -1241,18 +1278,19 @@ interface sbIRemotePlayer : nsISupports
   Properties define the set of possible columns available to the <WebPlaylist>
 
   Prototype:
-    createDownloadButtonProperty(in AString ID, in AString displayName,
+    createDownloadButtonProperty(in AString ID,
+                                 in AString displayName,
                                  in AString buttonLabel,
-                                 in boolean userViewable,
-                                 in boolean userEditable,
-                                 in unsigned long nullSort)
+                                 [optional] in boolean readOnly = false,
+                                 [optional] in boolean hidden = false,
+                                 [optional] in unsigned long nullSort = 0)
 
   Parameters:
     ID - A unique text id of the new property.
     displayName - The displayed name of the property
     buttonLabel - The text displayed on the download button
-    userViewable - property can be viewed by the user.
-    userEditable - property values can be edited by the user.
+    readOnly - property values can NOT be edited by the user.
+    hidden - property can NOT be viewed by the user.
     nullSort - The type of null sorting desired.
 
   Null Sorting Types:
@@ -1287,9 +1325,13 @@ interface sbIRemotePlayer : nsISupports
   void createDownloadButtonProperty( in AString ID,
                                      in AString displayName,
                                      in AString buttonLabel,
-                                     in boolean userViewable,
-                                     in boolean userEditable,
-                                     in unsigned long nullSort );
+                                     [optional] in boolean readOnly,
+                                     [optional] in boolean hidden,
+                                     [optional] in unsigned long nullSort );
+
+  /*
+   Group
+  */
 
   /**
    * \brief Check if the code has access to a category

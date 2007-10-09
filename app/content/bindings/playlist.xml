@@ -880,70 +880,6 @@
       </method>
 
       <!-- sbIPlaylistWidget -->
-      <method name="moveColumnBefore">
-        <parameter name="columnName"/>
-        <parameter name="beforeColumnName"/>
-        <body>
-<![CDATA[
-  // find the column with the name passed in.
-  var columns = this._treecols.getElementsByAttribute("bind",
-                                                      columnName);
-  var beforeColumns = this._treecols.getElementsByAttribute("bind",
-                                                            beforeColumnName);
-
-  if (!beforeColumns.length || !columns.length)
-    return;
-
-  this.tree._reorderColumn( columns[0], beforeColumns[0], true );
-]]>
-        </body>
-      </method>
-
-      <!-- sbIPlaylistWidget -->  
-      <method name="insertColumn">
-        <parameter name="propertyInfo"/>
-        <parameter name="isHidden"/>
-        <parameter name="width"/>
-        <parameter name="sort"/>
-        <parameter name="before"/>
-        <body>
-<![CDATA[
-    // get the array of tree column DOM elements (does not include splitters)
-    var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,
-                                                            "treecol");
-
-    var ordinal = 0;
-    if (!before) {
-      // shortcut - insert it at the end
-      ordinal = treecolList.length * 2;
-    } else {
-      // look for the before string
-      for (var index = 0; index < treecolList.length; index++) {
-        var col = treecolList[index];
-        if ( col.getAttribute("bind") == before ) {
-          // found it, stop here ordinal is where we want the column
-          break;
-        }
-        ordinal += 2;
-      } 
-    } 
-
-    // despite taking an ordinal this call doesn't put the column in 
-    // the right place.
-    this._appendColumn(propertyInfo, isHidden, width, sort, ordinal);
-
-    // must move the column after appending to get it in the right spot
-    if (before)
-      this.moveColumnBefore(propertyInfo.name, before);
-
-    if (this.tree.columns) {
-      this.tree.columns.invalidateColumns();
-    }
-]]>
-        </body>
-      </method>
-
-      <!-- sbIPlaylistWidget -->
       <method name="getColumnCount">
         <body>
 <![CDATA[
@@ -957,8 +893,8 @@
       <method name="clearColumns">
         <body>
 <![CDATA[
+  this._suppressColumnSpecSave = true;
   try {
-    this._suppressColumnSpecSave = true;
 
     // Hide all visible columns
     this._getVisibleColumnArray().forEach(function(column) {
@@ -972,10 +908,30 @@
         </body>
       </method>
 
+      <!-- sbIPlaylistWidget -->  
+      <method name="appendColumn">
+        <parameter name="aPropertyID"/>
+        <parameter name="aWidth"/>
+        <body>
+<![CDATA[
+  this._suppressColumnSpecSave = true;
+  try {
+
+    this.insertColumnBefore(aPropertyID, "", aWidth);
+  }
+  finally {
+    this._suppressColumnSpecSave = false;
+  }
+]]>
+        </body>
+      </method>
+
+
       <!-- sbIPlaylistWidget -->
       <method name="insertColumnBefore">
         <parameter name="aPropertyID"/>
         <parameter name="aBeforePropertyID"/>
+        <parameter name="aWidth"/>
         <body>
 <![CDATA[
   // Find some important indexes
@@ -1030,6 +986,12 @@
     }
 
     mover.element.setAttribute("hidden", "false");
+
+    // set the width if it isn't already set and we got one passed in
+    var width = mover.element.getAttribute("width");
+    if ( aWidth && width == "" ) {
+      mover.element.setAttribute("width", aWidth);
+    }
   }
   finally {
     this._suppressColumnSpecSave = false;
@@ -1328,36 +1290,6 @@
   // specs.  This was previously done by writing back to the XUL columnSpec
   // attribute, but that caused bug #4220.
   mediaList.library.setProperty(SBProperties.columnSpec, columnSpec);
-]]>
-        </body>
-      </method>
-
-      <!-- sbIPlaylistWidget -->
-      <method name="showColumn">
-        <parameter name="columnName"/>
-        <body>
-<![CDATA[
-    var treecolList = this._treecols.getElementsByAttribute("bind",
-                                                            columnName);
-
-    for (var index = 0; index < treecolList.length; index++) {
-        treecolList[index].setAttribute("hidden", false);
-    } 
-]]>
-        </body>
-      </method>
-
-      <!-- sbIPlaylistWidget -->
-      <method name="hideColumn">
-        <parameter name="columnName"/>
-        <body>
-<![CDATA[
-    var treecolList = this._treecols.getElementsByAttribute("bind",
-                                                            columnName);
-
-    for (var index = 0; index < treecolList.length; index++) {
-      treecolList[index].setAttribute("hidden", true);
-    } 
 ]]>
         </body>
       </method>
