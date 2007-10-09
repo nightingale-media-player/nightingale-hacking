@@ -2025,6 +2025,9 @@
     
     <handlers>
       <handler event="TabClose"><![CDATA[
+        // Stop async scanner and hide outerplaylist
+        this.clearOuterPlaylist();
+        
         // When we drop the tab, release all of the associated views stored in the map.
         Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                   .getService(Components.interfaces.sbIMediaListViewMap)

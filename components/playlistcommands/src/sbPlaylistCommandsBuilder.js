@@ -925,8 +925,9 @@ PlaylistCommandsBuilder.prototype = {
       }
       return prop;
     } catch (e) {
-      this.LOG("_getCommandProperty(" + aSubMenuId + ", " + aIndex + ", " + aHost +
-            ", " + aProperty + ", " + aDefault + ") - " + e);
+      this.LOG("_getCommandProperty(" + aSubMenuId + ", " + aIndex + " (" + 
+               menu[aIndex].m_Id + "), " + aHost + ", " + aProperty + ", " + 
+               aDefault + ") - " + e);
     }
     return aDefault;
   },

@@ -233,12 +233,21 @@
         <parameter name="stateonly"/>
         <body>
           <![CDATA[
-          try
-          {
+            var skip = false;
+
             // Sometimes we get here before the tree is properly built.  That's bad.
             // Also skip if the playlist is not visible, or if our context has not
             // yet been given a playlist at all.
-            var skip = false;
+
+            try
+            {
+            // safety test, is the playlist ready ?
+            var err = false;
+            try {
+              var a = this.playlist.tree.currentIndex;
+            } catch (e) {
+              skip=true;
+            }
             if (!this.medialist) skip = true;
             if (this.playlist) {
               if (this.playlist.getAttribute("hidden") == "true" ||
@@ -335,7 +344,7 @@
           <![CDATA[
             if (!this.commands) return false;
             for (var i in this.commands) {
-              if (this.commands[i].getNumCommands("", "") > 0) return true;
+              if (this.commands[i].getNumCommands("", this.hoststring) > 0) return true;
             }
             return false;
           ]]>
