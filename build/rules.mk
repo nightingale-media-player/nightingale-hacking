@@ -1109,6 +1109,8 @@ endif
 #                               (e.g. "coolthing@songbirdnest.com")
 #              EXTENSION_ARCH - arch string describing the build machine
 #                               (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
+#              EXTENSION_VER  - extension version
+#                               (e.g. "1.2.3")
 #
 #            If you want to also install the contents of the XPI to the
 #            extensions directory then you may set the following variable:
@@ -1152,6 +1154,7 @@ $(install_rdf_file): $(srcdir)/$(INSTALL_RDF)
           $(ACDEFINES) $(PPDEFINES)                        \
           -DEXTENSION_ARCH=$(EXTENSION_ARCH)               \
           -DEXTENSION_UUID=$(EXTENSION_UUID)               \
+          -DEXTENSION_VER=$(EXTENSION_VER)                 \
           -DEXTENSION_NAME=$(EXTENSION_NAME) --            \
           $(srcdir)/$(INSTALL_RDF) > $(install_rdf_file)
 
