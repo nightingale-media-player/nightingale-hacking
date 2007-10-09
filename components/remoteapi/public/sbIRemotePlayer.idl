@@ -868,471 +868,6 @@ interface sbIRemotePlayer : nsISupports
    */
   [noscript] void onCommandsChanged();
 
-  /* Group: Property Creation
-
-  This applies to ALL the Create***Property() methods
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user. Optional - default to false
-    hidden - property can NOT be viewed by the user. Optional - default to false
-    nullSort - The type of null sorting desired. Optional - defaults to 0
-  */
-  
-  /*
-  Func: createTextProperty()
-
-  Add a text property to the system that will be available for all media items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createTextProperty(in AString ID,
-                       in AString displayName,
-                       [optional] in boolean readOnly = false,
-                       [optional] in boolean hidden = false,
-                       [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user. Optional - default to false
-    hidden - property can NOT be viewed by the user. Optional - default to false
-    nullSort - The type of null sorting desired. Optional - defaults to 0
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that indicates what store this item is from
-    songbird.createDateTimeProperty("Store", "Store", true, false, 0);
-
-    // Add the store name to the media item
-    mediaitem.setProperty("Store", "Amazon");
-    (end)
-
-  See Also:
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createTextProperty( in AString ID,
-                           in AString displayName,
-                           [optional] in boolean readOnly,
-                           [optional] in boolean hidden,
-                           [optional] in unsigned long nullSort );
-
-  /*
-  Func: createDateTimeProperty()
-
-  Add a date time property to the system that will be available for all media
-  items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createDateTimeProperty(in AString ID,
-                           in AString displayName,
-                           [optional] in boolean readOnly = false,
-                           [optional] in boolean hidden = false,
-                           [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    timeType - Determines the formatting of the datetime string
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  timeType value:
-   -1 - Unintialized
-    0 - 2007-03-28 , in localized format
-    1 - HH:mm:ss.ms, in localized format. Limited to 24 hour days.
-    2 - Long date format, 2007-03-28 12:33:01 , no milliseconds.
-    3 - Duration, represented in HH:mm:ss.ms, in localized format. May exceed 24 hours
-    4 - Timestamp format, respects unix time, microsecond format. Also internal
-        storage type.
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property of when this item was added to the store
-    songbird.createDateTimeProperty("DateAdded", "Added", true, false, 0);
-
-    // Add the added date to the media item
-    mediaitem.setProperty("DateAdded", "4948575738");
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createDateTimeProperty( in AString ID,
-                               in AString displayName,
-                               in PRInt32 timeType,
-                               [optional] in boolean readOnly,
-                               [optional] in boolean hidden,
-                               [optional] in unsigned long nullSort );
-
-  /*
-  Func: createURIProperty()
-
-  Add a URI property to the system that will be available for all media items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createURIProperty(in AString ID,
-                      in AString displayName,
-                      [optional] in boolean readOnly = false,
-                      [optional] in boolean hidden = false,
-                      [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that links to the store
-    songbird.createURIProperty("StoreLink", "Store", true, false, 0);
-
-    // Add a url to the media item
-    mediaitem.setProperty("StoreLink", "http://www.store.com/item.php?id=1");
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createDateTimeProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createURIProperty( in AString ID,
-                          in AString displayName,
-                          [optional] in boolean readOnly,
-                          [optional] in boolean hidden,
-                          [optional] in unsigned long nullSort );
-
-  /*
-  Func: createNumberProperty()
-
-  Add a number property to the system that will be available for all media
-  items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createNumberProperty(in AString ID,
-                         in AString displayName,
-                         [optional] in boolean readOnly = false,
-                         [optional] in boolean hidden = false,
-                         [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that shows the price of this item
-    songbird.createNumberProperty("Price", "Price", true, false, 0);
-
-    // Add a price to the media item
-    mediaitem.setProperty("Price", "0.99");
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createNumberProperty(in AString ID,
-                            in AString displayName,
-                            [optional] in boolean readOnly,
-                            [optional] in boolean hidden,
-                            [optional] in unsigned long nullSort);
-
-  /*
-  Func: createImageProperty()
-
-  Add an image property to the system that will be available for all media
-  items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createImageProperty(in AString ID,
-                        in AString displayName,
-                        [optional] in boolean readOnly = false,
-                        [optional] in boolean hidden = false,
-                        [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that shows the logo of the store this item is from
-    songbird.createImageProperty("Logo", "Logo", true, false, 0);
-
-    // Add a logo to the media item
-    mediaitem.setProperty("Logo", "http://www.domain.com/image.jpg");
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createImageProperty( in AString ID,
-                            in AString displayName,
-                            [optional] in boolean readOnly,
-                            [optional] in boolean hidden,
-                            [optional] in unsigned long nullSort );
-
-  /*
-  Func: createRatingsProperty()
-
-  Add a ratings property to the system that will be available for all media
-  items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createRatingsProperty(in AString ID,
-                          in AString displayName,
-                          [optional] in boolean readOnly = false,
-                          [optional] in boolean hidden = false,
-                          [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a  property that shows what the average rating for this item is
-    songbird.createRatingsProperty("StoreRatings", "Ratings", true, true, 0);
-
-    // Add a share button to the media item
-    mediaitem.setProperty("StoreRatings", "2");
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createRatingsProperty( in AString ID,
-                              in AString displayName,
-                              [optional] in boolean readOnly,
-                              [optional] in boolean hidden,
-                              [optional] in unsigned long nullSort );
-
-  /*
-  Func: createButtonProperty()
-
-  Add a button property to the system that will be available for all media
-  items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createButtonProperty(in AString ID,
-                         in AString displayName,
-                         in AString buttonLabel,
-                         [optional] in boolean readOnly = false,
-                         [optional] in boolean hidden = false,
-                         [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    buttonLabel - The text displayed on the download button
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that allows the user to share this item with others
-    songbird.createButtonProperty("ShareItem", "Share", "Share", true, false,
-                                  0);
-
-    // Add a share button to the media item
-    mediaitem.setProperty("ShareItem", "Share me");
-    (end)
-
-  See Also:
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-    <createDownloadButtonProperty>
-  */
-  void createButtonProperty( in AString ID,
-                             in AString displayName,
-                             in AString buttonLabel,
-                             [optional] in boolean readOnly,
-                             [optional] in boolean hidden,
-                             [optional] in unsigned long nullSort );
-
-  /*
-  Func: createDownloadButtonProperty()
-
-  Add a download button property to the system that will be available for all
-  media items.
-  Properties define the set of possible columns available to the <WebPlaylist>
-
-  Prototype:
-    createDownloadButtonProperty(in AString ID,
-                                 in AString displayName,
-                                 in AString buttonLabel,
-                                 [optional] in boolean readOnly = false,
-                                 [optional] in boolean hidden = false,
-                                 [optional] in unsigned long nullSort = 0)
-
-  Parameters:
-    ID - A unique text id of the new property.
-    displayName - The displayed name of the property
-    buttonLabel - The text displayed on the download button
-    readOnly - property values can NOT be edited by the user.
-    hidden - property can NOT be viewed by the user.
-    nullSort - The type of null sorting desired.
-
-  Null Sorting Types:
-    0 - Null values are infinitely small.  This is the default.
-    1 - Null values are infinitely large.
-    2 - Null values are always first (regardless of sort direction)
-    3 - Null values are always last
-
-  Example:
-    (start code)
-    //This example assumes you already have created
-    //a mediaitem and assigned it to mediaItem.
-
-    // Create a property that will allow the user to get the item (Download)
-    songbird.createDownloadButtonProperty("DownlodButton", "Download", "Get",
-                                          true, false, 0);
-
-    // Add a download button to the media item
-    mediaitem.setProperty("DownloadButton", "1|0|0");
-
-    (end)
-
-  See Also:
-    <createTextProperty>
-    <createDateTimeProperty>
-    <createURIProperty>
-    <createNumberProperty>
-    <createImageProperty>
-    <createRatingsProperty>
-    <createButtonProperty>
-  */
-  void createDownloadButtonProperty( in AString ID,
-                                     in AString displayName,
-                                     in AString buttonLabel,
-                                     [optional] in boolean readOnly,
-                                     [optional] in boolean hidden,
-                                     [optional] in unsigned long nullSort );
-
-  /*
-   Group
-  */
-
   /**
    * \brief Check if the code has access to a category
    */
@@ -1358,4 +893,434 @@ interface sbIRemotePlayer : nsISupports
     (end)
   */
   boolean hasAccess( in AString aRemotePermCataegory );
+
+  /* Group: Property Creation
+
+  Properties define the list of available columns, as well as provide a 
+  means of storing data about a <MediaItem>. This section defines and
+  explains the parameters for the various property creation methods below.
+
+  Common Parameters:
+    ID - A unique text id of the new property. Does not need to be in URL format
+         but that is a recommended format for ensuring uniqueness.
+    displayName - The displayed name of the property.
+    readOnly - If true this property's value can NOT be edited by the user.
+    hidden - If true this property can NOT be viewed by the user.
+    nullSort - The type of null sorting desired. When sorted will empty values
+               sort small or large; see below for more detail.
+
+  Specific Parameters: 
+    timeType - Determines the formatting of the datetime string. Present only in
+               <createDateTimeProperty()>.
+    buttonLabel - The text displayed on a button. Present only in
+               <createButtonProperty()> and <createDownloadButtonProperty()>. For
+               standard button properties the absence of this parameter at property
+               creation allows buttons to have different text on them by setting
+               the value of the property on various <MediaItem>s. That is not
+               possible with download buttons as the value determines the state
+               and therefore the display of the button. The text for download
+               buttons MUST be set at creation or the button will not have any
+               and will not draw properly.
+
+  nullSort values:
+    0 - Null values are infinitely small.  This is the default.
+    1 - Null values are infinitely large.
+    2 - Null values are always first (regardless of sort direction)
+    3 - Null values are always last
+
+  timeType values:
+   -1 - Unintialized
+    0 - 2007-03-28 , in localized format
+    1 - HH:mm:ss.ms, in localized format. Limited to 24 hour days.
+    2 - Long date format, 2007-03-28 12:33:01 , no milliseconds.
+    3 - Duration, represented in HH:mm:ss.ms, in localized format. May exceed 24 hours
+    4 - Timestamp format, respects unix time, microsecond format. Also internal
+        storage type.
+
+  See:
+    <createTextProperty()>, <createDateTimeProperty()>, <createURIProperty()>,
+    <createNumberProperty()>, <createImageProperty()>, <createRatingsProperty()>,
+    <createButtonProperty()>, <createDownloadButtonProperty()>
+  */
+  
+  /*
+  Func: createTextProperty()
+
+  Add a text property to the system that will be available for all media items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createTextProperty ( in AString ID,
+                         in AString displayName,
+                         [optional] in boolean readOnly = false,
+                         [optional] in boolean hidden = false,
+                         [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that indicates what store this item is from.
+    songbird.createTextProperty("http://example.com/Store",
+                                "Store", true, false, 0);
+
+    // Add the store name to the media item
+    mediaitem.setProperty("Store", "Amazon");
+    (end)
+
+  See Also:
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createTextProperty( in AString ID,
+                           in AString displayName,
+                           [optional] in boolean readOnly,
+                           [optional] in boolean hidden,
+                           [optional] in unsigned long nullSort );
+
+  /*
+  Func: createDateTimeProperty()
+
+  Add a date time property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+  This property accept values for time in microseconds, 5 minutes 52 seconds
+  would be a value of 352000000. For the date based time types the time is the
+  number of microseconds from the linux epoch: 1 January 1970 00:00:00 UTC.
+
+  Prototype:
+    createDateTimeProperty ( in AString ID,
+                             in AString displayName,
+                             in PRInt32 timeType,
+                             [optional] in boolean readOnly = false,
+                             [optional] in boolean hidden = false,
+                             [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property of when this item was added to the store
+    songbird.createDateTimeProperty("http://example.com/DateAdded",
+                                    "Added", true, false, 0);
+
+    // Add the added date to the media item
+    mediaitem.setProperty("DateAdded", "4948575738");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createDateTimeProperty( in AString ID,
+                               in AString displayName,
+                               in PRInt32 timeType,
+                               [optional] in boolean readOnly,
+                               [optional] in boolean hidden,
+                               [optional] in unsigned long nullSort );
+
+  /*
+  Func: createURIProperty()
+
+  Add a URI property to the system that will be available for all media items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createURIProperty ( in AString ID,
+                        in AString displayName,
+                        [optional] in boolean readOnly = false,
+                        [optional] in boolean hidden = false,
+                        [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that links to the store
+    songbird.createURIProperty("http://example.com/StoreLink",
+                               "Store", true, false, 0);
+
+    // Add a url to the media item
+    mediaitem.setProperty("StoreLink", "http://www.store.com/item.php?id=1");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createURIProperty( in AString ID,
+                          in AString displayName,
+                          [optional] in boolean readOnly,
+                          [optional] in boolean hidden,
+                          [optional] in unsigned long nullSort );
+
+  /*
+  Func: createNumberProperty()
+
+  Add a number property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createNumberProperty ( in AString ID,
+                           in AString displayName,
+                           [optional] in boolean readOnly = false,
+                           [optional] in boolean hidden = false,
+                           [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that shows the price of this item
+    songbird.createNumberProperty("http://example.com/Price", "Price", true);
+
+    // Add a price to the media item
+    mediaitem.setProperty("Price", "0.99");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createNumberProperty( in AString ID,
+                             in AString displayName,
+                             [optional] in boolean readOnly,
+                             [optional] in boolean hidden,
+                             [optional] in unsigned long nullSort );
+
+  /*
+  Func: createImageProperty()
+
+  Add an image property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createImageProperty ( in AString ID,
+                          in AString displayName,
+                          [optional] in boolean readOnly = false,
+                          [optional] in boolean hidden = false,
+                          [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that shows the logo of the store this item is from
+    songbird.createImageProperty("http://example.com/Logo",
+                                 "Logo", true, false, 0);
+
+    // Add a logo to the media item
+    mediaitem.setProperty("Logo", "http://www.domain.com/image.jpg");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createImageProperty( in AString ID,
+                            in AString displayName,
+                            [optional] in boolean readOnly,
+                            [optional] in boolean hidden,
+                            [optional] in unsigned long nullSort );
+
+  /*
+  Func: createRatingsProperty()
+
+  Add a ratings property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+
+  Prototype:
+    createRatingsProperty ( in AString ID,
+                            in AString displayName,
+                            [optional] in boolean readOnly = false,
+                            [optional] in boolean hidden = false,
+                            [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a  property that shows what the average rating for this item is
+    songbird.createRatingsProperty("http://example.com/StoreRatings", "Ratings");
+
+    // Add a share button to the media item
+    mediaitem.setProperty("StoreRatings", "2");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createRatingsProperty( in AString ID,
+                              in AString displayName,
+                              [optional] in boolean readOnly,
+                              [optional] in boolean hidden,
+                              [optional] in unsigned long nullSort );
+
+  /*
+  Func: createButtonProperty()
+
+  Add a button property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createButtonProperty ( in AString ID,
+                           in AString displayName,
+                           in AString buttonLabel,
+                           [optional] in boolean readOnly = false,
+                           [optional] in boolean hidden = false,
+                           [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that allows the user to share this item with others
+    songbird.createButtonProperty("http://example.com/ShareItem",
+                                  "Share", "Share Me", true, false, 0);
+
+    // Add a share button to the media item
+    mediaitem.setProperty("ShareItem", "Share me");
+    (end)
+
+  See Also:
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createButtonProperty( in AString ID,
+                             in AString displayName,
+                             in AString buttonLabel,
+                             [optional] in boolean readOnly,
+                             [optional] in boolean hidden,
+                             [optional] in unsigned long nullSort );
+
+  /*
+  Func: createDownloadButtonProperty()
+
+  Add a download button property to the system that will be available for all
+  media items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+  The value to set on this button is a triple field value that includes the
+  size of the object and the amount downloaded. The fields are separated by
+  '|' characters. The format is:
+ (start code)
+ <mode>|<total size>|<current size>
+ (end)
+
+  Prototype:
+    createDownloadButtonProperty ( in AString ID,
+                                   in AString displayName,
+                                   in AString buttonLabel,
+                                   [optional] in boolean readOnly = false,
+                                   [optional] in boolean hidden = false,
+                                   [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Download Mode Types:
+    0 - none
+    1 - new
+    2 - starting
+    3 - downloading
+    4 - paused
+    5 - complete
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that will allow the user to get the item (Download)
+    songbird.createDownloadButtonProperty("http://example.com/DownlodButton",
+                                          "Download", "Get", true, false, 0);
+
+    // Add a download button to the media item
+    mediaitem.setProperty("DownloadButton", "1|0|0");
+
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+  */
+  void createDownloadButtonProperty( in AString ID,
+                                     in AString displayName,
+                                     in AString buttonLabel,
+                                     [optional] in boolean readOnly,
+                                     [optional] in boolean hidden,
+                                     [optional] in unsigned long nullSort );
+
 };
