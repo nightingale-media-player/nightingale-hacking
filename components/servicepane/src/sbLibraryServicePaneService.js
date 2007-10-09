@@ -1065,7 +1065,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
   // Set properties for styling purposes
-  node.properties = "library libraryguid-" + aLibrary.guid + " " + aLibrary.type + " " + customType;
+  this._mergeProperties(node,
+                        ["library",
+                         "libraryguid-" + aLibrary.guid,
+                         aLibrary.type,
+                         customType]);
   // Save the type of media list so that we can group by type
   node.setAttributeNS(LSP, "ListType", aLibrary.type)
   // Save the guid of the library
@@ -1122,12 +1126,12 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   }
   // Set properties for styling purposes
   if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
-    node.properties = "medialist medialisttype-dynamic";
+    this._mergeProperties(node, ["medialist", "medialisttype-dynamic"]);
   } else {
-    node.properties = "medialist medialisttype-" + aMediaList.type;
+    this._mergeProperties(node, ["medialist medialisttype-" + aMediaList.type]);
   }
   // Add the customType to the properties to encourage people to set it for CSS
-  node.properties += " " + customType;
+  this._mergeProperties(node, [customType]);
   // Save the type of media list so that we can group by type
   node.setAttributeNS(LSP, "ListType", aMediaList.type);
   // Save the guid of the library that owns this media list
@@ -1181,7 +1185,7 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
         this._servicePane.root, true);
   }
   fnode.name = '&servicesource.playlists';
-  fnode.properties = 'folder Playlists';
+  this._mergeProperties(fnode, ["folder", "Playlists"]);
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;
   fnode.dndAcceptIn = 'text/x-sb-playlist';
@@ -1364,6 +1368,26 @@ function sbLibraryServicePane__removeListNodesForLibrary(aStartNode, aLibraryGUI
     
     node = nextSibling;
   }
+}
+
+sbLibraryServicePane.prototype._mergeProperties =
+function sbLibraryServicePane__mergeProperties(aNode, aList) {
+
+  var o = {};
+  var a = aNode.properties.split(" ");
+  a.forEach(function(prop) {
+    o[prop] = 1;
+  });
+
+  aList.forEach(function(prop) {
+    o[prop] = 1;
+  });
+
+  var retval = [];
+  for (var prop in o) {
+    retval.push(prop);
+  }
+  aNode.properties = retval.join(" ");
 }
 
 ///////////////////////////////

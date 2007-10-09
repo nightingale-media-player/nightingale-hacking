@@ -84,6 +84,11 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }
 
+.servicepane_tree > treechildren::-moz-tree-image( download downloading )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon-downloads-progress.png) ;
+}
+
 .servicepane_tree > treechildren::-moz-tree-image( folder open )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;
