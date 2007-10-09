@@ -1,0 +1,17 @@
+Index: layout/xul/base/src/tree/src/nsTreeSelection.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeSelection.cpp,v
+retrieving revision 1.58
+diff -u -p -r1.58 nsTreeSelection.cpp
+--- layout/xul/base/src/tree/src/nsTreeSelection.cpp	8 Jul 2007 07:08:33 -0000	1.58
++++ layout/xul/base/src/tree/src/nsTreeSelection.cpp	9 Oct 2007 19:52:51 -0000
+@@ -299,6 +299,9 @@ NS_IMETHODIMP nsTreeSelection::SetTree(n
+ 
+ NS_IMETHODIMP nsTreeSelection::GetSingle(PRBool* aSingle)
+ {
++  if (!mTree)
++    return NS_ERROR_UNEXPECTED;
++
+   nsCOMPtr<nsIBoxObject> boxObject = do_QueryInterface(mTree);
+ 
+   nsCOMPtr<nsIDOMElement> element;
