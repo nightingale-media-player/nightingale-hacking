@@ -388,11 +388,15 @@ try
       var location = "" + gBrowser.mCurrentBrowser.currentURI.spec;
       
       // TODO: Make this an API.
-      
+
+      // set the pref 'songbird.scraper.disable.youtube' as a string to '1'
+      // to block and '0' to allow.
+      var disableYouTube = SBDataGetBoolValue("scraper.disable.youtube");
+
       //
       // YouTube videos embedded in other webpages
       //
-      if ( url.indexOf( "www.youtube.com/v/" ) != -1 ) {
+      if ( !disableYouTube && url.indexOf( "www.youtube.com/v/" ) != -1 ) {
         // This has to traverse a redirect, asynchronously.
         var observer = {
           url : "",
@@ -438,7 +442,7 @@ try
       //
       // YouTube videos on youtube.com
       //
-      else if ( location.indexOf( "youtube.com" ) != -1 ) {
+      else if ( !disableYouTube && location.indexOf( "youtube.com" ) != -1 ) {
         // Crack it for the get_video URL.
         var seek = "video_id";
         var key = url.indexOf( seek );
