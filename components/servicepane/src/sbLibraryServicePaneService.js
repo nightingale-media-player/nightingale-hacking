@@ -1374,7 +1374,7 @@ sbLibraryServicePane.prototype._mergeProperties =
 function sbLibraryServicePane__mergeProperties(aNode, aList) {
 
   var o = {};
-  var a = aNode.properties.split(" ");
+  var a = aNode.properties?aNode.properties.split(" "):[];
   a.forEach(function(prop) {
     o[prop] = 1;
   });
