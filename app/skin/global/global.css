@@ -67,6 +67,8 @@ TODO: Link to developer site!
  
 @import url("chrome://global/skin/songbird-base-styles.css");
 
+@import url("chrome://global/skin/bindings.css");
+
 
 
 /* Import the current feathers.  This allows feathers

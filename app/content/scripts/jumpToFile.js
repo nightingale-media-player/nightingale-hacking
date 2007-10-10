@@ -717,11 +717,16 @@ try
       if (this._cssminwidth == -1) {
         this._cssminwidth = parseInt(getStyle(document.documentElement, "min-width"));
       }
+      var frame = document.getElementById('dialog-outer-frame');
+      if (!frame) {
+        // using plucked or other feather not using the hidechrome dialog binding
+        frame = document.getAnonymousNodes(document.documentElement)[0];
+      }
       // If min size is not yet known and if the window size is different from the document's box object, 
-      if (this._minwidth == -1 && window.innerWidth != document.getElementById('jumpto_frame').boxObject.width)
+      if (this._minwidth == -1 && window.innerWidth != frame.boxObject.width)
       { 
         // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-        this._minwidth = document.getElementById('jumpto_frame').boxObject.width + 1;
+        this._minwidth = frame.boxObject.width + 1;
       }
       return Math.max(this._minwidth, this._cssminwidth);
     },
@@ -731,11 +736,16 @@ try
       if (this._cssminheight == -1) {
         this._cssminheight = parseInt(getStyle(document.documentElement, "min-height"));
       }
+      var frame = document.getElementById('dialog-outer-frame');
+      if (!frame) {
+        // using plucked or other feather not using the hidechrome dialog binding
+        frame = document.getAnonymousNodes(document.documentElement)[0];
+      }
       // If min size is not yet known and if the window size is different from the document's box object, 
-      if (this._minheight == -1 && window.innerHeight != document.getElementById('jumpto_frame').boxObject.height)
+      if (this._minheight == -1 && window.innerHeight != frame.boxObject.height)
       { 
         // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-        this._minheight = document.getElementById('jumpto_frame').boxObject.height + 1;
+        this._minheight = frame.boxObject.height + 1;
       }
       return Math.max(this._minheight, this._cssminheight);
     },

@@ -1122,6 +1122,11 @@ label
   -moz-border-radius: 5px;
 }
 
+dialog:root[type="songbird"] .groupbox-body
+{
+  border-color: #0f100f; /** Groove */
+}
+
 /* class for text with a 'link' appearance */
 .text-link
 {

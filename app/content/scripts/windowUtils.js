@@ -426,7 +426,7 @@ function onWindowLoadSizeAndPosition()
     dump("resetsize = " + resetsize + "\n");
 */
     
-    if (!resetsize) { 
+    if (resizable && !resetsize) { 
       // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
       // YAY YAY YAY the windowregion hack actualy fixes this :D
       window.resizeTo( rootW, rootH );
@@ -578,14 +578,12 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
     // on the other hand, if resizable=yes is present in the flags, that create a border
     // around the window in OSX, so remove it
     var flags = param2.split(",");
-    var newflags;
-    for (var i in flags) {
-      if (newflags != "") newflags += ",";
+    for (var i = flags.length - 1 ; i >= 0; --i) {
       if (flags[i] == "resizable=yes" ||
-          flags[i] == "resizable") 
-        continue;
+          flags[i] == "resizable")
+        flags.splice(i, 1);
     }
-    param2 = newflags;
+    param2 = flags.join(",");
   }
 
   param2 += titlebar;

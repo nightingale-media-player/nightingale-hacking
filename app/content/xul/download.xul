@@ -30,7 +30,7 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -40,32 +40,22 @@
  onload="doLoad();"
  flex="1"
  hidechrome="true"
+ type="songbird"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogcancel="if ( doCancel() ) onExit( );"
 >
 
   <windowregion/>
 
-  <sb-sys-outer-frame resizers="none" flex="1">
-    <sb-sys-dialog-titlebar/>
-    <spacer height="5"/>             
-    <label  value="&download.select;"/>
-    <spacer height="3"/>             
-    <hbox>
-      <textbox  id="download_folder_path" />
-      <button id="button_browse" label="&window.browse;"  oncommand="doBrowse();"/>
-    </hbox>        
-    <spacer height="3"/>
-    <hbox>
-      <checkbox id="download_check" label="&download.always;" />
-    </hbox>              
-    <spacer height="1"/>           
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
-    </hbox>
-  </sb-sys-outer-frame>
- 
+  <label  value="&download.select;"/>
+  <hbox>
+    <textbox  id="download_folder_path" />
+    <button id="button_browse" label="&window.browse;"  oncommand="doBrowse();"/>
+  </hbox>
+  <hbox>
+    <checkbox id="download_check" label="&download.always;" />
+  </hbox>
+
   <!-- SCRIPTS -->
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
@@ -155,4 +145,4 @@
   </script>
   
   
-</window>
+</dialog>

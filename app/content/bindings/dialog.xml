@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings id="sbDialogBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">
+    <!-- we want to eventually extend all dialogs, not just type="songbird" -->
+    <resources>
+      <stylesheet src="chrome://songbird/skin/dialog.css"/>
+    </resources>
+    <content flex="1">
+      <sb-sys-outer-frame resizers="none" flex="1" id="dialog-outer-frame"
+        xbl:inherits="resizers"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <sb-sys-dialog-titlebar id="dialog-titlebar"/>
+
+        <vbox class="dialog-content-box" flex="1">
+          <xbl:children/>
+        </vbox>
+
+        <hbox class="dialog-button-box" pack="end" anonid="buttons"
+          xbl:inherits="pack=buttonpack,align=buttonalign,dir=buttondir,orient=buttonorient">
+
+          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
+          <xul:spacer anonid="spacer" flex="1" hidden="true"/>
+          <xul:button dlgtype="accept" class="dialog-button" xbl:inherits="disabled=buttondisabledaccept"/>
+          <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
+          <xul:button dlgtype="cancel" class="dialog-button"/>
+          <xul:button dlgtype="help" class="dialog-button" hidden="true"/>
+          <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
+        </hbox>
+
+      </sb-sys-outer-frame>
+    </content>
+  </binding>
+  
+  <binding id="platform-dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">
+    <!-- this binding is used for plucked (i.e. platform-native look).  It is used to
+         remove the hidechrome= attribute so that we get the window decorations back. -->
+    <implementation>
+      <constructor><![CDATA[
+        /* warning: this gets applied for a split second before the override binding loads
+         * so we must explicitly make sure we _should_ do this!
+         * we can't just add the attribute in the other binding because (on Windows) we
+         * get a small raised border that way
+         */
+        
+        var plucked = SBDataGetBoolValue( "accessibility.enabled" );
+        if (plucked) {
+          document.documentElement.removeAttribute("hidechrome");
+        }
+      ]]></constructor>
+    </implementation>
+  </binding>
+</bindings>

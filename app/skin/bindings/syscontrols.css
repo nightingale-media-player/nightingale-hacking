@@ -74,14 +74,14 @@ sb-sys-titlebar > menubar
 }
 
 
-sb-feathers-toggle-button,
-sb-sys-minimize-button,
-sb-sys-close-button,
-sb-sys-hide-button,
-sb-player-fullscreen-button,
-sb-sys-maximize-button
+sb-feathers-toggle-button.sb-player-button,
+sb-sys-minimize-button.sb-player-button,
+sb-sys-close-button.sb-player-button,
+sb-sys-hide-button.sb-player-button,
+sb-player-fullscreen-button.sb-player-button,
+sb-sys-maximize-button.sb-player-button
 {
-  margin: 0px 4px 0px 5px !important;
+  margin: 0px 4px 0px 5px;
 }
 
 

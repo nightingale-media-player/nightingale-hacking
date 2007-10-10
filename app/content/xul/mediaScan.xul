@@ -30,7 +30,7 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window 
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="media_scan"
@@ -38,6 +38,11 @@
  onload="return onLoad();"
  flex="1"
  hidechrome="true"
+ type="songbird"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogcancel="if ( doCancel() ) onExit( );"
+ buttons="cancel"
+ buttonpack="center"
 >
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 
@@ -46,10 +51,6 @@
 
   <windowregion/>
 
-  <sb-sys-outer-frame resizers="none" flex="1">
-    <sb-sys-dialog-titlebar/>
-      
-    <spacer flex="1"/>
     <hbox style="overflow: hidden;"> 
       <spacer flex="1"/>
       <label id="songbird_media_scan_title"  value="" control="songbird_media_scan"/>
@@ -70,17 +71,6 @@
       <checkbox id="watch_check" label="&media_scan.watch;" />
       <spacer flex="1"/>
     </hbox>
-      
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" hidden="true"  oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
-      <spacer flex="1"/>  
-    </hbox>
-    <spacer flex="1"/> 
-  </sb-sys-outer-frame>  
-  
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
@@ -93,4 +83,4 @@
    src="chrome://songbird/content/scripts/mediaScan.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js" />
-</window>
+</dialog>

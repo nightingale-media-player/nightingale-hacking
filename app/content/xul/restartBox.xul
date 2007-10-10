@@ -26,30 +26,29 @@
 //
  */
  -->
-<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="restartbox"
  title=""
- buttons="none"
+ buttons="accept,cancel,extra1"
+ type="songbird"
+ buttonlabelaccept="&restartbox.restartnow;"
+ buttonlabelextra1="&restartbox.restartonplaybackend;"
+ buttonlabelcancel="&restartbox.restartlater;"
+ ondialogaccept="doExit(1);"
+ ondialogextra1="doExit(2);"
+ ondialogcancel="doExit(0);"
+ pack="center"
 >
   
   <!-- Astounding complexity! -->  
   
-  <vbox>
-    <spacer height="16"/>
-    <label id="songbird_restartbox_label" value="" />
-    <spacer height="16"/>
-    <hbox>
-      <spacer flex="1"/>
-      <button id="songbird_restartbox_restartnow" label="&restartbox.restartnow;" oncommand="doExit(1);"/>
-      <button id="songbird_restartbox_restartonplaybackend" label="&restartbox.restartonplaybackend;" oncommand="doExit(2);"/>
-      <button id="songbird_restartbox_restartlater" label="&restartbox.restartlater;" oncommand="doExit(0);"/>
-    </hbox>
-  </vbox>
+  <label id="songbird_restartbox_label" value="" />
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript"
@@ -64,7 +63,7 @@
       {
         document.getElementById("restartbox").setAttribute("title", window.arguments[0].title);
         document.getElementById("songbird_restartbox_label").setAttribute("value", window.arguments[0].message);
-        if (!window.arguments[0].playing) document.getElementById("songbird_restartbox_restartonplaybackend").setAttribute("hidden", "true");
+        if (!window.arguments[0].playing) document.documentElement.buttons = "accept,cancel";
       }
     }
     catch( err )

@@ -1,0 +1,102 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * This file is only included in <dialog type="songbird">
+ */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+dialog:root
+{
+  /* the padding interferes with the sb-sys-outer-frame */
+  padding: 0;
+}
+
+#dialog-outer-frame
+{
+  border: 2px solid !important;
+  -moz-border-top-colors: #474948 /** Rubber Highlight */
+                          #000000 /** black */
+                          !important;
+  -moz-border-right-colors: #474948 /** Rubber Highlight */
+                            #000000 /** black */
+                            !important;
+  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
+                             #000000 /** black */
+                             !important;
+  -moz-border-left-colors: #474948 /** Rubber Highlight */
+                           #000000 /** black */
+                           !important;
+  background-image: url(chrome://songbird/skin/backgrounds/background.png);
+  background-repeat: repeat-x;
+}
+
+#sb-sys-title-title
+{
+  margin: 0 !important;
+}
+
+#sb-sys-buttons-close
+{
+  -moz-margin-end: 0 !important;
+}
+
+/* the box that is the sibling of the <titlebar> element which does the drag */
+#sb-sys-outer-frame-children > stack > vbox
+{
+  padding-top: 4px; /* 5px - 1px of the resizing border */
+  padding-left: 5px; /* 10px - 5px of the resizing border */
+  padding-right: 5px; /* 10px - 5px */
+}
+
+#dialog-titlebar
+{
+  margin: 5px 0;
+}
+
+.dialog-content-box
+{
+  background-color: #202220; /** Button Shadow*/
+  border: 1px solid #0f100f; /** Groove */
+  border-bottom: 2px solid red;
+  -moz-border-bottom-colors: #474948  /** Rubber Highlight */
+                             #0f100f; /** Groove */
+  margin: 5px 0;
+  padding: 10px;
+  padding-left: 15px;
+}
+
+.dialog-button-box
+{
+  -moz-box-pack: end;
+}
+
+.dialog-button-box button
+{
+  margin: 5px !important;
+  -moz-margin-end: 0 !important;
+}

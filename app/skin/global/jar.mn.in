@@ -1,4 +1,5 @@
 songbird.jar:
 % skin  songbird-global classic/1.0  %skin/global/
+% overlay chrome://global/content/commonDialog.xul                           chrome://global/skin/dialog/commonDialog.xul
 @include_all_to skin/global/
 *       skin/global/wizard.css                      (wizard.css)

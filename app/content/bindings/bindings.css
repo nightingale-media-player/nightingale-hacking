@@ -407,3 +407,10 @@ label.text-link {
 notification {
   -moz-binding: url("chrome://songbird/content/bindings/sbNotification.xml#sbNotification") !important;
 }
+
+/* dialogs (document element) */
+/* this only applies to plucked; for feathers using the songbird version of global,
+   chrome://global/skin/bindings.css overrides this with the draggable hidechrome version */
+dialog[type="songbird"] {
+  -moz-binding: url("chrome://songbird/content/bindings/dialog.xml#platform-dialog");
+}

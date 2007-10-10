@@ -30,34 +30,23 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="add_tag"
  title="&trackeditor.addtag.title;"
  buttons="accept,cancel"
- ondialogaccept="return doOK();"
- ondialogcancel="return doCancel();"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogcancel="if ( doCancel() ) onExit( );"
  hidechrome="true"
  onkeydown="handleKeyDown(event);"
  onload="initFocus();"
+ type="songbird"
 >
   
   <windowregion/>
-  <sb-sys-outer-frame resizers="none" flex="1">
-    <sb-sys-dialog-titlebar/>
-    <spacer height="8"/>
-    <label id="songbird_addtag_label" value="&trackeditor.addtag.tag;"/>
-    <textbox  id="songbird_addtag_name"/>
-    <spacer height="5"/> 
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
-      <spacer flex="1"/>  
-    </hbox> 
-  </sb-sys-outer-frame>
+  <label id="songbird_addtag_label" value="&trackeditor.addtag.tag;"/>
+  <textbox  id="songbird_addtag_name"/>
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
@@ -114,4 +103,4 @@
   ]]>
   </script>
   
-</window>
+</dialog>

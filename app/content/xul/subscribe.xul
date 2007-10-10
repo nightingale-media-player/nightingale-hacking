@@ -32,7 +32,7 @@
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
-<window
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -42,18 +42,18 @@
  onkeypress="onKeyPress(event);"
  flex="1"
  hidechrome="true"
+ type="songbird"
+ buttons="accept,cancel"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogcancel="if ( doCancel() ) onExit( );"
 >
 
   <windowregion/>
   
-  <sb-sys-outer-frame resizers="none" flex="1">
-    <sb-sys-dialog-titlebar/>
-    
     <hbox align="center">
       <label  value="URL:"/>
       <textbox  id="subscribe_url" />
     </hbox>
-    <spacer height="5"/>
     <hbox  align="center">
     <spacer width="40"/>
     <label  id="auto_subscribe_label" label="&subscribe.autocheck;"/>
@@ -66,23 +66,12 @@
       </menupopup>
     </menulist>
     </hbox>
-    <spacer height="10"/>             
     <label  value="&subscribe.destinationfolder;"/>
     <hbox>
       <textbox  id="subscribe_folder_path" flex="1"/>
       <button id="button_browse" label="&window.browse;"  oncommand="doBrowse();"/>
-    </hbox>        
-    <spacer height="8"/>           
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" 
-              oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" 
-              oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
-  </sb-sys-outer-frame>
- 
+
   <!-- SCRIPTS -->
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
@@ -345,5 +334,4 @@ function doBrowse()
 
 ]]>
   </script>
-</window>
-
+</dialog>

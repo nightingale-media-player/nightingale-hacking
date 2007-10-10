@@ -207,10 +207,7 @@ function sbBatchCreateListener_onComplete(aItemArray)
     }
     theLabel.value = SBString("media_scan.complete", "Complete");
     theProgress.removeAttribute( "mode" );
-    document.getElementById("button_ok").removeAttribute( "hidden" );
-    document.getElementById("button_ok").setAttribute( "disabled", "false" );
-    document.getElementById("button_ok").focus();
-    document.getElementById("button_cancel").setAttribute( "hidden", "true" );
+    document.documentElement.buttons = "accept";
   }
 
   if (closePending && batchLoadsPending == 0) {

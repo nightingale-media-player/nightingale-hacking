@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/dialog/commonDialog.css" type="text/css"?>
+<!DOCTYPE overlay PUBLIC "-//MOZILLA//DTD XUL V1.0//EN" "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<overlay id="commonDialogOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<dialog id="commonDialog"
+  hidechrome="true"
+  buttonpack="end"
+  type="songbird">
+
+  <!-- the sysContol stuff uses data remotes, we need to include it -->
+  <script type="text/javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <script type="text/javascript"><![CDATA[
+    /* XXX Mook: XUL is messed up, flex= and pack= take precedence over CSS
+                 unset them (the CSS will set our desired behaviour) */
+    addEventListener("load", function() {
+      removeEventListener("load", arguments.callee, false);
+      document.getElementById("info.header")
+              .parentNode
+              .removeAttribute("flex");
+      /* while we're here, fix up some other CSS stuff */
+      document.getElementById("info.header")
+              .parentNode
+              .parentNode
+              .className += " dialog-content-inner";
+      document.getElementById("sb-sys-outer-frame-children")
+              .style.setProperty("overflow", "visible", "important");
+    }, false);
+  ]]></script>
+</dialog>
+
+</overlay>

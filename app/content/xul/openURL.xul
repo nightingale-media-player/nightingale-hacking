@@ -30,34 +30,23 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window 
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="open_url"
  title="&open_url.title;"
- buttons="false"
  hidechrome="true"
- ondialogaccept="return doOK();"
- ondialogcancel="return doCancel();"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogcancel="if ( doCancel() ) onExit( );"
+ type="songbird"
+ buttons="accept,cancel"
 >
   <windowregion/>
-  <sb-sys-outer-frame resizers="none" flex="1">
-    <sb-sys-dialog-titlebar/>
-    <label  value="&textbox.songbird_open_url;"/>
-    
-    <spacer height="5"/> 
-    <hbox>          
-      <textbox  id="songbird_open_url"/> 
-    </hbox>
-    <spacer height="5"/>
-    <hbox>
-        <spacer flex="1"/>           
-        <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
-        <spacer width="5"/>
-        <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/> 
-      </hbox>
-  </sb-sys-outer-frame>  
- 
+  <label  value="&textbox.songbird_open_url;"/>
+
+  <hbox>
+    <textbox id="songbird_open_url" flex="1"/>
+  </hbox>
 
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
@@ -94,4 +83,4 @@
   ]]>
   </script>
   
-</window>
+</dialog>

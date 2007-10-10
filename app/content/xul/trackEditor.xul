@@ -30,35 +30,35 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="track_editor"
  title="&trackeditor.title;"
  hidechrome="true"
- buttons="none"
+ buttons="accept,cancel,extra1"
  onkeydown="handleKeyDown(event);"
  onload="onLoadTrackEditor();"
  onunload="onUnloadTrackEditor();"
  windowtype="track_editor"
  onfocus="onFocus()"
  onblur="onBlur()"
+ type="songbird"
+ ondialogaccept="if ( doOK() ) onExit( );"
+ ondialogextra1="doUndo();"
+ ondialogcancel="if ( doCancel() ) onExit( );"
+ buttonlabelextra1="&window.undo;"
+ resizers="horiz"
 >
   
   <windowregion/>
 
-  <sb-sys-outer-frame id="trackeditor_frame" resizers="horiz" overflow="true" flex="1">
-    <sb-sys-dialog-titlebar/>
     <menubar id="trackeditor_menu" hidden="false"  oncommand="onMenu(event.target)"/>
-    
-    <spacer height="3"/>
-    
+
     <description>
       &trackeditor.disclaimer;
     </description>
-    
-    <spacer height="8"/>
-    
+
     <hbox id="trackeditor.hflex">
       <sb-trackeditor-drawer id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />
     </hbox>
@@ -72,16 +72,6 @@
       <sb-tageditor-drawer id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
     </hbox>
 -->          
-    <spacer height="5"/>
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_undo" label="&window.undo;"  oncommand="doUndo();"/> 
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/> 
-    </hbox>
-  </sb-sys-outer-frame>
 
   
   <script type="application/x-javascript" 
@@ -162,11 +152,11 @@
   }
   
   function enableUndo() {
-    document.getElementById("button_undo").removeAttribute("disabled");
+    document.documentElement.getButton("extra1").removeAttribute("disabled");
   }
   
   function disableUndo() {
-    document.getElementById("button_undo").setAttribute("disabled", "true");
+    document.documentElement.getButton("extra1").setAttribute("disabled", "true");
   }
   
   function doOK() {
@@ -254,11 +244,20 @@
       if (this._cssminwidth == -1) {
         this._cssminwidth = parseInt(getStyle(document.documentElement, "min-width"));
       }
+      
+      // find the container element - but since we may be in plucked, we have to
+      // try things in two ways
+      
+      var frame = document.getElementById('dialog-outer-frame'); // when using non-native dialog
+      if (!frame) {
+        // assume it's the platform version of the dialog
+        frame = document.getAnonymousNodes(document.documentElement)[0];
+      }
       // If min size is not yet known and if the window size is different from the document's box object, 
-      if (this._minwidth == -1 && window.innerWidth != document.getElementById('trackeditor_frame').boxObject.width)
+      if (this._minwidth == -1 && window.innerWidth != frame.boxObject.width)
       { 
         // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-        this._minwidth = document.getElementById('trackeditor_frame').boxObject.width + 1;
+        this._minwidth = frame.boxObject.width + 1;
       }
       return Math.max(this._minwidth, this._cssminwidth);
     },
@@ -309,4 +308,4 @@
   ]]>
   </script>
 
-</window>
+</dialog>

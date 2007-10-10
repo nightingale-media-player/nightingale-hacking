@@ -282,6 +282,11 @@
           }
         ]]>
       </destructor>
+      <property name="value">
+        <setter><![CDATA[
+          document.getAnonymousElementByAttribute(this, 'sbid', 'title').value = val;
+        ]]></setter>
+      </property>
     </implementation>
   </binding>
 
@@ -316,6 +321,13 @@
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
           if ( this.getAttribute("hidden") != "true" )
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          
+          /* watch document.title for changes and update our fake title */
+          /* Object.watch() doesn't need cleaning up (all GCed JS) */
+          var self = this;
+          document.watch("title", function(aObject, aOldValue, aNewValue){
+            return self.title = aNewValue;
+          } );
         ]]>
       </constructor>
       <destructor>
@@ -326,6 +338,19 @@
           }
         ]]>
       </destructor>
+      <property name="title">
+        <setter><![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            document.getAnonymousElementByAttribute(this, 'id', 'sb-sys-dialog-titlebar-osx-title-title')
+                    .value = val;
+          else
+            document.getAnonymousElementByAttribute(this, 'id', 'sb-sys-dialog-titlebar-title')
+                    .value = val;
+          return val;
+        ]]></setter>
+      </property>
     </implementation>
   </binding>
 
@@ -361,6 +386,18 @@
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
         ]]>
       </constructor>
+      <property name="title">
+        <setter><![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-osx-title-title')
+                    .value = val;
+          else
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-title')
+                    .value = val;
+        ]]></setter>
+      </property>
     </implementation>
   </binding>
 
