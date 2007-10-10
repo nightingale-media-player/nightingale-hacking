@@ -535,7 +535,9 @@ function sbBookmarks_onDragGesture(aNode, aTransferable) {
   
   // attach a text/x-moz-url
   // this is for dragging to other places
+  /*
   this._addDragData(aTransferable, aNode.url+'\n'+aNode.name, MOZ_URL_DRAG_TYPE);
+  */
   
   // and say yet - lets do this drag
   return true;
