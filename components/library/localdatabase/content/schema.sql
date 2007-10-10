@@ -1,9 +1,10 @@
-drop table media_items;
-drop table media_list_types;
-drop table properties;
-drop table resource_properties;
-drop table library_metadata;
-drop table simple_media_lists;
+drop table if exists media_items;
+drop table if exists media_list_types;
+drop table if exists properties;
+drop table if exists resource_properties;
+drop table if exists library_metadata;
+drop table if exists simple_media_lists;
+drop table if exists library_media_item;
 
 create table library_metadata (
   name text primary key,

@@ -3248,8 +3248,11 @@ sbLocalDatabaseLibrary::Clear()
 {
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
+  nsresult rv = mPropertyCache->Write();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbMediaListArray lists;
-  nsresult rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
+  rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify simple media lists that they are getting cleared

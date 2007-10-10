@@ -256,7 +256,7 @@ nsresult sbMetadataJobManager::InitCurrentTasks()
 
   // Compose the create table query string
   nsAutoString createTable;
-  createTable.AppendLiteral( "CREATE TABLE " );
+  createTable.AppendLiteral( "CREATE TABLE IF NOT EXISTS " );
   createTable += sbMetadataJob::DATABASE_GUID();
   createTable.AppendLiteral( " (job_guid TEXT NOT NULL PRIMARY KEY, ms_delay INTEGER NOT NULL)" );
   rv = ExecuteQuery( createTable );      

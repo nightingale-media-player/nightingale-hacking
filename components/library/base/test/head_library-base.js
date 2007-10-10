@@ -41,7 +41,7 @@ function loadData(databaseGuid) {
   var a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?)");
+    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, hidden, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?, ?)");
     dbq.bindStringParameter(0, b[1]);
     dbq.bindInt64Parameter(1, b[2]);
     dbq.bindInt64Parameter(2, b[3]);
@@ -53,11 +53,12 @@ function loadData(databaseGuid) {
     else {
       dbq.bindInt32Parameter(5, b[6]);
     }
-    if(b[7] == "") {
-      dbq.bindNullParameter(6);
+    dbq.bindInt32Parameter(6, b[7]);
+    if(b[8] == "" || b[8] == "0") {
+      dbq.bindNullParameter(7);
     }
     else {
-      dbq.bindInt32Parameter(6, b[7]);
+      dbq.bindInt32Parameter(7, b[8]);
     }
   }
 
@@ -116,7 +117,11 @@ function readFile(fileName) {
   return data;
 }
 
-function createLibrary(databaseGuid, databaseLocation) {
+function createLibrary(databaseGuid, databaseLocation, init) {
+
+  if (typeof(init) == "undefined") {
+    init = true;
+  }
 
   var directory;
   if (databaseLocation) {
@@ -128,7 +133,7 @@ function createLibrary(databaseGuid, databaseLocation) {
                 get("ProfD", Ci.nsIFile);
     directory.append("db");
   }
-  
+
   var file = directory.clone();
   file.append(databaseGuid + ".db");
 
@@ -140,11 +145,16 @@ function createLibrary(databaseGuid, databaseLocation) {
   hashBag.setPropertyAsInterface("databaseFile", file);
   var library = libraryFactory.createLibrary(hashBag);
   try {
-    library.clear();
+    if (init) {
+      library.clear();
+    }
   }
   catch(e) {
   }
-  loadData(databaseGuid, databaseLocation);
+
+  if (init) {
+    loadData(databaseGuid, databaseLocation);
+  }
   return library;
 }
 

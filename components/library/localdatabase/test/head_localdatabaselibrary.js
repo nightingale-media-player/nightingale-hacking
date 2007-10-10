@@ -164,7 +164,7 @@ function readFile(fileName) {
 
 function createLibrary(databaseGuid, databaseLocation, init) {
 
-  if (init == undefined) {
+  if (typeof(init) == "undefined") {
     init = true;
   }
 
