@@ -1268,27 +1268,16 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
         return (result);
 
 #if defined(XP_WIN)
-    // Attempt to convert using local code page.
-    const char *str = value.toCString(true);
+
+    const char *str = value.toCString(false);
     size_t len = strlen(str);
 
-    int size = MultiByteToWideChar( CP_UTF8, 0, str, len, nsnull, 0 );
+    int size = MultiByteToWideChar( CP_ACP, 0, str, len, nsnull, 0 );
     PRUnichar *wstr = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
     NS_ENSURE_TRUE(wstr, NS_ERROR_OUT_OF_MEMORY);
 
-    int read = MultiByteToWideChar( CP_UTF8, 0, str, len, wstr, size );
-    NS_ASSERTION(size == read, "Win32 UTF-8 conversion failed.");
-
-    if(size != read) {
-      nsMemory::Free( wstr );
-
-      int size = MultiByteToWideChar( CP_ACP, 0, str, len, nsnull, 0 );
-      PRUnichar *wstr = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
-      NS_ENSURE_TRUE(wstr, NS_ERROR_OUT_OF_MEMORY);
-
-      int read = MultiByteToWideChar( CP_ACP, 0, str, len, wstr, size );
-      NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
-    }
+    int read = MultiByteToWideChar( CP_ACP, 0, str, len, wstr, size );
+    NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
 
     wstr[ size ] = 0;
     nsAutoString strValue( wstr );
