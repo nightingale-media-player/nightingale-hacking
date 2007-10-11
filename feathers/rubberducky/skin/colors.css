@@ -45,6 +45,7 @@ These are the colors used in Rubberducky, our default:
 #202220; /** Button Shadow           cool charcoal grey 1
 #0f100f; /** Groove                  almost black
 #474948; /** Rubber Highlight        dark grey
+#1b1d1b; /** Rubber Shadow           darker grey
 #797f76; /** Button Highlight        light grey  
 
 This style sheet groups color rules by UI element. To change the color
@@ -1590,7 +1591,7 @@ DIALOGS
 /** Add a darker content box and appropriate padding **/
 .dialog-content-box
 {
-  background-color: #202220; /** Button Shadow*/
+  background-color: #1b1d1b; /** Rubber Shadow */
   border: 1px solid #0f100f; /** Groove */
   border-bottom: 2px solid red;
   -moz-border-bottom-colors: #474948  /** Rubber Highlight */
