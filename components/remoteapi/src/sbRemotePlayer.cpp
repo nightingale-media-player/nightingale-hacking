@@ -1978,6 +1978,10 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
         NS_ENSURE_SUCCESS(rv, rv);
         rv = builder->SetRemoteWritable(PR_TRUE);
         NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetUserViewable(aHidden ? PR_FALSE : PR_TRUE);
+        NS_ENSURE_SUCCESS( rv, rv );
+        rv = builder->SetUserEditable(aReadonly ? PR_FALSE : PR_TRUE);
+        NS_ENSURE_SUCCESS( rv, rv );
         rv = builder->Get(getter_AddRefs(info));
         NS_ENSURE_SUCCESS(rv, rv);
       }

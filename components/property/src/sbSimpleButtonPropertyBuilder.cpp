@@ -67,7 +67,9 @@ sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
                                    hasLabel,
                                    label,
                                    mRemoteReadable,
-                                   mRemoteWritable);
+                                   mRemoteWritable,
+                                   mUserViewable,
+                                   mUserEditable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();

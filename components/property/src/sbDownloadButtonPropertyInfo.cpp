@@ -51,12 +51,15 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
                                                            const nsAString& aDisplayName,
                                                            const nsAString& aLabel,
                                                            const PRBool aRemoteReadable,
-                                                           const PRBool aRemoteWritable)
+                                                           const PRBool aRemoteWritable,
+                                                           const PRBool aUserViewable,
+                                                           const PRBool aUserEditable)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
   mLabel = aLabel;
-  mUserViewable = PR_TRUE;
+  mUserViewable = aUserViewable;
+  mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("downloadbutton");

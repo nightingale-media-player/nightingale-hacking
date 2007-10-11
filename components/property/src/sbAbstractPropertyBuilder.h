@@ -40,6 +40,10 @@
   NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
   NS_IMETHOD GetDisplayNameKey(nsAString & aDisplayNameKey) { return _to GetDisplayNameKey(aDisplayNameKey); } \
   NS_IMETHOD SetDisplayNameKey(const nsAString & aDisplayNameKey) { return _to SetDisplayNameKey(aDisplayNameKey); } \
+  NS_IMETHOD GetUserViewable(PRBool * aUserViewable) { return _to GetUserViewable(aUserViewable); } \
+  NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
+  NS_IMETHOD GetUserEditable(PRBool * aUserEditable) { return _to GetUserEditable(aUserEditable); } \
+  NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
   NS_IMETHOD GetRemoteReadable(PRBool * aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
   NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
   NS_IMETHOD GetRemoteWritable(PRBool * aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
@@ -69,6 +73,8 @@ protected:
   nsString mPropertyName;
   nsString mDisplayName;
   nsString mDisplayNameKey;
+  PRBool mUserViewable;
+  PRBool mUserEditable;
   PRBool mRemoteReadable;
   PRBool mRemoteWritable;
 

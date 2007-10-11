@@ -52,7 +52,9 @@ public:
                                const nsAString& aDisplayName,
                                const nsAString& aLabel,
                                const PRBool aRemoteReadable,
-                               const PRBool aRemoteWritable);
+                               const PRBool aRemoteWritable,
+                               const PRBool aUserViewable,
+                               const PRBool aUserEditable);
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 

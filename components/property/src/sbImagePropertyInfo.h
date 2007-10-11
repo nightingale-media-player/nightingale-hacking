@@ -49,7 +49,9 @@ public:
   sbImagePropertyInfo(const nsAString& aPropertyName,
                       const nsAString& aDisplayName,
                       const PRBool aRemoteReadable,
-                      const PRBool aRemoteWritable);
+                      const PRBool aRemoteWritable,
+                      const PRBool aUserViewable,
+                      const PRBool aUserEditable);
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 

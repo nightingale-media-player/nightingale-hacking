@@ -39,11 +39,14 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbImagePropertyInfo,
 sbImagePropertyInfo::sbImagePropertyInfo(const nsAString& aPropertyName,
                                          const nsAString& aDisplayName,
                                          const PRBool aRemoteReadable,
-                                         const PRBool aRemoteWritable)
+                                         const PRBool aRemoteWritable,
+                                         const PRBool aUserViewable,
+                                         const PRBool aUserEditable)
 {
   mName = aPropertyName;
   mDisplayName = aDisplayName;
-  mUserViewable = PR_TRUE;
+  mUserViewable = aUserViewable;
+  mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("image");

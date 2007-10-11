@@ -50,7 +50,9 @@ sbImagePropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsRefPtr<sbImagePropertyInfo> pi = new sbImagePropertyInfo(mPropertyName,
                                                              displayName,
                                                              mRemoteReadable,
-                                                             mRemoteWritable);
+                                                             mRemoteWritable,
+                                                             mUserViewable,
+                                                             mUserEditable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();
