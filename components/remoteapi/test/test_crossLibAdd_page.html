@@ -1,0 +1,97 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: Cross-library media list adding</title>
+    <script>
+      function runTest(tester) {
+        try {
+          var mainLib = songbird.mainLibrary;
+          var mainLibLength = mainLib.length;
+
+          var siteLib = songbird.siteLibrary;
+          var siteLibLength = siteLib.length;
+
+          var siteList = siteLib.createMediaList("simple");
+          tester.assertEqual(siteLib.length, ++siteLibLength);
+
+          siteList.name = "Foo";
+
+          mainLib.add(siteList);
+          tester.assertEqual(mainLib.length, ++mainLibLength);
+
+          siteList = siteLib.createMediaList("simple");
+          tester.assertEqual(siteLib.length, ++siteLibLength);
+
+          siteList.name = "Bar";
+          var siteListLength = siteList.length;
+
+          var item = siteLib.createMediaItem("http://www.foo.com/bar.mp3");
+          tester.assertEqual(siteLib.length, ++siteLibLength);
+
+          siteList.add(item);
+          tester.assertEqual(siteLib.length, siteLibLength);
+          tester.assertEqual(siteList.length, ++siteListLength);
+
+          item = siteLib.createMediaItem("http://www.foo.com/bar2.mp3");
+          tester.assertEqual(siteLib.length, ++siteLibLength);
+
+          siteList.add(item);
+          tester.assertEqual(siteLib.length, siteLibLength);
+          tester.assertEqual(siteList.length, ++siteListLength);
+
+          item = siteLib.createMediaItem("http://www.foo.com/bar3.mp3");
+          tester.assertEqual(siteLib.length, ++siteLibLength);
+
+          siteList.add(item);
+          tester.assertEqual(siteLib.length, siteLibLength);
+          tester.assertEqual(siteList.length, ++siteListLength);
+
+          mainLib.add(siteList);
+          mainLibLength += 4; // One for the list, three for the items.
+          tester.assertEqual(mainLib.length, mainLibLength);
+
+        }
+        catch (e) {
+          tester.endRemoteAPITest(e);
+        }
+
+        tester.endRemoteAPITest();
+      }
+
+      function runPageTest(tester) {
+        setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+      }
+    </script>
+  </head>
+
+  <body>
+  </body>
+
+</html>

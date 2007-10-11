@@ -1238,19 +1238,72 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> newItem;
+  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
 
-  // CreateMediaItem usually notifies listeners that an item was added to the
-  // media list. That's not what we want in this case because our callers
-  // (Add and OnEnumeratedItem) will notify instead. Unfortunately we have to
-  // use a member variable because CreateMediaItem is an IDL method and
-  // additional (optional) parameters are not allowed.
-  mPreventAddedNotification = PR_TRUE;
-  rv = CreateMediaItem(contentUri,
-                       properties,
-                       PR_TRUE,
-                       getter_AddRefs(newItem));
-  mPreventAddedNotification = PR_FALSE;
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsString type;
+    rv = itemAsList->GetType(type);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ASSERTION(!type.IsEmpty(), "GetType returned an empty type!");
+
+    PRUint32 otherListLength;
+    rv = itemAsList->GetLength(&otherListLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // CreateMediaList usually notify listeners that an item was added to the
+    // media list. That's not what we want in this case because our callers
+    // (Add and OnEnumeratedItem) will notify instead.
+    mPreventAddedNotification = PR_TRUE;
+
+    // Don't return after this without resetting mPreventAddedNotification!
+
+    nsCOMPtr<sbIMediaList> newList;
+    rv = CreateMediaList(type, properties, getter_AddRefs(newList));
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create media list!");
+    if (NS_FAILED(rv)) {
+      // Hm, try to create a simple list if that failed.
+      rv = CreateMediaList(NS_LITERAL_STRING("simple"), properties,
+                           getter_AddRefs(newList));
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create simple media list!");
+    }
+
+    if (NS_SUCCEEDED(rv) && otherListLength) {
+      rv = newList->AddAll(itemAsList);
+    }
+
+    if (NS_FAILED(rv)) {
+      // Crap, clean up the new media list.
+      NS_WARNING("AddAll failed!");
+
+      nsresult rvOther;
+      nsCOMPtr<sbIMediaItem> newListAsItem =
+        do_QueryInterface(newList, &rvOther);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rvOther), "Couldn't QI!");
+
+      if (NS_SUCCEEDED(rvOther)) {
+        rvOther = Remove(newListAsItem);
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rvOther), "Couldn't remove new list!");
+      }
+    }
+
+    mPreventAddedNotification = PR_FALSE;
+
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    newItem = do_QueryInterface(newList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // CreateMediaItem usually notify listeners that an item was added to the
+    // media list. That's not what we want in this case because our callers
+    // (Add and OnEnumeratedItem) will notify instead.
+    mPreventAddedNotification = PR_TRUE;
+    rv = CreateMediaItem(contentUri, properties, PR_TRUE,
+                         getter_AddRefs(newItem));
+    mPreventAddedNotification = PR_FALSE;
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   newItem.swap(*_retval);
   return NS_OK;
@@ -2284,7 +2337,9 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem);
+  if (!mPreventAddedNotification) {
+    NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem);
+  }
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2317,6 +2372,15 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   //        we won't automatically lock other types out (by returning early)
   //        just in case another media list type implements this behavior.
   rv = newList->AddAll(aSource);
+  if (NS_FAILED(rv)) {
+    nsresult rvOther;
+    // Ick, sucks that that failed... Clean up the new media list.
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(newList, &rvOther);
+    NS_ENSURE_SUCCESS(rvOther, rvOther);
+
+    rvOther = Remove(item);
+    NS_ENSURE_SUCCESS(rvOther, rvOther);
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newList);
