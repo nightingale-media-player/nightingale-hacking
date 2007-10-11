@@ -26,9 +26,9 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
-= Songbird Window Styles =
+SONGBIRD WINDOW STYLES
 
 All Songbird specific XUL windows directly import 
 chrome://songbird/skin/songbird.css.   For example, the
@@ -41,10 +41,9 @@ the chrome://global/skin package.  If you want make a Feather
 that works with the default platform global skin (Winstrip 
 or Pinstripe), you must import your additional styles here.
 
-For more information, visit:
-TODO:  Link to the feathers overview documentation !important.
+For more information, visit http://developer.songbirdnest.com/
 
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 

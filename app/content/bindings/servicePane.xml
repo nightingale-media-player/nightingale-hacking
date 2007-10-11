@@ -35,14 +35,14 @@
   
   <binding id="servicepane">
     <content>
-      <xul:vbox id="sb-servicepane" class="servicepane_box" flex="1">
-        <xul:vbox id="sb-servicepane-box" flex="1">
-          <xul:vbox id="sb-servicepane-treepane" 
+      <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
+        <xul:vbox id="sb_servicepane_box" class="servicepane-inner-box" flex="1">
+          <xul:vbox id="sb_servicepane_treepane" 
                 style="-moz-binding:url(#treepane)" flex="1"
                 anonid="treepane" 
                 mousethrough="never"
                 xbl:inherits="browser"/>
-          <xul:vbox id="sb-servicepane-toolbar" 
+          <xul:vbox id="sb_servicepane_toolbar" 
                 style="-moz-binding:url(#toolbar)"
                 anonid="toolbar" />
         </xul:vbox>
@@ -104,7 +104,7 @@
   
   <binding id="treepane">
     <content>
-      <xul:tree class="servicepane_tree" anonid="tree" flex="1"
+      <xul:tree class="servicepane-tree" anonid="tree" flex="1"
             datasources="rdf:null" ref="SB:Root"
             hidecolumnpicker="true" seltype="single"
             mousethrough="never"
@@ -739,8 +739,8 @@
       <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
-      <xul:hbox id="frame_service_buttonbar">
-        <xul:sb-clickhold-button anonid='clickhold' flex="1" popupanchor="topleft" popupalign="bottomleft" />
+      <xul:hbox id="servicepane_toolbar_box" class="servicepane-toolbar-box">
+        <xul:sb-clickhold-button anonid='clickhold' class="servicepane-toolbar-newitem-button" flex="1" popupanchor="topleft" popupalign="bottomleft" />
       </xul:hbox>
     </content>
     <implementation>
@@ -781,7 +781,7 @@
   
   <binding id="extensions">
     <content>
-      <xul:vbox class="servicepane_buttonbar" flex="1">
+      <xul:vbox class="servicepane-extensions-box" flex="1">
         <xul:button label="extension picker" type="menu"
               datasources="rdf:null" ref="SB:Extensions"
               anonid="button">

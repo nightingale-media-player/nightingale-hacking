@@ -26,9 +26,9 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
-= Songbird Global Skin = 
+SONGBIRD GLOBAL SKIN
 
 A chrome://global/skin provider intended for use with feathers that fully
 style all XUL elements.
@@ -50,10 +50,9 @@ Feathers request the Songbird global through entries in their
 chrome.manifest configuration file.  See the Rubberducky chrome.manifest
 for an example.
 
-For more information, see 
-TODO: Link to developer site!
+For more information, see http://developer.songbirdnest.com/
 
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 

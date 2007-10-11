@@ -49,9 +49,6 @@ function doMenu( command ) {
     case "file.url":
       SBUrlOpen();
     break;
-    case "file.mab":
-      SBMabOpen();
-    break;
     case "file.playlist":
       SBPlaylistOpen();
     break;

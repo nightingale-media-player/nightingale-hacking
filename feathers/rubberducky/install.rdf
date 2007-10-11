@@ -30,7 +30,7 @@
             <songbird:internalName>rubberducky/0.2</songbird:internalName>
             <songbird:compatibleLayout>
               <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:layoutURL>
+                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
                 <songbird:showChrome>false</songbird:showChrome>
               </Description>
             </songbird:compatibleLayout>

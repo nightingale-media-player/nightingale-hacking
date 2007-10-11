@@ -27,9 +27,9 @@
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
-= Additional Images = 
+ADDITIONAL IMAGES
 
 This css file provides additional image rules that are specific to
 this feather.
@@ -44,7 +44,7 @@ You can override the default image rules by re-specifying them here.
 Explore the app/skin/ folder in the Songbird subversion repository 
 to find existing rules, or use DOM Inspector to make your own.
 
-***************************************************************************************************
+*******************************************************************************
 */
 
 
@@ -94,7 +94,7 @@ playlist
 }
 
 /*  This rule changes the background image behind the Main Pane **/
-#main_pane_border
+#content_pane_box
 {
   background-image: none;
 }

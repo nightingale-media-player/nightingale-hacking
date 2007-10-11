@@ -371,15 +371,6 @@ function SBScanMedia( parentWindow )
   theFileScanIsOpen.boolValue = false;
 }
 
-function SBMabOpen( parentWindow )
-{
-  var mab_data = new Object();
-  mab_data.retval = "";
-  
-  // Open the non modal dialog
-  SBOpenWindow( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome", mab_data, parentWindow ); 
-}
-
 
 /** Legacy function **/
 function SBNewPlaylist()

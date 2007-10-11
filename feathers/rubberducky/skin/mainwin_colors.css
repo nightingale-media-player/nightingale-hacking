@@ -27,11 +27,12 @@
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 
-= Color Scheme = 
+COLOR SCHEME
 
-This css file specifies color styles for all windows and elements in the Songbird application.
+This CSS file specifies color styles for all windows and elements in
+the Songbird application.
 
 These are the colors used in Rubberducky, our default:
 
@@ -46,21 +47,23 @@ These are the colors used in Rubberducky, our default:
 #474948; /** Rubber Highlight        dark grey
 #797f76; /** Button Highlight        light grey  
 
-This style sheet groups color rules by UI element. To change the color of an element, find its 
-appropriate section and change all of the associated colors for that section.  For example, to 
-change the color of the rows in the playlist, search for THE PLAYLIST section and change all of the 
-colors in that section of the style sheet.  Some UI elements are made up of many parts so be sure to 
-address all of the colors in the section for best results.
+This style sheet groups color rules by UI element. To change the color
+of an element, find its appropriate section and change all of the 
+associated colors for that section.  For example, to change the color
+of the rows in the playlist, search for THE PLAYLIST section and change
+all of the colors in that section of the style sheet.  Some UI elements
+are made up of many parts so be sure to address all of the colors in
+the section for best results.
 
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 WINDOW CHROME
 These rules paint the resizeable window for Songbird.
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 wizard,
@@ -103,16 +106,14 @@ sb-sys-hide-button
 /* END WINDOW CHROME **/
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 SERVICE PANE - a.k.a the Left Pane
 The Service Pane is the primary area for navigating through services and content. 
 It serves as the primary GUI entry point to content and services.
-***************************************************************************************************
+*******************************************************************************
 */ 
 
-/** TODO Use child selector to improve efficiency */
-
-#frame_servicetree_pane
+#servicepane_box
 {
   -moz-border-radius: 4px;
   border-top-color: #202220; /** Button Shadow */
@@ -123,15 +124,15 @@ It serves as the primary GUI entry point to content and services.
   color: #feffff; /** Light Color Brightest */
 }
 
-.servicepane_tree scrollbar
+.servicepane-tree > .tree-stack > .tree-rows > scrollbar
 {
   border-top: none;
   border-right: none;
   margin-right: -1px;
 }
 
-.servicepane_tree > treechildren::-moz-tree-cell-text( selected ),
-.servicepane_tree
+.servicepane-tree > treechildren::-moz-tree-cell-text( selected ),
+.servicepane-tree
 {
   color: #B3BAAC; /** Light Color 1 */
   background-color: transparent;
@@ -139,18 +140,23 @@ It serves as the primary GUI entry point to content and services.
   border: none;
 }
 
-.servicepane_tree > treechildren::-moz-tree-row
+.servicepane-tree > treechildren::-moz-tree-row
 {
   background-color: transparent;
   margin: 0;
   border: none;
 }
 
+.servicepane-tree > treechildren::-moz-tree-cell
+{
+  border-right: 1px solid transparent !important;
+}
+
 /** Since it will be a difficult task to keep 
 the service pane and the browser in sync, 
 we should nix the painting of the selection.*/
 
-/**.servicepane_tree > treechildren::-moz-tree-row( selected )
+/**.servicepane-tree > treechildren::-moz-tree-row( selected )
 {
   -moz-border-radius-topright: 2px;
   -moz-border-radius-topleft: 1px;
@@ -159,21 +165,21 @@ we should nix the painting of the selection.*/
   background-color: #8A8F84;  Light Color 2 
 }*/
 
-.servicepane_tree > treechildren::-moz-tree-row( dropOn ),
-.servicepane_tree > treechildren::-moz-tree-row( dropBefore ),
-.servicepane_tree > treechildren::-moz-tree-row( dropAfter )
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ),
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ),
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter )
 {
   background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
   background-position: center bottom !important;
   background-repeat: repeat-x !important;
 }
 
-.servicepane_tree > treechildren::-moz-tree-row( dropBefore )
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore )
 {
   background-position: center top !important;
 }
 
-#frame_service_buttonbar button
+.servicepane-toolbar-newitem-button > .clickhold-button
 {
   border: 1px solid;
   border-top-color: #797f76; /** Button Highlight */
@@ -184,12 +190,12 @@ we should nix the painting of the selection.*/
   color: #B3BAAC; /** Light Color 1 */
 }
 
-#frame_service_buttonbar button:hover
+.servicepane-toolbar-newitem-button > .clickhold-button:hover
 {
   color: #feffff; /** Light Color Brightest */
 }
 
-#frame_service_buttonbar button:active
+.servicepane-toolbar-newitem-button > .clickhold-button:active
 {
   border-top-color: #474948; /** Rubber Highlight */
   border-left-color: #474948; /** Rubber Highlight */
@@ -200,14 +206,13 @@ we should nix the painting of the selection.*/
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 SCROLLBARS
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 scrollbar
 {   
-  -moz-border-radius: 3px;
   background-color: #202220 !important;
   background-image: none !important; 
   border-top: 1px solid #202220; /** Button Shadow */
@@ -231,7 +236,7 @@ scrollbar > slider > thumb:active
   border-left-color: #202220; /** Button Shadow */
   border-top-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */  
-	background-color: #313131;
+  background-color: #313131;
 } 
 scrollbar > slider > thumb > gripper
 {   
@@ -244,7 +249,7 @@ scrollbar > slider > thumb
   border-left-color: #202220; /** Button Shadow */ 
   border-bottom-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */
-	background-color: #313131;
+  background-color: #313131;
 } 
 scrollbar > slider
 {   
@@ -252,16 +257,15 @@ scrollbar > slider
   background-image: none !important; 
 } 
 
-
-
-
 /* END SCROLLBARS **/
 
+
+
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE LISTS, aka. the List Tree.
 A List Tree is a sortable column list with striping rows.
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 
@@ -302,19 +306,32 @@ treecol > label
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE FILTERLISTS
 Organize your collection with genre/artist/album filterlists.  
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 .sb-filterlist-tree
 {
   background-color: #B3BAAC; 
-  border-left: 1px solid #202220; /** Button Shadow */
+  border-left: 1px solid 202220; /** Button Shadow */
   border-right: none;
   border-bottom: 1px solid #474948; /** Rubber Highlight */
   /* opacity: 0.8; slow on the mac :( **/
+}
+
+/** Remove the left border from the first filterlist.
+    This prevents it from having a double border **/
+sb-filterlist:first-child > .filterlist > .sb-filterlist-tree
+{
+  border-left: none;
+}
+/** Remove the left border from the first filterlist.
+    This prevents it from having a double border **/
+sb-filterlist:last-child > .filterlist > .sb-filterlist-tree
+{
+  border-right: none;
 }
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell
@@ -359,9 +376,9 @@ Organize your collection with genre/artist/album filterlists.
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE PLAYLIST
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 playlist
@@ -487,9 +504,9 @@ treechildren::-moz-tree-column(insertbefore)
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 BUTTONS
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 /** TODO COMPRESS */
@@ -578,9 +595,9 @@ button[disabled="true"]:hover > hbox > label.button-text
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 DATEPICKER see the RICHLISTBOX for box styles
-***************************************************************************************************
+*******************************************************************************
 */
 .datepicker-gridlabel[selected="true"] {
   background-color: #8A8F84;
@@ -590,9 +607,9 @@ DATEPICKER see the RICHLISTBOX for box styles
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
-***************************************************************************************************
+*******************************************************************************
 */
 
 /* The Top Menu (File, Edit, Etc...) **/
@@ -657,11 +674,14 @@ popup > menu:hover > label
 {
   color: #5c5f58 !important; /** Selected Focus Row */
 }
+
+
 /** 
-***************************************************************************************************
+*******************************************************************************
 PREFERENCES
-***************************************************************************************************
+*******************************************************************************
 */
+
 /* View buttons */
 .viewSelector 
 {
@@ -738,28 +758,14 @@ label.descriptionWrap,
   color: #feffff !important; 
 }
 
+
 /** 
-***************************************************************************************************
-THE SPLITTERS aka THE GRIPPY
+*******************************************************************************
+THE SPLITTERS
 These let the user resize the frames in your box model.
-***************************************************************************************************
+*******************************************************************************
 */ 
 
-/* Splitters to resize the panes */
-
-.vert_splitter
-{
-  background-color: transparent;
-  border-right: 1px solid #202220; /** Button Shadow */
-  border-left: 1px solid #474948; /** Rubber Highlight */
-}
-
-.vert_splitter:active
-{
-  background-color: transparent;
-  border-left: 1px solid #202220; /** Button Shadow */
-  border-right: 1px solid #474948; /** Rubber Highlight */
-}
 
 #filter_splitter > grippy
 {
@@ -782,7 +788,6 @@ These let the user resize the frames in your box model.
   background-color: transparent;
 }
 
-.vert_splitter[state="collapsed"],
 #servicepane_splitter[state="collapsed"]
 {
   background-color: transparent;
@@ -816,17 +821,21 @@ These let the user resize the frames in your box model.
   -moz-border-radius: 5px;
 }
 
-.horz_splitter,
-#horz_splitter,
-.playlist_web_split
+.playlist-splitter,
+.playlist-web-splitter
 {
   background-color: transparent;
   border: none;
 }
 
-.horz_splitter:active,
-#horz_splitter:active,
-.playlist_web_split:active
+.playlist-splitter:active,
+.playlist-web-splitter:active
+{
+  background-color: transparent;
+}
+
+.playlist-splitter[state="collapsed"],
+.playlist-web-splitter[state="collapsed"]
 {
   background-color: transparent;
 }
@@ -841,22 +850,17 @@ These let the user resize the frames in your box model.
   background-color: transparent;
 }
 
-#horz_splitter[state="collapsed"],
-.playlist_web_split[state="collapsed"]
-{
-  background-color: transparent;
-}
 /* END SPLITTERS **/
 
+
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE MAIN PANE
-***************************************************************************************************
+*******************************************************************************
 */ 
 
-
-
-#main_pane_border
+/** The box around the browser **/
+#content_pane_box
 {
   border-top: 1px solid #0f100f; /** Groove  */
   border-left: 1px solid #202220; /** Button Shadow */
@@ -864,10 +868,11 @@ THE MAIN PANE
   border-right: 1px solid #202220; /** Button Shadow */
 }
 
+
 /** 
-***************************************************************************************************
+*******************************************************************************
 THE STATUS PANE
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 sb-status-progressmeter { 
@@ -898,9 +903,9 @@ sb-player-numplaylistitems-label > label
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 TOOLTIPS
-***************************************************************************************************
+*******************************************************************************
 */
 
 tooltip
@@ -910,9 +915,9 @@ tooltip
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 FACEPLATE
-***************************************************************************************************
+*******************************************************************************
 */
 
 sb-player-faceplate {
@@ -974,12 +979,12 @@ progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 SEARCH WIDGET
 Note that this widget inherits from the FireFox binding.
 See dependencies/vendor/mozilla/browser/components/search/content/search.xml
 and app/content/bindings/search.xml
-***************************************************************************************************
+*******************************************************************************
 */
 
 
@@ -1034,9 +1039,9 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 TEXTBOX
-***************************************************************************************************
+*******************************************************************************
 */
 
 .fileFieldContentBox,
@@ -1078,27 +1083,24 @@ textbox[invalid="true"] {
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 VOLUME
-***************************************************************************************************
+*******************************************************************************
 */
-#volume_box,
 sb-player-volume-slider,
 thumb.sb-player-volume-slider > gripper,
 thumb.sb-player-volume-slider,
 progressmeter.sb-player-volume-slider,
 progressmeter.sb-player-volume-slider > .progress-bar,
-progressmeter.sb-player-volume-slider > .progress-remainder,
-#songbird_volume_e,
-#songbird_volume_w
+progressmeter.sb-player-volume-slider > .progress-remainder
 {
   background-color: transparent !important;
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 MISC
-***************************************************************************************************
+*******************************************************************************
 */
 
 button.button-menubutton-button,
@@ -1178,9 +1180,9 @@ separator[orient="vertical"].groove-thin
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 TREE
-***************************************************************************************************
+*******************************************************************************
 */
 
 tree
@@ -1274,9 +1276,9 @@ treechildren::-moz-tree-progressmeter( selected, focus )
 
 
 /** 
-***********************************************************************
+*******************************************************************************
 AUTOCOMPLETE POPUPS
-**********************************************************************
+*******************************************************************************
 */
 
 .autocomplete-treebody::-moz-tree-row( odd )
@@ -1296,9 +1298,9 @@ AUTOCOMPLETE POPUPS
 
 
 /** 
-***********************************************************************
+*******************************************************************************
 CHECKBOXES, boxes, labels, images, states.
-**********************************************************************
+*******************************************************************************
 */
 
 /* ..... disabled state ..... */
@@ -1328,9 +1330,9 @@ checkbox[checked="true"]:focus{
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 MENULIST
-***************************************************************************************************
+*******************************************************************************
 */
 
 .menulist-label
@@ -1362,9 +1364,9 @@ menulist[focused="true"]
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 LISTBOX
-***************************************************************************************************
+*******************************************************************************
 */
 
 listbox
@@ -1421,9 +1423,9 @@ richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 NUMBERBOX
-***************************************************************************************************
+*******************************************************************************
 */
 
 textbox[type="number"] {
@@ -1445,9 +1447,9 @@ html|*.numberbox-input {
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 PROGRESSMETER
-***************************************************************************************************
+*******************************************************************************
 */
 
 progressmeter {
@@ -1457,9 +1459,9 @@ progressmeter {
 
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 RICHLISTBOX
-***************************************************************************************************
+*******************************************************************************
 */
 .datepicker-mainbox,
 .datetimepicker-input,
@@ -1494,9 +1496,9 @@ richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="t
 }
 
 /** 
-***************************************************************************************************
+*******************************************************************************
 TABBED BROWSER
-***************************************************************************************************
+*******************************************************************************
 */ 
 
 .tabbrowser-strip
@@ -1616,9 +1618,9 @@ tabpanels {
  }
 
 /** 
-*******************************************************************
+*******************************************************************************
 SMART PLAYLIST BUILDER
-*******************************************************************
+*******************************************************************************
 */
 
 .drawer-box
@@ -1627,9 +1629,9 @@ SMART PLAYLIST BUILDER
 }
 
 /** 
-*******************************************************************
+*******************************************************************************
 WIZARDS
-*******************************************************************
+*******************************************************************************
 */
 .wizard-header {
   background-color: #0f100f; /** Groove */
@@ -1649,10 +1651,11 @@ installitem
   background-color: #313131 !important; /** Window color */
   border: none !important;
 }
+
 /** 
-*******************************************************************
+*******************************************************************************
 ERRORS
-*******************************************************************
+*******************************************************************************
 */
 
 html|*.error-box,

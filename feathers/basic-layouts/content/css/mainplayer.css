@@ -26,8 +26,12 @@
 
 /** 
 *******************************************************************************
-MAINWIN SIZE & POSITION
-This CSS files specifies the size and position of the Main Window UI.
+
+MAIN PLAYER WINDOW SIZE & POSITION
+
+This CSS file specifies the size and position of the Main Window UI.
+This file is typically included by the current feathers CSS.
+
 *******************************************************************************
 */ 
 
@@ -38,7 +42,7 @@ Love the box.
 *******************************************************************************
 */ 
 
-#frame_outer
+window#mainplayer
 {
   width:  974px;
   height: 718px;
@@ -46,20 +50,13 @@ Love the box.
   min-height: 400px;
 }
 
-#frame_top_pane
-{
-  top: 0px;
-  left: 0px;
-  height: 40px;
-}
-
-#frame_control_pane
+#control_pane_box
 {
   margin-top: 7px;
   max-height: 45px;
 }
 
-#frame_servicetree_pane /* aka The Service Pane, The Left Pane **/
+#servicepane_box /* aka The Service Tree, The Left Pane **/
 {
   border: 1px solid;
   margin: 0px;
@@ -90,22 +87,6 @@ SPLITTERS
 }
 
 
-
-
-
-/** 
-*******************************************************************************
-THE MAIN PANE
-*******************************************************************************
-*/ 
-
-#main_pane_border
-{
-  border: none;
-}
-
-
-
 /** 
 *******************************************************************************
 TOP PANE
@@ -115,19 +96,13 @@ Contains the Main Playback Controls and the Dashboard.
 
 #control_left_box
 {
-  -moz-box-align: left;
   max-width:120px;
 }
 
-#playbutton_box
+#control_buttons_box
 {
   min-height: 55px;
   margin: 0px 0px 0px 20px;
-}
-
-
-sb-player-playpause-button 
-{
 }
 
 #volume_box
@@ -136,51 +111,7 @@ sb-player-playpause-button
   margin-left: 35px;
 }
 
-#control_right_box
-{
- width: 500px;
- height: 55px;
-}
-
-#main_faceplate
+#faceplate
 {
   min-width: 420px;
 }
-
-#face_left_box
-{
-  margin: 0px 10px 0px 0px;
-  padding: 1px 0px 0px 0px;
-}
-
-sb-player-shuffle-button,
-sb-player-cyclefaceplate-button
-{
-  margin: 10px 0px 0px 0px;
-}
-
-#face_right_box
-{
-  margin: 0px 0px 0px 10px;
-  padding: 1px 0px 0px 0px;
-}
-
-/* the faceplate buttons */
-#face_left_box button,
-#face_right_box button
-{
-  margin: 2px 5px 2px 5px;
-}
-
-
-
-
-
-
-
-
-                        
-
-
-
-

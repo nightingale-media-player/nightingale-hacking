@@ -39,67 +39,67 @@ Imported by bindings.css or directly into feathers.
 */ 
 
 /* Twisty and Shouty **/
-.servicepane_tree > treechildren::-moz-tree-twisty(open)
+.servicepane-tree > treechildren::-moz-tree-twisty(open)
 {
   list-style-image: url(chrome://songbird/skin/tree/twisty-open.png);
 }
-.servicepane_tree > treechildren::-moz-tree-twisty(closed)
+.servicepane-tree > treechildren::-moz-tree-twisty(closed)
 {
   list-style-image: url(chrome://songbird/skin/tree/twisty-closed.png);
 }
 
 /* Service Pane Icons **/
-.servicepane_tree > treechildren::-moz-tree-image( library )
+.servicepane-tree > treechildren::-moz-tree-image( library )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( birdhouse )
+.servicepane-tree > treechildren::-moz-tree-image( birdhouse )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-birdhouse.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( web library )
+.servicepane-tree > treechildren::-moz-tree-image( web library )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( medialist )
+.servicepane-tree > treechildren::-moz-tree-image( medialist )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( medialisttype-smart )
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png);
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( medialisttype-dynamic )
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( download )
+.servicepane-tree > treechildren::-moz-tree-image( download )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( download downloading )
+.servicepane-tree > treechildren::-moz-tree-image( download downloading )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads-progress.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( folder open )
+.servicepane-tree > treechildren::-moz-tree-image( folder open )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( folder closed )
+.servicepane-tree > treechildren::-moz-tree-image( folder closed )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-folder-closed.png) ;
 }
 
-.servicepane_tree > treechildren::-moz-tree-image( bookmark )
+.servicepane-tree > treechildren::-moz-tree-image( bookmark )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-bookmark.ico) ;
 }
@@ -113,9 +113,7 @@ Currently a single clickhold button below the service tree
 *******************************************************************************
 */
 
-/** TODO Either clean up these styles or kill the bar completely **/
-
-#frame_service_buttonbar button
+.servicepane-toolbar-newitem-button > .clickhold-button
 {
   padding: 0px;
   margin: 0px;
@@ -123,18 +121,18 @@ Currently a single clickhold button below the service tree
 }
 
 /** Offset menu to account for rounded button **/
-#frame_service_buttonbar sb-clickhold-button menupopup
+.servicepane-toolbar-newitem-button > .clickhold-menupopup
 {
  margin-left: 8px;
 }
 
 /** Bind images to the button and button-popup on the Service Pane */
-/** NOTE: IDs containing periods are bad... */
-sb-clickhold-button[id="file.new"]
+.servicepane-toolbar-newitem-button
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
+/** NOTE: IDs containing periods are bad!!! */
 .menuitem-iconic[id="file.new"]  {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }

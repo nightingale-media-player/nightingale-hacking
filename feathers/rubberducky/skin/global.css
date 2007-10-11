@@ -27,7 +27,7 @@
 /** 
 ***************************************************************************************************
 
-= Global Styles =
+GLOBAL STYLES
 
 Whereas songbird.css is loaded only by Songbird windows, global.css 
 is loaded into all windows and dialogs in the application 
@@ -43,8 +43,7 @@ feel of the application.
 This file can be used to pull in additional styles that should be
 present everywhere in the application.
 
-For more information, visit:
-TODO:  Link to the feathers overview documentation !important.
+For more information, visit http://developer.songbirdnest.com/
 
 ***************************************************************************************************
 */ 
@@ -58,10 +57,13 @@ TODO:  Link to the feathers overview documentation !important.
 @import url(chrome://songbird-dialogs/skin/dialogs.css); 
 
 /* size and positioning for the main application window */
-@import url(chrome://songbird/content/feathers/basic-layouts/css/mainwin.css); 
+@import url(chrome://songbird/content/feathers/basic-layouts/css/mainplayer.css); 
 
 /* size and positioning for the miniplayer window */
 @import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); 
+
+
+/** TODO RENAME **/ 
 
 /* extra images for the main application window */
 @import url(mainwin_images.css); 

@@ -239,10 +239,10 @@ var gMiniplayer = {
       try // I guess this is just a fallback for if a page doesn't provide its own.
       {
         // If min size is not yet known and if the window size is different from the document's box object, 
-        if (this._minwidth == -1 && window.innerWidth != document.getElementById('frame_mini').boxObject.width)
+        if (this._minwidth == -1 && window.innerWidth != document.getElementById('miniplayer_box').boxObject.width)
         { 
           // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-          this._minwidth = document.getElementById('frame_mini').boxObject.width + 1;
+          this._minwidth = document.getElementById('miniplayer_box').boxObject.width + 1;
         }
       } catch(e) {};
       return this._minwidth;

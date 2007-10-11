@@ -25,34 +25,35 @@
  */
 
 /** 
-************************************************************************************************************************************************
+*******************************************************************************
+
 MINIPLAYER SIZE & POSITION
-This CSS files specifies the size and position of the Mini Window UI.
+
+This CSS file specifies the size and position of the Mini Window UI.
 Note that most of the miniplayer is actually in the miniplayer.xml XBL binding
 and is styled by chrome://songbird-bindings/skin/miniplayer.css
-************************************************************************************************************************************************
+
+This file is typically included by the current feathers CSS.
+
+*******************************************************************************
 */ 
 
 
-
-
-window#mini  
+window#miniplayer
 { 
   width: 800px !important;
-  min-width: 390px ! important;
   
   /** HACK! Force height to get around Bug 2851 (Mini grows by 1px on every load) **/
   min-height: 23px;
   max-height: 23px;
   
-  /** Get rid of the gradient that is applied to all windows */
   background-image:none;
   
   /* Only transparent on windows. (Bug 1656) */
   background-color: transparent !important;
 }
 
-#frame_mini
+#miniplayer_box
 {
   -moz-border-radius: 10px !important;
   background-color: #313131 !important;  /** Match the Main Window */
@@ -61,11 +62,27 @@ window#mini
 }
 
 /* the horizontal resizers */
-#mini_resize_w,
-#mini_resize_e
+#miniplayer_resizer_left,
+#miniplayer_resizer_right
 {
   height: 10px;
   width: 2px;
+}
+#miniplayer_resizer_left {
+  cursor: w-resize;
+}
+#miniplayer_resizer_right {
+  cursor: e-resize;
+}
+
+
+/* HACKS-R-US
+ * see: http://bugzilla.songbirdnest.com/show_bug.cgi?id=4846
+ * Force the miniplayer menubar to be hidden. This should be revisited once
+ * the XUL changes settle down, but this works for 0.3
+ */
+window#miniplayer #songbird_menu { 
+  display: none !important 
 }
 
 /* Restore */
@@ -97,14 +114,14 @@ sb-player-jumpto-button.miniplayer
 
 
 /* RUNTIME-SPECIFIC HACKS */
-window#mini[hasTitlebar="false"]
+window#miniplayer[hasTitlebar="false"]
 {
   background-color: transparent !important;
 }
 
 /* PLATFORM-SPECIFIC HACKS */
-window[platform="Linux"] #frame_mini,
-window[platform="Darwin"] #frame_mini
+window[platform="Linux"] #miniplayer_box,
+window[platform="Darwin"] #miniplayer_box
 {
   /* Remove the roundedness of the borders, these platforms can't handle it. */
   -moz-border-radius: 0px !important; 

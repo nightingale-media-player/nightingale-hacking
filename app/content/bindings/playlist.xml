@@ -55,7 +55,7 @@
           <sb-smart-splitter
             id="sb-playlist-splitter"
             sbid="filter_splitter"
-            class="horz_splitter"
+            class="playlist-splitter"
             state="open"
             orient="vertical"
             collapse="before"

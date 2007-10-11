@@ -49,9 +49,8 @@
 
 
 <window
-  id="frame_outer"
-  class="mainwin"
-  onclose="/*return false;*/ quitApp();" 
+  id="mainplayer"
+  onclose="quitApp();" 
   title="&window.dev.title;"
   windowtype="Songbird:Main"
   titlemenuseparator="&window.browser.titlemenuseparator;"
@@ -63,15 +62,20 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
-
-  <stringbundleset id="stringbundleset"> 
-     <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
-  </stringbundleset>
-  
   
   <windowregion/> <!-- No matter what mig says, don't take this out!! -->
   
+  <!--
+     Standard sets, filled by overlay files.  
+     NOTE: These items must retain their IDs for Firefox extension compatibility.
+  -->
   <popupset id="mainPopupSet" />
+  <commandset id="mainCommandSet" />
+  <broadcasterset id="mainBroadcasterSet" />
+  <keyset id="mainKeyset" />  
+  <stringbundleset id="stringbundleset"> 
+     <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+  </stringbundleset>  
 
   <sb-sys-outer-frame flex="1">
 
@@ -79,30 +83,29 @@
     <sb-sys-titlebar>
     
       <!-- Note: This menu must have the id "songbird_menu", as it is the overlay
-            target of menuOverlay.xul.  This cannot be put inside of a binding
-            as that would break OSX menu handling. 
-            See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
+           target of menuOverlay.xul.  This cannot be put inside of a binding
+           as that would break OSX menu handling. 
+           See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
         -->
       <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
     </sb-sys-titlebar>
     
     <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-    <hbox id="frame_mini" hidden="true">
+    <hbox id="miniplayer_box" hidden="true">
       <!-- MINI PLAYER DISPLAY AND CONTROLS -->
       <sb-mini-player-controls flex="1"/>
     </hbox>
 
-
-    <!-- inner_frame -->
-    <vbox id="frame_inner_pane" flex="1">
+    <!-- INNER PLAYER BOX -->
+    <vbox id="inner_player_box" flex="1">
       
       <!-- CONTROL PANE -->
-      <hbox id="frame_control_pane">
+      <hbox id="control_pane_box">
 
         <vbox id="control_left_box" flex="1">
           <!-- PLAY BUTTONS -->
-          <hbox id="playbutton_box" pack="center" align="center">
-            <sb-player-control-buttons id="songbird_control_btns" class="sb-player-button"/>
+          <hbox id="control_buttons_box" pack="center" align="center">
+            <sb-player-control-buttons id="control_buttons" class="sb-player-button"/>
             <!-- Possible Control Buttons:
               <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
               <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
@@ -114,37 +117,40 @@
           </hbox>
         </vbox>
 
+        <!-- VOLUME SLIDER -->
         <hbox id="volume_box" pack="center" align="center" flex="1">
-          <sb-player-mute-button id="mute" />
-          <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
+          <sb-player-mute-button id="mute_button" />
+          <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100"/>
         </hbox>
 
         <spacer id="control_middle_spacer" flex="3" />
         
-        <sb-player-faceplate id="main_faceplate" flex="1" />            
+        <!-- FACEPLATE DISPLAY / DASHBOARD -->
+        <sb-player-faceplate id="faceplate" flex="1" />            
         
         <spacer id="control_right_spacer" flex="7" />
       </hbox>
+      
 
       <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="app" metricsid="collapse.controlpane">
         <grippy/>
       </sb-smart-splitter>
 
-      <vbox id="frame_middle_pane" flex="1">
-        <hbox id="frame_middle_pane_hbox" flex="1">
+      <!-- MIDDLE PANE -->
+      <vbox id="middle_pane_box" flex="1">
+        <hbox id="middle_pane_inner_box" flex="1">
 
           <!-- SERVICE PANE -->
-          <vbox id="frame_servicetree_pane">
-            <!--  NOTE: the id used to be frame_servicetree. -->
-            <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
+          <vbox id="servicepane_box">
+            <servicepane id="servicepane" flex="1" browser="tabbrowser" />                  
           </vbox>
 
           <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
             <grippy/>
           </sb-smart-splitter>
 
-          <!-- MAIN PANE -->
-          <vbox flex="1" id="main_pane_border">
+          <!-- MAIN CONTENT PANE -->
+          <vbox flex="1" id="content_pane_box">
                                         
             <!-- BROWSER TOOLBAR.  Filled via overlay by browserToolbarOverlay.xul and others. 
                   Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
@@ -152,28 +158,20 @@
             <toolbox id="navigator-toolbox"/>
 
             <!-- BROWSER -->
-            <sb-tabbrowser id="frame_main_pane" flex="1"
+            <sb-tabbrowser id="tabbrowser" flex="1"
                             servicepane="servicepane"
                             contentcontextmenu="html_context_menu"
                             />
           </vbox>
         </hbox>
       </vbox>
-      <!-- frame_middle_pane -->
       
-      <!-- STATUS PANE -->
-      <sb-status-bar/>
+      <!-- STATUS BAR -->
+      <sb-status-bar id="status_bar"/>
     </vbox>
-    <!-- inner_frame -->
+    <!-- END INNER PLAYER BOX -->
 
   </sb-sys-outer-frame>
-
-
-  <!-- NOTE: These items must retain their IDs for Firefox extension compatibility. -->
-  <commandset id="mainCommandSet" />
-  <broadcasterset id="mainBroadcasterSet" />
-  <keyset id="mainKeyset" />
-
 </window>
 
 

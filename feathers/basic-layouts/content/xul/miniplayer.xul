@@ -49,7 +49,7 @@
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
- id="mini"
+ id="miniplayer"
  title="&window.dev.title;"
  windowtype="Songbird:Main"
  
@@ -65,30 +65,33 @@
    src="chrome://global/content/dialogOverlay.js" /> 
 
   <draggable flex="1">
-    <hbox id="frame_mini" flex="1" align="center" pack="center">
-      <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
+    <hbox id="miniplayer_box" flex="1" align="center" pack="center">
+      <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
   
-      <!--  Magic menu to keep OS X happy.  
-            Must have "songbird_menu" id for Firefox compatibility.
-            TODO: Make a popup version for everyone else. -->
+      <!-- Magic menu to keep OS X happy.
+           Note: This menu must have the id "songbird_menu", as it is the overlay
+           target of menuOverlay.xul.  This cannot be put inside of a binding
+           as that would break OSX menu handling. 
+           See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
+        -->
       <menubar id="songbird_menu" hidden="true"/>
   
       <!-- PLAYER DISPLAY AND CONTROLS -->
-      <sb-mini-player-controls flex="1"/>
+      <sb-mini-player-controls id="miniplayer_controls" flex="1"/>
   
       <!-- WINDOW CONTROLS -->
-      <sb-player-jumpto-button id="mini_btn_jump" class="miniplayer"/>    
-      <sb-feathers-toggle-button id="mini_btn_feathers" popupanchor="bottomleft" 
+      <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>    
+      <sb-feathers-toggle-button id="miniplayer_feathers_button" popupanchor="bottomleft" 
           popupalign="topleft" class="miniplayer sb-player-button"/>
-      <sb-sys-close-button id="mini_btn_close" class="miniplayer"/>
-      <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" 
-          dir="right" style="cursor: w-resize;"/>
+      <sb-sys-close-button id="miniplayer_close_button" class="miniplayer"/>
+      <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_right" 
+          dir="right"/>
     </hbox>
   </draggable>
 
   <keyset>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
-    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
+    <key id="feathers-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
   </keyset>
 
 </window>

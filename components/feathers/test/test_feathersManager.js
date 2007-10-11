@@ -33,7 +33,7 @@
 // Fallback layouts/skin, used by previousSkinName and previousLayoutURL
 // Changes to the shipped feathers must be reflected here
 // and in sbFeathersManager.js
-const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul";
+const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
 const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
 const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 
