@@ -208,8 +208,8 @@ sb-player-curtrack-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-button") !important;
 }
 
-sb-player-curtrack-hbox {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-hbox") !important;
+sb-player-curtrack-box {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-box") !important;
 }
 
 sb-player-jumpto-button {

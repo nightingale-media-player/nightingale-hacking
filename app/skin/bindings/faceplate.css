@@ -101,10 +101,10 @@ sb-player-artist-label.faceplate-text
   margin: 0px;
 }
 
-.faceplate-artist-box:hover > .faceplate-text,
-.faceplate-album-box:hover > .faceplate-text
+.faceplate-curtrack-box:hover .faceplate-text
 {
   text-decoration: underline !important;
+  cursor: pointer;
 }  
   
 

@@ -105,6 +105,186 @@ sb-sys-hide-button
 
 /* END WINDOW CHROME **/
 
+
+
+/** 
+*******************************************************************************
+THE MAIN PANE
+*******************************************************************************
+*/ 
+
+/** The box around the browser **/
+#content_pane_box
+{
+  border-top: 1px solid #0f100f; /** Groove  */
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
+  border-right: 1px solid #202220; /** Button Shadow */
+}
+
+
+/** 
+*******************************************************************************
+THE STATUS PANE
+*******************************************************************************
+*/ 
+
+sb-status-progressmeter { 
+  background-color: transparent;
+  color: #feffff !important; /** Light Color Brightest */
+  border-top: 1px solid #0f100f; /** Groove  */
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
+  border-right: 1px solid #202220; /** Button Shadow */ 
+} 
+
+sb-status-progressmeter .progress-bar { 
+  background-color: #474948; /** Rubber Highlight */
+  color: #feffff !important; /** Light Color Brightest */
+} 
+  
+sb-status-progressmeter[mode="undetermined"] { 
+  background-color: #0f100f; /** Groove  */
+  color: #feffff !important; /** Light Color Brightest */
+} 
+  
+/** TODO: Why not define a color for the whole status bar and then inherit? **/
+sb-status-label, 
+sb-player-scanning-label, 
+sb-player-numplaylistitems-label > label
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+
+
+/** 
+*******************************************************************************
+FACEPLATE
+*******************************************************************************
+*/
+
+sb-player-faceplate {
+}
+
+/* the seekbar slider */
+thumb.sb-player-seek-slider 
+{
+  -moz-border-radius: 5px;
+  background-color: White;
+  border: 3px solid #313131;
+}
+.faceplate-seekbar
+{
+  border: none;
+  background-color: Transparent;
+}
+
+.faceplate-text
+{
+  color: #0f100f; /** Groove */
+}
+
+.faceplate-progressmeter
+{
+  border: none;
+}
+
+.faceplate-progressmeter > .progress-bar,
+progressmeter.sb-player-seek-slider > .progress-bar
+{
+  background-color: #313131;
+  -moz-border-radius: 5px;
+}
+
+progressmeter.sb-player-seek-slider > .progress-remainder,
+.faceplate-progressmeter > .progress-remainder
+{
+  background-color: #B3BAAC;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+}
+
+
+/** MINI FACEPLATE/DASHBOARD **/
+.mini-dash-text
+{
+  color: #313131;
+}
+progressmeter.sb-player-seek-slider.miniplayer > .progress-bar
+{
+  background-color: #313131;
+  -moz-border-radius: 1px;
+}
+progressmeter.sb-player-seek-slider.miniplayer,
+progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder
+{
+  background-color: Transparent !important;
+}
+
+
+/** 
+*******************************************************************************
+SEARCH WIDGET
+Note that this widget inherits from the FireFox binding.
+See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+and app/content/bindings/search.xml
+*******************************************************************************
+*/
+
+
+/* Make the search bar match the general textbox style */
+searchbar
+{
+  border-top-color: #202220; /** Button Shadow */ 
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-right-color: #202220; /** Button Shadow */ 
+  background-color: #0f100f; /** Groove */
+  color: #feffff; /** Light Color Brightest */
+}
+searchbar[focused="true"] 
+{
+  background-color: #0f100f; /** Groove */
+}
+
+/** Change the background color when a live search is active 
+    (search box is filtering a media list)
+ **/
+searchbar:not([empty="true"])[livesearchmode="true"]
+{
+  background-color: #474948; /** Rubber Highlight */ 
+}
+
+.searchbar-engine-button[addengines="true"] 
+{
+  /** When there is a search engine available for Songbird, 
+  this button can show itself. For now, we are choosing to swap the 
+  dropmarker with a plus symbol in an animated gif (dropmarker-plus.gif)
+  when an engine is available. **/
+} 
+
+.searchbar-engine-button,
+.search-go-button
+{
+  background-color: Transparent;
+}
+
+
+/** Get rid of the default textbox styles **/
+.searchbar-textbox {
+  background-color: transparent !important;
+}
+
+/** Dim the text that is displayed when no search has been entered **/
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox 
+{
+  color: #8A8F84; /** Light Color 2 */  
+  opacity: 0.5;
+}
+
+
+
 /** 
 *******************************************************************************
 SERVICE PANE - a.k.a the Left Pane
@@ -205,104 +385,7 @@ we should nix the painting of the selection.*/
 
 
 
-/** 
-*******************************************************************************
-SCROLLBARS
-*******************************************************************************
-*/ 
 
-scrollbar
-{   
-  background-color: #202220 !important;
-  background-image: none !important; 
-  border-top: 1px solid #202220; /** Button Shadow */
-  border-left: none !important;
-} 
-scrollbarbutton
-{    
-  -moz-border-radius: 3px;
-  border-top-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-bottom-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */ 
-  background-color: #313131 !important;
-} 
-scrollbarbutton:hover:active, 
-scrollbarbutton[active="true"],
-scrollbar > slider > thumb:active
-{   	
-  -moz-border-radius: 3px;
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */  
-  background-color: #313131;
-} 
-scrollbar > slider > thumb > gripper
-{   
-  background-color: transparent !important; 
-} 
-scrollbar > slider > thumb
-{   
-  -moz-border-radius: 3px;
-  border-top-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-bottom-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #313131;
-} 
-scrollbar > slider
-{   
-  background-color: #202220 !important;
-  background-image: none !important; 
-} 
-
-/* END SCROLLBARS **/
-
-
-
-/** 
-*******************************************************************************
-THE LISTS, aka. the List Tree.
-A List Tree is a sortable column list with striping rows.
-*******************************************************************************
-*/ 
-
-
-listheader,
-tree treecol
-{
-  border-top: 1px solid #474948; /** Rubber Highlight */
-  color: #8A8F84; /** Light Color 2 */
-  background-color: #313131 !important; /* same as the main window */
-}
-
-treecolpicker
-{
-  border-top: 1px solid #474948; /** Rubber Highlight */
-  background-color: #313131 !important; /* same as the main window */
-  border-right: 1px solid #202220 !important;
-}
-
-treecol[dragging="true"]
-{
-  background-color: transparent !important;
-}
-
-treecol[dragging="true"] > label
-{
-  color: #5c5f58; /** Selected Focus Row */
-}
-
-treecol[insertafter="true"] 
-{
-  border-right: 5px solid transparent !important; 
-}
-
-treecol > label
-{
-  color: #8A8F84; /** Light Color 2 */
-}
 
 
 /** 
@@ -315,7 +398,7 @@ Organize your collection with genre/artist/album filterlists.
 .sb-filterlist-tree
 {
   background-color: #B3BAAC; 
-  border-left: 1px solid 202220; /** Button Shadow */
+  border-left: 1px solid #202220; /** Button Shadow */
   border-right: none;
   border-bottom: 1px solid #474948; /** Rubber Highlight */
   /* opacity: 0.8; slow on the mac :( **/
@@ -374,6 +457,7 @@ sb-filterlist:last-child > .filterlist > .sb-filterlist-tree
 {
   color: #feffff; /** Light Color Brightest */
 }
+
 
 /** 
 *******************************************************************************
@@ -503,680 +587,6 @@ treechildren::-moz-tree-column(insertbefore)
   width: 63360in;
 }
 
-/** 
-*******************************************************************************
-BUTTONS
-*******************************************************************************
-*/ 
-
-/** TODO COMPRESS */
-
-toolbarbutton
-{
-  border-color: transparent;
-}
-
-toolbarbutton[disabled="true"],
-toolbarbutton[disabled="true"]:active,
-toolbarbutton[disabled="true"]:hover
-{
-  background-color: transparent;
-  border-color: transparent;
-  opacity: 0.5;
-}
-
-toolbarbutton:hover
-{
-  border-top-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */
-  border-bottom-color: #202220; /** Button Shadow */
-  border-right-color: #202220; /** Button Shadow */
-}
-
-toolbarbutton:active
-{
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */  
-}
-
-button
-{
-  border: 1px solid;
-  border-top-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-bottom-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */ 
-  -moz-border-radius: 5px;
-  color: #B3BAAC; /* Light Color 1 */
-  background-color: #313131; /** color of the Main Window */
-}
-
-button:active
-{
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */ 
-}
-
-button > dropmarker.button-menubutton-dropmarker,
-toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
-{
-  border-left: 1px solid #202220 !important; /** Button Shadow */
-}
-
-
-button:hover > hbox > .button-text,
-toolbarbutton:hover > .toolbarbutton-text,
-button:hover,
-toolbarbutton:hover
-{
-  color: #FFF;  
-}
-
-button[disabled="true"],
-button[disabled="true"]:active,
-button[disabled="true"]:hover
-{
-  background-color: transparent;
-  border: 1px dotted #474948; /** Rubber Highlight */
-}
-
-toolbarbutton[disabled="true"] > .toolbarbutton-text,
-toolbarbutton[disabled="true"]:active > .toolbarbutton-text,
-toolbarbutton[disabled="true"]:hover > .toolbarbutton-text,
-button[disabled="true"] > hbox > label.button-text,
-button[disabled="true"]:active > hbox > label.button-text,
-button[disabled="true"]:hover > hbox > label.button-text
-{
-  color: #474948 !important; /** Rubber Highlight */
-}
-
-/** 
-*******************************************************************************
-DATEPICKER see the RICHLISTBOX for box styles
-*******************************************************************************
-*/
-.datepicker-gridlabel[selected="true"] {
-  background-color: #8A8F84;
-  color: #0f100f; /** Groove */
-}
-
-
-
-/** 
-*******************************************************************************
-MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
-*******************************************************************************
-*/
-
-/* The Top Menu (File, Edit, Etc...) **/
-menu > label
-{
-  background-color: transparent !important;
-  color: #8A8F84; /** Light Color 2 */
-}
-
-menu:hover,
-menu:hover > label,
-menu[open],
-menu[open] > label,
-menu[_moz-menuactive="true"],
-menu[_moz-menuactive="true"] > label
-{
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #feffff; /** Light Color Brightest */
-}
-
-/* The Basic Menu Styles **/
-
-menupopup, 
-popup
-{
-  background-color: #0f100f; /** Groove */
-  color: #feffff; /** Light Color Brightest */
-}
-
-menuseparator
-{
-  border-top-color: #202220; /** Button Shadow */
-}
-
-menuitem[disabled="true"],
-menuitem[disabled="true"]:hover,
-menuitem[disabled="true"] > label,
-menuitem[disabled="true"]:hover > label
-{
-  color: #5c5f58 !important; /** Selected Focus Row */
-}
-menuitem > label,
-menupopup > menu > label,
-popup > menu > label
-{
-  color: #B3BAAC !important; /** Light Color 1 */
-}
-
-menuitem:hover,
-menuitem:hover > label,
-menupopup > menu:hover,
-menupopup > menu:hover > label,
-popup > menu:hover,
-popup > menu:hover > label
-{
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #feffff !important; /** Light Color Brightest */ 
-}
-
-.menu-accel,
-.menu-iconic-accel
-{
-  color: #5c5f58 !important; /** Selected Focus Row */
-}
-
-
-/** 
-*******************************************************************************
-PREFERENCES
-*******************************************************************************
-*/
-
-/* View buttons */
-.viewSelector 
-{
-  border: 1px solid !important;
-  border-top-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-bottom-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */ 
-  background-color: transparent !important;
-  color: #feffff !important;
-}
-
-#viewGroup
-{
-  background-color: #0f100f !important; /** Groove */
-  border: 1px solid !important;
-  border-bottom-color: #797f76 !important; /** Button Highlight */
-  border-left-color: #202220 !important; /** Button Shadow */ 
-  border-top-color: #202220 !important; /** Button Shadow */ 
-  border-right-color: #202220 !important; /** Button Shadow */
-}
-
-#viewGroup radio:hover {
-  background-color: #B3BAAC !important; /** Light Color 1 */
-}
-
-#viewGroup radio:hover > label {
-  color: #feffff !important;
-}
-
-#viewGroup radio[selected="true"] {
-  background-color: #8A8F84 !important; /** Light Color 2 */
-  color: #B3BAAC !important; 
-}
-
-#viewGroup radio[selected="true"] > label /** In Preferences this inverts the selected label color under Add-ons */
-{
-  color: #0f100f !important; /** Groove */
-}
-
-/* Extensions */
-
-#extensionsBox > richlistbox
-{
-  border: none !important;
-}
-
-#extensionsBox > richlistbox > richlistitem[selected="true"]
-{
-  background-color: #202220 !important; /** Button Shadow */
-  border-right: 1px solid #0f100f !important; /** Groove */
-  border-top: 1px solid #0f100f !important; /** Groove */
-  border-bottom: 1px solid #0f100f !important; /** Groove */
-  border-left: 1px solid #0f100f !important; /** Groove */
-}
-#extensionsView:focus > richlistitem[selected="true"]
-{
-  background-image: none !important;
-}
-
-label.addonName,
-label.addonVersion,
-label.descriptionWrap,
-#error_noupdate_header
-{
-  color: #B3BAAC !important; 
-}
-
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonVersion,
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
-#extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
-{
-  color: #feffff !important; 
-}
-
-
-/** 
-*******************************************************************************
-THE SPLITTERS
-These let the user resize the frames in your box model.
-*******************************************************************************
-*/ 
-
-
-#filter_splitter > grippy
-{
-  background-color: #313131;
-  margin: 0px 0px 0px 0px;
-  border-top: 1px solid !important;
-  border-top-color: #474948 !important; /** Rubber Highlight */
-}
-
-#filter_splitter:active
-{
-  background-color: #313131;
-  margin: 0px 0px 0px 0px;
-}
-
-
-#servicepane_splitter,
-#search_splitter
-{
-  background-color: transparent;
-}
-
-#servicepane_splitter[state="collapsed"]
-{
-  background-color: transparent;
-}
-
-#servicepane_splitter[state="collapsed"]
-{
-  border: 1px solid #202220; /** Button Shadow */
-  -moz-border-radius: 5px;
-}
-
-#servicepane_splitter[state="collapsed"]:hover
-{
-  border: 1px solid;
-  border-top-color: #474948; /** Rubber Highlight */
-  border-left-color: #474948; /** Rubber Highlight */
-  border-bottom-color: #202220; /** Button Shadow */
-  border-right-color: #202220; /** Button Shadow */
-  color: #FFF;  
-  -moz-border-radius: 5px;
-}
-
-#servicepane_splitter[state="collapsed"]:active
-{
-  border: 1px solid;
-  border-top-color: #202220; /** Button Shadow */
-  border-left-color: #202220; /** Button Shadow */
-  border-bottom-color: #474948; /** Rubber Highlight */
-  border-right-color: #474948; /** Rubber Highlight */
-  color: #FFF;  
-  -moz-border-radius: 5px;
-}
-
-.playlist-splitter,
-.playlist-web-splitter
-{
-  background-color: transparent;
-  border: none;
-}
-
-.playlist-splitter:active,
-.playlist-web-splitter:active
-{
-  background-color: transparent;
-}
-
-.playlist-splitter[state="collapsed"],
-.playlist-web-splitter[state="collapsed"]
-{
-  background-color: transparent;
-}
-
-#control_pane_splitter
-{
-  background-color: transparent;
-}
-
-#control_pane_splitter[state="collapsed"]
-{
-  background-color: transparent;
-}
-
-/* END SPLITTERS **/
-
-
-/** 
-*******************************************************************************
-THE MAIN PANE
-*******************************************************************************
-*/ 
-
-/** The box around the browser **/
-#content_pane_box
-{
-  border-top: 1px solid #0f100f; /** Groove  */
-  border-left: 1px solid #202220; /** Button Shadow */
-  border-bottom: 1px solid #474948; /** Rubber Highlight */
-  border-right: 1px solid #202220; /** Button Shadow */
-}
-
-
-/** 
-*******************************************************************************
-THE STATUS PANE
-*******************************************************************************
-*/ 
-
-sb-status-progressmeter { 
-  background-color: transparent;
-  color: #feffff !important; /** Light Color Brightest */
-  border-top: 1px solid #0f100f; /** Groove  */
-  border-left: 1px solid #202220; /** Button Shadow */
-  border-bottom: 1px solid #474948; /** Rubber Highlight */
-  border-right: 1px solid #202220; /** Button Shadow */ 
-} 
-
-sb-status-progressmeter .progress-bar { 
-  background-color: #474948; /** Rubber Highlight */
-  color: #feffff !important; /** Light Color Brightest */
-} 
-  
-sb-status-progressmeter[mode="undetermined"] { 
-  background-color: #0f100f; /** Groove  */
-  color: #feffff !important; /** Light Color Brightest */
-} 
-  
-/** TODO: Why not define a color for the whole status bar and then inherit? **/
-sb-status-label, 
-sb-player-scanning-label, 
-sb-player-numplaylistitems-label > label
-{
-  color: #B3BAAC; /** Light Color 1 */
-}
-
-/** 
-*******************************************************************************
-TOOLTIPS
-*******************************************************************************
-*/
-
-tooltip
-{  
-  background-color: #EEE !important;
-  color: #0f100f !important; /** Groove  */
-}
-
-/** 
-*******************************************************************************
-FACEPLATE
-*******************************************************************************
-*/
-
-sb-player-faceplate {
-}
-
-/* the seekbar slider */
-thumb.sb-player-seek-slider 
-{
-  -moz-border-radius: 5px;
-  background-color: White;
-  border: 3px solid #313131;
-}
-.faceplate-seekbar
-{
-  border: none;
-  background-color: Transparent;
-}
-
-.faceplate-text
-{
-  color: #0f100f; /** Groove */
-}
-
-.faceplate-progressmeter
-{
-  border: none;
-}
-
-.faceplate-progressmeter > .progress-bar,
-progressmeter.sb-player-seek-slider > .progress-bar
-{
-  background-color: #313131;
-  -moz-border-radius: 5px;
-}
-
-progressmeter.sb-player-seek-slider > .progress-remainder,
-.faceplate-progressmeter > .progress-remainder
-{
-  background-color: #B3BAAC;
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-bottomright: 5px;
-}
-
-
-/** MINI FACEPLATE/DASHBOARD **/
-.mini-dash-text
-{
-  color: #313131;
-}
-progressmeter.sb-player-seek-slider.miniplayer > .progress-bar
-{
-  background-color: #313131;
-  -moz-border-radius: 1px;
-}
-progressmeter.sb-player-seek-slider.miniplayer,
-progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder
-{
-  background-color: Transparent !important;
-}
-
-/** 
-*******************************************************************************
-SEARCH WIDGET
-Note that this widget inherits from the FireFox binding.
-See dependencies/vendor/mozilla/browser/components/search/content/search.xml
-and app/content/bindings/search.xml
-*******************************************************************************
-*/
-
-
-/* Make the search bar match the general textbox style */
-searchbar
-{
-  border-top-color: #202220; /** Button Shadow */ 
-  border-left-color: #202220; /** Button Shadow */ 
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-right-color: #202220; /** Button Shadow */ 
-  background-color: #0f100f; /** Groove */
-  color: #feffff; /** Light Color Brightest */
-}
-searchbar[focused="true"] 
-{
-  background-color: #0f100f; /** Groove */
-}
-
-/** Change the background color when a live search is active 
-    (search box is filtering a media list)
- **/
-searchbar:not([empty="true"])[livesearchmode="true"]
-{
-  background-color: #474948; /** Rubber Highlight */ 
-}
-
-.searchbar-engine-button[addengines="true"] 
-{
-  /** When there is a search engine available for Songbird, 
-  this button can show itself. For now, we are choosing to swap the 
-  dropmarker with a plus symbol in an animated gif (dropmarker-plus.gif)
-  when an engine is available. **/
-} 
-
-.searchbar-engine-button,
-.search-go-button
-{
-  background-color: Transparent;
-}
-
-
-/** Get rid of the default textbox styles **/
-.searchbar-textbox {
-  background-color: transparent !important;
-}
-
-/** Dim the text that is displayed when no search has been entered **/
-searchbar[empty="true"] > hbox > hbox > .searchbar-textbox 
-{
-  color: #8A8F84; /** Light Color 2 */  
-  opacity: 0.5;
-}
-
-/** 
-*******************************************************************************
-TEXTBOX
-*******************************************************************************
-*/
-
-.fileFieldContentBox,
-textbox,
-textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
-{
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */ 
-  color: #B3BAAC; /** Light Color 1 */
-}
-    
-
-/* ..... focused state ..... */
-
-.fileFieldContentBox,
-textbox[focused="true"] 
-{
-  background-color: #0f100f; /** Groove */
-}
-
-/* ..... readonly state ..... textbox[readonly="true"]  */
-
-
-/* ..... disabled state ..... */
-.fileFieldContentBox,
-textbox[disabled="true"] 
-{
-  cursor: default;
-} 
-
-/* ..... invalid state ..... */
-
-textbox[invalid="true"] {
-  background-color: red;
-} 
-
-
-/** 
-*******************************************************************************
-VOLUME
-*******************************************************************************
-*/
-sb-player-volume-slider,
-thumb.sb-player-volume-slider > gripper,
-thumb.sb-player-volume-slider,
-progressmeter.sb-player-volume-slider,
-progressmeter.sb-player-volume-slider > .progress-bar,
-progressmeter.sb-player-volume-slider > .progress-remainder
-{
-  background-color: transparent !important;
-}
-
-/** 
-*******************************************************************************
-MISC
-*******************************************************************************
-*/
-
-button.button-menubutton-button,
-button.button-menubutton-button:active
-{
-  border: none !important;
-  padding: 0;
-  margin: 0;
-}
-
-description,
-groupbox,
-label
-{
-  color: #B3BAAC; /** Light Color 1 */
-}
-
-.groupbox-body
-{
-  border: 1px solid #202220; /** Button Shadow 3*/
-  -moz-border-radius: 5px;
-}
-
-dialog:root[type="songbird"] .groupbox-body
-{
-  border-color: #0f100f; /** Groove */
-}
-
-/* class for text with a 'link' appearance */
-.text-link
-{
-  color: #99CCFF;
-  border: 1px solid transparent;
-}
-.text-link:focus
-{
-  color: #99CCFF;		
-  border: 1px dotted -moz-DialogText;
-}
-.text-link:hover
-{
-  color: #D4ECFF;
-  cursor: pointer;
-} 
-.text-link:hover:active
-{
-  color: #3399FF;
-} 
-.text-link[visited="true"]
-{
-  color: #3399FF;
-}
-
-/* groove separators (50% size) */
-separator.groove,
-separator.groove[orient="horizontal"] 
-{
-  border-top: 2px solid;
-  -moz-border-top-colors: black #474948; /** Rubber Highlight */
-}
-  
-separator.groove[orient="vertical"] 
-{
-  border-left: 1px solid #474948;
-}
-  
-/* groove separators (0 padding, for dividing effects) */  
-separator.groove-thin 
-{
-  border-top: 1px solid #474948; /** Rubber Highlight */  
-}
-  
-separator[orient="vertical"].groove-thin 
-{
-  border-left: 1px solid #474948; /** Rubber Highlight */
-}
 
 
 /** 
@@ -1192,13 +602,6 @@ tree
   border-left-color: #202220; /** Button Shadow */ 
   border-bottom-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */ 
-}
-
-tree treecol
-{
-  background-color: transparent;
-  border-right: 1px solid #202220 !important; /** Button Shadow */
-  border-top: 1px solid #474948; /** Rubber Highlight */
 }
 
 treechildren::-moz-tree-row
@@ -1274,6 +677,43 @@ treechildren::-moz-tree-progressmeter( selected, focus )
   background-color: #8A8F84; /** Light Color 2 */
 }
 
+listheader,
+tree treecol
+{
+  background-color: #313131 !important;
+  border-right: 1px solid #202220 !important; /** Button Shadow */
+  border-top: 1px solid #474948; /** Rubber Highlight */
+  color: #8A8F84; /** Light Color 2 */
+}
+
+treecol[dragging="true"]
+{
+  background-color: transparent !important;
+}
+
+treecol[dragging="true"] > label
+{
+  color: #5c5f58; /** Selected Focus Row */
+}
+
+treecol[insertafter="true"] 
+{
+  border-right: 5px solid transparent !important; 
+}
+
+treecol > label
+{
+  color: #8A8F84; /** Light Color 2 */
+}
+
+treecolpicker
+{
+  border-top: 1px solid #474948; /** Rubber Highlight */
+  background-color: #313131 !important; /* same as the main window */
+  border-right: 1px solid #202220 !important;
+}
+
+
 
 /** 
 *******************************************************************************
@@ -1297,203 +737,7 @@ AUTOCOMPLETE POPUPS
 }
 
 
-/** 
-*******************************************************************************
-CHECKBOXES, boxes, labels, images, states.
-*******************************************************************************
-*/
 
-/* ..... disabled state ..... */
-
-checkbox[disabled="true"] {
-  opacity: 0.5;
-}
-
-/* ::::: checkmark image ::::: */
-
-.checkbox-check {
-  border-bottom: 1px solid #797f76; /** Button Highlight */
-  border-left: 1px solid  #202220; /** Button Shadow */ 
-  border-top: 1px solid  #202220; /** Button Shadow */ 
-  border-right: 1px solid  #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */  
-}
-
-/* ..... focused state ..... */
-
-checkbox:focus,
-checkbox[checked="true"]:focus{
-  border: 1px dotted #797f76 !important; /** Button Highlight */
-}
-
-
-
-
-/** 
-*******************************************************************************
-MENULIST
-*******************************************************************************
-*/
-
-.menulist-label
-{
-  color: inherit;
-}
-
-menulist
-{
-  color: #fffff1; /** Light Color Brightest */
-  background-color: #0f100f; /** Groove */
-  border: 1px solid;
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-}
-
-menulist[disabled="true"]
-{
-  color: #666 !important;
-}
-
-menulist:focus,
-menulist[focused="true"] 
-{
-  background-color: #0f100f; /** Groove */
-}
-
-
-/** 
-*******************************************************************************
-LISTBOX
-*******************************************************************************
-*/
-
-listbox
-{
-  border: 1px solid !important;
-  border-bottom-color: #797f76 !important; /** Button Highlight */
-  border-left-color: #202220 !important; /** Button Shadow */ 
-  border-top-color: #202220 !important; /** Button Shadow */ 
-  border-right-color: #202220 !important; /** Button Shadow */
-  background-color: #0f100f !important; /** Groove */
-  -moz-border-radius: 5px !important;
-}
-
-/* ..... disabled state ..... */
-
-listbox[disabled="true"] {
-  opacity: 0.5;
-}
-
-listitem[selected="true"] > listcell > .listcell-label
-{
-  color: #0f100f; /** Groove */
-}
-
-listbox:focus > listitem[selected="true"][current="true"] {
-  background-color: #8A8F84; /** Light Color 2 */
-}
-
-listitem[selected="true"] {
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Groove */
-}
-
-listbox:focus,
-listbox:focus > listitem[selected="true"] {  
-   background-color: #0f100f; /** Groove */
-   color: #FFFFFF;
-}
-
-richlistitem[selected="true"] > label,
-richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
-{
-  color: #202220; /** Button Shadow */ 
-}
-
-/* ::::: checkmark image ::::: */
-
-.listcell-check {
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #313131; /** color of the Main Window */  
-}
-
-/** 
-*******************************************************************************
-NUMBERBOX
-*******************************************************************************
-*/
-
-textbox[type="number"] {
-  border: 1px solid;
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */
-}
-
-textbox[type="number"][focused="true"] 
-{
-  background-color: #0f100f; /** Groove */
-}
-
-html|*.numberbox-input {
-  color: #feffff; /** Light Color Brightest */
-}
-
-/** 
-*******************************************************************************
-PROGRESSMETER
-*******************************************************************************
-*/
-
-progressmeter {
-  border: 1px solid #797f76; /** Button Highlight */
-  background-color: #474948; /** Rubber Highlight */
-}
-
-
-/** 
-*******************************************************************************
-RICHLISTBOX
-*******************************************************************************
-*/
-.datepicker-mainbox,
-.datetimepicker-input,
-.datetimepicker-input-box ,
-richlistbox {
-  color: #B3BAAC; /** Light Color 1 */
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */
-}
-richlistitem
-{
-  border: none !important;
-}
-
-richlistitem[selected="true"]
-{
-  background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f !important; /** Groove */
-}
-
-richlistbox:focus > richlistitem[selected="true"] 
-{
-  background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f; /** Groove */
-}
-
-richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
-  outline: 1px dotted #474948; /** Rubber Highlight */
-}
 
 /** 
 *******************************************************************************
@@ -1606,16 +850,681 @@ tabpanels {
 
 .scrollbutton-rel-box > .scrollbutton-down {
   background-color: #313131;
- }
+}
  
  
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
   background-color: #313131;
- }
+}
  
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
   background-color: #313131;
- }
+}
+
+
+
+/** 
+*******************************************************************************
+SCROLLBARS
+*******************************************************************************
+*/ 
+
+scrollbar
+{   
+  background-color: #202220 !important;
+  background-image: none !important; 
+  border-top: 1px solid #202220; /** Button Shadow */
+  border-left: none !important;
+} 
+scrollbarbutton
+{    
+  -moz-border-radius: 3px;
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
+  background-color: #313131 !important;
+} 
+scrollbarbutton:hover:active, 
+scrollbarbutton[active="true"],
+scrollbar > slider > thumb:active
+{   	
+  -moz-border-radius: 3px;
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */  
+  background-color: #313131;
+} 
+scrollbar > slider > thumb > gripper
+{   
+  background-color: transparent !important; 
+} 
+scrollbar > slider > thumb
+{   
+  -moz-border-radius: 3px;
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #313131;
+} 
+scrollbar > slider
+{   
+  background-color: #202220 !important;
+  background-image: none !important; 
+} 
+
+/* END SCROLLBARS **/
+
+
+
+/** 
+*******************************************************************************
+BUTTONS
+*******************************************************************************
+*/ 
+
+/** TODO COMPRESS */
+
+toolbarbutton
+{
+  border-color: transparent;
+}
+
+toolbarbutton[disabled="true"],
+toolbarbutton[disabled="true"]:active,
+toolbarbutton[disabled="true"]:hover
+{
+  background-color: transparent;
+  border-color: transparent;
+  opacity: 0.5;
+}
+
+toolbarbutton:hover
+{
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-bottom-color: #202220; /** Button Shadow */
+  border-right-color: #202220; /** Button Shadow */
+}
+
+toolbarbutton:active
+{
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */  
+}
+
+button
+{
+  border: 1px solid;
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
+  -moz-border-radius: 5px;
+  color: #B3BAAC; /* Light Color 1 */
+  background-color: #313131; /** color of the Main Window */
+}
+
+button:active
+{
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
+}
+
+button > dropmarker.button-menubutton-dropmarker,
+toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
+{
+  border-left: 1px solid #202220 !important; /** Button Shadow */
+}
+
+
+button:hover > hbox > .button-text,
+toolbarbutton:hover > .toolbarbutton-text,
+button:hover,
+toolbarbutton:hover
+{
+  color: #FFF;  
+}
+
+button[disabled="true"],
+button[disabled="true"]:active,
+button[disabled="true"]:hover
+{
+  background-color: transparent;
+  border: 1px dotted #474948; /** Rubber Highlight */
+}
+
+toolbarbutton[disabled="true"] > .toolbarbutton-text,
+toolbarbutton[disabled="true"]:active > .toolbarbutton-text,
+toolbarbutton[disabled="true"]:hover > .toolbarbutton-text,
+button[disabled="true"] > hbox > label.button-text,
+button[disabled="true"]:active > hbox > label.button-text,
+button[disabled="true"]:hover > hbox > label.button-text
+{
+  color: #474948 !important; /** Rubber Highlight */
+}
+
+
+/** 
+*******************************************************************************
+DATEPICKER see the RICHLISTBOX for box styles
+*******************************************************************************
+*/
+.datepicker-gridlabel[selected="true"] {
+  background-color: #8A8F84;
+  color: #0f100f; /** Groove */
+}
+
+
+/** 
+*******************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+*******************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) **/
+menu > label
+{
+  background-color: transparent !important;
+  color: #8A8F84; /** Light Color 2 */
+}
+
+menu:hover,
+menu:hover > label,
+menu[open],
+menu[open] > label,
+menu[_moz-menuactive="true"],
+menu[_moz-menuactive="true"] > label
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #feffff; /** Light Color Brightest */
+}
+
+/* The Basic Menu Styles **/
+
+menupopup, 
+popup
+{
+  background-color: #0f100f; /** Groove */
+  color: #feffff; /** Light Color Brightest */
+}
+
+menuseparator
+{
+  border-top-color: #202220; /** Button Shadow */
+}
+
+menuitem[disabled="true"],
+menuitem[disabled="true"]:hover,
+menuitem[disabled="true"] > label,
+menuitem[disabled="true"]:hover > label
+{
+  color: #5c5f58 !important; /** Selected Focus Row */
+}
+menuitem > label,
+menupopup > menu > label,
+popup > menu > label
+{
+  color: #B3BAAC !important; /** Light Color 1 */
+}
+
+menuitem:hover,
+menuitem:hover > label,
+menupopup > menu:hover,
+menupopup > menu:hover > label,
+popup > menu:hover,
+popup > menu:hover > label
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #feffff !important; /** Light Color Brightest */ 
+}
+
+.menu-accel,
+.menu-iconic-accel
+{
+  color: #5c5f58 !important; /** Selected Focus Row */
+}
+
+
+/** 
+*******************************************************************************
+THE SPLITTERS
+These let the user resize the frames in your box model.
+*******************************************************************************
+*/ 
+
+
+#filter_splitter > grippy
+{
+  background-color: #313131;
+  margin: 0px 0px 0px 0px;
+  border-top: 1px solid !important;
+  border-top-color: #474948 !important; /** Rubber Highlight */
+}
+
+#filter_splitter:active
+{
+  background-color: #313131;
+  margin: 0px 0px 0px 0px;
+}
+
+#servicepane_splitter,
+#search_splitter
+{
+  background-color: transparent;
+}
+
+#servicepane_splitter[state="collapsed"]
+{
+  background-color: transparent;
+}
+
+#servicepane_splitter[state="collapsed"]
+{
+  border: 1px solid #202220; /** Button Shadow */
+  -moz-border-radius: 5px;
+}
+
+#servicepane_splitter[state="collapsed"]:hover
+{
+  border: 1px solid;
+  border-top-color: #474948; /** Rubber Highlight */
+  border-left-color: #474948; /** Rubber Highlight */
+  border-bottom-color: #202220; /** Button Shadow */
+  border-right-color: #202220; /** Button Shadow */
+  color: #FFF;  
+  -moz-border-radius: 5px;
+}
+
+#servicepane_splitter[state="collapsed"]:active
+{
+  border: 1px solid;
+  border-top-color: #202220; /** Button Shadow */
+  border-left-color: #202220; /** Button Shadow */
+  border-bottom-color: #474948; /** Rubber Highlight */
+  border-right-color: #474948; /** Rubber Highlight */
+  color: #FFF;  
+  -moz-border-radius: 5px;
+}
+
+.playlist-splitter,
+.playlist-web-splitter
+{
+  background-color: transparent;
+  border: none;
+}
+
+.playlist-splitter:active,
+.playlist-web-splitter:active
+{
+  background-color: transparent;
+}
+
+.playlist-splitter[state="collapsed"],
+.playlist-web-splitter[state="collapsed"]
+{
+  background-color: transparent;
+}
+
+#control_pane_splitter
+{
+  background-color: transparent;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  background-color: transparent;
+}
+
+/* END SPLITTERS **/
+
+
+
+/** 
+*******************************************************************************
+TOOLTIPS
+*******************************************************************************
+*/
+
+tooltip
+{  
+  background-color: #EEE !important;
+  color: #0f100f !important; /** Groove  */
+}
+
+
+/** 
+*******************************************************************************
+TEXTBOX
+*******************************************************************************
+*/
+
+.fileFieldContentBox,
+textbox,
+textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
+{
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */ 
+  color: #B3BAAC; /** Light Color 1 */
+}
+    
+
+/* ..... focused state ..... */
+
+.fileFieldContentBox,
+textbox[focused="true"] 
+{
+  background-color: #0f100f; /** Groove */
+}
+
+/* ..... readonly state ..... textbox[readonly="true"]  */
+
+
+/* ..... disabled state ..... */
+.fileFieldContentBox,
+textbox[disabled="true"] 
+{
+  cursor: default;
+} 
+
+/* ..... invalid state ..... */
+
+textbox[invalid="true"] {
+  background-color: red;
+} 
+
+
+/** 
+*******************************************************************************
+MISC
+*******************************************************************************
+*/
+
+button.button-menubutton-button,
+button.button-menubutton-button:active
+{
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+description,
+groupbox,
+label
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+.groupbox-body
+{
+  border: 1px solid #202220; /** Button Shadow 3*/
+  -moz-border-radius: 5px;
+}
+
+dialog:root[type="songbird"] .groupbox-body
+{
+  border-color: #0f100f; /** Groove */
+}
+
+/* class for text with a 'link' appearance */
+.text-link
+{
+  color: #99CCFF;
+  border: 1px solid transparent;
+}
+.text-link:focus
+{
+  color: #99CCFF;		
+  border: 1px dotted -moz-DialogText;
+}
+.text-link:hover
+{
+  color: #D4ECFF;
+  cursor: pointer;
+} 
+.text-link:hover:active
+{
+  color: #3399FF;
+} 
+.text-link[visited="true"]
+{
+  color: #3399FF;
+}
+
+/* groove separators (50% size) */
+separator.groove,
+separator.groove[orient="horizontal"] 
+{
+  border-top: 2px solid;
+  -moz-border-top-colors: black #474948; /** Rubber Highlight */
+}
+  
+separator.groove[orient="vertical"] 
+{
+  border-left: 1px solid #474948;
+}
+  
+/* groove separators (0 padding, for dividing effects) */  
+separator.groove-thin 
+{
+  border-top: 1px solid #474948; /** Rubber Highlight */  
+}
+  
+separator[orient="vertical"].groove-thin 
+{
+  border-left: 1px solid #474948; /** Rubber Highlight */
+}
+
+
+
+/** 
+*******************************************************************************
+CHECKBOXES, boxes, labels, images, states.
+*******************************************************************************
+*/
+
+/* ..... disabled state ..... */
+
+checkbox[disabled="true"] {
+  opacity: 0.5;
+}
+
+/* ::::: checkmark image ::::: */
+
+.checkbox-check {
+  border-bottom: 1px solid #797f76; /** Button Highlight */
+  border-left: 1px solid  #202220; /** Button Shadow */ 
+  border-top: 1px solid  #202220; /** Button Shadow */ 
+  border-right: 1px solid  #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */  
+}
+
+/* ..... focused state ..... */
+
+checkbox:focus,
+checkbox[checked="true"]:focus{
+  border: 1px dotted #797f76 !important; /** Button Highlight */
+}
+
+
+
+/** 
+*******************************************************************************
+MENULIST
+*******************************************************************************
+*/
+
+.menulist-label
+{
+  color: inherit;
+}
+
+menulist
+{
+  color: #fffff1; /** Light Color Brightest */
+  background-color: #0f100f; /** Groove */
+  border: 1px solid;
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+}
+
+menulist[disabled="true"]
+{
+  color: #666 !important;
+}
+
+menulist:focus,
+menulist[focused="true"] 
+{
+  background-color: #0f100f; /** Groove */
+}
+
+
+/** 
+*******************************************************************************
+LISTBOX
+*******************************************************************************
+*/
+
+listbox
+{
+  border: 1px solid !important;
+  border-bottom-color: #797f76 !important; /** Button Highlight */
+  border-left-color: #202220 !important; /** Button Shadow */ 
+  border-top-color: #202220 !important; /** Button Shadow */ 
+  border-right-color: #202220 !important; /** Button Shadow */
+  background-color: #0f100f !important; /** Groove */
+  -moz-border-radius: 5px !important;
+}
+
+/* ..... disabled state ..... */
+
+listbox[disabled="true"] {
+  opacity: 0.5;
+}
+
+listitem[selected="true"] > listcell > .listcell-label
+{
+  color: #0f100f; /** Groove */
+}
+
+listbox:focus > listitem[selected="true"][current="true"] {
+  background-color: #8A8F84; /** Light Color 2 */
+}
+
+listitem[selected="true"] {
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #0f100f; /** Groove */
+}
+
+listbox:focus,
+listbox:focus > listitem[selected="true"] {  
+   background-color: #0f100f; /** Groove */
+   color: #FFFFFF;
+}
+
+richlistitem[selected="true"] > label,
+richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
+{
+  color: #202220; /** Button Shadow */ 
+}
+
+/* ::::: checkmark image ::::: */
+
+.listcell-check {
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #313131; /** color of the Main Window */  
+}
+
+
+/** 
+*******************************************************************************
+NUMBERBOX
+*******************************************************************************
+*/
+
+textbox[type="number"] {
+  border: 1px solid;
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */
+}
+
+textbox[type="number"][focused="true"] 
+{
+  background-color: #0f100f; /** Groove */
+}
+
+html|*.numberbox-input {
+  color: #feffff; /** Light Color Brightest */
+}
+
+
+/** 
+*******************************************************************************
+PROGRESSMETER
+*******************************************************************************
+*/
+
+progressmeter {
+  border: 1px solid #797f76; /** Button Highlight */
+  background-color: #474948; /** Rubber Highlight */
+}
+
+
+/** 
+*******************************************************************************
+RICHLISTBOX
+*******************************************************************************
+*/
+.datepicker-mainbox,
+.datetimepicker-input,
+.datetimepicker-input-box ,
+richlistbox {
+  color: #B3BAAC; /** Light Color 1 */
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */
+}
+richlistitem
+{
+  border: none !important;
+}
+
+richlistitem[selected="true"]
+{
+  background-color: #B3BAAC; /** Light Color 1*/
+  color: #0f100f !important; /** Groove */
+}
+
+richlistbox:focus > richlistitem[selected="true"] 
+{
+  background-color: #B3BAAC; /** Light Color 1*/
+  color: #0f100f; /** Groove */
+}
+
+richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
+  outline: 1px dotted #474948; /** Rubber Highlight */
+}
+
 
 /** 
 *******************************************************************************
@@ -1627,6 +1536,7 @@ SMART PLAYLIST BUILDER
 {
   border: 1px solid #202220; /** Button Shadow */
 }
+
 
 /** 
 *******************************************************************************
@@ -1651,6 +1561,91 @@ installitem
   background-color: #313131 !important; /** Window color */
   border: none !important;
 }
+
+
+
+/** 
+*******************************************************************************
+PREFERENCES
+*******************************************************************************
+*/
+
+/* View buttons */
+.viewSelector 
+{
+  border: 1px solid !important;
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
+  background-color: transparent !important;
+  color: #feffff !important;
+}
+
+#viewGroup
+{
+  background-color: #0f100f !important; /** Groove */
+  border: 1px solid !important;
+  border-bottom-color: #797f76 !important; /** Button Highlight */
+  border-left-color: #202220 !important; /** Button Shadow */ 
+  border-top-color: #202220 !important; /** Button Shadow */ 
+  border-right-color: #202220 !important; /** Button Shadow */
+}
+
+#viewGroup radio:hover {
+  background-color: #B3BAAC !important; /** Light Color 1 */
+}
+
+#viewGroup radio:hover > label {
+  color: #feffff !important;
+}
+
+#viewGroup radio[selected="true"] {
+  background-color: #8A8F84 !important; /** Light Color 2 */
+  color: #B3BAAC !important; 
+}
+
+#viewGroup radio[selected="true"] > label /** In Preferences this inverts the selected label color under Add-ons */
+{
+  color: #0f100f !important; /** Groove */
+}
+
+/* Extensions */
+
+#extensionsBox > richlistbox
+{
+  border: none !important;
+}
+
+#extensionsBox > richlistbox > richlistitem[selected="true"]
+{
+  background-color: #202220 !important; /** Button Shadow */
+  border-right: 1px solid #0f100f !important; /** Groove */
+  border-top: 1px solid #0f100f !important; /** Groove */
+  border-bottom: 1px solid #0f100f !important; /** Groove */
+  border-left: 1px solid #0f100f !important; /** Groove */
+}
+#extensionsView:focus > richlistitem[selected="true"]
+{
+  background-image: none !important;
+}
+
+label.addonName,
+label.addonVersion,
+label.descriptionWrap,
+#error_noupdate_header
+{
+  color: #B3BAAC !important; 
+}
+
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonVersion,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
+#extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
+{
+  color: #feffff !important; 
+}
+
 
 /** 
 *******************************************************************************

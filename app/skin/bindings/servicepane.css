@@ -132,16 +132,16 @@ Currently a single clickhold button below the service tree
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
-/** NOTE: IDs containing periods are bad!!! */
-.menuitem-iconic[id="file.new"]  {
+
+#menuitem_file_new {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
-.menuitem-iconic[id="file.smart"] {
+#menuitem_file_smart {
   list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png) ;
 }
 
-.menuitem-iconic[id="file.remote"]{
+#menuitem_file_remote {
   list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 

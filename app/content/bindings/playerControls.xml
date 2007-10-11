@@ -1666,12 +1666,16 @@
 
   </binding>
   
-  <binding id="curtrack-hbox" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
+  <binding id="curtrack-box" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
     
     <content>
-      <xul:hbox id="sb-player-curtrack-hbox" mousethrough="never" onmousedown="onCurrentTrack();" xbl:inherits="hidden,class,flex,pack">
+      <xul:box id="sb-player-curtrack-box" 
+                orient="horizontal" 
+                mousethrough="never" 
+                onmousedown="onCurrentTrack();" 
+                xbl:inherits="hidden,class,flex,pack,orient">
         <children/>
-      </xul:hbox>
+      </xul:box>
     </content>
 
   </binding>

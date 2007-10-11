@@ -31,37 +31,37 @@
 function doMenu( command ) {
   switch ( command )
   {
-    case "file.new":
+    case "menuitem_file_new":
       SBNewPlaylist();
     break;
-    case "file.smart":
+    case "menuitem_file_smart":
       SBNewSmartPlaylist();
     break;
-    case "file.remote":
+    case "menuitem_file_remote":
       SBSubscribe(null, null);
     break;
-    case "file.folder":
+    case "menuitem_file_folder":
       SBNewFolder();
       break;
-    case "file.file":
+    case "menuitem_file_file":
       SBFileOpen();
     break;
-    case "file.url":
+    case "menuitem_file_url":
       SBUrlOpen();
     break;
-    case "file.playlist":
+    case "menuitem_file_playlist":
       SBPlaylistOpen();
     break;
-    case "file.newtab":
+    case "menuitem_file_newtab":
       gBrowser.loadURI(gBrowser.homePage, null, null, null, 'tab');
     break;
-    case "file.scan":
+    case "menuitem_file_scan":
       SBScanMedia();
     break;
-    case "file.dlfolder":
+    case "menuitem_file_dlfolder":
       SBSetDownloadFolder();
     break;
-    case "file.watch":
+    case "menuitem_file_watch":
       SBWatchFolders();
     break;
 /*    
@@ -76,41 +76,37 @@ function doMenu( command ) {
       }
     break;
 */    
-
-    case "file.koshi":
-      SBKoshiOpen();
-    break;
     case "aboutName": // This has to be hardcoded this way for the stinky mac.
       About(); 
     break;
     case "menu_FileQuitItem": // Stinky mac again.  See nsMenuBarX::AquifyMenuBar
       quitApp();
     break;
-    case "control.play":
+    case "menuitem_control_play":
       gPPS.playing ? ( gPPS.paused ? gPPS.play() : gPPS.pause() ) : gPPS.play();
     break;
-    case "control.next":
+    case "menuitem_control_next":
       gPPS.next();
     break;
-    case "control.prev":
+    case "menuitem_control_prev":
       gPPS.previous();
     break;
-    case "control.shuf":
+    case "menuitem_control_shuf":
       SBDataSetIntValue( "playlist.shuffle", (SBDataGetIntValue( "playlist.shuffle" ) + 1) % 2 );
     break;
-    case "control.repa":
+    case "menuitem_control_repa":
       SBDataSetIntValue( "playlist.repeat", 2 );
     break;
-    case "control.rep1":
+    case "menuitem_control_rep1":
       SBDataSetIntValue( "playlist.repeat", 1 );
     break;
-    case "control.repx":
+    case "menuitem_control_repx":
       SBDataSetIntValue( "playlist.repeat", 0 );
     break;
-    case "control.jumpto":
+    case "menuitem_control_jumpto":
       toggleJumpTo();
     break;
-    case "menu.extensions":
+    case "menu_extensions":
       SBOpenPreferences("paneAddons");
     break;
     case "menu_preferences":
@@ -119,7 +115,7 @@ function doMenu( command ) {
 /*    case "menu.downloadmgr":
       SBOpenDownloadManager();
     break;*/
-    case "menu.clearprivatedata":
+    case "menuitem_tools_clearprivatedata":
       clearPrivateData();
     break;
     // Renamed to match FireFox

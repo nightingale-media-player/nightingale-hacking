@@ -272,7 +272,7 @@ try
 // Help
 function onHelp()
 {
-  var helpitem = document.getElementById("help.topics");
+  var helpitem = document.getElementById("menuitem_help_topics");
   onMenu(helpitem);
 }
 

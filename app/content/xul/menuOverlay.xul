@@ -38,36 +38,36 @@
 <overlay id="ovMenu"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
+  
   <menubar id="songbird_menu">
     <menu id="songbird_menu_item" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="file-popup">
-        <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+        <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <!-- XXX Mook: disabled; see bug 4001
-        <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+        <menuitem id="menuitem_file_smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
         -->
-        <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+        <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
         <!-- XXX lone: disabled; see bug 4387
-        <menuitem id="file.folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;"/>
+        <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;"/>
         -->
-        <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
-        <menuitem id="file.url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
-        <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
+        <menuitem id="menuitem_file_file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
+        <menuitem id="menuitem_file_url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
+        <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
         <menuseparator/>
-        <menuitem id="file.newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;"/>
+        <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;"/>
         <menuseparator/>
-        <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-        <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
+        <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+        <menuitem id="menuitem_file_dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
         <!-- BUG 3961 "Comment out watch folder UI" 
-          <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
+          <menuitem id="menuitem_file_watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
         -->
         <menuseparator/>
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
-          <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
+          <menupopup id="locale-popup" onpopupshowing="fillLocaleList(this);" />
         </menu>
         <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
         <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-
-        <!--<menuitem id="menu_Reload" label="Reload" oncommand="reloadWindow();"/> -->
 
         <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
         <menuseparator id="menu_FileQuitSeparator"/>
@@ -78,32 +78,32 @@
 
     <menu id="songbird_menu_item_edit" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
       <menupopup id="edit-popup">
-        <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
+        <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
         <menuseparator/>
-        <menuitem id="edit.cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-        <menuitem id="edit.copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-        <menuitem id="edit.paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
-        <menuitem id="edit.clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
+        <menuitem id="menuitem_edit_cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+        <menuitem id="menuitem_edit_copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+        <menuitem id="menuitem_edit_paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+        <menuitem id="menuitem_edit_clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
         <menuseparator/>
-        <menuitem id="edit.selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
-        <menuitem id="edit.selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
+        <menuitem id="menuitem_edit_selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+        <menuitem id="menuitem_edit_selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
       </menupopup>
     </menu>
 
     <menu id="songbird_menu_item_controls" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
       <menupopup id="controls-popup">
-        <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
+        <menuitem id="menuitem_control_play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
         <menuseparator/>
-        <menuitem id="control.next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
-        <menuitem id="control.prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
+        <menuitem id="menuitem_control_next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
+        <menuitem id="menuitem_control_prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
         <menuseparator/>
-        <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
+        <menuitem id="menuitem_control_shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
         <menuseparator/>
-        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
-        <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
-        <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
+        <menuitem id="menuitem_control_repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
+        <menuitem id="menuitem_control_repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
+        <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
         <menuseparator/>
-        <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
+        <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
       </menupopup>
     </menu>
 
@@ -113,7 +113,7 @@
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menu.extensions" 
+        <menuitem id="menu_extensions" 
                   label="&menu.extensions;" 
                   accesskey="&menu.extensions.accesskey;"/>
         <menuseparator id="devToolsSeparator"/> 
@@ -121,7 +121,7 @@
                   label="&menu.errorconsole;" 
                   accesskey="&menu.errorconsole.accesskey;"/> 
         <menuseparator id="sanitizeSeparator" hidden="true"/> 
-        <menuitem id="menu.sanitize"
+        <menuitem id="menuitem_tools_clearprivatedata"
                   hidden="true" 
                   key="sanitize-key" 
                   label="&menu.clearprivatedata;" 
@@ -139,11 +139,11 @@
           accesskey="&menu.help.accesskey;"
           onpopupshowing="buildHelpMenu();">
       <menupopup id="help-popup">
-        <menuitem id="help.bugz"
+        <menuitem id="menuitem_help_bugz"
                   label="&menu.help.bugz;"
                   value="songbird.url.bugzilla"
                   accesskey="&menu.help.bugz.accesskey;"/>
-        <menuitem id="help.topics"
+        <menuitem id="menuitem_help_topics"
                   label="&menu.help.topics;"
                   value="songbird.url.support"
                   key="help-key" 

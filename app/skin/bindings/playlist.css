@@ -181,7 +181,7 @@ In-cell Buttons
        background-position:100% -36px;
        background-repeat:no-repeat;
        margin:0 0 0 13px ! important;
-       padding:3px 14px 4px 0 ! important;
+       padding:2px 14px 5px 0 ! important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button selected )
@@ -206,7 +206,7 @@ In-cell Buttons
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
 {
        background-position:100% 0px;
-       padding:4px 14px 3px 0 ! important;
+       padding:3px 14px 4px 0 ! important;
 }
 
 /* button disabled state */
