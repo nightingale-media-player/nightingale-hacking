@@ -483,11 +483,11 @@ var theCDListener =
     return this;
   },
   
-  onTransferStart: function(sourceURL, destinationURL)
+  onTransferStart: function(mediaItem)
   {
   },
   
-  onTransferComplete: function(sourceURL, destinationURL, transferStatus)
+  onTransferComplete: function(mediaItem, transferStatus)
   {
   },
   

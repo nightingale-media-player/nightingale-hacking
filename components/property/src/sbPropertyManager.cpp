@@ -584,6 +584,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Remote API scope URL
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
+                   NS_LITERAL_STRING("property.rapi_scope_url"),
+                   stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

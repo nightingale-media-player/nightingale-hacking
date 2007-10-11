@@ -864,6 +864,14 @@ interface sbIRemotePlayer : nsISupports
   [noscript] void fireEventToContent(in AString aClass, in AString aType);
 
   /**
+   * \brief Fires the media item status event to the webpage
+   */
+  [noscript] void fireMediaItemStatusEventToContent(in AString aClass,
+                                                    in AString aType,
+                                                    in sbIMediaItem aMediaItem,
+                                                    in long aStatus);
+
+  /**
    * \brief Forces the webplaylist to rescan it's commands
    */
   [noscript] void onCommandsChanged();

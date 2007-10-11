@@ -1207,7 +1207,7 @@ function plCmd_DownloadInit(aContext, aHost) {
     needRefresh: false,
 
     // sbIDeviceBaseCallback
-    onTransferComplete: function(aSourceURL, aDestinationURL, aStatus) {
+    onTransferComplete: function(aMediaItem, aStatus) {
       this.refreshCommands();
     },
 
@@ -1217,7 +1217,7 @@ function plCmd_DownloadInit(aContext, aHost) {
 
     onDeviceConnect: function(aDeviceIdentifier) {},
     onDeviceDisconnect: function(aDeviceIdentifier) {},
-    onTransferStart: function(aDeviceIdentifier) {},
+    onTransferStart: function(aMediaItem) {},
 
 
     // sbIMediaListListener

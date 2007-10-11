@@ -290,14 +290,12 @@ public:
   /**
    *
    */
-  void DoTransferStartCallback(const nsAString& aSourceURL,
-                               const nsAString& aDestinationURL);
+  void DoTransferStartCallback(sbIMediaItem* aMediaItem);
 
   /**
    *
    */
-  void DoTransferCompleteCallback(const nsAString& aSourceURL,
-                                  const nsAString& aDestinationURL,
+  void DoTransferCompleteCallback(sbIMediaItem* aMediaItem,
                                   PRInt32 aStatus);
 
   /** 

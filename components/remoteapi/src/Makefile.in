@@ -46,6 +46,7 @@ CPP_SRCS = sbRemoteAPIModule.cpp \
            sbRemotePlayer.cpp \
            sbRemotePlaylistClickEvent.cpp \
            sbRemoteMediaItem.cpp \
+           sbRemoteMediaItemStatusEvent.cpp \
            sbRemoteMediaList.cpp \
            sbRemoteMediaListBase.cpp \
            sbRemoteNotificationManager.cpp \

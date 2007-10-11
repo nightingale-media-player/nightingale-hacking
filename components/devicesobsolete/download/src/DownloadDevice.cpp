@@ -1698,6 +1698,10 @@ nsresult sbDownloadDevice::RunTransferQueue()
         else
             initiated = PR_FALSE;
 
+        /* Send notification that the transfer started. */
+        if (initiated)
+            DoTransferStartCallback(pMediaItem);
+
         /* Release the download session if not initiated. */
         if (!initiated && mpDownloadSession)
             mpDownloadSession = nsnull;
@@ -1911,9 +1915,7 @@ void sbDownloadDevice::SessionCompleted(
         nsAutoMonitor mon(mpDeviceMonitor);
 
         /* Deliver transfer completion callbacks. */
-        DoTransferCompleteCallback(apDownloadSession->mSrcURISpec,
-                                   apDownloadSession->mDstURISpec,
-                                   aStatus);
+        DoTransferCompleteCallback(apDownloadSession->mpMediaItem, aStatus);
 
         /* Release the download session. */
         if (apDownloadSession == mpDownloadSession)

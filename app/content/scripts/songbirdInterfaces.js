@@ -377,5 +377,12 @@ const SB_PROPERTY_DOWNLOAD_DETAILS = SB_PROPERTY_PREFACE + "downloadDetails";
  */
 const SB_PROPERTY_ISSORTABLE = SB_PROPERTY_PREFACE + "isSortable";
 
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_RAPISCOPEURL = SB_PROPERTY_PREFACE + "rapiScopeURL";
+
 
 

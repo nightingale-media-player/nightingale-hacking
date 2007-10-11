@@ -49,7 +49,7 @@ interface sbIMediaItem;
  * <TODO:Detail>.
  *
  */
-[scriptable, uuid(123f41bd-5976-4561-a12a-d417cf5c18b2)]
+[scriptable, uuid(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]
 interface sbIDeviceBaseCallback : nsISupports
 {
   /**
@@ -75,23 +75,19 @@ interface sbIDeviceBaseCallback : nsISupports
    *
    * <TODO:Detail>.
    *
-   * \param aSourceURL [in AString] <TODO>.
-   * \param aDestinationURL [in AString] <TODO>.
+   * \param aMediaItem [in sbIMediaItem] <TODO>.
    */
-  void onTransferStart(in AString aSourceURL,
-                       in AString aDestinationURL);
+  void onTransferStart(in sbIMediaItem aMediaItem);
 
   /**
    * \brief <TODO:Brief>.
    *
    * <TODO:Detail>.
    *
-   * \param aSourceURL [in AString] <TODO>.
-   * \param aDestinationURL [in AString] <TODO>.
+   * \param aMediaItem [in sbIMediaItem] <TODO>.
    * \param aStatus [in PRInt32] <TODO>.
    */
-  void onTransferComplete(in AString aSourceURL,
-                          in AString aDestinationURL,
+  void onTransferComplete(in sbIMediaItem aMediaItem,
                           in PRInt32 aStatus);
 
   /**

@@ -30,6 +30,7 @@
 #include "sbRemoteCommands.h"
 #include "sbRemoteLibrary.h"
 #include "sbRemoteLibraryBase.h"
+#include "sbRemoteMediaItemStatusEvent.h"
 #include "sbRemotePlaylistClickEvent.h"
 #include "sbRemoteSiteLibrary.h"
 #include "sbRemoteWebLibrary.h"
@@ -38,6 +39,7 @@
 #include "sbURIChecker.h"
 #include <sbClassInfoUtils.h>
 #include <sbIDataRemote.h>
+#include <sbIDeviceManager.h>
 #include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
@@ -48,6 +50,7 @@
 #include <sbITabBrowser.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 #include <sbIPropertyBuilder.h>
 
 #include <nsAutoPtr.h>
@@ -195,11 +198,13 @@ const static char* sPublicCategoryConversions[][2] =
     { "Create Medialists", "library_create:" } };
 
 // needs to be in nsEventDispatcher.cpp
-#define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
-#define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
-#define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
-#define SB_EVENT_CMNDS_UP     NS_LITERAL_STRING("playlist-commands-updated")
-#define SB_WEB_TABBROWSER     NS_LITERAL_STRING("sb-tabbrowser")
+#define RAPI_EVENT_CLASS                  NS_LITERAL_STRING("Events")
+#define RAPI_EVENT_TYPE                   NS_LITERAL_STRING("remoteapi")
+#define RAPI_EVENT_TYPE_DOWNLOADSTART     NS_LITERAL_STRING("downloadstart")
+#define RAPI_EVENT_TYPE_DOWNLOADCOMPLETE  NS_LITERAL_STRING("downloadcomplete")
+#define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
+#define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
+#define SB_WEB_TABBROWSER                 NS_LITERAL_STRING("sb-tabbrowser")
 
 #define SB_EVENT_RAPI_PREF_PANEL_OPENED   NS_LITERAL_STRING("RemoteAPIPrefPanelOpened")
 #define SB_EVENT_RAPI_PREF_CHANGED        NS_LITERAL_STRING("RemoteAPIPrefChanged")
@@ -257,6 +262,38 @@ class sbAutoPrincipalPusher
     nsCOMPtr<nsIJSContextStack> mStack;
 };
 
+class sbRemotePlayerEnumCallback : public sbIMediaListEnumerationListener
+{
+  public:
+    NS_DECL_ISUPPORTS
+
+    sbRemotePlayerEnumCallback( nsCOMArray<sbIMediaItem>& aArray ) :
+      mArray(aArray) { }
+
+    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRBool* _retval )
+    {
+      NS_ENSURE_ARG(_retval);
+      *_retval = PR_TRUE;
+      return NS_OK;
+    }
+    NS_IMETHODIMP OnEnumerationEnd( sbIMediaList*, nsresult )
+    {
+      return NS_OK;
+    }
+    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRBool* _retval )
+    {
+      NS_ENSURE_ARG(_retval);
+      *_retval = PR_TRUE;
+
+      mArray.AppendObject( aItem );
+
+      return NS_OK;
+    }
+  private:
+    nsCOMArray<sbIMediaItem>& mArray;
+};
+NS_IMPL_ISUPPORTS1( sbRemotePlayerEnumCallback, sbIMediaListEnumerationListener )
+
 NS_IMPL_ISUPPORTS6( sbRemotePlayer,
                     nsIClassInfo,
                     nsISecurityCheckedComponent,
@@ -313,6 +350,8 @@ sbRemotePlayer::~sbRemotePlayer()
   LOG(("sbRemotePlayer::~sbRemotePlayer()"));
   mRemObsHash.Enumerate(UnbindAndRelease, nsnull);
   mRemObsHash.Clear();
+  if (mDownloadCallback)
+    mDownloadCallback->Finalize();
 }
 
 nsresult
@@ -323,6 +362,9 @@ sbRemotePlayer::Init()
   nsresult rv;
   mGPPS = do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   PRBool success = mRemObsHash.Init();
   NS_ENSURE_TRUE( success, NS_ERROR_FAILURE );
@@ -421,6 +463,12 @@ sbRemotePlayer::Init()
   mScopeDomain.SetIsVoid(PR_TRUE);
   mScopePath.SetIsVoid(PR_TRUE);
   
+  // Set up download callbacks
+  mDownloadCallback = new sbRemotePlayerDownloadCallback();
+  NS_ENSURE_TRUE(mDownloadCallback, NS_ERROR_OUT_OF_MEMORY);
+  rv = mDownloadCallback->Initialize(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -750,11 +798,16 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
 
   NS_ENSURE_ARG_POINTER(aItem);
 
+  nsresult rv;
+
   // Make sure the item is JUST an item, no lists or libraries allowed
   nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem) );
   NS_ENSURE_FALSE( listcheck, NS_ERROR_INVALID_ARG );
 
-  nsresult rv;
+  // Set the item scope
+  rv = SetDownloadScope( aItem );
+  NS_ENSURE_SUCCESS( rv, rv );
+
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
     do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -778,6 +831,10 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
   nsCOMPtr<sbIMediaList> list (do_QueryInterface(aList, &rv));
   NS_ENSURE_SUCCESS( rv, rv );
 
+  // Set the items scope
+  rv = SetDownloadListScope( list );
+  NS_ENSURE_SUCCESS( rv, rv );
+
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
     do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -795,8 +852,12 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
 
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
 
+  // Set the items scope
+  nsresult rv = SetDownloadSelectedScope( aWebPlaylist );
+  NS_ENSURE_SUCCESS( rv, rv );
+
   nsCOMPtr<nsISimpleEnumerator> selection;
-  nsresult rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
+  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
@@ -1242,6 +1303,52 @@ sbRemotePlayer::FireEventToContent( const nsAString &aClass,
         NS_LossyConvertUTF16toASCII(aType).get() ));
 
   return sbRemotePlayer::DispatchEvent(mContentDoc, aClass, aType, PR_FALSE);
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
+                                                   const nsAString &aType,
+                                                   sbIMediaItem* aMediaItem,
+                                                   PRInt32 aStatus )
+{
+  LOG(( "sbRemotePlayer::FireMediaItemStatusEventToContent(%s, %s)",
+        NS_LossyConvertUTF16toASCII(aClass).get(),
+        NS_LossyConvertUTF16toASCII(aType).get() ));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  //change interfaces to create the event
+  nsCOMPtr<nsIDOMDocumentEvent>
+                              docEvent( do_QueryInterface( mContentDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv , rv );
+
+  //create the event
+  nsCOMPtr<nsIDOMEvent> event;
+  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
+  NS_ENSURE_STATE(event);
+  rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
+  NS_ENSURE_SUCCESS( rv , rv );
+
+  //use the document for a target.
+  nsCOMPtr<nsIDOMEventTarget>
+                          eventTarget( do_QueryInterface( mContentDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  //make the event untrusted
+  nsCOMPtr<nsIPrivateDOMEvent> privEvt( do_QueryInterface( event, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  privEvt->SetTrusted(PR_FALSE);
+
+  // make our custom media item wrapper event
+  nsRefPtr<sbRemoteMediaItemStatusEvent>
+                          remoteEvent(new sbRemoteMediaItemStatusEvent(this) );
+  remoteEvent->Init();
+  remoteEvent->InitEvent( event, aMediaItem, aStatus );
+
+  // Fire an event to the chrome system.
+  PRBool dummy;
+  return eventTarget->DispatchEvent( remoteEvent, &dummy );
 }
 
 // ---------------------------------------------------------------------------
@@ -1799,6 +1906,125 @@ sbRemotePlayer::GetNotificationManager()
   return mNotificationMgr;
 }
 
+nsresult
+sbRemotePlayer::SetDownloadScope( sbIMediaItem *aItem )
+{
+  LOG(( "sbRemotePlayer::SetDownloadScope()" ));
+  NS_ASSERTION(aItem, "aItem is null");
+
+  nsresult rv;
+
+  // get the unwrapped media item
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  nsCOMPtr<sbIWrappedMediaItem> wrappedMediaItem = do_QueryInterface( aItem,
+                                                                      &rv );
+  if (NS_SUCCEEDED(rv)) {
+    mediaItem = wrappedMediaItem->GetMediaItem();
+    NS_ENSURE_TRUE( mediaItem, NS_ERROR_FAILURE );
+  } else {
+    mediaItem = aItem;
+  }
+
+  // check if the site scope has been set before; if not, set it implicitly
+  if ( mScopeDomain.IsVoid() || mScopePath.IsVoid() ) {
+    SetSiteScope( mScopeDomain, mScopePath );
+  }
+
+  // get the codebase URI
+  nsCOMPtr<nsIURI> codebaseURI;
+  nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface( mSecurityMixin, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = mixin->GetCodebase( getter_AddRefs(codebaseURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // construct a download scope URI starting with the codebase URI scheme
+  nsCOMPtr<nsIURI> scopeURI;
+  nsCAutoString scopeSpec;
+  rv = codebaseURI->GetScheme( scopeSpec );
+  NS_ENSURE_SUCCESS( rv, rv );
+  scopeSpec.AppendLiteral(":");
+  rv = mIOService->NewURI( scopeSpec,
+                           nsnull,
+                           nsnull,
+                           getter_AddRefs(scopeURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = scopeURI->SetHost( mScopeDomain );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = scopeURI->SetPath( mScopePath );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // set the download item scope property
+  rv = scopeURI->GetSpec( scopeSpec );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = mediaItem->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
+                               NS_ConvertUTF8toUTF16(scopeSpec) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::SetDownloadListScope( sbIMediaList *aList )
+{
+  LOG(("sbRemotePlayer::SetDownloadListScope()"));
+  NS_ASSERTION(aList, "aList is null");
+  nsresult rv;
+
+  nsCOMArray<sbIMediaItem> items;
+  nsRefPtr<sbRemotePlayerEnumCallback> listener =
+    new sbRemotePlayerEnumCallback(items);
+  if ( !listener )
+    return NS_ERROR_OUT_OF_MEMORY;
+
+  rv = aList->EnumerateAllItems( listener,
+                                 sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  for ( PRInt32 i = 0; i < items.Count(); ++i ) {
+    // Set the item scope
+    rv = SetDownloadScope( items[i] );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::SetDownloadSelectedScope( sbIRemoteWebPlaylist *aWebPlaylist )
+{
+  LOG(("sbRemotePlayer::SetDownloadSelectedScope()"));
+  NS_ASSERTION(aWebPlaylist, "aWebPlaylist is null");
+  nsresult rv;
+
+  nsCOMPtr<nsISimpleEnumerator> selection;
+  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
+                                 new sbUnwrappingSimpleEnumerator(selection) );
+  NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
+
+  PRBool more;
+  rv = wrapper->HasMoreElements( &more );
+  NS_ENSURE_SUCCESS( rv, rv );
+  while (more) {
+    // Get the next item.
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = wrapper->GetNext( getter_AddRefs(mediaItem) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Set the item scope.
+    rv = SetDownloadScope( mediaItem );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Check for more items.
+    rv = wrapper->HasMoreElements( &more );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  return NS_OK;
+}
+
 // ---------------------------------------------------------------------------
 //
 //                             Component stuff
@@ -2182,3 +2408,208 @@ sbRemotePlayer::HasAccess( const nsAString& aRemotePermCategory,
   mCategory.AssignLiteral(sPublicCategoryConversions[iIndex][1]);
   return mixin->GetPermissionForScopedNameWrapper( mCategory, _retval );
 }
+
+// ---------------------------------------------------------------------------
+//
+//                             sbRemotePlayerDownloadCallback
+//
+// ---------------------------------------------------------------------------
+
+NS_IMPL_ISUPPORTS1(sbRemotePlayerDownloadCallback, sbIDeviceBaseCallback)
+
+sbRemotePlayerDownloadCallback::sbRemotePlayerDownloadCallback()
+{
+  LOG(("sbRemotePlayerDownloadCallback::sbRemotePlayerDownloadCallback()"));
+}
+
+sbRemotePlayerDownloadCallback::~sbRemotePlayerDownloadCallback()
+{
+  LOG(("sbRemotePlayerDownloadCallback::~sbRemotePlayerDownloadCallback()"));
+}
+
+nsresult
+sbRemotePlayerDownloadCallback::Initialize(sbRemotePlayer* aRemotePlayer)
+{
+  LOG(("sbRemotePlayerDownloadCallback::Initialize()"));
+  NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
+
+  nsresult rv;
+
+  // Get a weak reference to the remote player
+  mWeakRemotePlayer = do_GetWeakReference
+                    ( NS_ISUPPORTS_CAST(sbIRemotePlayer*, aRemotePlayer), &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get the codebase
+  nsCOMPtr<sbISecurityMixin> mixin =
+                        do_QueryInterface( aRemotePlayer->mSecurityMixin, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = mixin->GetCodebase( getter_AddRefs(mCodebaseURI) );
+
+  // Get the IO service
+  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+
+  // Set up download callbacks
+  nsCOMPtr<sbIDeviceManager> deviceManager;
+  PRBool hasDeviceForCategory;
+
+  deviceManager = do_GetService("@songbirdnest.com/Songbird/DeviceManager;1",
+                                &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceManager->HasDeviceForCategory
+        (NS_LITERAL_STRING("Songbird Download Device"), &hasDeviceForCategory);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(hasDeviceForCategory, NS_ERROR_UNEXPECTED);
+  rv = deviceManager->GetDeviceByCategory
+                                (NS_LITERAL_STRING("Songbird Download Device"),
+                                 getter_AddRefs(mDownloadDevice));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDownloadDevice->AddCallback(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbRemotePlayerDownloadCallback::Finalize()
+{
+  LOG(("sbRemotePlayerDownloadCallback::Finalize()"));
+
+  if (mDownloadDevice)
+    mDownloadDevice->RemoveCallback(this);
+}
+
+// ---------------------------------------------------------------------------
+//
+//                           sbIDeviceBaseCallback
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemotePlayerDownloadCallback::OnDeviceConnect
+                                          ( const nsAString &aDeviceIdentifier )
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayerDownloadCallback::OnDeviceDisconnect
+                                          ( const nsAString &aDeviceIdentifier )
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayerDownloadCallback::OnTransferStart( sbIMediaItem* aMediaItem )
+{
+  LOG(("sbRemotePlayer::OnTransferStart()"));
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
+  nsresult rv;
+
+  // Check item scope.  Return without error if out of scope
+  rv = CheckItemScope( aMediaItem );
+  if (NS_FAILED(rv))
+    return NS_OK;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer =
+                                      do_QueryReferent(mWeakRemotePlayer, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (remotePlayer) {
+    rv = remotePlayer->FireMediaItemStatusEventToContent
+                                                ( RAPI_EVENT_CLASS,
+                                                  RAPI_EVENT_TYPE_DOWNLOADSTART,
+                                                  aMediaItem,
+                                                  NS_OK );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayerDownloadCallback::OnTransferComplete( sbIMediaItem* aMediaItem,
+                                                    PRInt32 aStatus )
+{
+  LOG(("sbRemotePlayer::OnTransferComplete()"));
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
+  nsresult rv;
+
+  // Check item scope.  Return without error if out of scope
+  rv = CheckItemScope( aMediaItem );
+  if (NS_FAILED(rv))
+    return NS_OK;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer =
+                                      do_QueryReferent(mWeakRemotePlayer, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (remotePlayer) {
+    rv = remotePlayer->FireMediaItemStatusEventToContent
+                                            ( RAPI_EVENT_CLASS,
+                                              RAPI_EVENT_TYPE_DOWNLOADCOMPLETE,
+                                              aMediaItem,
+                                              aStatus );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayerDownloadCallback::OnStateChanged
+                                          ( const nsAString &aDeviceIdentifier,
+                                            PRUint32 aState )
+{
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayerDownloadCallback::CheckItemScope( sbIMediaItem* aMediaItem )
+{
+  LOG(("sbRemotePlayer::CheckItemScope()"));
+  nsresult rv;
+
+  // Get the item scope
+  nsCAutoString scopeDomain;
+  nsCAutoString scopePath;
+  rv = GetItemScope( aMediaItem, scopeDomain, scopePath );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check the item scope against the codebase
+  rv = sbURIChecker::CheckURI( scopeDomain, scopePath, mCodebaseURI );
+
+  return rv;
+}
+
+nsresult
+sbRemotePlayerDownloadCallback::GetItemScope( sbIMediaItem* aMediaItem,
+                                              nsACString& aScopeDomain,
+                                              nsACString& aScopePath )
+{
+  LOG(("sbRemotePlayer::GetItemScope()"));
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
+  nsresult rv;
+
+  // Get the scope property.  If not available, use the origin page property
+  nsAutoString scopeSpec;
+  rv = aMediaItem->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
+                                scopeSpec );
+  if (NS_FAILED(rv) || scopeSpec.IsEmpty()) {
+    rv = aMediaItem->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
+                                  scopeSpec );
+    if (NS_FAILED(rv))
+      return rv;
+  }
+
+  // Get the scope URI
+  nsCOMPtr<nsIURI> scopeURI;
+  rv = mIOService->NewURI( NS_ConvertUTF16toUTF8(scopeSpec),
+                           nsnull,
+                           nsnull,
+                           getter_AddRefs(scopeURI) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the scope domain and path
+  rv = sbURIChecker::CheckURI(aScopeDomain, aScopePath, scopeURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

@@ -429,9 +429,9 @@ EnumDeviceCallback(nsISupports *key, sbIDeviceBaseCallback *data, void *closure)
 }
 
 void
-sbDeviceBase::DoTransferStartCallback(const nsAString& aSourceURL,
-                                      const nsAString& aDestinationURL)
+sbDeviceBase::DoTransferStartCallback(sbIMediaItem *aMediaItem)
 {
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
   PRUint32 callbackCount = 0;
   nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
   mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
@@ -445,7 +445,7 @@ sbDeviceBase::DoTransferStartCallback(const nsAString& aSourceURL,
     nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
     if(callback) {
       try {
-        callback->OnTransferStart(aSourceURL, aDestinationURL);
+        callback->OnTransferStart(aMediaItem);
       }
       catch(...) {
         //Oops. Someone is being really bad.
@@ -456,10 +456,10 @@ sbDeviceBase::DoTransferStartCallback(const nsAString& aSourceURL,
 }
 
 void
-sbDeviceBase::DoTransferCompleteCallback(const nsAString& aSourceURL,
-                                         const nsAString& aDestinationURL,
+sbDeviceBase::DoTransferCompleteCallback(sbIMediaItem* aMediaItem,
                                          PRInt32 aStatus)
 {
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
   PRUint32 callbackCount = 0;
   nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
   mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
@@ -473,7 +473,7 @@ sbDeviceBase::DoTransferCompleteCallback(const nsAString& aSourceURL,
     nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
     if(callback) {
       try {
-        callback->OnTransferComplete(aSourceURL, aDestinationURL, aStatus);
+        callback->OnTransferComplete(aMediaItem, aStatus);
       }
       catch(...) {
         //Oops. Someone is being really bad.

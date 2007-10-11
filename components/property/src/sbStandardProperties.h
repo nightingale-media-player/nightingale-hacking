@@ -69,5 +69,6 @@
 #define SB_PROPERTY_DOWNLOAD_STATUS_TARGET  "http://songbirdnest.com/data/1.0#downloadStatusTarget"
 #define SB_PROPERTY_DOWNLOAD_DETAILS        "http://songbirdnest.com/data/1.0#downloadDetails"
 #define SB_PROPERTY_ISSORTABLE              "http://songbirdnest.com/data/1.0#isSortable"
+#define SB_PROPERTY_RAPISCOPEURL            "http://songbirdnest.com/data/1.0#rapiScopeURL"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

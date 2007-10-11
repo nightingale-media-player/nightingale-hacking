@@ -28,6 +28,7 @@
 <html>
   <head>
   <script>
+const SB_NS = "http://songbirdnest.com/data/1.0#";
 function runTest(tester) {
   try {
 
@@ -71,6 +72,42 @@ function runTest(tester) {
     tester.log("Clearing the download list...");
     dlList.clear();
 
+    // test download events
+    item = siteLib.createMediaItem
+                    ("http://www.songbirdnest.com/nonexistent/nonexistent.mp3");
+
+    var downloadStarted = false;
+    function onDownloadStart(event) {
+      downloadStarted = true;
+      tester.assertEqual(event.item.getProperty(SB_NS + "originURL"),
+                         item.getProperty(SB_NS + "contentURL"));
+    }
+
+    function onDownloadComplete(event) {
+      var e = null;
+      try {
+        document.removeEventListener("downloadstart", onDownloadStart, true);
+        document.removeEventListener("downloadcomplete",
+                                     onDownloadComplete,
+                                     true);
+        tester.assertNotEqual(event.status, 0);
+        tester.assertEqual(event.item.getProperty(SB_NS + "originURL"),
+                           item.getProperty(SB_NS + "contentURL"));
+        tester.assertTrue(downloadStarted);
+      }
+      catch (_e) {
+        e = _e;
+      }
+      tester.endRemoteAPITest(e);
+    }
+
+    document.addEventListener("downloadstart", onDownloadStart, true);
+    document.addEventListener("downloadcomplete", onDownloadComplete, true);
+
+    tester.log("Triggering download events...");
+    songbird.downloadItem(item); 
+    tester.assertEqual(dlList.length, 1);
+
     // We need to do this to give the web browser persists component a chance
     // to tidy up, otherwise it will leak
     tester.sleep(2000);
@@ -78,7 +115,6 @@ function runTest(tester) {
   catch(e) {
     tester.endRemoteAPITest(e);
   }
-  tester.endRemoteAPITest();
 }
 
 function runPageTest(tester) {

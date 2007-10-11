@@ -28,9 +28,11 @@
 #define __SB_REMOTE_PLAYER_H__
 
 #include "sbRemoteAPI.h"
+#include "sbRemoteMediaListBase.h"
 #include "sbRemoteNotificationManager.h"
 
 #include <sbIDataRemote.h>
+#include <sbIDownloadDevice.h>
 #include <sbIMediaList.h>
 #include <sbIPlaylistPlayback.h>
 #include <sbIPlaylistWidget.h>
@@ -45,6 +47,7 @@
 #include <nsIClassInfo.h>
 #include <nsIDOMEventListener.h>
 #include <nsIGenericFactory.h>
+#include <nsIIOService.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsPIDOMWindow.h>
 #include <nsStringGlue.h>
@@ -69,6 +72,7 @@ struct sbRemoteObserver {
 
 class sbRemoteCommands;
 class sbIDataRemote;
+class sbRemotePlayerDownloadCallback;
 
 class sbRemotePlayer : public sbIRemotePlayer,
                        public nsIClassInfo,
@@ -77,6 +81,8 @@ class sbRemotePlayer : public sbIRemotePlayer,
                        public nsSupportsWeakReference,
                        public sbISecurityAggregator
 {
+  friend class sbRemotePlayerDownloadCallback;
+
 public:
   NS_DECL_SBIREMOTEPLAYER
   NS_DECL_ISUPPORTS
@@ -120,6 +126,9 @@ protected:
   nsresult ConfirmPlaybackControl();
   nsresult GetBrowser( nsIDOMElement** aElement );
   nsresult TakePlaybackControl( nsIURI* aURI );
+  nsresult SetDownloadScope( sbIMediaItem *aItem );
+  nsresult SetDownloadListScope( sbIMediaList *aList );
+  nsresult SetDownloadSelectedScope( sbIRemoteWebPlaylist *aWebPlaylist );
   nsresult CreateProperty( const nsAString& aPropertyType,
                            const nsAString& aPropertyID,
                            const nsAString& aDisplayName,
@@ -133,6 +142,7 @@ protected:
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+  nsCOMPtr<nsIIOService> mIOService;
   nsCOMPtr<nsIWeakReference> mWeakDownloadMediaList;
 
   // The documents for the web page and for the tabbrowser
@@ -142,6 +152,9 @@ protected:
   // the remote impl for the playlist binding
   nsRefPtr<sbIPlaylistWidget> mWebPlaylistWidget;
   
+  // The download device callback
+  nsRefPtr<sbRemotePlayerDownloadCallback> mDownloadCallback;
+
   // the domain and path to use for scope
   // @see setSiteScope()
   nsCString mScopeDomain;
@@ -173,6 +186,31 @@ protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
   nsRefPtr<sbRemoteNotificationManager> mNotificationMgr;
+};
+
+class sbRemotePlayerDownloadCallback : public sbIDeviceBaseCallback
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVICEBASECALLBACK
+
+  sbRemotePlayerDownloadCallback();
+  virtual ~sbRemotePlayerDownloadCallback();
+
+  nsresult Initialize(sbRemotePlayer* aRemotePlayer);
+
+  void Finalize();
+
+private:
+  nsCOMPtr<nsIWeakReference> mWeakRemotePlayer;
+  nsCOMPtr<sbIDeviceBase> mDownloadDevice;
+  nsCOMPtr<nsIURI> mCodebaseURI;
+  nsCOMPtr<nsIIOService> mIOService;
+
+  nsresult GetItemScope( sbIMediaItem* aMediaItem,
+                         nsACString& aScopeDomain,
+                         nsACString& aScopePath );
+  nsresult CheckItemScope( sbIMediaItem* aMediaItem );
 };
 
 #endif // __SB_REMOTE_PLAYER_H__

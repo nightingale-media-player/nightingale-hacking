@@ -30,6 +30,7 @@
   <head>
     <title>Remote API Test: 11 (downloading)</title>
     <script>
+      const SB_NS = "http://songbirdnest.com/data/1.0#";
       var siteLib;
       var myDiv;
       var origWebPlaylist;
@@ -46,6 +47,13 @@
         songbird.webPlaylist.mediaList = list;
 
         myDiv = document.getElementById("output");
+        document.addEventListener("downloadstart", onDownloadStart, true);
+        document.addEventListener("downloadcomplete", onDownloadComplete, true);
+      }
+
+      function unload() {
+        document.removeEventListener("downloadstart", onDownloadStart, true);
+        document.removeEventListener("downloadcomplete", onDownloadComplete, true);
       }
 
       function showDownloadList() {
@@ -86,11 +94,21 @@
         songbird.webPlaylist.mediaList = songbird.downloadMediaList;
       }
 
+      function onDownloadStart(event) {
+        myDiv.firstChild.nodeValue = "Downloading: " +
+                                     event.item.getProperty(SB_NS + "trackName");
+      }
+
+      function onDownloadComplete(event) {
+        myDiv.firstChild.nodeValue = "Downloaded: " +
+                                     event.item.getProperty(SB_NS + "trackName") +
+                                     ", status: " + event.status;
+      }
     </script>
   </head>
 
-  <body onload="load();">
-    <h1>Download track to the users library.</h1>
+  <body onload="load();" onunload="unload();">
+    <h1>Download track to the user's library.</h1>
     
     <p>
     <form>
