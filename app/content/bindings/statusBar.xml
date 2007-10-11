@@ -39,10 +39,10 @@
     <content>
       <xul:statusbar id="status-bar" flex="1">
         <xul:statusbarpanel id="statusbar-display" flex="1">
-          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label" value=" " flex="1" crop="end"/>
+          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label sb-status-bar-text" value=" " flex="1" crop="end"/>
         </xul:statusbarpanel>
-        <xul:sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label" class="sb-status-bar-numplaylistitems-label" crop="end"/>
-        <xul:sb-player-scanning-label id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label" crop="end"/>
+        <xul:sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label" class="sb-status-bar-numplaylistitems-label sb-status-bar-text" crop="end"/>
+        <xul:sb-player-scanning-label id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label sb-status-bar-text" crop="end"/>
         <xul:statusbarpanel class="statusbarpanel-progress" id="statusbar-progresspanel">
           <xul:sb-status-progressmeter id="sb-status-bar-status-progressmeter" class="sb-status-bar-status-progressmeter" mode="undetermined"/>
         </xul:statusbarpanel>

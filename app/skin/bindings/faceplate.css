@@ -85,6 +85,7 @@ Imported by bindings.css or directly into feathers.
 .faceplate-text
 {
   font-family: Arial, Helvetica, Sans-serif !important;
+  margin: 0;
 }
 
 sb-player-artist-label.faceplate-text

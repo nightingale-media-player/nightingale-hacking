@@ -60,7 +60,7 @@ toolbarbutton {
 }
 
 .toolbarbutton-text {
-  margin: 0px;
+  margin: 0px !important;
   padding: 0px;
   text-align: center;
   vertical-align: middle;

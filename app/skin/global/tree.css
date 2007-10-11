@@ -403,11 +403,9 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 }
 
 .tree-input {
-  margin: 0px;
+  margin: 0 0 0 -5px !important;
   padding: 0px;
 }
-
-
 
 /** Songbird customizations **/
 
