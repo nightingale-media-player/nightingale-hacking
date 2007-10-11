@@ -30,6 +30,11 @@
       document.getElementById("sb-sys-outer-frame-children")
               .style.setProperty("overflow", "visible", "important");
     }, false);
+    
+    /* support the close button */
+    function onExit() {
+      return document.documentElement.cancelDialog();
+    }
   ]]></script>
 </dialog>
 
