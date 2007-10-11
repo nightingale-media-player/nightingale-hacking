@@ -71,7 +71,7 @@
       theTextbox.value = SBDataGetStringValue( "download.folder" );
       var theCheckbox = document.getElementById( "download_check" );
       theCheckbox.checked = SBDataGetBoolValue( "download.always" );
-      var ok = document.getElementById( "button_ok" );
+      var ok = document.documentElement.getButton( "accept" );
       ok.focus();
     }
     function doOK()
