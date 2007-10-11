@@ -53,9 +53,6 @@ For more information, visit http://developer.songbirdnest.com/
 /* size, positioning, and images for the standard Songbird elements */
 @import url(chrome://songbird-bindings/skin/bindings.css); 
 
-/* TODO Remove this line **/
-@import url(chrome://songbird-dialogs/skin/dialogs.css); 
-
 /* size and positioning for the main application window */
 @import url(chrome://songbird/content/feathers/basic-layouts/css/mainplayer.css); 
 

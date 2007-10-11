@@ -35,7 +35,7 @@
   <binding id="dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">
     <!-- we want to eventually extend all dialogs, not just type="songbird" -->
     <resources>
-      <stylesheet src="chrome://songbird/skin/dialog.css"/>
+      <stylesheet src="chrome://songbird-bindings/skin/dialog.css"/>
     </resources>
     <content flex="1">
       <sb-sys-outer-frame resizers="none" flex="1" id="dialog-outer-frame"

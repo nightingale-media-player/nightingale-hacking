@@ -28,25 +28,43 @@
 /** 
 *******************************************************************************
 
-JUMP-TO DIALOG
+SMART PLAYLIST BUILDER DIALOG
 
-This file is used by the Jump To dialog (accel-J)
+Additional styles imported directly by the smart playlist dialog. 
+See app/content/xul/smartPlaylist.xul
 
 *******************************************************************************
 */ 
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-
-#jump_to_file
+#smart_playlist,
 {
-  width: 420px;
-  height: 500px;
-  min-width: 320px;
-  min-height: 150px;
+  width:  550px; 
 }
 
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
+#smartpl_select_library
+{
+  margin: 10px 0px 0px 0px !important;
+}
+
+#smart_playlist_name_label
+{
+  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
+}
+
+#smart_songs_check,
+#smart_match_check
+{
+  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
+}
+
+#smart_songs_count
+{
+  width: 40px !important;
+}
+
+sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
+{
+  height: 28px !important;
 }

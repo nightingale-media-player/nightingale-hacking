@@ -28,25 +28,22 @@
 /** 
 *******************************************************************************
 
-JUMP-TO DIALOG
+WATCH FOLDERS DIALOG
 
-This file is used by the Jump To dialog (accel-J)
+Additional styles imported directly by the watch folders dialog 
+See app/content/xul/watchFolders.xul
 
 *******************************************************************************
 */ 
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-
-#jump_to_file
+#watchfolder
 {
-  width: 420px;
-  height: 500px;
-  min-width: 320px;
-  min-height: 150px;
+  width: 400px;
 }
 
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
+sb-watch-folders-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
+{
+  height: 28px;
 }

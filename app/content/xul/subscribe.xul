@@ -26,6 +26,7 @@
 //
  */
 -->
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/subscribe.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
@@ -51,12 +52,12 @@
   <windowregion/>
   
     <hbox align="center">
-      <label  value="URL:"/>
+      <label  value="&subscribe.url;"/>
       <textbox  id="subscribe_url" />
     </hbox>
     <hbox  align="center">
     <spacer width="40"/>
-    <label  id="auto_subscribe_label" label="&subscribe.autocheck;"/>
+    <label  id="auto_subscribe_label" value="&subscribe.autocheck;"/>
     <textbox  id="subscribe_interval" />
     <menulist id="subscribe_interval_unit" >
       <menupopup id="subscribe_interval_unit_popup">

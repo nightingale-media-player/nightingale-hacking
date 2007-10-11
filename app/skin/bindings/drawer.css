@@ -23,55 +23,29 @@
 // END SONGBIRD GPL
 //
  */
- 
+
 /** 
 *******************************************************************************
 
-FIRST RUN DIALOG, aka, the Bundle Picker. 
+DRAWER
 
-Additional styles imported directly by the first run dialog. 
+Margin/padding styles for the app/content/bindings/drawer.xml widgets.
+
+Imported by bindings.css or directly into feathers. 
 
 *******************************************************************************
 */ 
- 
- 
-.firstrun-spinner-image
+
+
+.drawer-box
 {
-  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.gif);
+  -moz-border-radius: 5px; 
+  border: 1px solid;
+  margin: 0px 0px 10px 0px;
+  padding: 5px 5px 5px 0px;
 }
 
-.firstrun-image
-{
-  margin: 5px 0;
-  list-style-image: url(chrome://songbird-branding/skin/firstrun.png);
-}
 
-#error_noupdate_image
-{
-  padding: 5px;
-  list-style-image: url(chrome://songbird/skin/icons/info.png);
-}
+                        
 
-#error_noupdate_text_box
-{
-  padding: 5px;
-}
 
-#error_noupdate_header 
-{ 
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-#error_noupdate_link 
-{
-  text-align: right;
-}
-
-sb-extensions-drawer > .drawer-box
-{
-  -moz-border-radius: 0px; 
-  border: none;
-  margin: 0px;
-  padding: 0px;
-}

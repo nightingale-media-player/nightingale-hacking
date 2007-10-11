@@ -160,6 +160,7 @@
 
 <!ENTITY open_url.title           "Open URL">
 <!ENTITY subscribe.title          "Subscribe">
+<!ENTITY subscribe.url            "URL:">
 <!ENTITY subscribe.minutes        "Minute(s)">
 <!ENTITY subscribe.hours          "Hour(s)">
 <!ENTITY subscribe.days           "Day(s)">

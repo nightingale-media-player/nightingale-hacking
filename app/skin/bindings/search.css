@@ -82,6 +82,7 @@ searchbar
 .searchbar-engine-button:focus
 {
   border: none;
+  margin: 0px;
 }
 
 

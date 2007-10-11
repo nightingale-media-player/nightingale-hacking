@@ -28,25 +28,17 @@
 /** 
 *******************************************************************************
 
-JUMP-TO DIALOG
+DOWNLOAD LOCATION DIALOG
 
-This file is used by the Jump To dialog (accel-J)
+Additional styles imported directly by the download location dialog 
+See app/content/xul/download.xul
 
 *******************************************************************************
 */ 
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-
-#jump_to_file
+#download_folder_path
 {
-  width: 420px;
-  height: 500px;
-  min-width: 320px;
-  min-height: 150px;
-}
-
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
+  width: 365px;
 }

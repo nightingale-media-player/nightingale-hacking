@@ -1270,6 +1270,8 @@ label
   -moz-border-radius: 5px;
 }
 
+/** Make dialog group boxes lighter, since
+    dialogs have darker content areas **/
 dialog:root[type="songbird"] .groupbox-body
 {
   border-color: #0f100f; /** Groove */
@@ -1563,6 +1565,40 @@ installitem
 }
 
 
+/** 
+*******************************************************************************
+DIALOGS
+*******************************************************************************
+*/
+
+#dialog-outer-frame
+{
+  border: 2px solid !important;
+  -moz-border-top-colors: #474948 /** Rubber Highlight */
+                          #000000 /** black */
+                          !important;
+  -moz-border-right-colors: #474948 /** Rubber Highlight */
+                            #000000 /** black */
+                            !important;
+  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
+                             #000000 /** black */
+                             !important;
+  -moz-border-left-colors: #474948 /** Rubber Highlight */
+                           #000000 /** black */
+                           !important;
+}
+/** Add a darker content box and appropriate padding **/
+.dialog-content-box
+{
+  background-color: #202220; /** Button Shadow*/
+  border: 1px solid #0f100f; /** Groove */
+  border-bottom: 2px solid red;
+  -moz-border-bottom-colors: #474948  /** Rubber Highlight */
+                             #0f100f; /** Groove */
+  margin: 5px 0;
+  padding: 10px;
+  padding-left: 15px;
+}
 
 /** 
 *******************************************************************************

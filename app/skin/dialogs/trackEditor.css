@@ -28,25 +28,32 @@
 /** 
 *******************************************************************************
 
-JUMP-TO DIALOG
+TRACK EDITOR DIALOG
 
-This file is used by the Jump To dialog (accel-J)
+Additional styles imported directly by the track editor dialog. 
+See app/content/xul/trackEditor.xul
 
 *******************************************************************************
 */ 
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-
-#jump_to_file
+#track_editor
 {
-  width: 420px;
-  height: 500px;
-  min-width: 320px;
-  min-height: 150px;
+  width:  550px; 
 }
 
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
+sb-trackeditor-drawer > .drawer-box > .drawer-content
+{
+  height: 170px !important;
+}
+
+sb-exttrackeditor-drawer > .drawer-box > .drawer-content
+{
+  height: 225px !important;
+}
+
+sb-tageditor-drawer > .drawer-box > .drawer-content
+{
+  height: 150px !important;
 }

@@ -85,7 +85,7 @@ wizard[branded="true"] .wizard-header-icon {
 }
 
 .wizard-header-box-1 {
-  padding: 5px 0px 5px 0px;
+  padding: 5px 10px 5px 10px;
 }
 
 wizard[description=""] .wizard-header-description {
@@ -103,7 +103,6 @@ wizard[description=""] .wizard-header-description {
 
 wizard[branded="true"] .wizard-header-icon {
   list-style-image: url("chrome://branding/content/icon48.png");
-  -moz-margin-end: 5px;
 }
 
 .wizard-page-box {

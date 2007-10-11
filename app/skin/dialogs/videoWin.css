@@ -35,6 +35,20 @@ Additional styles imported by the Cheesy Video Window
 *******************************************************************************
 */ 
 
+#video_window
+{
+  height: 600px;
+  width: 800px;
+  min-width: 320px;
+  min-height: 240px;
+}
+
+iframe#video_controls
+{
+  height: 24px !important;
+  width: 700px !important;
+}
+
 /* left and right padding outside of the video part (previously two spacers) */
 #video-boxes {
     padding-left: 10px;

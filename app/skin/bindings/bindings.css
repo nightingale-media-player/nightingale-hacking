@@ -52,21 +52,22 @@ For more information, see:
 /** The global toolbar styles are not included by default **/
 @import url(chrome://global/skin/toolbar.css); 
 
+@import url(browsertoolbar.css); 
+@import url(drawer.css); 
 @import url(faceplate.css); 
 @import url(filterlist.css); 
+@import url(miniplayer.css); 
 @import url(observes-dataremote.css); 
 @import url(player-controls.css); 
-@import url(miniplayer.css); 
 @import url(playlist.css); 
 @import url(playlist-commands.css);
+@import url(preferences.css); 
 @import url(search.css); 
 @import url(servicepane.css); 
 @import url(smartsplitter.css); 
 @import url(statusbar.css); 
 @import url(syscontrols.css); 
-@import url(browsertoolbar.css); 
 @import url(tabbrowser.css);
-@import url(preferences.css); 
 
 
 

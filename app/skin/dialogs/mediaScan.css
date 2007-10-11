@@ -28,9 +28,10 @@
 /** 
 *******************************************************************************
 
-JUMP-TO DIALOG
+MEDIA SCAN DIALOG
 
-This file is used by the Jump To dialog (accel-J)
+Additional styles imported directly by the media scan dialog 
+(Available from the File menu. See app/content/xul/mediaScan.xul)
 
 *******************************************************************************
 */ 
@@ -38,15 +39,7 @@ This file is used by the Jump To dialog (accel-J)
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 
-#jump_to_file
-{
-  width: 420px;
-  height: 500px;
-  min-width: 320px;
-  min-height: 150px;
-}
-
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
-}
+#media_scan 
+{ 
+  width: 400px;
+} 

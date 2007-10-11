@@ -24,9 +24,20 @@
 //
  */
 
-/**
- * This file is only included in <dialog type="songbird">
- */
+
+/** 
+*******************************************************************************
+
+CUSTOM SONGBIRD DIALOG STYLES
+
+This file is included directly into <dialog type="songbird"> elements 
+when using feathers that disable native operating system window chrome 
+(e.g. titlebars).
+
+See also app/content/bindings/dialog.xml and app/skin/global/dialog
+
+*******************************************************************************
+*/
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
@@ -38,19 +49,6 @@ dialog:root
 
 #dialog-outer-frame
 {
-  border: 2px solid !important;
-  -moz-border-top-colors: #474948 /** Rubber Highlight */
-                          #000000 /** black */
-                          !important;
-  -moz-border-right-colors: #474948 /** Rubber Highlight */
-                            #000000 /** black */
-                            !important;
-  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
-                             #000000 /** black */
-                             !important;
-  -moz-border-left-colors: #474948 /** Rubber Highlight */
-                           #000000 /** black */
-                           !important;
   background-image: url(chrome://songbird/skin/backgrounds/background.png);
   background-repeat: repeat-x;
 }
@@ -76,18 +74,6 @@ dialog:root
 #dialog-titlebar
 {
   margin: 5px 0;
-}
-
-.dialog-content-box
-{
-  background-color: #202220; /** Button Shadow*/
-  border: 1px solid #0f100f; /** Groove */
-  border-bottom: 2px solid red;
-  -moz-border-bottom-colors: #474948  /** Rubber Highlight */
-                             #0f100f; /** Groove */
-  margin: 5px 0;
-  padding: 10px;
-  padding-left: 15px;
 }
 
 .dialog-button-box
