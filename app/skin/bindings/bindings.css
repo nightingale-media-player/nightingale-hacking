@@ -27,7 +27,7 @@
 /** 
 *******************************************************************************
 
-= Songbird Widget Styles =
+SONGBIRD WIDGET STYLES    
 
 Imports styles for all the Songbird XBL widgets. 
 
@@ -55,10 +55,10 @@ For more information, see:
 @import url(faceplate.css); 
 @import url(filterlist.css); 
 @import url(observes-dataremote.css); 
-@import url(player_controls.css); 
+@import url(player-controls.css); 
 @import url(miniplayer.css); 
 @import url(playlist.css); 
-@import url(playlist_commands.css);
+@import url(playlist-commands.css);
 @import url(search.css); 
 @import url(servicepane.css); 
 @import url(smartsplitter.css); 

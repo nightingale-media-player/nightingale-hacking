@@ -286,3 +286,13 @@ progressmeter.sb-player-volume-slider
 }
 
 
+sb-player-volume-slider,
+thumb.sb-player-volume-slider > gripper,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder
+{
+  background-color: transparent !important;
+}
+
