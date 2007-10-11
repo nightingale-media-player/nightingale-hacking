@@ -63,12 +63,10 @@ For more information, visit http://developer.songbirdnest.com/
 @import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); 
 
 
-/** TODO RENAME **/ 
-
 /* extra images for the main application window */
-@import url(mainwin_images.css); 
+@import url(images.css); 
 
 /* colors for all elements */
-@import url(mainwin_colors.css); 
+@import url(colors.css); 
 
 
