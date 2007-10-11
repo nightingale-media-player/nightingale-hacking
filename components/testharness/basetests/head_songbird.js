@@ -146,7 +146,7 @@ function fail(aMessage) {
 }
 
 function testPending() {
-  //log("*** [" + _test_name + "] - test pending\n");
+  log("*** [" + _test_name + "] - test pending\n");
   if ( _tests_pending == 0 ) {
     // start of tests, don't spin wait
     _tests_pending++;
@@ -156,12 +156,12 @@ function testPending() {
   let count = _tests_pending++;
   while ( count < _tests_pending ) {
     // sleep for awhile. testFinished will decrement the _tests_pending
-    sleep(100);
+    sleep(100, true);
   }
 }
 
 function testFinished() {
-  //log("*** [" + _test_name + "] - test finished\n");
+  log("*** [" + _test_name + "] - test finished\n");
   if (--_tests_pending == 0)
     doQuit();
 }
@@ -175,17 +175,21 @@ function getPlatform() {
   return sysInfo.getProperty("name");
 }
 
-function sleep(ms) {
+function sleep(ms, suppressOutput) {
   var threadManager = Cc["@mozilla.org/thread-manager;1"].
                       getService(Ci.nsIThreadManager);
   var mainThread = threadManager.mainThread;
 
-  log("*** [" + _test_name + "] - waiting for " + ms + " milliseconds...");
+  if (!suppressOutput) {
+    log("*** [" + _test_name + "] - waiting for " + ms + " milliseconds...");
+  }
   var then = new Date().getTime(), now = then;
   for (; now - then < ms; now = new Date().getTime()) {
     mainThread.processNextEvent(true);
   }
-  log("*** [" + _test_name + "] - done waiting.");
+  if (!suppressOutput) {
+    log("*** [" + _test_name + "] - done waiting.");
+  }
 }
 
 function getTestServerPortNumber() {
@@ -228,7 +232,7 @@ mockCore.prototype = {
   _playing: false,
   _paused: false,
   _video: false,
-  _volume: 128, 
+  _volume: 128,
   _length: 25000,
   _position: 0,
   _metadata: null,
