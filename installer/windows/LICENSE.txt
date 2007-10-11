@@ -7,7 +7,7 @@ copyright their respective copyright holders. These files may include
 modifications which are Copyright(c) 2005-2007 POTI, Inc.
  
 This binary also contains trademarks of POTI Inc. including, but not limited to, 
-the name “Songbird”, logos, icons, and page layout files (“feathers”). POTI Inc. 
+the name ("Songbird"), logos, icons, and page layout files ("Feathers"). POTI Inc. 
 does not express or imply any permission to use or distribute these trademarks.
  
 This binary is licensed to you under the GNU General Public License Version 2 
