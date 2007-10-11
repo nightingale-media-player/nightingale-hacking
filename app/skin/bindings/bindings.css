@@ -57,11 +57,10 @@ For more information, see:
 @import url(faceplate.css); 
 @import url(filterlist.css); 
 @import url(miniplayer.css); 
-@import url(observes-dataremote.css); 
-@import url(player-controls.css); 
+@import url(observesDataRemote.css); 
+@import url(playerControls.css); 
 @import url(playlist.css); 
-@import url(playlist-commands.css);
-@import url(preferences.css); 
+@import url(playlistCommands.css);
 @import url(search.css); 
 @import url(servicepane.css); 
 @import url(smartsplitter.css); 

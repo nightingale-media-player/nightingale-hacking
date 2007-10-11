@@ -62,9 +62,9 @@ For more information, see http://developer.songbirdnest.com/
 
 @import url("chrome://global/skin/formatting.css");
 
-@import url("chrome://global/skin/global-misc.css");
+@import url("chrome://global/skin/globalMisc.css");
  
-@import url("chrome://global/skin/songbird-base-styles.css");
+@import url("chrome://global/skin/songbirdBaseStyles.css");
 
 @import url("chrome://global/skin/bindings.css");
 
@@ -72,5 +72,5 @@ For more information, see http://developer.songbirdnest.com/
 
 /* Import the current feathers.  This allows feathers
    to modify the look of XUL elements in all windows. */    
-@import url("chrome://songbird/skin/global-import.css");
+@import url("chrome://songbird/skin/globalImport.css");
 
