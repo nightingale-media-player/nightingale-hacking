@@ -48,7 +48,11 @@ function beginWindowTest(url, continueFunction) {
 }
 
 function setAllAccess () {
-  log("******** Setting All Access for RemoteAPI ********");
+  log("");
+  log("--------------------------------------------------------------------------------");
+  log("*********************** Setting All Access for RemoteAPI ***********************");
+  log("--------------------------------------------------------------------------------");
+  log("");
   setRapiPref("playback_control_disable", false);
   setRapiPref("playback_read_disable", false);
   setRapiPref("library_read_disable", false);
@@ -57,7 +61,11 @@ function setAllAccess () {
 }
 
 function setNoAccess() {
-  log("******** Setting No Access for RemoteAPI ********");
+  log("");
+  log("--------------------------------------------------------------------------------");
+  log("*********************** Setting No Access for RemoteAPI ************************");
+  log("--------------------------------------------------------------------------------");
+  log("");
   setRapiPref("playback_control_disable", true);
   setRapiPref("playback_read_disable", true);
   setRapiPref("library_read_disable", true);

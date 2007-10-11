@@ -45,14 +45,44 @@ function runTest(tester) {
 
     mainLib.scanMediaOnCreation = true;
 
+    var list;
+    function onCreated(mediaList) {
+      var test = tester;
+      test.log("in onCreated");
+      list = mediaList;
+      test.testFinished();
+      test.assertEqual(list.length, 4);
+      test = null;
+      list = null;
+    }
+
     // media creation in the mainLibrary
-    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
-                                   function(mediaList) { var test = tester;
-                                                         list = mediaList;
-                                                         test.testFinished();
-                                                         test.assertEqual(list.length, 4);
-                                                         test = null });
+    tester.log("");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("Creating MediaList from Main Library - should succeed");
+    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u", onCreated);
     tester.testPending();
+    tester.log("Created from MainLib - SUCCESS");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("");
+
+    tester.log("");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("Creating MediaList from Main Library to bogus URL - should create 0 length list");
+    mainLib.createMediaListFromURL("http://www.example.com/dummy.m3u",
+                                   function onCreated(mediaList) {
+                                     var test = tester;
+                                     test.log("in onCreated");
+                                     list = mediaList;
+                                     test.testFinished();
+                                     test.assertEqual(list.length, 0);
+                                     test = null;
+                                     list = null;
+                                   });
+    tester.testPending();
+    tester.log("Created from MainLib & bogus - SUCCESS");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("");
     
     mainLib.createMediaList("simple");
     mainLib.createMediaList("dynamic");
@@ -71,6 +101,10 @@ function runTest(tester) {
     webLib.type;
     webLib.length;
 
+    // creating medialist from webLib should fail
+    tester.log("");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("Creating MediaList from Web Library - should fail");
     try {
       webLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
                                     function(mediaList) { var test = tester;
@@ -80,14 +114,20 @@ function runTest(tester) {
                                                          test = null });
       test.testPending();
       tester.fail("did not throw: createMediaListFromURL('')");
-    } catch (e) {}
+    } catch (e) { 
+      tester.log("Web library could not create a mediaList - SUCCESS");
+    }
+    tester.log("----------------------------------------------------------------------");
+    tester.log("");
 
     // access within the siteLibrary
     siteLib.name;
     siteLib.type;
     siteLib.length;
 
-    var list;
+    tester.log("");
+    tester.log("----------------------------------------------------------------------");
+    tester.log("Creating MediaList from Site Library - should succeed");
     siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
                                    function(mediaList) { var test = tester;
                                                          list = mediaList;
@@ -95,9 +135,12 @@ function runTest(tester) {
                                                          test.assertEqual(list.length, 4);
                                                          test = null });
     tester.testPending(); 
+    tester.log("Site library could create a mediaList - SUCCESS");
   } catch (e) {
     tester.endRemoteAPITest(e);
   }
+  tester.log("----------------------------------------------------------------------");
+  tester.log("");
 
   // Lock down the permissions, access to objects should change
   tester.setNoAccess();

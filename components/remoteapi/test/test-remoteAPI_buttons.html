@@ -35,18 +35,6 @@
 
       const isSongbird = ( typeof(songbird) != "undefined" );
 
-      if (isSongbird) {
-        siteLib = songbird.siteLibrary;
-        siteList = siteLib.createMediaList("simple");
-        songbird.webPlaylist.mediaList = siteList;
-
-        createProperties();
-
-        populateList();
-
-        showColumns();
-      }
-      
       function createProperties() {
         songbird.createButtonProperty(
                          "http://example.com/button1",  // name
@@ -62,7 +50,7 @@
                          false,
                          0 ); 
         songbird.createDownloadButtonProperty(
-                         "http://example.com/downloadButton1,
+                         "http://example.com/downloadButton1",
                          "Download1",
                          "Download",               // button label - Must be set here or button looks wrong.
                          true,
@@ -78,122 +66,67 @@
 
       function populateList() {
         var tracks = ["http://ccmixter.org/people/teru/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
-                      "http://ccmixter.org/people/omnivista/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3" ];
-        for each ( var track in tracks ) {
-          var item = siteLib.createMediaItem(track);
-          item.setProperty("http://example.com/text", "sample text"); 
-          item.setProperty("http://example.com/dateTime", 352000000); // time in microseconds 5:52
-          item.setProperty("http://example.com/URI", "http://example.com"); 
-          item.setProperty("http://example.com/number", "6"); 
-          item.setProperty("http://example.com/image", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-          item.setProperty("http://example.com/ratings", "3"); 
-          item.setProperty("http://example.com/buttonDefault", "pushDef");
-          item.setProperty("http://example.com/button", "push"); 
-          item.setProperty("http://example.com/downloadButton", "1|10|0"); 
-          siteList.add(item);
+                      "http://ccmixter.org/people/omnivista/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
+                      "http://ccmixter.org/people/mactonite/mactonite_-_Days_of_April_(Part_1).mp3" ];
 
+        var item = siteLib.createMediaItem(tracks[0]);
+        item.setProperty("http://example.com/button1", "Buy Me"); 
+        item.setProperty("http://example.com/logo1", "http://image.com.com/mp3/images/css/v2/icons/realplayer.gif"); 
+        item.setProperty("http://example.com/downloadButton1", "1|0|0"); 
+        item.setProperty("http://example.com/ratings1", "0"); 
+        siteList.add(item);
+            
+        item = siteLib.createMediaItem(tracks[1]);
+        item.setProperty("http://example.com/button1", "Don't Buy Me|1"); 
+        item.setProperty("http://example.com/logo1", "1|0|0"); 
+        item.setProperty("http://example.com/downloadButton1", "http://www.emusic.com/favicon.ico"); 
+        item.setProperty("http://example.com/ratings1", "3"); 
+        siteList.add(item);
+      
+        item = siteLib.createMediaItem(tracks[2]);
+        item.setProperty("http://example.com/button1", "Don't Buy Me|1"); 
+        item.setProperty("http://example.com/logo1", "1|0|0"); 
+        item.setProperty("http://example.com/downloadButton1", "http://www.songbirdnest.com/files/images/button_opera.png"); 
+        item.setProperty("http://example.com/ratings1", "3"); 
+        siteList.add(item);
       }
 
       function showColumns() {
         songbird.webPlaylist.insertColumnBefore("http://example.com/logo1", "http://songbirdnest.com/data/1.0#artistName");
         songbird.webPlaylist.appendColumn("http://example.com/ratings1");
         songbird.webPlaylist.appendColumn("http://example.com/button1");
-        songbird.webPlaylist.appendColumn("http://example.com/downloadButton1");
+        songbird.webPlaylist.insertColumnBefore("http://example.com/downloadButton1", "http://example.com/button1");
       }
 
-function load() {
+      function load() {
+        document.addEventListener("PlaylistCellClick", function(event) {
+          alert("boom " + event.property + " " + event.item.getProperty("http://songbirdnest.com/data/1.0#contentURL"));
+        }, false);
 
-  document.addEventListener("PlaylistCellClick", function(event) {
-    alert("boom " + event.property + " " + event.item.getProperty("http://songbirdnest.com/data/1.0#contentURL"));
-  }, false);
+        if (isSongbird) {
+          siteLib = songbird.siteLibrary;
+          siteList = siteLib.createMediaList("simple");
 
+          createProperties();
 
-  songbird.webPlaylist.appendColumn( "text",
-                                  "buttonDemoText",
-                                  "FOO",
-                                  "",
-                                  "",
-                                  false,
-                                  true,
-                                  false,
-                                  0,
-                                  150 ); 
+          populateList();
 
-  songbird.webPlaylist.appendColumn( "button",
-                                  "buttonDemoBuy",
-                                  "Get it!",
-                                  "FOO",
-                                  "",
-                                  false,
-                                  true,
-                                  false,
-                                  0,
-                                  150 ); 
+          songbird.webPlaylist.mediaList = siteList;
 
-  songbird.webPlaylist.appendColumn( "image",
-                                  "buttonDemoImage",
-                                  "My Logo",
-                                  "Foo",    // won't appear on image columns
-                                  "",
-                                  false,
-                                  true,
-                                  false,
-                                  0,
-                                  150 ); 
+          showColumns();
+        }
+      }
 
-  songbird.webPlaylist.appendColumn( "downloadbutton",
-                                  "buttonDemoDownloadButton",
-                                  "Download it!!",
-                                  "Download",
-                                  "",
-                                  false,
-                                  true,
-                                  false,
-                                  0,
-                                  150 ); 
-
-  songbird.webPlaylist.appendColumn( "rating",
-                                  "demoRating",
-                                  "Rate Me!!",
-                                  "",
-                                  "",
-                                  false,
-                                  true,
-                                  true,
-                                  0,
-                                  400 ); 
-
-  var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-  item.setProperty("buttonDemoBuy", "Buy Me"); 
-  item.setProperty("buttonDemoImage", "http://image.com.com/mp3/images/css/v2/icons/realplayer.gif"); 
-  item.setProperty("buttonDemoDownloadButton", "1|0|0"); 
-  item.setProperty("demoRating", "0"); 
-  siteList.add(item);
-
-  item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
-  item.setProperty("buttonDemoBuy", "Don't Buy Me|1"); 
-  item.setProperty("buttonDemoDownloadButton", "1|0|0"); 
-  item.setProperty("buttonDemoImage", "http://www.emusic.com/favicon.ico"); 
-  item.setProperty("demoRating", "3"); 
-  siteList.add(item);
-
-  item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
-  item.setProperty("buttonDemoBuy", "Don't Buy Me|1"); 
-  item.setProperty("buttonDemoDownloadButton", "1|0|0"); 
-  item.setProperty("buttonDemoImage", "http://www.songbirdnest.com/files/images/button_opera.png"); 
-  item.setProperty("demoRating", "3"); 
-  siteList.add(item);
-}
-function unload() {
-  if (siteList)
-    siteLib.remove(siteList);
-}
+      function unload() {
+        if (siteList)
+          siteLib.remove(siteList);
+      }
 
     </script>
   </head>
 
   <body onload="load();" onunload="unload();">
-    <h1>Buttons</h1>
+    <h1>Buttons and PlaylistCellClick</h1>
   </body>
 
 </html>

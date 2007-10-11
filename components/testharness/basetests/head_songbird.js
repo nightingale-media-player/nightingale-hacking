@@ -147,7 +147,17 @@ function fail(aMessage) {
 
 function testPending() {
   //log("*** [" + _test_name + "] - test pending\n");
-  _tests_pending++;
+  if ( _tests_pending == 0 ) {
+    // start of tests, don't spin wait
+    _tests_pending++;
+    return;
+  }
+
+  let count = _tests_pending++;
+  while ( count < _tests_pending ) {
+    // sleep for awhile. testFinished will decrement the _tests_pending
+    sleep(100);
+  }
 }
 
 function testFinished() {

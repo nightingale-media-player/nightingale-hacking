@@ -422,6 +422,9 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
                                            getter_AddRefs(mediaList) );
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mRemotePlayer->GetNotificationManager()
+      ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
+
   nsCOMPtr<sbIPlaylistReaderManager> manager =
        do_GetService( "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
                       &rv );
@@ -459,11 +462,6 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   PRInt32 dummy;
   rv = manager->LoadPlaylist( uri, mediaList, EmptyString(), true, lstnr, &dummy );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (NS_SUCCEEDED(rv)) {
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
-  }
 
   return NS_OK;
 }
