@@ -1,5 +1,5 @@
 
-Certain files in this binary application (“binary”) are
+Certain files in this binary application "Songbird" are
 Copyright(c) 2005-2007 POTI, Inc.
 
 Certain files in this binary may contain code from VLC and XUL Runner which is 
