@@ -169,6 +169,7 @@ protected:
   static nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );
   static nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aName, const nsAString& aValue);
   static nsresult GetJobLibrary( sbIDatabaseQuery *aQuery, const nsAString& aTableName, sbILibrary **_retval );
+  static nsresult DropJobTable( sbIDatabaseQuery *aQuery, const nsAString& aTableName );
 
   void IncrementDataRemote();
   void DecrementDataRemote();

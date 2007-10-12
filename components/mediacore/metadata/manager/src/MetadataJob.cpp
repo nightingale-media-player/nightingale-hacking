@@ -258,8 +258,15 @@ NS_IMETHODIMP sbMetadataJob::RemoveObserver()
 /* void init (in AString aTableName, in nsIArray aMediaItemsArray); */
 NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMediaItemsArray, PRUint32 aSleepMS)
 {
-  // aMediaItemsArray may be null.
   nsresult rv;
+
+  NS_ENSURE_TRUE(!aTableName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  // aMediaItemsArray may be null, but not zero length
+  if (aMediaItemsArray) {
+    PRUint32 length;
+    rv = aMediaItemsArray->GetLength(&length);
+    NS_ENSURE_TRUE(length, NS_ERROR_INVALID_ARG);
+  }
 
   mTableName = aTableName;
   mSleepMS = aSleepMS;
@@ -323,20 +330,36 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
-  // Determine what library is associated with this job.  We may not be able
-  // to determine this if there are no items in the queue
-  rv = GetJobLibrary( mMainThreadQuery, aTableName, getter_AddRefs(mLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Update any old items that were scanned but not written
   rv = ResetUnwritten( mMainThreadQuery, mTableName );
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Append any new items in the array to the task table
-  if ( aMediaItemsArray != nsnull )
+  if ( aMediaItemsArray )
   {
     Append( aMediaItemsArray );
   }
+  else {
+    // If aMediaItemsArray is not null, this is an old job.  Determine what
+    //library is associated with this job.
+    rv = GetJobLibrary( mMainThreadQuery, aTableName, getter_AddRefs(mLibrary));
+    if (NS_FAILED(rv)) {
+
+      // XXXsteve If GetJobLibrary fails, this means either we have an existing
+      // job with no entires, or the library for this job can not be found
+      // in the library manager.  Drop the job.  bug 5026 is about adding the
+      // ability to keep this job around until the library reappears.
+      NS_WARNING("Invalid job or unable to find job's library, dropping");
+
+      rv = DropJobTable(mMainThreadQuery, mTableName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+  }
+
+  // At this point we should know the library of this job.
+  NS_ENSURE_TRUE(mLibrary, NS_ERROR_UNEXPECTED);
 
   // Launch the timer to complete initialization.
   rv = mTimer->InitWithFuncCallback( MetadataJobTimer, this, TIMER_LOOP_MS, nsITimer::TYPE_ONE_SHOT );
@@ -789,49 +812,8 @@ nsresult sbMetadataJob::FinishJob()
   // Decrement the atomic counter
   DecrementDataRemote();
 
-  // Drop the working table
-  nsAutoString dropTable;
-  dropTable.AppendLiteral("DROP TABLE ");
-  dropTable += mTableName;
-  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+  rv = DropJobTable(mMainThreadQuery, mTableName);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mMainThreadQuery->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mMainThreadQuery->AddQuery( dropTable );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 error;
-  rv = mMainThreadQuery->Execute( &error );
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
-
-  // Remove the entry from the tracking table
-  nsAutoString delTracking;
-  nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  nsCOMPtr<sbISQLDeleteBuilder> del =
-    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = del->SetTableName( sbMetadataJob::DATABASE_GUID() );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = del->CreateMatchCriterionString( sbMetadataJob::DATABASE_GUID(),
-                                            NS_LITERAL_STRING("job_guid"),
-                                            sbISQLUpdateBuilder::MATCH_EQUALS,
-                                            mTableName,
-                                            getter_AddRefs(criterion) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = del->AddCriterion( criterion );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = del->ToString( delTracking );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMainThreadQuery->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mMainThreadQuery->AddQuery( delTracking );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMainThreadQuery->Execute( &error );
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -1135,19 +1117,70 @@ sbMetadataJob::GetJobLibrary( sbIDatabaseQuery *aQuery,
   rv = pResult->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ASSERTION(rowCount == 1, "Empty job table");
-  if (rowCount == 1) {
-    nsString libraryGuid;
-    rv = pResult->GetRowCellByColumn( 0,
-                                      NS_LITERAL_STRING( "library_guid" ),
-                                      libraryGuid );
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = libraryManager->GetLibrary(libraryGuid, _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
+  NS_ENSURE_TRUE(rowCount == 1, NS_ERROR_UNEXPECTED);
 
-  *_retval = nsnull;
+  nsString libraryGuid;
+  rv = pResult->GetRowCellByColumn( 0,
+                                    NS_LITERAL_STRING( "library_guid" ),
+                                    libraryGuid );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = libraryManager->GetLibrary(libraryGuid, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbMetadataJob::DropJobTable( sbIDatabaseQuery *aQuery, const nsAString& aTableName )
+{
+  NS_ASSERTION(aQuery, "aQuery is null");
+  NS_ASSERTION(!aTableName.IsEmpty(), "aTableName is empty");
+
+  nsresult rv;
+
+  // Drop the working table
+  nsString dropTable;
+  dropTable.AppendLiteral("DROP TABLE ");
+  dropTable += aTableName;
+  rv = aQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->AddQuery( dropTable );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 error;
+  rv = aQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+  // Remove the entry from the tracking table
+  nsString delTracking;
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  nsCOMPtr<sbISQLDeleteBuilder> del =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = del->SetTableName( sbMetadataJob::DATABASE_GUID() );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = del->CreateMatchCriterionString( sbMetadataJob::DATABASE_GUID(),
+                                        NS_LITERAL_STRING("job_guid"),
+                                        sbISQLUpdateBuilder::MATCH_EQUALS,
+                                        aTableName,
+                                        getter_AddRefs(criterion) );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = del->AddCriterion( criterion );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = del->ToString( delTracking );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->AddQuery( delTracking );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
   return NS_OK;
 }
 

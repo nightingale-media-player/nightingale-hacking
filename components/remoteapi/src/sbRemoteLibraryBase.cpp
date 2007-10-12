@@ -109,17 +109,17 @@ public:
     nsCOMPtr<sbIMediaList> mediaList ( do_QueryInterface( aSubject, &rv ) );
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mShouldScan) {
+    PRUint32 length;
+    rv = mediaList->GetLength( &length );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mShouldScan && length) {
       nsCOMPtr<sbIMetadataJobManager> metaJobManager =
         do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIMutableArray> mediaItems =
                                  do_CreateInstance( NS_ARRAY_CONTRACTID, &rv );
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 length;
-      rv = mediaList->GetLength( &length );
       NS_ENSURE_SUCCESS(rv, rv);
 
       for ( PRUint32 index = 0; index < length; index++ ) {
