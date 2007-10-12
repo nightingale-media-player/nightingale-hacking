@@ -40,7 +40,6 @@
  id="subscribe"
  title="&subscribe.title;"
  onload="doLoad();"
- onkeypress="onKeyPress(event);"
  flex="1"
  hidechrome="true"
  type="songbird"
@@ -88,15 +87,6 @@ const SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
 const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
 const SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
 const SB_PROP_DESTINATION          = SB_NS + "destination"
-
-function onKeyPress(event)
-{
-  if ( event.keyCode == 13 ) {          // enter
-    if ( doOK() ) onExit();
-  } else if ( event.keyCode == 27 ) {   // ESC
-      if ( doCancel() ) onExit();
-  }
-}
 
 function getWindowArguments() {
   // First window argument is a sbIMediaList if we are updating an existing
@@ -214,8 +204,7 @@ function doLoad()
   }
 
   // focus the ok button by default
-  var ok = document.getElementById("button_ok");
-  ok.focus();
+  document.documentElement.getButton("accept").focus();
 }
 
 function doOK()

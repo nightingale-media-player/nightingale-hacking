@@ -38,7 +38,6 @@
  title="&bookmarks.edit.title;"
  hidechrome="true"
  buttons="accept,cancel"
- onkeydown="handleKeyDown(event);"
  onload="initFocus();"
  onunload=""
  type="songbird"
@@ -79,9 +78,6 @@
   
   <script>
   <![CDATA[
-    const VK_ESCAPE = 27;
-    const VK_ENTER = 13;
-    
     var IOSERVICE = Components.classes['@mozilla.org/network/io-service;1']
         .getService(Components.interfaces.nsIIOService);
   
@@ -126,7 +122,7 @@
         valid = false;
       }
       
-      document.getElementById('button_ok').setAttribute('disabled', valid?"false":"true");
+      document.documentElement.getButton("accept").disabled = !valid;
     }
    
     function doOK()
@@ -149,20 +145,7 @@
     {
       return true;
     }
-    
-    function handleKeyDown(event) 
-    {
-      switch (event.keyCode)
-      {
-        case VK_ESCAPE:
-          document.getElementById("button_cancel").doCommand();
-          break;
-        case VK_ENTER:
-          document.getElementById("button_ok").doCommand();
-          break;
-      }
-    }
-    
+
     function onSetDefaultIcon(evt) {
       var icon = document.getElementById("bookmark.icon");
       icon.value = "";

@@ -38,7 +38,6 @@
  title="&trackeditor.title;"
  hidechrome="true"
  buttons="accept,cancel,extra1"
- onkeydown="handleKeyDown(event);"
  onload="onLoadTrackEditor();"
  onunload="onUnloadTrackEditor();"
  windowtype="track_editor"
@@ -196,19 +195,6 @@
   
   function doCancel() {
     return true;
-  }
-  
-  function handleKeyDown(event) 
-  {
-    switch (event.keyCode)
-    {
-      case VK_ESCAPE:
-        document.getElementById("button_cancel").doCommand();
-        break;
-      case VK_ENTER:
-        document.getElementById("button_ok").doCommand();
-        break;
-    }
   }
   
   function onFocus() {

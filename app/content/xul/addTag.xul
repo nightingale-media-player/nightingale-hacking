@@ -39,7 +39,6 @@
  ondialogaccept="if ( doOK() ) onExit( );"
  ondialogcancel="if ( doCancel() ) onExit( );"
  hidechrome="true"
- onkeydown="handleKeyDown(event);"
  onload="initFocus();"
  type="songbird"
 >
@@ -57,10 +56,6 @@
   <![CDATA[
   
     // init ...
-
-    const VK_ESCAPE = 27;
-    const VK_ENTER = 13;
-    
     function initFocus()
     {
       var textbox = document.getElementById("songbird_addtag_name");
@@ -86,19 +81,6 @@
         window.arguments[0].retval = "cancel";
       }
       return true;
-    }
-
-    function handleKeyDown(event) 
-    {
-      switch (event.keyCode)
-      {
-        case VK_ESCAPE:
-          document.getElementById("button_cancel").doCommand();
-          break;
-        case VK_ENTER:
-          document.getElementById("button_ok").doCommand();
-          break;
-      }
     }
   ]]>
   </script>
