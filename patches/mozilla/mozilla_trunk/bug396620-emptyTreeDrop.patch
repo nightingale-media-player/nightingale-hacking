@@ -1,16 +1,11 @@
 Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
-retrieving revision 1.330
-diff -u -8 -p -r1.330 nsTreeBodyFrame.cpp
---- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	4 Sep 2007 09:08:15 -0000	1.330
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	19 Sep 2007 15:35:17 -0000
-@@ -1259,16 +1259,22 @@ nsTreeBodyFrame::GetRowAt(PRInt32 aX, PR
-   // Check if the coordinates are below our visible space (or within our visible
-   // space but below any row).
-   if (row > mTopRowIndex + mPageLength || row >= mRowCount)
-     return -1;
- 
+retrieving revision 1.332
+diff -u -r1.332 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	11 Oct 2007 08:18:52 -0000	1.332
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	12 Oct 2007 19:26:57 -0000
+@@ -1264,6 +1264,12 @@
    return row;
  }
  
@@ -23,17 +18,7 @@ diff -u -8 -p -r1.330 nsTreeBodyFrame.cpp
  void
  nsTreeBodyFrame::CheckTextForBidi(nsAutoString& aText)
  {
-   // We could check to see whether the prescontext already has bidi enabled,
-   // but usually it won't, so it's probably faster to avoid the call to
-   // GetPresContext() when it's not needed.
-   const PRUnichar* text = aText.get();
-   PRUint32 length = aText.Length();
-@@ -2598,17 +2604,19 @@ nsTreeBodyFrame::HandleEvent(nsPresConte
-       }
- 
-       if (mSlots->mTimer) {
-         // Timer is active but for a different row than the current one, kill it.
-         mSlots->mTimer->Cancel();
+@@ -2601,7 +2607,9 @@
          mSlots->mTimer = nsnull;
        }
  
@@ -44,17 +29,7 @@ diff -u -8 -p -r1.330 nsTreeBodyFrame.cpp
          if (!mSlots->mTimer && mSlots->mDropOrient == nsITreeView::DROP_ON) {
            // Either there wasn't a timer running or it was just killed above.
            // If over a folder, start up a timer to open the folder.
-           PRBool isContainer = PR_FALSE;
-           mView->IsContainer(mSlots->mDropRow, &isContainer);
-           if (isContainer) {
-             PRBool isOpen = PR_FALSE;
-             mView->IsContainerOpen(mSlots->mDropRow, &isOpen);
-@@ -4225,16 +4233,24 @@ nsTreeBodyFrame::ComputeDropPosition(nsG
-     else {
-       // for a non-container use a 50%/50% breakdown
-       if (yOffset < mRowHeight / 2)
-         *aOrient = nsITreeView::DROP_BEFORE;
-       else
+@@ -4228,6 +4236,14 @@
          *aOrient = nsITreeView::DROP_AFTER;
      }
    }
@@ -69,24 +44,14 @@ diff -u -8 -p -r1.330 nsTreeBodyFrame.cpp
  
    if (CanAutoScroll(*aRow)) {
      // Get the max value from the look and feel service.
-     PRInt32 scrollLinesMax = 0;
-     PresContext()->LookAndFeel()->
-       GetMetric(nsILookAndFeel::eMetric_TreeScrollLinesMax, scrollLinesMax);
-     scrollLinesMax--;
-     if (scrollLinesMax < 0)
 Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.h
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.h,v
 retrieving revision 1.121
-diff -u -8 -p -r1.121 nsTreeBodyFrame.h
+diff -u -r1.121 nsTreeBodyFrame.h
 --- layout/xul/base/src/tree/src/nsTreeBodyFrame.h	23 Aug 2007 15:57:55 -0000	1.121
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	19 Sep 2007 15:35:18 -0000
-@@ -236,16 +236,21 @@ protected:
-   PRInt32 GetLastVisibleRow() {
-     return mTopRowIndex + mPageLength;
-   }
- 
-   // An internal hit test.  aX and aY are expected to be in twips in the
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	12 Oct 2007 19:26:57 -0000
+@@ -241,6 +241,11 @@
    // coordinate system of this frame.
    PRInt32 GetRowAt(nscoord aX, nscoord aY);
  
@@ -98,8 +63,3 @@ diff -u -8 -p -r1.121 nsTreeBodyFrame.h
    // Check for bidi characters in the text, and if there are any, ensure
    // that the prescontext is in bidi mode.
    void CheckTextForBidi(nsAutoString& aText);
- 
-   void AdjustForCellText(nsAutoString& aText,
-                          PRInt32 aRowIndex,  nsTreeColumn* aColumn,
-                          nsIRenderingContext& aRenderingContext,
-                          nsRect& aTextRect);
