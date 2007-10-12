@@ -68,9 +68,9 @@ function runTest(tester) {
                                      test.log("in onCreated");
                                      list = mediaList;
                                      test.assertEqual(list.length, 4);
-                                     test = null;
                                      list = null;
                                      test.testFinished();
+                                     test = null;
                                    } );
     tester.testPending();
     tester.log("Created from MainLib - SUCCESS");
@@ -86,9 +86,9 @@ function runTest(tester) {
                                      test.log("in onCreated");
                                      list = mediaList;
                                      test.assertEqual(list.length, 0);
-                                     test = null;
                                      list = null;
                                      test.testFinished();
+                                     test = null;
                                    });
     tester.testPending();
     tester.log("Created from MainLib & bogus - SUCCESS");
@@ -123,11 +123,11 @@ function runTest(tester) {
                                       test.log("in onCreated");
                                       list = mediaList;
                                       test.assertEqual(list.length, 4);
-                                      test = null;
                                       list = null;
                                       test.testFinished();
+                                      test = null;
                                     });
-      test.testPending();
+      tester.testPending();
       tester.fail("did not throw: createMediaListFromURL('')");
     } catch (e) { 
       tester.log("Web library could not create a mediaList - SUCCESS");
@@ -147,11 +147,10 @@ function runTest(tester) {
                                    function(mediaList) {
                                      var test = tester;
                                      list = mediaList;
-                                     test.testFinished();
                                      test.assertEqual(list.length, 4);
-                                     test = null;
                                      list = null;
                                      test.testFinished();
+                                     test = null;
                                     });
     tester.testPending(); 
     tester.log("Site library could create a mediaList - SUCCESS");
