@@ -66,52 +66,37 @@ function runTest() {
 
   library.clear();
 
-  testAsync1(library, toAdd);
-}
-
-function testAsync1(library, toAdd) {
-
   var listener = {
+    arrayLength: 0,
+    libraryLength: 0,
+    that: this,
     onProgress: function(index) {
     },
     onComplete: function(array) {
-      assertEqual(array.length, 2);
-      assertEqual(library.length, 2);
-      testAsync2(library, toAdd);
+      assertEqual(array.length, this.arrayLength);
+      assertEqual(library.length, this.libraryLength);
+      this.that.testFinished();
+      test = null;
     }
   };
 
+  // 2 tracks added, library will have 2 items, no duplicates
+  listener.arrayLength = 2;
+  listener.libraryLength = 2;
   library.batchCreateMediaItemsAsync(listener, toAdd);
   testPending();
-}
 
-function testAsync2(library, toAdd) {
-
-  var listener = {
-    onProgress: function(index) {
-    },
-    onComplete: function(array) {
-      assertEqual(array.length, 0);
-      assertEqual(library.length, 2);
-      testAsync3(library, toAdd);
-    }
-  };
-
+  // 0 tracks added, library will have 2 items, no duplicates
+  listener.arrayLength = 0;
+  listener.libraryLength = 2;
   library.batchCreateMediaItemsAsync(listener, toAdd);
-}
+  testPending();
 
-function testAsync3(library, toAdd) {
-
-  var listener = {
-    onProgress: function(index) {
-    },
-    onComplete: function(array) {
-      assertEqual(array.length, 4);
-      assertEqual(library.length, 6);
-      testFinished();
-    }
-  };
-
+  // 0 tracks added, library will have 2 items, duplicates allowed
+  listener.arrayLength = 4;
+  listener.libraryLength = 6;
   library.batchCreateMediaItemsAsync(listener, toAdd, null, true);
+  testPending();
+
 }
 
