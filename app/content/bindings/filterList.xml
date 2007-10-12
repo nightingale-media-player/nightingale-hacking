@@ -222,7 +222,7 @@
     for (var j = min.value; j <= max.value; j++) {
       // The actual number of rows in the view can lag behind the number of
       // rows in the tree, so make sure we don't select those
-      if (j < count) {
+      if (j - 1 < count) {
         var value = this.cfs.getValueAt(this.index, j - 1);
         values.push(value);
       }
