@@ -54,7 +54,11 @@
     <constructor>
         this.setAttribute("tooltiptext", "&tooltip.control.volume;")
       <![CDATA[
-        Components.utils.import("resource://app/components/sbProperties.jsm");
+        if (typeof(SBProperties) == "undefined") {
+          Components.utils.import("resource://app/components/sbProperties.jsm");
+          if (!SBProperties)
+            throw new Error("Import of sbProperties module failed");
+        }
 
         // OVERLAY TARGET ID MATCHES ELEMENT NAME
         this.box.setAttribute("id", "sb-player-volume-slider" );
@@ -789,7 +793,12 @@
 
       <constructor>
         <![CDATA[
-          this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+        if (typeof(SBProperties) == "undefined") {
+          Components.utils.import("resource://app/components/sbProperties.jsm");
+          if (!SBProperties)
+            throw new Error("Import of sbProperties module failed");
+        }
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
         // Create and bind data remotes
         this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
