@@ -46,6 +46,8 @@ function runTest(tester) {
     mainLib.scanMediaOnCreation = true;
 
     var list;
+    var testItem = mainLib.createMediaItem(
+              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
 /*
     function onCreated(mediaList) {
       var test = tester;
@@ -65,9 +67,11 @@ function runTest(tester) {
     mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
                                    function (mediaList) {
                                      var test = tester;
+                                     var item = testItem;
                                      test.log("in onCreated");
                                      list = mediaList;
-                                     test.assertEqual(list.length, 4);
+                                     list.add(item);
+                                     test.assertEqual(list.length, 5);
                                      list = null;
                                      test.testFinished();
                                      test = null;

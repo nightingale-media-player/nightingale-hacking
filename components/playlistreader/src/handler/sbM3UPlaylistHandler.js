@@ -82,6 +82,7 @@ function(aFile, aMediaList, aReplace)
 
     // Otherwise, this line is a URL.  Add it to the list
     var newUri = SB_ResolveURI(aLine, this._originalURI);
+    dump("\n\n\nXXXredfive - is there a URI: " + newUri.spec + "\n");
     if (newUri) {
       var item = { uri: newUri, properties: {}};
       if (nextFileMetadata.title)
