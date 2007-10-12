@@ -323,7 +323,6 @@
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
           
           /* watch document.title for changes and update our fake title */
-          /* Object.watch() doesn't need cleaning up (all GCed JS) */
           var self = this;
           document.watch("title", function(aObject, aOldValue, aNewValue){
             return self.title = aNewValue;
@@ -332,12 +331,14 @@
       </constructor>
       <destructor>
         <![CDATA[
+          document.unwatch("title");
           if (this._visibilityBinding) {
             this._visibilityBinding.unbind();
             this._visibilityBinding = null;
           }
         ]]>
       </destructor>
+            
       <property name="title">
         <setter><![CDATA[
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
