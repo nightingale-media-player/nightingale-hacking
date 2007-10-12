@@ -41,6 +41,14 @@
 NS_IMPL_ISUPPORTS1(sbAbstractPropertyBuilder,
                    sbIPropertyBuilder)
 
+sbAbstractPropertyBuilder::sbAbstractPropertyBuilder() :
+  mUserViewable(PR_TRUE),
+  mUserEditable(PR_TRUE),
+  mRemoteReadable(PR_FALSE),
+  mRemoteWritable(PR_FALSE)
+{
+}
+
 nsresult
 sbAbstractPropertyBuilder::Init()
 {

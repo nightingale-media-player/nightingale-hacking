@@ -56,6 +56,8 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPROPERTYBUILDER
 
+  sbAbstractPropertyBuilder();
+
   nsresult Init();
 
   static nsresult GetStringFromName(nsIStringBundle* aBundle,
@@ -73,10 +75,10 @@ protected:
   nsString mPropertyName;
   nsString mDisplayName;
   nsString mDisplayNameKey;
-  PRBool mUserViewable;
-  PRBool mUserEditable;
-  PRBool mRemoteReadable;
-  PRBool mRemoteWritable;
+  PRPackedBool mUserViewable;
+  PRPackedBool mUserEditable;
+  PRPackedBool mRemoteReadable;
+  PRPackedBool mRemoteWritable;
 
 };
 

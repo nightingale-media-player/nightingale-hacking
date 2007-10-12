@@ -551,6 +551,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = dbBuilder->SetRemoteReadable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetRemoteWritable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
   rv = dbBuilder->Get(getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -579,6 +585,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = rBuilder->Get(getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->SetRemoteReadable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->SetRemoteWritable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddPropertyInfo(propertyInfo);
