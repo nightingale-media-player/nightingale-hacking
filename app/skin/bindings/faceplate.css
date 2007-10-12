@@ -78,7 +78,6 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird-branding/skin/faceplate.png);
 }
 
-/** Seekbar **/
 
 
 /** Text **/
@@ -110,6 +109,14 @@ sb-player-artist-label.faceplate-text
 
 /* the seekbar slider */
 
+/** 
+  NOTE:
+  In order to keep the progress meter exactly in sync with  
+  the slider we make the slider thumb invisible, and paint
+  a fake thumb as a background image on the right edge
+  of the progress bar.
+ **/
+  
 .faceplate-progressmeter,
 .faceplate-seekbar
 {
@@ -132,9 +139,18 @@ progressmeter.sb-player-seek-slider
 
 thumb.sb-player-seek-slider 
 {
-  width: 11px;
+  width: 10px;
   height: 10px;
+  border: none;
 }
+
+progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image: url(chrome://songbird/skin/faceplate/seek-thumb.png);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-color: transparent;
+}
+
 thumb.sb-player-seek-slider  > gripper
 {
   height: 8px;
@@ -146,18 +162,23 @@ progressmeter.sb-player-seek-slider
   padding: 0px;
   border: 0px !important;
 }
-progressmeter.sb-player-seek-slider > .progress-bar,
 progressmeter.sb-player-seek-slider > .progress-remainder
 {
   height: 10px;
   background-image: none;
 }
-
+progressmeter.sb-player-seek-slider > .progress-bar
+{
+  min-width:10px;
+}
 
 /* shuffle and repeat */
 .faceplate-shuffle
 {
   margin: -1px 2px 0px 0px;
+}
+.faceplate-repeat {
+  margin: 0px 0px 0px 2px;
 }
 .sb-player-shuffle-button-off > button
 {

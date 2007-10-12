@@ -169,16 +169,10 @@ sb-player-faceplate {
 }
 
 /* the seekbar slider */
-thumb.sb-player-seek-slider 
-{
-  -moz-border-radius: 5px;
-  background-color: White;
-  border: 3px solid #313131;
-}
 .faceplate-seekbar
 {
   border: none;
-  background-color: Transparent;
+  background-color: transparent;
 }
 
 .faceplate-text
@@ -191,19 +185,18 @@ thumb.sb-player-seek-slider
   border: none;
 }
 
+.faceplate-progressmeter,
+progressmeter.sb-player-seek-slider
+{
+  background-color: #B3BAAC;
+  -moz-border-radius: 5px;
+}
+
 .faceplate-progressmeter > .progress-bar,
 progressmeter.sb-player-seek-slider > .progress-bar
 {
   background-color: #313131;
   -moz-border-radius: 5px;
-}
-
-progressmeter.sb-player-seek-slider > .progress-remainder,
-.faceplate-progressmeter > .progress-remainder
-{
-  background-color: #B3BAAC;
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-bottomright: 5px;
 }
 
 

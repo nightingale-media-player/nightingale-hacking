@@ -76,14 +76,7 @@
       <setter>
       <![CDATA[
         var prog = (val * 100) / this.maxpos;
-        if ( this.thumb.boxObject.width > 0 )
-        {
-          // Stupid fun to keep progress under the thumb.
-          if ( ( val > 0 ) && ( prog < 50 ) ) 
-          {
-            prog += 2;
-          }
-        }
+        
         this.progress.setAttribute('value', prog);
       ]]>
       </setter>
