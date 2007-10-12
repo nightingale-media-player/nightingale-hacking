@@ -26,9 +26,11 @@
 
 /**
  * \brief FaceplateManager test file
+ * 
+ * NOTE: This test has been temporarily disabled.
+ * See sbIFaceplateManager for more information.
  */
  
-
 
 var faceplateManager =  Cc['@songbirdnest.com/faceplate/manager;1']
                           .getService(Ci.sbIFaceplateManager);

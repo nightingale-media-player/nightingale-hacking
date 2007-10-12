@@ -44,13 +44,30 @@
     
     For an example of how to display a pane in all faceplates, see #progress-pane
     in this file, as well as sbFaceplateManager.js and sbIFaceplateManager.idl.
+ 
+    
+    WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ 
+    We are redesigning this integration point to better
+    balance user and developer value. In the meantime, the
+    faceplate interface will be disabled to avoid premature use. 
+ 
+    If you need to display status information please open a tab,
+    open a window, or use the status bar area for the time being.
+ 
+    Please submit any suggestions/feedback as bug reports to
+    http://bugzilla.songbirdnest.com
+ 
+    WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING    
+    
+    
     -->
   <binding id="faceplate">
 
     <content>
       <xul:hbox id="sb-player-faceplate" flex="1" xbl:inherits="currentIndex,currentId,class">
         <xul:spacer id="sb-player-faceplate-left" class="faceplate-left-spacer" xbl:inherits="currentIndex,currentId"/>
-        <xul:deck id="sb-player-faceplate-deck" anonid="faceplate-deck" selectedIndex="0" class="faceplate-bkgd-box" flex="1" xbl:inherits="currentIndex,currentId">
+        <xul:deck id="sb-player-faceplate-deck" anonid="faceplate-deck" selectedIndex="0" class="faceplate-deck" flex="1" xbl:inherits="currentIndex,currentId">
           <!--  All faceplate panes are added programmatically via sbIFaceplateManager -->
         </xul:deck>
         <xul:spacer id="sb-player-faceplate-right" class="faceplate-right-spacer" xbl:inherits="currentIndex,currentId"/>
@@ -530,8 +547,24 @@
    GENERIC PROGRESS DISPLAY PANE
         
    Features two labels and a progressmeter.
-
-   Usage example:
+   
+   
+   WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ 
+   We are redesigning this integration point to better
+   balance user and developer value. In the meantime, the
+   faceplate interface will be disabled to avoid premature use. 
+ 
+   If you need to display status information please open a tab,
+   open a window, or use the status bar area for the time being.
+ 
+   Please submit any suggestions/feedback as bug reports to
+   http://bugzilla.songbirdnest.com
+ 
+   WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING       
+   
+   
+   Usage example: [NOTE: DOES NOT WORK. SEE ABOVE.]
    
       var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
                         .getService(Components.interfaces.sbIFaceplateManager);  

@@ -41,6 +41,22 @@ interface nsISimpleEnumerator;
  * \interface sbIFaceplateManager
  * \brief Manages the panes that are displayed in faceplate widgets.
  *
+ *
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ *
+ * We are redesigning this integration point to better
+ * balance user and developer value. In the meantime, the
+ * faceplate interface will be disabled to avoid premature use. 
+ *
+ * If you need to display status information please open a tab,
+ * open a window, or use the status bar area for the time being.
+ *
+ * Please submit any suggestions/feedback as bug reports to
+ * http://bugzilla.songbirdnest.com
+ *
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ *
+ *
  * To use the generic progress display faceplate:
  * \Example
  * \code
@@ -86,11 +102,11 @@ interface sbIFaceplateManager : nsISupports
    * \return An interface that can be used to communicate with all the
    *         instances of this faceplate pane. 
    * \throws NS_ERROR_FAILURE if the given id is already in use.  
-   */
+   
   sbIFaceplatePane createPane(in AString aID, 
                               in AString aName,
                               in AString aBindingURL);
-
+  */
   /**
    * \brief Cause all faceplate widgets to immediately switch to the 
    *        given faceplate pane. 
@@ -99,13 +115,15 @@ interface sbIFaceplateManager : nsISupports
    */
   void showPane(in sbIFaceplatePane aPane);
   
+
   /**
    * \brief Cause all faceplate widgets to immediately destory their instances 
    *        of the given faceplate pane. 
    *
    * \param aPane An active, instantiated, faceplate pane interface.
-   */  
+     
   void destroyPane(in sbIFaceplatePane aPane);
+  */
 
   /**
    * \brief Get an interface representing all instances of a particular 

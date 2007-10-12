@@ -49,6 +49,6 @@ For more information, visit http://developer.songbirdnest.com/
 
 
 /* 
- Rubberducky does not include any styles specific to Songbird windows.
- All Rubberducky styles are included via global.css
+ This feathers add-on does not include any styles specific to Songbird windows.
+ All styles are included via globalImport.css
 */

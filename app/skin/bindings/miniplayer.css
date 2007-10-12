@@ -209,10 +209,6 @@ sb-player-volume-slider.miniplayer
   margin-bottom: 1px !important; 
 }
 
-/** The thumb does not respond to list-style-image, so we are forced to 
-    use a background. We put both states in one image and then change
-    the background-position in order to prevent flickering when changing
-    states. **/
 thumb.sb-player-volume-slider.miniplayer
 {
   width: 11px;

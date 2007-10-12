@@ -1597,8 +1597,7 @@ DIALOGS
   -moz-border-bottom-colors: #474948  /** Rubber Highlight */
                              #0f100f; /** Groove */
   margin: 5px 0;
-  padding: 10px;
-  padding-left: 15px;
+  padding: 10px 10px 10px 15px;
 }
 
 /** 

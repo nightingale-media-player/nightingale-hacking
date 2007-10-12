@@ -58,14 +58,14 @@ Imported by bindings.css or directly into feathers.
 /*  Sample for how to style the faceplate based upon the showing pane.
 .faceplate-left-spacer[currentId="songbird-intro"],
 .faceplate-right-spacer[currentId="songbird-intro"],
-.faceplate-bkgd-box[currentId="songbird-intro"]
+.faceplate-deck[currentId="songbird-intro"]
 {
   opacity: 0.5; 
 }
 */
 
 
-.faceplate-bkgd-box
+.faceplate-deck
 {
   height: 55px;
   background-image: url(chrome://songbird/skin/faceplate/faceplate-bkgd.png);

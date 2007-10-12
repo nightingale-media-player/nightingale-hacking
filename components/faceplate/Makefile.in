@@ -22,6 +22,7 @@
 # END SONGBIRD GPL
 #
 
+
 DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
@@ -29,9 +30,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+# Note: Tests have been disabled, since the API has been commented out.
+#       The component still runs, since it is responsible for switching
+#       to the display faceplate, but you cannot interact with it.
 SUBDIRS = public \
           src \
-          test \
+#          test \
           $(NULL)
 
 SUBDIRDEPS = src : public
