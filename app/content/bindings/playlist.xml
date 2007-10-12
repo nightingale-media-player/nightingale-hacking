@@ -532,6 +532,8 @@
   this.mediaListView = mediaListView;
   this.treeView = mediaListView.treeView;
 
+  this.isSortable = mediaListView.mediaList.getProperty(SBProperties.isSortable);
+
   // Set up the columns
   this._setupColumns();
 
@@ -548,8 +550,6 @@
       self._dropOnTree(row, orientation);
     }
   };
-  
-  this.isSortable = mediaListView.mediaList.getProperty(SBProperties.isSortable);
 
   // Create whatever filters we think we need.
   this._generateFilters();
@@ -735,10 +735,10 @@
   
   if (!columnMap.length) {
     columnMap =
-      this._parseColumnSpec(SBProperties.ordinal + " 55 a " +
+      this._parseColumnSpec(SBProperties.ordinal + " 55 " +
                             SBProperties.trackName + " 350 " +
                             SBProperties.duration + " 50 " +
-                            SBProperties.artistName + " 222 " +
+                            SBProperties.artistName + " 222 a " +
                             SBProperties.albumName + " 222 " +
                             SBProperties.genre + " 70");
     this._columnSpecOrigin = 6;
@@ -759,14 +759,19 @@
   var alreadyAdded = {};
   var addedColumns = 0;
   var ordinal = 0;
+  var sortProperty;
+  var sortDirection;
   columnMap.forEach(
     function(columnInfo) {
       var propertyInfo = this._pm.getPropertyInfo(columnInfo.property);
       if(propertyInfo.userViewable) {
+        if (!sortProperty && columnInfo.sort) {
+          sortProperty = columnInfo.property;
+          sortDirection = columnInfo.sort;
+        }
         this._appendColumn(propertyInfo,
                           false,
                           columnInfo.width,
-                          columnInfo.sort,
                           ordinal);
         alreadyAdded[columnInfo.property] = true;
         addedColumns++;
@@ -787,12 +792,21 @@
         this._appendColumn(propertyInfo,
                           columnMap.length,
                           null,
-                          null,
                           ordinal);
         addedColumns++;
         ordinal += 2;
       }
     }
+  }
+
+  if (!sortProperty) {
+    sortProperty = SBProperties.ordinal;
+    sortDirection = "ascending";
+  }
+
+  if (this.tree.view) {
+    var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+    ldtv.setSort(sortProperty, sortDirection == "ascending");
   }
 
   if (this.tree.columns) {
@@ -861,7 +875,7 @@
                 }
                 else {
                   // This is a property name.
-                  columns[++columnIndex] = { property: token };
+                  columns[++columnIndex] = { property: token, sort: null };
                 }
               }
               else {
@@ -1151,7 +1165,6 @@
         <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
         <parameter name="width"/>
-        <parameter name="sort"/>
         <parameter name="ordinal"/>
         <body>
 <![CDATA[
@@ -1165,11 +1178,6 @@
 
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
-  }
-
-  if (sort && this.isSortable) {
-    treecol.setAttribute("sortDirection", sort);
-    treecol.setAttribute("sortActive", "true");
   }
 
   treecol.setAttribute("ordinal", ordinal);

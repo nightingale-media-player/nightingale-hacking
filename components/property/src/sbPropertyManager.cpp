@@ -29,6 +29,7 @@
 
 #include <nsAutoLock.h>
 #include <nsMemory.h>
+#include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
@@ -361,11 +362,30 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
 
   //Artist name
+  nsCOMPtr<sbIMutablePropertyArray> sortProfile =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sortProfile->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                   NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                   NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                   NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
                     stringBundle, PR_TRUE, PR_TRUE, 
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, sortProfile);
 
   //Duration (in usecs)
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
@@ -614,7 +634,8 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
                                 PRUint32 aNullSort,
                                 PRBool aHasNullSort,
                                 PRBool aRemoteReadable,
-                                PRBool aRemoteWritable)
+                                PRBool aRemoteWritable,
+                                sbIPropertyArray* aSortProfile)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -647,6 +668,11 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
 
   rv = textProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aSortProfile) {
+    rv = textProperty->SetSortProfile(aSortProfile);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);

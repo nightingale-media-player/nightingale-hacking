@@ -278,7 +278,7 @@ NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
 
   sbSimpleAutoLock lock(mSortProfileLock);
   *aSortProfile = mSortProfile;
-  NS_ADDREF(*aSortProfile);
+  NS_IF_ADDREF(*aSortProfile);
 
   return NS_OK;
 }

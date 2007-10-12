@@ -100,7 +100,8 @@ private:
                         PRUint32 aNullSort,
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,
-                        PRBool aRemoteWritable);
+                        PRBool aRemoteWritable,
+                        sbIPropertyArray* aSortProfile = nsnull);
 
   nsresult RegisterURI(const nsAString& aPropertyName,
                        const nsAString& aDisplayKey,
