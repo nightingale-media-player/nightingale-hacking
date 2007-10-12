@@ -51,6 +51,8 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
 
 function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
 
+  dump("\n\n\nXXXredfive SB_AddItems: " + aItems.length + " ***********************\n\n\n");
+
   if (aItems.length == 0)
     return;
 
