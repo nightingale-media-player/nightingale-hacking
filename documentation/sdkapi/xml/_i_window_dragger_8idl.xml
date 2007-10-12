@@ -4,13 +4,13 @@
     <compoundname>IWindowDragger.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="157">
+      <node id="160">
         <label>components/integration/public/IWindowDragger.idl</label>
         <link refid="IWindowDragger.idl"/>
-        <childnode refid="158" relation="include">
+        <childnode refid="161" relation="include">
         </childnode>
       </node>
-      <node id="158">
+      <node id="161">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

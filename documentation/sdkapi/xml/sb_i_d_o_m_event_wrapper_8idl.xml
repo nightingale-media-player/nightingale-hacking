@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMEvent.idl</includes>
     <incdepgraph>
-      <node id="355">
+      <node id="358">
         <label>nsIDOMEvent.idl</label>
       </node>
-      <node id="353">
+      <node id="356">
         <label>components/moz/domevents/public/sbIDOMEventWrapper.idl</label>
         <link refid="sbIDOMEventWrapper.idl"/>
-        <childnode refid="354" relation="include">
+        <childnode refid="357" relation="include">
         </childnode>
-        <childnode refid="355" relation="include">
+        <childnode refid="358" relation="include">
         </childnode>
       </node>
-      <node id="354">
+      <node id="357">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

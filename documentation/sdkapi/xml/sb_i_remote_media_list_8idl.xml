@@ -5,24 +5,24 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <incdepgraph>
-      <node id="412">
+      <node id="415">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="413" relation="include">
+        <childnode refid="416" relation="include">
         </childnode>
       </node>
-      <node id="413">
+      <node id="416">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="414">
+      <node id="417">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="415" relation="include">
+        <childnode refid="418" relation="include">
         </childnode>
       </node>
-      <node id="415">
+      <node id="418">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
       </node>

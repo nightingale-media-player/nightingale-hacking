@@ -4,13 +4,13 @@
     <compoundname>sbITreeViewPropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="399">
+      <node id="402">
         <label>components/property/public/sbITreeViewPropertyInfo.idl</label>
         <link refid="sbITreeViewPropertyInfo.idl"/>
-        <childnode refid="400" relation="include">
+        <childnode refid="403" relation="include">
         </childnode>
       </node>
-      <node id="400">
+      <node id="403">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

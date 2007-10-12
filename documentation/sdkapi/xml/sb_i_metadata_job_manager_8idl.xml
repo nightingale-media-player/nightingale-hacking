@@ -4,13 +4,13 @@
     <compoundname>sbIMetadataJobManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="322">
+      <node id="325">
         <label>components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</label>
         <link refid="sbIMetadataJobManager.idl"/>
-        <childnode refid="323" relation="include">
+        <childnode refid="326" relation="include">
         </childnode>
       </node>
-      <node id="323">
+      <node id="326">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

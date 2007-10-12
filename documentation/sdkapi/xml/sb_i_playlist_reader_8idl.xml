@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIWebProgressListener.idl</includes>
     <incdepgraph>
-      <node id="373">
+      <node id="376">
         <label>components/playlistreader/public/sbIPlaylistReader.idl</label>
         <link refid="sbIPlaylistReader.idl"/>
-        <childnode refid="374" relation="include">
+        <childnode refid="377" relation="include">
         </childnode>
-        <childnode refid="375" relation="include">
+        <childnode refid="378" relation="include">
         </childnode>
       </node>
-      <node id="374">
+      <node id="377">
         <label>nsISupports.idl</label>
       </node>
-      <node id="375">
+      <node id="378">
         <label>nsIWebProgressListener.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbILibraryTransferContext.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="219">
+      <node id="222">
         <label>components/library/base/public/sbILibraryTransferContext.idl</label>
         <link refid="sbILibraryTransferContext.idl"/>
-        <childnode refid="220" relation="include">
+        <childnode refid="223" relation="include">
         </childnode>
       </node>
-      <node id="220">
+      <node id="223">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

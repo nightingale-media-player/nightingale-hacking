@@ -10,24 +10,18 @@
     <includes local="yes">nsStringGlue.h</includes>
     <includes local="yes">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="85">
+      <node id="88">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="83">
+      <node id="86">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="84">
+      <node id="87">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="79">
+      <node id="82">
         <label>components/devices/controller/public/sbIDeviceController.idl</label>
         <link refid="sbIDeviceController.idl"/>
-        <childnode refid="80" relation="include">
-        </childnode>
-        <childnode refid="81" relation="include">
-        </childnode>
-        <childnode refid="82" relation="include">
-        </childnode>
         <childnode refid="83" relation="include">
         </childnode>
         <childnode refid="84" relation="include">
@@ -36,17 +30,23 @@
         </childnode>
         <childnode refid="86" relation="include">
         </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
       </node>
-      <node id="81">
+      <node id="84">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="82">
+      <node id="85">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="80">
+      <node id="83">
         <label>nsISupports.idl</label>
       </node>
-      <node id="86">
+      <node id="89">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>

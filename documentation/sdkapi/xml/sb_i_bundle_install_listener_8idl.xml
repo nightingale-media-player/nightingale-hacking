@@ -4,13 +4,13 @@
     <compoundname>sbIBundleInstallListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="15">
+      <node id="18">
         <label>components/bundle/public/sbIBundleInstallListener.idl</label>
         <link refid="sbIBundleInstallListener.idl"/>
-        <childnode refid="16" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="16">
+      <node id="19">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

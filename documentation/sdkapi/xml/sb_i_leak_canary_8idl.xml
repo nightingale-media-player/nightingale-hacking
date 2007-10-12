@@ -4,13 +4,13 @@
     <compoundname>sbILeakCanary.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="455">
+      <node id="458">
         <label>components/testharness/public/sbILeakCanary.idl</label>
         <link refid="sbILeakCanary.idl"/>
-        <childnode refid="456" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
       </node>
-      <node id="456">
+      <node id="459">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

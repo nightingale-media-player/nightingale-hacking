@@ -47,6 +47,32 @@
         </inbodydescription>
         <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_builder_16bd38aab3111172dda32d7f08b8c9168" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPropertyBuilder::userViewable</definition>
+        <argsstring></argsstring>
+        <name>userViewable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_builder_187c7d838c9a0f42969961d23235ea9bc" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPropertyBuilder::userEditable</definition>
+        <argsstring></argsstring>
+        <name>userEditable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
         <definition>attribute boolean sbIPropertyBuilder::remoteReadable</definition>
@@ -58,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="52" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -71,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="54" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -86,7 +112,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="56"/>
+        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="60"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -95,36 +121,36 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="528">
+      <node id="538">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="531">
+      <node id="541">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="528" relation="public-inheritance">
+        <childnode refid="538" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="532">
+      <node id="542">
         <label>sbISimpleButtonPropertyBuilder</label>
         <link refid="interfacesb_i_simple_button_property_builder"/>
-        <childnode refid="528" relation="public-inheritance">
+        <childnode refid="538" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="529">
+      <node id="539">
         <label>sbIDownloadButtonPropertyBuilder</label>
         <link refid="interfacesb_i_download_button_property_builder"/>
-        <childnode refid="528" relation="public-inheritance">
+        <childnode refid="538" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="530">
+      <node id="540">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="528" relation="public-inheritance">
+        <childnode refid="538" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="44" bodyend="57"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="44" bodyend="61"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>displayNameKey</name></member>
@@ -132,6 +158,8 @@
       <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>propertyName</name></member>
       <member refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>remoteReadable</name></member>
       <member refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>remoteWritable</name></member>
+      <member refid="interfacesb_i_property_builder_187c7d838c9a0f42969961d23235ea9bc" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_property_builder_16bd38aab3111172dda32d7f08b8c9168" prot="public" virt="non-virtual"><scope>sbIPropertyBuilder</scope><name>userViewable</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

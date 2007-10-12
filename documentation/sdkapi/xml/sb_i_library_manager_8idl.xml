@@ -4,13 +4,13 @@
     <compoundname>sbILibraryManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="206">
+      <node id="209">
         <label>nsISupports.idl</label>
       </node>
-      <node id="205">
+      <node id="208">
         <label>components/library/base/public/sbILibraryManager.idl</label>
         <link refid="sbILibraryManager.idl"/>
-        <childnode refid="206" relation="include">
+        <childnode refid="209" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="119"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="124"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_10f811f5ded3cc58d75023dbd5401f95e" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC</name>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="123"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="128"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_1df9ef3e803a63291142cdf5b358c7d66" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC</name>
@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="127"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="132"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -113,26 +113,28 @@
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
 <codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getLibraryLoadsAtStartup(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasLibrary(in<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>aLibrary);</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"></highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="113"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"></highlight></codeline>
-<codeline lineno="115"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>Library<sp/>Manager<sp/>will<sp/>use<sp/>this<sp/>topic<sp/>to<sp/>notify<sp/>interested<sp/>components<sp/>that</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/>its<sp/>startup<sp/>libraries<sp/>have<sp/>all<sp/>been<sp/>registered.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_READY_TOPIC<sp/>&quot;songbird-library-manager-ready&quot;</highlight></codeline>
-<codeline lineno="120"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>but<sp/>before<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-before-shutdown&quot;</highlight></codeline>
-<codeline lineno="124"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>and<sp/>after<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-after-shutdown&quot;</highlight></codeline>
-<codeline lineno="128"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>Library<sp/>Manager<sp/>will<sp/>use<sp/>this<sp/>topic<sp/>to<sp/>notify<sp/>interested<sp/>components<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>its<sp/>startup<sp/>libraries<sp/>have<sp/>all<sp/>been<sp/>registered.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_READY_TOPIC<sp/>&quot;songbird-library-manager-ready&quot;</highlight></codeline>
+<codeline lineno="125"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>but<sp/>before<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-before-shutdown&quot;</highlight></codeline>
+<codeline lineno="129"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>and<sp/>after<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-after-shutdown&quot;</highlight></codeline>
+<codeline lineno="133"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryManager.idl"/>
   </compounddef>

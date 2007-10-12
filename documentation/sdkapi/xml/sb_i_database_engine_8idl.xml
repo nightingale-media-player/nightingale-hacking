@@ -4,13 +4,13 @@
     <compoundname>sbIDatabaseEngine.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="40">
+      <node id="43">
         <label>components/dbengine/public/sbIDatabaseEngine.idl</label>
         <link refid="sbIDatabaseEngine.idl"/>
-        <childnode refid="41" relation="include">
+        <childnode refid="44" relation="include">
         </childnode>
       </node>
-      <node id="41">
+      <node id="44">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseSimpleMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="284">
+      <node id="287">
         <label>components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl</label>
         <link refid="sbILocalDatabaseSimpleMediaList.idl"/>
-        <childnode refid="285" relation="include">
+        <childnode refid="288" relation="include">
         </childnode>
       </node>
-      <node id="285">
+      <node id="288">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbIContentTypeFormat.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="49">
+      <node id="52">
         <label>components/devices/base/public/sbIContentTypeFormat.idl</label>
         <link refid="sbIContentTypeFormat.idl"/>
-        <childnode refid="50" relation="include">
+        <childnode refid="53" relation="include">
         </childnode>
       </node>
-      <node id="50">
+      <node id="53">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

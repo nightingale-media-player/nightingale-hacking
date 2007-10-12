@@ -6,23 +6,23 @@
     <includes local="yes">nsIObserver.idl</includes>
     <includes local="yes">nsIStringEnumerator.idl</includes>
     <incdepgraph>
-      <node id="371">
+      <node id="374">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="370">
+      <node id="373">
         <label>nsIObserver.idl</label>
       </node>
-      <node id="368">
+      <node id="371">
         <label>components/playlistplayback/public/sbIPlaylistPlayback.idl</label>
         <link refid="sbIPlaylistPlayback.idl"/>
-        <childnode refid="369" relation="include">
+        <childnode refid="372" relation="include">
         </childnode>
-        <childnode refid="370" relation="include">
+        <childnode refid="373" relation="include">
         </childnode>
-        <childnode refid="371" relation="include">
+        <childnode refid="374" relation="include">
         </childnode>
       </node>
-      <node id="369">
+      <node id="372">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

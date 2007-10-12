@@ -7,28 +7,28 @@
     <includes local="yes">nsIPrompt.idl</includes>
     <includes local="yes">nsIAuthPrompt.idl</includes>
     <incdepgraph>
-      <node id="377">
+      <node id="380">
         <label>components/playlistreader/public/sbIPlaylistWriter.idl</label>
         <link refid="sbIPlaylistWriter.idl"/>
-        <childnode refid="378" relation="include">
-        </childnode>
-        <childnode refid="379" relation="include">
-        </childnode>
-        <childnode refid="380" relation="include">
-        </childnode>
         <childnode refid="381" relation="include">
         </childnode>
+        <childnode refid="382" relation="include">
+        </childnode>
+        <childnode refid="383" relation="include">
+        </childnode>
+        <childnode refid="384" relation="include">
+        </childnode>
       </node>
-      <node id="379">
+      <node id="382">
         <label>nsIProgressEventSink.idl</label>
       </node>
-      <node id="381">
+      <node id="384">
         <label>nsIAuthPrompt.idl</label>
       </node>
-      <node id="378">
+      <node id="381">
         <label>nsISupports.idl</label>
       </node>
-      <node id="380">
+      <node id="383">
         <label>nsIPrompt.idl</label>
       </node>
     </incdepgraph>

@@ -5,33 +5,33 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
-      <node id="290">
+      <node id="293">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="294" relation="include">
+        </childnode>
+      </node>
+      <node id="294">
+        <label>sbILibraryResource.idl</label>
+        <link refid="sb_i_library_resource_8idl"/>
         <childnode refid="291" relation="include">
         </childnode>
       </node>
-      <node id="291">
-        <label>sbILibraryResource.idl</label>
-        <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="288" relation="include">
-        </childnode>
-      </node>
-      <node id="289">
+      <node id="292">
         <label>sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="290" relation="include">
+        <childnode refid="293" relation="include">
         </childnode>
       </node>
-      <node id="287">
+      <node id="290">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sbILocalDatabaseSmartMediaList.idl"/>
-        <childnode refid="288" relation="include">
+        <childnode refid="291" relation="include">
         </childnode>
-        <childnode refid="289" relation="include">
+        <childnode refid="292" relation="include">
         </childnode>
       </node>
-      <node id="288">
+      <node id="291">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

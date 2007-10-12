@@ -2290,26 +2290,26 @@
 </para><para>Commands registered to the PlaylistCommandsManager using the registerPlaylistCommandsMedia[List|Item]() functions should be unregistered using the corresponding unregisterPlaylistCommandsMedia[List|Item]() function before application shutdown. Commands published using the publish() function should be withdrawn using the withdraw() function before application shutdown.</para><para>All instantiated <ref refid="interfacesb_i_playlist_commands_builder" kindref="compound">sbIPlaylistCommandsBuilder</ref> should have their <ref refid="interfacesb_i_playlist_commands_builder_1f6859e26c95738651c4c42e833435643" kindref="member">shutdown()</ref> method called before application shutdown to ensure that no external reference remains in their internal arrays.</para><para>Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut strings (key, keycode, modifiers) may take values such as &quot;&amp;value&quot;, which will cause the appropriate localized string to be fetched from the active locale.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> <ref refid="interfacesb_i_playlist_commands_manager" kindref="compound">sbIPlaylistCommandsManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="427">
+      <node id="437">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="426">
+      <node id="436">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="427" relation="public-inheritance">
+        <childnode refid="437" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="429">
+      <node id="439">
         <label>sbIPlaylistCommands</label>
         <link refid="interfacesb_i_playlist_commands"/>
       </node>
-      <node id="428">
+      <node id="438">
         <label>sbIPlaylistCommandsBuilder</label>
         <link refid="interfacesb_i_playlist_commands_builder"/>
-        <childnode refid="429" relation="public-inheritance">
+        <childnode refid="439" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

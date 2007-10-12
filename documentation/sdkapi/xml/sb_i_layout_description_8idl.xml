@@ -4,13 +4,13 @@
     <compoundname>sbILayoutDescription.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="142">
+      <node id="145">
         <label>components/feathers/public/sbILayoutDescription.idl</label>
         <link refid="sbILayoutDescription.idl"/>
-        <childnode refid="143" relation="include">
+        <childnode refid="146" relation="include">
         </childnode>
       </node>
-      <node id="143">
+      <node id="146">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

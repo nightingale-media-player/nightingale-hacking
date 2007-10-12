@@ -33,7 +33,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="89" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="88" bodyend="90"/>
+    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="93" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="92" bodyend="94"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayNameKey</name></member>
@@ -41,6 +41,8 @@
       <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>propertyName</name></member>
       <member refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteReadable</name></member>
       <member refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteWritable</name></member>
+      <member refid="interfacesb_i_property_builder_187c7d838c9a0f42969961d23235ea9bc" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_property_builder_16bd38aab3111172dda32d7f08b8c9168" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>userViewable</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="67">
+      <node id="70">
         <label>components/devices/base/public/sbIDeviceEventListener.idl</label>
         <link refid="sbIDeviceEventListener.idl"/>
-        <childnode refid="68" relation="include">
+        <childnode refid="71" relation="include">
         </childnode>
       </node>
-      <node id="68">
+      <node id="71">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

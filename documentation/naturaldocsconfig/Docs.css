@@ -544,3 +544,47 @@ body.FramedMenuPage .Footer {
     .Footer a:hover,
     .Footer a:visited { color: #909090 }
     .Footer a:active { color: #A00000 }
+
+#sb_header {
+	font-size:11px;
+	background-color:rgb(0,0,0);
+	color:rgb(200,200,200);
+	padding:6px 0px 7px 0px;
+	line-height:16px;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	font-family:georgia, serif;
+	height:17px;
+	text-align:left;
+}
+
+#sb_header a,
+#sb_header a:link {
+    text-decoration: underline;
+	color:rgb(255,255,255);
+}
+
+#sb_header a:visited{
+}
+
+#sb_header a:hover{
+	text-decoration: none;
+	background-color:transparent ! important;
+}
+
+#sb_header img {
+	border:none;
+	vertical-align:middle;
+	margin:0 10px 0 12px;
+}
+
+body {
+	padding-top:32px;
+}
+
+.IE #sb_header {
+  width:expression(document.body.clientWidth);
+  position:absolute;
+}

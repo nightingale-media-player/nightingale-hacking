@@ -4,13 +4,13 @@
     <compoundname>IWindowResizeHook.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="169">
+      <node id="172">
         <label>components/integration/public/IWindowResizeHook.idl</label>
         <link refid="IWindowResizeHook.idl"/>
-        <childnode refid="170" relation="include">
+        <childnode refid="173" relation="include">
         </childnode>
       </node>
-      <node id="170">
+      <node id="173">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

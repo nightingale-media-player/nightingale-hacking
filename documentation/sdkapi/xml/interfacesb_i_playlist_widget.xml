@@ -14,7 +14,7 @@
 <para>This is used only during the propogation of the PlaylistClickEvent event and will only be non-null for a very brief time during that flow. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="156" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="156" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="231" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="231" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -39,11 +39,11 @@
         <briefdescription>
 <para>Get the view being displayed in the &lt;WebPlaylist&gt;. </para>        </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>A medialist view for the currently displayed medialist </para></simplesect>
+<para>NOTE - Not callable from web pages.</para><para><simplesect kind="return"><para>A medialist view for the currently displayed medialist </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="66"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -69,7 +69,7 @@
         <briefdescription>
 <para>Attach the &lt;WebPlaylist&gt; to the view passed in. </para>        </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
+<para>NOTE - Not callable from web pages.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>mediaListView</parametername>
 </parameternamelist>
@@ -101,162 +101,207 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="81"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="85"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_widget_11c7b3baeb159a3dc6fa5b8b73432ccba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIPlaylistWidget::showColumn</definition>
-        <argsstring>(in AString aColumnName)</argsstring>
-        <name>showColumn</name>
-        <param>
-          <type>in AString</type>
-          <declname>aColumnName</declname>
-        </param>
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_16d734ebceaaaf931882ea882b034495b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIPlaylistWidget::getColumnCount</definition>
+        <argsstring>()</argsstring>
+        <name>getColumnCount</name>
         <briefdescription>
-<para>Make a column show up in the UI. </para>        </briefdescription>
+<para>Get the total number of columns in the web playlist. </para>        </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aColumnName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- the name of the column to display </para></parameterdescription>
-</parameteritem>
-</parameterlist>
+<para><simplesect kind="return"><para>The number of columns in the web playlist </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="102"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="101"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_widget_1b54636b919d480ad5d9ed7a56df4902f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_1beec3e34b905d617f4ca536b3806b11c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIPlaylistWidget::hideColumn</definition>
-        <argsstring>(in AString aColumnName)</argsstring>
-        <name>hideColumn</name>
-        <param>
-          <type>in AString</type>
-          <declname>aColumnName</declname>
-        </param>
+        <definition>void sbIPlaylistWidget::clearColumns</definition>
+        <argsstring>()</argsstring>
+        <name>clearColumns</name>
         <briefdescription>
-<para>Make a column disappear from the UI. </para>        </briefdescription>
+<para>Clear all columns from the web playlist. </para>        </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aColumnName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- the name of the column to hide </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="122"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="111"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_widget_12c7775c5b1d348cad166898abc1bd3e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_16da4706da9e7352222edfba6d5de3414" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIPlaylistWidget::moveColumnBefore</definition>
-        <argsstring>(in AString aColumnName, in AString aBeforeColumnName)</argsstring>
-        <name>moveColumnBefore</name>
+        <definition>void sbIPlaylistWidget::appendColumn</definition>
+        <argsstring>(in AString aPropertyID,[optional] in AString aWidth)</argsstring>
+        <name>appendColumn</name>
         <param>
           <type>in AString</type>
-          <declname>aColumnName</declname>
+          <declname>aPropertyID</declname>
         </param>
         <param>
+          <attributes>[optional]</attributes>
           <type>in AString</type>
-          <declname>aBeforeColumnName</declname>
-        </param>
-        <briefdescription>
-<para>Make the named column move before the second. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aColumnName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- The column to move </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aBeforeColumnName</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- The column that will be after (to the right of) the first column </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="132"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_widget_1f541b89c267cecbf3fd0d3ee3426b033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIPlaylistWidget::insertColumn</definition>
-        <argsstring>(in sbIPropertyInfo aPropInfo, in boolean aIsHidden, in long aWidth, in AString aSortOrder, in AString aBeforeCol)</argsstring>
-        <name>insertColumn</name>
-        <param>
-          <type>in <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></type>
-          <declname>aPropInfo</declname>
-        </param>
-        <param>
-          <type>in boolean</type>
-          <declname>aIsHidden</declname>
-        </param>
-        <param>
-          <type>in long</type>
           <declname>aWidth</declname>
         </param>
-        <param>
-          <type>in AString</type>
-          <declname>aSortOrder</declname>
-        </param>
-        <param>
-          <type>in AString</type>
-          <declname>aBeforeCol</declname>
-        </param>
         <briefdescription>
-<para>Add a column indicated by the propertyInfo into the UI. </para>        </briefdescription>
+<para>Add a column to the right side of visible columns. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aPropInfo</parametername>
+<parametername>aPropertyID</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>- the propertyInfo that defines the column data </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aIsHidden</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- if the column should be visible </para></parameterdescription>
+<para>- The ID of the property you want to add as a column </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>aWidth</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>- the width of the column </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aSortOrder</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- What direction the sort should be in </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aBeforeCol</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>- The column name that the added column should be inserted before </para></parameterdescription>
+<para>- The width in pixels of the column. If there has been a width set for this particular column then that width will be respected and this ignored. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="148"/>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="133"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_1c91f64c42ecdd35cd493f1fb6c737828" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistWidget::insertColumnBefore</definition>
+        <argsstring>(in AString aPropertyID,[optional] in AString aBeforePropertyID,[optional] in AString aWidth)</argsstring>
+        <name>insertColumnBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyID</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in AString</type>
+          <declname>aBeforePropertyID</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in AString</type>
+          <declname>aWidth</declname>
+        </param>
+        <briefdescription>
+<para>Insert a column into the web playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The ID of the property you want to add as a column </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeforePropertyID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- If specified, the new column will appear before the column that is bound to the specified property. If not specified, the column will be added to the end of the list. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The width in pixels of the column. If there has been a width set for this particular column then that width will be respected and this ignored. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="162"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_1954f750374aa2eb5ee5f1dbd90515207" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistWidget::removeColumn</definition>
+        <argsstring>(in AString aPropertyID)</argsstring>
+        <name>removeColumn</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyID</declname>
+        </param>
+        <briefdescription>
+<para>Remove a column from the playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The ID of the property that is bound to the column you wish to remove. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="179"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_12a2e67cb62d2e986b28a2652931032bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistWidget::getColumnPropertyIDByIndex</definition>
+        <argsstring>(in unsigned long aIndex)</argsstring>
+        <name>getColumnPropertyIDByIndex</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the property ID bould to a particular column at a given index. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The index of the column from which you want to retrieve the bound property </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The ID of the property bound to the specified column </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="201"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_widget_16750c08bbd51228859ed153b8ba0bdac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistWidget::setSortColumn</definition>
+        <argsstring>(in AString aPropertyID, in boolean aIsAscending)</argsstring>
+        <name>setSortColumn</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyID</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsAscending</declname>
+        </param>
+        <briefdescription>
+<para>Set the sort of the web playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The ID of the property that is bound to the column you wish to sort. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsAscending</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- True if the sort should be ascending, false if the sort should be descending. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="223"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -264,87 +309,90 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="504">
+      <node id="514">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="501" relation="public-inheritance">
+        <childnode refid="511" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="508">
+      <node id="518">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="505">
+      <node id="515">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="506" relation="usage">
+        <childnode refid="516" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="508" relation="usage">
+        <childnode refid="518" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="503">
+      <node id="513">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="504" relation="public-inheritance">
+        <childnode refid="514" relation="public-inheritance">
         </childnode>
-        <childnode refid="505" relation="usage">
+        <childnode refid="515" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="507" relation="usage">
+        <childnode refid="517" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="502">
+      <node id="512">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="501">
+      <node id="511">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="502" relation="public-inheritance">
+        <childnode refid="512" relation="public-inheritance">
         </childnode>
-        <childnode refid="503" relation="usage">
+        <childnode refid="513" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="506">
+      <node id="516">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="507" relation="usage">
+        <childnode refid="517" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="507">
+      <node id="517">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="500">
+      <node id="510">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="501" relation="usage">
+        <childnode refid="511" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="499">
+      <node id="509">
         <label>sbIPlaylistWidget</label>
         <link refid="interfacesb_i_playlist_widget"/>
-        <childnode refid="500" relation="usage">
+        <childnode refid="510" relation="usage">
           <edgelabel>lastClickEvent</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="49" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="48" bodyend="157"/>
+    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="49" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="48" bodyend="232"/>
     <listofallmembers>
+      <member refid="interfacesb_i_playlist_widget_16da4706da9e7352222edfba6d5de3414" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>appendColumn</name></member>
       <member refid="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>bind</name></member>
+      <member refid="interfacesb_i_playlist_widget_1beec3e34b905d617f4ca536b3806b11c" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>clearColumns</name></member>
+      <member refid="interfacesb_i_playlist_widget_16d734ebceaaaf931882ea882b034495b" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>getColumnCount</name></member>
+      <member refid="interfacesb_i_playlist_widget_12a2e67cb62d2e986b28a2652931032bc" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>getColumnPropertyIDByIndex</name></member>
       <member refid="interfacesb_i_playlist_widget_139986e570cddb5d1932acc6f0a647e0f" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>getListView</name></member>
-      <member refid="interfacesb_i_playlist_widget_1b54636b919d480ad5d9ed7a56df4902f" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>hideColumn</name></member>
-      <member refid="interfacesb_i_playlist_widget_1f541b89c267cecbf3fd0d3ee3426b033" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>insertColumn</name></member>
+      <member refid="interfacesb_i_playlist_widget_1c91f64c42ecdd35cd493f1fb6c737828" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>insertColumnBefore</name></member>
       <member refid="interfacesb_i_playlist_widget_1c023582f73fbed84eb3b1b63609487a8" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>lastClickEvent</name></member>
-      <member refid="interfacesb_i_playlist_widget_12c7775c5b1d348cad166898abc1bd3e4" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>moveColumnBefore</name></member>
+      <member refid="interfacesb_i_playlist_widget_1954f750374aa2eb5ee5f1dbd90515207" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>removeColumn</name></member>
       <member refid="interfacesb_i_playlist_widget_1fd3292f2b9571292155841e07adcb567" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>rescanCommands</name></member>
-      <member refid="interfacesb_i_playlist_widget_11c7b3baeb159a3dc6fa5b8b73432ccba" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>showColumn</name></member>
+      <member refid="interfacesb_i_playlist_widget_16750c08bbd51228859ed153b8ba0bdac" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>setSortColumn</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIApplicationController.idl</compoundname>
     <includes local="yes">nsIControllers.idl</includes>
     <incdepgraph>
-      <node id="30">
+      <node id="33">
         <label>components/controller/public/sbIApplicationController.idl</label>
         <link refid="sbIApplicationController.idl"/>
-        <childnode refid="31" relation="include">
+        <childnode refid="34" relation="include">
         </childnode>
       </node>
-      <node id="31">
+      <node id="34">
         <label>nsIControllers.idl</label>
       </node>
     </incdepgraph>

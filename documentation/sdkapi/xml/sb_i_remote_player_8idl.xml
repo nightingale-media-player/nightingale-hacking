@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="416">
+      <node id="419">
         <label>components/remoteapi/public/sbIRemotePlayer.idl</label>
         <link refid="sbIRemotePlayer.idl"/>
-        <childnode refid="417" relation="include">
+        <childnode refid="420" relation="include">
         </childnode>
       </node>
-      <node id="417">
+      <node id="420">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -757,431 +757,466 @@
 <codeline lineno="860"><highlight class="normal"></highlight></codeline>
 <codeline lineno="864"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fireEventToContent(in<sp/>AString<sp/>aClass,<sp/>in<sp/>AString<sp/>aType);</highlight></codeline>
 <codeline lineno="865"><highlight class="normal"></highlight></codeline>
-<codeline lineno="869"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommandsChanged();</highlight></codeline>
-<codeline lineno="870"><highlight class="normal"></highlight></codeline>
-<codeline lineno="871"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="872"><highlight class="comment"><sp/><sp/>Func:<sp/>createTextProperty()</highlight></codeline>
-<codeline lineno="873"><highlight class="comment"></highlight></codeline>
-<codeline lineno="874"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>text<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media<sp/>items.</highlight></codeline>
-<codeline lineno="875"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
-<codeline lineno="876"><highlight class="comment"></highlight></codeline>
-<codeline lineno="877"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="878"><highlight class="comment"><sp/><sp/><sp/><sp/>createTextProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="879"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="880"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="881"><highlight class="comment"></highlight></codeline>
-<codeline lineno="882"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="883"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="884"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="885"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="886"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="887"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="888"><highlight class="comment"></highlight></codeline>
-<codeline lineno="889"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="890"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="891"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="892"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="893"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="894"><highlight class="comment"></highlight></codeline>
-<codeline lineno="895"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="896"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="897"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="898"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="899"><highlight class="comment"></highlight></codeline>
-<codeline lineno="900"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>indicates<sp/>what<sp/>store<sp/>this<sp/>item<sp/>is<sp/>from</highlight></codeline>
-<codeline lineno="901"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createDateTimeProperty(&quot;Store&quot;,<sp/>&quot;Store&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="902"><highlight class="comment"></highlight></codeline>
-<codeline lineno="903"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>the<sp/>store<sp/>name<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="904"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Store&quot;,<sp/>&quot;Amazon&quot;);</highlight></codeline>
-<codeline lineno="905"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="869"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fireMediaItemStatusEventToContent(in<sp/>AString<sp/>aClass,</highlight></codeline>
+<codeline lineno="870"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aType,</highlight></codeline>
+<codeline lineno="871"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem,</highlight></codeline>
+<codeline lineno="872"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStatus);</highlight></codeline>
+<codeline lineno="873"><highlight class="normal"></highlight></codeline>
+<codeline lineno="877"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommandsChanged();</highlight></codeline>
+<codeline lineno="878"><highlight class="normal"></highlight></codeline>
+<codeline lineno="882"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="883"><highlight class="comment"><sp/><sp/>Method:<sp/>hasAccess()</highlight></codeline>
+<codeline lineno="884"><highlight class="comment"></highlight></codeline>
+<codeline lineno="885"><highlight class="comment"><sp/><sp/>Check<sp/>if<sp/>the<sp/>code<sp/>has<sp/>access<sp/>to<sp/>a<sp/>category.</highlight></codeline>
+<codeline lineno="886"><highlight class="comment"></highlight></codeline>
+<codeline lineno="887"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="888"><highlight class="comment"><sp/><sp/><sp/><sp/>boolean<sp/>hasAccess(<sp/>String<sp/>Category<sp/>)</highlight></codeline>
+<codeline lineno="889"><highlight class="comment"></highlight></codeline>
+<codeline lineno="890"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="891"><highlight class="comment"><sp/><sp/><sp/><sp/>Category<sp/>-<sp/>The<sp/>category<sp/>to<sp/>check<sp/>for<sp/>access<sp/>to.</highlight></codeline>
+<codeline lineno="892"><highlight class="comment"></highlight></codeline>
+<codeline lineno="893"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="894"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="895"><highlight class="comment"><sp/><sp/><sp/><sp/>...</highlight></codeline>
+<codeline lineno="896"><highlight class="comment"><sp/><sp/><sp/><sp/>if<sp/>(songbird.hasAccess(&apos;Read<sp/>Current&apos;))</highlight></codeline>
+<codeline lineno="897"><highlight class="comment"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="898"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>var<sp/>artist<sp/>=<sp/>songbird.currentArtist;</highlight></codeline>
+<codeline lineno="899"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="900"><highlight class="comment"><sp/><sp/><sp/><sp/>...</highlight></codeline>
+<codeline lineno="901"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="902"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="903"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasAccess(<sp/>in<sp/>AString<sp/>aRemotePermCataegory<sp/>);</highlight></codeline>
+<codeline lineno="904"><highlight class="normal"></highlight></codeline>
+<codeline lineno="905"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Group:<sp/>Property<sp/>Creation</highlight></codeline>
 <codeline lineno="906"><highlight class="comment"></highlight></codeline>
-<codeline lineno="907"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="908"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="909"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="910"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="911"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="912"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="913"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="914"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="915"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="916"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createTextProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="917"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="918"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="919"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="920"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="921"><highlight class="normal"></highlight></codeline>
-<codeline lineno="922"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="923"><highlight class="comment"><sp/><sp/>Func:<sp/>createDateTimeProperty()</highlight></codeline>
-<codeline lineno="924"><highlight class="comment"></highlight></codeline>
-<codeline lineno="925"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>date<sp/>time<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
-<codeline lineno="926"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
-<codeline lineno="927"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
-<codeline lineno="928"><highlight class="comment"></highlight></codeline>
-<codeline lineno="929"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="930"><highlight class="comment"><sp/><sp/><sp/><sp/>createDateTimeProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="931"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="932"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="933"><highlight class="comment"></highlight></codeline>
-<codeline lineno="934"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="935"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="936"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="937"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="938"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="939"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="940"><highlight class="comment"></highlight></codeline>
-<codeline lineno="941"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="942"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="943"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="944"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="945"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="946"><highlight class="comment"></highlight></codeline>
-<codeline lineno="947"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="948"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="949"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="950"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="951"><highlight class="comment"></highlight></codeline>
-<codeline lineno="952"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>of<sp/>when<sp/>this<sp/>item<sp/>was<sp/>added<sp/>to<sp/>the<sp/>store</highlight></codeline>
-<codeline lineno="953"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createDateTimeProperty(&quot;DateAdded&quot;,<sp/>&quot;Added&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="954"><highlight class="comment"></highlight></codeline>
-<codeline lineno="955"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>the<sp/>added<sp/>date<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="956"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;DateAdded&quot;,<sp/>&quot;4948575738&quot;);</highlight></codeline>
-<codeline lineno="957"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="958"><highlight class="comment"></highlight></codeline>
-<codeline lineno="959"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="960"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="961"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="962"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="963"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="964"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="965"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="966"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="967"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="968"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createDateTimeProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="969"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="970"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="971"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="972"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="973"><highlight class="normal"></highlight></codeline>
-<codeline lineno="974"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="975"><highlight class="comment"><sp/><sp/>Func:<sp/>createURIProperty()</highlight></codeline>
-<codeline lineno="976"><highlight class="comment"></highlight></codeline>
-<codeline lineno="977"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>URI<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media<sp/>items.</highlight></codeline>
-<codeline lineno="978"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
-<codeline lineno="979"><highlight class="comment"></highlight></codeline>
-<codeline lineno="980"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="981"><highlight class="comment"><sp/><sp/><sp/><sp/>createURIProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="982"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="983"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="984"><highlight class="comment"></highlight></codeline>
-<codeline lineno="985"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="986"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="987"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="988"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="989"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="990"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="991"><highlight class="comment"></highlight></codeline>
-<codeline lineno="992"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="993"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="994"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="995"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="996"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="997"><highlight class="comment"></highlight></codeline>
-<codeline lineno="998"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="999"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1000"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1001"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1002"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1003"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>links<sp/>to<sp/>the<sp/>store</highlight></codeline>
-<codeline lineno="1004"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createURIProperty(&quot;StoreLink&quot;,<sp/>&quot;Store&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="1005"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1006"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>url<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1007"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;StoreLink&quot;,<sp/>&quot;http://www.store.com/item.php?id=1&quot;);</highlight></codeline>
-<codeline lineno="1008"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="1009"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1010"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1011"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="1012"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1013"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="1014"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="1015"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="1016"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1017"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1018"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1019"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createURIProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1020"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1021"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1022"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1023"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="1024"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1025"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1026"><highlight class="comment"><sp/><sp/>Func:<sp/>createNumberProperty()</highlight></codeline>
+<codeline lineno="907"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>list<sp/>of<sp/>available<sp/>columns,<sp/>as<sp/>well<sp/>as<sp/>provide<sp/>a<sp/></highlight></codeline>
+<codeline lineno="908"><highlight class="comment"><sp/><sp/>means<sp/>of<sp/>storing<sp/>data<sp/>about<sp/>a<sp/>&lt;MediaItem&gt;.<sp/>This<sp/>section<sp/>defines<sp/>and</highlight></codeline>
+<codeline lineno="909"><highlight class="comment"><sp/><sp/>explains<sp/>the<sp/>parameters<sp/>for<sp/>the<sp/>various<sp/>property<sp/>creation<sp/>methods<sp/>below.</highlight></codeline>
+<codeline lineno="910"><highlight class="comment"></highlight></codeline>
+<codeline lineno="911"><highlight class="comment"><sp/><sp/>Common<sp/>Parameters:</highlight></codeline>
+<codeline lineno="912"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.<sp/>Does<sp/>not<sp/>need<sp/>to<sp/>be<sp/>in<sp/>URL<sp/>format</highlight></codeline>
+<codeline lineno="913"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>but<sp/>that<sp/>is<sp/>a<sp/>recommended<sp/>format<sp/>for<sp/>ensuring<sp/>uniqueness.</highlight></codeline>
+<codeline lineno="914"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property.</highlight></codeline>
+<codeline lineno="915"><highlight class="comment"><sp/><sp/><sp/><sp/>readOnly<sp/>-<sp/>If<sp/>true<sp/>this<sp/>property&apos;s<sp/>value<sp/>can<sp/>NOT<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
+<codeline lineno="916"><highlight class="comment"><sp/><sp/><sp/><sp/>hidden<sp/>-<sp/>If<sp/>true<sp/>this<sp/>property<sp/>can<sp/>NOT<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
+<codeline lineno="917"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.<sp/>When<sp/>sorted<sp/>will<sp/>empty<sp/>values</highlight></codeline>
+<codeline lineno="918"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sort<sp/>small<sp/>or<sp/>large;<sp/>see<sp/>below<sp/>for<sp/>more<sp/>detail.</highlight></codeline>
+<codeline lineno="919"><highlight class="comment"></highlight></codeline>
+<codeline lineno="920"><highlight class="comment"><sp/><sp/>Specific<sp/>Parameters:<sp/></highlight></codeline>
+<codeline lineno="921"><highlight class="comment"><sp/><sp/><sp/><sp/>timeType<sp/>-<sp/>Determines<sp/>the<sp/>formatting<sp/>of<sp/>the<sp/>datetime<sp/>string.<sp/>Present<sp/>only<sp/>in</highlight></codeline>
+<codeline lineno="922"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;.</highlight></codeline>
+<codeline lineno="923"><highlight class="comment"><sp/><sp/><sp/><sp/>buttonLabel<sp/>-<sp/>The<sp/>text<sp/>displayed<sp/>on<sp/>a<sp/>button.<sp/>Present<sp/>only<sp/>in</highlight></codeline>
+<codeline lineno="924"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;<sp/>and<sp/>&lt;createDownloadButtonProperty()&gt;.<sp/>For</highlight></codeline>
+<codeline lineno="925"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>standard<sp/>button<sp/>properties<sp/>the<sp/>absence<sp/>of<sp/>this<sp/>parameter<sp/>at<sp/>property</highlight></codeline>
+<codeline lineno="926"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>creation<sp/>allows<sp/>buttons<sp/>to<sp/>have<sp/>different<sp/>text<sp/>on<sp/>them<sp/>by<sp/>setting</highlight></codeline>
+<codeline lineno="927"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>the<sp/>value<sp/>of<sp/>the<sp/>property<sp/>on<sp/>various<sp/>&lt;MediaItem&gt;s.<sp/>That<sp/>is<sp/>not</highlight></codeline>
+<codeline lineno="928"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>possible<sp/>with<sp/>download<sp/>buttons<sp/>as<sp/>the<sp/>value<sp/>determines<sp/>the<sp/>state</highlight></codeline>
+<codeline lineno="929"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>therefore<sp/>the<sp/>display<sp/>of<sp/>the<sp/>button.<sp/>The<sp/>text<sp/>for<sp/>download</highlight></codeline>
+<codeline lineno="930"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>buttons<sp/>MUST<sp/>be<sp/>set<sp/>at<sp/>creation<sp/>or<sp/>the<sp/>button<sp/>will<sp/>not<sp/>have<sp/>any</highlight></codeline>
+<codeline lineno="931"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>will<sp/>not<sp/>draw<sp/>properly.</highlight></codeline>
+<codeline lineno="932"><highlight class="comment"></highlight></codeline>
+<codeline lineno="933"><highlight class="comment"><sp/><sp/>nullSort<sp/>values:</highlight></codeline>
+<codeline lineno="934"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
+<codeline lineno="935"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
+<codeline lineno="936"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
+<codeline lineno="937"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
+<codeline lineno="938"><highlight class="comment"></highlight></codeline>
+<codeline lineno="939"><highlight class="comment"><sp/><sp/>timeType<sp/>values:</highlight></codeline>
+<codeline lineno="940"><highlight class="comment"><sp/><sp/><sp/>-1<sp/>-<sp/>Unintialized</highlight></codeline>
+<codeline lineno="941"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>2007-03-28<sp/>,<sp/>in<sp/>localized<sp/>format</highlight></codeline>
+<codeline lineno="942"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>HH:mm:ss.ms,<sp/>in<sp/>localized<sp/>format.<sp/>Limited<sp/>to<sp/>24<sp/>hour<sp/>days.</highlight></codeline>
+<codeline lineno="943"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Long<sp/>date<sp/>format,<sp/>2007-03-28<sp/>12:33:01<sp/>,<sp/>no<sp/>milliseconds.</highlight></codeline>
+<codeline lineno="944"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Duration,<sp/>represented<sp/>in<sp/>HH:mm:ss.ms,<sp/>in<sp/>localized<sp/>format.<sp/>May<sp/>exceed<sp/>24<sp/>hours</highlight></codeline>
+<codeline lineno="945"><highlight class="comment"><sp/><sp/><sp/><sp/>4<sp/>-<sp/>Timestamp<sp/>format,<sp/>respects<sp/>unix<sp/>time,<sp/>microsecond<sp/>format.<sp/>Also<sp/>internal</highlight></codeline>
+<codeline lineno="946"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>storage<sp/>type.</highlight></codeline>
+<codeline lineno="947"><highlight class="comment"></highlight></codeline>
+<codeline lineno="948"><highlight class="comment"><sp/><sp/>See:</highlight></codeline>
+<codeline lineno="949"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;,<sp/>&lt;createDateTimeProperty()&gt;,<sp/>&lt;createURIProperty()&gt;,</highlight></codeline>
+<codeline lineno="950"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;,<sp/>&lt;createImageProperty()&gt;,<sp/>&lt;createRatingsProperty()&gt;,</highlight></codeline>
+<codeline lineno="951"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;,<sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="952"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="953"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="954"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="955"><highlight class="comment"><sp/><sp/>Func:<sp/>createTextProperty()</highlight></codeline>
+<codeline lineno="956"><highlight class="comment"></highlight></codeline>
+<codeline lineno="957"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>text<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media<sp/>items.</highlight></codeline>
+<codeline lineno="958"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="959"><highlight class="comment"></highlight></codeline>
+<codeline lineno="960"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="961"><highlight class="comment"><sp/><sp/><sp/><sp/>createTextProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="962"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="963"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="964"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="965"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="966"><highlight class="comment"></highlight></codeline>
+<codeline lineno="967"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="968"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="969"><highlight class="comment"></highlight></codeline>
+<codeline lineno="970"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="971"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="972"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="973"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="974"><highlight class="comment"></highlight></codeline>
+<codeline lineno="975"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>indicates<sp/>what<sp/>store<sp/>this<sp/>item<sp/>is<sp/>from.</highlight></codeline>
+<codeline lineno="976"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createTextProperty(&quot;http://example.com/Store&quot;,</highlight></codeline>
+<codeline lineno="977"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Store&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
+<codeline lineno="978"><highlight class="comment"></highlight></codeline>
+<codeline lineno="979"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>the<sp/>store<sp/>name<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="980"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Store&quot;,<sp/>&quot;Amazon&quot;);</highlight></codeline>
+<codeline lineno="981"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="982"><highlight class="comment"></highlight></codeline>
+<codeline lineno="983"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="984"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="985"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="986"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="987"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="988"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="989"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="990"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="991"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="992"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createTextProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="993"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="994"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="995"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="996"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="997"><highlight class="normal"></highlight></codeline>
+<codeline lineno="998"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="999"><highlight class="comment"><sp/><sp/>Func:<sp/>createDateTimeProperty()</highlight></codeline>
+<codeline lineno="1000"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1001"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>date<sp/>time<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
+<codeline lineno="1002"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
+<codeline lineno="1003"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;.</highlight></codeline>
+<codeline lineno="1004"><highlight class="comment"><sp/><sp/>This<sp/>property<sp/>accept<sp/>values<sp/>for<sp/>time<sp/>in<sp/>microseconds,<sp/>5<sp/>minutes<sp/>52<sp/>seconds</highlight></codeline>
+<codeline lineno="1005"><highlight class="comment"><sp/><sp/>would<sp/>be<sp/>a<sp/>value<sp/>of<sp/>352000000.<sp/>For<sp/>the<sp/>date<sp/>based<sp/>time<sp/>types<sp/>the<sp/>time<sp/>is<sp/>the</highlight></codeline>
+<codeline lineno="1006"><highlight class="comment"><sp/><sp/>number<sp/>of<sp/>microseconds<sp/>from<sp/>the<sp/>linux<sp/>epoch:<sp/>1<sp/>January<sp/>1970<sp/>00:00:00<sp/>UTC.</highlight></codeline>
+<codeline lineno="1007"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1008"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1009"><highlight class="comment"><sp/><sp/><sp/><sp/>createDateTimeProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1010"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1011"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>timeType,</highlight></codeline>
+<codeline lineno="1012"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1013"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1014"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1015"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1016"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1017"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1018"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1019"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1020"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1021"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1022"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1023"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1024"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>of<sp/>when<sp/>this<sp/>item<sp/>was<sp/>added<sp/>to<sp/>the<sp/>store</highlight></codeline>
+<codeline lineno="1025"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createDateTimeProperty(&quot;http://example.com/DateAdded&quot;,</highlight></codeline>
+<codeline lineno="1026"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Added&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
 <codeline lineno="1027"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1028"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>number<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
-<codeline lineno="1029"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
-<codeline lineno="1030"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1028"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>the<sp/>added<sp/>date<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1029"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;DateAdded&quot;,<sp/>&quot;4948575738&quot;);</highlight></codeline>
+<codeline lineno="1030"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
 <codeline lineno="1031"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1032"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1033"><highlight class="comment"><sp/><sp/><sp/><sp/>createNumberProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1034"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="1035"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="1036"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1037"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1038"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="1039"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="1040"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1041"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1042"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="1043"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1044"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="1045"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="1046"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="1047"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="1048"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="1049"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1050"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1051"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1052"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1053"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1054"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1055"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>shows<sp/>the<sp/>price<sp/>of<sp/>this<sp/>item</highlight></codeline>
-<codeline lineno="1056"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createNumberProperty(&quot;Price&quot;,<sp/>&quot;Price&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="1057"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1058"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>price<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1059"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Price&quot;,<sp/>&quot;0.99&quot;);</highlight></codeline>
-<codeline lineno="1060"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="1061"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1062"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1063"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="1064"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1065"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="1066"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="1067"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="1068"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1069"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1070"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1071"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createNumberProperty(in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1072"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1073"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1074"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1075"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort);</highlight></codeline>
-<codeline lineno="1076"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1077"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1078"><highlight class="comment"><sp/><sp/>Func:<sp/>createImageProperty()</highlight></codeline>
-<codeline lineno="1079"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1080"><highlight class="comment"><sp/><sp/>Add<sp/>an<sp/>image<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
-<codeline lineno="1081"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
-<codeline lineno="1082"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
-<codeline lineno="1083"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1084"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1085"><highlight class="comment"><sp/><sp/><sp/><sp/>createImageProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1086"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="1087"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="1088"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1089"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1090"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="1091"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="1092"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1093"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1094"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="1095"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1096"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="1097"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="1098"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="1099"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="1100"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="1101"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1102"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1103"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1104"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1105"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1106"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1107"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>shows<sp/>the<sp/>logo<sp/>of<sp/>the<sp/>store<sp/>this<sp/>item<sp/>is<sp/>from</highlight></codeline>
-<codeline lineno="1108"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createImageProperty(&quot;Logo&quot;,<sp/>&quot;Logo&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="1109"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1110"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>logo<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1111"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Logo&quot;,<sp/>&quot;http://www.domain.com/image.jpg&quot;);</highlight></codeline>
-<codeline lineno="1112"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1032"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1033"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1034"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1035"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1036"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1037"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1038"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1039"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1040"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1041"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createDateTimeProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1042"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1043"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>timeType,</highlight></codeline>
+<codeline lineno="1044"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1045"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1046"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1047"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1048"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1049"><highlight class="comment"><sp/><sp/>Func:<sp/>createURIProperty()</highlight></codeline>
+<codeline lineno="1050"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1051"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>URI<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media<sp/>items.</highlight></codeline>
+<codeline lineno="1052"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1053"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1054"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1055"><highlight class="comment"><sp/><sp/><sp/><sp/>createURIProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1056"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1057"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1058"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1059"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1060"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1061"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1062"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1063"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1064"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1065"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1066"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1067"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1068"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1069"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>links<sp/>to<sp/>the<sp/>store</highlight></codeline>
+<codeline lineno="1070"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createURIProperty(&quot;http://example.com/StoreLink&quot;,</highlight></codeline>
+<codeline lineno="1071"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Store&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
+<codeline lineno="1072"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1073"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>url<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1074"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;StoreLink&quot;,<sp/>&quot;http://www.store.com/item.php?id=1&quot;);</highlight></codeline>
+<codeline lineno="1075"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1076"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1077"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1078"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1079"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1080"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1081"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1082"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1083"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1084"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1085"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1086"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createURIProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1087"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1088"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1089"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1090"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1091"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1092"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1093"><highlight class="comment"><sp/><sp/>Func:<sp/>createNumberProperty()</highlight></codeline>
+<codeline lineno="1094"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1095"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>number<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
+<codeline lineno="1096"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
+<codeline lineno="1097"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1098"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1099"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1100"><highlight class="comment"><sp/><sp/><sp/><sp/>createNumberProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1101"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1102"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1103"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1104"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1105"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1106"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1107"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1108"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1109"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1110"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1111"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1112"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
 <codeline lineno="1113"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1114"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1115"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="1116"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1117"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="1118"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="1119"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="1120"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1121"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1122"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createImageProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="1128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1129"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1130"><highlight class="comment"><sp/><sp/>Func:<sp/>createRatingsProperty()</highlight></codeline>
-<codeline lineno="1131"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1132"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>ratings<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
-<codeline lineno="1133"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
-<codeline lineno="1134"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
-<codeline lineno="1135"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1136"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1137"><highlight class="comment"><sp/><sp/><sp/><sp/>createRatingsProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1138"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,<sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="1139"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="1140"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1141"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1142"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="1143"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="1144"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1145"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1146"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="1147"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1148"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="1149"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="1150"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="1151"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="1152"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="1153"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1154"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1155"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1156"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1157"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1158"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1159"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/><sp/>property<sp/>that<sp/>shows<sp/>what<sp/>the<sp/>average<sp/>rating<sp/>for<sp/>this<sp/>item<sp/>is</highlight></codeline>
-<codeline lineno="1160"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createRatingsProperty(&quot;StoreRatings&quot;,<sp/>&quot;Ratings&quot;,<sp/>true,<sp/>true,<sp/>0);</highlight></codeline>
+<codeline lineno="1114"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>shows<sp/>the<sp/>price<sp/>of<sp/>this<sp/>item</highlight></codeline>
+<codeline lineno="1115"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createNumberProperty(&quot;http://example.com/Price&quot;,<sp/>&quot;Price&quot;,<sp/>true);</highlight></codeline>
+<codeline lineno="1116"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1117"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>price<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1118"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Price&quot;,<sp/>&quot;0.99&quot;);</highlight></codeline>
+<codeline lineno="1119"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1120"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1121"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1122"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1123"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1124"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1125"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1126"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1127"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1128"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1129"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createNumberProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1136"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1137"><highlight class="comment"><sp/><sp/>Func:<sp/>createImageProperty()</highlight></codeline>
+<codeline lineno="1138"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1139"><highlight class="comment"><sp/><sp/>Add<sp/>an<sp/>image<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
+<codeline lineno="1140"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
+<codeline lineno="1141"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1142"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1143"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1144"><highlight class="comment"><sp/><sp/><sp/><sp/>createImageProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1145"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1146"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1147"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1148"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1149"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1150"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1151"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1152"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1153"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1154"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1155"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1156"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1157"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1158"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>shows<sp/>the<sp/>logo<sp/>of<sp/>the<sp/>store<sp/>this<sp/>item<sp/>is<sp/>from</highlight></codeline>
+<codeline lineno="1159"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createImageProperty(&quot;http://example.com/Logo&quot;,</highlight></codeline>
+<codeline lineno="1160"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Logo&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
 <codeline lineno="1161"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1162"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>share<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1163"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;StoreRatings&quot;,<sp/>&quot;2&quot;);</highlight></codeline>
+<codeline lineno="1162"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>logo<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1163"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;Logo&quot;,<sp/>&quot;http://www.domain.com/image.jpg&quot;);</highlight></codeline>
 <codeline lineno="1164"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
 <codeline lineno="1165"><highlight class="comment"></highlight></codeline>
 <codeline lineno="1166"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1167"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="1168"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1169"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="1170"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="1171"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="1172"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1173"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
+<codeline lineno="1167"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1168"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1169"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1170"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1171"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1172"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1173"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
 <codeline lineno="1174"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createRatingsProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createImageProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
 <codeline lineno="1180"><highlight class="normal"></highlight></codeline>
 <codeline lineno="1181"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1182"><highlight class="comment"><sp/><sp/>Func:<sp/>createButtonProperty()</highlight></codeline>
+<codeline lineno="1182"><highlight class="comment"><sp/><sp/>Func:<sp/>createRatingsProperty()</highlight></codeline>
 <codeline lineno="1183"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1184"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>button<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
+<codeline lineno="1184"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>ratings<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
 <codeline lineno="1185"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
-<codeline lineno="1186"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1186"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;.</highlight></codeline>
 <codeline lineno="1187"><highlight class="comment"></highlight></codeline>
 <codeline lineno="1188"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1189"><highlight class="comment"><sp/><sp/><sp/><sp/>createButtonProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1190"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,<sp/>in<sp/>boolean<sp/>userViewable,</highlight></codeline>
-<codeline lineno="1191"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userEditable,<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="1192"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1193"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1194"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="1195"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="1196"><highlight class="comment"><sp/><sp/><sp/><sp/>buttonLabel<sp/>-<sp/>The<sp/>text<sp/>displayed<sp/>on<sp/>the<sp/>download<sp/>button</highlight></codeline>
-<codeline lineno="1197"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1198"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1199"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="1200"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1201"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="1202"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="1203"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="1204"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="1205"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="1206"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1207"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1208"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1209"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1210"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1211"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1212"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>allows<sp/>the<sp/>user<sp/>to<sp/>share<sp/>this<sp/>item<sp/>with<sp/>others</highlight></codeline>
-<codeline lineno="1213"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createButtonProperty(&quot;ShareItem&quot;,<sp/>&quot;Share&quot;,<sp/>&quot;Share&quot;,<sp/>true,<sp/>false,</highlight></codeline>
-<codeline lineno="1214"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0);</highlight></codeline>
-<codeline lineno="1215"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1216"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>share<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1217"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;ShareItem&quot;,<sp/>&quot;Share<sp/>me&quot;);</highlight></codeline>
-<codeline lineno="1218"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="1219"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1220"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1221"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1222"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="1223"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="1224"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="1225"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="1226"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1227"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1228"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1229"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createButtonProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
-<codeline lineno="1232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="1235"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1236"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1237"><highlight class="comment"><sp/><sp/>Func:<sp/>createDownloadButtonProperty()</highlight></codeline>
-<codeline lineno="1238"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1239"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>download<sp/>button<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all</highlight></codeline>
-<codeline lineno="1240"><highlight class="comment"><sp/><sp/>media<sp/>items.</highlight></codeline>
-<codeline lineno="1241"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1189"><highlight class="comment"><sp/><sp/><sp/><sp/>createRatingsProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1190"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1191"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1192"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1193"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1194"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1195"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1196"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1197"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1198"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1199"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1200"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1201"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1202"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1203"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/><sp/>property<sp/>that<sp/>shows<sp/>what<sp/>the<sp/>average<sp/>rating<sp/>for<sp/>this<sp/>item<sp/>is</highlight></codeline>
+<codeline lineno="1204"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createRatingsProperty(&quot;http://example.com/StoreRatings&quot;,<sp/>&quot;Ratings&quot;);</highlight></codeline>
+<codeline lineno="1205"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1206"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>share<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1207"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;StoreRatings&quot;,<sp/>&quot;2&quot;);</highlight></codeline>
+<codeline lineno="1208"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1209"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1210"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1211"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1212"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1213"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1214"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1215"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1216"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1217"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1218"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1219"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createRatingsProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1225"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1226"><highlight class="comment"><sp/><sp/>Func:<sp/>createButtonProperty()</highlight></codeline>
+<codeline lineno="1227"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1228"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>button<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all<sp/>media</highlight></codeline>
+<codeline lineno="1229"><highlight class="comment"><sp/><sp/>items.</highlight></codeline>
+<codeline lineno="1230"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;</highlight></codeline>
+<codeline lineno="1231"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1232"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1233"><highlight class="comment"><sp/><sp/><sp/><sp/>createButtonProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1234"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1235"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
+<codeline lineno="1236"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1237"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1238"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1239"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1240"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1241"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
 <codeline lineno="1242"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1243"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1244"><highlight class="comment"><sp/><sp/><sp/><sp/>createDownloadButtonProperty(in<sp/>AString<sp/>ID,<sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1245"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
-<codeline lineno="1246"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userViewable,</highlight></codeline>
-<codeline lineno="1247"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>boolean<sp/>userEditable,</highlight></codeline>
-<codeline lineno="1248"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>unsigned<sp/>long<sp/>nullSort)</highlight></codeline>
-<codeline lineno="1249"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1250"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1251"><highlight class="comment"><sp/><sp/><sp/><sp/>ID<sp/>-<sp/>A<sp/>unique<sp/>text<sp/>id<sp/>of<sp/>the<sp/>new<sp/>property.</highlight></codeline>
-<codeline lineno="1252"><highlight class="comment"><sp/><sp/><sp/><sp/>displayName<sp/>-<sp/>The<sp/>displayed<sp/>name<sp/>of<sp/>the<sp/>property</highlight></codeline>
-<codeline lineno="1253"><highlight class="comment"><sp/><sp/><sp/><sp/>buttonLabel<sp/>-<sp/>The<sp/>text<sp/>displayed<sp/>on<sp/>the<sp/>download<sp/>button</highlight></codeline>
-<codeline lineno="1254"><highlight class="comment"><sp/><sp/><sp/><sp/>userViewable<sp/>-<sp/>property<sp/>can<sp/>be<sp/>viewed<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1255"><highlight class="comment"><sp/><sp/><sp/><sp/>userEditable<sp/>-<sp/>property<sp/>values<sp/>can<sp/>be<sp/>edited<sp/>by<sp/>the<sp/>user.</highlight></codeline>
-<codeline lineno="1256"><highlight class="comment"><sp/><sp/><sp/><sp/>nullSort<sp/>-<sp/>The<sp/>type<sp/>of<sp/>null<sp/>sorting<sp/>desired.</highlight></codeline>
-<codeline lineno="1257"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1258"><highlight class="comment"><sp/><sp/>Null<sp/>Sorting<sp/>Types:</highlight></codeline>
-<codeline lineno="1259"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>small.<sp/><sp/>This<sp/>is<sp/>the<sp/>default.</highlight></codeline>
-<codeline lineno="1260"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>infinitely<sp/>large.</highlight></codeline>
-<codeline lineno="1261"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>first<sp/>(regardless<sp/>of<sp/>sort<sp/>direction)</highlight></codeline>
-<codeline lineno="1262"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>Null<sp/>values<sp/>are<sp/>always<sp/>last</highlight></codeline>
-<codeline lineno="1263"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1264"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1265"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1266"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
-<codeline lineno="1267"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
-<codeline lineno="1268"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1269"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>will<sp/>allow<sp/>the<sp/>user<sp/>to<sp/>get<sp/>the<sp/>item<sp/>(Download)</highlight></codeline>
-<codeline lineno="1270"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createDownloadButtonProperty(&quot;DownlodButton&quot;,<sp/>&quot;Download&quot;,<sp/>&quot;Get&quot;,</highlight></codeline>
-<codeline lineno="1271"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
-<codeline lineno="1272"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1273"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>download<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
-<codeline lineno="1274"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;DownloadButton&quot;,<sp/>&quot;1|0|0&quot;);</highlight></codeline>
-<codeline lineno="1275"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1276"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="1277"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1278"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1279"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty&gt;</highlight></codeline>
-<codeline lineno="1280"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty&gt;</highlight></codeline>
-<codeline lineno="1281"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty&gt;</highlight></codeline>
-<codeline lineno="1282"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty&gt;</highlight></codeline>
-<codeline lineno="1283"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty&gt;</highlight></codeline>
-<codeline lineno="1284"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty&gt;</highlight></codeline>
-<codeline lineno="1285"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty&gt;</highlight></codeline>
-<codeline lineno="1286"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createDownloadButtonProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
-<codeline lineno="1288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
-<codeline lineno="1289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
-<codeline lineno="1290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userViewable,</highlight></codeline>
-<codeline lineno="1291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>userEditable,</highlight></codeline>
-<codeline lineno="1292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
-<codeline lineno="1293"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="1243"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1244"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1245"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1246"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1247"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1248"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>allows<sp/>the<sp/>user<sp/>to<sp/>share<sp/>this<sp/>item<sp/>with<sp/>others</highlight></codeline>
+<codeline lineno="1249"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createButtonProperty(&quot;http://example.com/ShareItem&quot;,</highlight></codeline>
+<codeline lineno="1250"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Share&quot;,<sp/>&quot;Share<sp/>Me&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
+<codeline lineno="1251"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1252"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>share<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1253"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;ShareItem&quot;,<sp/>&quot;Share<sp/>me&quot;);</highlight></codeline>
+<codeline lineno="1254"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1255"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1256"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1257"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1258"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1259"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1260"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1261"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1262"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1263"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDownloadButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1264"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createButtonProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
+<codeline lineno="1268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1272"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1273"><highlight class="comment"><sp/><sp/>Func:<sp/>createDownloadButtonProperty()</highlight></codeline>
+<codeline lineno="1274"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1275"><highlight class="comment"><sp/><sp/>Add<sp/>a<sp/>download<sp/>button<sp/>property<sp/>to<sp/>the<sp/>system<sp/>that<sp/>will<sp/>be<sp/>available<sp/>for<sp/>all</highlight></codeline>
+<codeline lineno="1276"><highlight class="comment"><sp/><sp/>media<sp/>items.</highlight></codeline>
+<codeline lineno="1277"><highlight class="comment"><sp/><sp/>Properties<sp/>define<sp/>the<sp/>set<sp/>of<sp/>possible<sp/>columns<sp/>available<sp/>to<sp/>the<sp/>&lt;WebPlaylist&gt;.</highlight></codeline>
+<codeline lineno="1278"><highlight class="comment"><sp/><sp/>The<sp/>value<sp/>to<sp/>set<sp/>on<sp/>this<sp/>button<sp/>is<sp/>a<sp/>triple<sp/>field<sp/>value<sp/>that<sp/>includes<sp/>the</highlight></codeline>
+<codeline lineno="1279"><highlight class="comment"><sp/><sp/>size<sp/>of<sp/>the<sp/>object<sp/>and<sp/>the<sp/>amount<sp/>downloaded.<sp/>The<sp/>fields<sp/>are<sp/>separated<sp/>by</highlight></codeline>
+<codeline lineno="1280"><highlight class="comment"><sp/><sp/>&apos;|&apos;<sp/>characters.<sp/>The<sp/>format<sp/>is:</highlight></codeline>
+<codeline lineno="1281"><highlight class="comment"><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1282"><highlight class="comment"><sp/>&lt;mode&gt;|&lt;total<sp/>size&gt;|&lt;current<sp/>size&gt;</highlight></codeline>
+<codeline lineno="1283"><highlight class="comment"><sp/>(end)</highlight></codeline>
+<codeline lineno="1284"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1285"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1286"><highlight class="comment"><sp/><sp/><sp/><sp/>createDownloadButtonProperty<sp/>(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1287"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1288"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
+<codeline lineno="1289"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>readOnly<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1290"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>boolean<sp/>hidden<sp/>=<sp/>false,</highlight></codeline>
+<codeline lineno="1291"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>unsigned<sp/>long<sp/>nullSort<sp/>=<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="1292"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1293"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1294"><highlight class="comment"><sp/><sp/><sp/><sp/>See<sp/>&lt;Property<sp/>Creation&gt;<sp/>for<sp/>a<sp/>complete<sp/>list<sp/>of<sp/>parameter<sp/>types<sp/>and<sp/>their<sp/>values.</highlight></codeline>
+<codeline lineno="1295"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1296"><highlight class="comment"><sp/><sp/>Download<sp/>Mode<sp/>Types:</highlight></codeline>
+<codeline lineno="1297"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/>-<sp/>none</highlight></codeline>
+<codeline lineno="1298"><highlight class="comment"><sp/><sp/><sp/><sp/>1<sp/>-<sp/>new</highlight></codeline>
+<codeline lineno="1299"><highlight class="comment"><sp/><sp/><sp/><sp/>2<sp/>-<sp/>starting</highlight></codeline>
+<codeline lineno="1300"><highlight class="comment"><sp/><sp/><sp/><sp/>3<sp/>-<sp/>downloading</highlight></codeline>
+<codeline lineno="1301"><highlight class="comment"><sp/><sp/><sp/><sp/>4<sp/>-<sp/>paused</highlight></codeline>
+<codeline lineno="1302"><highlight class="comment"><sp/><sp/><sp/><sp/>5<sp/>-<sp/>complete</highlight></codeline>
+<codeline lineno="1303"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1304"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1305"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1306"><highlight class="comment"><sp/><sp/><sp/><sp/>//This<sp/>example<sp/>assumes<sp/>you<sp/>already<sp/>have<sp/>created</highlight></codeline>
+<codeline lineno="1307"><highlight class="comment"><sp/><sp/><sp/><sp/>//a<sp/>mediaitem<sp/>and<sp/>assigned<sp/>it<sp/>to<sp/>mediaItem.</highlight></codeline>
+<codeline lineno="1308"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1309"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>property<sp/>that<sp/>will<sp/>allow<sp/>the<sp/>user<sp/>to<sp/>get<sp/>the<sp/>item<sp/>(Download)</highlight></codeline>
+<codeline lineno="1310"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.createDownloadButtonProperty(&quot;http://example.com/DownlodButton&quot;,</highlight></codeline>
+<codeline lineno="1311"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Download&quot;,<sp/>&quot;Get&quot;,<sp/>true,<sp/>false,<sp/>0);</highlight></codeline>
+<codeline lineno="1312"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1313"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>Add<sp/>a<sp/>download<sp/>button<sp/>to<sp/>the<sp/>media<sp/>item</highlight></codeline>
+<codeline lineno="1314"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaitem.setProperty(&quot;DownloadButton&quot;,<sp/>&quot;1|0|0&quot;);</highlight></codeline>
+<codeline lineno="1315"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1316"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1317"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1318"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1319"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createTextProperty()&gt;</highlight></codeline>
+<codeline lineno="1320"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createDateTimeProperty()&gt;</highlight></codeline>
+<codeline lineno="1321"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createURIProperty()&gt;</highlight></codeline>
+<codeline lineno="1322"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createNumberProperty()&gt;</highlight></codeline>
+<codeline lineno="1323"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createImageProperty()&gt;</highlight></codeline>
+<codeline lineno="1324"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createRatingsProperty()&gt;</highlight></codeline>
+<codeline lineno="1325"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createButtonProperty()&gt;</highlight></codeline>
+<codeline lineno="1326"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1327"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createDownloadButtonProperty(<sp/>in<sp/>AString<sp/>ID,</highlight></codeline>
+<codeline lineno="1328"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>displayName,</highlight></codeline>
+<codeline lineno="1329"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>buttonLabel,</highlight></codeline>
+<codeline lineno="1330"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readOnly,</highlight></codeline>
+<codeline lineno="1331"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden,</highlight></codeline>
+<codeline lineno="1332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nullSort<sp/>);</highlight></codeline>
+<codeline lineno="1333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1334"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl"/>
   </compounddef>

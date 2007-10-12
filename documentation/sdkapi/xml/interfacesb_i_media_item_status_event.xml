@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_media_item_status_event" kind="interface" prot="public">
+    <compoundname>sbIMediaItemStatusEvent</compoundname>
+    <includes refid="sb_i_media_item_status_event_8idl" local="no">sbIMediaItemStatusEvent.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_media_item_status_event_1cd0598b779cb5e1cb8f0f2c88b081a7c" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>readonly attribute sbIMediaItem sbIMediaItemStatusEvent::item</definition>
+        <argsstring></argsstring>
+        <name>item</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" line="78" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_item_status_event_1a9e3a1f4ceb3e435d8274ce8761c2bb7" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbIMediaItemStatusEvent::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" line="87" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>an interface to maintain information about the last event that occurred </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="323">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="320" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="327">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="324">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="325" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="327" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="322">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="323" relation="public-inheritance">
+        </childnode>
+        <childnode refid="324" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="326" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="321">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="320">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="321" relation="public-inheritance">
+        </childnode>
+        <childnode refid="322" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="325">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="326" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="326">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+      <node id="319">
+        <label>sbIMediaItemStatusEvent</label>
+        <link refid="interfacesb_i_media_item_status_event"/>
+        <childnode refid="320" relation="usage">
+          <edgelabel>item</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" line="70" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl" bodystart="69" bodyend="88"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_item_status_event_1cd0598b779cb5e1cb8f0f2c88b081a7c" prot="public" virt="non-virtual"><scope>sbIMediaItemStatusEvent</scope><name>item</name></member>
+      <member refid="interfacesb_i_media_item_status_event_1a9e3a1f4ceb3e435d8274ce8761c2bb7" prot="public" virt="non-virtual"><scope>sbIMediaItemStatusEvent</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

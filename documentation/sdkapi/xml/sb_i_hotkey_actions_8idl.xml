@@ -4,13 +4,13 @@
     <compoundname>sbIHotkeyActions.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="172">
+      <node id="175">
         <label>components/integration/public/sbIHotkeyActions.idl</label>
         <link refid="sbIHotkeyActions.idl"/>
-        <childnode refid="173" relation="include">
+        <childnode refid="176" relation="include">
         </childnode>
       </node>
-      <node id="173">
+      <node id="176">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

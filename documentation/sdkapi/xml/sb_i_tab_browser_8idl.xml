@@ -4,13 +4,13 @@
     <compoundname>sbITabBrowser.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="6">
+      <node id="9">
         <label>bindings/public/sbITabBrowser.idl</label>
         <link refid="sbITabBrowser.idl"/>
-        <childnode refid="7" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
       </node>
-      <node id="7">
+      <node id="10">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

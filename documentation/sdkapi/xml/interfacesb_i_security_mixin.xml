@@ -94,15 +94,49 @@
         </inbodydescription>
         <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="77"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_security_mixin_1738f1870d0dd3354bc94ec7210522cae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbISecurityMixin::getPermissionForScopedNameWrapper</definition>
+        <argsstring>(in AString aRemotePermCategory)</argsstring>
+        <name>getPermissionForScopedNameWrapper</name>
+        <param>
+          <type>in AString</type>
+          <declname>aRemotePermCategory</declname>
+        </param>
+        <briefdescription>
+<para>Get the permissions for a category. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aRemotePermCategory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- String representation of the category to check. &quot;Control Playback&quot; &quot;Read Current&quot; &quot;Read Library&quot; &quot;Add Media&quot; &quot;Create Medialists&quot; </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>_retval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- True if site has permissions in category, False if site does not have permissions in category. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>NS_OK </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="97"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface for setting up nsISecurityCheckedComponent security checks. </para>    </briefdescription>
     <detaileddescription>
 <para>Implemented by objects that provide the nsISecurityCheckedComponent functionality to allow other classes to aggregate (or compose) that functionality in without implementing it directly.</para><para><simplesect kind="see"><para>nsISecurityCheckedComponent </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" bodystart="53" bodyend="83"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" bodystart="53" bodyend="98"/>
     <listofallmembers>
       <member refid="interfacesb_i_security_mixin_144156905c04d374770e558d2076d8bc9" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>getCodebase</name></member>
+      <member refid="interfacesb_i_security_mixin_1738f1870d0dd3354bc94ec7210522cae" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>getPermissionForScopedNameWrapper</name></member>
       <member refid="interfacesb_i_security_mixin_166940f85f9e5ef28484139b34e07eadd" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>init</name></member>
       <member refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>notificationDocument</name></member>
     </listofallmembers>

@@ -4,13 +4,13 @@
     <compoundname>sbIPlaylistWidget.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="3">
+      <node id="6">
         <label>bindings/public/sbIPlaylistWidget.idl</label>
         <link refid="sbIPlaylistWidget.idl"/>
-        <childnode refid="4" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="4">
+      <node id="7">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -57,60 +57,110 @@
 <codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="41"><highlight class="comment"><sp/>Class<sp/>PlaylistWidget</highlight></codeline>
 <codeline lineno="42"><highlight class="comment"><sp/>*/</highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(7a33d37c-34a3-4fe0-8d8d-5eb6e680457a)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(7660f28b-6b55-40b8-8660-353aad8df5a3)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_playlist_widget" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_widget" kindref="compound">sbIPlaylistWidget</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>rescanCommands();</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>getListView();</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bind(<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>mediaListView,</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>commands,</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>resize,</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>collapse<sp/>);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>showColumn()</highlight></codeline>
-<codeline lineno="90"><highlight class="comment"></highlight></codeline>
-<codeline lineno="91"><highlight class="comment"><sp/><sp/><sp/>Makes<sp/>a<sp/>column<sp/>appear<sp/>in<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/>UI.<sp/>The<sp/>column<sp/>must</highlight></codeline>
-<codeline lineno="92"><highlight class="comment"><sp/><sp/><sp/>already<sp/>exist<sp/>in<sp/>the<sp/>system.</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>getListView();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bind(<sp/>in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>mediaListView,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/>commands,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>resize,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>collapse<sp/>);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="92"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>getColumnCount()</highlight></codeline>
 <codeline lineno="93"><highlight class="comment"></highlight></codeline>
-<codeline lineno="94"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
-<codeline lineno="95"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aColumnName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>column<sp/>to<sp/>display</highlight></codeline>
-<codeline lineno="96"><highlight class="comment"></highlight></codeline>
-<codeline lineno="97"><highlight class="comment"><sp/><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="98"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addColumn()&gt;</highlight></codeline>
-<codeline lineno="99"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;showColumnBefore()&gt;</highlight></codeline>
-<codeline lineno="100"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;hideColumn()&gt;</highlight></codeline>
-<codeline lineno="101"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showColumn(<sp/>in<sp/>AString<sp/>aColumnName<sp/>);</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="110"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>hideColumn()</highlight></codeline>
-<codeline lineno="111"><highlight class="comment"></highlight></codeline>
-<codeline lineno="112"><highlight class="comment"><sp/><sp/><sp/>Makes<sp/>a<sp/>column<sp/>disappear<sp/>from<sp/>view.</highlight></codeline>
-<codeline lineno="113"><highlight class="comment"></highlight></codeline>
-<codeline lineno="114"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
-<codeline lineno="115"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aColumnName<sp/>-<sp/>The<sp/>name<sp/>of<sp/>the<sp/>column<sp/>to<sp/>hide</highlight></codeline>
-<codeline lineno="116"><highlight class="comment"></highlight></codeline>
-<codeline lineno="117"><highlight class="comment"><sp/><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="118"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;addColumn()&gt;</highlight></codeline>
-<codeline lineno="119"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;showColumnBefore()&gt;</highlight></codeline>
-<codeline lineno="120"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;showColumn()&gt;</highlight></codeline>
-<codeline lineno="121"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hideColumn(<sp/>in<sp/>AString<sp/>aColumnName<sp/>);</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>moveColumnBefore(<sp/>in<sp/>AString<sp/>aColumnName,</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeColumnName<sp/>);</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"></highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>insertColumn(<sp/>in<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>aPropInfo,</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsHidden,</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWidth,</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aSortOrder,</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aBeforeCol<sp/>);</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"></highlight></codeline>
-<codeline lineno="156" refid="interfacesb_i_playlist_widget_1c023582f73fbed84eb3b1b63609487a8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>lastClickEvent;</highlight></codeline>
-<codeline lineno="157"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="94"><highlight class="comment"><sp/><sp/><sp/>Get<sp/>the<sp/>total<sp/>number<sp/>of<sp/>columns<sp/>in<sp/>the<sp/>web<sp/>playlist</highlight></codeline>
+<codeline lineno="95"><highlight class="comment"></highlight></codeline>
+<codeline lineno="96"><highlight class="comment"><sp/><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="97"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;clearColumns()&gt;</highlight></codeline>
+<codeline lineno="98"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;insertColumnBefore()&gt;</highlight></codeline>
+<codeline lineno="99"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;removeColumn()&gt;</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getColumnCount();</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>clearColumns()</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"></highlight></codeline>
+<codeline lineno="109"><highlight class="comment"><sp/><sp/><sp/>Clear<sp/>all<sp/>columns<sp/>from<sp/>the<sp/>web<sp/>playlist</highlight></codeline>
+<codeline lineno="110"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearColumns(<sp/>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="122"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>appendColumn()</highlight></codeline>
+<codeline lineno="123"><highlight class="comment"></highlight></codeline>
+<codeline lineno="124"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="125"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aPropertyID<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>you<sp/>want<sp/>to<sp/>add<sp/>as<sp/>a<sp/>column</highlight></codeline>
+<codeline lineno="126"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aWidth<sp/>-<sp/>The<sp/>width<sp/>in<sp/>pixels<sp/>of<sp/>the<sp/>column.<sp/>If<sp/>there<sp/>has<sp/>been<sp/>a</highlight></codeline>
+<codeline lineno="127"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>width<sp/>set<sp/>for<sp/>this<sp/>particular<sp/>column<sp/>then<sp/>that<sp/>width</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>will<sp/>be<sp/>respected<sp/>and<sp/>this<sp/>ignored.</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"></highlight></codeline>
+<codeline lineno="130"><highlight class="comment"><sp/><sp/><sp/>Add<sp/>a<sp/>column<sp/>to<sp/>the<sp/>right<sp/>side<sp/>of<sp/>visible<sp/>columns</highlight></codeline>
+<codeline lineno="131"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>appendColumn(<sp/>in<sp/>AString<sp/>aPropertyID,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>AString<sp/>aWidth<sp/>);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="147"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>insertColumnBefore()</highlight></codeline>
+<codeline lineno="148"><highlight class="comment"></highlight></codeline>
+<codeline lineno="149"><highlight class="comment"><sp/><sp/><sp/>Insert<sp/>a<sp/>column<sp/>into<sp/>the<sp/>web<sp/>playlist</highlight></codeline>
+<codeline lineno="150"><highlight class="comment"></highlight></codeline>
+<codeline lineno="151"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="152"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aPropertyID<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>you<sp/>want<sp/>to<sp/>add<sp/>as<sp/>a<sp/>column</highlight></codeline>
+<codeline lineno="153"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aBeforePropertyID<sp/>-<sp/>If<sp/>specified,<sp/>the<sp/>new<sp/>column<sp/>will<sp/>appear<sp/>before<sp/>the</highlight></codeline>
+<codeline lineno="154"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>column<sp/>that<sp/>is<sp/>bound<sp/>to<sp/>the<sp/>specified<sp/>property.<sp/><sp/>If<sp/>not<sp/>specified,<sp/>the</highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>column<sp/>will<sp/>be<sp/>added<sp/>to<sp/>the<sp/>end<sp/>of<sp/>the<sp/>list.</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aWidth<sp/>-<sp/>The<sp/>width<sp/>in<sp/>pixels<sp/>of<sp/>the<sp/>column.<sp/>If<sp/>there<sp/>has<sp/>been<sp/>a</highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>width<sp/>set<sp/>for<sp/>this<sp/>particular<sp/>column<sp/>then<sp/>that<sp/>width</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>will<sp/>be<sp/>respected<sp/>and<sp/>this<sp/>ignored.</highlight></codeline>
+<codeline lineno="159"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>insertColumnBefore(<sp/>in<sp/>AString<sp/>aPropertyID,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>AString<sp/>aBeforePropertyID,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>AString<sp/>aWidth<sp/>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>removeColumn()</highlight></codeline>
+<codeline lineno="172"><highlight class="comment"></highlight></codeline>
+<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/>Remove<sp/>a<sp/>column<sp/>from<sp/>the<sp/>playlist</highlight></codeline>
+<codeline lineno="174"><highlight class="comment"></highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aPropertyID<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>that<sp/>is<sp/>bound<sp/>to<sp/>the<sp/>column<sp/>you<sp/>wish</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>to<sp/>remove.</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeColumn(<sp/>in<sp/>AString<sp/>aPropertyID<sp/>);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>getColumnPropertyIDByIndex()</highlight></codeline>
+<codeline lineno="191"><highlight class="comment"></highlight></codeline>
+<codeline lineno="192"><highlight class="comment"><sp/><sp/><sp/>Get<sp/>the<sp/>property<sp/>ID<sp/>bould<sp/>to<sp/>a<sp/>particular<sp/>column<sp/>at<sp/>a<sp/>given<sp/>index</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"></highlight></codeline>
+<codeline lineno="194"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aIndex<sp/>-<sp/>The<sp/>index<sp/>of<sp/>the<sp/>column<sp/>from<sp/>which<sp/>you<sp/>want<sp/>to<sp/>retrieve<sp/>the<sp/>bound</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>property</highlight></codeline>
+<codeline lineno="197"><highlight class="comment"></highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="199"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>bound<sp/>to<sp/>the<sp/>specified<sp/>column</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>AString<sp/>getColumnPropertyIDByIndex(<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex<sp/>);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/>Method:<sp/>setSortColumn()</highlight></codeline>
+<codeline lineno="213"><highlight class="comment"></highlight></codeline>
+<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/>Set<sp/>the<sp/>sort<sp/>of<sp/>the<sp/>web<sp/>playlist</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"></highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/>Arguments:</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aPropertyID<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>that<sp/>is<sp/>bound<sp/>to<sp/>the<sp/>column<sp/>you<sp/>wish</highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>to<sp/>sort.</highlight></codeline>
+<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>aIsAscending<sp/>-<sp/>True<sp/>if<sp/>the<sp/>sort<sp/>should<sp/>be<sp/>ascending,<sp/>false<sp/>if<sp/>the<sp/>sort</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>should<sp/>be<sp/>descending.</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSortColumn(<sp/>in<sp/>AString<sp/>aPropertyID,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsAscending<sp/>);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="interfacesb_i_playlist_widget_1c023582f73fbed84eb3b1b63609487a8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>lastClickEvent;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl"/>
   </compounddef>

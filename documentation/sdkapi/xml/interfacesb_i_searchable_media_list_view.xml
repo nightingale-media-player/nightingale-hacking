@@ -77,14 +77,14 @@
 <para>Media lists that implement this interface declare themselves as searchable. The search is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="580">
+      <node id="590">
         <label>sbISearchableMediaListView</label>
         <link refid="interfacesb_i_searchable_media_list_view"/>
-        <childnode refid="581" relation="usage">
+        <childnode refid="591" relation="usage">
           <edgelabel>currentSearch</edgelabel>
         </childnode>
       </node>
-      <node id="581">
+      <node id="591">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>

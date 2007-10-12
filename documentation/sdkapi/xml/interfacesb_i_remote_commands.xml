@@ -108,43 +108,43 @@
     <detaileddescription>
 <para>TODO: Write this documentation </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="558">
+      <node id="568">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="556">
+      <node id="566">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="557" relation="usage">
+        <childnode refid="567" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="560">
+      <node id="570">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="557">
+      <node id="567">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="556" relation="usage">
+        <childnode refid="566" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="558" relation="usage">
+        <childnode refid="568" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="559" relation="usage">
+        <childnode refid="569" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="560" relation="usage">
+        <childnode refid="570" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="559">
+      <node id="569">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="560" relation="usage">
+        <childnode refid="570" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>

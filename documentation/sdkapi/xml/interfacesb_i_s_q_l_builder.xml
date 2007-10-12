@@ -473,38 +473,38 @@
     <detaileddescription>
 <para>Components implementing this interface are used to build SQL string. The interface is inspired by Squiggle: <ulink url="http://joe.truemesh.com/squiggle/javadoc/index.html">http://joe.truemesh.com/squiggle/javadoc/index.html</ulink> </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="637">
+      <node id="647">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="635" relation="public-inheritance">
+        <childnode refid="645" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="640">
+      <node id="650">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="637" relation="public-inheritance">
+        <childnode refid="647" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="638">
+      <node id="648">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="637" relation="public-inheritance">
+        <childnode refid="647" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="635">
+      <node id="645">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="639">
+      <node id="649">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="637" relation="public-inheritance">
+        <childnode refid="647" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="636">
+      <node id="646">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="635" relation="public-inheritance">
+        <childnode refid="645" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

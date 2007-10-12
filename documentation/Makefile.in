@@ -46,6 +46,8 @@ DOXYGEN_STRIP_TOPSRCDIR = $(DEPTH)/.. \
                           $(NULL)
 
 SONGBIRD_DOCUMENTATION = songbird.dox.in \
+                         naturaldocsconfig/Docs.css \
+                         doxygenconfig/header.html \
                          $(NULL)
                          
 DOXYGEN_PREPROCESS = songbird.dox \

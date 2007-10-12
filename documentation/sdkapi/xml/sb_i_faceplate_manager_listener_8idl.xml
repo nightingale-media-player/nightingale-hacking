@@ -4,13 +4,13 @@
     <compoundname>sbIFaceplateManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="131">
+      <node id="134">
         <label>nsISupports.idl</label>
       </node>
-      <node id="130">
+      <node id="133">
         <label>components/faceplate/public/sbIFaceplateManagerListener.idl</label>
         <link refid="sbIFaceplateManagerListener.idl"/>
-        <childnode refid="131" relation="include">
+        <childnode refid="134" relation="include">
         </childnode>
       </node>
     </incdepgraph>

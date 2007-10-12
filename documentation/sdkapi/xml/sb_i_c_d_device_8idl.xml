@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_base_8idl" local="yes">sbIDeviceBase.idl</includes>
     <incdepgraph>
-      <node id="114">
+      <node id="117">
         <label>sbIDeviceBase.idl</label>
         <link refid="sb_i_device_base_8idl"/>
-        <childnode refid="113" relation="include">
+        <childnode refid="116" relation="include">
         </childnode>
       </node>
-      <node id="112">
+      <node id="115">
         <label>components/devicesobsolete/cd/public/sbICDDevice.idl</label>
         <link refid="sbICDDevice.idl"/>
-        <childnode refid="113" relation="include">
+        <childnode refid="116" relation="include">
         </childnode>
-        <childnode refid="114" relation="include">
+        <childnode refid="117" relation="include">
         </childnode>
       </node>
-      <node id="113">
+      <node id="116">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

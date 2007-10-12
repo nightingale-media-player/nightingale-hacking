@@ -269,10 +269,10 @@
 <simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="683">
+      <node id="693">
         <label>sbIStateObject</label>
         <link refid="interfacesb_i_state_object"/>
-        <childnode refid="683" relation="usage">
+        <childnode refid="693" relation="usage">
           <edgelabel>parent</edgelabel>
         </childnode>
       </node>
