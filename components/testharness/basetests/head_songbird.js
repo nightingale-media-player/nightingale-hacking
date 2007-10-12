@@ -105,6 +105,7 @@ function doQuit() {
 
 function doThrow(text) {
   _fail = true;
+  _tests_pending = 0;
   doQuit();
   log("*** [" + _test_name + "] - CHECK FAILED: " + text);
   var frame = Components.stack;
