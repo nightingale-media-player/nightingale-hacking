@@ -54,6 +54,13 @@ provided.
 The Songbird object provides download functionality as well. You may use it to download
 <MediaItems>, <MediaLists> and user selected items present in the <WebPlaylist>.
 
+You may listen for download events by adding "downloadstart" or
+"downloadcomplete" event listeners to the document object.  These events will
+only be sent to handlers within the scope of the page that originated the
+downloaded items.  The event listener is provided the downloaded media item
+within the main Songbird library.  To access the media item properties, the user
+must have enabled remote access to the main Songbird library.
+
 The Songbird object is accessible (from Javascript) using the "songbird" global variable attached
 to the currently loaded document. See the example below.
 
@@ -81,6 +88,12 @@ mediaList.add(mediaItem);
 songbird.playMediaList(mediaList, 0);
 
 //You may also want to trigger a download to the users machine, for this mediaitem.
+function onDownloadComplete(aEvent) {
+  // The event item is the one in the user's main library.
+  alert(aEvent.item.guid);
+  alter(aEvent.status);
+}
+document.addEventListener("downloadcomplete", onDownloadComplete, false);
 songbird.downloadItem(mediaItem);
 (end)
 
