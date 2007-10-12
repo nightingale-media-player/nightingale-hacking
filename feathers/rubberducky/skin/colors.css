@@ -1170,7 +1170,7 @@ These let the user resize the frames in your box model.
 .playlist-splitter[state="collapsed"],
 .playlist-web-splitter[state="collapsed"]
 {
-  background-color: transparent;
+  background-color: #313131 !important;
 }
 
 #control_pane_splitter
