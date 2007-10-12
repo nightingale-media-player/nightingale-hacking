@@ -147,7 +147,7 @@ function fail(aMessage) {
 }
 
 function testPending() {
-  log("*** [" + _test_name + "] - test pending\n");
+  log("*** [" + _test_name + "] - test pending");
   if ( _tests_pending == 0 ) {
     // start of tests, don't spin wait
     _tests_pending++;
@@ -162,7 +162,7 @@ function testPending() {
 }
 
 function testFinished() {
-  log("*** [" + _test_name + "] - test finished\n");
+  log("*** [" + _test_name + "] - test finished");
   if (--_tests_pending == 0)
     doQuit();
 }
