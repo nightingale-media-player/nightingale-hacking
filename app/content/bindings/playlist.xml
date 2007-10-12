@@ -1698,7 +1698,7 @@
   var bo = this.tree.treeBoxObject;
   try
   {
-    if ( evt.button == 0 && this.tree.currentIndex != -1 )
+    if ( evt.button == 0 )
     {
       var obj = {}, row = {}, col = {};
       bo.getCellAt( evt.clientX, evt.clientY, row, col, obj );
@@ -1776,7 +1776,8 @@
           }
           evt.stopPropagation();
         }
-        else if (this.treeView.isEditable(row.value, col.value))
+        else if (this.tree.currentIndex != -1 &&
+                 this.treeView.isEditable(row.value, col.value))
         {
           // Remember the row and column
           this.edit_row = row.value;
