@@ -46,27 +46,16 @@ function runTest(tester) {
     mainLib.scanMediaOnCreation = true;
 
     var list;
-/*
-    function onCreated(mediaList) {
-      var test = tester;
-      test.log("in onCreated");
-      list = mediaList;
-      test.assertEqual(list.length, 4);
-      test = null;
-      list = null;
-      test.testFinished();
-    }
-*/
 
     // media creation in the mainLibrary
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library - should succeed");
-    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+    mainLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function (mediaList) {
                                      var test = tester;
-                                     test.log("in onCreated");
                                      list = mediaList;
+                                     test.log("in onCreated - length: " + list.length);
                                      test.assertEqual(list.length, 4);
                                      list = null;
                                      test.testFinished();
@@ -80,11 +69,11 @@ function runTest(tester) {
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library to bogus URL - should create 0 length list");
-    mainLib.createMediaListFromURL("http://www.example.com/dummy.m3u",
+    mainLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/dummy.m3u",
                                    function (mediaList) {
                                      var test = tester;
-                                     test.log("in onCreated");
                                      list = mediaList;
+                                     test.log("in onCreated - length: " + list.length);
                                      test.assertEqual(list.length, 0);
                                      list = null;
                                      test.testFinished();
@@ -117,11 +106,11 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Web Library - should fail");
     try {
-      webLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+      webLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                     function(mediaList) {
                                       var test = tester;
-                                      test.log("in onCreated");
                                       list = mediaList;
+                                      test.log("in onCreated - length: " + list.length);
                                       test.assertEqual(list.length, 4);
                                       list = null;
                                       test.testFinished();
@@ -143,10 +132,11 @@ function runTest(tester) {
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Site Library - should succeed");
-    siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
+    siteLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function(mediaList) {
                                      var test = tester;
                                      list = mediaList;
+                                     test.log("in onCreated - length: " + list.length);
                                      test.assertEqual(list.length, 4);
                                      list = null;
                                      test.testFinished();
