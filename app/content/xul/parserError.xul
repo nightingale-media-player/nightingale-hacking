@@ -98,17 +98,16 @@
           var prefs = Components.classes["@mozilla.org/preferences-service;1"].
                                 getService(Components.interfaces.nsIPrefBranch);
           prefs.setCharPref("general.useragent.locale", "en-US");
-
           if (as) {
             as.quit(Components.interfaces.nsIAppStartup.eRestart | 
-                    Components.interfaces.nsIAppStartup.eAttemptQuit);
+                    Components.interfaces.nsIAppStartup.eForceQuit);
           }
           break;
 
         case "quit":
 
           if (as) {
-            as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+            as.quit(Components.interfaces.nsIAppStartup.eForceQuit);
           }
           break;
       }

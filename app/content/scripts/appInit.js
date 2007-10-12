@@ -348,8 +348,8 @@ function SBRestartApp()
     dump("SBRestartApp could not get the nsIAppStartup component\n"); // Don't throw, we really do want to at least exit.
   else
   {
-    as.quit(Components.interfaces.nsIAppStartup.eRestart);
-    as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+    as.quit(Components.interfaces.nsIAppStartup.eRestart |
+            Components.interfaces.nsIAppStartup.eAttemptQuit);
   }
 
   onExit();

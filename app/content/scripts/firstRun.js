@@ -346,9 +346,9 @@ function restartSongbird() {
             .getService(Components.interfaces.nsIAppStartup);
   if (as)
   {
-    //Both calls are needed as the restart path only sets an internal
-    //   variable that gets cached and references during the second call.
-    as.quit(Components.interfaces.nsIAppStartup.eRestart | Components.interfaces.nsIAppStartup.eAttemptQuit);
+    //Both flags are needed 
+    as.quit(Components.interfaces.nsIAppStartup.eRestart | 
+            Components.interfaces.nsIAppStartup.eAttemptQuit);
   }
 }
 

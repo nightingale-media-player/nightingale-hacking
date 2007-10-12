@@ -63,7 +63,7 @@
       {
         document.getElementById("restartbox").setAttribute("title", window.arguments[0].title);
         document.getElementById("songbird_restartbox_label").setAttribute("value", window.arguments[0].message);
-        if (!window.arguments[0].playing) document.documentElement.buttons = "accept,cancel";
+        if (!window.arguments[0].playing) document.documentElement.setAttribute("buttons", "accept,cancel");
       }
     }
     catch( err )
