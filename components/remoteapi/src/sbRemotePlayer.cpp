@@ -1964,6 +1964,26 @@ sbRemotePlayer::SetDownloadScope( sbIMediaItem *aItem )
 }
 
 nsresult
+sbRemotePlayer::SetOriginScope( sbIMediaItem *aItem )
+{
+  LOG(("sbRemotePlayer::SetOriginScope()"));
+  NS_ASSERTION(aItem, "aItem is null");
+  nsresult rv;
+
+  rv = SetDownloadScope(aItem);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsString scope;
+  rv = aItem->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL), scope);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = aItem->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE), scope );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return NS_OK;
+}
+
+nsresult
 sbRemotePlayer::SetDownloadListScope( sbIMediaList *aList )
 {
   LOG(("sbRemotePlayer::SetDownloadListScope()"));
@@ -2594,7 +2614,8 @@ sbRemotePlayerDownloadCallback::GetItemScope( sbIMediaItem* aMediaItem,
   if (NS_FAILED(rv) || scopeSpec.IsEmpty()) {
     rv = aMediaItem->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
                                   scopeSpec );
-    if (NS_FAILED(rv))
+    // It is possible the download was not triggered by us so ignore the notification
+    if (NS_FAILED(rv) || scopeSpec.IsEmpty())
       return rv;
   }
 

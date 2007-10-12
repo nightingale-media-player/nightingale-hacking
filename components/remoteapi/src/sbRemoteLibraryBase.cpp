@@ -328,6 +328,10 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
                                  getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the OriginPage property so we know where it came from
+  rv = mRemotePlayer->SetOriginScope(mediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (mShouldScan) {
     nsCOMPtr<sbIMetadataJobManager> metaJobManager =
       do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
@@ -399,6 +403,13 @@ sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
                                           getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the OriginPage property so we know where it came from
+  nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(mediaList));
+  NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
+
+  rv = mRemotePlayer->SetOriginScope(mediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // This will wrap in the appropriate site/regular RemoteMediaList
   rv = SB_WrapMediaList(mRemotePlayer, mediaList, _retval);
   if (NS_SUCCEEDED(rv)) {
@@ -420,6 +431,13 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   nsresult rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"),
                                            nsnull,
                                            getter_AddRefs(mediaList) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the OriginPage property so we know where it came from
+  nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(mediaList));
+  NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
+
+  rv = mRemotePlayer->SetOriginScope(mediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mRemotePlayer->GetNotificationManager()

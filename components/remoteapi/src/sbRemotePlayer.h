@@ -112,6 +112,7 @@ public:
   static PRBool GetUserApprovalForHost( nsIURI *aURI,
                                         const nsAString &aTitleKey,
                                         const nsAString &aMessageKey );
+  nsresult SetOriginScope( sbIMediaItem *aItem );
 
 protected:
   virtual ~sbRemotePlayer();

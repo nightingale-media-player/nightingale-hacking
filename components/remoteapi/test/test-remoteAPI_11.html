@@ -32,19 +32,19 @@
     <script>
       const SB_NS = "http://songbirdnest.com/data/1.0#";
       var siteLib;
+      var siteList;
       var myDiv;
-      var origWebPlaylist;
 
       function load() {
         siteLib = songbird.siteLibrary;
 
-        var list = siteLib.createMediaList("simple");
-        var item = siteLib.createMediaItem("http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3");
-        list.add(item);
-        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-        list.add(item);
+        siteList = siteLib.createMediaList("simple");
+        var item = siteLib.createMediaItem("http://ccmixter.org/people/3rd_attempt/3rd_attempt_-_September_(Melancholic_Guitar_Mix).mp3");
+        siteList.add(item);
+        item = siteLib.createMediaItem("http://ccmixter.org/people/presse/presse_-_Got_To_Rock_Funkerror_.mp3");
+        siteList.add(item);
 
-        songbird.webPlaylist.mediaList = list;
+        songbird.webPlaylist.mediaList = siteList;
 
         myDiv = document.getElementById("output");
         document.addEventListener("downloadstart", onDownloadStart, true);
@@ -57,52 +57,57 @@
       }
 
       function showDownloadList() {
-        if (!origWebPlaylist)
-          origWebPlaylist = songbird.webPlaylist.mediaList;
-
         songbird.webPlaylist.mediaList = songbird.downloadMediaList;
+      }
+
+      function showSiteList() {
+        songbird.webPlaylist.mediaList = siteList;
       }
 
       function downloadList() {
-        if (!origWebPlaylist)
-          origWebPlaylist = songbird.webPlaylist.mediaList;
-
-        // pass the medialist into the songbird object to download
-        songbird.downloadList(origWebPlaylist);
+        songbird.downloadList(siteList);
       }
 
       function downloadItem() {
-        if (!origWebPlaylist)
-          origWebPlaylist = songbird.webPlaylist.mediaList;
-
-        // pass the medialist into the songbird object to download
-        songbird.downloadItem( origWebPlaylist.getItemByIndex(1) );
+        songbird.downloadItem( siteList.getItemByIndex(1) );
       }
 
       function downloadSelected() {
-        // pass the web playlist into the songbird object to download
         songbird.downloadSelected(songbird.webPlaylist);
       }
 
+      function addToMain() {
+        var item = siteLib.createMediaItem("http://ccmixter.org/people/Briareus/Briareus_-_In_A_Day.mp3");
+        songbird.mainLibrary.add(item);
+      }
+
+      function addListToMain() {
+        var item = siteLib.createMediaItem("http://ccmixter.org/people/Briareus/Briareus_-_In_A_Day.mp3");
+        var list = siteLib.createMediaList("simple");
+        list.name = "testName";
+        list.add(item);
+        songbird.mainLibrary.add(list);
+      }
+
       function addToDLList() {
-        if (!origWebPlaylist)
-          origWebPlaylist = songbird.webPlaylist.mediaList;
-
-        var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+        var item = siteLib.createMediaItem("http://ccmixter.org/people/3rd_attempt/3rd_attempt_-_Tonight_(Fast_Rock_Mix).mp3");
         songbird.downloadMediaList.add(item);
-
-        songbird.webPlaylist.mediaList = songbird.downloadMediaList;
       }
 
       function onDownloadStart(event) {
-        myDiv.firstChild.nodeValue = "Downloading: " +
-                                     event.item.getProperty(SB_NS + "trackName");
+        myDiv.appendChild(
+          document.createTextNode("Downloading: " +
+                                  event.item.getProperty(SB_NS + "trackName")));
+        myDiv.appendChild(document.createElement("br"));
       }
 
       function onDownloadComplete(event) {
-        myDiv.firstChild.nodeValue = "Downloaded: " +
-                                     event.item.getProperty(SB_NS + "trackName") +
-                                     ", status: " + event.status;
+        myDiv.appendChild(
+          document.createTextNode("Downloaded: " +
+                                  event.item.getProperty(SB_NS + "trackName") +
+                                  ", status: " +
+                                  event.status ));
+        myDiv.appendChild(document.createElement("br"));
       }
     </script>
   </head>
@@ -112,20 +117,29 @@
     
     <p>
     <form>
+      <input type="button" id="show_site_button" value="Show Site List"
+             onclick="showSiteList();" />  (songbird.webPlaylist.mediaList = siteList)
+      <br />
       <input type="button" id="show_download_button" value="Show Download List"
-             onclick="showDownloadList();" /> 
+             onclick="showDownloadList();" />  (songbird.webPlaylist.mediaList = songbird.downloadList)
       <br />
       <input type="button" id="addToList_button" value="Add To DL List"
-             onclick="addToDLList();" /> 
+             onclick="addToDLList();" /> (songbird.downloadList.add())
       <br />
       <input type="button" id="download_list_button" value="downloadList"
-             onclick="downloadList();" /> 
+             onclick="downloadList();" />  (songbird.downloadList())
       <br />
       <input type="button" id="download_item_button" value="downloadItem"
-             onclick="downloadItem();" /> 
+             onclick="downloadItem();" />  (songbird.downloadItem())
       <br />
       <input type="button" id="download_selected_button" value="downloadSelected"
-             onclick="downloadSelected();" /> 
+             onclick="downloadSelected();" />  (songbird.downloadSelcted())
+      <br />
+      <input type="button" id="add_remote_to_lib" value="add track to main"
+             onclick="addToMain();" /> (songbird.mainLibrary.add())
+      <br />
+      <input type="button" id="add_remotelist_to_lib" value="add list to main"
+             onclick="addListToMain();" /> (songbird.mainLibrary.add())
       <br />
     </form>
     </p>
