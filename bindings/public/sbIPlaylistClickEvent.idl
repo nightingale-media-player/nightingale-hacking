@@ -29,7 +29,7 @@
 interface sbIMediaItem;
 
 /*
-Class: PlaylistClickEvent
+Event: PlaylistClickEvent
 
 A <PlaylistClickEvent> is passed to any event handlers listening for the
 PlaylistCellClick event fired on the document object.  This event object also
@@ -37,6 +37,31 @@ has some of the properties of MouseEvent.
 
 Note that the <Songbird> object must be accessed before any events will be raised.
 This will likely change in the future.
+
+Fired on:
+  document
+
+Properties inherited from MouseEvent:
+ctrlKey - true if the control key is down when the click occurred
+altKey - true if the alt key is down
+shiftKey - true if the shift key is down
+metaKey - true if the meta key is down
+button - which mouse button was pressed;
+         0 for primary, 1 for middle, and 2 for secondary.
+type - constant string, "PlaylistCellClick"
+target - the document object of the content page which displayed the playlist
+bubbles - contant true
+cancelable - constant true
+timeStamp - the time at which the click occurred, as milliseconds from epoch
+
+Properties inherited from MouseEvent, but not used:
+screenX
+screenY
+clientX
+clientY
+relatedTarget
+view
+detail
 
 Example:
   (start code)
@@ -75,7 +100,9 @@ Example:
   /*
   Prop: property
   
-  The name of the property (column) that was clicked on
+  The name of the property (column) that was clicked on e.g.,
+             "http://songbirdnest.com/data/1.0#trackName".  See
+             <MediaItem::getProperty()> for standard properties.
   
   Type: String
   
@@ -87,7 +114,7 @@ Example:
   /*
   Prop: item
   
-  The <MediaItem> that was clicked on
+  The <MediaItem> that corresponds to the row clicked on.
   
   Type: <MediaItem>
   */

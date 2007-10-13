@@ -29,7 +29,7 @@
 interface sbIMediaItem;
 
 /*
-Class: MediaItemStatusEvent
+Event: MediaItemStatusEvent
 
 A <MediaItemStatusEvent> is passed to any event handlers listening for
 media item status related events fired on the document object.

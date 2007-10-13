@@ -57,7 +57,9 @@ librarybasefilescleanup="$docstempdir/sbIMediaItem.idl
                          $docstempdir/sbILibraryResource.idl
 "
 # Bindings files needed to generate the documentation
-bindingsfiles="$bindingsdir/public/sbIPlaylistWidget.idl"
+bindingsfiles="$bindingsdir/public/sbIPlaylistWidget.idl
+               $bindingsdir/public/sbIPlaylistClickEvent.idl
+               $bindingsdir/public/sbIMediaItemStatusEvent.idl"
 
 # Bindings files we need to clean up
 bindingsfilescleanup="$docstempdir/sbIPlaylistWidget.idl"
