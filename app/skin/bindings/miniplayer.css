@@ -328,7 +328,11 @@ progressmeter.sb-player-seek-slider.miniplayer
   height: 4px !important;
   border: 0px !important;
 }
-
+progressmeter.sb-player-seek-slider.miniplayer > .progress-bar
+{
+  background-image: none;
+  min-width:0px;
+}
 
 /** 
 *******************************************************************************
