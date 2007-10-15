@@ -1193,6 +1193,12 @@
         // unwrap it
         playlist = playlist.wrappedJSObject;
         var tab = this.getTabForDocument(contentDocument);
+        if (!tab) {
+          // if the tab is being closed, the <tab> and <browser> go away from
+          // the DOM before the unload happens, so we can't get the tab
+          // fortunately, we also don't want to save the state in that case
+          return;
+        }
         
         var browser = tab.linkedBrowser;
         var history = browser.webNavigation.sessionHistory;
