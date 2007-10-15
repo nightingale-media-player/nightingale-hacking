@@ -49,12 +49,6 @@ class nsIWeakReference;
 class sbILibrary;
 class sbIPropertyManager;
 
-struct FilterSpec {
-  nsString property;
-  nsTArray<nsString> values;
-  PRBool isSearch;
-};
-
 class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
 {
 public:
@@ -62,6 +56,17 @@ public:
   NS_DECL_SBILOCALDATABASEGUIDARRAY
 
   sbLocalDatabaseGUIDArray();
+
+  struct FilterSpec {
+    nsString property;
+    nsTArray<nsString> values;
+    PRBool isSearch;
+  };
+
+  struct SortSpec {
+    nsString property;
+    PRBool ascending;
+  };
 
 private:
 
@@ -134,11 +139,6 @@ private:
   nsresult GetByIndexInternal(PRUint32 aIndex, ArrayItem** _retval);
 
   PRInt32 GetPropertyId(const nsAString& aProperty);
-
-  struct SortSpec {
-    nsString property;
-    PRBool ascending;
-  };
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;

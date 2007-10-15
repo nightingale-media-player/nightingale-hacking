@@ -46,9 +46,8 @@ public:
                        const nsAString& aBaseConstraintColumn,
                        PRUint32 aBaseConstraintValue,
                        const nsAString& aBaseForeignKeyColumn,
-                       const nsAString& aPrimarySortProperty,
-                       PRBool aPrimarySortAscending,
-                       nsTArray<FilterSpec>* aFilters,
+                       nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
+                       nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
                        PRBool aIsDistinct,
                        sbILocalDatabasePropertyCache* aPropertyCache);
 
@@ -57,12 +56,13 @@ public:
   nsresult GetNonNullCountQuery(nsAString& aQuery);
   nsresult GetNullGuidRangeQuery(nsAString& aQuery);
   nsresult GetPrefixSearchQuery(nsAString& aQuery);
+  nsresult GetResortQuery(nsAString& aQuery);
 
 private:
   struct sbAddJoinInfo {
     sbAddJoinInfo(sbISQLSelectBuilder* aBuilder) :
-      builder(aBuilder),
-      joinCounter(0)
+      joinCounter(0),
+      builder(aBuilder)
     {
       NS_ASSERTION(aBuilder, "aBuilder is null");
     };
@@ -98,9 +98,8 @@ private:
   nsString mBaseConstraintColumn;
   PRUint32 mBaseConstraintValue;
   nsString mBaseForeignKeyColumn;
-  nsString mPrimarySortProperty;
-  PRBool mPrimarySortAscending;
-  nsTArray<FilterSpec>* mFilters;
+  nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* mFilters;
+  nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* mSorts;
   PRBool mIsDistinct;
 
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;

@@ -68,18 +68,16 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseConstraintColumn,
                                            PRUint32 aBaseConstraintValue,
                                            const nsAString& aBaseForeignKeyColumn,
-                                           const nsAString& aPrimarySortProperty,
-                                           PRBool aPrimarySortAscending,
-                                           nsTArray<FilterSpec>* aFilters,
+                                           nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
+                                           nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
                                            PRBool aIsDistinct,
                                            sbILocalDatabasePropertyCache* aPropertyCache) :
   mBaseTable(aBaseTable),
   mBaseConstraintColumn(aBaseConstraintColumn),
   mBaseConstraintValue(aBaseConstraintValue),
   mBaseForeignKeyColumn(aBaseForeignKeyColumn),
-  mPrimarySortProperty(aPrimarySortProperty),
-  mPrimarySortAscending(aPrimarySortAscending),
   mFilters(aFilters),
+  mSorts(aSorts),
   mIsDistinct(aIsDistinct),
   mPropertyCache(aPropertyCache),
   mHasSearch(PR_FALSE)
@@ -107,6 +105,9 @@ sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
 
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = AddCountColumns();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -124,9 +125,6 @@ sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
   rv = mBuilder->ToString(aQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -134,6 +132,9 @@ nsresult
 sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddGuidColumns(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -153,9 +154,9 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
   // to ensure we only get rows with non-null values.  Note that we don't have
   // to do this when it is not a top level property because we don't get nulls
   // by virtue of the join
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
@@ -176,9 +177,6 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
   rv = mBuilder->ToString(aQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -186,6 +184,9 @@ nsresult
 sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // There are no non-null rows in a distinct count query
   if (mIsDistinct) {
@@ -208,9 +209,6 @@ sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
   rv = mBuilder->ToString(aQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -218,6 +216,9 @@ nsresult
 sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // There are no non-null rows in a distinct count query
   if (mIsDistinct) {
@@ -249,9 +250,6 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   rv = mBuilder->ToString(aQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -259,6 +257,9 @@ nsresult
 sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddCountColumns();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -278,7 +279,7 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+  if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
 
     nsAutoString baseTable;
     rv = mBuilder->GetBaseTableName(baseTable);
@@ -312,14 +313,150 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
 }
 
 nsresult
+sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
+{
+  NS_ENSURE_FALSE(mIsDistinct, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(mSorts->Length() > 1, NS_ERROR_UNEXPECTED);
+
+  nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddBaseTable();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Constrain the rows in the base table to a given value parameter
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
+
+    // If the primary sort is a top level property, we can put the value
+    // constraint directly on the media items table
+    nsString columnName;
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property,
+                                      columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionParameter(MEDIAITEMS_ALIAS,
+                                                 columnName,
+                                                 sbISQLSelectBuilder::MATCH_EQUALS,
+                                                 getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Join the properties tabe to apply the constraint
+    rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                           PROPERTIES_TABLE,
+                           CONSTRAINT_ALIAS,
+                           GUID_COLUMN,
+                           MEDIAITEMS_ALIAS,
+                           GUID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionLong(CONSTRAINT_ALIAS,
+                                            PROPERTYID_COLUMN,
+                                            sbISQLSelectBuilder::MATCH_EQUALS,
+                                            GetPropertyId(mSorts->ElementAt(0).property),
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionParameter(CONSTRAINT_ALIAS,
+                                                 OBJSORTABLE_COLUMN,
+                                                 sbISQLSelectBuilder::MATCH_EQUALS,
+                                                 getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add a join for each sort
+  PRUint32 numSorts = mSorts->Length();
+  for (PRUint32 i = 1; i < numSorts; i++) {
+    const sbLocalDatabaseGUIDArray::SortSpec& sort = mSorts->ElementAt(i);
+
+    nsString joinedAlias(SORT_ALIAS);
+    joinedAlias.AppendInt(i);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
+    rv = mBuilder->CreateMatchCriterionTable(joinedAlias,
+                                             GUID_COLUMN,
+                                             sbISQLSelectBuilder::MATCH_EQUALS,
+                                             MEDIAITEMS_ALIAS,
+                                             GUID_COLUMN,
+                                             getter_AddRefs(criterionGuid));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (SB_IsTopLevelProperty(sort.property)) {
+      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
+                                          MEDIAITEMS_TABLE,
+                                          joinedAlias,
+                                          criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString columnName;
+      rv = SB_GetTopLevelPropertyColumn(sort.property, columnName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mBuilder->AddOrder(joinedAlias, columnName, sort.ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
+      rv = mBuilder->CreateMatchCriterionLong(joinedAlias,
+                                              NS_LITERAL_STRING("property_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              GetPropertyId(sort.property),
+                                              getter_AddRefs(criterionProperty));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->CreateAndCriterion(criterionGuid,
+                                        criterionProperty,
+                                        getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
+                                          PROPERTIES_TABLE,
+                                          joinedAlias,
+                                          criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddOrder(joinedAlias, OBJSORTABLE_COLUMN, sort.ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+
+  // Sort on the base table's guid column so make sure things are sorted the
+  // same on all platforms
+  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS, GUID_COLUMN, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->ToString(aQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseQuery::AddCountColumns()
 {
   nsresult rv;
 
   if (mIsDistinct) {
-    if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+    if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
         nsAutoString columnName;
-        rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+        rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property,
+                                          columnName);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsAutoString count;
@@ -381,16 +518,16 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+    if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
       nsAutoString columnName;
-      rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+      rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, columnName);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
-      if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+      if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
 
         if (mBaseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
           rv = mBuilder->AddColumn(CONSTRAINT_ALIAS,
@@ -525,7 +662,7 @@ sbLocalDatabaseQuery::AddFilters()
   // Combine all searches with the same term into one search
   PRUint32 len = mFilters->Length();
   for (PRUint32 i = 0; i < len; i++) {
-    const FilterSpec& fs = mFilters->ElementAt(i);
+    const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);
     if (fs.isSearch) {
 
       // Right now we don't support top level property searches
@@ -567,7 +704,7 @@ sbLocalDatabaseQuery::AddFilters()
   // Add the filters as joins
 
   for (PRUint32 i = 0; i < len; i++) {
-    const FilterSpec& fs = mFilters->ElementAt(i);
+    const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);
 
     if (!fs.isSearch) {
 
@@ -658,10 +795,10 @@ sbLocalDatabaseQuery::AddFilters()
 
   // If this is a top level distinct query, make sure the primary sort property
   // is never null
-  if (mIsDistinct && SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (mIsDistinct && SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
@@ -809,14 +946,14 @@ sbLocalDatabaseQuery::AddPrimarySort()
   /*
    * If this is a top level propery, simply add the sort
    */
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
                             columnName,
-                            mPrimarySortAscending);
+                            mSorts->ElementAt(0).ascending);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -825,7 +962,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
      * "simple_media_lists" table.  Make sure that base table is actually
      * the simple media lists table before proceeding.
      */
-    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+    if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
       nsAutoString baseTable;
       rv = mBuilder->GetBaseTableName(baseTable);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -833,7 +970,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
       if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
         rv = mBuilder->AddOrder(CONSTRAINT_ALIAS,
                                 ORDINAL_COLUMN,
-                                mPrimarySortAscending);
+                                mSorts->ElementAt(0).ascending);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
@@ -859,7 +996,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
       rv = mBuilder->CreateMatchCriterionLong(SORT_ALIAS,
                                               PROPERTYID_COLUMN,
                                               sbISQLSelectBuilder::MATCH_EQUALS,
-                                              GetPropertyId(mPrimarySortProperty),
+                                              GetPropertyId(mSorts->ElementAt(0).property),
                                               getter_AddRefs(criterion));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -871,7 +1008,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
        */
       rv = mBuilder->AddOrder(SORT_ALIAS,
                               OBJSORTABLE_COLUMN,
-                              mPrimarySortAscending);
+                              mSorts->ElementAt(0).ascending);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -884,7 +1021,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
    */
   rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
                           MEDIAITEMID_COLUMN,
-                          mPrimarySortAscending);
+                          mSorts->ElementAt(0).ascending);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -898,9 +1035,9 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
 
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
@@ -911,7 +1048,7 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+    if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
 
       nsAutoString baseTable;
       rv = mBuilder->GetBaseTableName(baseTable);
@@ -941,7 +1078,7 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
       rv = mBuilder->CreateMatchCriterionLong(GETNOTNULL_ALIAS,
                                               PROPERTYID_COLUMN,
                                               sbISQLSelectBuilder::MATCH_EQUALS,
-                                              GetPropertyId(mPrimarySortProperty),
+                                              GetPropertyId(mSorts->ElementAt(0).property),
                                               getter_AddRefs(criterion));
       NS_ENSURE_SUCCESS(rv, rv);
       rv = mBuilder->AddCriterion(criterion);
@@ -959,9 +1096,9 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
 
   // When doing a distict query, add a constraint so we only select media items
   // that have a value for the primary sort
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> notNull;
@@ -1002,7 +1139,7 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
     rv = mBuilder->CreateMatchCriterionLong(DISTINCT_ALIAS,
                                             PROPERTYID_COLUMN,
                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                            GetPropertyId(mPrimarySortProperty),
+                                            GetPropertyId(mSorts->ElementAt(0).property),
                                             getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1032,9 +1169,9 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
 {
   nsresult rv;
 
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Prevent empty values
@@ -1054,7 +1191,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
 
   }
   else {
-    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+    if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
 
       if (mBaseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
         rv = mBuilder->AddGroupBy(CONSTRAINT_ALIAS,
@@ -1087,9 +1224,9 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
 {
   nsresult rv;
 
-  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSorts->ElementAt(0).property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
@@ -1116,7 +1253,7 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
     rv = mBuilder->CreateMatchCriterionLong(GETNULL_ALIAS,
                                             PROPERTYID_COLUMN,
                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                            GetPropertyId(mPrimarySortProperty),
+                                            GetPropertyId(mSorts->ElementAt(0).property),
                                             getter_AddRefs(criterionProperty));
     NS_ENSURE_SUCCESS(rv, rv);
 

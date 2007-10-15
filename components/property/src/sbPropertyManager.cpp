@@ -381,13 +381,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                                    NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXsteve I'm going to disable to sort profile until I figure out why
-  // it is not working, see bug 3076
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
                     stringBundle, PR_TRUE, PR_TRUE, 
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, nsnull);
+                    PR_TRUE, PR_TRUE, sortProfile);
 
   //Duration (in usecs)
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_DURATION),

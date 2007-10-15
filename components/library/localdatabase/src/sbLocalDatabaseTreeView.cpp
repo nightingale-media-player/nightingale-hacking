@@ -962,6 +962,9 @@ sbLocalDatabaseTreeView::GetState(sbLocalDatabaseTreeViewState** aState)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 {
+  LOG(("sbLocalDatabaseTreeView[0x%.8x] - SetSort(%s, %d)",
+       this, NS_LossyConvertUTF16toASCII(aProperty).get(), aDirection));
+
   nsresult rv;
 
   nsCOMPtr<sbIMediaList> list;
@@ -1069,6 +1072,9 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     rv = Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  mCurrentSortProperty = aProperty;
+  mCurrentSortDirectionIsAscending = aDirection;
 
   rv = UpdateColumnSortAttributes(aProperty, aDirection);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1579,14 +1585,14 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
   nsCOMPtr<sbIMediaList> mediaList;
   rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // If the list is not sortable, ignore the click
   nsAutoString isSortable;
   rv = mediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), isSortable);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isSortable.Equals(NS_LITERAL_STRING("0"))) return NS_OK;
 
-  nsAutoString bind;
+  nsString bind;
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1601,15 +1607,12 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
     }
   }
 
+  PRBool directionIsAscending = PR_TRUE;
   if (bind.Equals(mCurrentSortProperty)) {
-    mCurrentSortDirectionIsAscending = !mCurrentSortDirectionIsAscending;
-  }
-  else {
-    mCurrentSortProperty = bind;
-    mCurrentSortDirectionIsAscending = PR_TRUE;
+    directionIsAscending = !mCurrentSortDirectionIsAscending;
   }
 
-  rv = SetSort(mCurrentSortProperty, mCurrentSortDirectionIsAscending);
+  rv = SetSort(bind, directionIsAscending);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
