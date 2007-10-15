@@ -126,7 +126,7 @@ wizard[branded="true"] .wizard-header-icon {
   -moz-margin-end: 0px !important;
 }
 
-wizard,
+wizard
 {
   background-color: #313131 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
 }
