@@ -6,7 +6,7 @@ xpcom_helloworld.jar:
 # map the things under content/ to chrome://xpcom_helloworld/content/
 % content  xpcom_helloworld  %content/
 # map in the locale
-% locale  xpcom_helloworld en-US %locale/en-US/
+% locale  xpcom_helloworld en-US %locales/en-US/
 # map in the skin
 % skin xpcom_helloworld classic/1.0 %skin/
 # apply an overlay to all Songbird main windows
