@@ -241,12 +241,14 @@
 
             try
             {
-            // safety test, is the playlist ready ?
-            var err = false;
-            try {
-              var a = this.playlist.tree.currentIndex;
-            } catch (e) {
-              skip=true;
+            if (this.playlist) {
+              // safety test, is the playlist ready ?
+              var err = false;
+              try {
+                var a = this.playlist.tree.currentIndex;
+              } catch (e) {
+                skip=true;
+              }
             }
             if (!this.medialist) skip = true;
             if (this.playlist) {
