@@ -1649,12 +1649,13 @@ sbRemotePlayer::ConfirmPlaybackControl() {
 PRBool
 sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                                         const nsAString &aTitleKey,
-                                        const nsAString &aMessageKey )
+                                        const nsAString &aMessageKey,
+                                        const char* aScopedName )
 {
   LOG(("sbRemotePlayer::GetUserApprovalForHost(URI)"));
   NS_ENSURE_ARG_POINTER(aURI);
-  NS_ASSERTION(aTitleKey.IsEmpty(), "Title Key empty!!!!");
-  NS_ASSERTION(aMessageKey.IsEmpty(), "Message key empty!!!!");
+  NS_ASSERTION(!aTitleKey.IsEmpty(), "Title Key empty!!!!");
+  NS_ASSERTION(!aMessageKey.IsEmpty(), "Message key empty!!!!");
 
   nsCString hostUTF8;
   nsresult rv = aURI->GetHost(hostUTF8);
@@ -1702,6 +1703,21 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   rv = bundle->GetStringFromName( aTitleKey.BeginReading(),
                                   getter_Copies(title) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
+
+  nsString allowDeny;
+  rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.deny").get(),
+                                  getter_Copies(allowDeny) );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
+  
+  nsString allowAlways;
+  rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.always").get(),
+                                  getter_Copies(allowAlways) );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
+
+  nsString allowOnce;
+  rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.once").get(),
+                                  getter_Copies(allowOnce) );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   
   // now we can actually go for the prompt
   nsCOMPtr<nsIPromptService> promptService =
@@ -1713,14 +1729,41 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   nsCOMPtr<nsIDOMWindow> window = do_QueryInterface( jsWindow, &rv );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
-  PRBool allowed;
-  rv = promptService->Confirm( window,
-                               title.BeginReading(),
-                               message.BeginReading(),
-                               &allowed );
+  PRUint32 buttons =  nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* allow for visit */
+                      nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* cancel */
+                      nsIPromptService::BUTTON_POS_1_DEFAULT;
+  
+  if (aScopedName) {
+    buttons += nsIPromptService::BUTTON_POS_2 * nsIPromptService::BUTTON_TITLE_IS_STRING;
+  }
+
+  PRInt32 allowed;
+  // the buttons have to be in this weird order for the cancel button to be
+  // properly enabled while we delay allowing the user to accept
+  rv = promptService->ConfirmEx( window,
+                                 title.BeginReading(),
+                                 message.BeginReading(),
+                                 buttons,
+                                 allowOnce.BeginReading(),
+                                 allowDeny.BeginReading(),
+                                 allowAlways.BeginReading(),
+                                 nsnull,
+                                 nsnull,
+                                 &allowed );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
-  return allowed;
+  switch(allowed) {
+    case 2:
+      // set the permissions permanently
+      rv = sbSecurityMixin::SetPermission( aURI, nsDependentCString(aScopedName) );
+      // failure is silent
+      /* fall through to allow once */
+    case 0:
+      return PR_TRUE;
+    case 1:
+      break;
+  }
+  return PR_FALSE;
 }
 
 nsresult

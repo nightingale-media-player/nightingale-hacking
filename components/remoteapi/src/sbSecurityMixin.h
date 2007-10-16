@@ -65,6 +65,13 @@ public:
   NS_DECL_SBISECURITYMIXIN
 
   sbSecurityMixin();
+  
+  /**
+   * \brief Set the permission to allow for a scoped name
+   * \param aURI the URI to set permissions for
+   * \param aScopedName the permission to set
+   */
+  static nsresult SetPermission(nsIURI *aURI, const nsACString &aScopedName);
 
 protected:
   virtual ~sbSecurityMixin();

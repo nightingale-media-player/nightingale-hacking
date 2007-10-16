@@ -111,7 +111,8 @@ public:
 
   static PRBool GetUserApprovalForHost( nsIURI *aURI,
                                         const nsAString &aTitleKey,
-                                        const nsAString &aMessageKey );
+                                        const nsAString &aMessageKey,
+                                        const char* aScopedName = nsnull );
   nsresult SetOriginScope( sbIMediaItem *aItem );
 
 protected:

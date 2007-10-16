@@ -471,7 +471,8 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
       allowed =
         sbRemotePlayer::GetUserApprovalForHost( codebase,
                             NS_LITERAL_STRING("rapi.media_add.request.title"),
-                            NS_LITERAL_STRING("rapi.media_add.request.message") );
+                            NS_LITERAL_STRING("rapi.media_add.request.message"),
+                            scope->name );
 
     }
     else if ( strcmp(notification, sNotificationStatus) == 0 ) {
@@ -582,6 +583,27 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const struct Scope *aScope )
   // Negative Ghostrider, pattern is full.
   LOG(("sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!"));
   return PR_FALSE;
+}
+
+nsresult
+sbSecurityMixin::SetPermission(nsIURI *aURI, const nsACString &aScopedName)
+{
+  NS_ENSURE_ARG(aURI);
+  NS_ENSURE_TRUE( !aScopedName.IsEmpty(), NS_ERROR_INVALID_ARG );
+  
+  nsresult rv;
+  nsCString permission_name("rapi.");
+  permission_name.Append(aScopedName);
+  nsCOMPtr<nsIPermissionManager> permMgr =
+    do_GetService( NS_PERMISSIONMANAGER_CONTRACTID, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  rv = permMgr->Add( aURI,
+                     permission_name.BeginReading(),
+                     nsIPermissionManager::ALLOW_ACTION );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  return NS_OK;
 }
 
 
