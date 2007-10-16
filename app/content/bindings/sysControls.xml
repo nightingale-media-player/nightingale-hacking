@@ -383,10 +383,22 @@
           else
             // Hidden on all but Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
+			
+          // Hide feathers button when the OS titlebar is showing
+          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');
+          this._feathersVisibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", feathersButton, "hidden", true );
 
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
         ]]>
       </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._feathersVisibilityBinding) {
+            this._feathersVisibilityBinding.unbind();
+            this._feathersVisibilityBinding = null;
+          }
+        ]]>
+      </destructor>  
       <property name="title">
         <setter><![CDATA[
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
