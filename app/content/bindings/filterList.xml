@@ -281,13 +281,19 @@
             while (propEnumerator.hasMore()) {
               var propertyName = propEnumerator.getNext();
               var propertyInfo = pm.getPropertyInfo(propertyName);
-              var popupChild = document.createElement("menuitem");
-              popupChild.setAttribute("type", "checkbox");
-              popupChild.setAttribute("label", propertyInfo.displayName);
-              popupChild.setAttribute("property", propertyName);
-              if (propertyName == filterlist._property)
-                  popupChild.setAttribute("checked", "true");
-              aPopup.insertBefore(popupChild, refChild);
+              
+              if (propertyInfo.userViewable) {
+                var popupChild = document.createElement("menuitem");
+                
+                popupChild.setAttribute("type", "checkbox");
+                popupChild.setAttribute("label", propertyInfo.displayName);
+                popupChild.setAttribute("property", propertyName);
+                
+                if (propertyName == filterlist._property)
+                    popupChild.setAttribute("checked", "true");
+                    
+                aPopup.insertBefore(popupChild, refChild);
+              }
             }
           ]]>
         </body>
