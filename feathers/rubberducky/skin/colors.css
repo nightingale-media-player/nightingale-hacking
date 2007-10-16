@@ -71,7 +71,8 @@ wizard,
 dialog,
 window,
 prefwindow,
-playlist
+playlist,
+page
 {
   background-color: #313131; /* color of the Main Window **/
   color: #B3BAAC; /* Light Color 1 */
@@ -339,20 +340,6 @@ we should nix the painting of the selection.*/
   background-color: #8A8F84;  Light Color 2 
 }*/
 
-.servicepane-tree > treechildren::-moz-tree-row( dropOn ),
-.servicepane-tree > treechildren::-moz-tree-row( dropBefore ),
-.servicepane-tree > treechildren::-moz-tree-row( dropAfter )
-{
-  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
-  background-position: center bottom !important;
-  background-repeat: repeat-x !important;
-}
-
-.servicepane-tree > treechildren::-moz-tree-row( dropBefore )
-{
-  background-position: center top !important;
-}
-
 .servicepane-toolbar-newitem-button > .clickhold-button
 {
   border: 1px solid;
@@ -573,13 +560,6 @@ treechildren::-moz-tree-column(insertbefore)
   color: #B3BAAC !important; /** Light Color 1 */
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-drop-feedback
-{
-  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png);
-  margin: 0;
-  /* the width must use absolute number of units here, no percentages */
-  width: 63360in;
-}
 
 
 
@@ -638,13 +618,11 @@ treechildren::-moz-tree-row( selected, focus )
   background-color: #B3BAAC; /** Light Color 1 */
 }
 
-treechildren#trDOMTreeBody::-moz-tree-cell-text, /* for DOM Inspector */
 treechildren::-moz-tree-cell-text
 {
   color: #B3BAAC; /** Light Color 1 */
 }
 
-treechildren#trDOMTreeBody::-moz-tree-cell-text( selected ), /* for DOM Inspector */
 treechildren::-moz-tree-cell-text( selected )
 {
   color: #0f100f; /** Groove */
@@ -1696,4 +1674,21 @@ html|*.error-text,
 }
 
 
+/** 
+*******************************************************************************
+DOM INSPECTOR
+*******************************************************************************
+*/
 
+treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE)
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous)
+{
+  color: red;
+}
+treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
+{
+  color: #0f100f; /** Groove */
+}

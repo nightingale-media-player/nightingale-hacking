@@ -70,6 +70,13 @@ playlist > stack > vbox,
   font-weight: normal;
 }
 
+.sb-playlist-tree > treechildren::-moz-tree-drop-feedback
+{
+  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png);
+  margin: 0;
+  /* the width must use absolute number of units here, no percentages */
+  width: 63360in;
+}
 
 
 /** 

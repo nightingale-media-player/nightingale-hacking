@@ -104,6 +104,20 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-bookmark.ico) ;
 }
 
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ),
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ),
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter )
+{
+  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
+  background-position: center bottom !important;
+  background-repeat: repeat-x !important;
+}
+
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore )
+{
+  background-position: center top !important;
+}
+
 
 
 /** 
