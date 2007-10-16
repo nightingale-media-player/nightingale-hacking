@@ -1329,7 +1329,10 @@ checkbox[checked="true"]:focus{
   border: 1px dotted #797f76 !important; /** Button Highlight */
 }
 
-
+checkbox:focus > hbox > label,
+checkbox[checked="true"]:focus > hbox > label{
+  color: #fffff1 !important; /** Light Color Brightest */  
+}
 
 /** 
 *******************************************************************************
@@ -1562,11 +1565,14 @@ DIALOGS
 /** Add a darker content box and appropriate padding **/
 .dialog-content-box
 {
-  background-color: #1b1d1b; /** Rubber Shadow */
-  border: 1px solid #0f100f; /** Groove */
+  background-color: #313131; /** Window */
+  border: 1px solid #202220; /** Button Shadow */
   border-bottom: 2px solid red;
   -moz-border-bottom-colors: #474948  /** Rubber Highlight */
                              #0f100f; /** Groove */
+  border-top: 2px solid red;
+  -moz-border-top-colors: #0f100f /** Groove */  
+                             #474948;  /** Rubber Highlight */                         
   margin: 5px 0;
   padding: 10px 10px 10px 15px;
 }
