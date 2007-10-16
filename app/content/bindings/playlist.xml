@@ -124,7 +124,11 @@
         </stack>
         </content>
 
-    <implementation implements="sbIPlaylistWidget" type="application/x-javascript" name="songbird_playlist">
+    <implementation
+      implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver"
+      type="application/x-javascript"
+      name="songbird_playlist"
+    >
 
       <constructor>
 <![CDATA[
@@ -526,18 +530,7 @@
   var mediaListViewTreeView =
     this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
 
-  var self = this;
-  mediaListViewTreeView.observer = {
-    canDrop: function(index, orientation) {
-      return true;
-    },
-    drop: function(row, orientation) {
-      self._dropOnTree(row, orientation);
-    },
-    cycleHeader: function(col) {
-      self._columnSpecIsDirty = true;
-    }
-  };
+  mediaListViewTreeView.observer = this;
 
   // Create whatever filters we think we need.
   this._generateFilters();
@@ -2589,38 +2582,14 @@
 
       if (item instanceof this._Ci.sbIMediaList) {
         // If this is a list, send it as both a media item and a media list
-        var context = {
-          item: item,
-          list: item,
-          source: ml,
-          count: 1,
-          QueryInterface : function(iid) {
-            if (iid.equals(self._Ci.sbISingleItemTransferContext) ||
-                iid.equals(self._Ci.sbISingleListTransferContext) ||
-                iid.equals(self._Ci.nsISupports))
-              return this;
-            throw self._Cr.NS_NOINTERFACE;
-          }
-        }
-
+        var context = this._getSingleListTransferContext(item, ml);
         var handle = dnd.registerSource(context);
         data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
         data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
       }
       else {
         // If this is just a media item, send it only as a media item
-        var context = {
-          item: item,
-          source: ml,
-          count: 1,
-          QueryInterface : function(iid) {
-            if (iid.equals(self._Ci.sbISingleItemTransferContext) ||
-                iid.equals(self._Ci.nsISupports))
-              return this;
-            throw self._Cr.NS_NOINTERFACE;
-          }
-        }
-
+        var context = this._getSingleItemTransferContext(item, ml);
         var handle = dnd.registerSource(context);
         data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
       }
@@ -2630,22 +2599,9 @@
       // We are sending more than one item.  We dont know (or care to find
       // out) if all of the items to be sent are actually lists, so send
       // as items
-      var context = {
-        items: null,
-        source: ml,
-        count: numRows,
-        reset: function sbMultipleItemTransferContext_reset() {
-          // fetch a new enumerator (reset it)
-          this.items = treeView.selectedMediaItems;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(self._Ci.sbIMultipleItemTransferContext) ||
-              iid.equals(self._Ci.nsISupports))
-            return this;
-          throw self._Cr.NS_NOINTERFACE;
-        }
-      }
+
       // initialize the context to have items
+      var context = this._getMultipleItemTransferContext(ml, numRows, treeView);
       context.reset();
 
       var handle = dnd.registerSource(context);
@@ -2669,6 +2625,83 @@
     }
     throw e;
   }
+]]>
+        </body>
+      </method>
+
+      <method name="_getSingleListTransferContext">
+        <parameter name="item"/>
+        <parameter name="ml"/>
+        <body>
+<![CDATA[
+  function sbSingleListTransferContext(item, ml) {
+    this.item   = item;
+    this.list   = item;
+    this.source = ml;
+    this.count  = 1;
+  }
+  sbSingleListTransferContext.prototype = {
+    QueryInterface : function(iid) {
+      if (iid.equals(Components.interfaces.sbISingleItemTransferContext) ||
+          iid.equals(Components.interfaces.sbISingleListTransferContext) ||
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }
+  return new sbSingleListTransferContext(item, ml);
+]]>
+        </body>
+      </method>
+
+      <method name="_getSingleItemTransferContext">
+        <parameter name="item"/>
+        <parameter name="ml"/>
+        <body>
+<![CDATA[
+  function sbSingleItemTransferContext(item, ml) {
+    this.item   = item;
+    this.source = ml;
+    this.count  = 1;
+  }
+  sbSingleItemTransferContext.prototype = {
+    QueryInterface : function(iid) {
+      if (iid.equals(Components.interfaces.sbISingleItemTransferContext) ||
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }
+  return new sbSingleItemTransferContext(item, ml);
+]]>
+        </body>
+      </method>
+
+      <method name="_getMultipleItemTransferContext">
+        <parameter name="ml"/>
+        <parameter name="numRows"/>
+        <parameter name="treeView"/>
+        <body>
+<![CDATA[
+  function sbMultipleItemTransferContext(ml, numRows, treeView) {
+    this.items     = null;
+    this.source    = ml;
+    this.count     = numRows;
+    this._treeView = treeView;
+  }
+  sbMultipleItemTransferContext.prototype = {
+    reset: function() {
+      // fetch a new enumerator (reset it)
+      this.items = this._treeView.selectedMediaItems;
+    },
+    QueryInterface : function(iid) {
+      if (iid.equals(Components.interfaces.sbIMultipleItemTransferContext) ||
+          iid.equals(Components.interfaces._Ci.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }
+  return new sbMultipleItemTransferContext(ml, numRows, treeView);
 ]]>
         </body>
       </method>
@@ -2806,8 +2839,38 @@
           ]]>
         </body>
       </method>
+
+      <method name="canDrop">
+        <parameter name="aIndex"/>
+        <parameter name="aOrientation"/>
+        <body>
+<![CDATA[
+  return true;
+]]>
+        </body>
+      </method>
+
+      <method name="drop">
+        <parameter name="aIndex"/>
+        <parameter name="aOrientation"/>
+        <body>
+<![CDATA[
+  this._dropOnTree(aIndex, aOrientation);
+]]>
+        </body>
+      </method>
+
+      <method name="cycleHeader">
+        <parameter name="aCol"/>
+        <body>
+<![CDATA[
+  this._columnSpecIsDirty = true;
+]]>
+        </body>
+      </method>
+
     </implementation>
-    
+
     <handlers>
       <handler event="click" clickcount="2" phase="capturing">
         <![CDATA[

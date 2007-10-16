@@ -244,8 +244,8 @@ private:
   nsCOMPtr<nsITreeSelection> mRealSelection;
   nsCOMPtr<nsITreeBoxObject> mTreeBoxObject;
 
-  // Listener
-  nsCOMPtr<sbIMediaListViewTreeViewObserver> mObserver;
+  // Weak listener
+  nsCOMPtr<nsIWeakReference> mObserver;
 
   // Temporary cache of visible rows while refreshing
   nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mDirtyRowCache;

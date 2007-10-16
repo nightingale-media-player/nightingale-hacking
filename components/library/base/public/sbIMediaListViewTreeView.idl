@@ -76,7 +76,8 @@ interface sbIMediaListViewTreeView : nsISupports
                                        in unsigned long aStartFrom);
 
   /**
-   * \brief Get and set an observer for this media list tree view
+   * \brief Get and set an observer for this media list tree view.  This
+   *        observer must support nsIWeakReference
    */
   attribute sbIMediaListViewTreeViewObserver observer;
 

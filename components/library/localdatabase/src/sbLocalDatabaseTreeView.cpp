@@ -1621,8 +1621,12 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mObserver) {
-    rv = mObserver->CycleHeader(col);
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
+      do_QueryReferent(mObserver);
+    if (observer) {
+      rv = observer->CycleHeader(col);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -1894,10 +1898,15 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
          row, orientation));
 
   if (!IsAllRow(row) && mObserver) {
-    nsresult rv = mObserver->CanDrop(TreeToArray(row),
-                                     orientation,
-                                     _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
+      do_QueryReferent(mObserver);
+    if (observer) {
+      nsresult rv = observer->CanDrop(TreeToArray(row),
+                                      orientation,
+                                      _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   else {
     *_retval = PR_FALSE;
@@ -1913,8 +1922,13 @@ sbLocalDatabaseTreeView::Drop(PRInt32 row, PRInt32 orientation)
          row, orientation));
 
   if (!IsAllRow(row) && mObserver) {
-    nsresult rv = mObserver->Drop(TreeToArray(row), orientation);
-    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
+      do_QueryReferent(mObserver);
+    if (observer) {
+      nsresult rv = observer->Drop(TreeToArray(row), orientation);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -2331,7 +2345,15 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetObserver(sbIMediaListViewTreeViewObserver* aObserver)
 {
-  mObserver = aObserver;
+  nsresult rv;
+
+  if (aObserver) {
+    mObserver = do_GetWeakReference(aObserver, &rv);;
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mObserver = nsnull;
+  }
 
   return NS_OK;
 }
@@ -2344,7 +2366,15 @@ sbLocalDatabaseTreeView::GetObserver(sbIMediaListViewTreeViewObserver** aObserve
 {
   NS_ENSURE_ARG_POINTER(aObserver);
 
-  NS_IF_ADDREF(*aObserver = mObserver);
+  *aObserver = nsnull;
+  if (mObserver) {
+    nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
+      do_QueryReferent(mObserver);
+    if (observer) {
+      NS_ADDREF(*aObserver = observer);
+    }
+  }
+
   return NS_OK;
 }
 
