@@ -1242,13 +1242,6 @@ label
   -moz-border-radius: 5px;
 }
 
-/** Make dialog group boxes lighter, since
-    dialogs have darker content areas **/
-dialog:root[type="songbird"] .groupbox-body
-{
-  border-color: #0f100f; /** Groove */
-}
-
 /* class for text with a 'link' appearance */
 .text-link
 {
