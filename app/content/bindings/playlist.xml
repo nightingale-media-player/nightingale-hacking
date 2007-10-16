@@ -432,8 +432,8 @@
         0: undefined
         1: "contentSpec" property on the medialist
         2: "defaultColumnSpec" property on the medialist
-        3: "contentSpec" property on the medialist library
-        4: "defaultColumnSpec" property on the medialist library
+        3: "defaultColumnSpec" property on the medialist library
+        4: "contentSpec" property on the medialist library
         5: XUL "columnSpec" attribute
         6: Our last-ditch hardcoded list
       -->
@@ -709,24 +709,24 @@
   
   var columnMap = [];
   var medialist = this.mediaListView.mediaList;
-  columnMap = this._getColumnMap(medialist.getProperty(SBProperties.columnSpec),
-                                 1);
+  columnMap =
+    this._getColumnMap(medialist.getProperty(SBProperties.columnSpec), 1);
   if (!columnMap.length) {
-    columnMap = this._getColumnMap
-                        (medialist.getProperty(SBProperties.defaultColumnSpec),
+    columnMap =
+      this._getColumnMap(medialist.getProperty(SBProperties.defaultColumnSpec),
                          2);
   }
   
   if (!columnMap.length) {
-    columnMap = this._getColumnMap
-                        (medialist.library.getProperty(SBProperties.columnSpec),
+    columnMap =
+      this._getColumnMap(medialist.library.getProperty(SBProperties.defaultColumnSpec),
                          3);
   }
   
   if (!columnMap.length) {
-    columnMap = this._getColumnMap
-                (medialist.library.getProperty(SBProperties.defaultColumnSpec),
-                 4);
+    columnMap =
+      this._getColumnMap(medialist.library.getProperty(SBProperties.columnSpec),
+                         4);
   }
   
   if (!columnMap.length) {
@@ -1290,14 +1290,24 @@
   if (!columnSpec) {
     throw new Error("No columns enumerated");
   }
-  
+
   var mediaList = this.mediaListView.mediaList;
   mediaList.setProperty(SBProperties.columnSpec, columnSpec);
 
-  // Write library column spec to use as default for media lists without column
-  // specs.  This was previously done by writing back to the XUL columnSpec
-  // attribute, but that caused bug #4220.
-  mediaList.library.setProperty(SBProperties.columnSpec, columnSpec);
+  // Write the column spec to the default column spec for this list's library
+  // only if the list is not actually the library
+  if (mediaList instanceof this._Ci.sbILibrary) {
+    return;
+  }
+
+  // The download playlist should not modify the default column spec
+  var ddh = this._Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                    .getService(this._Ci.sbIDownloadDeviceHelper);
+  if (ddh.downloadMediaList.equals(mediaList)) {
+    return;
+  }
+
+  mediaList.library.setProperty(SBProperties.defaultColumnSpec, columnSpec);
 ]]>
         </body>
       </method>
