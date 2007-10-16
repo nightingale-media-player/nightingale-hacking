@@ -305,7 +305,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     mSelectionIsAll = PR_TRUE;
   }
   else {
-    nsAutoString baseTable;
+    nsString baseTable;
     rv = mArray->GetBaseTable(baseTable);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -313,7 +313,12 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
       mListType = eLibrary;
     }
     else {
-      mListType = eSimple;
+      if (baseTable.EqualsLiteral("simple_media_lists")) {
+        mListType = eSimple;
+      }
+      else {
+        return NS_ERROR_UNEXPECTED;
+      }
     }
   }
 
@@ -980,13 +985,21 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     return NS_ERROR_FAILURE;
   }
 
+  // If this the library, a sort on ordinal is replaced with a create date
+  // sort since the library does not have an ordinal.
+  nsString sortProperty;
+  sortProperty = aProperty;
+  if (mListType == eLibrary && aProperty.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
+    sortProperty.AssignLiteral(SB_PROPERTY_CREATED);
+  }
+
   // If we are linked to a media list view, use its interfaces to manage
   // the sort
   if (mListType != eDistinct) {
     NS_ENSURE_STATE(mMediaListView);
 
     nsCOMPtr<sbIPropertyInfo> propertyInfo;
-    rv = mPropMan->GetPropertyInfo(aProperty, getter_AddRefs(propertyInfo));
+    rv = mPropMan->GetPropertyInfo(sortProperty, getter_AddRefs(propertyInfo));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIPropertyArray> sortProfile;
@@ -1043,7 +1056,7 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
       rv = newSort->SetStrict(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = newSort->AppendProperty(aProperty,
+      rv = newSort->AppendProperty(sortProperty,
                                    aDirection ?
                                      NS_LITERAL_STRING("a") :
                                      NS_LITERAL_STRING("d"));
@@ -1063,7 +1076,7 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     rv = mArray->ClearSorts();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mArray->AddSort(aProperty, aDirection);
+    rv = mArray->AddSort(sortProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mArray->Invalidate();
@@ -1599,14 +1612,6 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - CycleHeader %s", this,
          NS_LossyConvertUTF16toASCII(bind).get()));
 
-  if (bind.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
-    if (mListType == eLibrary) {
-      rv = SetSort(NS_LITERAL_STRING(SB_PROPERTY_CREATED), PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-      return NS_OK;
-    }
-  }
-
   PRBool directionIsAscending = PR_TRUE;
   if (bind.Equals(mCurrentSortProperty)) {
     directionIsAscending = !mCurrentSortDirectionIsAscending;
@@ -1614,6 +1619,11 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
 
   rv = SetSort(bind, directionIsAscending);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mObserver) {
+    rv = mObserver->CycleHeader(col);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

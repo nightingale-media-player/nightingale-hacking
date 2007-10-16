@@ -187,6 +187,10 @@
 
       <destructor>
 <![CDATA[
+  if (this._columnSpecIsDirty) {
+    this._saveColumnSpec();
+  }
+
   var e = document.createEvent("Events");
   e.initEvent("playlist-destroy", false, true);
   this.dispatchEvent(e);
@@ -362,26 +366,6 @@
         </getter>
       </property>
 
-      <field name="__suppressColumnSpecSave">false</field>
-      <property name="_suppressColumnSpecSave">
-        <getter>
-<![CDATA[
-  return this.__suppressColumnSpecSave;
-]]>
-        </getter>
-        <setter>
-<![CDATA[
-  if (!val && this.__suppressColumnSpecSave) {
-    this.__suppressColumnSpecSave = val;
-    this._saveColumnSpec();
-  }
-  else {
-    this.__suppressColumnSpecSave = val;
-  }
-]]>
-        </setter>
-      </property>
-
       <!-- Last click time and row index.  This is used to time the slow click
            to inline edit -->
       <field name="_lastClickIndex">0</field>
@@ -427,7 +411,8 @@
       <!-- Used to implement draggable smart splitters -->
       <field name="_down">0</field>
       <field name="_lastpos">0</field>
-      
+      <field name="_columnSpecIsDirty">false</field>
+
       <!-- Where the columnSpec came from. Possible values:
         0: undefined
         1: "contentSpec" property on the medialist
@@ -548,6 +533,9 @@
     },
     drop: function(row, orientation) {
       self._dropOnTree(row, orientation);
+    },
+    cycleHeader: function(col) {
+      self._columnSpecIsDirty = true;
     }
   };
 
@@ -681,7 +669,7 @@
 <![CDATA[
   if((event.attrName == "dragging" && event.newValue == "") ||
      event.attrName == "width" || event.attrName == "hidden") {
-    this._saveColumnSpec();
+    this._columnSpecIsDirty = true;
   }
 ]]>
         </body>
@@ -907,17 +895,11 @@
       <method name="clearColumns">
         <body>
 <![CDATA[
-  this._suppressColumnSpecSave = true;
-  try {
-
-    // Hide all visible columns
-    this._getVisibleColumnArray().forEach(function(column) {
-      column.element.setAttribute("hidden", "true");
-    });
-  }
-  finally {
-    this._suppressColumnSpecSave = false;
-  }
+  // Hide all visible columns
+  this._getVisibleColumnArray().forEach(function(column) {
+    column.element.setAttribute("hidden", "true");
+  });
+  this._columnSpecIsDirty = true;
 ]]>
         </body>
       </method>
@@ -928,14 +910,8 @@
         <parameter name="aWidth"/>
         <body>
 <![CDATA[
-  this._suppressColumnSpecSave = true;
-  try {
-
-    this.insertColumnBefore(aPropertyID, "", aWidth);
-  }
-  finally {
-    this._suppressColumnSpecSave = false;
-  }
+  this.insertColumnBefore(aPropertyID, "", aWidth);
+  this._columnSpecIsDirty = true;
 ]]>
         </body>
       </method>
@@ -973,43 +949,38 @@
     throw this._Cr.NS_ERROR_INVALID_ARG;
   }
 
-  this._suppressColumnSpecSave = true;
-  try {
-    var mover;
+  var mover;
 
-    // If no columns are visible, just move this column to the front
-    if (lastVisibleIndex < 0) {
-      mover = this._moveColumnBefore(columns, columnIndex, 0);
+  // If no columns are visible, just move this column to the front
+  if (lastVisibleIndex < 0) {
+    mover = this._moveColumnBefore(columns, columnIndex, 0);
+  }
+  else {
+    // If a before column was specified, splice the mover into the array
+    // before that column
+    if (aBeforePropertyID) {
+      mover = this._moveColumnBefore(columns, columnIndex, beforeColumnIndex);
     }
     else {
-      // If a before column was specified, splice the mover into the array
-      // before that column
-      if (aBeforePropertyID) {
-        mover = this._moveColumnBefore(columns, columnIndex, beforeColumnIndex);
+      // If no before column was specified, splice the mover into the array
+      // after the last visible column
+      if (lastVisibleIndex < columns.length) {
+        mover = this._moveColumnBefore(columns, columnIndex, lastVisibleIndex + 1);
       }
       else {
-        // If no before column was specified, splice the mover into the array
-        // after the last visible column
-        if (lastVisibleIndex < columns.length) {
-          mover = this._moveColumnBefore(columns, columnIndex, lastVisibleIndex + 1);
-        }
-        else {
-          mover = this._moveLast(columns, columnIndex);
-        }
+        mover = this._moveLast(columns, columnIndex);
       }
     }
-
-    mover.element.setAttribute("hidden", "false");
-
-    // set the width if it isn't already set and we got one passed in
-    var width = mover.element.getAttribute("width");
-    if ( aWidth && width == "" ) {
-      mover.element.setAttribute("width", aWidth);
-    }
   }
-  finally {
-    this._suppressColumnSpecSave = false;
+
+  mover.element.setAttribute("hidden", "false");
+
+  // set the width if it isn't already set and we got one passed in
+  var width = mover.element.getAttribute("width");
+  if ( aWidth && width == "" ) {
+    mover.element.setAttribute("width", aWidth);
   }
+  this._columnSpecIsDirty = true;
 ]]>
         </body>
       </method>
@@ -1076,20 +1047,15 @@
     throw this._Cr.NS_ERROR_INVALID_ARG;
   }
 
-  this._suppressColumnSpecSave = true;
-  try {
-    var mover;
-    if (firstHiddenIndex < 0) {
-      mover = this._moveColumnLast(columns, columnIndex);
-    }
-    else {
-      mover = this._moveColumnBefore(columns, columnIndex, firstHiddenIndex);
-    }
-    mover.element.setAttribute("hidden", "true");
+  var mover;
+  if (firstHiddenIndex < 0) {
+    mover = this._moveColumnLast(columns, columnIndex);
   }
-  finally {
-    this._suppressColumnSpecSave = false;
+  else {
+    mover = this._moveColumnBefore(columns, columnIndex, firstHiddenIndex);
   }
+  mover.element.setAttribute("hidden", "true");
+  this._columnSpecIsDirty = true;
 ]]>
         </body>
       </method>
@@ -1214,10 +1180,6 @@
       <method name="_saveColumnSpec">
         <body>
 <![CDATA[
-  if (this._suppressColumnSpecSave) {
-    return;
-  }
-
   var columns = [];
 
   var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,
@@ -1238,7 +1200,7 @@
         if (sortDirection == "ascending") {
           sortKey = "a";
         }
-        else if (sortDirection == "ascending") {
+        else if (sortDirection == "descending") {
           sortKey = "d";
         }
         if (sortKey) {

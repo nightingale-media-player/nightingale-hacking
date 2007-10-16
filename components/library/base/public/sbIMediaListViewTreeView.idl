@@ -31,6 +31,7 @@
 #include "nsISupports.idl"
 
 interface nsISimpleEnumerator;
+interface nsITreeColumn;
 interface sbIMediaItem;
 
 /**
@@ -47,6 +48,7 @@ interface sbIMediaListViewTreeViewObserver : nsISupports
 
   boolean canDrop(in long index, in long orientation);
   void drop(in long row, in long orientation);
+  void cycleHeader(in nsITreeColumn col);
 };
 
 /**
