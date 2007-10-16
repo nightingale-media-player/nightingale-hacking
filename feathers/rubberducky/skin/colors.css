@@ -1562,9 +1562,9 @@ DIALOGS
   border: 1px solid #202220; /** Button Shadow */
   border-bottom: 2px solid red;
   -moz-border-bottom-colors: #474948  /** Rubber Highlight */
-                             #0f100f; /** Groove */
+                             #202220; /** Button Shadow */
   border-top: 2px solid red;
-  -moz-border-top-colors: #0f100f /** Groove */  
+  -moz-border-top-colors: #202220 /** Button Shadow */
                              #474948;  /** Rubber Highlight */                         
   margin: 5px 0;
   padding: 10px 10px 10px 15px;
