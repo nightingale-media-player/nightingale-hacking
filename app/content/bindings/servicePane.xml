@@ -570,37 +570,35 @@
       var obj={}, row={}, col={};
       this.mTree.treeBoxObject.getCellAt(event.clientX, event.clientY,
                          row, col, obj);
-      if (row.value < 0) {
-        // oh, you must be clicking the header
-        // we hid the header so this shouldn't happen, but still...
-        return;
+
+      // clear the popup menu
+      while (this.mPopup.lastChild) {
+        this.mPopup.removeChild(this.mPopup.lastChild);
       }
+
       var node = this.getNodeForRow(row.value);
-      
       if (node) {
-        // clear the popup menu
-        while (this.mPopup.lastChild) {
-          this.mPopup.removeChild(this.mPopup.lastChild);
-        }
-        
         // ask the service to fill in the popup for this node
         this.mService.fillContextMenu(node.id, this.mPopup, window);
-        
-        // show the popup menu
-        document.popupNode = null;
-        this.mPopup.showPopup(document.documentElement,
-                    event.screenX+5, event.screenY,
-                    'context', null, null, null);
-
-        // Setup a one-shot event listener to force the popup closed 
-        // on the next click in the document                    
-        var pop = this.mPopup;
-        function doclistener() {
-          pop.hidePopup();
-          document.removeEventListener( "click", doclistener, false );
-        }
-        document.addEventListener( "click", doclistener, false );
+      } else {
+        // hmm, fill the popup with the contents of the "new stuff" menu
+        this.mService.fillNewItemMenu(null, this.mPopup, window);
       }
+
+      // show the popup menu
+      document.popupNode = null;
+      this.mPopup.showPopup(document.documentElement,
+                  event.screenX+5, event.screenY,
+                  'context', null, null, null);
+
+      // Setup a one-shot event listener to force the popup closed 
+      // on the next click in the document                    
+      var pop = this.mPopup;
+      function doclistener() {
+        pop.hidePopup();
+        document.removeEventListener( "click", doclistener, false );
+      }
+      document.addEventListener( "click", doclistener, false );
       
       event.stopPropagation();
       event.preventBubble();
