@@ -1,4 +1,4 @@
-Index: client/Makefile.in
+Index: toolkit/crashreporter/client/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/client/Makefile.in,v
 retrieving revision 1.12
@@ -24,7 +24,7 @@ diff -u -8 -p -r1.12 Makefile.in
  
  ifeq ($(OS_ARCH),Darwin)
  libs::
-Index: google-breakpad/src/common/linux/http_upload.cc
+Index: toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc,v
 retrieving revision 1.1
