@@ -117,6 +117,12 @@
                   label="&menu.extensions;" 
                   accesskey="&menu.extensions.accesskey;"/>
         <menuseparator id="devToolsSeparator"/> 
+        <menuitem id="view_page_source"
+                  label="&menu.viewpagesource;"
+                  key="viewpagesource-key"
+                  accesskey="&menu.viewpagesource.accesskey;"
+                  command="Browser:ViewPageSource"/> 
+        <menuseparator id="viewspagesourceSeparator" hidden="true"/> 
         <menuitem id="javascriptConsole"
                   label="&menu.errorconsole;" 
                   accesskey="&menu.errorconsole.accesskey;"/> 

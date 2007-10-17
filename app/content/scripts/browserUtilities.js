@@ -515,9 +515,9 @@ function loadURI(uri, referrer, postData, allowThirdPartyFixup)
   try {
     if (postData === undefined)
       postData = null;
-    var flags = nsIWebNavigation.LOAD_FLAGS_NONE;
+    var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;
     if (allowThirdPartyFixup) {
-      flags = nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP;
+      flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP;
     }
     getWebNavigation().loadURI(uri, flags, referrer, postData, null);
   } catch (e) {
@@ -531,6 +531,62 @@ function getWebNavigation()
     return gBrowser.webNavigation;
   } catch (e) {
     return null;
+  }
+}
+
+// From browser.js
+function BrowserViewSourceOfDocument(aDocument)
+{
+  var pageCookie;
+  var webNav;
+
+  // Get the document charset
+  var docCharset = "charset=" + aDocument.characterSet;
+
+  // Get the nsIWebNavigation associated with the document
+  try {
+      var win;
+      var ifRequestor;
+
+      // Get the DOMWindow for the requested document.  If the DOMWindow
+      // cannot be found, then just use the content window...
+      //
+      // XXX:  This is a bit of a hack...
+      win = aDocument.defaultView;
+      if (win == window) {
+        win = content;
+      }
+      ifRequestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+
+      webNav = ifRequestor.getInterface(Components.interfaces.nsIWebNavigation);
+  } catch(err) {
+      // If nsIWebNavigation cannot be found, just get the one for the whole
+      // window...
+      webNav = getWebNavigation();
+  }
+  //
+  // Get the 'PageDescriptor' for the current document. This allows the
+  // view-source to access the cached copy of the content rather than
+  // refetching it from the network...
+  //
+  try{
+    var PageLoader = webNav.QueryInterface(Components.interfaces.nsIWebPageDescriptor);
+
+    pageCookie = PageLoader.currentDescriptor;
+  } catch(err) {
+    // If no page descriptor is available, just use the view-source URL...
+  }
+
+  ViewSourceOfURL(webNav.currentURI.spec, pageCookie, aDocument);
+}
+
+function ViewSourceOfURL(aURL, aPageDescriptor, aDocument)
+{
+  if (getBoolPref("view_source.editor.external", false)) {
+    gViewSourceUtils.openInExternalEditor(aURL, aPageDescriptor, aDocument);
+  }
+  else {
+    gViewSourceUtils.openInInternalViewer(aURL, aPageDescriptor, aDocument);
   }
 }
 

@@ -68,6 +68,7 @@
 <!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-Ons..." >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
+<!ENTITY menu.viewpagesource "View Page Source">
 <!ENTITY menu.errorconsole "Error Console">
 <!ENTITY menu.dominspector  "DOM Inspector" >
 
@@ -221,6 +222,7 @@
 <!ENTITY menu.feathers.accesskey      "r" >
 <!ENTITY menu.preferences.accesskey   "O" >
 <!ENTITY menu.extensions.accesskey    "A" >
+<!ENTITY menu.viewpagesource.accesskey "V" >
 <!ENTITY menu.clearprivatedata.accesskey "P" >
 <!ENTITY menu.errorconsole.accesskey  "C" >
 <!ENTITY menu.file.exit.accesskey     "X" >
@@ -346,7 +348,7 @@
 <!ENTITY locationbar.key               "L" >
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY sanitize.key                  "Del" >
-
+<!ENTITY menu.viewpagesource.key       "U" >
 
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">

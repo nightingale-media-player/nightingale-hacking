@@ -85,6 +85,8 @@
                 boolean="true"
                 inverted="true" />  
     </command>
+
+    <command id="Browser:ViewPageSource" oncommand="gBrowser.viewPageSourceOfCurrentTab();"/>
   </commandset>
   
   <broadcasterset id="mainBroadcasterSet">
@@ -137,6 +139,7 @@
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
+    <key id="viewpagesource-key" modifiers="accel,shift" key="&menu.viewpagesource.key;" command="Browser:ViewPageSource"/>
   </keyset>
 
 </overlay>
