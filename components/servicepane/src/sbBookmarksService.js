@@ -414,7 +414,18 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     
   var item = document.createElement('menuitem');
   item.setAttribute('label',
-            this.getString('bookmark.menu.edit', 'Edit'));
+            this.getString('bookmarks.menu.rename', 'Rename'));
+  var service = this; // so we can get to it from the callback
+  item.addEventListener('command',
+  function bookmark_edit_oncommand (event) {
+    var servicepane = aParentWindow.document.getElementById('servicepane');
+    servicepane.startEditingNode(aNode);
+  }, false);
+  aContextMenu.appendChild(item);
+
+  item = document.createElement('menuitem');
+  item.setAttribute('label',
+            this.getString('bookmarks.menu.edit', 'Edit'));
   var service = this; // so we can get to it from the callback
   item.addEventListener('command',
   function bookmark_edit_oncommand (event) {
@@ -432,7 +443,7 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
   
   item = document.createElement('menuitem');
   item.setAttribute('label',
-            this.getString('bookmark.menu.remove', 'Remove'));
+            this.getString('bookmarks.menu.remove', 'Remove'));
   item.addEventListener('command',
   function bookmark_delete_oncommand (event) {
     dump ('delete: '+aNode.name+'\n');
