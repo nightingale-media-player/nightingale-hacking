@@ -137,6 +137,12 @@ function sbLibraryServicePane_shutdown() {
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
 
+  // the playlists folder and the local library node get the "New Foo..." items
+  if (aNode.id == 'SB:Playlists' || 
+      aNode.getAttributeNS(LSP, 'ListCustomType') == 'local') {
+    this.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
+  }
+
   var list = this.getLibraryResourceForNode(aNode);
   if (list) {
     // the downloads playlist doesn't have anything.
