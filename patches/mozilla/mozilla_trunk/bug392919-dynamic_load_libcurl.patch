@@ -3,8 +3,8 @@ Index: toolkit/crashreporter/client/Makefile.in
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/client/Makefile.in,v
 retrieving revision 1.12
 diff -u -8 -p -r1.12 Makefile.in
---- client/Makefile.in	8 Aug 2007 15:19:59 -0000	1.12
-+++ client/Makefile.in	2 Oct 2007 04:22:43 -0000
+--- toolkit/crashreporter/client/Makefile.in	8 Aug 2007 15:19:59 -0000	1.12
++++ toolkit/crashreporter/client/Makefile.in	2 Oct 2007 04:22:43 -0000
 @@ -81,17 +81,17 @@ endif
  
  ifeq ($(OS_ARCH),Linux)
@@ -29,8 +29,8 @@ Index: toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc,v
 retrieving revision 1.1
 diff -u -8 -p -r1.1 http_upload.cc
---- google-breakpad/src/common/linux/http_upload.cc	25 Jul 2007 01:06:12 -0000	1.1
-+++ google-breakpad/src/common/linux/http_upload.cc	2 Oct 2007 04:22:44 -0000
+--- toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc	25 Jul 2007 01:06:12 -0000	1.1
++++ toolkit/crashreporter/google-breakpad/src/common/linux/http_upload.cc	2 Oct 2007 04:22:44 -0000
 @@ -23,16 +23,17 @@
  // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
