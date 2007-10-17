@@ -3032,9 +3032,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					RelativePath=".\skin\service-icons\default.ico">
 				</File>
 				<File
-					RelativePath=".\skin\service-icons\dogpile.ico">
-				</File>
-				<File
 					RelativePath=".\skin\service-icons\elbows.ico">
 				</File>
 				<File

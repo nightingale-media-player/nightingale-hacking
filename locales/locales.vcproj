@@ -82,9 +82,6 @@ echo. &gt; $(SolutionDir)compiled\dist\xulrunner\.autoreg
 				Name="searchplugins"
 				Filter="">
 				<File
-					RelativePath=".\en-US\searchplugins\dogpile.xml">
-				</File>
-				<File
 					RelativePath=".\en-US\searchplugins\elbows.xml">
 				</File>
 				<File
