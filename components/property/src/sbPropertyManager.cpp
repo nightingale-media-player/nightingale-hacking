@@ -285,6 +285,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Storage Guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), EmptyString(),
                     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
@@ -509,6 +515,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
                    NS_LITERAL_STRING("property.origin_url"),
                    stringBundle, PR_TRUE, PR_FALSE, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Download Status Target (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
+                    EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE,
+                    0, PR_TRUE, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Hidden
