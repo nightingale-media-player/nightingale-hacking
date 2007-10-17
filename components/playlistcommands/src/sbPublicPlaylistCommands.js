@@ -1039,7 +1039,7 @@ function plCmd_RemoveList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   unwrap(aContext.medialist).library.remove(aContext.medialist);
 }
 
-// Called when the "remove playlist" action is triggered 
+// Called when the "rename playlist" action is triggered 
 function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var window = unwrap(aContext.window);
   var medialist = unwrap(aContext.medialist);
