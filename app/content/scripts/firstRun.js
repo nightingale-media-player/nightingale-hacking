@@ -31,6 +31,7 @@ var firstrun_bundle = null;
 var locales_bundle = null;
 var installed_locales = null;
 var restartfirstrun = false;
+var margin = 0;
 
 const FIRSTRUN_BUNDLE_TIMEOUT = 15000;
 const RESTART_ON_LOCALE_SELECTION = true;
@@ -96,6 +97,14 @@ function localesBundleDataReady() {
 
 function initFirstRun() 
 {
+  computeBottomMargin(continueInit);
+  // do nothing below here in this function, unless you can guarantee that it 
+  // will not change the window's height (ie, don't change an element's
+  // hidden attribute here, do that in continueInit()).
+}
+
+function continueInit() {
+  showMetricsInfo();
   // Determine if we should show the error box for people who have previously run Songbird
   try {
     var oldLibrary = false;
@@ -556,5 +565,33 @@ function hideExtensionList() {
 }
 
 function fixWindowHeight() {
-  setTimeout(function() { window.sizeToContent(); }, 100); 
+  setTimeout(deferredFixWindowHeight, 100);
 }
+
+function showMetricsInfo() {
+  document.getElementById("metrics_info").removeAttribute("hidden");
+  fixWindowHeight();
+}
+
+function computeBottomMargin(nextJob) {
+  setTimeout(deferredComputeBottomMargin, 100, nextJob);
+}
+
+function getMargin() {
+  var btn = document.documentElement.defaultButton;
+  btn = document.documentElement.getButton(btn);
+  var y = btn.boxObject.screenY + btn.boxObject.height - document.documentElement.boxObject.screenY;
+  var wh = document.documentElement.boxObject.height;
+  return wh-y;
+}
+
+function deferredComputeBottomMargin(nextJob) {
+  margin = getMargin();
+  nextJob();
+}
+
+function deferredFixWindowHeight() {
+  var thismargin = getMargin();
+  window.resizeBy(0, margin-thismargin);
+}
+

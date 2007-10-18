@@ -56,6 +56,16 @@
  labelcancel="&window.cancel;"
 >
 
+  <!-- Important: any description or html element in this dialog should be
+       initially hidden (be it with an hidden="true" parameter, or by being
+       inside a hidden parent box. This is so that firstRun.js may compute
+       the correct bottom margin before any description/html element is shown.
+       The reason for this is that mozilla fails to compute the window's correct
+       height if a description/html element autowraps to multiple lines (moz
+       assumes it only takes up one line), so once we have computed the correct
+       margin, we can show the description/html elements and use our prior
+       knowledge to fix the window's height ourselves. -->
+
   <windowregion/>
 
   <hbox>
@@ -108,7 +118,7 @@
   <groupbox id="metrics_vbox" width="&setup.groupbox.width;">
     <label value="&setup.privacy;" />
     <checkbox id="metrics_optout" checked="true" label="&setup.metrics.optin;"/>
-    <description >&setup.metrics.info;</description>
+    <description id="metrics_info" hidden="true">&setup.metrics.info;</description>
   </groupbox>
 
   <script type="application/x-javascript"
