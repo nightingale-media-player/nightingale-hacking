@@ -384,6 +384,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyNa
                                                     nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  LOG(("sbRemoteMediaListBase::GetDistinctValuesForProperty()"));
 
   // get enumeration of stuff
   nsCOMPtr<nsIStringEnumerator> enumeration;

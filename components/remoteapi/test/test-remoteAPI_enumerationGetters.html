@@ -1,0 +1,141 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: Enumeration Getters</title>
+    <script>
+      var outputDiv; 
+      var siteLib = songbird.siteLibrary;
+      var mainLib = songbird.mainLibrary;
+      var siteList = siteLib.createMediaList("simple");
+      siteList.name = "My Foo List";
+
+      function load() {
+        outputDiv = document.getElementById("output");
+      }
+
+      function unload() {
+      }
+
+      function dump(stuff) {
+        outputDiv.appendChild(document.createTextNode(stuff));
+        outputDiv.appendChild(document.createElement("br"));
+      }
+
+      function clearOutput() {
+        outputDiv.innerHTML = "";
+      }
+
+      function getArtists() {
+        var stuff = songbird.siteLibrary.getArtists();
+        dump("SiteLibrary has artists:");
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+        dump("MainLibrary has artists:");
+        var stuff = songbird.mainLibrary.getArtists();
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+      }
+
+      function getAlbums() {
+        var stuff = songbird.siteLibrary.getAlbums();
+        dump("SiteLibrary has albums:");
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+        dump("MainLibrary has albums:");
+        var stuff = songbird.mainLibrary.getAlbums();
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+      }
+
+      function getYears() {
+        var stuff = songbird.siteLibrary.getYears();
+        dump("SiteLibrary has years:");
+        while (stuff.hasMore()) {
+          var thing = stuff.getNext();
+          alert(thing);
+          //dump(stuff.getNext());
+        }
+        dump("MainLibrary has years:");
+        var stuff = songbird.mainLibrary.getYears();
+        while (stuff.hasMore()) {
+          var thing = stuff.getNext();
+          alert(thing);
+          //dump(stuff.getNext());
+        }
+      }
+
+      function getGenres() {
+        var stuff = songbird.siteLibrary.getGenres();
+        dump("SiteLibrary has genres:");
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+        dump("MainLibrary has genres:");
+        var stuff = songbird.mainLibrary.getGenres();
+        while (stuff.hasMore()) {
+          dump(stuff.getNext());
+        }
+      }
+
+      function getPlaylists() {
+        var stuff = songbird.siteLibrary.getPlaylists();
+        dump("SiteLibrary has playlists:");
+        while (stuff.hasMoreElements()) {
+          dump(stuff.getNext());
+        }
+        dump("MainLibrary has playlists:");
+        var stuff = songbird.mainLibrary.getPlaylists();
+        while (stuff.hasMoreElements()) {
+          dump(stuff.getNext());
+        }
+      }
+
+    </script>
+  </head>
+  <body onload="load();" onunload="unload();">
+    <h1>Property enumeration checks</h1>
+    <form>
+      <input type="button" id="get_artists" value="getArtists" onclick="getArtists();" /> 
+      <input type="button" id="get_albums" value="getAlbums" onclick="getAlbums();" /> 
+      <input type="button" id="get_years" value="getYears" onclick="getYears();" /> 
+      <input type="button" id="get_genres" value="getGenres" onclick="getGenres();" /> 
+      <input type="button" id="get_playlists" value="getPlaylists" onclick="getPlaylists();" /> 
+      <input type="button" id="clear" value="clear" onclick="clearOutput();" /> 
+      <br />
+    </form>
+    <div id="output">
+    </div>
+  </body>
+</html>
+

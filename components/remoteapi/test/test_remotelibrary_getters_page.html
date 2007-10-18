@@ -1,0 +1,144 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+    <script>
+function runTest(tester) {
+  try {
+    var SB_NS = "http://songbirdnest.com/data/1.0#";
+
+    var data = [
+      ["Artist1", "Album1", "2001", "ROCK"],
+      ["Artist1", "Album1", "2001", "ROCK"],
+      ["Artist2", "Album1", "2001", "ROCK"],
+      ["Artist2", "Album1", "2001", "ROCK"],
+      ["Artist1", "Album2", "2002", "ROCK"],
+      ["Artist1", "Album2", "2002", "ROCK"],
+      ["Artist1", "Album3", "2004", "JAZZ"],
+      ["Artist1", "Album3", "2004", "JAZZ"]
+    ];
+    var library = songbird.libraries("main");
+
+    assertStringArray(tester, [], library.getArtists());
+    assertStringArray(tester, [], library.getAlbums());
+    assertStringArray(tester, [], library.getYears());
+    assertStringArray(tester, [], library.getGenres());
+
+    for (var i = 0; i < data.length; i++) {
+      var item = library.createMediaItem("http://example.com/foo" + i);
+      item.setProperty(SB_NS + "artistName", data[i][0]);
+      item.setProperty(SB_NS + "albumName",  data[i][1]);
+      item.setProperty(SB_NS + "year",       data[i][2]);
+      item.setProperty(SB_NS + "genre",      data[i][3]);
+    }
+
+    assertStringArray(tester,
+                      ["Artist1", "Artist2"],
+                      library.getArtists());
+    assertStringArray(tester,
+                      ["Album1", "Album2", "Album3"],
+                      library.getAlbums());
+    assertStringArray(tester,
+                      ["2001", "2002", "2004"],
+                      library.getYears());
+    assertStringArray(tester,
+                      ["ROCK", "JAZZ"],
+                      library.getGenres());
+
+    // Should only get the download media list
+    var a = enumeratorToArray(library.getPlaylists());
+    tester.assertTrue(a.length, 1);
+
+    var list1 = library.createSimpleMediaList("list1");
+    var list2 = library.createSimpleMediaList("list2");
+    var list3 = library.createSimpleMediaList("list3");
+    assertItemArray(tester,
+                    [a[0], list1, list2, list3],
+                    library.getPlaylists());
+
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+
+  tester.endRemoteAPITest();
+}
+
+function assertStringArray(tester, a, e) {
+  while (e.hasMore()) {
+    var s = e.getNext();
+    var i = a.indexOf(s);
+    if (i < 0) {
+      tester.fail("String '" + s + "' not in array");
+    }
+    a.splice(i, 1);
+  }
+  if (a.length > 0) {
+    tester.fail("Array contains stuff the enumerator did not: " + a);
+  }
+}
+
+function enumeratorToArray(e) {
+  var a = [];
+  while (e.hasMoreElements()) {
+    a.push(e.getNext());
+  }
+  return a;
+}
+
+function assertItemArray(tester, a, e) {
+  while (e.hasMoreElements()) {
+    var item = e.getNext();
+    var i = -1;
+    for (var j = 0; j < a.length; j++) {
+      if (a[j].equals(item)) {
+        i = j;
+      }
+    }
+    if (i < 0) {
+      tester.fail("Item '" + item.guid + "' not in array");
+    }
+    a.splice(i, 1);
+  }
+  if (a.length > 0) {
+    var guids = [];
+    for (var i = 0; i < a.length; i++) {
+      guids.push(a[i].guid);
+    }
+    tester.fail("Array contains stuff the enumerator did not: " + guids);
+  }
+}
+
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+    </script>
+  </head>
+  <body>test_remotelibrary_getters_page.html</body>
+</html>
+

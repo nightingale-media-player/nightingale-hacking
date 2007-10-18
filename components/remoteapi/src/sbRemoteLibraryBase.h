@@ -98,9 +98,6 @@ protected:
   // on connection to a library, set the internal remote medialist
   virtual nsresult InitInternalMediaList() = 0;
 
-  nsresult GetListEnumForProperty( const nsAString& aProperty,
-                                   nsIStringEnumerator** _retval );
-
   already_AddRefed<sbIRemoteMediaList>
     GetMediaListBySiteID(const nsAString& aSiteID);
 

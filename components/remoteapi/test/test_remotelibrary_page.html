@@ -45,6 +45,12 @@ function runTest(tester) {
 
     mainLib.scanMediaOnCreation = true;
 
+    var artists = mainLib.getArtists();
+    var albums = mainLib.getAlbums();
+    var years = mainLib.getYears();
+    var genres = mainLib.getGenres();
+    var playlists = mainLib.getPlaylists();
+
     var list;
 
     // media creation in the mainLibrary
@@ -102,6 +108,27 @@ function runTest(tester) {
     webLib.type;
     webLib.length;
 
+    try {
+      artists = webLib.getArtists();
+      tester.fail("did not throw: getArtists('')");
+    } catch(e) {}
+    try {
+      albums = webLib.getAlbums();
+      tester.fail("did not throw: getAblums('')");
+    } catch(e) {}
+    try {
+      years = webLib.getYears();
+      tester.fail("did not throw: getYears('')");
+    } catch(e) {}
+    try {
+      genres = webLib.getGenres();
+      tester.fail("did not throw: getGenres('')");
+    } catch(e) {}
+    try {
+      playlists = webLib.getPlaylists();
+      tester.fail("did not throw: getPlaylists('')");
+    } catch(e) {}
+
     // creating medialist from webLib should fail
     tester.log("");
     tester.log("----------------------------------------------------------------------");
@@ -130,6 +157,12 @@ function runTest(tester) {
     siteLib.name;
     siteLib.type;
     siteLib.length;
+
+    artists = siteLib.getArtists();
+    albums = siteLib.getAlbums();
+    years = siteLib.getYears();
+    genres = siteLib.getGenres();
+    playlists = siteLib.getPlaylists();
 
     tester.log("");
     tester.log("----------------------------------------------------------------------");

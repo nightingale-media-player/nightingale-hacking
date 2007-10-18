@@ -99,6 +99,11 @@ const static char* sPublicMethods[] =
     "site:createMediaListFromURL",
     "site:createMediaItem",
     "site:getMediaListBySiteID",
+    "site:getArtists",
+    "site:getAlbums",
+    "site:getYears",
+    "site:getGenres",
+    "site:getPlaylists",
 
     // sbIMediaList
     "site:getItemByGuid",

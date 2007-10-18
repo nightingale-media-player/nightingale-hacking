@@ -69,8 +69,14 @@ const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
     "library_create:createMediaListFromURL",
     "library_read:getMediaList",
+    "library_read:getArtists",
+    "library_read:getAlbums",
+    "library_read:getGenres",
+    "library_read:getYears",
+    "library_read:getPlaylists",
     "library_read:getMediaListBySiteID",
-     // different from the ones in sbILibrary
+
+    // different from the ones in sbILibrary
     "library_create:createSimpleMediaList",
     "library_write:createMediaItem",
 

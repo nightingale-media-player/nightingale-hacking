@@ -26,6 +26,7 @@
 
 #include "sbRemoteLibraryBase.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteWrappingSimpleEnumerator.h"
 
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
@@ -584,8 +585,8 @@ NS_IMETHODIMP
 sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
 {
   LOG(("sbRemoteLibraryBase::GetArtists()"));
-  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                 _retval );
+  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                       _retval );
 }
 
 NS_IMETHODIMP
@@ -593,8 +594,8 @@ sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
 {
   LOG(("sbRemoteLibraryBase::GetAlbums()"));
 
-  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                 _retval );
+  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                       _retval );
 }
 
 NS_IMETHODIMP
@@ -602,8 +603,8 @@ sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
 {
   LOG(("sbRemoteLibraryBase::GetGenres()"));
 
-  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_GENRE),
-                                 _retval );
+  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_GENRE),
+                                       _retval );
 }
 
 NS_IMETHODIMP
@@ -611,8 +612,8 @@ sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
 {
   LOG(("sbRemoteLibraryBase::GetYears()"));
 
-  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_YEAR),
-                                 _retval );
+  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_YEAR),
+                                       _retval );
 }
 
 NS_IMETHODIMP
@@ -633,13 +634,15 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
                                             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  nsCOMPtr<nsISimpleEnumerator> playlistEnum;
   if ( NS_SUCCEEDED(mEnumerationResult) ) {
     // Make an enumerator for the contents of mEnumerationArray.
     if ( mEnumerationArray.Count() ) {
-      rv = NS_NewArrayEnumerator( _retval, mEnumerationArray );
+      rv = NS_NewArrayEnumerator( getter_AddRefs(playlistEnum),
+                                  mEnumerationArray );
     }
     else {
-      rv = NS_NewEmptyEnumerator( _retval );
+      rv = NS_NewEmptyEnumerator( getter_AddRefs(playlistEnum) );
     }
 
     if ( NS_FAILED(rv) ) {
@@ -650,6 +653,20 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
     NS_WARNING("Item enumeration failed!");
     rv = mEnumerationResult;
   }
+
+  if (!playlistEnum) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  nsRefPtr<sbRemoteWrappingSimpleEnumerator> wrapped(
+           new sbRemoteWrappingSimpleEnumerator(mRemotePlayer, playlistEnum) );
+  NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
+
+  rv = wrapped->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_ADDREF( *_retval = wrapped );
 
   // Reset the array and result codes for next time.
   mEnumerationArray.Clear();
@@ -780,27 +797,6 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
   return NS_OK;
 }
 
-nsresult
-sbRemoteLibraryBase::GetListEnumForProperty( const nsAString& aProperty,
-                                             nsIStringEnumerator** _retval )
-{
-  NS_ASSERTION( !aProperty.IsEmpty(), "Don't send empty property names here!" );
-
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mLibrary);
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface( mLibrary, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsIStringEnumerator* enumerator;
-  rv = mediaList->GetDistinctValuesForProperty( aProperty, &enumerator );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  *_retval = enumerator;
-  return NS_OK;
-}
-
 already_AddRefed<sbIRemoteMediaList>
 sbRemoteLibraryBase::GetMediaListBySiteID(const nsAString& aSiteID)
 {
@@ -916,3 +912,4 @@ sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaIt
 
   return nsnull;
 }
+

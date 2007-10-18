@@ -24,6 +24,7 @@
 //
  */
 
+#include "sbRemoteAPIUtils.h"
 #include "sbRemoteWrappingSimpleEnumerator.h"
 #include "sbRemoteIndexedMediaItem.h"
 
@@ -92,17 +93,28 @@ sbRemoteWrappingSimpleEnumerator::GetNext(nsISupports** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIIndexedMediaItem> item = do_QueryInterface(supports, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCEEDED(rv)) {
+    // we have an IndexedMediaItem, we're handling a selection enumeration
+    nsRefPtr<sbRemoteIndexedMediaItem> indexedMediaItem =
+      new sbRemoteIndexedMediaItem(mRemotePlayer, item);
+    NS_ENSURE_TRUE(indexedMediaItem, NS_ERROR_OUT_OF_MEMORY);
 
-  nsRefPtr<sbRemoteIndexedMediaItem> indexedMediaItem =
-    new sbRemoteIndexedMediaItem(mRemotePlayer, item);
-  NS_ENSURE_TRUE(indexedMediaItem, NS_ERROR_OUT_OF_MEMORY);
+    rv = indexedMediaItem->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ADDREF( *_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
+                                            indexedMediaItem) );
+  }
+  else {
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      nsCOMPtr<sbIMediaItem> remoteItem;
+      rv = SB_WrapMediaItem(mRemotePlayer, item, getter_AddRefs(remoteItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ADDREF( *_retval = NS_ISUPPORTS_CAST(sbIMediaItem*,
+                                              remoteItem) );
+    }
+  }
 
-  rv = indexedMediaItem->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF( *_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
-                                          indexedMediaItem) );
   return NS_OK;
 }
 
