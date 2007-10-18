@@ -127,6 +127,11 @@ function safeSetTimeout(closure, timeout) {
 
 function beginRemoteAPITest(page, continueFunction) {
 
+  // Don't let lousy dialogs ruin our unit tests!
+  var prefs = Cc["@mozilla.org/preferences-service;1"].
+              getService(Ci.nsIPrefBranch);
+  prefs.setBoolPref("songbird.rapi.promptForApproval", false);
+
   var port = getTestServerPortNumber();
 
   testServer = Cc["@mozilla.org/server/jshttp;1"]

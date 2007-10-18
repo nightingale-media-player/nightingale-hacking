@@ -1646,8 +1646,21 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   NS_ASSERTION(!aTitleKey.IsEmpty(), "Title Key empty!!!!");
   NS_ASSERTION(!aMessageKey.IsEmpty(), "Message key empty!!!!");
 
+  // See if we should prompt for approval
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefService =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  if (NS_SUCCEEDED(rv)) {
+    PRBool shouldPrompt;
+    rv = prefService->GetBoolPref( "songbird.rapi.promptForApproval",
+                                   &shouldPrompt );
+    if (NS_SUCCEEDED(rv) && !shouldPrompt) {
+      return PR_FALSE;
+    }
+  }
+
   nsCString hostUTF8;
-  nsresult rv = aURI->GetHost(hostUTF8);
+  rv = aURI->GetHost(hostUTF8);
   NS_ENSURE_SUCCESS( rv, rv );
 
   if ( hostUTF8.IsEmpty() ) {
