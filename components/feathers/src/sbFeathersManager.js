@@ -587,6 +587,8 @@ FeathersManager.prototype = {
   
   _showChromeDataRemote: null,
 
+  _switching: false,
+
   
   // Hash of skin descriptions keyed by internalName (e.g. classic/1.0)
   _skins: null,
@@ -954,6 +956,11 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   switchFeathers: function switchFeathers(layoutURL, internalName) {
+    // don't allow this call if we're already switching
+    if (this._switching) {
+      return;
+    }
+
     this._init();
 
     layoutDescription = this.getLayoutDescription(layoutURL);
@@ -986,6 +993,7 @@ FeathersManager.prototype = {
     
     var timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
     var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
+    this._switching = true;
     timer.initWithCallback(callback, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
   },
   
@@ -1232,6 +1240,7 @@ FeathersManager_switchFeathers_callback.prototype = {
 
     this.feathersManager._flushXULPrototypeCache();
     this.feathersManager.openPlayerWindow();
+    this.feathersManager._switching = false;
     this.feathersManager = null;
   }
 }; // FeathersManager_switchFeathers_callback.prototype
