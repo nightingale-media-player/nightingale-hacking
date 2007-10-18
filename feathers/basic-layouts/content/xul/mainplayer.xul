@@ -18,6 +18,7 @@
 <?xul-overlay href="chrome://songbird/content/xul/actionSetsOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/browserToolbarOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/statusBarOverlay.xul"?>
 
 <!--
 /*
@@ -82,12 +83,12 @@
     <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
     <sb-sys-titlebar>
     
-      <!-- Note: This menu must have the id "songbird_menu", as it is the overlay
+      <!-- Note: This menu must have the id "main-menubar", as it is the overlay
            target of menuOverlay.xul.  This cannot be put inside of a binding
            as that would break OSX menu handling. 
            See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
         -->
-      <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
+      <menubar id="main-menubar" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
     </sb-sys-titlebar>
     
     <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
@@ -142,7 +143,7 @@
 
           <!-- SERVICE PANE -->
           <vbox id="servicepane_box">
-            <servicepane id="servicepane" flex="1" browser="tabbrowser" />                  
+            <servicepane id="servicepane" flex="1" browser="content" />                  
           </vbox>
 
           <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
@@ -157,17 +158,22 @@
             -->
             <toolbox id="navigator-toolbox"/>
 
-            <!-- BROWSER -->
-            <sb-tabbrowser id="tabbrowser" flex="1"
-                            servicepane="servicepane"
-                            contentcontextmenu="html_context_menu"
-                            />
+            <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
+            <vbox id="appcontent" flex="1">
+              <sb-tabbrowser id="content" flex="1"
+                             servicepane="servicepane"
+                             contentcontextmenu="contentAreaContextMenu"
+                             />
+            </vbox>
           </vbox>
         </hbox>
       </vbox>
       
-      <!-- STATUS BAR -->
-      <sb-status-bar id="status_bar"/>
+      <!-- STATUS BAR.  Filled via overlay by statusBarOverlay.xul. 
+            Note: this item must have id="status-bar" for Firefox 
+            extension compatibility.
+      -->
+      <statusbar id="status-bar"/>
     </vbox>
     <!-- END INNER PLAYER BOX -->
 

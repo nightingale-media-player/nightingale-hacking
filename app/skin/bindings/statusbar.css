@@ -36,7 +36,7 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */ 
 
-sb-status-bar
+statusbar#status-bar
 {
   margin: 3px 0px 0px 0px;
 }

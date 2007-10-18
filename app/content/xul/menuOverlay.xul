@@ -40,9 +40,9 @@
 
   <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
   
-  <menubar id="songbird_menu">
-    <menu id="songbird_menu_item" label="&menu.file;"  accesskey="&menu.file.accesskey;">
-      <menupopup id="file-popup">
+  <menubar id="main-menubar">
+    <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
+      <menupopup id="menu_FilePopup">
         <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <!-- XXX Mook: disabled; see bug 4001
         <menuitem id="menuitem_file_smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
@@ -76,8 +76,8 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_edit" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
-      <menupopup id="edit-popup">
+    <menu id="edit-menu" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
+      <menupopup id="menu_EditPopup">
         <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_edit_cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
@@ -90,8 +90,8 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_controls" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
-      <menupopup id="controls-popup">
+    <menu id="controls-menu" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
+      <menupopup id="menu_ControlsPopup">
         <menuitem id="menuitem_control_play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_control_next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
@@ -107,7 +107,7 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_feathers" label="&menu.feathers;" accesskey="&menu.feathers.accesskey;">
+    <menu id="feathers-menu" label="&menu.feathers;" accesskey="&menu.feathers.accesskey;">
       <menupopup type="feathers"/>
     </menu>
 
@@ -139,12 +139,11 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_help"
+    <menu id="helpMenu"
           label="&menu.help;"
-          
           accesskey="&menu.help.accesskey;"
           onpopupshowing="buildHelpMenu();">
-      <menupopup id="help-popup">
+      <menupopup id="menu_HelpPopup">
         <menuitem id="menuitem_help_bugz"
                   label="&menu.help.bugz;"
                   value="songbird.url.bugzilla"

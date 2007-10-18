@@ -81,7 +81,7 @@ window#miniplayer
  * Force the miniplayer menubar to be hidden. This should be revisited once
  * the XUL changes settle down, but this works for 0.3
  */
-window#miniplayer #songbird_menu { 
+window#miniplayer #main-menubar { 
   display: none !important 
 }
 

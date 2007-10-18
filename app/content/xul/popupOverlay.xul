@@ -36,7 +36,7 @@
   <popupset id="mainPopupSet">
   
     <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
-    <popup id="html_context_menu"
+    <popup id="contentAreaContextMenu"
            onpopupshowing="if(event.target!=this)return true; return gBrowser.onContextPopupShowing(this, event)"
            onpopuphiding="gBrowser.onContextPopupHiding(this)"
            oncommand="gBrowser.onHTMLContextMenu(event.target)">

@@ -69,12 +69,12 @@
       <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
   
       <!-- Magic menu to keep OS X happy.
-           Note: This menu must have the id "songbird_menu", as it is the overlay
+           Note: This menu must have the id "main-menubar", as it is the overlay
            target of menuOverlay.xul.  This cannot be put inside of a binding
            as that would break OSX menu handling. 
            See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
         -->
-      <menubar id="songbird_menu" hidden="true"/>
+      <menubar id="main-menubar" hidden="true"/>
   
       <!-- PLAYER DISPLAY AND CONTROLS -->
       <sb-mini-player-controls id="miniplayer_controls" flex="1"/>

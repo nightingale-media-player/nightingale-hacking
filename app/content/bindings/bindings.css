@@ -344,11 +344,6 @@ sb-status-progressmeter {
   -moz-binding: url("chrome://songbird/content/bindings/statusBar.xml#sb-status-progressmeter") !important;
 }
 
-sb-status-bar {
-  -moz-binding: url("chrome://songbird/content/bindings/statusBar.xml#sb-status-bar") !important;
-}
-
-
 /* BROWSER WIDGET */
 
 tabbrowser {

@@ -409,11 +409,6 @@ function checkForUpdates()
     prompter.checkForUpdates();
 }
 
-function buildHelpMenu()
-{
-  throw("browserUtilities.js: buildHelpMenu() is not implemented in Songbird!");
-}
-
 function isElementVisible(aElement)
 {
   // * When an element is hidden, the width and height of its boxObject
