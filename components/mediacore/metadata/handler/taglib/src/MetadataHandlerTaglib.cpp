@@ -52,6 +52,9 @@
 /* Mozilla imports. */
 #include <necko/nsIURI.h>
 #include <nsComponentManagerUtils.h>
+#ifdef MOZ_CRASHREPORTER
+#include <nsICrashReporter.h>
+#endif
 #include <nsIFile.h>
 #include <nsIStandardURL.h>
 #include <nsServiceManagerUtils.h>
@@ -261,6 +264,22 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
         result = mpURL->GetSpec(urlSpec);
     if (NS_SUCCEEDED(result))
         result = mpURL->GetScheme(urlScheme);
+
+#ifdef MOZ_CRASHREPORTER
+    /* Add annotation for crash reporter. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsCOMPtr<nsICrashReporter> pCrashReporter;
+        pCrashReporter = do_GetService("@mozilla.org/xre/app-info;1", &result);
+        if (NS_SUCCEEDED(result))
+        {
+            pCrashReporter->AnnotateCrashReport
+                                        (NS_LITERAL_CSTRING("TaglibReadSpec"),
+                                         urlSpec);
+        }
+        result = NS_OK;
+    }
+#endif
 
     /* If the channel URL scheme is for a local file, try reading     */
     /* synchronously.  If successful, mCompleted will be set to true. */
