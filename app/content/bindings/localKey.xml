@@ -52,6 +52,7 @@
   <implementation>
 
     <constructor>
+      this._destroyed = false;
       this.shiftDown = false;
       this.ctrlDown = false;
       this.altDown = false;
@@ -93,8 +94,20 @@
     </constructor>
 
     <destructor>
-      this.shutdownListeners();
+      this.destroy();
     </destructor>
+    
+    <method name="destroy">
+      <body>
+        if (!this._destroyed) {
+          this.shutdownListeners();
+          this.target = null;
+          this.oldtarget = null;
+          obliterateProperties(this);
+          this._destroyed = true;
+        }
+      </body>
+    </method>
 
     <method name="setTarget">
       <parameter name="target"/>

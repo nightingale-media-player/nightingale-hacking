@@ -132,6 +132,7 @@
 
       <constructor>
 <![CDATA[
+  this._destroyed = false;
   if (typeof(SBProperties) == "undefined") {
     Components.utils.import("resource://app/components/sbProperties.jsm");
     if (!SBProperties)
@@ -191,34 +192,7 @@
 
       <destructor>
 <![CDATA[
-  if (this._columnSpecIsDirty) {
-    this._saveColumnSpec();
-  }
-
-  var e = document.createEvent("Events");
-  e.initEvent("playlist-destroy", false, true);
-  this.dispatchEvent(e);
-  // Remove event listeners
-  this._treecols.removeEventListener("DOMAttrModified",
-                                     this._onColumnMutationClosure,
-                                      false);
-
-  this.removeEventListener("mousedown",
-                           this._onMouseDownClosure,
-                           true);
-
-  for (var s = 0; s < this._splitters.length; s++) {
-    this._splitters[s].removeEventListener("mousemove", this._onFilterSplitterMove, true);
-    this._splitters[s].removeEventListener("mousedown", this._onFilterSplitterDown, true);
-    this._splitters[s].removeEventListener("mouseup", this._onFilterSplitterUp, true);
-  }
-
-  // Break the cycle between ourselves and the tree view
-  var mediaListViewTreeView =
-    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
-  mediaListViewTreeView.observer = null;
-  this.treeView = null;
-  this.mediaListView = null;
+  this.destroy();
 ]]>
       </destructor>
 
@@ -562,6 +536,53 @@
   // If an integer
   if (parseInt(resize) > 0) {
     this.height = resize;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="destroy">
+        <body>
+<![CDATA[
+  if (!this._destroyed) {
+    if (this._columnSpecIsDirty) {
+      this._saveColumnSpec();
+    }
+
+    // only removes the commands elements
+    this.removeCommands(); 
+    // actually removes any reference to command objects
+    this._toolbar.destroy();
+    this._shortcuts.destroy();
+    this._commandmenuitems.destroy();
+
+    // Remove event listeners
+    this._treecols.removeEventListener("DOMAttrModified",
+                                      this._onColumnMutationClosure,
+                                        false);
+
+    this.removeEventListener("mousedown",
+                            this._onMouseDownClosure,
+                            true);
+
+    for (var s = 0; s < this._splitters.length; s++) {
+      this._splitters[s].removeEventListener("mousemove", this._onFilterSplitterMove, true);
+      this._splitters[s].removeEventListener("mousedown", this._onFilterSplitterDown, true);
+      this._splitters[s].removeEventListener("mouseup", this._onFilterSplitterUp, true);
+    }
+
+    // Break the cycle between ourselves and the tree view
+    var mediaListViewTreeView =
+      this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+    mediaListViewTreeView.observer = null;
+    this.treeView = null;
+    this.mediaListView = null;
+
+    var e = document.createEvent("Events");
+    e.initEvent("playlist-destroy", false, true);
+    this.dispatchEvent(e);
+    obliterateProperties(this);
+    this._destroyed = true;
   }
 ]]>
         </body>

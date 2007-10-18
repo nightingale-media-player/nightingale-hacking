@@ -39,6 +39,7 @@
 
       <constructor>
         <![CDATA[
+          this._destroyed = false;
           this._deferRefresh = false;
           this._needRefresh = false;
           this._laststateonly = false;
@@ -71,9 +72,31 @@
 
       <destructor>
         <![CDATA[
-          this.emptyCommandsArray();
+        this.destroy();
         ]]>
       </destructor>
+      
+      <method name="destroy">
+        <body>
+          <![CDATA[
+          if (!this._destroyed) {
+            this.removeCommands();
+            this.emptyCommandsArray();
+            this.stringbundle = null;
+            this._outerWindow = null;
+            this.medialist = null;
+            this.playlist = null;
+            this.defaultcommands = null;
+            this._outerWindow = null;
+            try {
+              this.destroy2();
+            } catch (e) {}
+            obliterateProperties(this);
+            this._destroyed = true;
+          }
+        ]]>  
+        </body>
+      </method>
 
       <property name="commandtype">
         <getter>
@@ -417,7 +440,7 @@
     <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
     <field name="toolbarbuttons">new Array();</field>
     <field name="hoststring">"toolbar"</field>
-    
+
     <method name="shouldForceRebuild">
       <body>
         // If our internal objects are out of sync, rebuild.
@@ -1113,11 +1136,14 @@
     <constructor>
     </constructor>
     
-    <destructor>
+    <method name="destroy2">
+      <body>
       <![CDATA[
         this.keyset.removeAllKeys();
+        this.keyset.destroy();
       ]]>
-    </destructor>
+      </body>
+    </method>
 
     <field name="hoststring">"shortcuts"</field>
     <field name="keyset">document.getAnonymousElementByAttribute(this, "sbid", "keyset");</field>

@@ -51,6 +51,24 @@
 
     <field name="keysets">new Array()</field>
     
+    <constructor>
+      this._destroyed = false;
+    </constructor>
+    
+    <destructor>
+      this.destroy();
+    </destructor>
+    
+    <method name="destroy">
+      <body>
+        if (!this._destroyed) {
+          this.removeAllKeys();
+          obliterateProperties(this);
+          this._destroyed = true;
+        }
+      </body>
+    </method>
+    
     <!-- Add a key handler.
          - local:         : a boolean that indicates whether to use a <key/> or a <sb-local-key/> object.
                             local keys are only trapped when the keystroke occurs on the targeted element 
@@ -122,6 +140,9 @@
           for (var i in this.keysets) {
             if (this.keysets[i].getAttribute("id") == id) {
               var parent = this.keysets[i].parentNode;
+              try {
+                this.keysets[i].destroy();
+              } catch (e) { }
               parent.removeChild(this.keysets[i]);
               this.keysets.splice(i,1);
               break;
@@ -136,6 +157,9 @@
         <![CDATA[
           for (var i in this.keysets) {
             var parent = this.keysets[i].parentNode;
+            try {
+              this.keysets[i].destroy();
+            } catch (e) { }
             parent.removeChild(this.keysets[i]);
           }
           this.keysets.length = 0;

@@ -41,6 +41,7 @@
 
     <constructor>
       <![CDATA[
+        this._destroyed = false;
         this.restoreLastState();
         this.setAttribute("mousethrough", "never");
         if (this.getAttribute("applydefault") == "true") {
@@ -49,8 +50,20 @@
       ]]>
     </constructor>
     <destructor>
-      this.savePosition();
+      this.destroy();
     </destructor>
+    
+    <method name="destroy">
+      <body>
+        <![CDATA[
+        if (!this._destroyed) {
+          this.savePosition();
+          obliterateProperties(this);
+          this._destroyed = true;
+        }
+        ]]>
+      </body>
+    </method>
 
     <method name="onAttrModified">
       <parameter name="event"/>

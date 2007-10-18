@@ -82,6 +82,7 @@ function sbLibraryServicePane() {
   this._servicePane = null;
   this._libraryManager = null;
   this._lastShortcuts = null;
+  this._lastMenuitems = null;
   
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
@@ -226,6 +227,7 @@ function sbLibraryServicePane__createShortcuts(aList, aContainer, aWindow) {
 sbLibraryServicePane.prototype._destroyShortcuts =
 function sbLibraryServicePane__destroyShortcuts(aContainer, aWindow) {
   if (this._lastShortcuts) {
+    this._lastShortcuts.destroy();
     aContainer.removeChild(this._lastShortcuts);
     this._lastShortcuts = null;
   }
@@ -1338,11 +1340,17 @@ function sbLibraryServicePane__appendMenuItem(aContextMenu, aLabel, aCallback) {
 
 sbLibraryServicePane.prototype._appendCommands =
 function sbLibraryServicePane__appendCommands(aContextMenu, aList, aParentWindow) {
+  if (this._lastMenuitems) {
+  var pnode = this._lastMenuitems.parentNode;
+    this._lastMenuitems.destroy();
+    this._lastMenuitems = null;
+  }
   var itemBuilder = aContextMenu.ownerDocument.createElement("sb-commands-menuitems");
   itemBuilder.setAttribute("id", "playlist-commands");
   itemBuilder.setAttribute("commandtype", "medialist");
   itemBuilder.setAttribute("bind", aList.library.guid + ';' + aList.guid);
   aContextMenu.appendChild(itemBuilder);
+  this._lastMenuitems = itemBuilder;
 }
 
 /**

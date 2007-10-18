@@ -473,18 +473,6 @@
               SBDataSetBoolValue('browser.cangofwd', this.webNavigation.canGoForward);
             }
             
-            // Clear the playlist tree variable so we are not confused.
-            //this.playlistTree = null;
-            theLibraryPlaylist = null;
-            // hack, to let play buttons find the visible playlist if needed
-            document.__CURRENTPLAYLIST__ = null;
-            
-            // Clear the playlist tree variable so we are not confused.
-            //this.playlistTree = null;
-            theLibraryPlaylist = null;
-            // hack, to let play buttons find the visible playlist if needed
-            document.__CURRENTPLAYLIST__ = null;
-            
             // Nothing in the status text
             theStatusText.stringValue = "";
             
@@ -1466,8 +1454,8 @@
         <setter><![CDATA[
           if (!this._playlist) return;
           dump('\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n\n\n\n');
-          this._playlist.hidden = !val;
-          this._splitter.hidden = !val;
+          this._playlist.setAttribute("hidden", !val);
+          this._splitter.setAttribute("hidden", !val);
 
           if (!val) {
             // if the balloontip for the webplaylist is shown, close it
@@ -1690,31 +1678,6 @@
           playlist.addEventListener("playlist-play", this._onplaylistplay, true);
           playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = playlist;
-          
-          // Wait until after the bind call?
-          if ( playlist.ref == "" )
-          {
-            return;
-          }
-          
-          //
-          // THE RETURN ABOVE IS ALWAYS HIT!!  THE CODE BELOW WON'T RUN!!
-          //
-          
-          // Drag and Drop tracker object
-          playlist.setDnDSourceTracker(sbDnDSourceTracker);
-
-          // Remember some values
-          theLibraryPlaylist = playlist;
-          this.playlistTree = playlist = playlist.tree;
-          SBDataSetStringValue('playlist.ref', playlist.getAttribute( "ref" )); // is this set yet?
-  
-          // Set the current selection
-          theLibraryPlaylist.syncPlaylistIndex(false);
-  
-          // And remember that we did this
-          installed_listener = true;
-          } catch( e ) { alert( "tabbrowser::setUpInnerPlaylist\n\n" + e ); }]]></body>
       </method>
       
       <field name="_swappedPlaylistView">null</field>
@@ -2046,6 +2009,18 @@
         Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                   .getService(Components.interfaces.sbIMediaListViewMap)
                   .releaseViews(event.target.linkedBrowser);
+
+        if (this._playlist) {
+          this._playlist.destroy();
+          this._playlist.parentNode.removeChild(this._playlist);
+          this._playlist = null;
+        }
+        if (this._splitter) {
+          this._splitter.destroy();
+          this._splitter.parentNode.removeChild(this._splitter);
+          this._splitter = null;
+        }
+
         // save the tab state soon
         setTimeout("window.gBrowser.saveTabState();", 100);
       ]]></handler>

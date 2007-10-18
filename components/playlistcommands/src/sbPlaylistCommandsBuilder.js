@@ -716,6 +716,10 @@ PlaylistCommandsBuilder.prototype = {
     this.m_ShutdownCallback = null;
     this.m_VisibleCallback = null;
     // and forget context
+    this.m_Context.playlist = null;
+    this.m_Context.medialist = null;
+    this.m_Context.window = null;
+    this.m_Context.commands = this;
     this.m_Context = null;
   },
 
