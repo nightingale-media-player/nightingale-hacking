@@ -1018,7 +1018,9 @@ function sbLibraryServicePane__getDisplayURL(aResource) {
     url += "library,"
   }
   url += aResource.guid;
-  if (aResource instanceof Ci.sbIMediaList) {
+  if (aResource instanceof Ci.sbIMediaList && 
+      !(aResource instanceof Ci.sbILibrary))
+  {
     url += "," + aResource.library.guid;
   }
   return url;

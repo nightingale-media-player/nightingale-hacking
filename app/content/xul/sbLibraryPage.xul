@@ -232,7 +232,7 @@ try
           }
           else {
             var valArray = searchTerm.split(" ");
-            filters.set(0, valArray, valArray.length);
+            filter.set(0, valArray, valArray.length);
           }
           
           var playlist = document.getElementById("sb-library-page-playlist");

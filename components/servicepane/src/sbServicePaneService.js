@@ -647,6 +647,21 @@ function ServicePaneService_getNode(aId) {
 ServicePaneService.prototype.getNodeForURL =
 function ServicePaneService_getNodeForURL(aURL) {
   if (!this._initialized) { this.init(); }
+
+  // HACK:  See BUG 4662 for more information.
+  //
+  // Library searches can cause the library to load as
+  // sbLibraryPage.xul?GUID&search=blah.  This extra
+  // search param breaks the library node highlighting.
+  // For now we fix this by chopping off the param.
+  if (aURL.indexOf("chrome://songbird/content/xul/sbLibraryPage.xul") != -1) {
+    var paramStart = aURL.indexOf("&");
+    if (paramStart != -1) {
+      aURL = aURL.substring(0,paramStart);
+    }
+  }
+  
+  
   var ncURL = RDFSVC.GetResource(NC+"URL");
   var url = RDFSVC.GetLiteral(aURL);
   var target = this._dataSource.GetSource(ncURL, url, true);

@@ -367,7 +367,7 @@
           }
           // we're going to try to highlight the bookmark in the
           // sidebar
-          var node = this.mService.getNode(aURL);
+          var node = this.mService.getNodeForURL(aURL);
           if (node) {
             // yep, there's a sidebar node for the URL,
             // how about a DOM element for that node
@@ -376,6 +376,8 @@
               // yeah, looks like it - let's select it
               this.mTree.view.selection.select(row);
             }
+          } else {
+            this.mTree.view.selection.clearSelection();
           }
           
           this.mCurrentURL = aURL;

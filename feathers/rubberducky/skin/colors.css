@@ -331,14 +331,33 @@ It serves as the primary GUI entry point to content and services.
 the service pane and the browser in sync, 
 we should nix the painting of the selection.*/
 
-/**.servicepane-tree > treechildren::-moz-tree-row( selected )
+.servicepane-tree > treechildren::-moz-tree-row( selected )
 {
   -moz-border-radius-topright: 2px;
   -moz-border-radius-topleft: 1px;
   -moz-border-radius-bottomright: 2px;
   -moz-border-radius-bottomleft: 1px;
-  background-color: #8A8F84;  Light Color 2 
-}*/
+  background-color: #474948; /** Selected Focus Row */
+}
+
+.servicepane-tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #0f100f; /** Groove */ 
+}
+
+.servicepane-tree > treechildren::-moz-tree-row( selected current focus )
+{
+  -moz-border-radius-topright: 2px;
+  -moz-border-radius-topleft: 1px;
+  -moz-border-radius-bottomright: 2px;
+  -moz-border-radius-bottomleft: 1px;
+  background-color: #5c5f58; /** Selected Focus Row */
+}
+
+.servicepane-tree > treechildren::-moz-tree-row( dropOn )
+{
+  background-color: #202220; /** Button Shadow */
+}
 
 .servicepane-toolbar-newitem-button > .clickhold-button
 {

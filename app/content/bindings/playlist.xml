@@ -464,8 +464,19 @@
   if (this.mediaListView && this.mediaListView.currentSearch) {
     var properties = this.mediaListView.currentSearch;
     if (properties.length > 0) {
-      var property = properties.getPropertyAt(0);
-      return property.value;
+      var terms = [];
+      var property = null;
+      var previousProperty = null;
+      for (var i = 0; i < properties.length; i++) {
+        property = properties.getPropertyAt(i);
+        // Continue adding terms until we get to the next property
+        if (previousProperty && property.name != previousProperty.name) {
+          break;
+        }
+        terms.push(property.value);
+        previousProperty = property;
+      }
+      return terms.join(" ");
     }
   }
   return "";

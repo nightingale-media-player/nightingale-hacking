@@ -536,9 +536,21 @@ try
   }
 
   function _getSearchString( view ) {
-    var props = view.currentSearch;
-    if (props.length) {
-      return props.getPropertyAt(0).value;
+    var properties = view.currentSearch;
+    if (properties.length) {
+      var terms = [];
+      var property = null;
+      var previousProperty = null;
+      for (var i = 0; i < properties.length; i++) {
+        property = properties.getPropertyAt(i);
+        // Continue adding terms until we get to the next property
+        if (previousProperty && property.name != previousProperty.name) {
+          break;
+        }
+        terms.push(property.value);
+        previousProperty = property;
+      }
+      return terms.join(" ");
     }
     return "";
   }

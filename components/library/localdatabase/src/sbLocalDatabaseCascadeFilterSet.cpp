@@ -745,8 +745,10 @@ sbLocalDatabaseCascadeFilterSet::AddSearches(sbIMutablePropertyArray* mArray)
     if (filter.isSearch && filter.values.Length()) {
       PRUint32 numProperties = filter.propertyList.Length();
       for (PRUint32 j = 0; j < numProperties; j++) {
-        rv = mArray->AppendProperty(filter.propertyList[j], filter.values[0]);
-        NS_ENSURE_SUCCESS(rv, rv);
+        for (PRUint32 k = 0; k < filter.values.Length(); k++) {
+          rv = mArray->AppendProperty(filter.propertyList[j], filter.values[k]);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
   }
