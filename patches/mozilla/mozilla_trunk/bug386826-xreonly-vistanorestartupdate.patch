@@ -1,0 +1,300 @@
+Index: toolkit/xre/nsAppRunner.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
+retrieving revision 1.197
+diff -u -8 -p -r1.197 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	13 Oct 2007 05:47:04 -0000	1.197
++++ toolkit/xre/nsAppRunner.cpp	18 Oct 2007 22:19:44 -0000
+@@ -1553,17 +1553,17 @@ static nsresult LaunchChild(nsINativeApp
+                             int needElevation = 0)
+ {
+   aNative->Quit(); // release DDE mutex, if we're holding it
+ 
+   // Restart this process by exec'ing it into the current process
+   // if supported by the platform.  Otherwise, use NSPR.
+  
+   if (aBlankCommandLine) {
+-    gRestartArgc = 1;
++    gRestartArgc = 1 + (gRestartArgc - gArgc);
+     gRestartArgv[gRestartArgc] = nsnull;
+   }
+ 
+   PR_SetEnv("MOZ_LAUNCHED_CHILD=1");
+ 
+ #if defined(XP_MACOSX)
+   LaunchChildMac(gRestartArgc, gRestartArgv);
+ #else
+@@ -2243,44 +2243,16 @@ static void RemoveComponentRegistries(ns
+   aLocalProfileDir->Clone(getter_AddRefs(file));
+   if (!file)
+     return;
+ 
+   file->AppendNative(NS_LITERAL_CSTRING("XUL" PLATFORM_FASL_SUFFIX));
+   file->Remove(PR_FALSE);
+ }
+ 
+-// To support application initiated restart via nsIAppStartup.quit, we
+-// need to save various environment variables, and then restore them
+-// before re-launching the application.
+-
+-static struct {
+-  const char *name;
+-  char *value;
+-} gSavedVars[] = {
+-  {"XUL_APP_FILE", nsnull}
+-};
+-
+-static void SaveStateForAppInitiatedRestart()
+-{
+-  for (size_t i = 0; i < NS_ARRAY_LENGTH(gSavedVars); ++i) {
+-    const char *s = PR_GetEnv(gSavedVars[i].name);
+-    if (s)
+-      gSavedVars[i].value = PR_smprintf("%s=%s", gSavedVars[i].name, s);
+-  }
+-}
+-
+-static void RestoreStateForAppInitiatedRestart()
+-{
+-  for (size_t i = 0; i < NS_ARRAY_LENGTH(gSavedVars); ++i) {
+-    if (gSavedVars[i].value)
+-      PR_SetEnv(gSavedVars[i].value);
+-  }
+-}
+-
+ #ifdef MOZ_CRASHREPORTER
+ // When we first initialize the crash reporter we don't have a profile,
+ // so we set the minidump path to $TEMP.  Once we have a profile,
+ // we set it to $PROFILE/minidumps, creating the directory
+ // if needed.
+ static void MakeOrSetMinidumpPath(nsIFile* profD)
+ {
+   nsCOMPtr<nsIFile> dumpD;
+@@ -2298,16 +2270,22 @@ static void MakeOrSetMinidumpPath(nsIFil
+     nsAutoString pathStr;
+     if(NS_SUCCEEDED(dumpD->GetPath(pathStr)))
+       CrashReporter::SetMinidumpPath(pathStr);
+   }
+ }
+ #endif
+ 
+ const nsXREAppData* gAppData = nsnull;
++nsILocalFile* gAppDataFile = nsnull;
++ 
++void XRE_SetAppDataFile(nsILocalFile* aAppDataFile)
++{
++  SetStrongPtr(gAppDataFile, aAppDataFile);
++}
+ 
+ #if defined(XP_OS2)
+ // because we use early returns, we use a stack-based helper to un-set the OS2 FP handler
+ class ScopedFPHandler {
+ private:
+   EXCEPTIONREGISTRATIONRECORD excpreg;
+ 
+ public:
+@@ -2623,24 +2601,46 @@ XRE_main(int argc, char* argv[], const n
+     if (::GetCurrentProcess(&psn) == noErr)
+       ::SetFrontProcess(&psn);
+   }
+ #endif
+ 
+   PR_SetEnv("MOZ_LAUNCHED_CHILD=");
+ 
+   gRestartArgc = gArgc;
+-  gRestartArgv = (char**) malloc(sizeof(char*) * (gArgc + 1));
++  if (gAppDataFile) {
++    gRestartArgc += 2;
++  }
++  gRestartArgv = (char**) malloc(sizeof(char*) * (gRestartArgc + 1));
+   if (!gRestartArgv) return 1;
++ 
++  int i = 0;
++  int j = 0;
++  if (gAppDataFile) {
++    // The first argument is the path to the executable. It needs to remain the first argument.
++    if (gArgc) {
++      gRestartArgv[j++] = gArgv[i++];
++    }
++    nsCAutoString iniPath;
++
++#ifdef XP_WIN
++    nsAutoString iniPathUnicode;
++    gAppDataFile->GetPath(iniPathUnicode);
++    iniPath = NS_ConvertUTF16toUTF8(iniPathUnicode);
++#else
++    gAppDataFile->GetNativePath(iniPath);
++#endif
+ 
+-  int i;
+-  for (i = 0; i < gArgc; ++i) {
+-    gRestartArgv[i] = gArgv[i];
++    gRestartArgv[j++] = "--app";
++    gRestartArgv[j++] = strdup(iniPath.get());
++  }
++  while (i < gArgc) {
++    gRestartArgv[j++] = gArgv[i++];
+   }
+-  gRestartArgv[gArgc] = nsnull;
++  gRestartArgv[gRestartArgc] = nsnull;
+ 
+ #if defined(XP_OS2)
+   PRBool StartOS2App(int aArgc, char **aArgv);
+   if (!StartOS2App(gArgc, gArgv))
+     return 1;
+   ScopedFPHandler handler;
+ #endif /* XP_OS2 */
+ 
+@@ -3083,27 +3083,24 @@ XRE_main(int argc, char* argv[], const n
+         if (noEMRestart && *noEMRestart && *noEMRestart == '1') {
+           if (upgraded || needsRestart) {
+             NS_WARNING("EM tried to force us to restart twice! Forcefully preventing that.");
+           }
+           needsRestart = upgraded = PR_FALSE;
+         }
+ 
+         if (!upgraded && !needsRestart) {
+-          SaveStateForAppInitiatedRestart();
+-
+           // clear out any environment variables which may have been set 
+           // during the relaunch process now that we know we won't be relaunching.
+           PR_SetEnv("XRE_PROFILE_PATH=");
+           PR_SetEnv("XRE_PROFILE_LOCAL_PATH=");
+           PR_SetEnv("XRE_PROFILE_NAME=");
+           PR_SetEnv("XRE_START_OFFLINE=");
+           PR_SetEnv("XRE_IMPORT_PROFILES=");
+           PR_SetEnv("NO_EM_RESTART=");
+-          PR_SetEnv("XUL_APP_FILE=");
+           PR_SetEnv("XRE_BINARY_PATH=");
+ 
+ #ifdef XP_MACOSX
+           // we re-initialize the command-line service and do appleevents munging
+           // after we are sure that we're not restarting
+           cmdLine = do_CreateInstance("@mozilla.org/toolkit/command-line;1");
+           NS_ENSURE_TRUE(cmdLine, 1);
+ 
+@@ -3184,20 +3181,17 @@ XRE_main(int argc, char* argv[], const n
+     }
+ 
+     // unlock the profile after ScopedXPCOMStartup object (xpcom) 
+     // has gone out of scope.  see bug #386739 for more details
+     profileLock->Unlock();
+ 
+     // Restart the app after XPCOM has been shut down cleanly. 
+     if (needsRestart) {
+-      if (appInitiatedRestart) {
+-        RestoreStateForAppInitiatedRestart();
+-      }
+-      else {
++      if (!appInitiatedRestart) {
+         char* noEMRestart = PR_GetEnv("NO_EM_RESTART");
+         if (noEMRestart && *noEMRestart) {
+           PR_SetEnv("NO_EM_RESTART=1");
+         }
+         else {
+           PR_SetEnv("NO_EM_RESTART=0");
+         }
+       }
+Index: toolkit/xre/nsXULAppAPI.h
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/nsXULAppAPI.h,v
+retrieving revision 1.25
+diff -u -8 -p -r1.25 nsXULAppAPI.h
+--- toolkit/xre/nsXULAppAPI.h	13 Oct 2007 05:47:04 -0000	1.25
++++ toolkit/xre/nsXULAppAPI.h	18 Oct 2007 22:19:44 -0000
+@@ -398,9 +398,18 @@ XRE_API(nsresult,
+                            nsXREAppData *aAppData))
+ 
+ /**
+  * Free a nsXREAppData structure that was allocated with XRE_CreateAppData.
+  */
+ XRE_API(void,
+         XRE_FreeAppData, (nsXREAppData *aAppData))
+ 
++/**
++ * Stores the  application.ini file to pass as an argument during a
++ * possible restart. It should be called before calling XRE_main().
++ *
++ * @param aINIFile The application.ini file to store.
++ */
++XRE_API(void,
++        XRE_SetAppDataFile, (nsILocalFile* aINIFile))
++
+ #endif // _nsXULAppAPI_h__
+Index: xulrunner/app/nsXULRunnerApp.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xulrunner/app/nsXULRunnerApp.cpp,v
+retrieving revision 1.36
+diff -u -8 -p -r1.36 nsXULRunnerApp.cpp
+--- xulrunner/app/nsXULRunnerApp.cpp	13 Oct 2007 05:47:04 -0000	1.36
++++ xulrunner/app/nsXULRunnerApp.cpp	18 Oct 2007 22:19:46 -0000
+@@ -397,57 +397,51 @@ int main(int argc, char* argv[])
+       rv = GetXULRunnerDir(argv[0], getter_AddRefs(regDir));
+       if (NS_FAILED(rv))
+         return 2;
+ 
+       return InstallXULApp(regDir, appLocation, installTo, leafName);
+     }
+   }
+ 
+-  const char *appDataFile = PR_GetEnv("XUL_APP_FILE");
++  if (argc < 2) {
++    Usage(argv[0]);
++    return 1;
++  }
+ 
+-  if (!(appDataFile && *appDataFile)) {
+-    if (argc < 2) {
++  if (IsArg(argv[1], "app")) {
++    if (argc == 2) {
+       Usage(argv[0]);
+       return 1;
+     }
+-
+-    if (IsArg(argv[1], "app")) {
+-      if (argc == 2) {
+-        Usage(argv[0]);
+-        return 1;
+-      }
+-      argv[1] = argv[0];
+-      ++argv;
+-      --argc;
+-    }
+-
+-    appDataFile = argv[1];
+     argv[1] = argv[0];
+     ++argv;
+     --argc;
+-
+-    static char kAppEnv[MAXPATHLEN];
+-    PR_snprintf(kAppEnv, MAXPATHLEN, "XUL_APP_FILE=%s", appDataFile);
+-    PR_SetEnv(kAppEnv);
+   }
+ 
++  const char *appDataFile = argv[1];
++  argv[1] = argv[0];
++  ++argv;
++  --argc;
++
+   nsCOMPtr<nsILocalFile> appDataLF;
+   nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
+   if (NS_FAILED(rv)) {
+     Output(PR_TRUE, "Error: unrecognized application.ini path.\n");
+     return 2;
+   }
+ 
+   AutoAppData appData(appDataLF);
+   if (!appData) {
+     Output(PR_TRUE, "Error: couldn't parse application.ini.\n");
+     return 2;
+   }
+ 
++  XRE_SetAppDataFile(appDataLF);
++
+   return XRE_main(argc, argv, appData);
+ }
+ 
+ #if defined( XP_WIN ) && defined( WIN32 ) && !defined(__GNUC__)
+ // We need WinMain in order to not be a console app.  This function is
+ // unused if we are a console application.
+ int WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR args, int )
+ {
