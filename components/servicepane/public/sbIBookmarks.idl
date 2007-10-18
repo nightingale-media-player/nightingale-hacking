@@ -40,7 +40,8 @@ interface sbIServicePaneNode;
  *  TODO: Write this documentation.
  *
  */
-[scriptable, uuid(0e3c0208-72d8-4676-86e1-138db0801586)]
+[scriptable, uuid(12526a6a-3edd-4853-97a9-2a729d883178)]
+
 interface sbIBookmarks : nsISupports {
   /* \brief Add a bookmark
    * Add a bookmark to the service pane. It will be added in the default
@@ -55,6 +56,27 @@ interface sbIBookmarks : nsISupports {
   sbIServicePaneNode addBookmark (in AString aURL,
                                   in AString aTitle,
                                   in AString aIconURL);
+
+  /* \brief Add a bookmark to a specific service pane node (folder)
+   * Given a folder, add a bookmark to that folder.  The bookmark's node
+   * object will be returned.  The folder node can be the node returned
+   * by addFolder() or getNode()
+   * If a bookmark for the given URL already exists then null will be
+   * returned.
+   * \param aURL The URL of the page to bookmark
+   * \param aTitle The title of the bookmark
+   * \param aIconURL The URL of the icon to associate with the bookmark
+   * \param aParent The parent node (folder) to add the bookmark to
+   * \param aBefore The node (bookmark) to insert this bookmark before
+   * \return a new bookmark node or null if the bookmark already exists
+   * \see addBookmark()
+   */
+  sbIServicePaneNode addBookmarkAt (in AString aURL,
+                                  in AString aTitle,
+                                  in AString aIconURL,
+                                  in sbIServicePaneNode aParent,
+                                  in sbIServicePaneNode aBefore);
+
   /* \brief Add a folder
    * Add a bookmark folder in the service pane.
    * \param aTitle The title of the folder
