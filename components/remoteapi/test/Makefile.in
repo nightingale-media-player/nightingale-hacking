@@ -46,6 +46,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_crossLibAdd.js \
                  $(srcdir)/test_crossLibAdd_page.html \
+                 $(srcdir)/test_siteID.js \
+                 $(srcdir)/test_siteID_page.html \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -82,11 +82,11 @@ function runTest(tester) {
     // downloading - set in test_ file to go to tmpD/remoteapi_test/
     var item = siteLib.createMediaItem(
               "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-    var list = siteLib.createMediaList("simple");
+    var list = siteLib.createSimpleMediaList("testRemotePlayer1");
     list.add(item);
 
-    songbird.downloadItem(item); 
-    songbird.downloadList(list); 
+    songbird.downloadItem(item);
+    songbird.downloadList(list);
 
     // Need the mainpage UI for this one
     // requires a webplaylist
@@ -110,7 +110,7 @@ function runTest(tester) {
     songbird.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
     songbird.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
     songbird.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
-    
+
     // We need to do this to give the web browser persists component a chance
     // to tidy up, otherwise it will leak
     tester.sleep(2000);
@@ -129,4 +129,3 @@ function runPageTest(tester) {
   </head>
   <body>test_remoteplayer_page.html</body>
 </html>
-

@@ -195,7 +195,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
   NS_ENSURE_ARG_POINTER(aRemoteMediaList);
 
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList( aRemotePlayer, 
+  nsresult rv = SB_WrapMediaList( aRemotePlayer,
                                   aMediaList,
                                   getter_AddRefs(mediaList) );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -263,4 +263,3 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 }
 
 #endif // __SB_REMOTE_API_H__
-

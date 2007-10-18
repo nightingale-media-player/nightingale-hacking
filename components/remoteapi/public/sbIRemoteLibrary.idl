@@ -51,7 +51,7 @@ It is possible to create a <Library> using the <Songbird::siteLibrary>
 function.
 
 Inherits:
-  <MediaList> <MediaItem> 
+  <MediaList> <MediaItem>
 
 Example:
   (start code)
@@ -202,7 +202,7 @@ interface sbIRemoteLibrary : nsISupports
 
   Note:
     Metadata for the <MediaItems> may get updated and overwritten during playback.
-    See <Metadata Updates> for more details about cases where metadata may 
+    See <Metadata Updates> for more details about cases where metadata may
     get updated.
 
   See Also:
@@ -212,32 +212,33 @@ interface sbIRemoteLibrary : nsISupports
   sbIMediaItem createMediaItem(in AString aURL);
 
   /**
-   * \brief Create a media list
+   * \brief Create a simple media list
    *
-   * Create and insert a media list into the library for the type
-   * passed in.
+   * Create and insert a media list into the library with the name passed in.
    *
-   * \param aType A string, either 'simple' or 'smart'
+   * \param aName A string to be used as an identifier on the media list.
+   * \param aSiteID An optional string to be used as an identifier on the media
+   *                list. If unspecified the siteID will be set to the value of
+   *                aName.
    *
    * \returns the media list that gets created.
    */
 
   /*
-  Method: createMediaList()
+  Method: createSimpleMediaList()
 
-  Create an empty <MediaList> of a certain type.
+  Create a simple <MediaList> with the given name.
 
   Prototype:
-    <MediaList> createMediaList(String type)
+    <MediaList> createSimpleMediaList(String name, String siteID)
 
   Parameters:
-    type - The type of <MediaList> to create.
+    name   - The name of the <MediaList> to create.
+    siteID - An optional siteID to assign. If unspecified then the siteID will
+             use the value passed for name.
 
   Returns:
     The newly created <MediaList> or null.
-
-  Note:
-    Currently only the type "simple" is supported.
 
   Example:
     (start code)
@@ -245,14 +246,16 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
 
     //Create an empty medialist.
-    var mediaList = library.createMediaList("simple");
+    var mediaList = library.createSimpleMediaList("MyList");
     (end)
 
   See Also:
     <createMediaItem()>
+    <createMediaList()>
     <createMediaListFromURL()>
   */
-  sbIRemoteMediaList createMediaList(in AString aType);
+  sbIRemoteMediaList createSimpleMediaList(in AString aName,
+                                           [optional] in AString aSiteID);
 
   /**
    * \brief Create a media list from an exising playlist file
@@ -292,7 +295,7 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
 
     //Create the medialist from a url pointing to a file.
-    library.createMediaListFromURL("http://path/to/file.m3u", 
+    library.createMediaListFromURL("http://path/to/file.m3u",
       function(list) {
         alert("loaded " + list.length + " items!");
       }
@@ -303,8 +306,10 @@ interface sbIRemoteLibrary : nsISupports
     <createMediaItem()>
     <createMediaList()>
   */
-  void createMediaListFromURL(in AString aURL,
-                              [optional] in sbICreateMediaListCallback aCallback);
+  void createMediaListFromURL(in AString aName,
+                              in AString aURL,
+                              [optional] in sbICreateMediaListCallback aCallback,
+                              [optional] in AString aSiteID);
 
   /**
    * \brief Connect the remote library to the main or web library
@@ -317,26 +322,21 @@ interface sbIRemoteLibrary : nsISupports
   [noscript] void connectToDefaultLibrary(in AString aLibName);
 
   /**
-   * \brief Get the media list with the given name.
-   * \param aName - The name of the media list to fetch
+   * \brief Get the media list with the given siteID.
+   * \param aSiteID - The siteID of the media list to fetch
    * \return The corresponding media list, or null if not found
    * \sa createMediaList
    */
   /*
-  Method: getMediaListByName()
+  Method: getMediaListBySiteID()
 
-  Get the site media list with the given name.  Note that to compare for
-  identity one must compare the guid (instead of JS object comparisions).
-
-  Note: 
-    This method will not work with the main library, it is only for
-    use with the Site Library.
+  Get the site media list with the given siteID.
 
   Prototype:
-    <MediaList> getMediaListByName(String name)
+    <MediaList> getMediaListBySiteID(String siteID)
 
   Paramters:
-    name - The name of the media list to fetch
+    name - The siteID of the media list to fetch
 
   Returns:
     The corresponding media list, or null if not found
@@ -347,17 +347,13 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
 
     //Fetch the shopping cart media list
-    var mediaList = library.getMediaListByName("Shopping Cart");
-
-    // comparisons for equality must be done on the guid
-    var cart = library.getMediaListByName("Shopping Cart");
-    alert(mediaList.guid == cart.guid);
+    var mediaList = library.getMediaListBySiteID("Shopping Cart");
     (end)
 
   See Also:
     <createMediaList()>
   */
-  sbIRemoteMediaList getMediaListByName( in AString aName );
+  sbIRemoteMediaList getMediaListBySiteID( in AString aSiteID );
 
   /*
   Method: getArtists()
@@ -368,7 +364,7 @@ interface sbIRemoteLibrary : nsISupports
     StringEnumerator getArtists()
 
   Returns:
-    A StringEnumerator containing all of the 
+    A StringEnumerator containing all of the
     unique artist names that exist in the <Library>.
 
   Example:
@@ -382,7 +378,7 @@ interface sbIRemoteLibrary : nsISupports
     while(artists.hasMore()) {
       //The artist name (ie. "Justice")
       var artist = artists.getNext();
-      
+
       //Do something with the artist name
       ...
     }
@@ -408,7 +404,7 @@ interface sbIRemoteLibrary : nsISupports
     StringEnumerator getAlbums()
 
   Returns:
-    A StringEnumerator containing all of the 
+    A StringEnumerator containing all of the
     unique album names that exist in the <Library>.
 
   Example:
@@ -422,7 +418,7 @@ interface sbIRemoteLibrary : nsISupports
     while(albums.hasMore()) {
       //The album name (ie. "Cross")
       var album = albums.getNext();
-      
+
       //Do something with the album name
       ...
     }
@@ -449,7 +445,7 @@ interface sbIRemoteLibrary : nsISupports
     StringEnumerator getGenres()
 
   Returns:
-    A StringEnumerator containing all of the 
+    A StringEnumerator containing all of the
     unique genres that exist in the <Library>.
 
   Example:
@@ -463,7 +459,7 @@ interface sbIRemoteLibrary : nsISupports
     while(genres.hasMore()) {
       //The genre (ie. "Electronic")
       var genre = genres.getNext();
-      
+
       //Do something with the genre
       ...
     }
@@ -490,7 +486,7 @@ interface sbIRemoteLibrary : nsISupports
     StringEnumerator getYears()
 
   Returns:
-    A StringEnumerator containing all of the 
+    A StringEnumerator containing all of the
     unique years that exist in the <Library>.
 
   Example:
@@ -504,7 +500,7 @@ interface sbIRemoteLibrary : nsISupports
     while(years.hasMore()) {
       //The year (ie. "2007")
       var year = years.getNext();
-      
+
       //Do something with the year
       ...
     }
@@ -530,14 +526,14 @@ interface sbIRemoteLibrary : nsISupports
     Enumerator getPlaylists()
 
   Returns:
-    An Enumerator containing all of the 
+    An Enumerator containing all of the
     <MediaLists> present in the <Library>.
 
   Example:
     (start code)
     //Create or get a library.
     var library = songbird.siteLibrary("", "");
-    
+
     //Get all MediaLists.
     var mediaLists = library.getPlaylists();
 

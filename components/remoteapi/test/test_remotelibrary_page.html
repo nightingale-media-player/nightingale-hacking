@@ -51,7 +51,8 @@ function runTest(tester) {
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library - should succeed");
-    mainLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+    mainLib.createMediaListFromURL("funTestList",
+                                   "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -69,7 +70,8 @@ function runTest(tester) {
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library to bogus URL - should create 0 length list");
-    mainLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/dummy.m3u",
+    mainLib.createMediaListFromURL("funTestList2",
+                                   "http://dingo.songbirdnest.com/~redfive/test_files/dummy.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -83,9 +85,8 @@ function runTest(tester) {
     tester.log("Created from MainLib & bogus - SUCCESS");
     tester.log("----------------------------------------------------------------------");
     tester.log("");
-    
-    mainLib.createMediaList("simple");
-    mainLib.createMediaList("dynamic");
+
+    mainLib.createSimpleMediaList("testRemoteLibrary1");
     mainLib.createMediaItem(
               "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
 
@@ -106,7 +107,8 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Web Library - should fail");
     try {
-      webLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+      webLib.createMediaListFromURL("funTestList4",
+                                    "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                     function(mediaList) {
                                       var test = tester;
                                       list = mediaList;
@@ -118,7 +120,7 @@ function runTest(tester) {
                                     });
       tester.testPending();
       tester.fail("did not throw: createMediaListFromURL('')");
-    } catch (e) { 
+    } catch (e) {
       tester.log("Web library could not create a mediaList - SUCCESS");
     }
     tester.log("----------------------------------------------------------------------");
@@ -132,7 +134,8 @@ function runTest(tester) {
     tester.log("");
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Site Library - should succeed");
-    siteLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+    siteLib.createMediaListFromURL("funTestList5",
+                                   "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function(mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -142,7 +145,7 @@ function runTest(tester) {
                                      test.testFinished();
                                      test = null;
                                     });
-    tester.testPending(); 
+    tester.testPending();
     tester.log("Site library could create a mediaList - SUCCESS");
   } catch (e) {
     tester.endRemoteAPITest(e);
@@ -179,4 +182,3 @@ function runPageTest(tester) {
   </head>
   <body>test_remotelibrary_page.html</body>
 </html>
-

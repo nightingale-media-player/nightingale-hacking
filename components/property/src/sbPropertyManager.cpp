@@ -56,7 +56,7 @@
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyManager, 
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyManager,
                               sbIPropertyManager,
                               nsIObserver)
 
@@ -64,7 +64,7 @@ sbPropertyManager::sbPropertyManager()
 : mPropNamesLock(nsnull)
 {
   PRBool success = mPropInfoHashtable.Init(32);
-  NS_ASSERTION(success, 
+  NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
   mPropNamesLock = PR_NewLock();
@@ -107,7 +107,7 @@ sbPropertyManager::~sbPropertyManager()
 NS_METHOD sbPropertyManager::Init()
 {
   nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService = 
+  nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -124,7 +124,7 @@ sbPropertyManager::Observe(nsISupports* aSubject,
 {
   if (strcmp(aTopic, "app-startup") == 0) {
     nsresult rv;
-    nsCOMPtr<nsIObserverService> observerService = 
+    nsCOMPtr<nsIObserverService> observerService =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
 
     // We have to remove ourselves or we will stay alive until app shutdown.
@@ -198,7 +198,7 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
     NS_ENSURE_SUCCESS(rv, rv);
 
     //This is the only safe way to hand off the instance because the hash table
-    //may have changed and returning the instance pointer above may yield a 
+    //may have changed and returning the instance pointer above may yield a
     //stale pointer and cause a crash.
     if(mPropInfoHashtable.Get(aName, _retval)) {
       return NS_OK;
@@ -220,20 +220,20 @@ NS_IMETHODIMP sbPropertyManager::HasProperty(const nsAString &aName,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyManager::CreateBundle(const char *aURLSpec, 
+NS_IMETHODIMP sbPropertyManager::CreateBundle(const char *aURLSpec,
                                               nsIStringBundle **_retval)
 {
   NS_ENSURE_ARG_POINTER(aURLSpec);
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
-  
+
   nsresult rv;
-  nsCOMPtr<nsIStringBundleService> stringBundleService = 
+  nsCOMPtr<nsIStringBundleService> stringBundleService =
     do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIStringBundle> stringBundle; 
-  rv = stringBundleService->CreateBundle(aURLSpec, 
+
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  rv = stringBundleService->CreateBundle(aURLSpec,
                                          getter_AddRefs(stringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -243,8 +243,8 @@ NS_IMETHODIMP sbPropertyManager::CreateBundle(const char *aURLSpec,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle, 
-                                                   const nsAString & aName, 
+NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
+                                                   const nsAString & aName,
                                                    nsAString & _retval)
 {
   NS_ENSURE_ARG_POINTER(aBundle);
@@ -279,7 +279,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Ordinal
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL), 
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
                       NS_LITERAL_STRING("property.ordinal"),
                       stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
                       PR_FALSE, PR_FALSE);
@@ -307,8 +307,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
                         NS_LITERAL_STRING("property.date_created"),
                         sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
-                        stringBundle, 
-                        PR_TRUE, 
+                        stringBundle,
+                        PR_TRUE,
                         PR_FALSE,
                         PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -356,14 +356,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                     NS_LITERAL_STRING("property.track_name"),
-                    stringBundle, PR_TRUE, PR_TRUE, 
+                    stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE);
 
   //Album name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                     NS_LITERAL_STRING("property.album_name"),
-                    stringBundle, PR_TRUE, PR_TRUE, 
+                    stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE);
 
@@ -389,7 +389,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
-                    stringBundle, PR_TRUE, PR_TRUE, 
+                    stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE, sortProfile);
 
@@ -527,7 +527,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Hidden
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                       NS_LITERAL_STRING("property.hidden"),
-                      stringBundle, PR_FALSE, PR_FALSE, 
+                      stringBundle, PR_FALSE, PR_FALSE,
                       0, PR_TRUE, 1, PR_TRUE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -635,6 +635,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Remote API SiteID
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_RAPISITEID),
+                    NS_LITERAL_STRING("property.rapi_site_id"),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+
   return NS_OK;
 }
 
@@ -741,10 +749,10 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIDatetimePropertyInfo*, datetimeProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -789,7 +797,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -848,7 +856,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -861,12 +869,12 @@ sbPropertyManager::SetRemoteAccess(sbIPropertyInfo* aProperty,
                                    PRBool aRemoteWritable)
 {
   nsresult rv = NS_OK;
-  
+
   rv = aProperty->SetRemoteReadable(aRemoteReadable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = aProperty->SetRemoteWritable(aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }

@@ -136,4 +136,3 @@ sbRemoteWebLibrary::InitInternalMediaList()
 
   return rv;
 }
-

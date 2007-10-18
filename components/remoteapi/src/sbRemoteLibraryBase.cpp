@@ -49,6 +49,7 @@
 #include <sbIMediaListView.h>
 #include <sbIMetadataJobManager.h>
 #include <sbIPlaylistReader.h>
+#include <sbIPropertyArray.h>
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
 
@@ -60,13 +61,16 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringEnumerator.h>
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 #include <nsTHashtable.h>
 #include <prlog.h>
+#include <sbPropertiesCID.h>
 #include "sbRemoteMediaItem.h"
 #include "sbRemoteMediaList.h"
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteAPIUtils.h"
 #include <sbStandardProperties.h>
+#include "sbURIChecker.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -138,7 +142,7 @@ public:
       // Already have a job, check completion status.
       if (mMetadataJob) {
         PRBool completed;
-        
+
         rv = mMetadataJob->GetCompleted(&completed);
         NS_ENSURE_SUCCESS(rv, rv);
 
@@ -217,6 +221,35 @@ class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
     nsCOMArray<sbIMediaItem>& mArray;
 };
 NS_IMPL_ISUPPORTS1( sbRemoteLibraryEnumCallback, sbIMediaListEnumerationListener )
+
+/**
+ * Simple struct to allow sorting of scopeURLs
+ */
+struct sbRemoteLibraryScopeURLSet {
+  sbRemoteLibraryScopeURLSet( const nsACString& path,
+                              sbIMediaItem* item )
+  : scopePath(path),
+    item(item),
+    length(path.Length())
+  {
+    NS_ASSERTION( item, "Null pointer!");
+  }
+
+  PRBool operator ==(const sbRemoteLibraryScopeURLSet& rhs) const
+  {
+    return (length == rhs.length) && (scopePath.Equals(rhs.scopePath));
+  }
+
+  PRBool operator <(const sbRemoteLibraryScopeURLSet& rhs) const
+  {
+    return length < rhs.length;
+  }
+
+  const nsCString scopePath;
+  const nsCOMPtr<sbIMediaItem> item;
+  const PRUint32 length;
+};
+
 
 NS_IMPL_ISUPPORTS9( sbRemoteLibraryBase,
                     nsISecurityCheckedComponent,
@@ -311,7 +344,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   // Only allow the creation of media items with http(s) schemes
   PRBool validScheme;
   uri->SchemeIs("http", &validScheme);
-  if (!validScheme) { 
+  if (!validScheme) {
     uri->SchemeIs("https", &validScheme);
     if (!validScheme) {
       return NS_ERROR_INVALID_ARG;
@@ -329,7 +362,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the OriginPage property so we know where it came from
-  rv = mRemotePlayer->SetOriginScope(mediaItem);
+  rv = mRemotePlayer->SetOriginScope( mediaItem, aURL );
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mShouldScan) {
@@ -379,66 +412,117 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
 
   // This will wrap in the appropriate site/regular RemoteMediaItem
   rv = SB_WrapMediaItem(mRemotePlayer, mediaItem, _retval);
-  if (NS_SUCCEEDED(rv)) {
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eUpdatedWithItems, mLibrary);
-  }
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mRemotePlayer->GetNotificationManager()
+    ->Action(sbRemoteNotificationManager::eUpdatedWithItems, mLibrary);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
-                                      sbIRemoteMediaList** _retval )
+sbRemoteLibraryBase::CreateSimpleMediaList( const nsAString& aName,
+                                            const nsAString& aSiteID,
+                                            sbIRemoteMediaList** _retval )
 {
+  NS_ENSURE_ARG(!aName.IsEmpty());
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mLibrary);
 
-  LOG(("sbRemoteLibraryBase::CreateMediaList()"));
-
-  nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = mLibrary->CreateMediaList(aType,
-                                          nsnull,
-                                          getter_AddRefs(mediaList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set the OriginPage property so we know where it came from
-  nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(mediaList));
-  NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
-
-  rv = mRemotePlayer->SetOriginScope(mediaItem);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // This will wrap in the appropriate site/regular RemoteMediaList
-  rv = SB_WrapMediaList(mRemotePlayer, mediaList, _retval);
-  if (NS_SUCCEEDED(rv)) {
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
+  nsString siteID;
+  if (aSiteID.IsEmpty()) {
+    siteID.Assign(aName);
   }
+  else {
+    siteID.Assign(aSiteID);
+  }
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> mediaList;
+  nsCOMPtr<sbIRemoteMediaList> remMediaList = GetMediaListBySiteID(siteID);
+  if (remMediaList) {
+    nsCOMPtr<sbIWrappedMediaList> wrappedList =
+      do_QueryInterface( remMediaList, &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    mediaList = wrappedList->GetMediaList();
+    NS_ENSURE_TRUE( mediaList, NS_ERROR_FAILURE );
+  }
+  else {
+    // Now we create one.
+    rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"), nsnull,
+                                    getter_AddRefs(mediaList) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Set the OriginPage property so we know where it came from
+    nsCOMPtr<sbIMediaItem> listAsItem( do_QueryInterface( mediaList, &rv ) );
+    NS_ENSURE_SUCCESS( rv, rv) ;
+
+    rv = mRemotePlayer->SetOriginScope( listAsItem, siteID );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    rv = SB_WrapMediaList( mRemotePlayer, mediaList,
+                           getter_AddRefs(remMediaList) );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  rv = mediaList->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                               aName );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  mRemotePlayer->GetNotificationManager()->
+    Action( sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary );
+
+  NS_ADDREF(*_retval = remMediaList);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
-                                             sbICreateMediaListCallback* aCallback )
+sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
+                                             const nsAString& aURL,
+                                             sbICreateMediaListCallback* aCallback,
+                                             const nsAString& aSiteID )
 {
+  NS_ENSURE_ARG(!aName.IsEmpty());
+  NS_ENSURE_ARG(!aURL.IsEmpty());
   NS_ENSURE_STATE(mLibrary);
 
   LOG(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
 
+  nsString siteID;
+  if (aSiteID.IsEmpty()) {
+    siteID.Assign(aName);
+  }
+  else {
+    siteID.Assign(aSiteID);
+  }
+
+  nsresult rv;
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"),
-                                           nsnull,
-                                           getter_AddRefs(mediaList) );
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIRemoteMediaList> remMediaList = GetMediaListBySiteID(siteID);
+  if (remMediaList) {
+    nsCOMPtr<sbIWrappedMediaList> wrappedList =
+      do_QueryInterface( remMediaList, &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
 
-  // Set the OriginPage property so we know where it came from
-  nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(mediaList));
-  NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
+    mediaList = wrappedList->GetMediaList();
+    NS_ENSURE_TRUE( mediaList, NS_ERROR_FAILURE );
+  }
+  else {
+    rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"), nsnull,
+                                    getter_AddRefs(mediaList) );
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mRemotePlayer->SetOriginScope(mediaItem);
-  NS_ENSURE_SUCCESS(rv, rv);
+    // Set the OriginPage property so we know where it came from
+    nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(mediaList));
+    NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
+
+    rv = mRemotePlayer->SetOriginScope( mediaItem, siteID );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mediaList->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                               aName );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   mRemotePlayer->GetNotificationManager()
       ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
@@ -485,48 +569,14 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::GetMediaListByName( const nsAString & aName,
-                                         sbIRemoteMediaList **_retval )
+sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
+                                           sbIRemoteMediaList **_retval )
 {
-  NS_ENSURE_ARG(_retval);
+  NS_ENSURE_ARG(!aSiteID.IsEmpty());
+  NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-  nsCOMPtr<sbIMediaList> libList = do_QueryInterface( mLibrary, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCOMArray<sbIMediaItem> items;
-  nsRefPtr<sbRemoteLibraryEnumCallback> listener =
-    new sbRemoteLibraryEnumCallback(items);
-  if ( !listener )
-    return NS_ERROR_OUT_OF_MEMORY;
-
-  rv = libList->EnumerateItemsByProperty( NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-                                          aName,
-                                          listener,
-                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  for ( PRInt32 i = 0; i < items.Count(); ++i ) {
-    nsCOMPtr<sbILibraryResource> res = do_QueryInterface( items[i], &rv );
-    if ( NS_FAILED(rv) )
-      continue;
-    nsString prop;
-    rv = res->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_ISLIST), prop );
-    if ( NS_FAILED(rv) )
-      continue;
-    if ( prop.EqualsLiteral("1") ) {
-      nsCOMPtr<sbIMediaList> list = do_QueryInterface( res, &rv );
-      if ( NS_FAILED(rv) )
-        continue;
-      rv = SB_WrapMediaList( mRemotePlayer, list, _retval );
-      if ( NS_SUCCEEDED(rv) )
-        return NS_OK;
-    }
-  }
-
-  // if we reach this point, we did not find the media list
-  // not an exception, so still return NS_OK
-  *_retval = nsnull;
+  nsCOMPtr<sbIRemoteMediaList> list = GetMediaListBySiteID(aSiteID);
+  NS_IF_ADDREF(*_retval = list);
   return NS_OK;
 }
 
@@ -749,4 +799,120 @@ sbRemoteLibraryBase::GetListEnumForProperty( const nsAString& aProperty,
 
   *_retval = enumerator;
   return NS_OK;
+}
+
+already_AddRefed<sbIRemoteMediaList>
+sbRemoteLibraryBase::GetMediaListBySiteID(const nsAString& aSiteID)
+{
+  NS_ASSERTION(!aSiteID.IsEmpty(), "Don't give me an empty ID!");
+
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> mutableArray =
+    do_CreateInstance( SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  rv = mutableArray->AppendProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISITEID),
+                                     aSiteID );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  rv = mutableArray->AppendProperty( NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                     NS_LITERAL_STRING("1") );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  nsCOMArray<sbIMediaItem> items;
+  nsRefPtr<sbRemoteLibraryEnumCallback> listener =
+    new sbRemoteLibraryEnumCallback(items);
+  NS_ENSURE_TRUE( listener, nsnull );
+
+  nsCOMPtr<sbIMediaList> libList = do_QueryInterface( mLibrary, &rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  rv = libList->EnumerateItemsByProperties( mutableArray,
+                                            listener,
+                                            sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  if (items.Count() > 0) {
+    nsCOMPtr<sbIMediaItem> foundItem = FindMediaItemWithMatchingScope(items);
+    if (foundItem) {
+      nsCOMPtr<sbIMediaList> list = do_QueryInterface( foundItem, &rv );
+      NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to QI to sbIMediaList!" );
+
+      nsCOMPtr<sbIRemoteMediaList> retval;
+      rv = SB_WrapMediaList( mRemotePlayer, list, getter_AddRefs(retval) );
+      NS_ENSURE_SUCCESS( rv, nsnull );
+
+      return retval.forget();
+    }
+  }
+
+  // if we reach this point, we did not find the media list, return nsnull.
+  return nsnull;
+}
+
+already_AddRefed<sbIMediaItem>
+sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaItem>& aMediaItems )
+{
+  nsCOMPtr<nsIURI> siteScopeURI = mRemotePlayer->GetSiteScopeURI();
+  NS_ENSURE_TRUE( siteScopeURI, nsnull );
+
+  nsCString siteHost;
+  nsresult rv = siteScopeURI->GetHost(siteHost);
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  PRUint32 itemCount = (PRUint32)aMediaItems.Count();
+  NS_ASSERTION(itemCount > 0, "Empty items list!");
+
+  // Build an array of site scope URLs
+  nsTArray<sbRemoteLibraryScopeURLSet> scopeURLSet(itemCount);
+
+  for (PRUint32 itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+    const nsCOMPtr<sbIMediaItem>& item = aMediaItems.ObjectAt(itemIndex);
+
+    nsString scopeURL;
+    rv = item->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
+                            scopeURL );
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    NS_ASSERTION( !scopeURL.IsEmpty(), "Empty scope URL" );
+
+    nsCOMPtr<nsIURI> scopeURI;
+    rv = NS_NewURI( getter_AddRefs(scopeURI), scopeURL );
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    nsCString host;
+    rv = scopeURI->GetHost(host);
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    rv = sbURIChecker::CheckDomain( host, siteScopeURI );
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+
+    nsCString path;
+    rv = scopeURI->GetPath(path);
+    NS_ENSURE_SUCCESS( rv, nsnull );
+
+    sbRemoteLibraryScopeURLSet* newSet =
+      scopeURLSet.AppendElement( sbRemoteLibraryScopeURLSet( path, item ) );
+    NS_ENSURE_TRUE( newSet, nsnull );
+  }
+
+  // Yay QuickSort!
+  scopeURLSet.Sort();
+
+  itemCount = scopeURLSet.Length();
+  for (PRUint32 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
+    const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt(setIndex);
+
+    nsCString path(set.scopePath);
+    rv = sbURIChecker::CheckPath( path, siteScopeURI );
+    if (NS_SUCCEEDED(rv)) {
+      sbIMediaItem* retval = set.item;
+      NS_ADDREF(retval);
+      return retval;
+    }
+  }
+
+  return nsnull;
 }

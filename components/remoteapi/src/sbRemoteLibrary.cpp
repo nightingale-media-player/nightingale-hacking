@@ -69,8 +69,9 @@ const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
     "library_create:createMediaListFromURL",
     "library_read:getMediaList",
+    "library_read:getMediaListBySiteID",
      // different from the ones in sbILibrary
-    "library_create:createMediaList",
+    "library_create:createSimpleMediaList",
     "library_write:createMediaItem",
 
     // sbIMediaList
@@ -156,4 +157,3 @@ sbRemoteLibrary::InitInternalMediaList()
 
   return rv;
 }
-

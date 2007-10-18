@@ -101,6 +101,12 @@ protected:
   nsresult GetListEnumForProperty( const nsAString& aProperty,
                                    nsIStringEnumerator** _retval );
 
+  already_AddRefed<sbIRemoteMediaList>
+    GetMediaListBySiteID(const nsAString& aSiteID);
+
+  already_AddRefed<sbIMediaItem>
+    FindMediaItemWithMatchingScope(const nsCOMArray<sbIMediaItem>& aMediaItems);
+
   PRBool mShouldScan;
   nsCOMPtr<sbILibrary> mLibrary;
   nsRefPtr<sbRemoteMediaListBase> mRemMediaList;

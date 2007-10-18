@@ -36,7 +36,7 @@ function runTest(tester) {
   try {
 
     var library = songbird.siteLibrary;
-    var list = library.createMediaList("simple");
+    var list = library.createSimpleMediaList("testRemoteMediaList1");
 
     // Test sbILibrarResource
     tester.assertTrue(list.created > 0);
@@ -148,7 +148,7 @@ function runTest(tester) {
     tester.assertEqual(list.lastIndexOf(item, 0), 0);
     tester.assertTrue(list.contains(item));
 
-    var list2 = library.createMediaList("simple");
+    var list2 = library.createSimpleMediaList("testRemoteMediaList2");
     list2.addAll(list);
     tester.assertEqual(list2.length, 1);
 
@@ -226,4 +226,3 @@ function runPageTest(tester) {
   </head>
   <body>test_remotemedialist_page.html</body>
 </html>
-

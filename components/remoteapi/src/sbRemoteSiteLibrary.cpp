@@ -95,10 +95,10 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
-    "site:createMediaList",
+    "site:createSimpleMediaList",
     "site:createMediaListFromURL",
     "site:createMediaItem",
-    "site:getMediaListByName",
+    "site:getMediaListBySiteID",
 
     // sbIMediaList
     "site:getItemByGuid",

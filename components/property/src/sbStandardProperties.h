@@ -48,7 +48,7 @@
 #define SB_PROPERTY_COMPOSERNAME            "http://songbirdnest.com/data/1.0#composerName"
 #define SB_PROPERTY_LYRICISTNAME            "http://songbirdnest.com/data/1.0#lyricistName"
 #define SB_PROPERTY_LYRICS                  "http://songbirdnest.com/data/1.0#lyrics"
-#define SB_PROPERTY_RECORDLABELNAME         "http://songbirdnest.com/data/1.0#recordLabelName" 
+#define SB_PROPERTY_RECORDLABELNAME         "http://songbirdnest.com/data/1.0#recordLabelName"
 #define SB_PROPERTY_ALBUMARTURL             "http://songbirdnest.com/data/1.0#albumArtURL"
 #define SB_PROPERTY_LASTPLAYTIME            "http://songbirdnest.com/data/1.0#lastPlayTime"
 #define SB_PROPERTY_PLAYCOUNT               "http://songbirdnest.com/data/1.0#playCount"
@@ -70,5 +70,6 @@
 #define SB_PROPERTY_DOWNLOAD_DETAILS        "http://songbirdnest.com/data/1.0#downloadDetails"
 #define SB_PROPERTY_ISSORTABLE              "http://songbirdnest.com/data/1.0#isSortable"
 #define SB_PROPERTY_RAPISCOPEURL            "http://songbirdnest.com/data/1.0#rapiScopeURL"
+#define SB_PROPERTY_RAPISITEID              "http://songbirdnest.com/data/1.0#rapiSiteID"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

@@ -1,0 +1,154 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: SiteID testing</title>
+    <script>
+      function runTest(tester) {
+        try {
+          var siteLib = songbird.siteLibrary;
+          var siteList1 = siteLib.createSimpleMediaList("testSiteIDList1");
+          var siteList1GUID = siteList1.guid;
+
+          siteList1 = siteLib.createSimpleMediaList("testSiteIDList1");
+          tester.assertEqual(siteList1.guid, siteList1GUID);
+
+          tester.assertEqual(siteList1.name, "testSiteIDList1");
+
+          siteList1 = siteLib.createSimpleMediaList("Foo", "testSiteIDList1");
+          tester.assertEqual(siteList1.guid, siteList1GUID);
+          tester.assertEqual(siteList1.name, "Foo");
+
+          var siteList2 = siteLib.createSimpleMediaList("Foo", "testSiteIDList2");
+          var siteList2GUID = siteList2.guid;
+          tester.assertNotEqual(siteList2GUID, siteList1GUID);
+          tester.assertEqual(siteList2.name, "Foo");
+
+          siteList2 = siteLib.createSimpleMediaList("Bar", "testSiteIDList2");
+          tester.assertEqual(siteList2.name, "Bar");
+          tester.assertEqual(siteList2.guid, siteList2GUID);
+
+          siteList2 = siteLib.getMediaListBySiteID("testSiteIDList1");
+          tester.assertEqual(siteList2.name, "Foo");
+          tester.assertEqual(siteList2.guid, siteList1GUID);
+
+          siteList2 = siteLib.getMediaListBySiteID("foopy");
+          tester.assertFalse(siteList2);
+
+          siteList2 = siteLib.getMediaListBySiteID("testSiteIDList2");
+          tester.assertEqual(siteList2.name, "Bar");
+          tester.assertEqual(siteList2.guid, siteList2GUID);
+
+          var mainLib = songbird.mainLibrary;
+          var mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDList1");
+          tester.assertFalse(mainLibList1);
+
+          mainLib.add(siteList1);
+          mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDList1");
+          tester.assertTrue(mainLibList1);
+
+          var tempGUID = mainLibList1.guid;
+          tester.assertNotEqual(tempGUID, siteList1GUID);
+
+          mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
+          var mainLibList1GUID = mainLibList1.guid;
+          tester.assertEqual(mainLibList1.name, "testSiteIDMainList1");
+          tester.assertNotEqual(mainLibList1GUID, tempGUID);
+
+          tester.setNoAccess();
+
+          try {
+            mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
+            tester.fail("did not throw: createSimpleMediaList");
+          } catch(e) {}
+
+          try {
+            mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
+            tester.fail("did not throw: getMediaListBySiteID");
+          } catch(e) {}
+
+          tester.setRapiPref("library_read_disable", false);
+          tester.setRapiPref("library_write_disable", false);
+
+          try {
+            mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
+            tester.fail("did not throw: createSimpleMediaList");
+          } catch(e) {}
+
+          try {
+            mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
+          } catch(e) {
+            tester.doThrow(e);
+          }
+
+          tester.setRapiPref("library_create_disable", false);
+
+          try {
+            mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
+          } catch(e) {
+            tester.doThrow(e);
+          }
+
+          try {
+            mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
+          } catch(e) {
+            tester.doThrow(e);
+          }
+
+          tester.setRapiPref("library_read_disable", true);
+
+          try {
+            mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
+          } catch(e) {
+            tester.doThrow(e);
+          }
+
+          try {
+            mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
+            tester.fail("did not throw: getMediaListBySiteID");
+          } catch(e) {}
+
+        }
+        catch (e) {
+          tester.endRemoteAPITest(e);
+        }
+
+        tester.endRemoteAPITest();
+      }
+
+      function runPageTest(tester) {
+        setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+      }
+    </script>
+  </head>
+
+  <body>
+  </body>
+
+</html>

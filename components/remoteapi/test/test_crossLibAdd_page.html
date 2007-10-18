@@ -38,18 +38,15 @@
           var siteLib = songbird.siteLibrary;
           var siteLibLength = siteLib.length;
 
-          var siteList = siteLib.createMediaList("simple");
+          var siteList = siteLib.createSimpleMediaList("testLibAdd1");
           tester.assertEqual(siteLib.length, ++siteLibLength);
-
-          siteList.name = "Foo";
 
           mainLib.add(siteList);
           tester.assertEqual(mainLib.length, ++mainLibLength);
 
-          siteList = siteLib.createMediaList("simple");
+          siteList = siteLib.createSimpleMediaList("testLibAdd2");
           tester.assertEqual(siteLib.length, ++siteLibLength);
 
-          siteList.name = "Bar";
           var siteListLength = siteList.length;
 
           var item = siteLib.createMediaItem("http://www.foo.com/bar.mp3");

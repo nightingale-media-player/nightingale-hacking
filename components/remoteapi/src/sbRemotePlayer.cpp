@@ -459,10 +459,11 @@ sbRemotePlayer::Init()
 
   rv = mNotificationMgr->Init();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   mScopeDomain.SetIsVoid(PR_TRUE);
   mScopePath.SetIsVoid(PR_TRUE);
-  
+  mSiteScopeURL.SetIsVoid(PR_TRUE);
+
   // Set up download callbacks
   mDownloadCallback = new sbRemotePlayerDownloadCallback();
   NS_ENSURE_TRUE(mDownloadCallback, NS_ERROR_OUT_OF_MEMORY);
@@ -560,14 +561,14 @@ NS_IMETHODIMP
 sbRemotePlayer::SetSiteScope(const nsACString & aDomain, const nsACString & aPath)
 {
   nsresult rv;
-  
+
 #if SB_DEBUG_RAPI
   NS_WARNING("sbRemotePlayer::SetSiteScope() - skipping multiple site library checks");
 #else
   NS_ENSURE_TRUE( mScopeDomain.IsVoid(), NS_ERROR_ALREADY_INITIALIZED );
   NS_ENSURE_TRUE( mScopePath.IsVoid(), NS_ERROR_ALREADY_INITIALIZED );
 #endif /* SB_DEBUG_RAPI */
-  
+
   nsCString domain(aDomain);
   nsCString path(aPath);
   nsCOMPtr<nsIURI> codebaseURI;
@@ -575,10 +576,10 @@ sbRemotePlayer::SetSiteScope(const nsACString & aDomain, const nsACString & aPat
   NS_ENSURE_SUCCESS( rv, rv );
   rv = mixin->GetCodebase( getter_AddRefs(codebaseURI) );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   rv = sbURIChecker::CheckURI(domain, path, codebaseURI);
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   mScopeDomain = domain;
   mScopePath = path;
 
@@ -591,7 +592,7 @@ sbRemotePlayer::GetSiteLibrary(sbIRemoteLibrary * *aSiteLibrary)
   LOG(( "sbRemotePlayer::GetSiteLibrary(%s)", mScopePath.BeginReading() ));
 
   nsresult rv;
-  
+
   // check if the site scope has beens set before; if not, set it implicitly
   if ( mScopeDomain.IsVoid() || mScopePath.IsVoid() ) {
     SetSiteScope( mScopeDomain, mScopePath );
@@ -774,19 +775,19 @@ sbRemotePlayer::GetDownloadMediaList( sbIRemoteMediaList **aDownloadMediaList )
     nsCOMPtr<sbIMediaItem> item;
     rv = mainLibrary->GetMediaItem( downloadListGUID,
                                     getter_AddRefs(item) );
-    NS_ENSURE_SUCCESS( rv, rv ); 
+    NS_ENSURE_SUCCESS( rv, rv );
 
     // put it in the comptr to be wrapped
     downloadMediaList = do_QueryInterface( item, &rv );
-    NS_ENSURE_SUCCESS( rv, rv ); 
+    NS_ENSURE_SUCCESS( rv, rv );
 
     // store it as a weak ref
     mWeakDownloadMediaList = do_GetWeakReference( downloadMediaList, &rv );
-    NS_ENSURE_SUCCESS( rv, rv ); 
+    NS_ENSURE_SUCCESS( rv, rv );
   }
 
   rv = SB_WrapMediaList( this, downloadMediaList, aDownloadMediaList );
-  NS_ENSURE_SUCCESS( rv, rv ); 
+  NS_ENSURE_SUCCESS( rv, rv );
 
   return NS_OK;
 }
@@ -803,10 +804,6 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
   // Make sure the item is JUST an item, no lists or libraries allowed
   nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem) );
   NS_ENSURE_FALSE( listcheck, NS_ERROR_INVALID_ARG );
-
-  // Set the item scope
-  rv = SetDownloadScope( aItem );
-  NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
     do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
@@ -831,10 +828,6 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
   nsCOMPtr<sbIMediaList> list (do_QueryInterface(aList, &rv));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // Set the items scope
-  rv = SetDownloadListScope( list );
-  NS_ENSURE_SUCCESS( rv, rv );
-
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
     do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -852,12 +845,8 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
 
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
 
-  // Set the items scope
-  nsresult rv = SetDownloadSelectedScope( aWebPlaylist );
-  NS_ENSURE_SUCCESS( rv, rv );
-
   nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
+  nsresult rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
@@ -1027,7 +1016,7 @@ sbRemotePlayer::SetPosition( PRInt64 aPosition )
   }
   rv = mdrPosition->SetIntValue(aPosition);
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   return TakePlaybackControl( nsnull );
 }
 
@@ -1134,7 +1123,7 @@ sbRemotePlayer::Play()
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   if (!mWebPlaylistWidget) {
     rv = AcquirePlaylistWidget();
     NS_ENSURE_SUCCESS( rv, rv );
@@ -1395,24 +1384,24 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove PlaylistCellClick listener from document" );
-                
+
     rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIPrefPanelOpened listener from document" );
-                              
+
     rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_HAT_CLOSED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIHatClosed listener from document" );
-                             
+
     rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_CHANGED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
-                  "Failed to remove RemoteAPIPrefChanged listener from document" );                              
+                  "Failed to remove RemoteAPIPrefChanged listener from document" );
     // the page is going away, clean up things that will cause us to
     // not get released.
     UnregisterCommands();
@@ -1518,7 +1507,7 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     nsCOMPtr<nsIDOMNSEvent> nsEvent( do_QueryInterface( aEvent, &rv ) );
     if ( NS_FAILED(rv) )
       return NS_OK;
-    
+
     nsCOMPtr<nsIDOMEventTarget> originalEventTarget;
     rv = nsEvent->GetOriginalTarget( getter_AddRefs(originalEventTarget) );
     NS_ENSURE_SUCCESS( rv, rv );
@@ -1591,14 +1580,14 @@ sbRemotePlayer::ConfirmPlaybackControl() {
   // try to guess if this is likely to annoy the user.
 
   LOG(("sbRemotePlayer::ConfirmPlaybackControl()"));
-  
+
   PRBool isPlaying;
   nsresult rv;
-  
+
   // we are safe to run from untrusted script.  Since we may end up across
   // XPConnect and land in JS again, we need to push a principal so that when
   // XPConnect looks it sees that it's a chrome caller.
-  
+
   // before we do that, however, we need to get any information we need from
   // the content document (since that will be unavailable when we push)
   nsCOMPtr<sbISecurityMixin> securityMixin =
@@ -1618,13 +1607,13 @@ sbRemotePlayer::ConfirmPlaybackControl() {
 
     rv = mGPPS->GetPlaying( &isPlaying );
     NS_ENSURE_SUCCESS( rv, rv );
-  
+
     if (!isPlaying) {
       // The player is not playing, allow it
       LOG(("sbRemotePlayer::ConfirmPlaybackControl() -- not playing, allow"));
       return NS_OK;
     }
-  
+
     // check to see if this page has control
     nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
       do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
@@ -1671,23 +1660,23 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   nsCOMPtr<nsIStringBundleService> sbs =
     do_GetService( NS_STRINGBUNDLE_CONTRACTID, &rv );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   // get the branding...
   nsCOMPtr<nsIStringBundle> bundle;
   rv = sbs->CreateBundle( "chrome://branding/locale/brand.properties",
                           getter_AddRefs(bundle) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   nsString branding;
   rv = bundle->GetStringFromName( NS_LITERAL_STRING("brandShortName").get(),
                                   getter_Copies(branding) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   // and the prompt title and message
   rv = sbs->CreateBundle( "chrome://songbird/locale/songbird.properties",
                           getter_AddRefs(bundle) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   const PRUnichar *formatParams[2];
   formatParams[0] = branding.BeginReading();
   formatParams[1] = host.BeginReading();
@@ -1698,7 +1687,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                                      NS_ARRAY_LENGTH(formatParams),
                                      getter_Copies(message) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   nsString title;
   rv = bundle->GetStringFromName( aTitleKey.BeginReading(),
                                   getter_Copies(title) );
@@ -1708,7 +1697,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.deny").get(),
                                   getter_Copies(allowDeny) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   nsString allowAlways;
   rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.always").get(),
                                   getter_Copies(allowAlways) );
@@ -1718,7 +1707,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   rv = bundle->GetStringFromName( NS_LITERAL_STRING("rapi.permissions.allow.once").get(),
                                   getter_Copies(allowOnce) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
-  
+
   // now we can actually go for the prompt
   nsCOMPtr<nsIPromptService> promptService =
     do_GetService( "@mozilla.org/embedcomp/prompt-service;1", &rv );
@@ -1732,7 +1721,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   PRUint32 buttons =  nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* allow for visit */
                       nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* cancel */
                       nsIPromptService::BUTTON_POS_1_DEFAULT;
-  
+
   if (aScopedName) {
     buttons += nsIPromptService::BUTTON_POS_2 * nsIPromptService::BUTTON_TITLE_IS_STRING;
   }
@@ -1785,7 +1774,7 @@ sbRemotePlayer::GetBrowser( nsIDOMElement** aElement )
   nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement,
                                                          &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   rv = tabbrowser->GetBrowserForDocument( mContentDoc, aElement );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -1797,7 +1786,7 @@ sbRemotePlayer::TakePlaybackControl( nsIURI* aURI )
 {
   nsresult rv;
   nsCOMPtr<nsIURI> uri = aURI;
-  
+
   // try to guess the URI if we are not given one
   if ( NS_UNLIKELY(!uri) ) {
     nsCOMPtr<sbISecurityMixin> securityMixin =
@@ -1806,11 +1795,11 @@ sbRemotePlayer::TakePlaybackControl( nsIURI* aURI )
     rv = securityMixin->GetCodebase( getter_AddRefs(uri) );
     NS_ENSURE_SUCCESS( rv, rv );
   }
-  
+
   nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
     do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   rv = remoteAPIService->TakePlaybackControl( uri, nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
   return NS_OK;
@@ -1950,10 +1939,81 @@ sbRemotePlayer::GetNotificationManager()
 }
 
 nsresult
-sbRemotePlayer::SetDownloadScope( sbIMediaItem *aItem )
+sbRemotePlayer::GetSiteScopeURL( nsAString& aURL )
+{
+  if (!mSiteScopeURL.IsVoid()) {
+    aURL.Assign(mSiteScopeURL);
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIURI> scopeURI = GetSiteScopeURI();
+  NS_ENSURE_TRUE( scopeURI, NS_ERROR_FAILURE );
+
+  nsCString scopeSpec;
+  nsresult rv = scopeURI->GetSpec(scopeSpec);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  mSiteScopeURL.Assign(NS_ConvertUTF8toUTF16(scopeSpec));
+  aURL.Assign(mSiteScopeURL);
+  return NS_OK;
+}
+
+already_AddRefed<nsIURI>
+sbRemotePlayer::GetSiteScopeURI()
+{
+  if (mSiteScopeURI) {
+    nsIURI* retval = mSiteScopeURI;
+    NS_ADDREF(retval);
+    return retval;
+  }
+
+  nsresult rv;
+
+  // check if the site scope has been set before; if not, set it implicitly
+  if ( mScopeDomain.IsVoid() || mScopePath.IsVoid() ) {
+    rv = SetSiteScope( mScopeDomain, mScopePath );
+    NS_ENSURE_SUCCESS( rv, nsnull);
+  }
+
+  // get the codebase URI
+  nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface( mSecurityMixin, &rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  nsCOMPtr<nsIURI> codebaseURI;
+  rv = mixin->GetCodebase( getter_AddRefs(codebaseURI) );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  // construct a download scope URI starting with the codebase URI scheme
+  nsCString scopeSpec;
+  rv = codebaseURI->GetScheme(scopeSpec);
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  scopeSpec.AppendLiteral(":");
+
+  nsCOMPtr<nsIURI> scopeURI;
+  rv = mIOService->NewURI( scopeSpec, nsnull, nsnull, getter_AddRefs(scopeURI) );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  rv = scopeURI->SetHost(mScopeDomain);
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  rv = scopeURI->SetPath(mScopePath);
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  scopeURI = NS_TryToMakeImmutable( scopeURI, &rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  mSiteScopeURI = scopeURI;
+  return scopeURI.forget();
+}
+
+nsresult
+sbRemotePlayer::SetDownloadScope( sbIMediaItem *aItem,
+                                  const nsAString& aSiteID )
 {
   LOG(( "sbRemotePlayer::SetDownloadScope()" ));
   NS_ASSERTION(aItem, "aItem is null");
+  NS_ASSERTION( !aSiteID.IsEmpty(), "aSiteID is empty!" );
 
   nsresult rv;
 
@@ -1968,52 +2028,30 @@ sbRemotePlayer::SetDownloadScope( sbIMediaItem *aItem )
     mediaItem = aItem;
   }
 
-  // check if the site scope has been set before; if not, set it implicitly
-  if ( mScopeDomain.IsVoid() || mScopePath.IsVoid() ) {
-    SetSiteScope( mScopeDomain, mScopePath );
-  }
+  nsString siteScopeURL;
+  rv = GetSiteScopeURL(siteScopeURL);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the codebase URI
-  nsCOMPtr<nsIURI> codebaseURI;
-  nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface( mSecurityMixin, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = mixin->GetCodebase( getter_AddRefs(codebaseURI) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // construct a download scope URI starting with the codebase URI scheme
-  nsCOMPtr<nsIURI> scopeURI;
-  nsCAutoString scopeSpec;
-  rv = codebaseURI->GetScheme( scopeSpec );
-  NS_ENSURE_SUCCESS( rv, rv );
-  scopeSpec.AppendLiteral(":");
-  rv = mIOService->NewURI( scopeSpec,
-                           nsnull,
-                           nsnull,
-                           getter_AddRefs(scopeURI) );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = scopeURI->SetHost( mScopeDomain );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = scopeURI->SetPath( mScopePath );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // set the download item scope property
-  rv = scopeURI->GetSpec( scopeSpec );
-  NS_ENSURE_SUCCESS( rv, rv );
   rv = mediaItem->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
-                               NS_ConvertUTF8toUTF16(scopeSpec) );
+                               siteScopeURL );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = mediaItem->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_RAPISITEID),
+                               aSiteID );
   NS_ENSURE_SUCCESS( rv, rv );
 
   return NS_OK;
 }
 
 nsresult
-sbRemotePlayer::SetOriginScope( sbIMediaItem *aItem )
+sbRemotePlayer::SetOriginScope( sbIMediaItem *aItem,
+                                const nsAString& aSiteID )
 {
   LOG(("sbRemotePlayer::SetOriginScope()"));
-  NS_ASSERTION(aItem, "aItem is null");
-  nsresult rv;
+  NS_ASSERTION( aItem, "aItem is null" );
+  NS_ASSERTION( !aSiteID.IsEmpty(), "aSiteID is empty!" );
 
-  rv = SetDownloadScope(aItem);
+  nsresult rv = SetDownloadScope( aItem, aSiteID );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsString scope;
@@ -2022,68 +2060,6 @@ sbRemotePlayer::SetOriginScope( sbIMediaItem *aItem )
 
   rv = aItem->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE), scope );
   NS_ENSURE_SUCCESS( rv, rv );
-
-  return NS_OK;
-}
-
-nsresult
-sbRemotePlayer::SetDownloadListScope( sbIMediaList *aList )
-{
-  LOG(("sbRemotePlayer::SetDownloadListScope()"));
-  NS_ASSERTION(aList, "aList is null");
-  nsresult rv;
-
-  nsCOMArray<sbIMediaItem> items;
-  nsRefPtr<sbRemotePlayerEnumCallback> listener =
-    new sbRemotePlayerEnumCallback(items);
-  if ( !listener )
-    return NS_ERROR_OUT_OF_MEMORY;
-
-  rv = aList->EnumerateAllItems( listener,
-                                 sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  for ( PRInt32 i = 0; i < items.Count(); ++i ) {
-    // Set the item scope
-    rv = SetDownloadScope( items[i] );
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbRemotePlayer::SetDownloadSelectedScope( sbIRemoteWebPlaylist *aWebPlaylist )
-{
-  LOG(("sbRemotePlayer::SetDownloadSelectedScope()"));
-  NS_ASSERTION(aWebPlaylist, "aWebPlaylist is null");
-  nsresult rv;
-
-  nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
-                                 new sbUnwrappingSimpleEnumerator(selection) );
-  NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
-
-  PRBool more;
-  rv = wrapper->HasMoreElements( &more );
-  NS_ENSURE_SUCCESS( rv, rv );
-  while (more) {
-    // Get the next item.
-    nsCOMPtr<sbIMediaItem> mediaItem;
-    rv = wrapper->GetNext( getter_AddRefs(mediaItem) );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // Set the item scope.
-    rv = SetDownloadScope( mediaItem );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // Check for more items.
-    rv = wrapper->HasMoreElements( &more );
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
 
   return NS_OK;
 }
@@ -2162,7 +2138,7 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 #endif
 
   nsresult rv;
-  nsCOMPtr<sbIPropertyManager> propMngr( 
+  nsCOMPtr<sbIPropertyManager> propMngr(
                          do_GetService( SB_PROPERTYMANAGER_CONTRACTID, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -2365,7 +2341,7 @@ sbRemotePlayer::CreateNumberProperty( const nsAString& aPropertyID,
                          aPropertyID,
                          aDisplayName,
                          EmptyString(),
-                         0, 
+                         0,
                          aReadonly,
                          aHidden,
                          aNullSort );
@@ -2382,7 +2358,7 @@ sbRemotePlayer::CreateImageProperty( const nsAString& aPropertyID,
                          aPropertyID,
                          aDisplayName,
                          EmptyString(),
-                         0, 
+                         0,
                          aReadonly,
                          aHidden,
                          aNullSort );
@@ -2399,7 +2375,7 @@ sbRemotePlayer::CreateRatingsProperty( const nsAString& aPropertyID,
                          aPropertyID,
                          aDisplayName,
                          EmptyString(),
-                         0, 
+                         0,
                          aReadonly,
                          aHidden,
                          aNullSort );
@@ -2417,7 +2393,7 @@ sbRemotePlayer::CreateButtonProperty( const nsAString& aPropertyID,
                          aPropertyID,
                          aDisplayName,
                          aButtonLabel,
-                         0, 
+                         0,
                          aReadonly,
                          aHidden,
                          aNullSort );
@@ -2465,7 +2441,7 @@ sbRemotePlayer::HasAccess( const nsAString& aRemotePermCategory,
     *_retval = false;
     return NS_OK;
   }
-  
+
   // Now grab the internal category name and get the permissions
   nsString mCategory;
   mCategory.AssignLiteral(sPublicCategoryConversions[iIndex][1]);
@@ -2502,7 +2478,7 @@ sbRemotePlayerDownloadCallback::Initialize(sbRemotePlayer* aRemotePlayer)
   mWeakRemotePlayer = do_GetWeakReference
                     ( NS_ISUPPORTS_CAST(sbIRemotePlayer*, aRemotePlayer), &rv );
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get the codebase
   nsCOMPtr<sbISecurityMixin> mixin =
                         do_QueryInterface( aRemotePlayer->mSecurityMixin, &rv );
@@ -2676,4 +2652,3 @@ sbRemotePlayerDownloadCallback::GetItemScope( sbIMediaItem* aMediaItem,
 
   return NS_OK;
 }
-

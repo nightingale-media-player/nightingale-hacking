@@ -113,7 +113,10 @@ public:
                                         const nsAString &aTitleKey,
                                         const nsAString &aMessageKey,
                                         const char* aScopedName = nsnull );
-  nsresult SetOriginScope( sbIMediaItem *aItem );
+  nsresult SetOriginScope( sbIMediaItem *aItem,
+                           const nsAString& aSiteID );
+  nsresult GetSiteScopeURL(nsAString &aURL);
+  already_AddRefed<nsIURI> GetSiteScopeURI();
 
 protected:
   virtual ~sbRemotePlayer();
@@ -128,9 +131,8 @@ protected:
   nsresult ConfirmPlaybackControl();
   nsresult GetBrowser( nsIDOMElement** aElement );
   nsresult TakePlaybackControl( nsIURI* aURI );
-  nsresult SetDownloadScope( sbIMediaItem *aItem );
-  nsresult SetDownloadListScope( sbIMediaList *aList );
-  nsresult SetDownloadSelectedScope( sbIRemoteWebPlaylist *aWebPlaylist );
+  nsresult SetDownloadScope( sbIMediaItem *aItem,
+                            const nsAString& aSiteID );
   nsresult CreateProperty( const nsAString& aPropertyType,
                            const nsAString& aPropertyID,
                            const nsAString& aDisplayName,
@@ -139,7 +141,7 @@ protected:
                            PRBool aReadonly,
                            PRBool aHidden,
                            PRUint32 aNullSort );
-                           
+
   // Data members
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
@@ -153,7 +155,7 @@ protected:
 
   // the remote impl for the playlist binding
   nsRefPtr<sbIPlaylistWidget> mWebPlaylistWidget;
-  
+
   // The download device callback
   nsRefPtr<sbRemotePlayerDownloadCallback> mDownloadCallback;
 
@@ -161,6 +163,10 @@ protected:
   // @see setSiteScope()
   nsCString mScopeDomain;
   nsCString mScopePath;
+
+  // the computed siteScopeURL and URI.
+  nsString mSiteScopeURL;
+  nsCOMPtr<nsIURI> mSiteScopeURI;
 
   // Like the site libraries, this may want to be a collection
   // The commands registered by the page.

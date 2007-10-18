@@ -53,7 +53,6 @@ public:
   // calls the other version of FixupPath with a generated dummy URI
   static nsresult FixupPath( const nsACString& aPath,
                              nsACString& _retval );
-protected:
   // validates aPath against aSiteURI, setting aPath if empty
   static nsresult CheckPath( /* inout */ nsACString &aPath,
                              nsIURI *aSiteURI );

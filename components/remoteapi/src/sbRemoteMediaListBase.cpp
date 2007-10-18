@@ -173,18 +173,31 @@ sbRemoteMediaListBase::GetItemByGuid(const nsAString& aGuid,
 
   nsCOMPtr<sbIMediaItem> item;
   nsresult rv = mMediaList->GetItemByGuid(aGuid, getter_AddRefs(item));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // This means that the item doesn't exist. Return null to be friendly to the
+    // nice JS callers.
+    *_retval = nsnull;
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   return SB_WrapMediaItem(mRemotePlayer, item, _retval);
 }
 
 NS_IMETHODIMP
-sbRemoteMediaListBase::GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval)
+sbRemoteMediaListBase::GetItemByIndex(PRUint32 aIndex,
+                                      sbIMediaItem **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIMediaItem> item;
   nsresult rv = mMediaList->GetItemByIndex(aIndex, getter_AddRefs(item));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // This means that the item doesn't exist. Return null to be friendly to the
+    // nice JS callers.
+    *_retval = nsnull;
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   return SB_WrapMediaItem(mRemotePlayer, item, _retval);
@@ -539,4 +552,3 @@ sbUnwrappingSimpleEnumerator::GetNext(nsISupports **_retval)
 
   return NS_ERROR_UNEXPECTED;
 }
-
