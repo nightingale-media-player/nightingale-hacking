@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -37,13 +37,13 @@ if (typeof(SBProperties) == "undefined") {
 try
 {
   // Parse through the document to get all the urls.
-  
+
   function CancelAsyncWebDocument(href_loop, newMediaListView)
   {
     if ( href_loop )
     {
       href_loop.cancel();
-      
+
       // Murder his whole family.
       for ( var i = 0; i < href_loop.childLoops.length; i++ )
         CancelAsyncWebDocument( href_loop.childLoops[ i ], newMediaListView );
@@ -65,7 +65,7 @@ try
       href_loop = null;
     }
   }
-  
+
   function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context, aTitle)
   {
     const CONTRACTID_ARRAY = "@mozilla.org/array;1";
@@ -75,12 +75,12 @@ try
     const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
     const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
-    
+
     CancelAsyncWebDocument(old_href_loop, aMediaListView);
 
     var href_loop = new sbIAsyncForLoop
     ( // This is an argument list passed to the sbIAsyncForLoop constructor.
-      
+
       function webPlaylist_initEval() {
         this.i = 0;
       },
@@ -91,7 +91,7 @@ try
                      (this.i < this.object_array.length) ||
                      (this.i < this.frame_array.length) ||
                      (this.i < this.iframe_array.length);
-                     
+
         for ( var i = 0; i < this.childLoops.length; i++ ) {
           retval |= this.childLoops[ i ].m_Interval != null;
         }
@@ -101,19 +101,19 @@ try
       function webPlaylist_stepEval() {
         this.i++;
       },
-      
+
       function webPlaylist_bodyEval() {
         try  {
-        
+
           // Check if clearInterval has been called (see asyncForLoop.js:66)
           if (!this.m_Interval) {
             return true;
           }
 
           var loop_break = false;
-          
+
           // "A" tags
-          if ( 
+          if (
               ( this.i < this.a_array.length ) &&
               ( this.a_array[ this.i ].href ) &&
               ( this.a_array[ this.i ].addEventListener )
@@ -124,7 +124,7 @@ try
               loop_break = this.handleURL( url );
           }
           // "Embed" tags
-          if ( 
+          if (
               ( this.i < this.embed_array.length )
             )
           {
@@ -133,7 +133,7 @@ try
               loop_break |= this.handleEmbedURL( url );
           }
           // "Object" tags
-          if ( 
+          if (
               ( this.i < this.object_array.length )
             )
           {
@@ -142,7 +142,7 @@ try
               loop_break |= this.handleEmbedURL( url );
           }
           // "Frame" tags
-          if ( 
+          if (
               ( this.i < this.frame_array.length )
             )
           {
@@ -154,7 +154,7 @@ try
             }
           }
           // "IFrame" tags
-          if ( 
+          if (
               ( this.i < this.iframe_array.length )
             )
           {
@@ -165,18 +165,18 @@ try
               this.childLoops.push( newloop );
             }
           }
-          
+
           return loop_break;
         }
-        catch ( err )        
+        catch ( err )
         {
-          alert( "async_webplaylist - aBodyEval\n\n" + err );
+          Components.utils.reportError(err);
         }
         return 0;
       },
 
       function webPlaylist_finishedEval() {
-        if (!this.m_Interval) 
+        if (!this.m_Interval)
           return;
 
         var mediaList = aMediaListView.mediaList;
@@ -193,12 +193,12 @@ try
           // Let the view know that we're about to make a lot of changes.
           mediaList.beginUpdateBatch();
 
-          // Only clear the list if we have anything to add.          
+          // Only clear the list if we have anything to add.
           if (mediaList.length) {
             // This will need to be fixed for multiple frames with media urls
-            mediaList.clear(); 
+            mediaList.clear();
           }
-          
+
           // Use a try/finally construct to make sure that we call
           // endUpdateBatch no matter what happens.
           var mediaItemsToScan;
@@ -214,15 +214,15 @@ try
                 // This must be just an URL.
                 var url = item;
                 var name = "";
-                
+
                 // Or, uhm, maybe it's an Object?
                 if (item instanceof Object) {
                   url = item.url;
                   name = item.name;
                 }
-                
+
                 var uri = newURI(url);
-                
+
                 // Set the originURL/Page values to remember our state.
                 var propArray = [
                     [SBProperties.originPage, this.currentURL],
@@ -234,7 +234,7 @@ try
                 if (name.length > 0) {
                   propArray.push([SBProperties.trackName, name])
                 }
-                
+
                 // Make a new media item for it
                 mediaItem = library.createMediaItem(uri,
                                 // Set the properties for later tracking
@@ -276,15 +276,15 @@ try
         if ( this.child == false ) {
           // Parent job can stop counting progress.
           context.progressTotal = context.progressCurrent = 1;
-        }                               
+        }
       },
-      
+
       20, // 20 steps per interval
-      
+
       0 // No pause per interval (each UI frame)
     );
     // End of class construction for sbIAsyncPlaylist
-    
+
     // Attach a whole bunch of stuff to it so it can do its job in one pass.
     href_loop.a_array = aDocument.getElementsByTagName("A");
     href_loop.embed_array = aDocument.getElementsByTagName("EMBED");
@@ -299,7 +299,7 @@ try
     href_loop.mediaListView = aMediaListView;
     href_loop.mediaList = aMediaListView.mediaList;
     href_loop.child = false; // might get set to true, later.
-    
+
     href_loop.checkForAnything = function webPlaylist_checkForAnything() {
       // Do I have anything?
       var retval = this.items.length > 0;
@@ -309,14 +309,14 @@ try
       }
       return retval;
     }
-    
+
     // Useful function to be called by the internal code
     href_loop.handleURL = function webPlaylist_handleURL(url, force) {
 
       // Tell other folks that we're on to the next item.
       if (context)
         context.progressCurrent = context.progressCurrent + 1;
-    
+
       if (!force) {
         // Make sure this is a well-formed url.
         try {
@@ -325,7 +325,7 @@ try
         catch (e) {
           return false;
         }
-        
+
         if (gPPS.isPlaylistURL(url)) {
           // Keep the loop going.
           return false;
@@ -343,12 +343,12 @@ try
         this.seenURLs.push(url);
         return true;
       }
-      
+
       // Don't insert it if we already did.
       if (this.seenURLs.indexOf(url) != -1) {
         return false;
       }
-      
+
       // Try to see if we've already found and scanned this url
       var listener = {
         foundItem: null,
@@ -377,16 +377,16 @@ try
       }
 
       this.seenURLs.push(url);
-      
+
       // Only one synchronous database call per ui frame.
       return true;
     };
-    
+
     href_loop.handleEmbedURL = function( url )
     {
       var retval = false;
       var location = "" + gBrowser.mCurrentBrowser.currentURI.spec;
-      
+
       // TODO: Make this an API.
 
       // set the pref 'songbird.scraper.disable.youtube' as a string to '1'
@@ -412,7 +412,7 @@ try
                   aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
                 if ( uriChecker ) {
                   var url = uriChecker.baseChannel.URI.spec;
-                  
+
                   // Crack it for the get_video URL.
                   var seek = "jp.swf";
                   var key = url.indexOf( seek );
@@ -424,8 +424,8 @@ try
                   }
                 }
               }
-            } catch( e ) { 
-              alert( "AsyncWebplaylist youtube urlobserver\n\n" + e ); 
+            } catch( e ) {
+              alert( "AsyncWebplaylist youtube urlobserver\n\n" + e );
             }
           }
         };
@@ -462,14 +462,14 @@ try
       }
       return retval;
     }
-    
+
     if (context) {
       context.progressTotal += href_loop.a_array.length +
                                href_loop.embed_array.length +
                                href_loop.object_array.length;
-    }                               
+    }
     return href_loop;
-  }  
+  }
 }
 catch ( err )
 {
