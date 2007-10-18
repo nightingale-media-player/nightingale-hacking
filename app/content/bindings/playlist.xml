@@ -191,9 +191,7 @@
       </constructor>
 
       <destructor>
-<![CDATA[
-  this.destroy();
-]]>
+        this.destroy();
       </destructor>
 
       <!-- The media list view this playlist is showing -->
@@ -581,7 +579,6 @@
     var e = document.createEvent("Events");
     e.initEvent("playlist-destroy", false, true);
     this.dispatchEvent(e);
-    obliterateProperties(this);
     this._destroyed = true;
   }
 ]]>

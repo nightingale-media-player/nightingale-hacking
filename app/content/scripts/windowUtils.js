@@ -814,18 +814,3 @@ function listProperties(obj, objName)
     alert(result);
 }
 
-/** 
- * \brief Sets all properties of an object to null.
- * \param obj The object.
- */
-function obliterateProperties(obj) 
-{
-    // Francis' Big Hammer(tm)
-    for (var i in obj) {
-      try {
-        this[i] = null;
-      } catch (e) {
-        // like i care...
-      }
-    }
-}

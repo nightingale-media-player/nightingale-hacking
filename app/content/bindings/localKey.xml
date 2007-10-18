@@ -103,7 +103,6 @@
           this.shutdownListeners();
           this.target = null;
           this.oldtarget = null;
-          obliterateProperties(this);
           this._destroyed = true;
         }
       </body>

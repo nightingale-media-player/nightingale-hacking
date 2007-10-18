@@ -58,7 +58,6 @@
         <![CDATA[
         if (!this._destroyed) {
           this.savePosition();
-          obliterateProperties(this);
           this._destroyed = true;
         }
         ]]>

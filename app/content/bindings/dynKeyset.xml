@@ -63,7 +63,6 @@
       <body>
         if (!this._destroyed) {
           this.removeAllKeys();
-          obliterateProperties(this);
           this._destroyed = true;
         }
       </body>

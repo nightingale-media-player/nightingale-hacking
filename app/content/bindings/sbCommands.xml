@@ -91,7 +91,6 @@
             try {
               this.destroy2();
             } catch (e) {}
-            obliterateProperties(this);
             this._destroyed = true;
           }
         ]]>  
@@ -821,15 +820,14 @@
       this.hidden = true;
     </constructor>
     
-    <destructor>
-      <![CDATA[
-      //alert("destructor");
-        this.resetParentPopup();
-      ]]>
-    </destructor>
-
     <field name="menuitems">new Array();</field>
     <field name="hoststring">"menu"</field>
+    
+    <method name="destroy2">
+      <body>
+        this.resetParentPopup();
+      </body>
+    </method>
 
     <method name="shouldForceRebuild">
       <body>
