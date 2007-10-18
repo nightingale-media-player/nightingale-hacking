@@ -129,9 +129,6 @@ ShowUninstDetails hide
 ; Installer pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; License page
-!insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
-
 ; Components page
 !insertmacro MUI_PAGE_COMPONENTS
 
