@@ -226,11 +226,21 @@ function setMinMaxCallback()
 
 function SBPostOverlayLoad()
 {
-  // After the overlays load, launch the scan for media loop if we haven't.
+  // After the overlays load, launch the scan for media loop if no scans have
+  // previously occurred.  Check again if scan has occurred after a delay to
+  // allow other scanners to run first (e.g., iTunes importer).
+  var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
+  if (dataScan != true)
+    setTimeout( SBPostOverlayLoad1, 1000 );
+}
+
+function SBPostOverlayLoad1()
+{
+  // Launch the scan for media loop if no scans have previously occurred.
   var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
   if (dataScan != true)
   {
-    setTimeout( SBScanMedia, 1000 );
     SBDataSetBoolValue("firstrun.scancomplete", true);
+    SBScanMedia(null);
   }
 }
