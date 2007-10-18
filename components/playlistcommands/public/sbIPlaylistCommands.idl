@@ -427,7 +427,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * of commands to be rendered arbitrarily by a playlist ui object (currently,
   * playlist.xml).
   *
-  * Commands can be registered for a spcific playlist, or for any "type" characteristic.
+  * Commands can be registered for a specific playlist, or for any "type" characteristic.
   *
   * \param aContextGUID The guid string for the database to register against
   * \param aPlaylistType The arbitrary type string to register against
@@ -453,10 +453,10 @@ interface sbIPlaylistCommandsManager : nsISupports
   /**
   * \brief Retrieve the list of sbIPlaylistCommands objects registered to a specific playlist
   *
-  * Given the guid, table, and type strings, returns a list of duplicate instances of
+  * Given the guid, and type strings, returns a list of duplicate instances of
   * the corresponding sbIPlaylistCommands objects.
   *
-  * The "type" string has precedence over the "guid"/"table" pair.
+  * The "guid" has precedence over the "type" string.
   *
   * This method is only called by the playlist UI object, in playlist.xml
   *
@@ -475,7 +475,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * of commands to be rendered arbitrarily by a service tree ui object (currently,
   * servicePane.xml).
   *
-  * Commands can be registered for a spcific playlist, or for any "type" characteristic.
+  * Commands can be registered for a specific playlist, or for any "type" characteristic.
   *
   * \param aContextGUID The guid string for the database to register against
   * \param aPlaylistType The arbitrary type string to register against
@@ -499,17 +499,17 @@ interface sbIPlaylistCommandsManager : nsISupports
   /**
   * \brief Retrieve the list of sbIPlaylistCommands objects to be used for a specific playlist
   *
-  * Given the guid, table, and type strings, returns a list of duplicate instances of
+  * Given the guid, and type strings, returns a list of duplicate instances of
   * the corresponding sbIPlaylistCommands objects.
   *
-  * The "type" string has precedence over the "guid"/"table" pair.
+  * The "guid" has precedence over the "type" string.
   *
-  * This method is only called by the playlist UI object, in playlist.xml
+  * This method is only called by the servicepane UI object, in servicePane.xml
   *
   * \param aContextGUID The guid string for the playlist
   * \param aPlaylistType The type of the playlist
   * \return A simple enumerator of newly duplicated command object instances to be used for this playlist
-  * \sa sbIPlaylistCommands, playlist.xml
+  * \sa sbIPlaylistCommands, servicePane.xml
   */
   nsISimpleEnumerator getPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType );
 

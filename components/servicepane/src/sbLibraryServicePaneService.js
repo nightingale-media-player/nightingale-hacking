@@ -145,11 +145,6 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
   var list = this.getLibraryResourceForNode(aNode);
   if (list) {
-    // the downloads playlist doesn't have anything.
-    if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
-      return;
-    }
-
     this._appendCommands(aContextMenu, list, aParentWindow);
 
     // Add menu items for a smart media list
@@ -472,7 +467,7 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
 
     // Metrics!
     var fromtype = context.source.library.getProperty("http://songbirdnest.com/data/1.0#customType");
-      Components.utils.reportError(fromtype + " - " + totype );
+    //Components.utils.reportError(fromtype + " - " + totype );
     metrics.metricsAdd("app.servicepane.copy", fromtype, totype, context.count);
     
     var itemEnumerator = {
@@ -1630,4 +1625,5 @@ var NSGetModule = makeGetModule (
     entry: '0library', // we want this to load first
     value: CONTRACTID
   }]);
+
 

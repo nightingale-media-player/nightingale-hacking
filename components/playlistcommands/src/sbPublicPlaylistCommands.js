@@ -87,6 +87,7 @@ PublicPlaylistCommands.prototype = {
   m_webPlaylistCommands           : null,
   m_downloadCommands              : null,
   m_downloadToolbarCommands       : null,
+  m_downloadCommandsServicePane   : null,
   m_serviceTreeDefaultCommands    : null,
   m_mgr                           : null,
 
@@ -690,6 +691,29 @@ PublicPlaylistCommands.prototype = {
                                                this.m_downloadToolbarCommands);
 
     // --------------------------------------------------------------------------
+    // Construct and publish the download service tree commands
+    // --------------------------------------------------------------------------
+    
+    this.m_downloadCommandsServicePane = new PlaylistCommandsBuilder();
+
+    this.m_downloadCommandsServicePane.
+      appendPlaylistCommands(null, 
+                             "library_cmdobj_pauseresumedownload",
+                             this.m_cmd_PauseResumeDownload);
+
+    this.m_downloadCommandsServicePane.setInitCallback(plCmd_DownloadInit);
+    this.m_downloadCommandsServicePane.setShutdownCallback(plCmd_DownloadShutdown);
+
+    this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
+
+    // Register these commands to the download playlist
+    var downloadListGUID =
+      prefs.getComplexValue("songbird.library.download",
+                            Components.interfaces.nsISupportsString);
+
+    this.m_mgr.registerPlaylistCommandsMediaList(downloadListGUID, "", this.m_downloadCommandsServicePane);
+
+    // --------------------------------------------------------------------------
     // Construct and publish the service tree playlist commands
     // --------------------------------------------------------------------------
 
@@ -743,6 +767,8 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST, this.m_downloadCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR, this.m_downloadToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, , this.m_downloadCommandsServicePane);
+    
 
     // Un-register download playlist commands
     
@@ -758,6 +784,11 @@ PublicPlaylistCommands.prototype = {
                                               (downloadListGUID, 
                                                "",
                                                this.m_downloadToolbarCommands);
+
+    this.m_mgr.unregisterPlaylistCommandsMediaList
+                                              (downloadListGUID, 
+                                               "",
+                                               this.m_downloadCommandsServicePane);
     
     g_downloadDevice = null;
     
@@ -801,6 +832,7 @@ PublicPlaylistCommands.prototype = {
     this.m_webPlaylistCommands.shutdown();
     this.m_downloadCommands.shutdown();
     this.m_downloadToolbarCommands.shutdown();
+    this.m_downloadCommandsServicePane.shutdown();
     this.m_serviceTreeDefaultCommands.shutdown();
 
     g_dataRemoteService = null;
@@ -1314,5 +1346,3 @@ function NSGetModule(compMgr, fileSpec) {
       true);
   });
 }
-
-

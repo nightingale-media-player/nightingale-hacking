@@ -159,22 +159,9 @@ CPlaylistCommandsManager::GetPlaylistCommands(commandmap_t *map,
 
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
+  commandmap_t::iterator c;
 
-  // "type" takes precedence over specific guid
-  commandmap_t::iterator c = (*map).find(type);
-  if (c != (*map).end()) {
-    commandlist_t *typelist = &((*c).second);
-    if (typelist && typelist->size() > 0) {
-      nsCOMArray<sbIPlaylistCommands> array;
-      for (int i=0;i<typelist->size();i++) {
-        nsCOMPtr<sbIPlaylistCommands> cmds;
-        (*typelist)[i]->Duplicate(getter_AddRefs(cmds));
-        array.AppendObject(cmds);
-      }
-      return NS_NewArrayEnumerator(_retval, array);
-    }
-  }
-
+  // guid takes precedence over type
   c = (*map).find(key);
   if (c != (*map).end()) {
     commandlist_t *keylist = &((*c).second);
@@ -183,6 +170,20 @@ CPlaylistCommandsManager::GetPlaylistCommands(commandmap_t *map,
       for (int i=0;i<keylist->size();i++) {
         nsCOMPtr<sbIPlaylistCommands> cmds;
         (*keylist)[i]->Duplicate(getter_AddRefs(cmds));
+        array.AppendObject(cmds);
+      }
+      return NS_NewArrayEnumerator(_retval, array);
+    }
+  }
+
+  c = (*map).find(type);
+  if (c != (*map).end()) {
+    commandlist_t *typelist = &((*c).second);
+    if (typelist && typelist->size() > 0) {
+      nsCOMArray<sbIPlaylistCommands> array;
+      for (int i=0;i<typelist->size();i++) {
+        nsCOMPtr<sbIPlaylistCommands> cmds;
+        (*typelist)[i]->Duplicate(getter_AddRefs(cmds));
         array.AppendObject(cmds);
       }
       return NS_NewArrayEnumerator(_retval, array);

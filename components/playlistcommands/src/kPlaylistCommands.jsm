@@ -52,6 +52,7 @@ var kPlaylistCommands = {
   MEDIAITEM_DOWNLOADPLAYLIST     : "{0bc53d42-81d1-437a-9ae6-d8c214a2eb0f}",
   MEDIAITEM_DOWNLOADTOOLBAR      : "{c8f507b2-904f-4769-9112-6eb067fc91c3}",
 
-  MEDIALIST_DEFAULT              : "{26c21ce7-bcdf-4857-86d4-82c9747c907f}"
+  MEDIALIST_DEFAULT              : "{26c21ce7-bcdf-4857-86d4-82c9747c907f}",
+  MEDIALIST_DOWNLOADPLAYLIST     : "{3d6125f1-e5cf-4c08-9c83-697ddf5809cb}"
 }
 
