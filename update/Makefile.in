@@ -55,9 +55,9 @@ UPDATE_FILENAME_BASE = $(SB_APPNAME)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(
 # On OS X we need to diff from the 'Contents' subdir inside the app bundle.
 #
 ifeq (macosx,$(SB_PLATFORM))
-TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
+TARGET_DIR=$(DEPTH)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
 else
-TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
+TARGET_DIR=$(DEPTH)/$(DISTDIRNAME)
 endif
 
 # MUST specify a target, no default rule
