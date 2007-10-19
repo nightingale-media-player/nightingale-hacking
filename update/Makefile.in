@@ -30,6 +30,11 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 #
+# Settings for the removed-files operation
+#
+REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
+
+#
 # These scripts have problems with absolute paths, so use $(DEPTH) instead
 #
 
@@ -67,7 +72,7 @@ dump-build-id::
     > $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).buildID.txt \
     $(NULL)
 
-complete-patch::
+complete-patch:: removed-files 
 	@$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
@@ -141,5 +146,11 @@ partial-snippet::
     $(SB_MILESTONE) \
     "sha1" \
     $(NULL)
+
+removed-files::
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
+	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/removed-files;
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
+    $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > $(SONGBIRD_DISTDIR)/removed-files;
 
 include $(topsrcdir)/build/rules.mk
