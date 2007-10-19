@@ -104,7 +104,7 @@ function SBInitialize()
     dump("diffh = " + diffh + "\n");
     // todo: resize the window accordingly (same method as windowUtils.js: 448 to 455)
     */
-    setMinMaxCallback();
+    setTimeout("setMinMaxCallback()", 25);
 
 
     initJumpToFileHotkey();
