@@ -1237,6 +1237,9 @@
         this._progressFilter =
           Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
                     .createInstance(Components.interfaces.nsIWebProgress);
+        this._metrics =
+          Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Components.interfaces.sbIMetrics);
       ]]></constructor>
      <destructor><![CDATA[
         this.closeBalloonTip();
@@ -1299,6 +1302,8 @@
           return (this._downloadListCache = mainLibrary.getMediaItem(guid));
         ]]></getter>
       </property>
+
+      <field name="_metrics">null</field>
 
       <method name="createOuterPlaylist">
         <body><![CDATA[
@@ -1866,6 +1871,7 @@
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
             } else {
+              this._metrics.metricsInc("app.browser", "pageViews", "");
               this.scanWebPage();
             }
           }
@@ -2026,6 +2032,8 @@
           this._splitter.parentNode.removeChild(this._splitter);
           this._splitter = null;
         }
+
+        this._metrics = null;
 
         // save the tab state soon
         setTimeout("window.gBrowser.saveTabState();", 100);

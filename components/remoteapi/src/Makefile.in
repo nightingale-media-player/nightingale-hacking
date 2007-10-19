@@ -65,6 +65,7 @@ CPP_SRCS = sbRemoteAPIModule.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(DEPTH)/components/metrics/public \
                $(DEPTH)/components/playlistplayback/public \
                $(DEPTH)/components/playlistcommands/public \
                $(DEPTH)/components/playlistreader/public \

@@ -44,6 +44,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIMetrics.h>
 #include <sbIRemoteAPIService.h>
 #include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
@@ -468,6 +469,16 @@ sbRemotePlayer::Init()
   mDownloadCallback = new sbRemotePlayerDownloadCallback();
   NS_ENSURE_TRUE(mDownloadCallback, NS_ERROR_OUT_OF_MEMORY);
   rv = mDownloadCallback->Initialize(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up metrics and count this session
+  mMetrics = do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Count this session
+  rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.sessionStarted"),
+                            EmptyString(),
+                            EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
   mInitialized = PR_TRUE;
@@ -1529,11 +1540,26 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     }
 
     if ( allow ) {
-      if ( type.Equals(SB_EVENT_RAPI_PREF_PANEL_OPENED) ||
-           type.Equals(SB_EVENT_RAPI_PREF_CHANGED) ||
-           type.Equals(SB_EVENT_RAPI_HAT_CLOSED) ) {
-        LOG(( "sbRemotePlayer::HandleEvent() - %s",
-              NS_LossyConvertUTF16toASCII(type).get() ));
+      LOG(( "sbRemotePlayer::HandleEvent() - %s",
+            NS_LossyConvertUTF16toASCII(type).get() ));
+      if ( type.Equals(SB_EVENT_RAPI_PREF_CHANGED)) {
+        return FireEventToContent( RAPI_EVENT_CLASS, type );
+      }
+      else if (type.Equals(SB_EVENT_RAPI_PREF_PANEL_OPENED) ||
+               type.Equals(SB_EVENT_RAPI_HAT_CLOSED) ) {
+
+        nsString value;
+        if (type.Equals(SB_EVENT_RAPI_HAT_CLOSED)) {
+          value.AssignLiteral("dismissed");
+        }
+        else {
+          value.AssignLiteral("preferences");
+        }
+        rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
+                                  value,
+                                  EmptyString());
+        NS_ENSURE_SUCCESS(rv, rv);
+
         return FireEventToContent( RAPI_EVENT_CLASS, type );
       } else {
         LOG(("sbRemotePlayer::HandleEvent() - Some other event"));
@@ -1754,18 +1780,40 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                                  &allowed );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
+  PRBool retval = PR_FALSE;
+  nsString metricsCategory;
+  metricsCategory.AssignLiteral("rapi.prompt.");
   switch(allowed) {
     case 2:
       // set the permissions permanently
+      metricsCategory.AppendLiteral("always");
       rv = sbSecurityMixin::SetPermission( aURI, nsDependentCString(aScopedName) );
-      // failure is silent
-      /* fall through to allow once */
+      retval = PR_TRUE;
+      break;
     case 0:
-      return PR_TRUE;
+      // Allow once
+      metricsCategory.AppendLiteral("once");
+      retval = PR_TRUE;
+      break;
     case 1:
+      // Disallow
+      metricsCategory.AppendLiteral("deny");
       break;
   }
-  return PR_FALSE;
+
+  if (aScopedName) {
+    nsCOMPtr<sbIMetrics> metrics =
+      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString name(aScopedName);
+    rv = metrics->MetricsInc(metricsCategory,
+                             NS_ConvertASCIItoUTF16(name),
+                             EmptyString());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return retval;
 }
 
 nsresult
