@@ -135,7 +135,7 @@ BalloonTip.prototype = {
       default: raisedflag = ""; break;
     }
     // Open the window (cloaked)
-    this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", "_blank", "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);
+    this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", "_blank", "chrome,dependent=yes,modal=no,titlebar=no,resizable=no"+raisedflag, this);
     this.initTimeStamp = new Date().getTime();
     if (this.autoCloseTimeout) setTimeout( function(obj) { obj.onAutoCloseTimeout(); }, this.autoCloseTimeout * 1000, this );
   },
