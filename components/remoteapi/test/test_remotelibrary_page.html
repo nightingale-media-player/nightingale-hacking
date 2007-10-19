@@ -186,21 +186,13 @@ function runTest(tester) {
   tester.log("----------------------------------------------------------------------");
   tester.log("");
 
-  // Lock down the permissions, access to objects should change
+  // Lock down the permissions, access to objects should not change
   tester.setNoAccess();
 
   try {
     var siteLib = songbird.siteLibrary;
-
-    try {
-      var mainLib = songbird.mainLibrary;
-      tester.fail("did not throw: songbird.mainLibrary;");
-    } catch (e) {}
-
-    try {
-      var webLib = songbird.webLibrary;
-      tester.fail("did not throw: songbird.webLibrary;");
-    } catch (e) {}
+    var mainLib = songbird.mainLibrary;
+    var webLib = songbird.webLibrary;
   } catch (e) {
     tester.endRemoteAPITest(e);
   }
