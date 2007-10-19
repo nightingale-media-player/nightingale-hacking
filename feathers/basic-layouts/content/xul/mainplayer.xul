@@ -133,7 +133,7 @@
       </hbox>
       
 
-      <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="app" metricsid="collapse.controlpane">
+      <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="miniplayer_box" showoncollapse="miniplayer_box" metricscategory="app" metricsid="collapse.controlpane">
         <grippy/>
       </sb-smart-splitter>
 
