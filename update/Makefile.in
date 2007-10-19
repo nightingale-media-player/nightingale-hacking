@@ -78,6 +78,7 @@ complete-patch:: removed-files
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
     "$(TARGET_DIR)"
+	$(CYGWIN_WRAPPER) $(RM) -f $(TARGET_DIR)/removed-files
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
@@ -148,9 +149,9 @@ partial-snippet::
     $(NULL)
 
 removed-files::
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
-	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/removed-files;
+	$(CYGWIN_WRAPPER) $(RM) -f $(TARGET_DIR)/removed-files
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
-    $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > $(SONGBIRD_DISTDIR)/removed-files;
+    $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > ./removed-files
+	$(CYGWIN_WRAPPER) $(CP) ./removed-files $(TARGET_DIR)/removed-files
 
 include $(topsrcdir)/build/rules.mk
