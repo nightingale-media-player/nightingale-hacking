@@ -593,6 +593,10 @@
                   event.screenX+5, event.screenY,
                   'context', null, null, null);
 
+      // This prevents the menu from working correctly on the mac, see
+      // bug 5178. It appears however that this is no longer needed anyway.
+      /*
+      
       // Setup a one-shot event listener to force the popup closed 
       // on the next click in the document                    
       var pop = this.mPopup;
@@ -601,6 +605,7 @@
         document.removeEventListener( "click", doclistener, false );
       }
       document.addEventListener( "click", doclistener, false );
+      */
       
       event.stopPropagation();
       event.preventBubble();
