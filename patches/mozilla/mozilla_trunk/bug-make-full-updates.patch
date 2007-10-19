@@ -1,0 +1,62 @@
+Index: tools/update-packaging/common.sh
+===================================================================
+RCS file: /cvsroot/mozilla/tools/update-packaging/common.sh,v
+retrieving revision 1.9
+diff -u -p -r1.9 common.sh
+--- tools/update-packaging/common.sh	29 Mar 2007 14:11:40 -0000	1.9
++++ tools/update-packaging/common.sh	19 Oct 2007 06:15:32 -0000
+@@ -35,7 +35,7 @@ copy_perm() {
+ 
+ make_add_instruction() {
+   f="$1"
+-  is_extension=$(echo "$f" | grep -c 'extensions/.*/')
++  is_extension=$(echo "$f" | grep -c 'xulrunner/extensions/.*/')
+   if [ $is_extension = "1" ]; then
+     # Use the subdirectory of the extensions folder as the file to test
+     # before performing this add instruction.
+@@ -82,6 +82,7 @@ append_remove_instructions() {
+       # directories.  The updater doesn't know how to remove entire directories.
+       if [ -n "$f" ]; then
+         if [ $(echo "$f" | grep -c '\/$') = 0 ]; then
++          notice "remove \"$prefix$f\""
+           echo "remove \"$prefix$f\""
+         else
+           notice "ignoring remove instruction for directory: $f"
+Index: tools/update-packaging/make_full_update.sh
+===================================================================
+RCS file: /cvsroot/mozilla/tools/update-packaging/make_full_update.sh,v
+retrieving revision 1.9
+diff -u -p -r1.9 make_full_update.sh
+--- tools/update-packaging/make_full_update.sh	29 Mar 2007 14:11:40 -0000	1.9
++++ tools/update-packaging/make_full_update.sh	19 Oct 2007 06:15:32 -0000
+@@ -38,6 +38,10 @@ targetfiles="update.manifest"
+ 
+ mkdir -p "$workdir"
+ 
++# XXXredfive - temporarily add the remove instructions first
++# Append remove instructions for any dead files.
++append_remove_instructions "$targetdir" > $manifest
++
+ # Generate a list of all files in the target directory.
+ pushd "$targetdir"
+ if test $? -ne 0 ; then
+@@ -48,8 +52,6 @@ list_files files
+ 
+ popd
+ 
+-> $manifest
+-
+ num_files=${#files[*]}
+ 
+ for ((i=0; $i<$num_files; i=$i+1)); do
+@@ -67,8 +69,9 @@ for ((i=0; $i<$num_files; i=$i+1)); do
+   targetfiles="$targetfiles \"$f\""
+ done
+ 
++# XXXredfive - temporarily moved to before the adds
+ # Append remove instructions for any dead files.
+-append_remove_instructions "$targetdir" >> $manifest
++#append_remove_instructions "$targetdir" >> $manifest
+ 
+ $BZIP2 -z9 "$manifest" && mv -f "$manifest.bz2" "$manifest"
+ 
