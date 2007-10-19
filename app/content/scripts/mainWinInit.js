@@ -104,8 +104,12 @@ function SBInitialize()
     dump("diffh = " + diffh + "\n");
     // todo: resize the window accordingly (same method as windowUtils.js: 448 to 455)
     */
+    
+    // Delay setting the min max callback to enable the reflow of the mainwin to
+    // happen. The reflow is caused by restoring the window size and position (or
+    // using the default size from xul/css).
+    // See bug #5185.
     setTimeout("setMinMaxCallback()", 25);
-
 
     initJumpToFileHotkey();
 
