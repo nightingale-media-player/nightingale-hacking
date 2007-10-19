@@ -1585,8 +1585,8 @@ DIALOGS
   border-top: 2px solid red;
   -moz-border-top-colors: #202220 /** Button Shadow */
                              #474948;  /** Rubber Highlight */                         
-  margin: 5px 0;
-  padding: 10px 10px 10px 15px;
+  margin: 5px 0px;
+  padding: 10px;
 }
 
 /** 

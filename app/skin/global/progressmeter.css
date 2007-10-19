@@ -45,10 +45,9 @@
 /* ::::: progressmeter ::::: */
 
 progressmeter {
-  margin: 2px 4px;
   min-width: 128px;
   height: 12px;
-  margin: 4px 4px;
+  margin: 5px;
   border: 1px solid #99A194; /** Dark Border 3*/
   background-color: #a3ab9f;
 }

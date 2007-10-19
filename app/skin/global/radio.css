@@ -85,6 +85,12 @@ radio[disabled="true"] {
   background: url(chrome://songbird/skin/radio/radio.png);
 }
 
+.radio-label-box {
+  -moz-margin-start: 2px;
+  border: 1px solid transparent;
+  padding: 0px 1px;
+}
+
 radio[focused="true"]
 {
   border: 1px dotted #99A195; /** Dark Border 2 */
@@ -94,7 +100,8 @@ radio:hover:active > .radio-check {
   background: url(chrome://songbird/skin/radio/radio-act.png);
 }
 
-radio[disabled="true"] > .radio-check {
+radio[disabled="true"] > .radio-check,
+radio[disabled="true"]:hover:active > .radio-check {
   background: url(chrome://songbird/skin/radio/radio-dis.png);
 }
 
@@ -111,7 +118,8 @@ radio[selected="true"]:hover:active > .radio-check {
   background: url(chrome://songbird/skin/radio/radio-check-act.png);
 }
 
-radio[selected="true"][disabled="true"] > .radio-check {
+radio[selected="true"][disabled="true"] > .radio-check,
+radio[selected="true"][disabled="true"]:hover:active > .radio-check  {
   background: url(chrome://songbird/skin/radio/radio-check-dis.png);
 }
 

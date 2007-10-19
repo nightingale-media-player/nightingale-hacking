@@ -1,7 +1,6 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 /* default margins */
-
   button,
   description,
   groupbox,
@@ -11,7 +10,6 @@
   textbox
     {
       margin              : 5px;
-      -moz-margin-start   : 0;
     }
 
 /* inset areas */

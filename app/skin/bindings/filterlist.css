@@ -35,10 +35,11 @@ Imported by bindings.css or directly into feathers.
 */ 
 
 sb-filterlist,
-.sb-filterlist-tree
+.sb-filterlist-tree,
+.sb-filterlist-tree > treechildren::-moz-tree-row
 {
-  margin: 0px;
-  padding: 0px;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 .sb-filterlist-tree
@@ -49,6 +50,16 @@ sb-filterlist,
   -moz-border-left-colors: none;
   border: none;
   /* opacity: 0.8; slow on the mac :( **/
+}
+
+.sb-filterlist-tree > treechildren::-moz-tree-cell
+{
+  margin: 0px !important;
+  padding: 0px 0px 2px 4px !important;
+}
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text
+{
+  padding-top: 1px;
 }
 
 .sb-filterlist-tree,

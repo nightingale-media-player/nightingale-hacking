@@ -519,7 +519,7 @@
             // This is actually the default state, but let's be thorough
             for ( var i = 1; i <= 12; i++ ) {
               document.getAnonymousElementByAttribute(this, 'sbid', 'r' + i ).setAttribute( "hidden", "true" ); 
-              document.getAnonymousElementByAttribute(this, 'sbid', 'x' + i ).setAttribute( "hidden", "true" ); 
+              document.getAnonymousElementByAttribute(this, 'sbid', 'x' + i ).setAttribute( "hidden", "false" ); 
             }
           ]]>
         </body>

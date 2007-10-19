@@ -60,6 +60,6 @@ prefwindow,
 wizard,
 dialog 
 {
-  font-family: tahoma, helvetica, arial, sans-serif !important; /*arial is the fallback font*/
+  font-family: tahoma, Lucida Grande, helvetica, arial, sans-serif !important; /*arial is the fallback font*/
   font-size: 11px !important;
 }

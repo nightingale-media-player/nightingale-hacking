@@ -247,7 +247,7 @@ treecolpicker {
 
 .treecol-text {
   margin: 0px !important;
-  padding-bottom: 3px;
+  padding-bottom: 1px;
 }
 
 treecol[hideheader="true"] {
@@ -403,7 +403,7 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 }
 
 .tree-input {
-  margin: 0 0 0 -5px !important;
+  margin: 0px 0px 0px -5px !important;
   padding: 0px;
 }
 
