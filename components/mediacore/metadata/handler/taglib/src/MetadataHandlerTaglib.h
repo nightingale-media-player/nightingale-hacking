@@ -72,6 +72,9 @@
 /* Mozilla imports. */
 #include <nsCOMPtr.h>
 #include <nsIChannel.h>
+#ifdef MOZ_CRASHREPORTER
+#include <nsICrashReporter.h>
+#endif
 #include <nsIFileProtocolHandler.h>
 #include <nsIURL.h>
 #include <nsStringGlue.h>
@@ -130,6 +133,7 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
      * mMetadataChannelRestart  True when metadata channel must be restarted.
      * mCompleted               True when metadata reading is complete.
      * mMetadataPath            Path used to access metadata.
+     * mpCrashReporter          Crash reporter service.
      */
 
 private:
@@ -146,6 +150,9 @@ private:
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
     nsCString                   mMetadataPath;
+#ifdef MOZ_CRASHREPORTER
+    nsCOMPtr<nsICrashReporter>  mpCrashReporter;
+#endif
 
 
     /* Inherited interfaces. */
@@ -219,6 +226,8 @@ private:
 
 private:
     nsresult ReadMetadata();
+
+    void CompleteRead();
 
     PRBool ReadFile(
         TagLib::File                *pTagFile);

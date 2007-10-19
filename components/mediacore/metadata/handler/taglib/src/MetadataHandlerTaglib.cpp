@@ -52,9 +52,6 @@
 /* Mozilla imports. */
 #include <necko/nsIURI.h>
 #include <nsComponentManagerUtils.h>
-#ifdef MOZ_CRASHREPORTER
-#include <nsICrashReporter.h>
-#endif
 #include <nsIFile.h>
 #include <nsIStandardURL.h>
 #include <nsServiceManagerUtils.h>
@@ -266,23 +263,27 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
         result = mpURL->GetScheme(urlScheme);
 
 #ifdef MOZ_CRASHREPORTER
-    /* Add annotation for crash reporter. */
+    /* Add crash reporter annotation. */
     if (NS_SUCCEEDED(result))
     {
-        nsCOMPtr<nsICrashReporter> pCrashReporter;
-        pCrashReporter = do_GetService("@mozilla.org/xre/app-info;1", &result);
-        if (NS_SUCCEEDED(result))
+        mpCrashReporter = do_GetService("@mozilla.org/xre/app-info;1", &result);
+        if (NS_FAILED(result))
         {
-            pCrashReporter->AnnotateCrashReport
+            mpCrashReporter = nsnull;
+            result = NS_OK;
+        }
+        if (mpCrashReporter)
+        {
+            mpCrashReporter->AnnotateCrashReport
                                         (NS_LITERAL_CSTRING("TaglibReadSpec"),
                                          urlSpec);
         }
-        result = NS_OK;
     }
 #endif
 
-    /* If the channel URL scheme is for a local file, try reading     */
-    /* synchronously.  If successful, mCompleted will be set to true. */
+    /* If the channel URL scheme is for a local file, try reading  */
+    /* synchronously.  If successful, metadata read operation will */
+    /* be completed.                                               */
     if (urlScheme.Equals(NS_LITERAL_CSTRING("file")))
     {
         /* Get the metadata local file path. */
@@ -345,10 +346,10 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     if (NS_SUCCEEDED(result) && mCompleted)
         result = mpMetadataValues->GetNumValues(&readCount);
 
-    /* Read operation is complete on error. */
+    /* Complete read operation on error. */
     if (!NS_SUCCEEDED(result))
     {
-        mCompleted = PR_TRUE;
+        CompleteRead();
         readCount = 0;
     }
 
@@ -426,8 +427,8 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
         mpSeekableChannel = nsnull;
     }
 
-    /* Read operation is complete. */
-    mCompleted = PR_TRUE;
+    /* Complete read operation. */
+    CompleteRead();
 
     return (NS_ERROR_NOT_IMPLEMENTED);
 }
@@ -520,13 +521,13 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
         {
             result = mpSeekableChannel->GetCompleted(&channelCompleted);
             if (NS_SUCCEEDED(result) && channelCompleted)
-                mCompleted = PR_TRUE;
+                CompleteRead();
         }
     }
     catch(...)
     {
         printf("1: OnChannelDataAvailable exception\n");
-        mCompleted = PR_TRUE;
+        CompleteRead();
     }
 
     return (result);
@@ -902,13 +903,36 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
 
     /* Check if the metadata reading is complete. */
     if (isValid && !mMetadataChannelRestart)
-        mCompleted = PR_TRUE;
+        CompleteRead();
 
-    /* Metadata reading is complete upon error. */
+    /* Complete metadata reading upon error. */
     if (!NS_SUCCEEDED(result))
-        mCompleted = PR_TRUE;
+        CompleteRead();
 
     return (result);
+}
+
+
+/*
+ * CompleteRead
+ *
+ *   This function completes a metadata read operation.
+ */
+
+void sbMetadataHandlerTaglib::CompleteRead()
+{
+    /* Indicate that the metadata read operation has completed. */
+    mCompleted = PR_TRUE;
+
+#ifdef MOZ_CRASHREPORTER
+    /* Remove crash reporter annotation. */
+    if (mpCrashReporter)
+    {
+        mpCrashReporter->AnnotateCrashReport
+                                        (NS_LITERAL_CSTRING("TaglibReadSpec"),
+                                         NS_LITERAL_CSTRING(""));
+    }
+#endif
 }
 
 
