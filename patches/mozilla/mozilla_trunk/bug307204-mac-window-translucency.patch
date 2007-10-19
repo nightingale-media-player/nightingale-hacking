@@ -1,0 +1,275 @@
+Index: widget/src/cocoa/nsChildView.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
+retrieving revision 1.73
+diff -u -r1.73 nsChildView.h
+--- widget/src/cocoa/nsChildView.h	17 Sep 2007 22:55:20 -0000	1.73
++++ widget/src/cocoa/nsChildView.h	24 Sep 2007 10:02:20 -0000
+@@ -112,6 +112,10 @@
+   NSMutableArray* mPendingDirtyRects;
+   BOOL mPendingFullDisplay;
+ 
++  // All views are always opaque (non-transparent). The only exception is when we're
++  // the content view in a transparent XUL window.
++  BOOL isTransparent;
++
+   // Holds our drag service across multiple drag calls. The reference to the
+   // service is obtained when the mouse enters the view and is released when
+   // the mouse exits or there is a drop. This prevents us from having to
+@@ -128,6 +132,7 @@
+ 
+ // Stop NSView hierarchy being changed during [ChildView drawRect:]
+ - (void)delayedTearDown;
++- (void)setTransparent:(BOOL)transparent;
+ @end
+ 
+ 
+@@ -296,12 +301,16 @@
+   NS_IMETHOD        StartDrawPlugin();
+   NS_IMETHOD        EndDrawPlugin();
+   
++  // translucency
++  NS_IMETHOD        GetWindowTranslucency(PRBool& aTranslucent);
++  NS_IMETHOD        SetWindowTranslucency(PRBool aTranslucent);
++  
+   // Mac specific methods
+   virtual PRBool    PointInWidget(Point aThePoint);
+   
+   virtual PRBool    DispatchWindowEvent(nsGUIEvent& event);
+-  virtual void      AcceptFocusOnClick(PRBool aBool) { mAcceptFocusOnClick = aBool;};
+-  PRBool            AcceptFocusOnClick() { return mAcceptFocusOnClick;};
++  virtual void      AcceptFocusOnClick(PRBool aBool) { mAcceptFocusOnClick = aBool; }
++  PRBool            AcceptFocusOnClick() { return mAcceptFocusOnClick; }
+   
+   void              LiveResizeStarted();
+   void              LiveResizeEnded();
+Index: widget/src/cocoa/nsChildView.mm
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
+retrieving revision 1.256
+diff -u -r1.256 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	20 Sep 2007 08:56:42 -0000	1.256
++++ widget/src/cocoa/nsChildView.mm	24 Sep 2007 10:02:23 -0000
+@@ -46,7 +46,6 @@
+ 
+ #include "nsCOMPtr.h"
+ #include "nsToolkit.h"
+-#include "prmem.h"
+ #include "nsCRT.h"
+ #include "nsplugindefs.h"
+ #include "nsThreadUtils.h"
+@@ -150,8 +149,6 @@
+ 
+ - (BOOL)childViewHasPlugin;
+ 
+-- (BOOL)isRectObscuredBySubview:(NSRect)inRect;
+-
+ - (void)processPendingRedraws;
+ 
+ - (BOOL)maybeRerouteMouseEventToRollupWidget:(NSEvent *)anEvent;
+@@ -657,8 +654,34 @@
+ 
+ #pragma mark -
+ 
++NS_IMETHODIMP nsChildView::GetWindowTranslucency(PRBool& aTranslucent)
++{
++  aTranslucent = ![mView isOpaque];
++  return NS_OK;
++}
++
++// This is called by nsContainerFrame on the root widget for all window types
++// except popup windows (which nsCocoaWindow::SetWindowTranslucency is used instead)
++NS_IMETHODIMP nsChildView::SetWindowTranslucency(PRBool aTranslucent)
++{
++  BOOL currentTranslucency = ![[mView nativeWindow] isOpaque];
++  nsresult rv = NS_OK;
++  if (aTranslucent != currentTranslucency) {
++    // Find out if this is a window we created by seeing if the delegate is WindowDelegate. If it is,
++    // let the nsCocoaWindow take care of changing the window's translucency.
++    id windowDelegate = [[mView nativeWindow] delegate];
++    if (windowDelegate && [windowDelegate isKindOfClass:[WindowDelegate class]]) {
++      nsCocoaWindow *widget = [(WindowDelegate *)windowDelegate geckoWidget];
++      if (widget) {
++        widget->MakeWindowTranslucent(aTranslucent);
++        [mView setTransparent:aTranslucent];
++      }
++    }
++  }
++  return rv;
++}
++
+ 
+-// Return PR_TRUE if the whether the component is visible, PR_FALSE otherwise
+ NS_IMETHODIMP nsChildView::IsVisible(PRBool& outState)
+ {
+   if (!mVisible) {
+@@ -2071,10 +2094,17 @@
+ }
+ 
+ 
++- (void)setTransparent:(BOOL)transparent
++{
++  if (isTransparent != transparent) {
++    isTransparent = transparent;
++  }
++}
++
++
+ - (BOOL)isOpaque
+ {
+-  // this will be NO when we can do transparent windows/views
+-  return YES;
++  return !isTransparent;
+ }
+ 
+ 
+@@ -2200,11 +2230,6 @@
+   PRBool isVisible;
+   if (!mGeckoChild || NS_FAILED(mGeckoChild->IsVisible(isVisible)) || !isVisible)
+     return;
+-  
+-  // Workaround for the fact that NSQuickDrawViews can't be opaque; see if the rect
+-  // being drawn is covered by a subview, and, if so, just bail.
+-  if ([self isRectObscuredBySubview:aRect])
+-    return;
+ 
+   CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+ 
+@@ -2291,19 +2316,6 @@
+ }
+ 
+ 
+-- (BOOL)isRectObscuredBySubview:(NSRect)inRect
+-{
+-  unsigned int numSubviews = [[self subviews] count];
+-  for (unsigned int i = 0; i < numSubviews; i++) {
+-    NSRect subviewFrame = [[[self subviews] objectAtIndex:i] frame];
+-    if (NSContainsRect(subviewFrame, inRect))
+-      return YES;
+-  }
+-  
+-  return NO;
+-}
+-
+-
+ // Allows us to turn off setting up the clip region
+ // before each drawRect. We already clip within gecko.
+ - (BOOL)wantsDefaultClipping
+@@ -2626,7 +2638,7 @@
+ 
+ 
+ - (void)mouseMoved:(NSEvent*)theEvent
+-{
++{ 
+   NSPoint windowEventLocation = [theEvent locationInWindow];
+   NSPoint screenEventLocation = [mWindow convertBaseToScreen:windowEventLocation];
+   NSPoint viewEventLocation = [self convertPoint:windowEventLocation fromView:nil];
+Index: widget/src/cocoa/nsCocoaWindow.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
+retrieving revision 1.40
+diff -u -r1.40 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	20 Sep 2007 08:56:42 -0000	1.40
++++ widget/src/cocoa/nsCocoaWindow.h	24 Sep 2007 10:02:23 -0000
+@@ -189,6 +189,8 @@
+     NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
+     NS_IMETHOD CaptureRollupEvents(nsIRollupListener * aListener, PRBool aDoCapture, PRBool aConsumeRollupEvent);
+     NS_IMETHOD GetAttention(PRInt32 aCycleCount);
++    NS_IMETHOD GetWindowTranslucency(PRBool& aTranslucent);
++    NS_IMETHOD SetWindowTranslucency(PRBool aTranslucent);
+ 
+     virtual gfxASurface* GetThebesSurface();
+ 
+@@ -202,6 +204,8 @@
+     
+     // nsIKBStateControl interface
+     NS_IMETHOD ResetInputState();
++    
++    void MakeWindowTranslucent(PRBool aTranslucency);
+ 
+ protected:
+   
+Index: widget/src/cocoa/nsCocoaWindow.mm
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
+retrieving revision 1.107
+diff -u -r1.107 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	20 Sep 2007 08:56:42 -0000	1.107
++++ widget/src/cocoa/nsCocoaWindow.mm	24 Sep 2007 10:02:24 -0000
+@@ -1,4 +1,4 @@
+-/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
++/* -*- Mode: Objective-C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* ***** BEGIN LICENSE BLOCK *****
+  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+  *
+@@ -64,6 +64,8 @@
+ 
+ #define NS_APPSHELLSERVICE_CONTRACTID "@mozilla.org/appshell/appShellService;1"
+ 
++#define POPUP_DEFAULT_TRANSPARENCY 0.95
++
+ NS_IMPL_ISUPPORTS_INHERITED1(nsCocoaWindow, Inherited, nsPIWidgetCocoa)
+ 
+ 
+@@ -303,6 +305,7 @@
+ 
+     rect.origin.y -= (newWindowFrame.size.height - rect.size.height);
+     
++    // XXXhakan: this should only be done on the screen showing the menubar
+     if (mWindowType != eWindowType_popup)
+       rect.origin.y -= ::GetMBarHeight();
+ 
+@@ -322,7 +325,7 @@
+                                    backing:NSBackingStoreBuffered defer:NO];
+     
+     if (mWindowType == eWindowType_popup) {
+-      [mWindow setAlphaValue:0.95];
++      [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
+       [mWindow setLevel:NSPopUpMenuWindowLevel];
+       [mWindow setHasShadow:YES];
+ 
+@@ -629,6 +632,44 @@
+   return NS_OK;
+ }
+ 
++void nsCocoaWindow::MakeWindowTranslucent(PRBool aTranslucent)
++{
++  BOOL currentTranslucency = ![mWindow isOpaque];
++  if (aTranslucent != currentTranslucency) {
++    // Popups have an alpha value we need to toggle.
++    if (mWindowType == eWindowType_popup) {
++      [mWindow setAlphaValue:(aTranslucent ? 1.0 : POPUP_DEFAULT_TRANSPARENCY)];
++    }
++    [mWindow setBackgroundColor:(aTranslucent ? [NSColor clearColor] : [NSColor whiteColor])];
++    [mWindow setHasShadow:!aTranslucent];
++    [mWindow setOpaque:!aTranslucent];
++  }
++}
++
++NS_IMETHODIMP nsCocoaWindow::GetWindowTranslucency(PRBool& aTranslucent)
++{
++  aTranslucent = ![mWindow isOpaque];   
++  return NS_OK;
++}
++
++// This is called from nsMenuPopupFrame when making a popup translucent.
++// For other window types, nsChildView::SetWindowTranslucency is used.
++NS_IMETHODIMP nsCocoaWindow::SetWindowTranslucency(PRBool aTranslucent)
++{
++  BOOL currentTranslucency = ![mWindow isOpaque];
++  if (aTranslucent != currentTranslucency) {
++    // Take care of window translucency
++    MakeWindowTranslucent(aTranslucent);
++    // Make sure our content view is also translucent
++    if (mPopupContentView) {
++      ChildView *childView = (ChildView*)mPopupContentView->GetNativeData(NS_NATIVE_WIDGET);
++      if (childView) {
++        [childView setTransparent:aTranslucent];
++      }
++    }
++  }
++  return NS_OK;
++}
+ 
+ NS_METHOD nsCocoaWindow::AddMouseListener(nsIMouseListener * aListener)
+ {
