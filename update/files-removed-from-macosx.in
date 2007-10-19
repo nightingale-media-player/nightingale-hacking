@@ -1,3 +1,4 @@
+./Contents/Frameworks/XUL.framework/chrome/app-chrome.manifest
 ./Contents/Frameworks/XUL.framework/chrome/chromelist.txt
 ./Contents/Frameworks/XUL.framework/chrome/installed-chrome.txt
 ./Contents/Frameworks/XUL.framework/chrome/venkman.jar
