@@ -78,7 +78,8 @@ page
   color: #B3BAAC; /* Light Color 1 */
 }
 
-toolbar
+toolbar,
+notification[type="warning"]
 {
   border-top: 1px solid #474948; /** Rubber Highlight */
   border-bottom: 1px solid #202220; /** Button Shadow */
