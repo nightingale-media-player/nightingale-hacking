@@ -1,10 +1,11 @@
+? bug392526-nsID-toString-mismatched-allocator.patch
 Index: xpcom/glue/nsID.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsID.cpp,v
 retrieving revision 3.12
 diff -p -u -8 -r3.12 nsID.cpp
 --- xpcom/glue/nsID.cpp	9 Aug 2005 14:04:49 -0000	3.12
-+++ xpcom/glue/nsID.cpp	29 Aug 2007 21:52:41 -0000
++++ xpcom/glue/nsID.cpp	20 Oct 2007 00:26:59 -0000
 @@ -33,16 +33,17 @@
   * and other provisions required by the GPL or the LGPL. If you do not delete
   * the provisions above, a recipient may use your version of this file under
@@ -45,18 +46,18 @@ diff -p -u -8 -r3.12 nsID.cpp
 Index: xpcom/reflect/xptinfo/src/xptiManifest.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/reflect/xptinfo/src/xptiManifest.cpp,v
-retrieving revision 1.32
-diff -p -u -8 -r1.32 xptiManifest.cpp
---- xpcom/reflect/xptinfo/src/xptiManifest.cpp	15 Jul 2007 01:15:26 -0000	1.32
-+++ xpcom/reflect/xptinfo/src/xptiManifest.cpp	29 Aug 2007 21:52:41 -0000
+retrieving revision 1.35
+diff -p -u -8 -r1.35 xptiManifest.cpp
+--- xpcom/reflect/xptinfo/src/xptiManifest.cpp	19 Oct 2007 23:26:53 -0000	1.35
++++ xpcom/reflect/xptinfo/src/xptiManifest.cpp	20 Oct 2007 00:26:59 -0000
 @@ -106,17 +106,17 @@ xpti_InterfaceWriter(PLDHashTable *table
-                                  (int) number,
-                                  entry->GetTheName(),
-                                  iidStr,
-                                  (int) typelib.GetFileIndex(),
-                                  (int) (typelib.IsZip() ? 
-                                  typelib.GetZipItemIndex() : -1),
-                                  (int) entry->GetScriptableFlag());
+                                    (int) number,
+                                    entry->GetTheName(),
+                                    iidStr,
+                                    (int) typelib.GetFileIndex(),
+                                    (int) (typelib.IsZip() ? 
+                                    typelib.GetZipItemIndex() : -1),
+                                    (int) entry->GetScriptableFlag());
  
 -    nsCRT::free(iidStr);
 +    NS_Free(iidStr);
