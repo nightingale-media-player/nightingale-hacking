@@ -898,6 +898,8 @@ sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaIt
   scopeURLSet.Sort();
 
   itemCount = scopeURLSet.Length();
+  NS_ENSURE_TRUE(itemCount, nsnull);
+
   for (PRUint32 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
     const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt(setIndex);
 
