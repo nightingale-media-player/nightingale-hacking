@@ -281,16 +281,16 @@
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
-<!ENTITY rapi.prefpane.title             "RemoteAPI" >
-<!ENTITY rapi.prefpane.access.caption    "Webpage" >
+<!ENTITY rapi.prefpane.title             "Web Integration" >
+<!ENTITY rapi.prefpane.access.caption    "Website Permissions" >
 <!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with Songbird to create a tighter coupling between the web and your media. Please configure Songbird to allow or block websites usage of the following points of integration." > 
-<!ENTITY rapi.whitelist.label            "Configure" >
+<!ENTITY rapi.whitelist.label            "Exceptions..." >
 <!ENTITY rapi.restore_defaults.label      "Restore to Default" >
-<!ENTITY rapi.playback_control_disable.label "Block from controlling media playback" >
-<!ENTITY rapi.playback_read_disable.label    "Block from looking at information about playing media" >
-<!ENTITY rapi.library_read_disable.label     "Block from looking at information about media in my Songbird" >
-<!ENTITY rapi.library_write_disable.label    "Block from adding/deleting media in my Library and devices" >
-<!ENTITY rapi.library_create_disable.label   "Block from creating/editing playlists in my Library and devices" >
+<!ENTITY rapi.playback_control_disable.label "Block websites from controlling media playback" >
+<!ENTITY rapi.playback_read_disable.label    "Block websites from looking at information about playing media" >
+<!ENTITY rapi.library_read_disable.label     "Block websites from looking at information about media in my Songbird" >
+<!ENTITY rapi.library_write_disable.label    "Block websites from adding/editing media in my Library and devices" >
+<!ENTITY rapi.library_create_disable.label   "Block websites from creating/editing playlists in my Library and devices" >
 <!ENTITY rapi.playback_control_disable.accesskey "p" >
 <!ENTITY rapi.playback_read_disable.accesskey    "m" >
 <!ENTITY rapi.library_read_disable.accesskey     "s" >
