@@ -76,7 +76,7 @@
 // the performance of threads talking to the library via a proxy.  If this is
 // acceptable, maybe we can make the library main thread only and save us some
 // pain.
-#define PROXY_LIBRARY 0
+#define PROXY_LIBRARY 1
 
 #include "prlog.h"
 #ifdef PR_LOGGING
