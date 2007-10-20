@@ -45,7 +45,7 @@
   <!-- Astounding complexity! -->
   <browser id="songbird.eula" src="chrome://songbird/content/html/eula.html" flex="1"/>
   <checkbox id="songbird.accepteula" 
-            label="I agree to the terms of the license agreement." 
+            label="I have read the terms of this license agreement." 
             oncommand="onAcceptChanged()"/>
 
   <!-- And intrepid instructions! -->  
