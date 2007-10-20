@@ -177,7 +177,7 @@
 
   <binding id="sb-sys-osx-buttons">
     <content>
-      <xul:hbox id="sb-sys-osx-buttons" flex="1">
+      <xul:hbox id="sb-sys-osx-buttons" flex="1" mousethrough="never" >
         <xul:sb-sys-hide-button id="sb-sys-osx-buttons-hide" sbid="hide" hidden="true"/>
         <xul:sb-sys-close-button id="sb-sys-osx-buttons-close" sbid="close" xbl:inherits="type"/>
         <xul:sb-sys-minimize-button id="sb-sys-osx-buttons-mini" sbid="mini"/>
@@ -192,10 +192,13 @@
           if ( sysInfo.getProperty("name") != "Darwin" )
             // Hidden on all but Mac
             this.setAttribute( "hidden", "true" ); 
-          else if ( this.getAttribute("hidden") != "true" )
+          else if ( this.getAttribute("hidden") != "true" ) {
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
-            
+			
+			// TEMP HACK:  Maximize is broken on Mac right now, so just disable the button
+			document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "disabled", "true" );
+		  }
           var type = this.getAttribute( "type" );
           switch ( type )
           {
@@ -375,17 +378,22 @@
     <implementation>
       <constructor>
         <![CDATA[
+          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');		
+		
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
-          if ( sysInfo.getProperty("name") == "Darwin" )
+          if ( sysInfo.getProperty("name") == "Darwin" ) {
+		    // Set an attribute on the feathers button so we can style it appropriately
+			feathersButton.setAttribute("mac", true);
+		  
             // Hidden on Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
-          else
+          } else {
             // Hidden on all but Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
-			
+		  }
+		  
           // Hide feathers button when the OS titlebar is showing
-          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');
           this._feathersVisibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", feathersButton, "hidden", true );
 
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
@@ -434,6 +442,10 @@
               <xul:image sbid="c7" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottom" flex="1"/>
               <xul:image sbid="c8" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomright"/>
           </xul:hbox>
+        </xul:vbox>
+		
+		<xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" >
+              <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
         </xul:vbox>
         
         <xul:vbox flex="1">
@@ -493,15 +505,18 @@
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           var plucked = SBDataGetBoolValue( "accessibility.enabled" );
-          if ( plucked )
+          if ( plucked ) {
             // If plucked, everything stays hidden.
             hideFrame();
-          else if ( sysInfo.getProperty("name") == "Darwin" )
+            // and we show the system chrome
+            showSystemChrome();
+          } else if ( sysInfo.getProperty("name") == "Darwin" ) {
             // If mac, do magic stuff to just the bottom-right
             this.enableMac();
-          else
+          } else {
             // Otherwise, fix yer frame, mate!
             this.enableResizers();
+          }
             
           if ( this.getAttribute("overflow") == "true" )
             document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" ); 
@@ -520,6 +535,18 @@
             for ( var i = 1; i <= 12; i++ ) {
               document.getAnonymousElementByAttribute(this, 'sbid', 'r' + i ).setAttribute( "hidden", "true" ); 
               document.getAnonymousElementByAttribute(this, 'sbid', 'x' + i ).setAttribute( "hidden", "false" ); 
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="showSystemChrome">
+        <body>
+          <![CDATA[
+            // We need to remove the hidechrome attribute from the window
+            // if one exists
+            if (document.documentElement.hasAttribute('hidechrome')) {
+              document.documentElement.removeAttribute('hidechrome');
             }
           ]]>
         </body>
@@ -551,6 +578,14 @@
                 r12.setAttribute( "dir", "right" );
                 r12.setAttribute( "style", "cursor: e-resize;" );
               }
+			  
+			  // If we don't have a titlebar the OS won't draw our 
+			  // resizer graphic for us...  so show our own image.
+			  var plucked = SBDataGetBoolValue( "accessibility.enabled" );
+			  if (!plucked) {
+			    var macResizeImageBox = document.getAnonymousElementByAttribute( this, 'sbid', 'mac_resize_image_box' ); 
+				macResizeImageBox.setAttribute("hidden", "false");
+			  }
             }
           ]]>
         </body>

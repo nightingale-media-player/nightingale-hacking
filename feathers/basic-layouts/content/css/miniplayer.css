@@ -119,13 +119,5 @@ window#miniplayer[hasTitlebar="false"]
   background-color: transparent !important;
 }
 
-/* PLATFORM-SPECIFIC HACKS */
-window[platform="Linux"] #miniplayer_box,
-window[platform="Darwin"] #miniplayer_box
-{
-  /* Remove the roundedness of the borders, these platforms can't handle it. */
-  -moz-border-radius: 0px !important; 
-  border-color: transparent !important;
-}
 
 

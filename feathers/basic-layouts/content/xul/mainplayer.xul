@@ -58,6 +58,7 @@
   titlemodifier="&window.browser.titlemodifier;"
   titlepreface="&window.browser.titlepreface;"
   titledefault="&window.browser.titledefault;"
+  hidechrome="true"
 
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"

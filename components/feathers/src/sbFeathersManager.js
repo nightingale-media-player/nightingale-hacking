@@ -897,10 +897,6 @@ FeathersManager.prototype = {
                             .getService(Components.interfaces.nsIPropertyBag2);
     var platform = sysInfo.getProperty("name");
     
-    if (platform == "Darwin") {
-      return true;
-    }
-    
     if (this._mappings[layoutURL]) {
       return this._mappings[layoutURL][internalName] == true;
     }

@@ -52,6 +52,7 @@
  id="miniplayer"
  title="&window.dev.title;"
  windowtype="Songbird:Main"
+ hidechrome="true"
  
  onload="gMiniplayer.onLoad();"
  onunload="gMiniplayer.onUnload();"

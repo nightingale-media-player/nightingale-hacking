@@ -74,14 +74,14 @@ sb-sys-titlebar > menubar
 }
 
 
-sb-feathers-toggle-button.sb-player-button,
+sb-feathers-toggle-button,
 sb-sys-minimize-button.sb-player-button,
 sb-sys-close-button.sb-player-button,
 sb-sys-hide-button.sb-player-button,
 sb-player-fullscreen-button.sb-player-button,
-sb-sys-maximize-button.sb-player-button
+sb-sys-maximize-button
 {
-  margin: 0px 4px 0px 5px;
+  margin: 0px 4px 0px 3px;
 }
 
 
@@ -153,95 +153,116 @@ MAC OSX TITLE BAR
 *******************************************************************************
 */
 
-sb-sys-osx-buttons > sb-sys-maximize-button
+
+
+#sb-sys-osx-buttons > sb-sys-maximize-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png);
-  -moz-image-region: rect(0px 15px 15px 0px); 
+  background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png); 
+  background-position: 0px 0px; 
+  background-repeat: no-repeat;
+  height: 15px;  
+  width: 14px;
 }
-sb-sys-osx-buttons > sb-sys-maximize-button[checked="true"] /* Restore */
+/* Restore */
+#sb-sys-osx-buttons > sb-sys-maximize-button[checked="true"] 
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(0px 15px 15px 0px); 
+  background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  background-position: 0px 0px; 
+  background-repeat: no-repeat;
+  height: 15px;   
+  width: 14px;
 }
-sb-sys-osx-buttons:hover > sb-sys-maximize-button
+#sb-sys-osx-buttons:hover > sb-sys-maximize-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(15px 15px 30px 0px); 
+  background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  background-position: 0px -15px; 
+  height: 15px;   
+  width: 14px;
 }
-sb-sys-osx-buttons > sb-sys-maximize-button:active
+#sb-sys-osx-buttons > sb-sys-maximize-button:active
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(30px 15px 45px 0px); 
+  background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  background-position: 0px -30px;
+  height: 15px;   
+  width: 14px;
 }
-sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"]
+#sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(45px 15px 60px 0px); 
+  background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  background-position: 0px -45px;
+  height: 15px;   
+  width: 14px;
 }
 
-sb-sys-osx-buttons > sb-sys-minimize-button
+#sb-sys-osx-buttons > sb-sys-minimize-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(0px 30px 15px 15px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(0px 28px 15px 14px); 
 }
-sb-sys-osx-buttons:hover > sb-sys-minimize-button
+#sb-sys-osx-buttons:hover > sb-sys-minimize-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(15px 30px 30px 15px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(15px 28px 30px 14px); 
 }
-sb-sys-osx-buttons > sb-sys-minimize-button:active
+#sb-sys-osx-buttons > sb-sys-minimize-button:active
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(30px 30px 45px 15px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(30px 28px 45px 14px); 
 }
-sb-sys-osx-buttons > sb-sys-minimize-button[disabled="true"]
+#sb-sys-osx-buttons > sb-sys-minimize-button[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(45px 30px 60px 15px); 
-}
-
-sb-sys-osx-buttons > sb-sys-close-button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(0px 45px 15px 30px); 
-}
-sb-sys-osx-buttons:hover > sb-sys-close-button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(15px 45px 30px 30px); 
-}
-sb-sys-osx-buttons > sb-sys-close-button:active
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(30px 45px 45px 30px); 
-}
-sb-sys-osx-buttons > sb-sys-close-button[disabled="true"]
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(45px 45px 60px 30px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(45px 28px 60px 14px); 
 }
 
-sb-sys-osx-feathers > sb-feathers-toggle-button
+#sb-sys-osx-buttons > sb-sys-hide-button, 
+#sb-sys-osx-buttons > sb-sys-close-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(0px 70px 15px 45px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(0px 42px 15px 28px); 
 }
-sb-sys-osx-feathers > sb-feathers-toggle-button:hover
+#sb-sys-osx-buttons:hover > sb-sys-hide-button, 
+#sb-sys-osx-buttons:hover > sb-sys-close-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(15px 70px 30px 45px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(15px 42px 30px 28px); 
 }
-sb-sys-osx-feathers > sb-feathers-toggle-button:active
+#sb-sys-osx-buttons > sb-sys-hide-button:active, 
+#sb-sys-osx-buttons > sb-sys-close-button:active
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(30px 70px 45px 45px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(30px 42px 45px 28px); 
 }
-sb-sys-osx-feathers > sb-feathers-toggle-button[disabled="true"]
+#sb-sys-osx-buttons > sb-sys-hide-button[disabled="true"], 
+#sb-sys-osx-buttons > sb-sys-close-button[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac.png) ; 
-  -moz-image-region: rect(45px 70px 60px 45px); 
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png) ; 
+  -moz-image-region: rect(45px 42px 60px 28px); 
 }
 
+/**** NOTE: The Mac feathers button style is disabled, as it doesn't seem to
+	  match the operating system ****/
+/*  Switch Feathers 
+sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  -moz-image-region: rect(0px 56px 15px 42px);  
+}
+sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button:hover
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  -moz-image-region: rect(15px 56px 30px 42px); 
+}
+sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button:active
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  -moz-image-region: rect(30px 56px 45px 42px);
+}
+sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
+  -moz-image-region: rect(45px 56px 60px 42px); 
+}*/
 
 
 /** 
@@ -301,4 +322,10 @@ RESIZERS
   cursor: se-resize;
 }
 
+
+/** Mac bottom right resizer **/
+.sb-sys-outer-frame-resizer-image {
+  list-style-image: url(chrome://songbird/skin/buttons/window-resizer.png);
+  margin: 2px;
+}
 

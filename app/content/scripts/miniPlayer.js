@@ -375,3 +375,4 @@ var gMiniplayer = {
   }
 
 }  // End of gMiniplayer
+
