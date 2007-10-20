@@ -392,7 +392,7 @@ function runTest () {
   
   // ------------------------
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true;
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true);
   assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].internalName), false);
   assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].internalName), false);
 
