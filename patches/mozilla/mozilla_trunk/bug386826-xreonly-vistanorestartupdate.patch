@@ -1,11 +1,12 @@
 ? bug386826-xreonly-vistanorestartupdate.patch
+? sanity.diff
 Index: toolkit/xre/nsAppRunner.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
 retrieving revision 1.198
 diff -u -8 -p -r1.198 nsAppRunner.cpp
 --- toolkit/xre/nsAppRunner.cpp	19 Oct 2007 13:14:24 -0000	1.198
-+++ toolkit/xre/nsAppRunner.cpp	20 Oct 2007 00:02:37 -0000
++++ toolkit/xre/nsAppRunner.cpp	20 Oct 2007 01:16:11 -0000
 @@ -1553,17 +1553,17 @@ static nsresult LaunchChild(nsINativeApp
                              int needElevation = 0)
  {
@@ -132,7 +133,7 @@ diff -u -8 -p -r1.198 nsAppRunner.cpp
 +    gRestartArgv[j++] = "--app";
 +    gRestartArgv[j++] = strdup(iniPath.get());
 +
-+    SetStrongPtr(gAppDataFile, nsnull);
++    XRE_SetAppDataFile(nsnull);
 +  }
 +  while (i < gArgc) {
 +    gRestartArgv[j++] = gArgv[i++];
@@ -203,7 +204,7 @@ RCS file: /cvsroot/mozilla/toolkit/xre/nsXULAppAPI.h,v
 retrieving revision 1.25
 diff -u -8 -p -r1.25 nsXULAppAPI.h
 --- toolkit/xre/nsXULAppAPI.h	13 Oct 2007 05:47:04 -0000	1.25
-+++ toolkit/xre/nsXULAppAPI.h	20 Oct 2007 00:02:37 -0000
++++ toolkit/xre/nsXULAppAPI.h	20 Oct 2007 01:16:11 -0000
 @@ -398,9 +398,18 @@ XRE_API(nsresult,
                             nsXREAppData *aAppData))
  
@@ -229,7 +230,7 @@ RCS file: /cvsroot/mozilla/xulrunner/app/nsXULRunnerApp.cpp,v
 retrieving revision 1.36
 diff -u -8 -p -r1.36 nsXULRunnerApp.cpp
 --- xulrunner/app/nsXULRunnerApp.cpp	13 Oct 2007 05:47:04 -0000	1.36
-+++ xulrunner/app/nsXULRunnerApp.cpp	20 Oct 2007 00:02:38 -0000
++++ xulrunner/app/nsXULRunnerApp.cpp	20 Oct 2007 01:16:12 -0000
 @@ -397,57 +397,51 @@ int main(int argc, char* argv[])
        rv = GetXULRunnerDir(argv[0], getter_AddRefs(regDir));
        if (NS_FAILED(rv))
