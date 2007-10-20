@@ -1,10 +1,11 @@
+? bug386826-xreonly-vistanorestartupdate.patch
 Index: toolkit/xre/nsAppRunner.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
-retrieving revision 1.197
-diff -u -8 -p -r1.197 nsAppRunner.cpp
---- toolkit/xre/nsAppRunner.cpp	13 Oct 2007 05:47:04 -0000	1.197
-+++ toolkit/xre/nsAppRunner.cpp	18 Oct 2007 22:19:44 -0000
+retrieving revision 1.198
+diff -u -8 -p -r1.198 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	19 Oct 2007 13:14:24 -0000	1.198
++++ toolkit/xre/nsAppRunner.cpp	20 Oct 2007 00:02:37 -0000
 @@ -1553,17 +1553,17 @@ static nsresult LaunchChild(nsINativeApp
                              int needElevation = 0)
  {
@@ -92,7 +93,7 @@ diff -u -8 -p -r1.197 nsAppRunner.cpp
    EXCEPTIONREGISTRATIONRECORD excpreg;
  
  public:
-@@ -2623,24 +2601,46 @@ XRE_main(int argc, char* argv[], const n
+@@ -2623,24 +2601,48 @@ XRE_main(int argc, char* argv[], const n
      if (::GetCurrentProcess(&psn) == noErr)
        ::SetFrontProcess(&psn);
    }
@@ -116,7 +117,10 @@ diff -u -8 -p -r1.197 nsAppRunner.cpp
 +      gRestartArgv[j++] = gArgv[i++];
 +    }
 +    nsCAutoString iniPath;
-+
+ 
+-  int i;
+-  for (i = 0; i < gArgc; ++i) {
+-    gRestartArgv[i] = gArgv[i];
 +#ifdef XP_WIN
 +    nsAutoString iniPathUnicode;
 +    gAppDataFile->GetPath(iniPathUnicode);
@@ -124,12 +128,11 @@ diff -u -8 -p -r1.197 nsAppRunner.cpp
 +#else
 +    gAppDataFile->GetNativePath(iniPath);
 +#endif
- 
--  int i;
--  for (i = 0; i < gArgc; ++i) {
--    gRestartArgv[i] = gArgv[i];
++
 +    gRestartArgv[j++] = "--app";
 +    gRestartArgv[j++] = strdup(iniPath.get());
++
++    SetStrongPtr(gAppDataFile, nsnull);
 +  }
 +  while (i < gArgc) {
 +    gRestartArgv[j++] = gArgv[i++];
@@ -144,7 +147,7 @@ diff -u -8 -p -r1.197 nsAppRunner.cpp
    ScopedFPHandler handler;
  #endif /* XP_OS2 */
  
-@@ -3083,27 +3083,24 @@ XRE_main(int argc, char* argv[], const n
+@@ -3083,27 +3085,24 @@ XRE_main(int argc, char* argv[], const n
          if (noEMRestart && *noEMRestart && *noEMRestart == '1') {
            if (upgraded || needsRestart) {
              NS_WARNING("EM tried to force us to restart twice! Forcefully preventing that.");
@@ -172,7 +175,7 @@ diff -u -8 -p -r1.197 nsAppRunner.cpp
            cmdLine = do_CreateInstance("@mozilla.org/toolkit/command-line;1");
            NS_ENSURE_TRUE(cmdLine, 1);
  
-@@ -3184,20 +3181,17 @@ XRE_main(int argc, char* argv[], const n
+@@ -3190,20 +3189,17 @@ XRE_main(int argc, char* argv[], const n
      }
  
      // unlock the profile after ScopedXPCOMStartup object (xpcom) 
@@ -200,7 +203,7 @@ RCS file: /cvsroot/mozilla/toolkit/xre/nsXULAppAPI.h,v
 retrieving revision 1.25
 diff -u -8 -p -r1.25 nsXULAppAPI.h
 --- toolkit/xre/nsXULAppAPI.h	13 Oct 2007 05:47:04 -0000	1.25
-+++ toolkit/xre/nsXULAppAPI.h	18 Oct 2007 22:19:44 -0000
++++ toolkit/xre/nsXULAppAPI.h	20 Oct 2007 00:02:37 -0000
 @@ -398,9 +398,18 @@ XRE_API(nsresult,
                             nsXREAppData *aAppData))
  
@@ -226,7 +229,7 @@ RCS file: /cvsroot/mozilla/xulrunner/app/nsXULRunnerApp.cpp,v
 retrieving revision 1.36
 diff -u -8 -p -r1.36 nsXULRunnerApp.cpp
 --- xulrunner/app/nsXULRunnerApp.cpp	13 Oct 2007 05:47:04 -0000	1.36
-+++ xulrunner/app/nsXULRunnerApp.cpp	18 Oct 2007 22:19:46 -0000
++++ xulrunner/app/nsXULRunnerApp.cpp	20 Oct 2007 00:02:38 -0000
 @@ -397,57 +397,51 @@ int main(int argc, char* argv[])
        rv = GetXULRunnerDir(argv[0], getter_AddRefs(regDir));
        if (NS_FAILED(rv))
