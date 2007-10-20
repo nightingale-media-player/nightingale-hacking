@@ -995,7 +995,7 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
     nsCOMPtr<sbILibrary> library;
     rv = libraryManager->GetLibrary( libraryGuid, getter_AddRefs(library) );
     if (NS_SUCCEEDED(rv)) {
-#ifdef PROXY_LIBRARY
+#if PROXY_LIBRARY
       nsCOMPtr<sbILibrary> proxiedLibrary;
       rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbILibrary),
@@ -1009,7 +1009,7 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
       rv = library->GetMediaItem( itemGuid, getter_AddRefs(item) );
       if (NS_SUCCEEDED(rv)) {
 
-#ifdef PROXY_LIBRARY
+#if PROXY_LIBRARY
         nsCOMPtr<sbIMediaItem> proxiedItem;
         rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                   NS_GET_IID(sbIMediaItem),
