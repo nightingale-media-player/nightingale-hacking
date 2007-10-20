@@ -66,20 +66,22 @@ to the currently loaded document. See the example below.
 
 Example:
 (start code)
+<script>
 //Get the currently playing artist.
 var artist = songbird.currentArtist;
 
 //Create default library with current domain and path automatically guessed.
 //This is the suggested way to create your site library.
-var library = songbird.siteLibrary("", "");
+var library = songbird.siteLibrary;
 
-... // Look up the artist in your web service database
-... // Find some samples by that artist.
+// Look up the artist in your web service database
+// ...
 
-var mediaItem = library.createMediaItem(url);
+//Create a media item from a file
+var mediaItem = library.createMediaItem("http://mirrors.creativecommons.org/ccmixter/contrib/Wired/David%20Byrne%20-%20My%20Fair%20Lady.mp3");
 
 //Create a simple media list.
-var mediaList = library.createMediaList("simple");
+var mediaList = library.createSimpleMediaList("PlaylistName");
 
 //Add a mediaitem to it.
 mediaList.add(mediaItem);
@@ -91,10 +93,11 @@ songbird.playMediaList(mediaList, 0);
 function onDownloadComplete(aEvent) {
   // The event item is the one in the user's main library.
   alert(aEvent.item.guid);
-  alter(aEvent.status);
+  alert(aEvent.status);
 }
 document.addEventListener("downloadcomplete", onDownloadComplete, false);
 songbird.downloadItem(mediaItem);
+</script>
 (end)
 
 See Also:
