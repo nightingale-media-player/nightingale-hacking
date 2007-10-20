@@ -11,9 +11,7 @@ notification[type="info"] {
 }
 
 notification[type="warning"] {
-  color: #585620;
-  background-color: #fdf2ab;
-  border: 1px solid #a29330;
+  background-color: #313131;
 }
 
 notification[type="critical"] {
