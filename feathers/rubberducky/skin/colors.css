@@ -78,8 +78,7 @@ page
   color: #B3BAAC; /* Light Color 1 */
 }
 
-toolbar,
-notification[type="warning"]
+toolbar
 {
   border-top: 1px solid #474948; /** Rubber Highlight */
   border-bottom: 1px solid #202220; /** Button Shadow */
@@ -1710,4 +1709,56 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous)
 treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 {
   color: #0f100f; /** Groove */
+}
+
+/** 
+*******************************************************************************
+NOTIFICATION HAT
+*******************************************************************************
+*/
+notification[type="warning"]
+{
+  background-color: #EDF3F0;
+  border-bottom: 1px solid #B3BAAC; /** Light Color 1 */
+}
+
+.messageText,
+.messageText:hover,
+.messageText:active
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button 
+{
+  background-color: #EDF3F0;
+  border-top: 1px solid #feffff; /** Light Color Brightest */
+  border-left: 1px solid #B3BAAC; /** Light Color 1 */
+  border-right: 1px solid #B3BAAC; /** Light Color 1 */
+  border-bottom: 1px solid #8A8F84; /** Light Color 2 */
+}
+
+notification > button > .button-box > .button-text
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button:hover > .button-box > .button-text
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+notification > button:active > .button-box > .button-text
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button:active
+{
+  color: #0f100f; /** Groove */
+  background-color: #EDF3F0;
+  border-bottom: 1px solid #feffff; /** Light Color Brightest */
+  border-left: 1px solid #B3BAAC; /** Light Color 1 */
+  border-right: 1px solid #B3BAAC; /** Light Color 1 */
+  border-top: 1px solid #8A8F84; /** Light Color 2 */
 }
