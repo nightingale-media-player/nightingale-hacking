@@ -721,7 +721,8 @@
 
       <method name="onRemoteAPI">
         <parameter name="event" />
-        <body><![CDATA[
+        <body>
+              <![CDATA[
           // todo:
           //       hook up an action to do when the user clicks through, probably launch prepanel
 
@@ -736,27 +737,32 @@
 
           var notificationName = "remoteapi-called";
           var message = "Web Page has accessed Songbird Directly";
-          var buttonLabel = "Preferences";
-          var buttonAccessKey = "P";
+          var editOptionsLabel = "Edit Options...";
+          var buttonAccessKey = "O";
+          var iconURL = "";
+          
           try {
             message = songbirdStrings
-                                .GetStringFromName("rapi.access.message.text");
-            buttonLabel = songbirdStrings
-                                .GetStringFromName("rapi.access.button.label");
-            buttonAccessKey = songbirdStrings
-                            .GetStringFromName("rapi.access.button.accessKey");
-            var iconURL = brandingStrings
-                                     .GetStringFromName("rapi.access.iconURL");
+                        .GetStringFromName("rapi.access.message.text");
+            editOptionsLabel = songbirdStrings
+                                .GetStringFromName("rapi.access.button.label.options");
+            editOptionsAccessKey = songbirdStrings
+                                     .GetStringFromName("rapi.access.button.accessKey.options");
+            iconURL = brandingStrings
+                        .GetStringFromName("rapi.access.iconURL");
           } catch (e) { }
 
-          var buttons = [{ label: buttonLabel,
-                           accessKey: buttonAccessKey,
-                           popup: null,    // point to a popup xul widget
+          var buttons = [
+                         {
+                           label: editOptionsLabel,
+                           accessKey: editOptionsAccessKey,
+                           popup: null,
                            callback: function(aHat, aButtonInfo) {
-                             aHat.closeEvent = "RemoteAPIPrefPanelOpened";
+                             aHat.closeEvent = "RemoteAPIPrefChanged";
                              SBOpenPreferences("paneRemoteAPI");
-                          }
-                        }];
+                           }
+                         }
+                         ];
 
           var browser = event.currentTarget
                              .gBrowser.getBrowserForDocument(event.target);
