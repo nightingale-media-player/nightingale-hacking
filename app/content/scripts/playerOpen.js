@@ -288,7 +288,10 @@ function SBOpenPreferences(paneID, parentWindow)
   // and is set at compile time.
   var instantApply = navigator.userAgent.indexOf("Windows") == -1;
 	
-  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");
+  // BUG 5081 - You can't call restart in a modal window, so
+  // we're making prefs non-modal on all platforms.
+  // Original line:  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");  
+  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : "");
 
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
   var win = wm.getMostRecentWindow("Browser:Preferences");
