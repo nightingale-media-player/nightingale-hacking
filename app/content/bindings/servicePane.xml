@@ -225,12 +225,6 @@
         function windowOnLoad() {
           sp.browser.addProgressListener(sp,
               Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
-          
-          var start = SBDataGetStringValue("servicetree.selected_url");
-          if (!start) {
-            start = sp.browser.homePage;
-          }
-          sp.loadURL(start);
 
           gServicePane.doneInit = true;
           window.removeEventListener('load', windowOnLoad, false);

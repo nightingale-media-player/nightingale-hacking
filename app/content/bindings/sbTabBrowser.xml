@@ -207,14 +207,32 @@
       </method>
       <method name="restoreTabState">
         <body><![CDATA[
-          var tabs = this._tabState;
-          this.tabStateRestored = true;
-          if (tabs) {
-            for (var i=0; i<tabs.length; i++) {
-              /* load the first url into the current tab and subsequent urls into new tabs */
-              this.loadURI(tabs[i], null, null, null, i?'tab':'current');
+          if ( !SBDataGetBoolValue( "firstrun.tabs.restore" ) ) {
+            //
+            // If we have never run the app before, load this keen stuff!@
+            var birdhouseURL = SBDataGetStringValue( "url.birdhouse" );
+            var firstrunURL = SBDataGetStringValue( "url.firstrun" );
+            var firstTab = this.mCurrentTab;
+            this.loadURI(firstrunURL, null, null, null, 'current');
+            this.loadURI(birdhouseURL, null, null, null, 'tab');
+            // (sigh) -- they want the firstrun to be the first tab but selected.  pleah.
+            function delayedTabSwitch() {
+              gBrowser.selectedTab = firstTab;
+            }
+            setTimeout( delayedTabSwitch, 100 );
+            SBDataSetBoolValue( "firstrun.tabs.restore", true );
+          } else {
+            //
+            // Otherwise, just restore whatever was there, previously.
+            var tabs = this._tabState;
+            if (tabs) {
+              for (var i=0; i<tabs.length; i++) {
+                /* load the first url into the current tab and subsequent urls into new tabs */
+                this.loadURI(tabs[i], null, null, null, i?'tab':'current');
+              }
             }
           }
+          this.tabStateRestored = true;
         ]]></body>
       </method>
 
@@ -235,6 +253,7 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
+            var retval = null;
             var where = aDefaultLocation?aDefaultLocation:'current';
             if (aEvent) {
               // if an event as supplied infer where we want to load this URI
@@ -273,6 +292,7 @@
             if (where == "tab") {
               var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
               tab.viewForNextPlaylist = aMediaListView;
+              retval = tab;
             } else if (where == "external") {
               var externalLoader = (Components
                     .classes["@mozilla.org/uriloader/external-protocol-service;1"]
@@ -285,9 +305,11 @@
             } else if (where == "current") {
               this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
               this.mCurrentTab.viewForNextPlaylist = aMediaListView;
+              retval = this.mCurrentTab;
             } else {
               // eek! unknown target
             }
+            return retval;
           ]]>
         </body>
       </method>
