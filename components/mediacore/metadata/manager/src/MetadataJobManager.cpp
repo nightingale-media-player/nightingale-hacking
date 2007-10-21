@@ -82,7 +82,7 @@ sbMetadataJobManager::sbMetadataJobManager()
 
   mQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ASSERTION(mQuery, "Unable to create sbMetadataJobManager::mQuery");
-  mQuery->SetDatabaseGUID( NS_LITERAL_STRING( "sbMetadataJob" ) );
+  mQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
   mQuery->SetAsyncQuery( PR_FALSE );
 
   nsCOMPtr< sbIDataRemote > dataDisplayString = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
