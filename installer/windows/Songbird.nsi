@@ -223,6 +223,7 @@ Section "-Application" Section1
   File LICENSE.txt
   File GPL.txt
   File TRADEMARK.txt
+  File README.txt
   
   ; List of directories to install
   File /r chrome
