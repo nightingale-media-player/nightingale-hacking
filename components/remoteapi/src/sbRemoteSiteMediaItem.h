@@ -50,7 +50,6 @@ public:
   NS_IMETHOD CanGetProperty( const nsIID* aIID,
                              const PRUnichar* aPropertyName,
                              char** _retval );
-
 private:
   // Weak ref, sbRemoteSiteMediaItem already owns this.
   sbIMediaItem* mMediaItem;

@@ -28,6 +28,7 @@
 #define __SB_REMOTE_LIBRARY_H__
 
 #include "sbRemoteAPI.h"
+#include "sbRemotePlayer.h"
 #include "sbRemoteLibraryBase.h"
 
 #include <nsIClassInfo.h>
@@ -36,6 +37,8 @@ class sbRemotePlayer;
 
 class sbRemoteLibrary : public sbRemoteLibraryBase
 {
+friend class sbRemotePlayer;
+
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO

@@ -149,7 +149,7 @@ NS_IMETHODIMP
 sbRemoteSiteMediaItem::GetProperty(const nsAString & aName,
                                    nsAString & _retval)
 {
-  LOG(("sbRemoteSiteMediaItem::~GetProperty()"));
+  LOG(("sbRemoteSiteMediaItem::GetProperty()"));
 
   nsresult rv = sbRemoteMediaItem::GetProperty( aName, _retval );
   if ( NS_SUCCEEDED(rv) || !aName.EqualsLiteral(SB_PROPERTY_CONTENTURL) ) {

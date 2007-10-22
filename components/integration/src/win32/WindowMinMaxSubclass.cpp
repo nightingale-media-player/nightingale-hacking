@@ -159,7 +159,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         if (_r && _b && _l && _t) break;
         
         // ask the script callback for current min/max values         
-        int _minwidth, _minheight, _maxwidth, _maxheight;
+        int _minwidth = -1, _minheight = -1, _maxwidth = -1, _maxheight = -1;
         m_callback->GetMaxWidth(&_maxwidth);
         m_callback->GetMaxHeight(&_maxheight);
         m_callback->GetMinWidth(&_minwidth);

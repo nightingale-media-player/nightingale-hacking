@@ -119,10 +119,10 @@ public:
   nsresult GetSiteScopeURL(nsAString &aURL);
   already_AddRefed<nsIURI> GetSiteScopeURI();
 
+  static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
+
 protected:
   virtual ~sbRemotePlayer();
-
-  static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
 
   // Helper Methods
   nsresult Init();

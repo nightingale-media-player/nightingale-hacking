@@ -28,6 +28,7 @@
 #define __SB_REMOTE_COMMANDS_H__
 
 #include "sbRemoteAPI.h"
+#include "sbRemotePlayer.h"
 #include <sbIPlaylistCommands.h>
 #include <sbIRemoteCommands.h>
 #include <sbIRemotePlayer.h>

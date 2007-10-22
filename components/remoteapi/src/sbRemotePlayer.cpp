@@ -1318,9 +1318,16 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
 
   nsresult rv;
 
+  nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface(mSecurityMixin, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMDocument> doc;
+  mixin->GetNotificationDocument(getter_AddRefs(doc));
+  NS_ENSURE_STATE(doc);
+
   //change interfaces to create the event
   nsCOMPtr<nsIDOMDocumentEvent>
-                              docEvent( do_QueryInterface( mContentDoc, &rv ) );
+                              docEvent( do_QueryInterface( doc, &rv ) );
   NS_ENSURE_SUCCESS( rv , rv );
 
   //create the event
@@ -1332,7 +1339,7 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
 
   //use the document for a target.
   nsCOMPtr<nsIDOMEventTarget>
-                          eventTarget( do_QueryInterface( mContentDoc, &rv ) );
+                          eventTarget( do_QueryInterface( doc, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   //make the event untrusted

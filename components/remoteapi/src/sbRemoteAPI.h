@@ -31,6 +31,8 @@
 #include <sbISecurityMixin.h>
 #include <nsAutoPtr.h>
 #include <nsMemory.h>
+#include <nsPIDOMWindow.h>
+#include <nsIDOMDocument.h>
 #include "sbSecurityMixin.h"
 
 #ifndef LOG
@@ -62,6 +64,15 @@ _class::Init()                                                                \
   mSecurityMixin = do_QueryInterface(                                         \
     NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );                     \
   NS_ENSURE_SUCCESS( rv, rv );                                                \
+  /* pull the dom window from the js stack and context */                     \
+  nsCOMPtr<nsPIDOMWindow> privWindow = sbRemotePlayer::GetWindowFromJS();     \
+  if(privWindow) {                                                            \
+    nsCOMPtr<nsIDOMDocument> domDoc;                                          \
+    privWindow->GetDocument( getter_AddRefs(domDoc) );                        \
+    NS_ENSURE_STATE(domDoc);                                                  \
+    rv = mixin->SetNotificationDocument( domDoc );                            \
+    NS_ENSURE_SUCCESS( rv, rv );                                              \
+  }                                                                           \
   return NS_OK;                                                               \
 }
 

@@ -104,7 +104,8 @@ SB_IMPL_CLASSINFO( sbSecurityMixin,
                    0,
                    kSecurityMixinCID );
 
-sbSecurityMixin::sbSecurityMixin() : mInterfacesCount(0)
+sbSecurityMixin::sbSecurityMixin() 
+: mInterfacesCount(0)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -641,6 +642,8 @@ sbSecurityMixin::GetNotificationDocument(nsIDOMDocument **aNotificationDocument)
   NS_ENSURE_ARG_POINTER(aNotificationDocument);
   
   *aNotificationDocument = mNotificationDocument;
+  NS_ADDREF(*aNotificationDocument);
+
   return NS_OK;
 }
 NS_IMETHODIMP sbSecurityMixin::SetNotificationDocument(nsIDOMDocument * aNotificationDocument)

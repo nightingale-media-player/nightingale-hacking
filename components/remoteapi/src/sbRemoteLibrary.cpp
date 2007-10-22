@@ -25,7 +25,6 @@
  */
 
 #include "sbRemoteLibrary.h"
-#include "sbRemotePlayer.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIMediaList.h>
