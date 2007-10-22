@@ -289,12 +289,12 @@ In-cell Download Buttons
 }
 
 /* Prevent the download button from appearing in the download playlist */
-.download-playlist .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton button )
+playlist[list-customtype="download"] .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton button )
 {
       background-image: none;
 }
 
-.download-playlist .sb-playlist-tree > treechildren::-moz-tree-cell-text( downloadbutton button )
+playlist[list-customtype="download"] .sb-playlist-tree > treechildren::-moz-tree-cell-text( downloadbutton button )
 {
       background-image: none;
 }
@@ -318,3 +318,5 @@ Playlist Commands
 {
   min-width: 160px !important;
 }
+
+

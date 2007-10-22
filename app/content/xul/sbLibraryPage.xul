@@ -239,15 +239,18 @@ try
           var mgr = new sbIPlaylistCommandsManager();
           var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
           playlist.bind(view, cmds);
-
-          // If this is the download playlist, add a class so we can style
-          // it differently
-          var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                              .getService(Components.interfaces.sbIDownloadDeviceHelper);
-          if (ddh.downloadMediaList.equals(mediaList)) {
-            playlist.className += " download-playlist";
+          
+          // Apply the customtype of the medialist/library to the playlist
+          // element just in case we want to apply special styles
+          var customType = mediaList.getProperty(SBProperties.customType);
+          if (mediaList instanceof Components.interfaces.sbILibrary) {
+            playlist.setAttribute("library-customtype", customType); 
+          } else {
+            var libCustomType = mediaList.library.getProperty(SBProperties.customType);          
+            playlist.setAttribute("library-customtype", libCustomType);
+            playlist.setAttribute("list-customtype", customType);
           }
-
+            
           // Listen for changes to library or media list
           SBLPListener.initialize(library, mediaList);
         }
