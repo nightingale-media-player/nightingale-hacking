@@ -23,6 +23,7 @@
 // END SONGBIRD GPL
 //
  */
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_METRICS_CONTRACTID = "@songbirdnest.com/Songbird/Metrics;1";
 const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
@@ -39,6 +40,15 @@ function Metrics() {
 }
 
 Metrics.prototype = {
+  classDescription: SONGBIRD_METRICS_CLASSNAME,
+  classID:          SONGBIRD_METRICS_CID,
+  contractID:       SONGBIRD_METRICS_CONTRACTID,
+  QueryInterface:   XPCOMUtils.generateQI([
+    SONGBIRD_METRICS_IID,
+    Components.interfaces.nsIWebProgressListener,
+    Components.interfaces.nsISupportsWeakReference
+  ]),
+
   _postreq: null,
   _dbquery: null,
   
@@ -164,12 +174,14 @@ Metrics.prototype = {
     var onpostload = { 
       _that: null, 
       handleEvent: function( event ) { this._that.onPostLoad(); } 
-    } onpostload._that = this;
+    };
+    onpostload._that = this;
     
     var onposterror = { 
       _that: null, 
       handleEvent: function( event ) { this._that.onPostError(); } 
-    } onposterror._that = this;
+    };
+    onposterror._that = this;
 
     var postURL = this.prefs.getCharPref(SONGBIRD_POSTMETRICS_PREFKEY);
     
@@ -431,71 +443,9 @@ Metrics.prototype = {
     this._dbquery.addQuery("DELETE FROM metrics");
     this._dbquery.execute();
   },
+} // Metrics.prototype
 
-  /**
-   * See nsISupports.idl
-   */
-  QueryInterface: function(iid) {
-    if (!iid.equals(SONGBIRD_METRICS_IID) &&
-        !iid.equals(Components.interfaces.nsIWebProgressListener) &&
-        !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-}; // Metrics.prototype
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([Metrics]);
+}
 
-/**
- * ----------------------------------------------------------------------------
- * Registration for XPCOM
- * ----------------------------------------------------------------------------
- * Adapted from nsMetricsService.js
- */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               fileSpec, location, type);
-    }
-  },
-
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
-    }
-    
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
-
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
-      if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
-  
-  _objects: {
-    // The Metrics Component
-    metrics:     { CID       : SONGBIRD_METRICS_CID,
-                  contractID : SONGBIRD_METRICS_CONTRACTID,
-                  className  : SONGBIRD_METRICS_CLASSNAME,
-                  factory    : #1#(Metrics)
-                },
-  },
-
-  canUnload: function(componentManager) { 
-    return true; 
-  }
-}; // gModule
-
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
-} // NSGetModule
