@@ -123,8 +123,9 @@ sbURIChecker::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
       LOG(("sbURIChecker::CheckDomain() -- Domain based host "));
 
       // make sure the domain wasn't '.com' - it should have a dot in it
+      // we need to skip this check if the host is localhost
       PRInt32 dot = aDomain.FindChar('.');
-      if ( dot < 0 ) {
+      if ( dot < 0 && !host.Equals("localhost")) {
         LOG(("sbURIChecker::CheckDomain() -- FAILED dot test "));
         return NS_ERROR_FAILURE;
       }
