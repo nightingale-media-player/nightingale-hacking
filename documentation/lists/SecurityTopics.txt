@@ -2,7 +2,7 @@ File: Security
 
 Sites can check what security restrictions it has through the songbird javascript object using the <Songbird::hasAccess()> function. Before trying to access these areas of the <Songbird> object a check should be done to verify that the current site has access to the area required.
 
-Security Catagories:
+Security Categories:
 + "Control Playback" - Access to commands like play and pause,
 + "Read Current" - Access to read information like currentArtist.
 + "Read Library" - Access to reading library information.
