@@ -47,6 +47,8 @@ const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
 const PLAYLISTPLAYBACK_CONTRACTID = 
   "@songbirdnest.com/Songbird/PlaylistPlayback;1"
 
+const MINIMUM_FILE_SIZE = 64000;
+
 /**
  * \class CoreBase
  * \brief Base class for sbICoreWrapper implementations
@@ -71,6 +73,23 @@ CoreBase.prototype =
       LOG("VERIFY OBJECT FAILED. OBJECT DOES NOT EXIST");
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
+  },
+
+  _checkURL: function(aURLSpec) {
+    var ios = Components.classes[IOSERVICE_CONTRACTID]
+                        .getService(Components.interfaces.nsIIOService);
+
+    var uri = ios.newURI(aURLSpec, null, null);
+
+    if (uri instanceof Components.interfaces.nsIFileURL) {
+      var file = uri.file;
+
+      // Don't play files of size < MINIMUM_FILE_SIZE
+      if (file.fileSize < MINIMUM_FILE_SIZE) {
+        throw Components.results.NS_ERROR_FILE_CORRUPTED;
+      }
+    }
+
   },
 
   getId : function () {

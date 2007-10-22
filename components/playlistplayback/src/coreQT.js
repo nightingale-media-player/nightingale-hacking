@@ -464,6 +464,7 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
 CoreQT.prototype.playURL = function ( aURL )
 {
   this._verifyObject();
+  this._checkURL(aURL);
 
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;

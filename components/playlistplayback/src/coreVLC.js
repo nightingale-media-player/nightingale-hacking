@@ -576,6 +576,7 @@ CoreVLC.prototype.destroyCoreVLC = function()
 CoreVLC.prototype.playURL = function (aURL)
 {
   this._verifyObject();
+  this._checkURL(aURL);
   
   this._fileTime = 0;
   this._lastCalcTime = 0;

@@ -46,9 +46,6 @@ const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/Pl
 // String Bundles
 const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
 
-// Other junk
-const MINIMUM_FILE_SIZE = 64000;
-
 // Interfaces
 const sbICoreWrapper           = Components.interfaces.sbICoreWrapper;
 const sbIDataRemote            = Components.interfaces.sbIDataRemote;
@@ -911,9 +908,6 @@ PlaylistPlayback.prototype = {
           throw Components.results.NS_ERROR_FILE_NOT_FOUND;
         if (!file.isReadable())
           throw Components.results.NS_ERROR_FILE_ACCESS_DENIED;
-        // If the size is too small we assume that the file is corrupted.
-        if (file.fileSize < MINIMUM_FILE_SIZE)
-          throw Components.results.NS_ERROR_FILE_CORRUPTED;
       }
 
       var coreCanPlayURI;

@@ -71,6 +71,7 @@ CoreGStreamerSimple.prototype.constructor = CoreGStreamerSimple();
 CoreGStreamerSimple.prototype.playURL = function ( aURL )
 {
   this._verifyObject();
+  this._checkURL(aURL);
 
   if (!aURL) {
     throw Components.results.NS_ERROR_INVALID_ARG;

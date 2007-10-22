@@ -73,6 +73,7 @@ CoreWMP.prototype = {
 
   playURL: function playURL(aURL) {
     this._verifyObject();
+    this._checkURL(aURL);
     
     var uri = newURI(aURL);
     this._object.currentURI = uri;
