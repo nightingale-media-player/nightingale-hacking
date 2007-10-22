@@ -342,7 +342,7 @@ we should nix the painting of the selection.*/
 
 .servicepane-tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #0f100f; /** Groove */ 
+  color: #feffff; /** Light Color Brightest */
 }
 
 .servicepane-tree > treechildren::-moz-tree-row( selected current focus )
