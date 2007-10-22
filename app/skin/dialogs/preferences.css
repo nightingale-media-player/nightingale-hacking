@@ -61,3 +61,8 @@ listheader
 {
   background-image: url(chrome://songbird/skin/tree/treecol.png);
 }
+
+.bottomBox {
+  padding-bottom: 4px;
+}
+

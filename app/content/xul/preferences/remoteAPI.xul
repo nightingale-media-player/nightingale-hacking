@@ -59,8 +59,8 @@
     
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
 
-    <vbox align="start">
-      <groupbox id="rapiAccessGroup" flex="1">
+    <vbox align="start" class="bottomBox">
+      <groupbox id="rapiAccessGroup">
         <caption label="&rapi.prefpane.access.caption;"/>
         <description>&rapi.prefpane.access.text;</description>
         <vbox flex="1">

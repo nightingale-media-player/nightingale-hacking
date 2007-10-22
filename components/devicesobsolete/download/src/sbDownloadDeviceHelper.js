@@ -197,9 +197,9 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
 sbDownloadDeviceHelper.prototype._ensureDestination =
 function sbDownloadDeviceHelper__ensureDestination()
 {
-  try {
-    var prefs = Cc["@mozilla.org/preferences-service;1"]
+  var prefs = Cc["@mozilla.org/preferences-service;1"]
                   .getService(Ci.nsIPrefBranch2);
+  try {
     var always = prefs.getCharPref("songbird.download.always") == "1";
     if (always) {
       return true;
@@ -208,16 +208,34 @@ function sbDownloadDeviceHelper__ensureDestination()
   catch(e) {
     // Don't care if it fails
   }
+  
+  var chromeFeatures = "modal,chrome,centerscreen,dialog=yes,resizable=no";
+  var useTitlebar = false;
+  try {
+    useTitlebar = prefs.getCharPref("songbird.accessibility.enabled") == "1";
+  }
+  catch(e) {
+    // Don't care if it fails
+  }
+
+  // bonus stuff to shut the mac up.
+  var chromeFeatures = ",modal=yes,resizable=no";
+  if (useTitlebar) chromeFeatures += ",titlebar=yes";
+  else chromeFeatures += ",titlebar=no";
+
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                      .getService(Components.interfaces.nsIWindowMediator);
+  var mainWin = wm.getMostRecentWindow("Songbird:Main");
 
   var paramBlock = Cc["@mozilla.org/embedcomp/dialogparam;1"]
                      .createInstance(Ci.nsIDialogParamBlock);
 
   var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                   .getService(Ci.nsIWindowWatcher);
-  watcher.openWindow(null,
+  watcher.openWindow(mainWin,
                      "chrome://songbird/content/xul/download.xul",
                      "_blank",
-                     "modal,chrome,centerscreen,dialog=yes",
+                     chromeFeatures,
                      paramBlock);
 
   return paramBlock.GetInt(0) == 1;
