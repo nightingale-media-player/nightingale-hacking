@@ -43,8 +43,8 @@
  ondialogaccept="doExit(1);"
  ondialogextra1="doExit(2);"
  ondialogcancel="doExit(0);"
- pack="center"
->
+ hidechrome="true" 
+ pack="center" >
   
   <!-- Astounding complexity! -->  
   
@@ -53,6 +53,8 @@
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/> 
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js" />
   <script>

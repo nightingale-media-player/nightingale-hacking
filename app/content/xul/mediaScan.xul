@@ -82,6 +82,8 @@
    src="chrome://songbird/content/scripts/watchFolders.js" /-->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mediaScan.js" />
+  <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/>    
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js" />
 </dialog>

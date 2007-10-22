@@ -271,7 +271,7 @@ function setWantedLocale(locale, bundleindex)
   if (RESTART_ON_LOCALE_SELECTION) {
     if (handleLocaleSelection()) {
       if (locales_bundle.restartRequired) {
-        restartSongbird();
+        restartApp();
       } else {
         restartfirstrun = true;
         document.defaultView.close();
@@ -344,22 +344,12 @@ function doOK()
   
   if ((firstrun_bundle && firstrun_bundle.restartRequired) || 
       (locales_bundle && locales_bundle.restartRequired)) {
-    restartSongbird();
+    restartApp();
   }
 
   return true;
 }
 
-function restartSongbird() {
-  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-            .getService(Components.interfaces.nsIAppStartup);
-  if (as)
-  {
-    //Both flags are needed 
-    as.quit(Components.interfaces.nsIAppStartup.eRestart | 
-            Components.interfaces.nsIAppStartup.eAttemptQuit);
-  }
-}
 
 function handleLocaleSelection() {
   // do we need to install a language pack ?

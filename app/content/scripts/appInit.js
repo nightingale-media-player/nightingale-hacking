@@ -98,7 +98,7 @@ appInit.onScriptInit = function()
   }
   
   // Show EULA, then the first run (if accepted) or exit (if rejected)
-  if ( doEULA( doFirstRun, doShutdown ) ) {
+  if ( doEULA( doFirstRun, quitApp ) ) {
     doMainwinStart();
   }
 }
@@ -184,26 +184,6 @@ function SBAppDeinitialize()
 */  
 }
 
-//
-// Shut down xulrunner
-//
-// - Passed as a param to doEULA
-// - Called if user rejects EULA
-function doShutdown() {
-        
-  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                    .createInstance(Components.interfaces.sbIMetrics);
-  if (!metrics) 
-    throw("doShutdown could not get the metrics component");
-    
-  // get the startup service and tell it to shut us down
-  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-                     .getService(Components.interfaces.nsIAppStartup);
-  if (!as) 
-    throw("doShutdown could not get the app-startup component!");
-
-  as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
-}
 
 //
 // Launch the main window.
@@ -339,21 +319,6 @@ function firstRunComplete(restartfirstrun) {
   }
 }
 
-function SBRestartApp()
-{
-  // attempt to restart
-  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-                     .getService(Components.interfaces.nsIAppStartup);
-  if (!as) 
-    dump("SBRestartApp could not get the nsIAppStartup component\n"); // Don't throw, we really do want to at least exit.
-  else
-  {
-    as.quit(Components.interfaces.nsIAppStartup.eRestart |
-            Components.interfaces.nsIAppStartup.eAttemptQuit);
-  }
-
-  onExit();
-}
 
 function SBMetricsAppShutdown() 
 {
@@ -376,7 +341,7 @@ function SBMetricsAppStart()
 //
 var songbird_restartNow;
 const sb_restart_app = {
-    observe: function ( aSubject, aTopic, aData ) { setTimeout("SBRestartApp();", 0); }
+    observe: function ( aSubject, aTopic, aData ) { setTimeout("restartApp();", 0); }
 }
 function SBRestarterInitialize() 
 {

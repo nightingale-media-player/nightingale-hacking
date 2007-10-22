@@ -46,6 +46,8 @@
     src="chrome://songbird/content/scripts/mainWinInit.js" />
 
     <!-- Load the Mozilla helpers -->
+    <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/>
     <script type="application/x-javascript"   
     src="chrome://global/content/dialogOverlay.js" />
     <script type="application/x-javascript"   

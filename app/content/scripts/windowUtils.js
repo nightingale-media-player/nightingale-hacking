@@ -28,6 +28,8 @@
  * \file windowUtils.js
  * \brief Window Utility constants, functions and objects that are common
  * to all windows.
+ * 
+ * Note: This file is dependent on chrome://global/content/globalOverlay.js
  */
 
 /**
@@ -597,19 +599,50 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
  * \param skipSave Skip saving window size and position.
  */
 function quitApp( skipSave )
-{
-  onExit(skipSave); // Don't always save the window position.
+{  
+  if ( skipSave != true ) {
+    onWindowSaveSizeAndPosition();
+  }
+  
   // Why not stop playback, too?
   try {
     gPPS.stop();
-  } catch (e) {}
-  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
-  if (as)
-  {
-    const V_ATTEMPT = 2;
-    as.quit(V_ATTEMPT);
+  } catch (e) {
+    dump("windowUtils.js:quitApp() Error: could not stop playback.\n");
   }
+  
+  // Defer to toolkit/globalOverlay.js
+  return goQuitApplication();
 }
+
+
+/**
+ * \brief Attempt to restart the application.
+ * \param skipSave Skip saving window size and position.
+ */
+function restartApp( skipSave )
+{
+  
+  // Notify all windows that an application quit has been requested.
+  var os = Components.classes["@mozilla.org/observer-service;1"]
+                     .getService(Components.interfaces.nsIObserverService);
+  var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
+                             .createInstance(Components.interfaces.nsISupportsPRBool);
+  os.notifyObservers(cancelQuit, "quit-application-requested", "restart");
+
+  // Something aborted the quit process.
+  if (cancelQuit.data)
+    return;  
+ 
+  // attempt to restart 
+  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                     .getService(Components.interfaces.nsIAppStartup);
+  as.quit(Components.interfaces.nsIAppStartup.eRestart |
+          Components.interfaces.nsIAppStartup.eAttemptQuit);
+
+  onExit( skipSave );
+}
+
 
 /**
  * \brief Hide the real resizers
