@@ -58,7 +58,7 @@ interface nsISimpleEnumerator;
 *
 * \sa playlist.xml, sbLibraryPage.xul, duplicate
 */
-[scriptable, uuid(dfe817f2-5398-4f16-ba62-10483311ffa7)]
+[scriptable, uuid(412e298d-957d-4f35-8528-ce053cf62807)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -387,7 +387,7 @@ interface sbIPlaylistCommands : nsISupports
 * \interface sbIPlaylistCommandsContext sbIPlaylistCommandsContext.h
 * \brief The interface for giving context to a playlistcommands object
 */
-[scriptable, uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]
+[scriptable, uuid(f08d76b6-cbe6-4cad-945e-1b1eea10a16c)]
 interface sbIPlaylistCommandsContext : nsISupports
 {
   /**
@@ -416,7 +416,7 @@ interface sbIPlaylistCommandsContext : nsISupports
 * \brief The service used to register, unregister, and list playlist
 *  commands for a particular playlist guid or type
 */
-[scriptable, uuid(2ca0eb0c-ab36-4a5a-b63e-dd34ca54f9da)]
+[scriptable, uuid(33e9c67c-7966-4bd4-bb42-ecf2fa31058d)]
 interface sbIPlaylistCommandsManager : nsISupports
 {
  /**
@@ -554,4 +554,5 @@ interface sbIPlaylistCommandsManager : nsISupports
 };
 
 /*! @} */ // end of playlistcommands group
+
 

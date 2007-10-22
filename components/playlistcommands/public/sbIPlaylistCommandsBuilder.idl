@@ -111,7 +111,7 @@ var builder = new PlaylistCommandsBuilder();
 *
 * \sa sbIPlaylistCommands sbIPlaylistCommandsManager
 */
-[scriptable, uuid(077d3924-b983-4728-b426-c5e98766cf6f)]
+[scriptable, uuid(5a4b21df-afc7-4270-a9b9-fc70565ca309)]
 interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands 
 {
   /**
@@ -679,7 +679,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
              sbIPlaylistCommandsBuilderContext.h
 * \brief The interface for giving context to playlist builder callbacks
 */
-[scriptable, uuid(98c7d9d0-9cd6-4bbb-a408-3f202f4b49f6)]
+[scriptable, uuid(c68a8813-7df9-41f4-888c-30f8a63cef60)]
 interface sbIPlaylistCommandsBuilderContext : sbIPlaylistCommandsContext
 {
   /**
@@ -697,7 +697,7 @@ interface sbIPlaylistCommandsBuilderContext : sbIPlaylistCommandsContext
 *
 * \sa sbIPlaylistCommandsBuilder
 */
-[scriptable, function, uuid(323d19d8-a127-44ff-9338-21992ddcc5b5)]
+[scriptable, function, uuid(d93a113b-348a-4050-8c03-3806228f9293)]
 interface sbIPlaylistCommandsBuilderSimpleCallback : nsISupports
 {
   /**
@@ -723,7 +723,7 @@ interface sbIPlaylistCommandsBuilderSimpleCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder
 */
-[scriptable, function, uuid(c9d8efd8-6177-43e0-aad0-a66e42779010)]
+[scriptable, function, uuid(2474bfcf-bf50-4f27-b76e-b2472a126c08)]
 interface sbIPlaylistCommandsBuilderGetStringCallback : nsISupports
 {
   /**
@@ -752,7 +752,7 @@ interface sbIPlaylistCommandsBuilderGetStringCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder
 */
-[scriptable, function, uuid(e589b7fc-2b8b-4ad4-bdc5-42eaa5d9fbd1)]
+[scriptable, function, uuid(68dde54c-5157-4650-addd-79ad331cf9ee)]
 interface sbIPlaylistCommandsBuilderGetBoolCallback : nsISupports
 {
   /**
@@ -781,7 +781,7 @@ interface sbIPlaylistCommandsBuilderGetBoolCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder
 */
-[scriptable, function, uuid(4f646a8b-02d3-4c13-9c08-85983cd1bf8c)]
+[scriptable, function, uuid(24b5f0d8-424f-43ee-8f97-4efbfad6500f)]
 interface sbIPlaylistCommandsBuilderSetValueCallback : nsISupports
 {
   /**
@@ -809,7 +809,7 @@ interface sbIPlaylistCommandsBuilderSetValueCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder, sbIPlaylistCommandsBuilderRefreshCallback
 */
-[scriptable, function, uuid(b946008a-fe51-4488-bf5f-4e113e8f36b8)]
+[scriptable, function, uuid(fb4694de-ba89-4097-843b-a00091cc430b)]
 interface sbIPlaylistCommandsBuilderInstantiationCallback : nsISupports
 {
   /**
@@ -838,7 +838,7 @@ interface sbIPlaylistCommandsBuilderInstantiationCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder, sbIPlaylistCommandsBuilderInstantiationCallback
 */
-[scriptable, function, uuid(2af53199-2947-4051-a1ac-7a65a8318f47)]
+[scriptable, function, uuid(d5f091e8-9b14-47f5-bf48-0f64c9d23a0a)]
 interface sbIPlaylistCommandsBuilderRefreshCallback : nsISupports
 {
   /**
@@ -866,7 +866,7 @@ interface sbIPlaylistCommandsBuilderRefreshCallback : nsISupports
 *
 * \sa sbIPlaylistCommandsBuilder
 */
-[scriptable, function, uuid(941adc3f-5640-4c9a-ac2c-91aceca7b075)]
+[scriptable, function, uuid(9f578767-7f92-486d-b0a9-f760ff6e22d0)]
 interface sbIPlaylistCommandsBuilderPCCallback : nsISupports
 {
   /**
