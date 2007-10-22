@@ -128,6 +128,7 @@
     <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
     <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
     <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
+    <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
     <!--<key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/> -->
     <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
     <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />

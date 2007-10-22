@@ -56,6 +56,7 @@
         <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;"/>
+        <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
         <menuitem id="menuitem_file_dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>

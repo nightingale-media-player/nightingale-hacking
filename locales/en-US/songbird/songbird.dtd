@@ -18,6 +18,7 @@
 <!ENTITY menu.file.url      "Open from URL..." >
 <!ENTITY menu.file.playlist "Import a Playlist..." >
 <!ENTITY menu.file.newtab   "New Tab" >
+<!ENTITY menu.file.closetab "Close Tab" >
 <!ENTITY menu.file.scan     "Scan for Media..." >
 <!ENTITY menu.file.dlfolder "Set Download Folder..." >
 <!ENTITY menu.file.watch    "Set Watched Folders..." >
@@ -214,6 +215,7 @@
 <!ENTITY menu.file.url.accesskey      "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
 <!ENTITY menu.file.newtab.accesskey   "T" >
+<!ENTITY menu.file.closetab.accesskey "W" >
 <!ENTITY menu.file.scan.accesskey     "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey    "W" >
@@ -337,6 +339,7 @@
 <!ENTITY menu.file.open.key            "O" >
 <!ENTITY menu.file.url.key             "U" >
 <!ENTITY menu.file.newtab.key          "T" >
+<!ENTITY menu.file.closetab.key        "W" >
 <!ENTITY menu.file.mini.key            "M" >
 <!ENTITY menu.file.dominspector        "I" >
 <!ENTITY menu.edit.undo.key            "Z" >
