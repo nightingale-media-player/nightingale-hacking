@@ -1037,18 +1037,63 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
      * into account the current filters/searches on the guid array since there
      * will never be a null primary sort key if an filter or search is applied.
      */
+    rv = builder->AddColumn(NS_LITERAL_STRING("_base"), MEDIAITEMID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = builder->AddColumn(NS_LITERAL_STRING("_base"), GUID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mBaseTable.EqualsLiteral("media_items")) {
+      rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = builder->AddColumn(NS_LITERAL_STRING("_con"),
+                              NS_LITERAL_STRING("ordinal"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = builder->AddColumn(NS_LITERAL_STRING("_base"),
+                            NS_LITERAL_STRING("rowid"));
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (SB_IsTopLevelProperty(mSorts[0].property)) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
     else {
-      rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (mBaseTable.EqualsLiteral("media_items")) {
+        rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        rv = builder->SetBaseTableName(mBaseTable);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_con"));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbISQLBuilderCriterion> criterion;
+        rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_con"),
+                                               mBaseConstraintColumn,
+                                               sbISQLSelectBuilder::MATCH_EQUALS,
+                                               mBaseConstraintValue,
+                                               getter_AddRefs(criterion));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->AddCriterion(criterion);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                              MEDIAITEMS_TABLE,
+                              NS_LITERAL_STRING("_base"),
+                              MEDIAITEMID_COLUMN,
+                              NS_LITERAL_STRING("_con"),
+                              NS_LITERAL_STRING("member_media_item_id"));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
       rv = builder->CreateMatchCriterionTable(NS_LITERAL_STRING("_p0"),
@@ -1454,18 +1499,6 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
       mCache.ReplaceElementsAt(index, 1, item);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-    // Add the new guid to the guid to first index map.
-    PRUint32 firstGuidIndex;
-    PRBool found = mGuidToFirstIndexMap.Get(guid, &firstGuidIndex);
-    if (!found || index < firstGuidIndex) {
-      PRBool added = mGuidToFirstIndexMap.Put(guid, index);
-      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-    }
-
-    // Add the new rowid to the rowid to index map.
-    PRBool added = mRowidToIndexMap.Put(rowid, index);
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-
     TRACE(("ReplaceElementsAt %d %s", index,
            NS_ConvertUTF16toUTF8(item->guid).get()));
 
@@ -1487,6 +1520,27 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
         isFirstValue = PR_FALSE;
       }
     }
+  }
+
+  // Record the indexes of the guids
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    PRUint32 index = i + aDestIndexOffset;
+
+    ArrayItem* item = mCache[index];
+    NS_ASSERTION(item, "Null item in cahce?");
+
+    // Add the new guid to the guid to first index map.
+    PRUint32 firstGuidIndex;
+    PRBool found = mGuidToFirstIndexMap.Get(item->guid, &firstGuidIndex);
+    if (!found || index < firstGuidIndex) {
+      PRBool added = mGuidToFirstIndexMap.Put(item->guid, index);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    // Add the new rowid to the rowid to index map.
+    PRBool added = mRowidToIndexMap.Put(item->rowid, index);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
   }
 
   LOG(("Replaced Elements %d to %d",
@@ -1642,12 +1696,31 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
     }
   }
 
-  /*
-   * Copy the rows from the query result into the cache starting at the
-   * calculated offset
-   */
+  // Copy the rows from the query result into the cache starting at the
+  // calculated offset
   for (PRUint32 i = 0; i < rangeLength; i++) {
-    rv = result->GetRowCell(offset + i, 0, mCache[i + aStartIndex]->guid);
+
+    PRUint32 row = offset + i;
+    nsAutoPtr<ArrayItem>& item = mCache[i + aStartIndex];
+
+    nsString mediaItemIdStr;
+    rv = result->GetRowCell(row, 0, mediaItemIdStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    item->mediaItemId = mediaItemIdStr.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = result->GetRowCell(row, 1, item->guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = result->GetRowCell(row, 2, item->ordinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString rowidStr;
+    rv = result->GetRowCell(row, 3, rowidStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    item->rowid = ToInteger64(rowidStr, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

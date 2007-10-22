@@ -323,7 +323,22 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
   rv = mBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsFullLibrary) {
+    rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddColumn(CONSTRAINT_ALIAS, ORDINAL_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, ROWID_COLUMN);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddBaseTable();
