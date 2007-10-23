@@ -72,7 +72,9 @@
       <vbox flex="1" class="balloontip-frame-c">
         <spacer class="balloontip-header-topspacer"/>
         <hbox>
-          <image id="balloontip-title-image"/>
+          <vbox id="balloontip-title-image-box" pack="center">
+            <image id="balloontip-title-image"/>
+          </vbox>
           <spacer class="balloontip-title-spacer"/>
           <label id="balloontip-title-label" class="balloontip-title"/>
           <spacer flex="1"/>
