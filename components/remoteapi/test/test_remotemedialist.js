@@ -32,7 +32,6 @@ function runTest () {
   setRapiPref("playback_read_disable", false);
   setRapiPref("library_read_disable", false);
   setRapiPref("library_write_disable", false);
-  setRapiPref("library_create_disable", false);
 
   beginRemoteAPITest("test_remotemedialist_page.html", startTesting);
 }

@@ -66,7 +66,7 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
-    "library_create:createMediaListFromURL",
+    "library_write:createMediaListFromURL",
     "library_read:getMediaList",
     "library_read:getArtists",
     "library_read:getAlbums",
@@ -76,7 +76,7 @@ const static char* sPublicMethods[] =
     "library_read:getMediaListBySiteID",
 
     // different from the ones in sbILibrary
-    "library_create:createSimpleMediaList",
+    "library_write:createSimpleMediaList",
     "library_write:createMediaItem",
 
     // sbIMediaList

@@ -44,7 +44,7 @@ static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 const static char* sPublicWProperties[] =
 {
   // sbIMediaList
-  "library_create:name"
+  "library_write:name"
 };
 
 const static char* sPublicRProperties[] =
@@ -84,7 +84,7 @@ const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
   "library_read:getProperty",
-  "library_create:setProperty",
+  "library_write:setProperty",
   "library_read:equals",
 
   // sbIMediaItem
@@ -99,11 +99,11 @@ const static char* sPublicMethods[] =
   "library_read:indexOf",
   "library_read:lastIndexOf",
   "library_read:contains",
-  "library_create:add",
-  "library_create:addAll",
-  "library_create:remove",
-  "library_create:removeByIndex",
-  "library_create:clear",
+  "library_write:add",
+  "library_write:addAll",
+  "library_write:remove",
+  "library_write:removeByIndex",
+  "library_write:clear",
   "library_read:getDistinctValuesForProperty",
 
   // sbIRemoteMediaList

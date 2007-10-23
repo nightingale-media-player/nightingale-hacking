@@ -51,10 +51,6 @@
                   name="songbird.rapi.library_write_disable"
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
-      <preference id="songbird.rapi.library_create_disable"
-                  name="songbird.rapi.library_create_disable"
-                  type="bool"
-                  onchange="gRemoteAPIPane.onChange()"/>
     </preferences>
     
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
@@ -102,16 +98,6 @@
             <button id="songbird.rapi.library_write_disable.button"
               label="&rapi.whitelist.label;"
               oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
-          </hbox>
-          
-          <hbox flex="1">
-            <checkbox checked="true" disabled="true"
-              label="&rapi.library_create_disable.label;"
-              accesskey="&rapi.library_create_disable.accesskey;"/>
-            <spacer flex="1"/>
-            <button id="songbird.rapi.library_create_disable.button"
-              label="&rapi.whitelist.label;"
-              oncommand="gRemoteAPIPane.configureWhitelist('library_create');"/>
           </hbox>
           
           <hbox flex="1">

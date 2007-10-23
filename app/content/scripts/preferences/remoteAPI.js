@@ -28,7 +28,6 @@ var gRemoteAPIPane = {
     'songbird.rapi.playback_read_disable',
     'songbird.rapi.library_read_disable',
     'songbird.rapi.library_write_disable',
-    'songbird.rapi.library_create_disable'
   ],
   isChanged: false,
 

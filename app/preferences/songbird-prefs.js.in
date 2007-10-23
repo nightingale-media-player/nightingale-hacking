@@ -205,14 +205,12 @@ pref("songbird.rapi.playback_control_disable", false);
 pref("songbird.rapi.playback_read_disable", false);
 pref("songbird.rapi.library_read_disable", true);
 pref("songbird.rapi.library_write_disable", true);
-pref("songbird.rapi.library_create_disable", true);
 
 // by default notify about everything
 pref("songbird.rapi.playback_control_notify", true);
 pref("songbird.rapi.playback_read_notify", true);
 pref("songbird.rapi.library_read_notify", true);
 pref("songbird.rapi.library_write_notify", true);
-pref("songbird.rapi.library_create_notify", true);
 
 // Songbird default urls
 pref("songbird.url.addons", "http://addons.songbirdnest.com/");

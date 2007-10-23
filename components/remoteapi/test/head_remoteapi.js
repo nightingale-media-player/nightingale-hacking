@@ -57,7 +57,6 @@ function setAllAccess () {
   setRapiPref("playback_read_disable", false);
   setRapiPref("library_read_disable", false);
   setRapiPref("library_write_disable", false);
-  setRapiPref("library_create_disable", false);
 }
 
 function setNoAccess() {
@@ -70,7 +69,6 @@ function setNoAccess() {
   setRapiPref("playback_read_disable", true);
   setRapiPref("library_read_disable", true);
   setRapiPref("library_write_disable", true);
-  setRapiPref("library_create_disable", true);
 }
 
 function cleanup() {

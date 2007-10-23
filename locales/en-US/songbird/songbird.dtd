@@ -292,12 +292,10 @@
 <!ENTITY rapi.playback_read_disable.label    "Block websites from looking at information about playing media" >
 <!ENTITY rapi.library_read_disable.label     "Block websites from looking at information about media in my Songbird" >
 <!ENTITY rapi.library_write_disable.label    "Block websites from adding/editing media in my Library and devices" >
-<!ENTITY rapi.library_create_disable.label   "Block websites from creating/editing playlists in my Library and devices" >
 <!ENTITY rapi.playback_control_disable.accesskey "p" >
 <!ENTITY rapi.playback_read_disable.accesskey    "m" >
 <!ENTITY rapi.library_read_disable.accesskey     "s" >
 <!ENTITY rapi.library_write_disable.accesskey    "a" >
-<!ENTITY rapi.library_create_disable.accesskey   "c" >
 
 <!ENTITY prefpane.addons.label        "Add-Ons">
 

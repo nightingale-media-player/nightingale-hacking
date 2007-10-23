@@ -43,13 +43,11 @@
 #define PERM_TYPE_PLAYBACK_READ    "rapi.playback_read"
 #define PERM_TYPE_LIBRARY_READ     "rapi.library_read"
 #define PERM_TYPE_LIBRARY_WRITE    "rapi.library_write"
-#define PERM_TYPE_LIBRARY_CREATE   "rapi.library_create"
 
 #define PREF_PLAYBACK_CONTROL "playback_control_disable"
 #define PREF_PLAYBACK_READ    "playback_read_disable"
 #define PREF_LIBRARY_READ     "library_read_disable"
 #define PREF_LIBRARY_WRITE    "library_write_disable"
-#define PREF_LIBRARY_CREATE   "library_create_disable"
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbSecurityMixin:5
@@ -80,7 +78,6 @@ static const Scope sScopes[] = {
   { "playback_read", sNotificationHat, sNotificationNone, },
   { "library_read", sNotificationHat, sNotificationNone, },
   { "library_write", sNotificationAlert, sNotificationStatus, },
-  { "library_create", sNotificationAlert, sNotificationStatus, },
 };
 
 #define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")

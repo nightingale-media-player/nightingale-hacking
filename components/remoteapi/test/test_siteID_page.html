@@ -94,7 +94,7 @@
           } catch(e) {}
 
           tester.setRapiPref("library_read_disable", false);
-          tester.setRapiPref("library_write_disable", false);
+          tester.setRapiPref("library_write_disable", true);
 
           try {
             mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
@@ -107,14 +107,6 @@
             tester.doThrow(e);
           }
 
-          tester.setRapiPref("library_create_disable", false);
-
-          try {
-            mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");
-          } catch(e) {
-            tester.doThrow(e);
-          }
-
           try {
             mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
           } catch(e) {
@@ -122,6 +114,7 @@
           }
 
           tester.setRapiPref("library_read_disable", true);
+          tester.setRapiPref("library_write_disable", false);
 
           try {
             mainLibList1 = mainLib.createSimpleMediaList("testSiteIDMainList1");

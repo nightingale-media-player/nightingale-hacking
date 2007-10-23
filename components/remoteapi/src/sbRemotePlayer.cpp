@@ -195,8 +195,7 @@ const static char* sPublicCategoryConversions[][2] =
   { { "Control Playback", "playback_control:" },
     { "Read Current", "playback_read:" },
     { "Read Library", "library_read:" },
-    { "Add Media", "library_write:" },
-    { "Create Medialists", "library_create:" } };
+    { "Modify Library", "library_write:" } };
 
 // needs to be in nsEventDispatcher.cpp
 #define RAPI_EVENT_CLASS                  NS_LITERAL_STRING("Events")
