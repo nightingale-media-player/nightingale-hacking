@@ -201,6 +201,18 @@ progressmeter.sb-player-seek-slider > .progress-bar
 }
 
 
+
+/** 
+*******************************************************************************
+MINIPLAYER
+*******************************************************************************
+*/
+
+#miniplayer_box
+{
+  background-color: #313131 !important;  /** Match the Main Window */
+}
+
 /** MINI FACEPLATE/DASHBOARD **/
 .mini-dash-text
 {

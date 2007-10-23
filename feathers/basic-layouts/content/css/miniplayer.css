@@ -56,7 +56,6 @@ window#miniplayer
 #miniplayer_box
 {
   -moz-border-radius: 10px !important;
-  background-color: #313131 !important;  /** Match the Main Window */
   padding: 0px 0px 0px 0px !important;
   height: 22px;
 }
