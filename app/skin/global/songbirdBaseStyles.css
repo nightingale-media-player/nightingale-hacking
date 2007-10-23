@@ -55,11 +55,3 @@ Additional Songbird specific rules for the global skin.
 
 
 
-window,
-prefwindow,
-wizard,
-dialog 
-{
-  font-family: tahoma, Lucida Grande, helvetica, arial, sans-serif !important; /*arial is the fallback font*/
-  font-size: 11px !important;
-}
