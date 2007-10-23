@@ -179,6 +179,42 @@ sbLocalDatabaseTreeView::CopySelectionListCallback(nsStringHashKey::KeyType aKey
   return PL_DHASH_NEXT;
 }
 
+class sbAutoSelectEventsSuppressed
+{
+public:
+  sbAutoSelectEventsSuppressed(nsITreeSelection* aSelection) :
+    mSelection(aSelection),
+    mSelectEventsSuppressed(PR_FALSE)
+  {
+  }
+
+  ~sbAutoSelectEventsSuppressed()
+  {
+    if (mSelectEventsSuppressed) {
+#ifdef DEBUG
+      nsresult rv =
+#endif
+      set(PR_FALSE);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unset");
+    }
+  }
+
+  nsresult set(PRBool aSelectEventsSuppressed)
+  {
+    if (mSelection) {
+      mSelectEventsSuppressed = aSelectEventsSuppressed;
+      return mSelection->SetSelectEventsSuppressed(aSelectEventsSuppressed);
+    }
+    else {
+      return NS_OK;
+    }
+  }
+
+private:
+  nsITreeSelection* mSelection;
+  PRBool mSelectEventsSuppressed;
+};
+
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseTreeView,
                    nsIClassInfo,
                    nsISupportsWeakReference,
@@ -510,7 +546,7 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
   // Note that we do this here rather than in the code that restores selection
   // because we never get a callback for this fake row when repopulating the
   // tree.
-  if (mFakeAllRow && mSelectionIsAll) {
+  if (mRealSelection && mFakeAllRow && mSelectionIsAll) {
     mSelectionChanging = PR_TRUE;
     rv = mRealSelection->Select(0);
     mSelectionChanging = PR_FALSE;
@@ -1215,11 +1251,12 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
          aIndex, NS_LossyConvertUTF16toASCII(aGUID).get()));
 
   nsresult rv;
+  sbAutoSelectEventsSuppressed autoSelectEventsSuppressed(mRealSelection);
 
   if (NS_SUCCEEDED(aResult) && !mCachedRowCountDirty) {
 
     // If there is a clear selection pending, clear the selection
-    if (mClearSelectionPending) {
+    if (mRealSelection && mClearSelectionPending) {
       mSelectionChanging = PR_TRUE;
       if (mSelectionIsAll) {
         rv = mRealSelection->Select(0);
@@ -1242,7 +1279,7 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
     PRUint32 length = end - start + 1;
 
     // Suppress select events
-    rv = mRealSelection->SetSelectEventsSuppressed(PR_TRUE);
+    rv = autoSelectEventsSuppressed.set(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Build an array of guids we want.  We build both a string array and a
@@ -1274,15 +1311,14 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
       //        modifying the selection. This was crashing occasionally, see
       //        bug 3533.
       nsCOMPtr<nsITreeBoxObject> boxObject;
-      rv = mRealSelection->GetTree(getter_AddRefs(boxObject));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      NS_ASSERTION(boxObject, "No box object?! Fix bug 3533 correctly!");
+      if (mRealSelection) {
+        rv = mRealSelection->GetTree(getter_AddRefs(boxObject));
+        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ASSERTION(boxObject, "No box object?! Fix bug 3533 correctly!");
+      }
 
       // Should this row be selected?
-      if (boxObject &&
-          mRealSelection &&
-          (mSelectionIsAll || mSelectionList.Count())) {
+      if (boxObject && (mSelectionIsAll || mSelectionList.Count())) {
 
         PRBool shouldSelect = PR_FALSE;
         if (mSelectionIsAll && !mFakeAllRow) {
@@ -1316,7 +1352,7 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
 
     // Unsuppress select events
     mSelectionChanging = PR_TRUE;
-    rv = mRealSelection->SetSelectEventsSuppressed(PR_FALSE);
+    rv = autoSelectEventsSuppressed.set(PR_FALSE);
     mSelectionChanging = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2492,20 +2528,22 @@ sbLocalDatabaseTreeView::GetSelectionCount(PRUint32* aSelectionLength)
     // Add the saved selection list with the number of selected rows
     PRUint32 length = mSelectionList.Count();
 
-    PRInt32 rangeCount;
-    nsresult rv = mRealSelection->GetRangeCount(&rangeCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRInt32 i = 0; i < rangeCount; i++) {
-      PRInt32 min;
-      PRInt32 max;
-      rv = mRealSelection->GetRangeAt(i, &min, &max);
+    if (mRealSelection) {
+      PRInt32 rangeCount;
+      nsresult rv = mRealSelection->GetRangeCount(&rangeCount);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      length += max - min + 1;
+      for (PRInt32 i = 0; i < rangeCount; i++) {
+        PRInt32 min;
+        PRInt32 max;
+        rv = mRealSelection->GetRangeAt(i, &min, &max);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      if (IsAllRow(min)) {
-        length--;
+        length += max - min + 1;
+
+        if (IsAllRow(min)) {
+          length--;
+        }
       }
     }
 
