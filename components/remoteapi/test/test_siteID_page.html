@@ -107,12 +107,6 @@
             tester.doThrow(e);
           }
 
-          try {
-            mainLibList1 = mainLib.getMediaListBySiteID("testSiteIDMainList1");
-          } catch(e) {
-            tester.doThrow(e);
-          }
-
           tester.setRapiPref("library_read_disable", true);
           tester.setRapiPref("library_write_disable", false);
 

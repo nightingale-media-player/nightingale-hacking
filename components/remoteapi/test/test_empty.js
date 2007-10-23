@@ -28,10 +28,7 @@
  * \brief Test file
  */
 function runTest () {
-  setRapiPref("playback_control_disable", false);
-  setRapiPref("playback_read_disable", false);
-  setRapiPref("library_read_disable", false);
-  setRapiPref("library_write_disable", false);
+  setAllAccess();
 
   beginRemoteAPITest("test_empty_page.html", startTesting);
 }
