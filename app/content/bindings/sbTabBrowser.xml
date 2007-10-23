@@ -212,14 +212,8 @@
             // If we have never run the app before, load this keen stuff!@
             var birdhouseURL = SBDataGetStringValue( "url.birdhouse" );
             var firstrunURL = SBDataGetStringValue( "url.firstrun" );
-            var firstTab = this.mCurrentTab;
-            this.loadURI(firstrunURL, null, null, null, 'current');
-            this.loadURI(birdhouseURL, null, null, null, 'tab');
-            // (sigh) -- they want the firstrun to be the first tab but selected.  pleah.
-            function delayedTabSwitch() {
-              gBrowser.selectedTab = firstTab;
-            }
-            setTimeout( delayedTabSwitch, 100 );
+            this.loadURI(birdhouseURL, null, null, null, 'current');
+            this.loadURI(firstrunURL, null, null, null, 'tab');
             SBDataSetBoolValue( "firstrun.tabs.restore", true );
           } else {
             //
