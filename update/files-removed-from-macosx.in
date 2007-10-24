@@ -146,7 +146,6 @@
 ./Contents/Frameworks/XUL.framework/res/throbber/anims29.gif
 ./Contents/Frameworks/XUL.framework/res/viewer.properties
 ./Contents/Frameworks/XUL.framework/xulrunner-config
-./Contents/MacOS/removed-files
 ./Contents/MacOS/Songbird
 ./Contents/Resources/chrome/classic.jar
 ./Contents/Resources/chrome/classic.manifest
@@ -181,4 +180,5 @@
 ./Contents/Resources/scripts/sbPlaylist.js
 ./Contents/Resources/scripts/sbSmartPlaylist.js
 ./LICENSE.txt
+./removed-files
 ./TRADEMARK.txt
