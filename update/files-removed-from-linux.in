@@ -23,6 +23,7 @@
 ./components/sbServicesource.xpt
 ./components/sbSimplePlaylist.js
 ./components/sbWMDevice.xpt
+./removed-files
 ./scripts/sbDynamicPlaylist.js
 ./scripts/sbPlaylistBase.js
 ./scripts/sbPlaylist.js

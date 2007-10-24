@@ -226,6 +226,7 @@
 ./plugins/plugins/libxa_plugin.dll
 ./plugins/plugins/libxml_plugin.dll
 ./plugins/plugins/libxtag_plugin.dll
+./removed-files
 ./scripts/sbDynamicPlaylist.js
 ./scripts/sbPlaylistBase.js
 ./scripts/sbPlaylist.js
