@@ -64,11 +64,7 @@ endif
 # Settings for the removed-files operation
 #
 REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
-ifeq (macosx,$(SB_PLATFORM))
-REMOVED_FILES_GEN = $(SONGBIRD_MACOS)/removed-files
-else
 REMOVED_FILES_GEN = $(TARGET_DIR)/removed-files
-endif
 
 # MUST specify a target, no default rule
 default: all
