@@ -910,7 +910,8 @@ interface sbIRemotePlayer : nsISupports
     boolean hasAccess( String Category )
 
   Parameters:
-    Category - The category to check for access to.
+    Category - The category to check for access to.  See <Security> for a list
+               of valid categories.
 
   Example:
     (start code)
