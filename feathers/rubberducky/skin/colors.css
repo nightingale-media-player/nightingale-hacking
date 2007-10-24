@@ -1730,8 +1730,8 @@ NOTIFICATION HAT
 */
 notification[type="warning"]
 {
-  background-color: #EDF3F0;
-  border-bottom: 1px solid #B3BAAC; /** Light Color 1 */
+  background-color: #ffffcc; /** yellow */
+  border-bottom: 1px solid #eaeabb; /** yellow button */
 }
 
 .messageText,
@@ -1743,8 +1743,8 @@ notification[type="warning"]
 
 notification > button 
 {
-  background-color: #EDF3F0;
-  border-top: 1px solid #feffff; /** Light Color Brightest */
+  background-color: #eaeabb; /** yellow button */
+  border-top: 1px solid #ffffcc; /** yellow */
   border-left: 1px solid #B3BAAC; /** Light Color 1 */
   border-right: 1px solid #B3BAAC; /** Light Color 1 */
   border-bottom: 1px solid #8A8F84; /** Light Color 2 */
@@ -1752,12 +1752,12 @@ notification > button
 
 notification > button > .button-box > .button-text
 {
-  color: #0f100f; /** Groove */
+  color: #5c5f58; /** Selected Focus Row */
 }
 
 notification > button:hover > .button-box > .button-text
 {
-  color: #B3BAAC; /** Light Color 1 */
+  color: #0f100f; /** Groove */
 }
 
 notification > button:active > .button-box > .button-text
@@ -1768,8 +1768,8 @@ notification > button:active > .button-box > .button-text
 notification > button:active
 {
   color: #0f100f; /** Groove */
-  background-color: #EDF3F0;
-  border-bottom: 1px solid #feffff; /** Light Color Brightest */
+  background-color: #eaeabb; /** yellow button */
+  border-bottom: 1px solid #ffffcc; /** yellow */
   border-left: 1px solid #B3BAAC; /** Light Color 1 */
   border-right: 1px solid #B3BAAC; /** Light Color 1 */
   border-top: 1px solid #8A8F84; /** Light Color 2 */
