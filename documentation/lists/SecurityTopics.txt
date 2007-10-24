@@ -6,8 +6,7 @@ Security Categories:
 + "Control Playback" - Access to commands like play and pause,
 + "Read Current" - Access to read information like currentArtist.
 + "Read Library" - Access to reading library information.
-+ "Add Media" - Access to write library information.
-+ "Create Medialists" - Access to create new libraries.
++ "Modify Library" - Access to create new libraries and write library information.
 
 Example (Proper way):
 
