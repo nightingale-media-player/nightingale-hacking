@@ -1,24 +1,24 @@
 #
 # BEGIN SONGBIRD GPL
-# 
+#
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2007 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the “GPL”).
-# 
-# Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+#
+# Software distributed under the License is distributed
+# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
+#
 # END SONGBIRD GPL
 #
 
@@ -30,16 +30,11 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 #
-# Settings for the removed-files operation
-#
-REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
-
-#
 # These scripts have problems with absolute paths, so use $(DEPTH) instead
 #
 
 ifndef STAGE_DIR
-STAGE_DIR	= $(DEPTH)/_built_installer
+STAGE_DIR = $(DEPTH)/_built_installer
 endif
 
 SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
@@ -52,7 +47,7 @@ endif
 UPDATE_FILENAME_BASE = $(SB_APPNAME)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
 #
-# On OS X we need to diff from the 'Contents' subdir inside the app bundle.
+# On OS X we need to diff from the 'Songbird.app' subdir.
 #
 ifeq (macosx,$(SB_PLATFORM))
 TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
@@ -63,6 +58,16 @@ TARGET_DIR=$(DEPTH)/$(DISTDIRNAME)
 else
 TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
 endif
+endif
+
+#
+# Settings for the removed-files operation
+#
+REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
+ifeq (macosx,$(SB_PLATFORM))
+REMOVED_FILES_GEN = $(SONGBIRD_MACOS)/removed-files
+else
+REMOVED_FILES_GEN = $(TARGET_DIR)/removed-files
 endif
 
 # MUST specify a target, no default rule
@@ -77,13 +82,12 @@ dump-build-id::
     > $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).buildID.txt \
     $(NULL)
 
-complete-patch:: removed-files 
+complete-patch:: removed-files
 	@$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
     "$(TARGET_DIR)"
-	$(CYGWIN_WRAPPER) $(RM) -f $(TARGET_DIR)/removed-files
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
@@ -157,6 +161,6 @@ removed-files::
 	$(CYGWIN_WRAPPER) $(RM) -f $(TARGET_DIR)/removed-files
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
     $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > ./removed-files
-	$(CYGWIN_WRAPPER) $(CP) ./removed-files $(TARGET_DIR)/removed-files
+	$(CYGWIN_WRAPPER) $(CP) ./removed-files $(REMOVED_FILES_GEN)
 
 include $(topsrcdir)/build/rules.mk
