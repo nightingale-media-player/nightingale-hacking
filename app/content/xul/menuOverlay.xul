@@ -81,12 +81,12 @@
       <menupopup id="menu_EditPopup">
         <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
         <menuseparator/>
-        <menuitem id="menuitem_edit_cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-        <menuitem id="menuitem_edit_copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-        <menuitem id="menuitem_edit_paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+        <menuitem id="menuitem_edit_cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+        <menuitem id="menuitem_edit_copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+        <menuitem id="menuitem_edit_paste"  disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
         <menuitem id="menuitem_edit_clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
         <menuseparator/>
-        <menuitem id="menuitem_edit_selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+        <menuitem id="menuitem_edit_selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
         <menuitem id="menuitem_edit_selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
       </menupopup>
     </menu>
