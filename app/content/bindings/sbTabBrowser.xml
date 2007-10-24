@@ -754,29 +754,80 @@
           var notificationName = "remoteapi-called";
           var message = "Web Page has accessed Songbird Directly";
           var editOptionsLabel = "Edit Options...";
-          var buttonAccessKey = "O";
+          var editOptionsAccessKey = "O";
+          var allowAlwaysLabel = "Always Allow Site"
           var iconURL = "";
+          var appName = "Songbird";
           
           try {
             message = songbirdStrings
-                        .GetStringFromName("rapi.access.message.text");
+                        .GetStringFromName("rapi.access.message." + event.categoryID);
             editOptionsLabel = songbirdStrings
                                 .GetStringFromName("rapi.access.button.label.options");
             editOptionsAccessKey = songbirdStrings
                                      .GetStringFromName("rapi.access.button.accessKey.options");
+            allowAlwaysLabel = songbirdStrings
+                                 .GetStringFromName("rapi.access.button.label.allow.always");
             iconURL = brandingStrings
                         .GetStringFromName("rapi.access.iconURL");
+                        
+            appName = brandingStrings
+                        .GetStringFromName("brandShortName");
           } catch (e) { }
+
+          message = message.replace(/\%S/, appName);
+
+          var closure = event;
+          
+          var allowAlwaysCallback = function(aHat, aButtonInfo) {
+            var nsIPermissionManager = Components.interfaces.nsIPermissionManager;
+            var permManager = Components.classes["@mozilla.org/permissionmanager;1"]
+                                .getService(nsIPermissionManager);
+            permManager.add(closure.siteScope, "rapi." + closure.categoryID, nsIPermissionManager.ALLOW_ACTION);
+            
+            var allowEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+                             .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
+
+            allowEvt.initSecurityEvent( document,
+                                        closure.siteScope,
+                                        closure.category,
+                                        closure.categoryID,
+                                        true);
+
+            aHat.closeEvent = allowEvt;
+
+            // add metrics reporting here
+          }
+
+          var editOptionsCallback = function(aHat, aButtonInfo) {
+            var editEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+                        .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
+
+            editEvt.initSecurityEvent( document,
+                                       closure.siteScope,
+                                       closure.category,
+                                       closure.categoryID,
+                                       false);
+
+            aHat.closeEvent = editEvt;
+
+            SBOpenPreferences("paneRemoteAPI");
+
+            // add metrics reporting here
+          }
 
           var buttons = [
                          {
                            label: editOptionsLabel,
                            accessKey: editOptionsAccessKey,
                            popup: null,
-                           callback: function(aHat, aButtonInfo) {
-                             aHat.closeEvent = "RemoteAPIPrefChanged";
-                             SBOpenPreferences("paneRemoteAPI");
-                           }
+                           callback: editOptionsCallback
+                         },
+                         {
+                           label: allowAlwaysLabel,
+                           accessKey: null,
+                           popup: null,
+                           callback: allowAlwaysCallback
                          }
                          ];
 
@@ -786,7 +837,7 @@
           var notification = notificationBox
                                    .getNotificationWithValue(notificationName);
           if (!notification) {
-            // if there isn't a notfication object, make one and append it
+            // if there isn't a notification object, make one and append it
             const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
             notification = notificationBox.appendNotification( message,
                                                 notificationName,
@@ -798,7 +849,17 @@
             // this has the side effect of showing it if it was dismissed
             notification.message = message;
           }
-          notification.closeEvent = "RemoteAPIHatClosed";
+          
+          var defaultEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+                             .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
+
+          defaultEvt.initSecurityEvent( document,
+                                        closure.siteScope,
+                                        closure.category,
+                                        closure.categoryID,
+                                        false);
+
+          notification.closeEvent = defaultEvt;
         ]]></body>
       </method>
 

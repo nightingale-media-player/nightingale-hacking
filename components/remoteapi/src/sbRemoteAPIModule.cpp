@@ -27,6 +27,7 @@
 #include "sbRemoteAPIService.h"
 #include "sbRemotePlayer.h"
 #include "sbSecurityMixin.h"
+#include "sbRemoteSecurityEvent.h"
 
 #include <nsIClassInfoImpl.h>
 
@@ -36,6 +37,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteAPIService, Init)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSecurityMixin)
 NS_DECL_CI_INTERFACE_GETTER(sbSecurityMixin)
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbRemoteSecurityEvent)
+NS_DECL_CI_INTERFACE_GETTER(sbRemoteSecurityEvent)
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbRemotePlayer, sbRemotePlayer::GetInstance)
 NS_DECL_CI_INTERFACE_GETTER(sbRemotePlayer)
@@ -68,6 +72,16 @@ static const nsModuleComponentInfo components[] =
     NULL,
     NULL,
     NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)
+  },
+  {
+    SONGBIRD_SECURITYEVENT_CLASSNAME,
+    SONGBIRD_SECURITYEVENT_CID,
+    SONGBIRD_SECURITYEVENT_CONTRACTID,
+    sbRemoteSecurityEventConstructor,
+    NULL,
+    NULL,
+    NULL,
+    NS_CI_INTERFACE_GETTER_NAME(sbRemoteSecurityEvent)
   }
 };
 

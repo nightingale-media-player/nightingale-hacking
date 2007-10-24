@@ -54,6 +54,12 @@ extern char* SB_CloneAllAccess();
 
 struct Scope;
 
+#define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
+#define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
+
+#define SB_EVENT_RAPI_PERMISSION_CHANGED  NS_LITERAL_STRING("RemoteAPIPermissionChanged")
+#define SB_EVENT_RAPI_PERMISSION_DENIED   NS_LITERAL_STRING("RemoteAPIPermissionDenied")
+
 class sbSecurityMixin : public nsISecurityCheckedComponent,
                         public nsIClassInfo,
                         public sbISecurityMixin
@@ -87,7 +93,9 @@ protected:
   const struct Scope* GetScopeForScopedName(const nsAString &aScopedName);
   
   // helpers for dispatching notification events
-  nsresult DispatchNotificationEvent(const char* aNotificationType);
+  nsresult DispatchNotificationEvent(const char* aNotificationType, 
+                                     const Scope* aScope,
+                                     PRBool aHasAccess);
 
   // helper function for allocating IID array 
   nsresult CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID ***aDestArray);

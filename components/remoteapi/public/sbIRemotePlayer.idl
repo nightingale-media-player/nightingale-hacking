@@ -34,6 +34,7 @@
 
 interface nsIObserver;
 interface nsISimpleEnumerator;
+interface nsIURI;
 interface sbIMediaItem;
 interface sbIMediaListView;
 interface sbIRemoteCommands;
@@ -112,7 +113,7 @@ See Also:
  *  our "Remote API" the websites can call to get information about and interact
  *  with Songbird.
  */
-[scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
+[scriptable, uuid(d2caab8d-35fd-41f8-9716-62ed422c244b)]
 interface sbIRemotePlayer : nsISupports
 {
 
@@ -850,6 +851,11 @@ interface sbIRemotePlayer : nsISupports
     <siteLibrary>
   */
   void setSiteScope(in AUTF8String aDomain, in AUTF8String aPath);
+
+  /**
+   * \brief Get the site scope.
+   */
+  nsIURI getSiteScope();
 
   /*
   Method: libraries()

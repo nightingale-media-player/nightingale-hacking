@@ -39,6 +39,8 @@
 
 #include "nsISupports.idl"
 
+interface sbIRemotePlayer;
+
 /**
  * \interface sbISecurityAggregator
  * \brief A marker interface for objects that aggregate the security mixin.
@@ -48,8 +50,9 @@
  * \sa sbRemotePlayer
  * \sa sbSecurityMixin
  */
-[scriptable, uuid(5a8b35b1-0625-4a2b-98c0-f1714a6675e1)]
+[scriptable, uuid(efc0f85a-b4d7-4405-aed8-8b0542ec67c5)]
 interface sbISecurityAggregator : nsISupports
 {
+  [noscript] readonly attribute sbIRemotePlayer remotePlayer;
 };
 

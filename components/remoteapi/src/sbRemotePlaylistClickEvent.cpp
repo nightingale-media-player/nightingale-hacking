@@ -122,6 +122,37 @@ sbRemotePlaylistClickEvent::~sbRemotePlaylistClickEvent( )
   MOZ_COUNT_DTOR(sbRemotePlaylistClickEvent);
 }
 
+// ---------------------------------------------------------------------------
+//
+//                          sbISecurityAggregator
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbRemotePlaylistClickEvent::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
+{
+  NS_ENSURE_STATE(mRemotePlayer);
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+
+  nsresult rv;
+  *aRemotePlayer = nsnull;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+  
+  rv = mRemotePlayer->QueryInterface( NS_GET_IID( sbIRemotePlayer ), getter_AddRefs( remotePlayer ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  remotePlayer.swap( *aRemotePlayer );
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                          sbIPlaylistClickEvent
+//
+// ---------------------------------------------------------------------------
+
 NS_IMETHODIMP sbRemotePlaylistClickEvent::InitEvent( sbIPlaylistClickEvent* aClickEvent,
                                                      nsIDOMMouseEvent* aMouseEvent )
 {

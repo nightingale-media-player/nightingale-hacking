@@ -53,6 +53,7 @@ CPP_SRCS = sbRemoteAPIModule.cpp \
            sbRemoteWebPlaylist.cpp \
            sbRemoteWrappingSimpleEnumerator.cpp \
            sbRemoteWrappingStringEnumerator.cpp \
+           sbRemoteSecurityEvent.cpp \
            sbRemoteSiteLibrary.cpp \
            sbRemoteSiteMediaItem.cpp \
            sbRemoteSiteMediaList.cpp \

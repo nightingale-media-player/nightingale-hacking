@@ -80,9 +80,6 @@ static const Scope sScopes[] = {
   { "library_write", sNotificationAlert, sNotificationStatus, },
 };
 
-#define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
-#define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
-
 static NS_DEFINE_CID( kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID );
 
 NS_IMPL_ISUPPORTS3( sbSecurityMixin,
@@ -501,7 +498,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
       
       // if the pref is true we should notify
       if (notify) {
-        DispatchNotificationEvent(notification);
+        DispatchNotificationEvent(notification, scope, allowed);
       }
     }
   }
@@ -606,12 +603,17 @@ sbSecurityMixin::SetPermission(nsIURI *aURI, const nsACString &aScopedName)
 
 
 nsresult
-sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType)
+sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType,
+                                           const Scope* aScope,
+                                           PRBool aHasAccess)
 {
   // NOTE: This method only /tries/ to dispatch the notification event.
   // If there's no notification document then it fails mostly silently.
   // This is intentional since there might be cases where this mixin is
   // used when no notification document is available.
+  
+  NS_ENSURE_ARG_POINTER(aNotificationType);
+  NS_ENSURE_ARG_POINTER(aScope);
   
   // TODO: we need to add the notification type to the event eventually
   // get it? event eventually...
@@ -621,10 +623,24 @@ sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType)
   // see if we've got a document to dispatch events to
   if ( mNotificationDocument ) {
     LOG(( "sbSecurityMixin::DispatchNotificationEvent - dispatching event" ));
-    return sbRemotePlayer::DispatchEvent( mNotificationDocument,
-                                          RAPI_EVENT_CLASS,
-                                          RAPI_EVENT_TYPE,
-                                          PR_TRUE );
+
+    nsCOMPtr<sbIRemotePlayer> remotePlayer;
+    nsresult rv = mOuter->GetRemotePlayer(getter_AddRefs(remotePlayer));
+    
+    // objects that do not return a remote player do not want to trigger notifications because
+    // they are owned by other objects that supercede them in the security hierarchy.
+    if(NS_SUCCEEDED(rv)) {
+
+      return sbRemotePlayer::DispatchSecurityEvent( mNotificationDocument,
+        remotePlayer,
+        RAPI_EVENT_CLASS,
+        RAPI_EVENT_TYPE,
+        NS_ConvertASCIItoUTF16(aScope->name),
+        aHasAccess,
+        PR_TRUE );
+
+    }
+
   } else {
     LOG(( "sbSecurityMixin::DispatchNotificationEvent - not dispatching event" ));
     NS_WARNING( "sbSecurityMixin::DispatchNotificationEvent didn't have a notification document to dispatch to" );

@@ -37,19 +37,23 @@
       <stylesheet src="chrome://global/skin/browser.css"/>
     </resources>
     <implementation>
-      <field name="closeEvent">"NotificationClosed"</field>
+      <field name="closeEvent">null</field>
       <method name="close">
         <body>
           <![CDATA[
             var control = this.control;
+            
             if (control) {
               control.removeNotification(this);
             } else {
               this.hidden = true;
             }
-            var evt = document.createEvent("Events");
-            evt.initEvent(this.closeEvent, true, false);
-            this.dispatchEvent(evt);
+            
+            if (this.closeEvent) {
+              var closure = this.closeEvent;
+              this.dispatchEvent(closure);
+              this.closeEvent = null;
+            }
           ]]>
         </body>
       </method>

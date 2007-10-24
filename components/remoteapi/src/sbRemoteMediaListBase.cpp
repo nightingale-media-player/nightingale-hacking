@@ -97,6 +97,30 @@ sbRemoteMediaListBase::~sbRemoteMediaListBase()
   LOG(("sbRemoteMediaListBase::~sbRemoteMediaListBase()"));
 }
 
+// ---------------------------------------------------------------------------
+//
+//                          sbISecurityAggregator
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbRemoteMediaListBase::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
+{
+  NS_ENSURE_STATE(mRemotePlayer);
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+
+  nsresult rv;
+  *aRemotePlayer = nsnull;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+
+  rv = mRemotePlayer->QueryInterface( NS_GET_IID( sbIRemotePlayer ), getter_AddRefs( remotePlayer ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  remotePlayer.swap( *aRemotePlayer );
+
+  return NS_OK;
+}
 
 // ---------------------------------------------------------------------------
 //
@@ -394,7 +418,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyNa
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbRemoteWrappingStringEnumerator> wrapped(
-                           new sbRemoteWrappingStringEnumerator(enumeration) );
+                           new sbRemoteWrappingStringEnumerator(enumeration, mRemotePlayer) );
   NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
 
   rv = wrapped->Init();

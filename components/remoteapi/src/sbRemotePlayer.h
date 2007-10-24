@@ -108,6 +108,17 @@ public:
                                  const nsAString &aClass,
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
+  static nsresult DispatchSecurityEvent( nsIDOMDocument *aDoc,
+                                         sbIRemotePlayer *aPlayer,
+                                         const nsAString &aClass,
+                                         const nsAString &aType,
+                                         const nsAString &aCategoryID,
+                                         PRBool aHasAccess,
+                                         PRBool aIsTrusted);
+
+  static nsresult GetJSScopeNameFromScope( const nsACString &aScopeName,
+                                           nsAString &aJSScopeName );
+
   sbRemoteNotificationManager* GetNotificationManager();
 
   static PRBool GetUserApprovalForHost( nsIURI *aURI,

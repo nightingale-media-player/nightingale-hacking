@@ -1,0 +1,95 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIDOMDocument;
+interface nsIDOMEvent;
+interface nsIURI;
+
+/*
+Event: SecurityEvent
+
+A <SecurityEvent> is passed to any event handlers listening for
+security permissions status related events fired on the document object.
+
+Note that the <Songbird> object must be accessed before any events will be
+raised. This will likely change in the future.
+
+  See Also:
+    <MediaItem>
+    <http://developer.mozilla.org/en/docs/DOM:event>
+    <http://developer.mozilla.org/en/docs/DOM:element.addEventListener>
+*/
+
+/**
+ * \interface sbIRemoteSecurityEvent
+ * \brief An interface to maintain information about the last security event that
+ *        occurred
+ */
+[scriptable, uuid(2faa8d0f-b3b0-4545-b06b-2ce92d53e7e3)]
+ interface sbIRemoteSecurityEvent : nsISupports
+{
+  /*
+  Prop: siteScope
+
+  The <Security> site scope.
+  */
+  readonly attribute nsIURI siteScope;
+
+  /*
+  Prop: category
+
+  The <Security> category.
+
+  Type: String
+  */
+  readonly attribute AString category;
+
+  /*
+  Prop: categoryID
+
+  The <Security> category ID. This is the internal ID for the <category>.
+
+  Type: String
+  */
+  readonly attribute AString categoryID;
+
+  /*
+  Prop: hasAccess
+
+  Indicates if access is granted for the <Security> category.
+
+  Type: Boolean
+  */
+  readonly attribute boolean hasAccess;
+};
+
+[scriptable, uuid(422A0C68-C4A3-40c6-974D-37D1E71BAE8C)]
+interface sbIMutableRemoteSecurityEvent : nsISupports
+{
+  void initSecurityEvent(in nsIDOMDocument aDoc, in nsIURI aSiteScope, in AString aCategory, in AString aCategoryID, in boolean aHasAccess);
+};

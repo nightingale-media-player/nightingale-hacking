@@ -31,42 +31,81 @@
     <title>Remote API Test: hat notification</title>
     <script>
       var myDiv;
+      var obs;
+      
       function load() {
-        //document.addEventListener('RemoteAPIPrefChanged', handleEvent, true);
-        document.addEventListener('RemoteAPIPrefChanged', handleEvent, true);
-        //document.addEventListener('RemoteAPIPrefPanelOpened', handleEvent, true);
-        document.addEventListener('RemoteAPIPrefPanelOpened', handleEvent, true);
-        //document.addEventListener('RemoteAPIHatClosed', handleEvent, true);
-        document.addEventListener('RemoteAPIHatClosed', handleEvent, true);
+        //document.addEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+        document.addEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+        //document.addEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+        document.addEventListener('RemoteAPIPermissionDenied', handleEvent, true);
         myDiv = document.getElementById("output");
 
-        var sb = songbird;
-        var mainLib = songbird.mainLibrary;
+        obs = {
+          observe: function ( aSubject, aTopic, aData) {
+          textfield.setAttribute("value", aData);
+          }
+        }
+
+        // Bind it to the value of the dataremote
+        songbird.addListener("metadata.artist", obs);
       }
 
       function unload() {
-        //document.removeEventListener('RemoteAPIPrefChanged', handleEvent, true);
-        document.removeEventListener('RemoteAPIPrefChanged', handleEvent, true);
-        //document.removeEventListener('RemoteAPIPrefPanelOpened', handleEvent, true);
-        document.removeEventListener('RemoteAPIPrefPanelOpened', handleEvent, true);
-        //document.removeEventListener('RemoteAPIHatClosed', handleEvent, true);
-        document.removeEventListener('RemoteAPIHatClosed', handleEvent, true);
+        //document.removeEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+        document.removeEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+        //document.removeEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+        document.removeEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+        
+        songbird.removeListener("metadata.artist", obs);
       }
 
       function handleEvent(aEvent) {
-        if ( aEvent.type == 'RemoteAPIHatClosed' ) {
-          alert ("You have opted to not configure Songbird so our webpage can interact " +
-                 "with it at it's fullest. Please open tools->options and configure the " +
-                 "RemoteAPI preferences to allow us XYZ permissions.");
+      var msg = "";
+        try {
+          for (var i in songbird) {
+            msg += i + ": " + songbird[i] + "\n";
+          }
+          alert(msg);
+        } catch(e) { dump(e); }
+        
+        if ( aEvent.type == 'RemoteAPIPermissionDenied' ) {
+          msg = "You have opted to not configure Songbird so our webpage can interact " +
+                "with it at it's fullest. Please open tools->options and configure the " +
+                "RemoteAPI preferences to allow us XYZ permissions. " + 
+                "Below are the permissions that were requested.";
+                
+          myDiv.appendChild( document.createTextNode(msg) );
+          
+          myDiv.appendChild( document.createElement("br") );
+          
+          myDiv.appendChild( document.createTextNode(aEvent.category + 
+                                                     " ( " + aEvent.categoryID + " ) , " + 
+                                                     aEvent.hasAccess));
         }
-        myDiv.appendChild(document.createTextNode(aEvent['originalTarget'].location));
-        myDiv.appendChild(document.createElement("br"));
-        //for ( var stuff in aEvent ) {
-        //  myDiv.appendChild(document.createTextNode(stuff + " is " + aEvent[stuff]));
-        //  myDiv.appendChild(document.createElement("br"));
-        //}
-        myDiv.appendChild(document.createTextNode(aEvent['type']));
-        myDiv.appendChild(document.createElement("br"));
+        else if( aEvent.type == "RemoteAPIPermissionChanged" ) {
+          msg = "Thanks! You've granted the following permissions:";
+          
+          myDiv.appendChild( document.createTextNode(msg) );
+          
+          myDiv.appendChild( document.createElement("br") );
+          
+          myDiv.appendChild( document.createTextNode(aEvent.category + 
+                                                     " ( " + aEvent.categoryID + " ) , " + 
+                                                     aEvent.hasAccess) );
+          myDiv.appendChild(document.createElement("br"));
+        }
+        
+        try {
+          myDiv.appendChild(document.createTextNode(aEvent.originalTarget.location));
+        } catch (e) { }
+          
+          myDiv.appendChild(document.createElement("br"));
+        
+        try {
+          myDiv.appendChild(document.createTextNode(aEvent.type));
+        } catch (e) { }
+          
+          myDiv.appendChild(document.createElement("br"));
       }
     </script>
   </head>

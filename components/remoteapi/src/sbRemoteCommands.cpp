@@ -117,6 +117,29 @@ sbRemoteCommands::~sbRemoteCommands()
 
 // ---------------------------------------------------------------------------
 //
+//                          sbISecurityAggregator
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbRemoteCommands::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
+{
+  NS_ENSURE_STATE(mWeakOwner);
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+
+  nsresult rv;
+  *aRemotePlayer = nsnull;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer( do_QueryReferent(mWeakOwner) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  remotePlayer.swap( *aRemotePlayer );
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
 //                        sbIRemoteCommands
 //
 // ---------------------------------------------------------------------------

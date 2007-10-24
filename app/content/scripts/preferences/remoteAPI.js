@@ -87,7 +87,7 @@ var gRemoteAPIPane = {
   onUnload: function(event) {
     if (gRemoteAPIPane.isChanged && window.opener && window.opener.document) {
       var evt = document.createEvent("Events");
-      evt.initEvent("RemoteAPIPrefChanged", true, false);
+      evt.initEvent("RemoteAPIPermissionChanged", true, false);
       window.opener.document.dispatchEvent(evt);
     }
   },

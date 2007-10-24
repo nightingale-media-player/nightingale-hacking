@@ -35,6 +35,7 @@ XPIDL_SRCS = \
              sbIRemoteLibrary.idl \
              sbIRemoteMediaList.idl \
              sbIRemotePlayer.idl \
+             sbIRemoteSecurityEvent.idl \
              sbIRemoteWebPlaylist.idl \
              sbISecurityAggregator.idl \
              sbISecurityMixin.idl \

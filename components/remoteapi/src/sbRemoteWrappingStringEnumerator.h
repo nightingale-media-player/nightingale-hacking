@@ -50,12 +50,15 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_FORWARD_SAFE_NSISTRINGENUMERATOR(mWrapped)
 
-  sbRemoteWrappingStringEnumerator(nsIStringEnumerator* aWrapped) :
-    mWrapped(aWrapped) {};
+  sbRemoteWrappingStringEnumerator(nsIStringEnumerator* aWrapped,
+                                   sbRemotePlayer *aRemotePlayer) :
+    mWrapped(aWrapped),
+    mRemotePlayer(aRemotePlayer) {};
 
 protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
   nsCOMPtr<nsIStringEnumerator> mWrapped;
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
 };
 
 #endif // __SB_REMOTE_WRAPPING_STRING_ENUMERATOR_H__

@@ -71,6 +71,31 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWrappingSimpleEnumerator)
 
 // ---------------------------------------------------------------------------
 //
+//                          sbISecurityAggregator
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbRemoteWrappingSimpleEnumerator::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
+{
+  NS_ENSURE_STATE(mRemotePlayer);
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+
+  nsresult rv;
+  *aRemotePlayer = nsnull;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+
+  rv = mRemotePlayer->QueryInterface( NS_GET_IID( sbIRemotePlayer ), getter_AddRefs( remotePlayer ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  remotePlayer.swap( *aRemotePlayer );
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
 //                            nsISimpleEnumerator
 //
 // ---------------------------------------------------------------------------

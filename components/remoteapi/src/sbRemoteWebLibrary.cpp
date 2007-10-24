@@ -113,6 +113,12 @@ sbRemoteWebLibrary::~sbRemoteWebLibrary()
   LOG(("sbRemoteWebLibrary::~sbRemoteWebLibrary()"));
 }
 
+// ---------------------------------------------------------------------------
+//
+//                            Helper Methods
+//
+// ---------------------------------------------------------------------------
+
 nsresult
 sbRemoteWebLibrary::InitInternalMediaList()
 {

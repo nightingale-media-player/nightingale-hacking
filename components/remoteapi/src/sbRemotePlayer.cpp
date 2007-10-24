@@ -32,6 +32,7 @@
 #include "sbRemoteLibraryBase.h"
 #include "sbRemoteMediaItemStatusEvent.h"
 #include "sbRemotePlaylistClickEvent.h"
+#include "sbRemoteSecurityEvent.h"
 #include "sbRemoteSiteLibrary.h"
 #include "sbRemoteWebLibrary.h"
 #include "sbRemoteWebPlaylist.h"
@@ -205,10 +206,6 @@ const static char* sPublicCategoryConversions[][2] =
 #define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER                 NS_LITERAL_STRING("sb-tabbrowser")
-
-#define SB_EVENT_RAPI_PREF_PANEL_OPENED   NS_LITERAL_STRING("RemoteAPIPrefPanelOpened")
-#define SB_EVENT_RAPI_PREF_CHANGED        NS_LITERAL_STRING("RemoteAPIPrefChanged")
-#define SB_EVENT_RAPI_HAT_CLOSED          NS_LITERAL_STRING("RemoteAPIHatClosed")
 
 #define SB_LIB_NAME_MAIN      "main"
 #define SB_LIB_NAME_WEB       "web"
@@ -445,14 +442,11 @@ sbRemotePlayer::Init()
   LOG(("sbRemotePlayer::Init() -- registering PlaylistCellClick listener"));
   eventTarget->AddEventListener( NS_LITERAL_STRING("PlaylistCellClick"), this , PR_TRUE );
 
-  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefPanelOpened listener"));
-  eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED, this , PR_TRUE );
+  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPermissionDenied listener"));
+  eventTarget->AddEventListener( SB_EVENT_RAPI_PERMISSION_DENIED, this , PR_TRUE );
 
-  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIHatClosed listener"));
-  eventTarget->AddEventListener( SB_EVENT_RAPI_HAT_CLOSED, this , PR_TRUE );
-
-  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPrefChanged listener"));
-  eventTarget->AddEventListener( SB_EVENT_RAPI_PREF_CHANGED, this , PR_TRUE );
+  LOG(("sbRemotePlayer::Init() -- registering RemoteAPIPermissionChanged listener"));
+  eventTarget->AddEventListener( SB_EVENT_RAPI_PERMISSION_CHANGED, this , PR_TRUE );
 
   mNotificationMgr = new sbRemoteNotificationManager();
   NS_ENSURE_TRUE(mNotificationMgr, NS_ERROR_OUT_OF_MEMORY);
@@ -481,6 +475,30 @@ sbRemotePlayer::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   mInitialized = PR_TRUE;
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                          sbISecurityAggregator
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
+{
+  NS_ENSURE_ARG_POINTER(aRemotePlayer);
+
+  nsresult rv;
+  *aRemotePlayer = nsnull;
+
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+
+  rv = QueryInterface( NS_GET_IID( sbIRemotePlayer ), getter_AddRefs( remotePlayer ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  remotePlayer.swap( *aRemotePlayer );
 
   return NS_OK;
 }
@@ -592,6 +610,17 @@ sbRemotePlayer::SetSiteScope(const nsACString & aDomain, const nsACString & aPat
 
   mScopeDomain = domain;
   mScopePath = path;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetSiteScope(nsIURI * *aURI)
+{
+  NS_ENSURE_ARG_POINTER(aURI);
+  
+  nsCOMPtr<nsIURI> uri = GetSiteScopeURI();
+  uri.swap(*aURI);
 
   return NS_OK;
 }
@@ -1402,23 +1431,17 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove PlaylistCellClick listener from document" );
 
-    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_PANEL_OPENED,
+    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PERMISSION_DENIED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
-                  "Failed to remove RemoteAPIPrefPanelOpened listener from document" );
+                  "Failed to remove RemoteAPIPermissionDenied listener from document" );
 
-    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_HAT_CLOSED,
+    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PERMISSION_CHANGED,
                                            this ,
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
-                  "Failed to remove RemoteAPIHatClosed listener from document" );
-
-    rv = eventTarget->RemoveEventListener( SB_EVENT_RAPI_PREF_CHANGED,
-                                           this ,
-                                           PR_TRUE );
-    NS_ASSERTION( NS_SUCCEEDED(rv),
-                  "Failed to remove RemoteAPIPrefChanged listener from document" );
+                  "Failed to remove RemoteAPIPermissionChanged listener from document" );
     // the page is going away, clean up things that will cause us to
     // not get released.
     UnregisterCommands();
@@ -1546,29 +1569,66 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     }
 
     if ( allow ) {
-      LOG(( "sbRemotePlayer::HandleEvent() - %s",
-            NS_LossyConvertUTF16toASCII(type).get() ));
-      if ( type.Equals(SB_EVENT_RAPI_PREF_CHANGED)) {
-        return FireEventToContent( RAPI_EVENT_CLASS, type );
-      }
-      else if (type.Equals(SB_EVENT_RAPI_PREF_PANEL_OPENED) ||
-               type.Equals(SB_EVENT_RAPI_HAT_CLOSED) ) {
 
-        nsString value;
-        if (type.Equals(SB_EVENT_RAPI_HAT_CLOSED)) {
-          value.AssignLiteral("dismissed");
-        }
-        else {
-          value.AssignLiteral("preferences");
-        }
+      nsString value;
+      if ( type.Equals( SB_EVENT_RAPI_PERMISSION_DENIED ) ) {
+        value.AssignLiteral("dismissed");
+      }
+      else {
+        value.AssignLiteral("preferences");
+      }
+
+      nsCOMPtr<sbIRemoteSecurityEvent> securityEvent = 
+        do_QueryInterface(aEvent, &rv);
+      
+      if ( NS_SUCCEEDED( rv ) ) {
+
+        nsAutoString categoryID;
+        rv = securityEvent->GetCategoryID(categoryID);
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        PRBool hasAccess = PR_FALSE;
+        rv = securityEvent->GetHasAccess(&hasAccess);
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        nsCOMPtr<sbISecurityMixin> mixin = do_QueryInterface(mSecurityMixin, &rv);
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        nsCOMPtr<nsIDOMDocument> doc;
+        rv = mixin->GetNotificationDocument(getter_AddRefs(doc));
+        NS_ENSURE_SUCCESS( rv, rv );
+
+        rv = DispatchSecurityEvent(doc, 
+                                   this, 
+                                   RAPI_EVENT_CLASS, 
+                                   type, 
+                                   categoryID, 
+                                   hasAccess, 
+                                   PR_FALSE );
+
         rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
                                   value,
                                   EmptyString());
-        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_SUCCESS( rv, rv );
+      }
+      else {
+        LOG(( "sbRemotePlayer::HandleEvent() - %s",
+          NS_LossyConvertUTF16toASCII(type).get() ));
 
-        return FireEventToContent( RAPI_EVENT_CLASS, type );
-      } else {
-        LOG(("sbRemotePlayer::HandleEvent() - Some other event"));
+        if ( type.Equals(SB_EVENT_RAPI_PERMISSION_CHANGED) ) {
+          return FireEventToContent( RAPI_EVENT_CLASS, type );
+        }
+        else if ( type.Equals(SB_EVENT_RAPI_PERMISSION_DENIED) ) {
+
+          rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
+                                    value,
+                                    EmptyString());
+          NS_ENSURE_SUCCESS( rv, rv );
+
+          return FireEventToContent( RAPI_EVENT_CLASS, type );
+        } else {
+          LOG(("sbRemotePlayer::HandleEvent() - Some other event"));
+        }
       }
     }
   }
@@ -1944,6 +2004,79 @@ sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
   // Fire an event to the chrome system. This event will NOT get to content.
   PRBool dummy;
   return eventTarget->DispatchEvent( event, &dummy );
+}
+
+nsresult
+sbRemotePlayer::DispatchSecurityEvent( nsIDOMDocument *aDoc,
+                                       sbIRemotePlayer *aPlayer,
+                                       const nsAString &aClass,
+                                       const nsAString &aType,
+                                       const nsAString &aCategoryID,
+                                       PRBool aHasAccess,
+                                       PRBool aIsTrusted )
+{
+  LOG(( "sbRemotePlayer::DispatchSecurityEvent(%s, %s)",
+    NS_LossyConvertUTF16toASCII(aClass).get(),
+    NS_LossyConvertUTF16toASCII(aType).get() ));
+
+  NS_ENSURE_ARG_POINTER(aDoc);
+  NS_ENSURE_ARG_POINTER(aPlayer);
+
+  nsresult rv;
+
+  //change interfaces to create the event
+  nsCOMPtr<nsIDOMDocumentEvent>
+    docEvent( do_QueryInterface( aDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv , rv );
+
+  //create the event
+  nsCOMPtr<nsIDOMEvent> event;
+  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
+  NS_ENSURE_STATE(event);
+  rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
+  NS_ENSURE_SUCCESS( rv , rv );
+
+  //use the document for a target.
+  nsCOMPtr<nsIDOMEventTarget>
+    eventTarget( do_QueryInterface( aDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  //make the event untrusted
+  nsCOMPtr<nsIPrivateDOMEvent> privEvt( do_QueryInterface( event, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  privEvt->SetTrusted(aIsTrusted);
+
+  // make our custom media item wrapper event
+  nsRefPtr<sbRemoteSecurityEvent> securityEvent( new sbRemoteSecurityEvent() );
+  securityEvent->Init();
+
+  nsAutoString category;
+  sbRemotePlayer::GetJSScopeNameFromScope( NS_LossyConvertUTF16toASCII( aCategoryID ), category );
+
+  nsCOMPtr<nsIURI> scopeURI;
+  rv = aPlayer->GetSiteScope( getter_AddRefs( scopeURI ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  securityEvent->InitEvent( event, scopeURI, category, aCategoryID, aHasAccess );
+
+  // Fire an event to the chrome system.
+  PRBool dummy;
+  return eventTarget->DispatchEvent( securityEvent, &dummy );
+}
+
+/*static*/ nsresult 
+sbRemotePlayer::GetJSScopeNameFromScope( const nsACString &aScopeName,
+                                         nsAString &aJSScopeName )
+
+{
+  for ( PRUint32 i=0; i < NS_ARRAY_LENGTH(sPublicCategoryConversions); i++ ) {
+    if ( StringBeginsWith( nsDependentCString(sPublicCategoryConversions[i][1]), aScopeName ) ) {
+      aJSScopeName.Assign( NS_ConvertASCIItoUTF16( sPublicCategoryConversions[i][0] ) );
+      return NS_OK;
+    }
+  }
+  
+  return NS_ERROR_INVALID_ARG;
 }
 
 nsresult
