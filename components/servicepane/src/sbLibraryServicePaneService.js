@@ -1340,8 +1340,8 @@ function sbLibraryServicePane__appendMenuItem(aContextMenu, aLabel, aCallback) {
 
 sbLibraryServicePane.prototype._appendCommands =
 function sbLibraryServicePane__appendCommands(aContextMenu, aList, aParentWindow) {
-  if (this._lastMenuitems) {
-  var pnode = this._lastMenuitems.parentNode;
+  if (this._lastMenuitems && this._lastMenuitems.destroy) {
+    var pnode = this._lastMenuitems.parentNode;
     this._lastMenuitems.destroy();
     this._lastMenuitems = null;
   }
