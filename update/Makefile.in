@@ -88,6 +88,7 @@ complete-patch:: removed-files
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
     "$(TARGET_DIR)"
+	$(CYGWIN_WRAPPER) $(RM) -f $(REMOVED_FILES_GEN)
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
