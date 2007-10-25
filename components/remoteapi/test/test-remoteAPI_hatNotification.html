@@ -79,14 +79,6 @@
       }
 
       function handleEvent(aEvent) {
-      var msg = "";
-        try {
-          for (var i in songbird) {
-            msg += i + ": " + songbird[i] + "\n";
-          }
-          alert(msg);
-        } catch(e) { dump(e); }
-        
         if ( aEvent.type == 'RemoteAPIPermissionDenied' ) {
           msg = "You have opted to not configure Songbird so our webpage can interact " +
                 "with it at it's fullest. Please open tools->options and configure the " +
@@ -108,7 +100,7 @@
           
           myDiv.appendChild( document.createElement("br") );
           
-          myDiv.appendChild( document.createTextNode(aEvent.siteScope.spec + ", " + aEvent.category + 
+          myDiv.appendChild( document.createTextNode(aEvent.category + 
                                                      " ( " + aEvent.categoryID + " ) , " + 
                                                      aEvent.hasAccess) );
           myDiv.appendChild(document.createElement("br"));
