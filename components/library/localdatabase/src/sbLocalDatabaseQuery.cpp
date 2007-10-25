@@ -323,22 +323,7 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
   rv = mBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mIsFullLibrary) {
-    rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = mBuilder->AddColumn(CONSTRAINT_ALIAS, ORDINAL_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, ROWID_COLUMN);
+  rv = AddResortColumns();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddBaseTable();
@@ -394,66 +379,80 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
   rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add a join for each sort
-  PRUint32 numSorts = mSorts->Length();
-  for (PRUint32 i = 1; i < numSorts; i++) {
-    const sbLocalDatabaseGUIDArray::SortSpec& sort = mSorts->ElementAt(i);
+  rv = AddMultiSorts();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString joinedAlias(SORT_ALIAS);
-    joinedAlias.AppendInt(i);
+  rv = mBuilder->ToString(aQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
-    rv = mBuilder->CreateMatchCriterionTable(joinedAlias,
-                                             GUID_COLUMN,
-                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                             MEDIAITEMS_ALIAS,
-                                             GUID_COLUMN,
-                                             getter_AddRefs(criterionGuid));
-    NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
 
-    if (SB_IsTopLevelProperty(sort.property)) {
-      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
-                                          MEDIAITEMS_TABLE,
-                                          joinedAlias,
-                                          criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
+nsresult
+sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
+{
+  NS_ENSURE_FALSE(mIsDistinct, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(mSorts->Length() > 1, NS_ERROR_UNEXPECTED);
 
-      nsString columnName;
-      rv = SB_GetTopLevelPropertyColumn(sort.property, columnName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mBuilder->AddOrder(joinedAlias, columnName, sort.ascending);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
-      rv = mBuilder->CreateMatchCriterionLong(joinedAlias,
-                                              NS_LITERAL_STRING("property_id"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              GetPropertyId(sort.property),
-                                              getter_AddRefs(criterionProperty));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mBuilder->CreateAndCriterion(criterionGuid,
-                                        criterionProperty,
-                                        getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
-                                          PROPERTIES_TABLE,
-                                          joinedAlias,
-                                          criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mBuilder->AddOrder(joinedAlias, OBJSORTABLE_COLUMN, sort.ascending);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
+  if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
+    return NS_ERROR_NOT_IMPLEMENTED;
   }
 
-  // Sort on the base table's guid column so make sure things are sorted the
-  // same on all platforms
-  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS, GUID_COLUMN, PR_TRUE);
+  nsresult rv;
+
+  rv = mBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddResortColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddBaseTable();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Left join the properties table to the base table includig a null
+  // constraint on the obj_sortable column
+  nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
+  rv = mBuilder->CreateMatchCriterionTable(NS_LITERAL_STRING("_p0"),
+                                           GUID_COLUMN,
+                                           sbISQLSelectBuilder::MATCH_EQUALS,
+                                           MEDIAITEMS_ALIAS,
+                                           GUID_COLUMN,
+                                           getter_AddRefs(criterionGuid));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
+  rv = mBuilder->CreateMatchCriterionLong(NS_LITERAL_STRING("_p0"),
+                                          NS_LITERAL_STRING("property_id"),
+                                          sbISQLSelectBuilder::MATCH_EQUALS,
+                                          GetPropertyId(mSorts->ElementAt(0).property),
+                                          getter_AddRefs(criterionProperty));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = mBuilder->CreateAndCriterion(criterionGuid,
+                                    criterionProperty,
+                                    getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
+                                      PROPERTIES_TABLE,
+                                      NS_LITERAL_STRING("_p0"),
+                                      criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->CreateMatchCriterionNull(NS_LITERAL_STRING("_p0"),
+                                          OBJSORTABLE_COLUMN,
+                                          sbISQLSelectBuilder::MATCH_EQUALS,
+                                          getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddMultiSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mBuilder->ToString(aQuery);
@@ -1293,6 +1292,101 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
     rv = mBuilder->AddCriterion(criterion);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseQuery::AddResortColumns()
+{
+  nsresult rv;
+
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsFullLibrary) {
+    rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddColumn(CONSTRAINT_ALIAS, ORDINAL_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, ROWID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseQuery::AddMultiSorts()
+{
+  nsresult rv;
+  PRUint32 numSorts = mSorts->Length();
+  for (PRUint32 i = 1; i < numSorts; i++) {
+    const sbLocalDatabaseGUIDArray::SortSpec& sort = mSorts->ElementAt(i);
+
+    nsString joinedAlias(SORT_ALIAS);
+    joinedAlias.AppendInt(i);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
+    rv = mBuilder->CreateMatchCriterionTable(joinedAlias,
+                                             GUID_COLUMN,
+                                             sbISQLSelectBuilder::MATCH_EQUALS,
+                                             MEDIAITEMS_ALIAS,
+                                             GUID_COLUMN,
+                                             getter_AddRefs(criterionGuid));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    if (SB_IsTopLevelProperty(sort.property)) {
+      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
+                                          MEDIAITEMS_TABLE,
+                                          joinedAlias,
+                                          criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString columnName;
+      rv = SB_GetTopLevelPropertyColumn(sort.property, columnName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mBuilder->AddOrder(joinedAlias, columnName, sort.ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
+      rv = mBuilder->CreateMatchCriterionLong(joinedAlias,
+                                              NS_LITERAL_STRING("property_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              GetPropertyId(sort.property),
+                                              getter_AddRefs(criterionProperty));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->CreateAndCriterion(criterionGuid,
+                                        criterionProperty,
+                                        getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
+                                          PROPERTIES_TABLE,
+                                          joinedAlias,
+                                          criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddOrder(joinedAlias, OBJSORTABLE_COLUMN, sort.ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+
+  // Sort on the base table's guid column so make sure things are sorted the
+  // same on all platforms
+  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS, GUID_COLUMN, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

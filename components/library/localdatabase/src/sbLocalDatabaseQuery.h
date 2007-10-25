@@ -57,6 +57,7 @@ public:
   nsresult GetNullGuidRangeQuery(nsAString& aQuery);
   nsresult GetPrefixSearchQuery(nsAString& aQuery);
   nsresult GetResortQuery(nsAString& aQuery);
+  nsresult GetNullResortQuery(nsAString& aQuery);
 
 private:
   struct sbAddJoinInfo {
@@ -82,6 +83,8 @@ private:
   nsresult AddJoinToGetNulls();
   nsresult AddDistinctConstraint();
   nsresult AddDistinctGroupBy();
+  nsresult AddResortColumns();
+  nsresult AddMultiSorts();
 
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
