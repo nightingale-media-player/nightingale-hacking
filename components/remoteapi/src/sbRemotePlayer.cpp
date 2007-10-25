@@ -1154,6 +1154,19 @@ sbRemotePlayer::RemoveListener( const nsAString &aKey,
   return NS_OK;
 }
 
+static inline 
+nsresult StandardPlay(sbIPlaylistPlayback *aPlaylistPlayback ) {
+  NS_ENSURE_ARG_POINTER(aPlaylistPlayback);
+  
+  PRBool success = PR_FALSE;
+  nsCOMPtr<sbIPlaylistPlayback> gpps(aPlaylistPlayback);
+  
+  nsresult rv = gpps->Play( &success );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return success ? NS_OK : NS_ERROR_FAILURE;
+}
+
 NS_IMETHODIMP
 sbRemotePlayer::Play()
 {
@@ -1162,6 +1175,19 @@ sbRemotePlayer::Play()
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
+
+  // Check to see if playback is currently paused.
+  // If currently paused, first attempt to resume.
+  PRBool isPaused = PR_FALSE;
+  
+  rv = GetPaused( &isPaused );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if ( isPaused ) {
+    PRBool isPlaying = PR_FALSE;
+    mGPPS->Play( &isPlaying );
+    return isPlaying ? NS_OK : NS_ERROR_FAILURE;
+  }
 
   if (!mWebPlaylistWidget) {
     rv = AcquirePlaylistWidget();
@@ -1175,18 +1201,22 @@ sbRemotePlayer::Play()
   // If the page does not have a web playlist, fall back
   // to the standard play button functionality.
   if (!mediaListView) {
-    PRBool retval;
-    mGPPS->Play( &retval );
-    return retval ? NS_OK : NS_ERROR_FAILURE;
+    return StandardPlay(mGPPS);
   }
 
   nsCOMPtr<nsITreeView> treeView;
   rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  if ( NS_FAILED(rv) ) {
+    NS_WARNING("Got list view but did not get tree view! Falling back to standard play.");
+    return StandardPlay(mGPPS);
+  }
 
   nsCOMPtr<nsITreeSelection> treeSelection;
   rv = treeView->GetSelection( getter_AddRefs(treeSelection) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  if ( NS_FAILED(rv) ) {
+    NS_WARNING("Got tree view but did not get selection in view. Falling back to standard play.");
+    return StandardPlay(mGPPS);
+  }
 
   PRInt32 index;
   treeSelection->GetCurrentIndex(&index);
@@ -1697,7 +1727,7 @@ sbRemotePlayer::ConfirmPlaybackControl() {
       return NS_ERROR_FAILURE;
     }
 
-    rv = mGPPS->GetPlaying( &isPlaying );
+    rv = GetPlaying( &isPlaying );
     NS_ENSURE_SUCCESS( rv, rv );
 
     if (!isPlaying) {
@@ -1782,9 +1812,8 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                           getter_AddRefs(bundle) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
-  const PRUnichar *formatParams[2];
+  const PRUnichar *formatParams[1] = {0};
   formatParams[0] = branding.BeginReading();
-  formatParams[1] = host.BeginReading();
 
   nsString message;
   rv = bundle->FormatStringFromName( aMessageKey.BeginReading(),

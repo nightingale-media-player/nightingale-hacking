@@ -58,6 +58,14 @@
     <p> Expose playback controls through a webpage interface. Display the
         some artist metadata to show success of the playback calls.  </p>
     <br />
+    <p> Four test tracks to force the web playlist to appear</p>
+    <ul>
+      <li><a href="http://dingo.songbirdnest.com/~aus/test/Shout_Out_Out_Out_Out_-_%20Procrastinators_Fight_Song.mp3">Shout Out Out Out</a></li>
+      <li><a href="http://dingo.songbirdnest.com/~aus/test/TH_Orion-House_Maybe.mp3">House Maybe</a></li>
+      <li><a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a></li>
+      <li><a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a></li>
+    </ul>
+    
     <form>
       <input type="button" id="play_button" value="play"
              onclick="songbird.play();" /> 
@@ -75,17 +83,11 @@
              onclick="songbird.next();" /> 
       <br />
       <input type="button" id="playURL_button" value="playURL"
-             onclick="songbird.playURL('http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3')" />
+             onclick="songbird.playURL('http://dingo.songbirdnest.com/~aus/test/TH_Orion-Crippled_Floor.mp3')" />
       <br />
       Below is the textfield to show the artist:<br />
       <input type="text" id="artist-text" value="" length="30" />
     </form>
-
-    <p> Force a web playlist to appear. <br />
-      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
-      <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
-    </p>
-
   </body>
 </html>
 
