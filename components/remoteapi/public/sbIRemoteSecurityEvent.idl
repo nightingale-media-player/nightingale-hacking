@@ -39,6 +39,111 @@ security permissions status related events fired on the document object.
 Note that the <Songbird> object must be accessed before any events will be
 raised. This will likely change in the future.
 
+Example:
+  The JavaScript code.
+
+  (start code)
+  var myDiv;
+  
+  function load() {
+    document.addEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+    document.addEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+    
+    myDiv = document.getElementById("output");
+
+    // Enumerate some items in the mainLibrary.
+    var listener = {
+      onEnumerationBegin: function() {
+        return true;
+      },
+      onEnumeratedItem: function(list, item) {
+        var artistName = item.getProperty("http://songbirdnest.com/data/1.0#artistName");
+        var trackName = item.getProperty("http://songbirdnest.com/data/1.0#trackName");
+        
+        //I love this track.
+        var msg = "I love this song, it's by " + 
+                  artistName + 
+                  " and I think the track name is " + 
+                  trackName;
+                  
+        myDiv.appendChild( document.createTextNode(msg) );
+        myDiv.appendChild( document.createElement("br") );
+
+        // Returning false stops the enumeration process, returning true continues.
+        return true;
+      },
+      onEnumerationEnd: function() {
+        var msg = "I like a lot of tracks."
+        
+        // I like a lot of tracks.
+        myDiv.appendChild( document.createTextNode(msg) );
+        
+        return true;
+      }
+    };
+    
+    // Attempt to enumerate all items
+    songbird.mainLibrary.enumerateAllItems(listener, 0);
+  }
+
+  function unload() {
+    document.removeEventListener('RemoteAPIPermissionChanged', handleEvent, true);
+    document.removeEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+  }
+
+  function handleEvent(aEvent) {
+    var msg = "";
+
+    if ( aEvent.type == 'RemoteAPIPermissionDenied' ) {
+      msg = "You have opted to not configure Songbird so our webpage can interact " +
+            "with it at it's fullest. Please open tools->options and configure the " +
+            "RemoteAPI preferences to allow us XYZ permissions. " + 
+            "Below are the permissions that were requested.";
+            
+      myDiv.appendChild( document.createTextNode(msg) );
+      
+      myDiv.appendChild( document.createElement("br") );
+      
+      myDiv.appendChild( document.createTextNode(aEvent.category + 
+                                                 " ( " + aEvent.categoryID + " ) , " + 
+                                                 aEvent.hasAccess));
+    }
+    else if( aEvent.type == "RemoteAPIPermissionChanged" ) {
+      msg = "Thanks! You've granted the following permissions:";
+      
+      myDiv.appendChild( document.createTextNode(msg) );
+      
+      myDiv.appendChild( document.createElement("br") );
+      
+      myDiv.appendChild( document.createTextNode(aEvent.category + 
+                                                 " ( " + aEvent.categoryID + " ) , " + 
+                                                 aEvent.hasAccess) );
+      myDiv.appendChild(document.createElement("br"));
+    }
+    
+    try {
+      myDiv.appendChild(document.createTextNode(aEvent.originalTarget.location));
+    } catch (e) { }
+      
+      myDiv.appendChild(document.createElement("br"));
+    
+    try {
+      myDiv.appendChild(document.createTextNode(aEvent.type));
+    } catch (e) { }
+      
+      myDiv.appendChild(document.createElement("br"));
+  }
+  (end code)
+
+  And then don't forget to add this to your HTML code.
+
+  (start code)
+  <body onload="load();" onunload="unload();"> 
+    <div id="output">
+    </div>
+  </body>
+  (end code)
+
   See Also:
     <MediaItem>
     <http://developer.mozilla.org/en/docs/DOM:event>
@@ -57,6 +162,9 @@ raised. This will likely change in the future.
   Prop: siteScope
 
   The <Security> site scope.
+
+  Type:
+    URI
   */
   readonly attribute nsIURI siteScope;
 
@@ -65,7 +173,8 @@ raised. This will likely change in the future.
 
   The <Security> category.
 
-  Type: String
+  Type: 
+    String
   */
   readonly attribute AString category;
 
@@ -74,7 +183,8 @@ raised. This will likely change in the future.
 
   The <Security> category ID. This is the internal ID for the <category>.
 
-  Type: String
+  Type:
+    String
   */
   readonly attribute AString categoryID;
 
@@ -83,7 +193,8 @@ raised. This will likely change in the future.
 
   Indicates if access is granted for the <Security> category.
 
-  Type: Boolean
+  Type: 
+    Boolean
   */
   readonly attribute boolean hasAccess;
 };

@@ -31,32 +31,51 @@
     <title>Remote API Test: hat notification</title>
     <script>
       var myDiv;
-      var obs;
       
       function load() {
-        //document.addEventListener('RemoteAPIPermissionChanged', handleEvent, true);
         document.addEventListener('RemoteAPIPermissionChanged', handleEvent, true);
-        //document.addEventListener('RemoteAPIPermissionDenied', handleEvent, true);
         document.addEventListener('RemoteAPIPermissionDenied', handleEvent, true);
+        
         myDiv = document.getElementById("output");
 
-        obs = {
-          observe: function ( aSubject, aTopic, aData) {
-          textfield.setAttribute("value", aData);
-          }
-        }
+        // Enumerate some items in the mainLibrary.
+        var listener = {
+          onEnumerationBegin: function() {
+            return true;
+          },
+          onEnumeratedItem: function(list, item) {
+            var artistName = item.getProperty("http://songbirdnest.com/data/1.0#artistName");
+            var trackName = item.getProperty("http://songbirdnest.com/data/1.0#trackName");
+            
+            //I love this track.
+            var msg = "I love this song, it's by " + 
+                      artistName + 
+                      " and I think the track name is " + 
+                      trackName;
+                      
+            myDiv.appendChild( document.createTextNode(msg) );
+            myDiv.appendChild( document.createElement("br") );
 
-        // Bind it to the value of the dataremote
-        songbird.addListener("metadata.artist", obs);
+            // Returning false stops the enumeration process, returning true continues.
+            return true;
+          },
+          onEnumerationEnd: function() {
+            var msg = "I like a lot of tracks."
+            
+            // I like a lot of tracks.
+            myDiv.appendChild( document.createTextNode(msg) );
+            
+            return true;
+          }
+        };
+        
+        // Attempt to enumerate all items
+        songbird.mainLibrary.enumerateAllItems(listener, 0);
       }
 
       function unload() {
-        //document.removeEventListener('RemoteAPIPermissionChanged', handleEvent, true);
         document.removeEventListener('RemoteAPIPermissionChanged', handleEvent, true);
-        //document.removeEventListener('RemoteAPIPermissionDenied', handleEvent, true);
         document.removeEventListener('RemoteAPIPermissionDenied', handleEvent, true);
-        
-        songbird.removeListener("metadata.artist", obs);
       }
 
       function handleEvent(aEvent) {
@@ -89,7 +108,7 @@
           
           myDiv.appendChild( document.createElement("br") );
           
-          myDiv.appendChild( document.createTextNode(aEvent.category + 
+          myDiv.appendChild( document.createTextNode(aEvent.siteScope.spec + ", " + aEvent.category + 
                                                      " ( " + aEvent.categoryID + " ) , " + 
                                                      aEvent.hasAccess) );
           myDiv.appendChild(document.createElement("br"));
