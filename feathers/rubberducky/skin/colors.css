@@ -887,7 +887,7 @@ notification[type="warning"]
 notification > button 
 {
   background-color: #eaeabb; /** yellow button */
-  border-top: 1px solid #ffffcc; /** yellow */
+  border-top: 1px solid #EDF3F0; /** Light Color 3 */
   border-left: 1px solid #B3BAAC; /** Light Color 1 */
   border-right: 1px solid #B3BAAC; /** Light Color 1 */
   border-bottom: 1px solid #8A8F84; /** Light Color 2 */
