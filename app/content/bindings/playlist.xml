@@ -570,9 +570,11 @@
     }
 
     // Break the cycle between ourselves and the tree view
-    var mediaListViewTreeView =
-      this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
-    mediaListViewTreeView.observer = null;
+    if (this.treeView) {
+      var mediaListViewTreeView =
+        this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+      mediaListViewTreeView.observer = null;
+    }
     this.treeView = null;
     this.mediaListView = null;
 
