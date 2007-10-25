@@ -54,7 +54,7 @@
 #include <nsCOMArray.h>
 
 // The maximum characters to output in a single PR_LOG call
-#define MAX_PRLOG 500
+#define MAX_PRLOG 400
 
 #if defined(_WIN32)
   #include <direct.h>
