@@ -3,13 +3,78 @@
   <compounddef id="interfacesb_i_security_aggregator" kind="interface" prot="public">
     <compoundname>sbISecurityAggregator</compoundname>
     <includes refid="sb_i_security_aggregator_8idl" local="no">sbISecurityAggregator.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_remote_player" kindref="compound">sbIRemotePlayer</ref></type>
+        <definition>readonly attribute sbIRemotePlayer sbISecurityAggregator::remotePlayer</definition>
+        <argsstring></argsstring>
+        <name>remotePlayer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
 <para>A marker interface for objects that aggregate the security mixin. </para>    </briefdescription>
     <detaileddescription>
 <para><simplesect kind="see"><para>nsISecurityCheckedComponent </para><para><ref refid="interfacesb_i_security_mixin" kindref="compound">sbISecurityMixin</ref> </para><para>sbRemotePlayer </para><para>sbSecurityMixin </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="52" bodyend="54"/>
+    <collaborationgraph>
+      <node id="600">
+        <label>sbIRemoteLibrary</label>
+        <link refid="interfacesb_i_remote_library"/>
+      </node>
+      <node id="599">
+        <label>sbIRemoteCommands</label>
+        <link refid="interfacesb_i_remote_commands"/>
+        <childnode refid="598" relation="usage">
+          <edgelabel>owner</edgelabel>
+        </childnode>
+      </node>
+      <node id="602">
+        <label>sbIRemoteMediaList</label>
+        <link refid="interfacesb_i_remote_media_list"/>
+      </node>
+      <node id="598">
+        <label>sbIRemotePlayer</label>
+        <link refid="interfacesb_i_remote_player"/>
+        <childnode refid="599" relation="usage">
+          <edgelabel>commands</edgelabel>
+        </childnode>
+        <childnode refid="600" relation="usage">
+          <edgelabel>webLibrary
+mainLibrary
+siteLibrary</edgelabel>
+        </childnode>
+        <childnode refid="601" relation="usage">
+          <edgelabel>webPlaylist</edgelabel>
+        </childnode>
+        <childnode refid="602" relation="usage">
+          <edgelabel>downloadMediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="597">
+        <label>sbISecurityAggregator</label>
+        <link refid="interfacesb_i_security_aggregator"/>
+        <childnode refid="598" relation="usage">
+          <edgelabel>remotePlayer</edgelabel>
+        </childnode>
+      </node>
+      <node id="601">
+        <label>sbIRemoteWebPlaylist</label>
+        <link refid="interfacesb_i_remote_web_playlist"/>
+        <childnode refid="602" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="54" bodyend="57"/>
     <listofallmembers>
+      <member refid="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" prot="public" virt="non-virtual"><scope>sbISecurityAggregator</scope><name>remotePlayer</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

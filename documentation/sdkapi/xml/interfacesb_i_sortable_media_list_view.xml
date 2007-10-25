@@ -77,14 +77,14 @@
 <para>Media lists that implement this interface declare themselves as sortable.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="644">
+      <node id="653">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="643">
+      <node id="652">
         <label>sbISortableMediaListView</label>
         <link refid="interfacesb_i_sortable_media_list_view"/>
-        <childnode refid="644" relation="usage">
+        <childnode refid="653" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>

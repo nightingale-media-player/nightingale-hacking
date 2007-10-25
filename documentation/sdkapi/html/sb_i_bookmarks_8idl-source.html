@@ -95,35 +95,57 @@
 <a name="l00033"></a>00033 
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a>;
 <a name="l00035"></a>00035 
-<a name="l00043"></a>00043 [scriptable, uuid(0e3c0208-72d8-4676-86e1-138db0801586)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_bookmarks.html">00044</a> interface <a class="code" href="interfacesb_i_bookmarks.html" title="Definition of the sbIBookmarks interface.">sbIBookmarks</a> : nsISupports {
-<a name="l00045"></a>00045   <span class="comment">/* \brief Add a bookmark</span>
-<a name="l00046"></a>00046 <span class="comment">   * Add a bookmark to the service pane. It will be added in the default</span>
-<a name="l00047"></a>00047 <span class="comment">   * folder. The bookmark's node object will be returned.</span>
-<a name="l00048"></a>00048 <span class="comment">   * If a bookmark for the given URL already exists then null will be</span>
-<a name="l00049"></a>00049 <span class="comment">   * returned.</span>
-<a name="l00050"></a>00050 <span class="comment">   * \param aURL The URL of the page to bookmark</span>
-<a name="l00051"></a>00051 <span class="comment">   * \param aTitle The title of the bookmark</span>
-<a name="l00052"></a>00052 <span class="comment">   * \param aIconURL The url of the icon to associate with the bookmark</span>
-<a name="l00053"></a>00053 <span class="comment">   * \return a new bookmark node or null if the bookmark already exists</span>
-<a name="l00054"></a>00054 <span class="comment">   */</span>
-<a name="l00055"></a>00055   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> addBookmark (in AString aURL,
-<a name="l00056"></a>00056                                   in AString aTitle,
-<a name="l00057"></a>00057                                   in AString aIconURL);
-<a name="l00058"></a>00058   <span class="comment">/* \brief Add a folder</span>
-<a name="l00059"></a>00059 <span class="comment">   * Add a bookmark folder in the service pane.</span>
-<a name="l00060"></a>00060 <span class="comment">   * \param aTitle The title of the folder</span>
-<a name="l00061"></a>00061 <span class="comment">   * \return a new folder node</span>
-<a name="l00062"></a>00062 <span class="comment">   */</span>
-<a name="l00063"></a>00063   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> addFolder (in AString aTitle);
-<a name="l00064"></a>00064   
-<a name="l00065"></a>00065   <span class="comment">/* \brief Test if a bookmark exists for the given URL</span>
-<a name="l00066"></a>00066 <span class="comment">   * \param aURL the URL to test</span>
-<a name="l00067"></a>00067 <span class="comment">   * \return true if the bookmark exists, false if it does not</span>
-<a name="l00068"></a>00068 <span class="comment">   */</span>
-<a name="l00069"></a>00069   <span class="keywordtype">boolean</span> bookmarkExists (in AString aURL);
-<a name="l00070"></a>00070 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 12 15:42:10 2007 for Songbird by&nbsp;
+<a name="l00043"></a>00043 [scriptable, uuid(12526a6a-3edd-4853-97a9-2a729d883178)]
+<a name="l00044"></a>00044 
+<a name="l00045"></a><a class="code" href="interfacesb_i_bookmarks.html">00045</a> interface <a class="code" href="interfacesb_i_bookmarks.html" title="Definition of the sbIBookmarks interface.">sbIBookmarks</a> : nsISupports {
+<a name="l00046"></a>00046   <span class="comment">/* \brief Add a bookmark</span>
+<a name="l00047"></a>00047 <span class="comment">   * Add a bookmark to the service pane. It will be added in the default</span>
+<a name="l00048"></a>00048 <span class="comment">   * folder. The bookmark's node object will be returned.</span>
+<a name="l00049"></a>00049 <span class="comment">   * If a bookmark for the given URL already exists then null will be</span>
+<a name="l00050"></a>00050 <span class="comment">   * returned.</span>
+<a name="l00051"></a>00051 <span class="comment">   * \param aURL The URL of the page to bookmark</span>
+<a name="l00052"></a>00052 <span class="comment">   * \param aTitle The title of the bookmark</span>
+<a name="l00053"></a>00053 <span class="comment">   * \param aIconURL The url of the icon to associate with the bookmark</span>
+<a name="l00054"></a>00054 <span class="comment">   * \return a new bookmark node or null if the bookmark already exists</span>
+<a name="l00055"></a>00055 <span class="comment">   */</span>
+<a name="l00056"></a>00056   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> addBookmark (in AString aURL,
+<a name="l00057"></a>00057                                   in AString aTitle,
+<a name="l00058"></a>00058                                   in AString aIconURL);
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060   <span class="comment">/* \brief Add a bookmark to a specific service pane node (folder)</span>
+<a name="l00061"></a>00061 <span class="comment">   * Given a folder, add a bookmark to that folder.  The bookmark's node</span>
+<a name="l00062"></a>00062 <span class="comment">   * object will be returned.  The folder node can be the node returned</span>
+<a name="l00063"></a>00063 <span class="comment">   * by addFolder() or getNode()</span>
+<a name="l00064"></a>00064 <span class="comment">   * If a bookmark for the given URL already exists then null will be</span>
+<a name="l00065"></a>00065 <span class="comment">   * returned.</span>
+<a name="l00066"></a>00066 <span class="comment">   * \param aURL The URL of the page to bookmark</span>
+<a name="l00067"></a>00067 <span class="comment">   * \param aTitle The title of the bookmark</span>
+<a name="l00068"></a>00068 <span class="comment">   * \param aIconURL The URL of the icon to associate with the bookmark</span>
+<a name="l00069"></a>00069 <span class="comment">   * \param aParent The parent node (folder) to add the bookmark to</span>
+<a name="l00070"></a>00070 <span class="comment">   * \param aBefore The node (bookmark) to insert this bookmark before</span>
+<a name="l00071"></a>00071 <span class="comment">   * \return a new bookmark node or null if the bookmark already exists</span>
+<a name="l00072"></a>00072 <span class="comment">   * \see addBookmark()</span>
+<a name="l00073"></a>00073 <span class="comment">   */</span>
+<a name="l00074"></a>00074   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> addBookmarkAt (in AString aURL,
+<a name="l00075"></a>00075                                   in AString aTitle,
+<a name="l00076"></a>00076                                   in AString aIconURL,
+<a name="l00077"></a>00077                                   in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aParent,
+<a name="l00078"></a>00078                                   in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aBefore);
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080   <span class="comment">/* \brief Add a folder</span>
+<a name="l00081"></a>00081 <span class="comment">   * Add a bookmark folder in the service pane.</span>
+<a name="l00082"></a>00082 <span class="comment">   * \param aTitle The title of the folder</span>
+<a name="l00083"></a>00083 <span class="comment">   * \return a new folder node</span>
+<a name="l00084"></a>00084 <span class="comment">   */</span>
+<a name="l00085"></a>00085   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> addFolder (in AString aTitle);
+<a name="l00086"></a>00086   
+<a name="l00087"></a>00087   <span class="comment">/* \brief Test if a bookmark exists for the given URL</span>
+<a name="l00088"></a>00088 <span class="comment">   * \param aURL the URL to test</span>
+<a name="l00089"></a>00089 <span class="comment">   * \return true if the bookmark exists, false if it does not</span>
+<a name="l00090"></a>00090 <span class="comment">   */</span>
+<a name="l00091"></a>00091   <span class="keywordtype">boolean</span> bookmarkExists (in AString aURL);
+<a name="l00092"></a>00092 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

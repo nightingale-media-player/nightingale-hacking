@@ -46,37 +46,53 @@
         </inbodydescription>
         <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="212"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_library_1689e240436391a9555834a107d0a9dce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
-        <definition>sbIRemoteMediaList sbIRemoteLibrary::createMediaList</definition>
-        <argsstring>(in AString aType)</argsstring>
-        <name>createMediaList</name>
+        <definition>sbIRemoteMediaList sbIRemoteLibrary::createSimpleMediaList</definition>
+        <argsstring>(in AString aName,[optional] in AString aSiteID)</argsstring>
+        <name>createSimpleMediaList</name>
         <param>
           <type>in AString</type>
-          <declname>aType</declname>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in AString</type>
+          <declname>aSiteID</declname>
         </param>
         <briefdescription>
-<para>Create a media list. </para>        </briefdescription>
+<para>Create a simple media list. </para>        </briefdescription>
         <detaileddescription>
-<para>Create and insert a media list into the library for the type passed in.</para><para><parameterlist kind="param"><parameteritem>
+<para>Create and insert a media list into the library with the name passed in.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aType</parametername>
+<parametername>aName</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>A string, either &apos;simple&apos; or &apos;smart&apos;</para></parameterdescription>
+<para>A string to be used as an identifier on the media list. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSiteID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An optional string to be used as an identifier on the media list. If unspecified the siteID will be set to the value of aName.</para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>the media list that gets created. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="255"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="258"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_library_1f49eeaaea6d0735699b3b22f6a590e48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_library_167fbbd789bc4206200e26052a1d07ab2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemoteLibrary::createMediaListFromURL</definition>
-        <argsstring>(in AString aURL,[optional] in sbICreateMediaListCallback aCallback)</argsstring>
+        <argsstring>(in AString aName, in AString aURL,[optional] in sbICreateMediaListCallback aCallback,[optional] in AString aSiteID)</argsstring>
         <name>createMediaListFromURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
         <param>
           <type>in AString</type>
           <declname>aURL</declname>
@@ -85,6 +101,11 @@
           <attributes>[optional]</attributes>
           <type>in <ref refid="interfacesb_i_create_media_list_callback" kindref="compound">sbICreateMediaListCallback</ref></type>
           <declname>aCallback</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in AString</type>
+          <declname>aSiteID</declname>
         </param>
         <briefdescription>
 <para>Create a media list from an exising playlist file. </para>        </briefdescription>
@@ -107,7 +128,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="307"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="312"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -132,34 +153,34 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="317"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="322"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_library_1f9de9839ed202a11c8d0ae63147a10a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
-        <definition>sbIRemoteMediaList sbIRemoteLibrary::getMediaListByName</definition>
-        <argsstring>(in AString aName)</argsstring>
-        <name>getMediaListByName</name>
+        <definition>sbIRemoteMediaList sbIRemoteLibrary::getMediaListBySiteID</definition>
+        <argsstring>(in AString aSiteID)</argsstring>
+        <name>getMediaListBySiteID</name>
         <param>
           <type>in AString</type>
-          <declname>aName</declname>
+          <declname>aSiteID</declname>
         </param>
         <briefdescription>
-<para>Get the media list with the given name. </para>        </briefdescription>
+<para>Get the media list with the given siteID. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aName</parametername>
+<parametername>aSiteID</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>- The name of the media list to fetch </para></parameterdescription>
+<para>- The siteID of the media list to fetch </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>The corresponding media list, or null if not found </para></simplesect>
-<simplesect kind="see"><para><ref refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" kindref="member">createMediaList</ref> </para></simplesect>
+<simplesect kind="see"><para>createMediaList </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="360"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="356"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -172,7 +193,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="400"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="396"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -185,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="441"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="437"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -198,7 +219,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="482"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="478"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_101044d10e08f514db0ce7bbac52ef472" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -211,7 +232,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="522"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="518"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_library_13062b2b86e74ad3251b43cf707b8ab29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -224,7 +245,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="561"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="557"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -232,27 +253,27 @@
     <detaileddescription>
 <para>The remote library interface allows websites to create media items in a manner more web-like than the internal <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> interface. Access to the main or web libraries is controlled through permissions set by the user. Some or all calls made to objects that implement this interface may fail based on the permissions set by the user. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="572">
+      <node id="574">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="571" relation="public-inheritance">
+        <childnode refid="573" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="571">
+      <node id="573">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </inheritancegraph>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="111" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="110" bodyend="562"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="111" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="110" bodyend="558"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>connectToDefaultLibrary</name></member>
       <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaItem</name></member>
-      <member refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaList</name></member>
-      <member refid="interfacesb_i_remote_library_1f49eeaaea6d0735699b3b22f6a590e48" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaListFromURL</name></member>
+      <member refid="interfacesb_i_remote_library_167fbbd789bc4206200e26052a1d07ab2" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaListFromURL</name></member>
+      <member refid="interfacesb_i_remote_library_1689e240436391a9555834a107d0a9dce" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createSimpleMediaList</name></member>
       <member refid="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getAlbums</name></member>
       <member refid="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getArtists</name></member>
       <member refid="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getGenres</name></member>
-      <member refid="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getMediaListByName</name></member>
+      <member refid="interfacesb_i_remote_library_1f9de9839ed202a11c8d0ae63147a10a1" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getMediaListBySiteID</name></member>
       <member refid="interfacesb_i_remote_library_13062b2b86e74ad3251b43cf707b8ab29" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getPlaylists</name></member>
       <member refid="interfacesb_i_remote_library_101044d10e08f514db0ce7bbac52ef472" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>getYears</name></member>
       <member refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>scanMediaOnCreation</name></member>

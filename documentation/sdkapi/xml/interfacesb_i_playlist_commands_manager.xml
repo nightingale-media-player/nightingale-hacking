@@ -23,7 +23,7 @@
         <briefdescription>
 <para>Register <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects to be shown for specific playlists in order to let the user perform actions on a playlist&apos;s items. </para>        </briefdescription>
         <detaileddescription>
-<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a playlist ui object (currently, playlist.xml).</para><para>Commands can be registered for a spcific playlist, or for any &quot;type&quot; characteristic.</para><para><parameterlist kind="param"><parameteritem>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a playlist ui object (currently, playlist.xml).</para><para>Commands can be registered for a specific playlist, or for any &quot;type&quot; characteristic.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aContextGUID</parametername>
 </parameternamelist>
@@ -115,7 +115,7 @@
         <briefdescription>
 <para>Retrieve the list of <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects registered to a specific playlist. </para>        </briefdescription>
         <detaileddescription>
-<para>Given the guid, table, and type strings, returns a list of duplicate instances of the corresponding <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects.</para><para>The &quot;type&quot; string has precedence over the &quot;guid&quot;/&quot;table&quot; pair.</para><para>This method is only called by the playlist UI object, in playlist.xml</para><para><parameterlist kind="param"><parameteritem>
+<para>Given the guid, and type strings, returns a list of duplicate instances of the corresponding <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects.</para><para>The &quot;guid&quot; has precedence over the &quot;type&quot; string.</para><para>This method is only called by the playlist UI object, in playlist.xml</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aContextGUID</parametername>
 </parameternamelist>
@@ -157,7 +157,7 @@
         <briefdescription>
 <para>Register <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects to be shown for specific playlists in order to let the user perform actions on the playlist itself. </para>        </briefdescription>
         <detaileddescription>
-<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a service tree ui object (currently, servicePane.xml).</para><para>Commands can be registered for a spcific playlist, or for any &quot;type&quot; characteristic.</para><para><parameterlist kind="param"><parameteritem>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a service tree ui object (currently, servicePane.xml).</para><para>Commands can be registered for a specific playlist, or for any &quot;type&quot; characteristic.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aContextGUID</parametername>
 </parameternamelist>
@@ -249,7 +249,7 @@
         <briefdescription>
 <para>Retrieve the list of <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects to be used for a specific playlist. </para>        </briefdescription>
         <detaileddescription>
-<para>Given the guid, table, and type strings, returns a list of duplicate instances of the corresponding <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects.</para><para>The &quot;type&quot; string has precedence over the &quot;guid&quot;/&quot;table&quot; pair.</para><para>This method is only called by the playlist UI object, in playlist.xml</para><para><parameterlist kind="param"><parameteritem>
+<para>Given the guid, and type strings, returns a list of duplicate instances of the corresponding <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects.</para><para>The &quot;guid&quot; has precedence over the &quot;type&quot; string.</para><para>This method is only called by the servicepane UI object, in servicePane.xml</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aContextGUID</parametername>
 </parameternamelist>
@@ -265,7 +265,7 @@
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>A simple enumerator of newly duplicated command object instances to be used for this playlist </para></simplesect>
-<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, playlist.xml </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, servicePane.xml </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>

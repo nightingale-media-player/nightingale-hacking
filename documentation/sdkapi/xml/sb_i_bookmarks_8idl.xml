@@ -4,13 +4,13 @@
     <compoundname>sbIBookmarks.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="433">
+      <node id="436">
         <label>components/servicepane/public/sbIBookmarks.idl</label>
         <link refid="sbIBookmarks.idl"/>
-        <childnode refid="434" relation="include">
+        <childnode refid="437" relation="include">
         </childnode>
       </node>
-      <node id="434">
+      <node id="437">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,34 +50,56 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(0e3c0208-72d8-4676-86e1-138db0801586)]</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_bookmarks" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bookmarks" kindref="compound" tooltip="Definition of the sbIBookmarks interface.">sbIBookmarks</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>bookmark</highlight></codeline>
-<codeline lineno="46"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Add<sp/>a<sp/>bookmark<sp/>to<sp/>the<sp/>service<sp/>pane.<sp/>It<sp/>will<sp/>be<sp/>added<sp/>in<sp/>the<sp/>default</highlight></codeline>
-<codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/>*<sp/>folder.<sp/>The<sp/>bookmark&apos;s<sp/>node<sp/>object<sp/>will<sp/>be<sp/>returned.</highlight></codeline>
-<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/>*<sp/>If<sp/>a<sp/>bookmark<sp/>for<sp/>the<sp/>given<sp/>URL<sp/>already<sp/>exists<sp/>then<sp/>null<sp/>will<sp/>be</highlight></codeline>
-<codeline lineno="49"><highlight class="comment"><sp/><sp/><sp/>*<sp/>returned.</highlight></codeline>
-<codeline lineno="50"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>page<sp/>to<sp/>bookmark</highlight></codeline>
-<codeline lineno="51"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>bookmark</highlight></codeline>
-<codeline lineno="52"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aIconURL<sp/>The<sp/>url<sp/>of<sp/>the<sp/>icon<sp/>to<sp/>associate<sp/>with<sp/>the<sp/>bookmark</highlight></codeline>
-<codeline lineno="53"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>bookmark<sp/>node<sp/>or<sp/>null<sp/>if<sp/>the<sp/>bookmark<sp/>already<sp/>exists</highlight></codeline>
-<codeline lineno="54"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addBookmark<sp/>(in<sp/>AString<sp/>aURL,</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aTitle,</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aIconURL);</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>folder</highlight></codeline>
-<codeline lineno="59"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Add<sp/>a<sp/>bookmark<sp/>folder<sp/>in<sp/>the<sp/>service<sp/>pane.</highlight></codeline>
-<codeline lineno="60"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>folder</highlight></codeline>
-<codeline lineno="61"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>folder<sp/>node</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addFolder<sp/>(in<sp/>AString<sp/>aTitle);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Test<sp/>if<sp/>a<sp/>bookmark<sp/>exists<sp/>for<sp/>the<sp/>given<sp/>URL</highlight></codeline>
-<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>the<sp/>URL<sp/>to<sp/>test</highlight></codeline>
-<codeline lineno="67"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>true<sp/>if<sp/>the<sp/>bookmark<sp/>exists,<sp/>false<sp/>if<sp/>it<sp/>does<sp/>not</highlight></codeline>
-<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>bookmarkExists<sp/>(in<sp/>AString<sp/>aURL);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(12526a6a-3edd-4853-97a9-2a729d883178)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_bookmarks" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bookmarks" kindref="compound" tooltip="Definition of the sbIBookmarks interface.">sbIBookmarks</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>bookmark</highlight></codeline>
+<codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Add<sp/>a<sp/>bookmark<sp/>to<sp/>the<sp/>service<sp/>pane.<sp/>It<sp/>will<sp/>be<sp/>added<sp/>in<sp/>the<sp/>default</highlight></codeline>
+<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/>*<sp/>folder.<sp/>The<sp/>bookmark&apos;s<sp/>node<sp/>object<sp/>will<sp/>be<sp/>returned.</highlight></codeline>
+<codeline lineno="49"><highlight class="comment"><sp/><sp/><sp/>*<sp/>If<sp/>a<sp/>bookmark<sp/>for<sp/>the<sp/>given<sp/>URL<sp/>already<sp/>exists<sp/>then<sp/>null<sp/>will<sp/>be</highlight></codeline>
+<codeline lineno="50"><highlight class="comment"><sp/><sp/><sp/>*<sp/>returned.</highlight></codeline>
+<codeline lineno="51"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>page<sp/>to<sp/>bookmark</highlight></codeline>
+<codeline lineno="52"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>bookmark</highlight></codeline>
+<codeline lineno="53"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aIconURL<sp/>The<sp/>url<sp/>of<sp/>the<sp/>icon<sp/>to<sp/>associate<sp/>with<sp/>the<sp/>bookmark</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>bookmark<sp/>node<sp/>or<sp/>null<sp/>if<sp/>the<sp/>bookmark<sp/>already<sp/>exists</highlight></codeline>
+<codeline lineno="55"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addBookmark<sp/>(in<sp/>AString<sp/>aURL,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aTitle,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aIconURL);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>bookmark<sp/>to<sp/>a<sp/>specific<sp/>service<sp/>pane<sp/>node<sp/>(folder)</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Given<sp/>a<sp/>folder,<sp/>add<sp/>a<sp/>bookmark<sp/>to<sp/>that<sp/>folder.<sp/><sp/>The<sp/>bookmark&apos;s<sp/>node</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/>*<sp/>object<sp/>will<sp/>be<sp/>returned.<sp/><sp/>The<sp/>folder<sp/>node<sp/>can<sp/>be<sp/>the<sp/>node<sp/>returned</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"><sp/><sp/><sp/>*<sp/>by<sp/>addFolder()<sp/>or<sp/>getNode()</highlight></codeline>
+<codeline lineno="64"><highlight class="comment"><sp/><sp/><sp/>*<sp/>If<sp/>a<sp/>bookmark<sp/>for<sp/>the<sp/>given<sp/>URL<sp/>already<sp/>exists<sp/>then<sp/>null<sp/>will<sp/>be</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"><sp/><sp/><sp/>*<sp/>returned.</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>page<sp/>to<sp/>bookmark</highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>bookmark</highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aIconURL<sp/>The<sp/>URL<sp/>of<sp/>the<sp/>icon<sp/>to<sp/>associate<sp/>with<sp/>the<sp/>bookmark</highlight></codeline>
+<codeline lineno="69"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParent<sp/>The<sp/>parent<sp/>node<sp/>(folder)<sp/>to<sp/>add<sp/>the<sp/>bookmark<sp/>to</highlight></codeline>
+<codeline lineno="70"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aBefore<sp/>The<sp/>node<sp/>(bookmark)<sp/>to<sp/>insert<sp/>this<sp/>bookmark<sp/>before</highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>bookmark<sp/>node<sp/>or<sp/>null<sp/>if<sp/>the<sp/>bookmark<sp/>already<sp/>exists</highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\see<sp/>addBookmark()</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addBookmarkAt<sp/>(in<sp/>AString<sp/>aURL,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aTitle,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aIconURL,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aParent,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>aBefore);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>folder</highlight></codeline>
+<codeline lineno="81"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Add<sp/>a<sp/>bookmark<sp/>folder<sp/>in<sp/>the<sp/>service<sp/>pane.</highlight></codeline>
+<codeline lineno="82"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aTitle<sp/>The<sp/>title<sp/>of<sp/>the<sp/>folder</highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>a<sp/>new<sp/>folder<sp/>node</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>addFolder<sp/>(in<sp/>AString<sp/>aTitle);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Test<sp/>if<sp/>a<sp/>bookmark<sp/>exists<sp/>for<sp/>the<sp/>given<sp/>URL</highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aURL<sp/>the<sp/>URL<sp/>to<sp/>test</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>true<sp/>if<sp/>the<sp/>bookmark<sp/>exists,<sp/>false<sp/>if<sp/>it<sp/>does<sp/>not</highlight></codeline>
+<codeline lineno="90"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>bookmarkExists<sp/>(in<sp/>AString<sp/>aURL);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIBookmarks.idl"/>
   </compounddef>

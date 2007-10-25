@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="32"><highlight class="comment">Class:<sp/>MediaItemStatusEvent</highlight></codeline>
+<codeline lineno="32"><highlight class="comment">Event:<sp/>MediaItemStatusEvent</highlight></codeline>
 <codeline lineno="33"><highlight class="comment"></highlight></codeline>
 <codeline lineno="34"><highlight class="comment">A<sp/>&lt;MediaItemStatusEvent&gt;<sp/>is<sp/>passed<sp/>to<sp/>any<sp/>event<sp/>handlers<sp/>listening<sp/>for</highlight></codeline>
 <codeline lineno="35"><highlight class="comment">media<sp/>item<sp/>status<sp/>related<sp/>events<sp/>fired<sp/>on<sp/>the<sp/>document<sp/>object.</highlight></codeline>

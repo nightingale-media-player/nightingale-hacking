@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="582" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="582" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="578" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="578" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -54,7 +54,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="610"/>
+        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="606"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -62,41 +62,41 @@
     <detaileddescription>
 <para>This interface is used by the player to connect a library to a specific library for a website. The library serves as an area a website can use to create the media items and lists needed to populate web playlists and to transfer into the user&apos;s main library. The restrictions on the site library are lighter allowing a website to do more with the limited scope of the site library. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="582">
+      <node id="586">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="583" relation="public-inheritance">
+        <childnode refid="587" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="583">
+      <node id="587">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="584">
+      <node id="588">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="585" relation="public-inheritance">
+        <childnode refid="589" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="585">
+      <node id="589">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="577" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="576" bodyend="611"/>
+    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="573" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="572" bodyend="607"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToDefaultLibrary</name></member>
       <member refid="interfacesb_i_remote_site_library_101c31dbb438cc8eda58b14e787c65c7c" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToSiteLibrary</name></member>
       <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaItem</name></member>
-      <member refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaList</name></member>
-      <member refid="interfacesb_i_remote_library_1f49eeaaea6d0735699b3b22f6a590e48" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaListFromURL</name></member>
+      <member refid="interfacesb_i_remote_library_167fbbd789bc4206200e26052a1d07ab2" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createMediaListFromURL</name></member>
+      <member refid="interfacesb_i_remote_library_1689e240436391a9555834a107d0a9dce" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createSimpleMediaList</name></member>
       <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>filename</name></member>
       <member refid="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getAlbums</name></member>
       <member refid="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getArtists</name></member>
       <member refid="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getGenres</name></member>
-      <member refid="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getMediaListByName</name></member>
+      <member refid="interfacesb_i_remote_library_1f9de9839ed202a11c8d0ae63147a10a1" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getMediaListBySiteID</name></member>
       <member refid="interfacesb_i_remote_library_13062b2b86e74ad3251b43cf707b8ab29" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getPlaylists</name></member>
       <member refid="interfacesb_i_remote_library_101044d10e08f514db0ce7bbac52ef472" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getYears</name></member>
       <member refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>scanMediaOnCreation</name></member>

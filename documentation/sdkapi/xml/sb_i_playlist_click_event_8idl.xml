@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="32"><highlight class="comment">Class:<sp/>PlaylistClickEvent</highlight></codeline>
+<codeline lineno="32"><highlight class="comment">Event:<sp/>PlaylistClickEvent</highlight></codeline>
 <codeline lineno="33"><highlight class="comment"></highlight></codeline>
 <codeline lineno="34"><highlight class="comment">A<sp/>&lt;PlaylistClickEvent&gt;<sp/>is<sp/>passed<sp/>to<sp/>any<sp/>event<sp/>handlers<sp/>listening<sp/>for<sp/>the</highlight></codeline>
 <codeline lineno="35"><highlight class="comment">PlaylistCellClick<sp/>event<sp/>fired<sp/>on<sp/>the<sp/>document<sp/>object.<sp/><sp/>This<sp/>event<sp/>object<sp/>also</highlight></codeline>
@@ -60,56 +60,83 @@
 <codeline lineno="38"><highlight class="comment">Note<sp/>that<sp/>the<sp/>&lt;Songbird&gt;<sp/>object<sp/>must<sp/>be<sp/>accessed<sp/>before<sp/>any<sp/>events<sp/>will<sp/>be<sp/>raised.</highlight></codeline>
 <codeline lineno="39"><highlight class="comment">This<sp/>will<sp/>likely<sp/>change<sp/>in<sp/>the<sp/>future.</highlight></codeline>
 <codeline lineno="40"><highlight class="comment"></highlight></codeline>
-<codeline lineno="41"><highlight class="comment">Example:</highlight></codeline>
-<codeline lineno="42"><highlight class="comment"><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="43"><highlight class="comment"><sp/><sp/>function<sp/>onPlaylistCellClick(<sp/>aEvent<sp/>)<sp/>{</highlight></codeline>
-<codeline lineno="44"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>we<sp/>can<sp/>get<sp/>the<sp/>property<sp/>that<sp/>was<sp/>clicked<sp/>on...</highlight></codeline>
-<codeline lineno="45"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.property);</highlight></codeline>
-<codeline lineno="46"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>or<sp/>the<sp/>&lt;MediaItem&gt;</highlight></codeline>
-<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.item.guid);</highlight></codeline>
-<codeline lineno="49"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="50"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>as<sp/>well<sp/>as<sp/>key<sp/>states<sp/>from<sp/>MouseEvent</highlight></codeline>
-<codeline lineno="51"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.ctrlKey);</highlight></codeline>
-<codeline lineno="52"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="53"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="54"><highlight class="comment"><sp/><sp/>//<sp/>initialize<sp/>the<sp/>event<sp/>system</highlight></codeline>
-<codeline lineno="55"><highlight class="comment"><sp/><sp/>songbird;</highlight></codeline>
-<codeline lineno="56"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="57"><highlight class="comment"><sp/><sp/>//<sp/>attach<sp/>the<sp/>event<sp/>handler</highlight></codeline>
-<codeline lineno="58"><highlight class="comment"><sp/><sp/>document.addEventListener(&quot;PlaylistCellClick&quot;,<sp/>onPlaylistCellClick,<sp/>false);</highlight></codeline>
-<codeline lineno="59"><highlight class="comment"><sp/><sp/>(end<sp/>code)</highlight></codeline>
-<codeline lineno="60"><highlight class="comment"></highlight></codeline>
-<codeline lineno="61"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem&gt;</highlight></codeline>
-<codeline lineno="63"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:event&gt;</highlight></codeline>
-<codeline lineno="64"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</highlight></codeline>
-<codeline lineno="65"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal">[scriptable,<sp/>uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]</highlight></codeline>
-<codeline lineno="73" refid="interfacesb_i_playlist_click_event" refkind="compound"><highlight class="normal"><sp/>interface<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="74"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="76"><highlight class="comment"><sp/><sp/>Prop:<sp/>property</highlight></codeline>
-<codeline lineno="77"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="78"><highlight class="comment"><sp/><sp/>The<sp/>name<sp/>of<sp/>the<sp/>property<sp/>(column)<sp/>that<sp/>was<sp/>clicked<sp/>on</highlight></codeline>
-<codeline lineno="79"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="80"><highlight class="comment"><sp/><sp/>Type:<sp/>String</highlight></codeline>
+<codeline lineno="41"><highlight class="comment">Fired<sp/>on:</highlight></codeline>
+<codeline lineno="42"><highlight class="comment"><sp/><sp/>document</highlight></codeline>
+<codeline lineno="43"><highlight class="comment"></highlight></codeline>
+<codeline lineno="44"><highlight class="comment">Properties<sp/>inherited<sp/>from<sp/>MouseEvent:</highlight></codeline>
+<codeline lineno="45"><highlight class="comment">ctrlKey<sp/>-<sp/>true<sp/>if<sp/>the<sp/>control<sp/>key<sp/>is<sp/>down<sp/>when<sp/>the<sp/>click<sp/>occurred</highlight></codeline>
+<codeline lineno="46"><highlight class="comment">altKey<sp/>-<sp/>true<sp/>if<sp/>the<sp/>alt<sp/>key<sp/>is<sp/>down</highlight></codeline>
+<codeline lineno="47"><highlight class="comment">shiftKey<sp/>-<sp/>true<sp/>if<sp/>the<sp/>shift<sp/>key<sp/>is<sp/>down</highlight></codeline>
+<codeline lineno="48"><highlight class="comment">metaKey<sp/>-<sp/>true<sp/>if<sp/>the<sp/>meta<sp/>key<sp/>is<sp/>down</highlight></codeline>
+<codeline lineno="49"><highlight class="comment">button<sp/>-<sp/>which<sp/>mouse<sp/>button<sp/>was<sp/>pressed;</highlight></codeline>
+<codeline lineno="50"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0<sp/>for<sp/>primary,<sp/>1<sp/>for<sp/>middle,<sp/>and<sp/>2<sp/>for<sp/>secondary.</highlight></codeline>
+<codeline lineno="51"><highlight class="comment">type<sp/>-<sp/>constant<sp/>string,<sp/>&quot;PlaylistCellClick&quot;</highlight></codeline>
+<codeline lineno="52"><highlight class="comment">target<sp/>-<sp/>the<sp/>document<sp/>object<sp/>of<sp/>the<sp/>content<sp/>page<sp/>which<sp/>displayed<sp/>the<sp/>playlist</highlight></codeline>
+<codeline lineno="53"><highlight class="comment">bubbles<sp/>-<sp/>contant<sp/>true</highlight></codeline>
+<codeline lineno="54"><highlight class="comment">cancelable<sp/>-<sp/>constant<sp/>true</highlight></codeline>
+<codeline lineno="55"><highlight class="comment">timeStamp<sp/>-<sp/>the<sp/>time<sp/>at<sp/>which<sp/>the<sp/>click<sp/>occurred,<sp/>as<sp/>milliseconds<sp/>from<sp/>epoch</highlight></codeline>
+<codeline lineno="56"><highlight class="comment"></highlight></codeline>
+<codeline lineno="57"><highlight class="comment">Properties<sp/>inherited<sp/>from<sp/>MouseEvent,<sp/>but<sp/>not<sp/>used:</highlight></codeline>
+<codeline lineno="58"><highlight class="comment">screenX</highlight></codeline>
+<codeline lineno="59"><highlight class="comment">screenY</highlight></codeline>
+<codeline lineno="60"><highlight class="comment">clientX</highlight></codeline>
+<codeline lineno="61"><highlight class="comment">clientY</highlight></codeline>
+<codeline lineno="62"><highlight class="comment">relatedTarget</highlight></codeline>
+<codeline lineno="63"><highlight class="comment">view</highlight></codeline>
+<codeline lineno="64"><highlight class="comment">detail</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"></highlight></codeline>
+<codeline lineno="66"><highlight class="comment">Example:</highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/>function<sp/>onPlaylistCellClick(<sp/>aEvent<sp/>)<sp/>{</highlight></codeline>
+<codeline lineno="69"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>we<sp/>can<sp/>get<sp/>the<sp/>property<sp/>that<sp/>was<sp/>clicked<sp/>on...</highlight></codeline>
+<codeline lineno="70"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.property);</highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>or<sp/>the<sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.item.guid);</highlight></codeline>
+<codeline lineno="74"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="75"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>as<sp/>well<sp/>as<sp/>key<sp/>states<sp/>from<sp/>MouseEvent</highlight></codeline>
+<codeline lineno="76"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(aEvent.ctrlKey);</highlight></codeline>
+<codeline lineno="77"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="79"><highlight class="comment"><sp/><sp/>//<sp/>initialize<sp/>the<sp/>event<sp/>system</highlight></codeline>
+<codeline lineno="80"><highlight class="comment"><sp/><sp/>songbird;</highlight></codeline>
 <codeline lineno="81"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="82"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="83"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem::getProperty()&gt;</highlight></codeline>
-<codeline lineno="84"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="85" refid="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="88"><highlight class="comment"><sp/><sp/>Prop:<sp/>item</highlight></codeline>
-<codeline lineno="89"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="90"><highlight class="comment"><sp/><sp/>The<sp/>&lt;MediaItem&gt;<sp/>that<sp/>was<sp/>clicked<sp/>on</highlight></codeline>
-<codeline lineno="91"><highlight class="comment"><sp/><sp/></highlight></codeline>
-<codeline lineno="92"><highlight class="comment"><sp/><sp/>Type:<sp/>&lt;MediaItem&gt;</highlight></codeline>
-<codeline lineno="93"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="94" refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>item;</highlight></codeline>
-<codeline lineno="95"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="82"><highlight class="comment"><sp/><sp/>//<sp/>attach<sp/>the<sp/>event<sp/>handler</highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/>document.addEventListener(&quot;PlaylistCellClick&quot;,<sp/>onPlaylistCellClick,<sp/>false);</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"><sp/><sp/>(end<sp/>code)</highlight></codeline>
+<codeline lineno="85"><highlight class="comment"></highlight></codeline>
+<codeline lineno="86"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:event&gt;</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</highlight></codeline>
+<codeline lineno="90"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal">[scriptable,<sp/>uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]</highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_playlist_click_event" refkind="compound"><highlight class="normal"><sp/>interface<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="101"><highlight class="comment"><sp/><sp/>Prop:<sp/>property</highlight></codeline>
+<codeline lineno="102"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="103"><highlight class="comment"><sp/><sp/>The<sp/>name<sp/>of<sp/>the<sp/>property<sp/>(column)<sp/>that<sp/>was<sp/>clicked<sp/>on<sp/>e.g.,</highlight></codeline>
+<codeline lineno="104"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;http://songbirdnest.com/data/1.0#trackName&quot;.<sp/><sp/>See</highlight></codeline>
+<codeline lineno="105"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;MediaItem::getProperty()&gt;<sp/>for<sp/>standard<sp/>properties.</highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/><sp/>Type:<sp/>String</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="109"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="110"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem::getProperty()&gt;</highlight></codeline>
+<codeline lineno="111"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="115"><highlight class="comment"><sp/><sp/>Prop:<sp/>item</highlight></codeline>
+<codeline lineno="116"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="117"><highlight class="comment"><sp/><sp/>The<sp/>&lt;MediaItem&gt;<sp/>that<sp/>corresponds<sp/>to<sp/>the<sp/>row<sp/>clicked<sp/>on.</highlight></codeline>
+<codeline lineno="118"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="119"><highlight class="comment"><sp/><sp/>Type:<sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="120"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>item;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl"/>
   </compounddef>

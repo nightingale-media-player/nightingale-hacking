@@ -124,6 +124,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_player.html#6b2fc642d2633e81693895ec2f40a2eb">previous</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Skip to the previous track and begin playing. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="62e15589a323331b09723ca29afebf26"></a><!-- doxytag: member="sbIRemotePlayer::getSiteScope" ref="62e15589a323331b09723ca29afebf26" args="()" -->
+nsIURI&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_player.html#62e15589a323331b09723ca29afebf26">getSiteScope</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the site scope. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d07ad92b9624b860ab2d5c522d61f35e"></a><!-- doxytag: member="sbIRemotePlayer::fireEventToContent" ref="d07ad92b9624b860ab2d5c522d61f35e" args="(in AString aClass, in AString aType)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_remote_player.html#d07ad92b9624b860ab2d5c522d61f35e">fireEventToContent</a> (in AString aClass, in AString aType)</td></tr>
 
@@ -206,7 +210,7 @@ This interface is a composition of many of our other interfaces with the goal of
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00100">100</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.<hr><h2>Member Data Documentation</h2>
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00117">117</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.<hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="291faf4a5b517b45abf8b1a1f212e669"></a><!-- doxytag: member="sbIRemotePlayer::playing" ref="291faf4a5b517b45abf8b1a1f212e669" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -225,7 +229,7 @@ The playing state of the application.
 true if the application is playing or paused </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00180">180</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00197">197</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="21d48ba0c9ac4258a5ad0fe0594df654"></a><!-- doxytag: member="sbIRemotePlayer::paused" ref="21d48ba0c9ac4258a5ad0fe0594df654" args="" -->
@@ -246,7 +250,7 @@ The paused state of the application.
 true if the application is paused </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00199">199</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00216">216</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="581a8e8eabd70467d0c503dded4ec1d9"></a><!-- doxytag: member="sbIRemotePlayer::repeat" ref="581a8e8eabd70467d0c503dded4ec1d9" args="" -->
@@ -265,7 +269,7 @@ The repeat state for playback.
 <p>
 The repeat state for playback. This can be one of three values: 0 - no repeat 1 - repeat the current track forever 2 - repeat the current playlist forever 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00221">221</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00238">238</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="8a3d81802e3d46206eca1bbfef1725fb"></a><!-- doxytag: member="sbIRemotePlayer::shuffle" ref="8a3d81802e3d46206eca1bbfef1725fb" args="" -->
@@ -284,7 +288,7 @@ Shuffle state for playback.
 <p>
 This will be true if shuffle is enabled, false if not. 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00238">238</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00255">255</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="ae2a154e0eed0c23dc850c002a397fcd"></a><!-- doxytag: member="sbIRemotePlayer::mute" ref="ae2a154e0eed0c23dc850c002a397fcd" args="" -->
@@ -303,12 +307,12 @@ The mute state.
 <p>
 True if muted or the volume is set to 0, false otherwise 
 <p>
-Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00282">282</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
+Definition at line <a class="el" href="sb_i_remote_player_8idl-source.html#l00299">299</a> of file <a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/remoteapi/public/<a class="el" href="sb_i_remote_player_8idl-source.html">sbIRemotePlayer.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 12 15:42:18 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:07 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

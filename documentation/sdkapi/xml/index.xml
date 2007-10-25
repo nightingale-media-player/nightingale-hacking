@@ -44,6 +44,7 @@
   </compound>
   <compound refid="interfacesb_i_bookmarks" kind="interface"><name>sbIBookmarks</name>
     <member refid="interfacesb_i_bookmarks_1ec6c4583a6e61f36c47d5a4390563119" kind="function"><name>addBookmark</name></member>
+    <member refid="interfacesb_i_bookmarks_16daa8719109834e1ae999bdaa64f8c22" kind="function"><name>addBookmarkAt</name></member>
     <member refid="interfacesb_i_bookmarks_15a055aa877fc68ac16016f0a89be4c43" kind="function"><name>addFolder</name></member>
     <member refid="interfacesb_i_bookmarks_12afc193a92025c64461f14e56cd6677c" kind="function"><name>bookmarkExists</name></member>
   </compound>
@@ -968,6 +969,7 @@
     <member refid="interfacesb_i_media_list_view_tree_view_observer_1e33d0469091e407bfbc86260f6af64ab" kind="variable"><name>DROP_AFTER</name></member>
     <member refid="interfacesb_i_media_list_view_tree_view_observer_17f0ece55f12034bb8609542d8ecc3d72" kind="function"><name>canDrop</name></member>
     <member refid="interfacesb_i_media_list_view_tree_view_observer_139d85791bcf981159707f02fe5b405f1" kind="function"><name>drop</name></member>
+    <member refid="interfacesb_i_media_list_view_tree_view_observer_1f3c18c4c2c180ccb4fa64376a191e8da" kind="function"><name>cycleHeader</name></member>
   </compound>
   <compound refid="interfacesb_i_media_transcoder" kind="interface"><name>sbIMediaTranscoder</name>
     <member refid="interfacesb_i_media_transcoder_163aa89d79dfb4e4ec29ab31438b935e9" kind="variable"><name>name</name></member>
@@ -1070,6 +1072,9 @@
   <compound refid="interfacesb_i_mutable_property_array" kind="interface"><name>sbIMutablePropertyArray</name>
     <member refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" kind="variable"><name>strict</name></member>
     <member refid="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" kind="function"><name>appendProperty</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mutable_remote_security_event" kind="interface"><name>sbIMutableRemoteSecurityEvent</name>
+    <member refid="interfacesb_i_mutable_remote_security_event_1afed5fd57dea18b302dba1a9720bf4f4" kind="function"><name>initSecurityEvent</name></member>
   </compound>
   <compound refid="interfacesb_i_number_property_info" kind="interface"><name>sbINumberPropertyInfo</name>
     <member refid="interfacesb_i_number_property_info_1e7ace5e86b1a21e70f5fc2b0d68c77f8" kind="variable"><name>RADIX_8</name></member>
@@ -1382,10 +1387,10 @@
   <compound refid="interfacesb_i_remote_library" kind="interface"><name>sbIRemoteLibrary</name>
     <member refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" kind="variable"><name>scanMediaOnCreation</name></member>
     <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" kind="function"><name>createMediaItem</name></member>
-    <member refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" kind="function"><name>createMediaList</name></member>
-    <member refid="interfacesb_i_remote_library_1f49eeaaea6d0735699b3b22f6a590e48" kind="function"><name>createMediaListFromURL</name></member>
+    <member refid="interfacesb_i_remote_library_1689e240436391a9555834a107d0a9dce" kind="function"><name>createSimpleMediaList</name></member>
+    <member refid="interfacesb_i_remote_library_167fbbd789bc4206200e26052a1d07ab2" kind="function"><name>createMediaListFromURL</name></member>
     <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" kind="function"><name>connectToDefaultLibrary</name></member>
-    <member refid="interfacesb_i_remote_library_180d3803ce55d850dadf3c07c75f13ced" kind="function"><name>getMediaListByName</name></member>
+    <member refid="interfacesb_i_remote_library_1f9de9839ed202a11c8d0ae63147a10a1" kind="function"><name>getMediaListBySiteID</name></member>
     <member refid="interfacesb_i_remote_library_1c7fbb12e9ee354652f97936265229439" kind="function"><name>getArtists</name></member>
     <member refid="interfacesb_i_remote_library_14470c7183a62fadbb3c9219fe494227a" kind="function"><name>getAlbums</name></member>
     <member refid="interfacesb_i_remote_library_158987a25deefd27e797e7a78fb128ada" kind="function"><name>getGenres</name></member>
@@ -1426,6 +1431,7 @@
     <member refid="interfacesb_i_remote_player_197bf001f488b18ededdcd36f3a59e71e" kind="function"><name>next</name></member>
     <member refid="interfacesb_i_remote_player_16b2fc642d2633e81693895ec2f40a2eb" kind="function"><name>previous</name></member>
     <member refid="interfacesb_i_remote_player_192ee1102bf2107746be0783194ece4e6" kind="function"><name>setSiteScope</name></member>
+    <member refid="interfacesb_i_remote_player_162e15589a323331b09723ca29afebf26" kind="function"><name>getSiteScope</name></member>
     <member refid="interfacesb_i_remote_player_1ae78604f44c7a50b11b6441758ec81bd" kind="function"><name>libraries</name></member>
     <member refid="interfacesb_i_remote_player_1d07ad92b9624b860ab2d5c522d61f35e" kind="function"><name>fireEventToContent</name></member>
     <member refid="interfacesb_i_remote_player_19e7c3117430ec25bce5f8531e2bfac55" kind="function"><name>fireMediaItemStatusEventToContent</name></member>
@@ -1439,6 +1445,12 @@
     <member refid="interfacesb_i_remote_player_166fc10eedf0996035546ef1a32fb4687" kind="function"><name>createRatingsProperty</name></member>
     <member refid="interfacesb_i_remote_player_151ed26be394b51d700ef4ec729ed6996" kind="function"><name>createButtonProperty</name></member>
     <member refid="interfacesb_i_remote_player_17406e1090a542be74360e4910531a896" kind="function"><name>createDownloadButtonProperty</name></member>
+  </compound>
+  <compound refid="interfacesb_i_remote_security_event" kind="interface"><name>sbIRemoteSecurityEvent</name>
+    <member refid="interfacesb_i_remote_security_event_17fa879e835968d9b31a8ee5bcecaa3b1" kind="variable"><name>siteScope</name></member>
+    <member refid="interfacesb_i_remote_security_event_1f156ea5b411c6818b7e4deb0f5f7df05" kind="variable"><name>category</name></member>
+    <member refid="interfacesb_i_remote_security_event_1e5d7767368df48e8915ce7fe9e4b75f5" kind="variable"><name>categoryID</name></member>
+    <member refid="interfacesb_i_remote_security_event_1b0fb56a6b901e69ecd47ef94d6d14439" kind="variable"><name>hasAccess</name></member>
   </compound>
   <compound refid="interfacesb_i_remote_site_library" kind="interface"><name>sbIRemoteSiteLibrary</name>
     <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" kind="variable"><name>filename</name></member>
@@ -1456,6 +1468,7 @@
     <member refid="interfacesb_i_searchable_media_list_view_1918ef33d7c7a26daa0d2a97ebe1b7132" kind="function"><name>clearSearch</name></member>
   </compound>
   <compound refid="interfacesb_i_security_aggregator" kind="interface"><name>sbISecurityAggregator</name>
+    <member refid="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" kind="variable"><name>remotePlayer</name></member>
   </compound>
   <compound refid="interfacesb_i_security_mixin" kind="interface"><name>sbISecurityMixin</name>
     <member refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" kind="variable"><name>notificationDocument</name></member>
@@ -2012,6 +2025,8 @@
     <member refid="sb_i_remote_media_list_8idl_17d4ef4b7d8ac8780e5a1a7835d1b41fe" kind="define"><name>NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS</name></member>
   </compound>
   <compound refid="sb_i_remote_player_8idl" kind="file"><name>sbIRemotePlayer.idl</name>
+  </compound>
+  <compound refid="sb_i_remote_security_event_8idl" kind="file"><name>sbIRemoteSecurityEvent.idl</name>
   </compound>
   <compound refid="sb_i_remote_web_playlist_8idl" kind="file"><name>sbIRemoteWebPlaylist.idl</name>
   </compound>

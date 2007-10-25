@@ -5,25 +5,25 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_security_mixin_8idl" local="yes">components/remoteapi/public/sbISecurityMixin.idl</includedby>
     <incdepgraph>
-      <node id="425">
+      <node id="428">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="426" relation="include">
+        <childnode refid="429" relation="include">
         </childnode>
       </node>
-      <node id="426">
+      <node id="429">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="428">
+      <node id="431">
         <label>components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sb_i_security_mixin_8idl"/>
       </node>
-      <node id="427">
+      <node id="430">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="428" relation="include">
+        <childnode refid="431" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -62,11 +62,14 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(5a8b35b1-0625-4a2b-98c0-f1714a6675e1)]</highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_security_aggregator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="54"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(efc0f85a-b4d7-4405-aed8-8b0542ec67c5)]</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_security_aggregator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>remotePlayer;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl"/>
   </compounddef>

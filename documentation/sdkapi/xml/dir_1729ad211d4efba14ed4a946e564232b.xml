@@ -7,6 +7,7 @@
     <innerfile refid="sb_i_remote_library_8idl">sbIRemoteLibrary.idl</innerfile>
     <innerfile refid="sb_i_remote_media_list_8idl">sbIRemoteMediaList.idl</innerfile>
     <innerfile refid="sb_i_remote_player_8idl">sbIRemotePlayer.idl</innerfile>
+    <innerfile refid="sb_i_remote_security_event_8idl">sbIRemoteSecurityEvent.idl</innerfile>
     <innerfile refid="sb_i_remote_web_playlist_8idl">sbIRemoteWebPlaylist.idl</innerfile>
     <innerfile refid="sb_i_security_aggregator_8idl">sbISecurityAggregator.idl</innerfile>
     <innerfile refid="sb_i_security_mixin_8idl">sbISecurityMixin.idl</innerfile>

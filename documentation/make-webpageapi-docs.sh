@@ -41,6 +41,7 @@ remoteapifiles="$remoteapidir/public/sbIRemoteCommands.idl
                 $remoteapidir/public/sbIRemoteLibrary.idl
                 $remoteapidir/public/sbIRemoteMediaList.idl
                 $remoteapidir/public/sbIRemotePlayer.idl
+                $remoteapidir/public/sbIRemoteSecurityEvent.idl
                 $remoteapidir/public/sbIRemoteWebPlaylist.idl
                 $remoteapidir/public/sbIWrappedMediaItem.h
 "

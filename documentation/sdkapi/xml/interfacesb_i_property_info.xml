@@ -470,56 +470,56 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_manager" kindref="compound">sbIPropertyManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="547">
+      <node id="549">
         <label>sbIBooleanPropertyInfo</label>
         <link refid="interfacesb_i_boolean_property_info"/>
-        <childnode refid="546" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="548">
-        <label>sbIDatetimePropertyInfo</label>
-        <link refid="interfacesb_i_datetime_property_info"/>
-        <childnode refid="546" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="546">
-        <label>sbIPropertyInfo</label>
-        <link refid="interfacesb_i_property_info"/>
-      </node>
-      <node id="549">
-        <label>sbINumberPropertyInfo</label>
-        <link refid="interfacesb_i_number_property_info"/>
-        <childnode refid="546" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="551">
-        <label>sbIProgressPropertyInfo</label>
-        <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="550" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="552">
-        <label>sbIURIPropertyInfo</label>
-        <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="546" relation="public-inheritance">
+        <childnode refid="548" relation="public-inheritance">
         </childnode>
       </node>
       <node id="550">
+        <label>sbIDatetimePropertyInfo</label>
+        <link refid="interfacesb_i_datetime_property_info"/>
+        <childnode refid="548" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="548">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+      </node>
+      <node id="551">
+        <label>sbINumberPropertyInfo</label>
+        <link refid="interfacesb_i_number_property_info"/>
+        <childnode refid="548" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="553">
+        <label>sbIProgressPropertyInfo</label>
+        <link refid="interfacesb_i_progress_property_info"/>
+        <childnode refid="552" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="554">
+        <label>sbIURIPropertyInfo</label>
+        <link refid="interfacesb_i_u_r_i_property_info"/>
+        <childnode refid="548" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="552">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="546" relation="public-inheritance">
+        <childnode refid="548" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="553">
+      <node id="555">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="554" relation="usage">
+        <childnode refid="556" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="554">
+      <node id="556">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>

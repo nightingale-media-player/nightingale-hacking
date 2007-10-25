@@ -100,7 +100,7 @@
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00034"></a>00034 interface nsISimpleEnumerator;
 <a name="l00035"></a>00035 
-<a name="l00061"></a>00061 [scriptable, uuid(dfe817f2-5398-4f16-ba62-10483311ffa7)]
+<a name="l00061"></a>00061 [scriptable, uuid(412e298d-957d-4f35-8528-ce053cf62807)]
 <a name="l00062"></a><a class="code" href="interfacesb_i_playlist_commands.html">00062</a> interface <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> : nsISupports 
 <a name="l00063"></a>00063 {
 <a name="l00073"></a>00073   PRBool getVisible( in AString aHost );
@@ -152,7 +152,7 @@
 <a name="l00383"></a>00383   <span class="keywordtype">void</span> shutdownCommands( );
 <a name="l00384"></a>00384 };
 <a name="l00385"></a>00385 
-<a name="l00390"></a>00390 [scriptable, uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]
+<a name="l00390"></a>00390 [scriptable, uuid(f08d76b6-cbe6-4cad-945e-1b1eea10a16c)]
 <a name="l00391"></a><a class="code" href="interfacesb_i_playlist_commands_context.html">00391</a> interface <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a> : nsISupports
 <a name="l00392"></a>00392 {
 <a name="l00396"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#69c851cca7096063b8c4363539e70936">00396</a>   readonly attribute nsIDOMNode playlist;   
@@ -164,7 +164,7 @@
 <a name="l00411"></a><a class="code" href="interfacesb_i_playlist_commands_context.html#1d8e53e9b4ad2510701628472a36643f">00411</a>   readonly attribute <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> commands;   
 <a name="l00412"></a>00412 };
 <a name="l00413"></a>00413 
-<a name="l00419"></a>00419 [scriptable, uuid(2ca0eb0c-ab36-4a5a-b63e-dd34ca54f9da)]
+<a name="l00419"></a>00419 [scriptable, uuid(33e9c67c-7966-4bd4-bb42-ecf2fa31058d)]
 <a name="l00420"></a><a class="code" href="interfacesb_i_playlist_commands_manager.html">00420</a> interface <a class="code" href="interfacesb_i_playlist_commands_manager.html" title="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</a> : nsISupports
 <a name="l00421"></a>00421 {
 <a name="l00439"></a>00439   <span class="keywordtype">void</span> registerPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> aCommandObj );
@@ -187,7 +187,8 @@
 <a name="l00554"></a>00554 };
 <a name="l00555"></a>00555  <span class="comment">// end of playlistcommands group</span>
 <a name="l00557"></a>00557 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 12 15:42:09 2007 for Songbird by&nbsp;
+<a name="l00558"></a>00558 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

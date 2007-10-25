@@ -10,18 +10,6 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="560">
-        <label>sbIPropertyBuilder</label>
-        <link refid="interfacesb_i_property_builder"/>
-      </node>
-      <node id="559">
-        <label>sbIRatingPropertyBuilder</label>
-        <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="560" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="562">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
@@ -30,6 +18,18 @@
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
         <childnode refid="562" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="564">
+        <label>sbIPropertyBuilder</label>
+        <link refid="interfacesb_i_property_builder"/>
+      </node>
+      <node id="563">
+        <label>sbIRatingPropertyBuilder</label>
+        <link refid="interfacesb_i_rating_property_builder"/>
+        <childnode refid="564" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

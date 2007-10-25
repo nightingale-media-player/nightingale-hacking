@@ -4,13 +4,13 @@
     <compoundname>sbIStateDatastore.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="445">
+      <node id="448">
         <label>components/state/public/sbIStateDatastore.idl</label>
         <link refid="sbIStateDatastore.idl"/>
-        <childnode refid="446" relation="include">
+        <childnode refid="449" relation="include">
         </childnode>
       </node>
-      <node id="446">
+      <node id="449">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

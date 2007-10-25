@@ -96,7 +96,7 @@
 <a name="l00029"></a>00029 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00030"></a>00030 
 <a name="l00031"></a>00031 <span class="comment">/*</span>
-<a name="l00032"></a>00032 <span class="comment">Class: PlaylistClickEvent</span>
+<a name="l00032"></a>00032 <span class="comment">Event: PlaylistClickEvent</span>
 <a name="l00033"></a>00033 <span class="comment"></span>
 <a name="l00034"></a>00034 <span class="comment">A &lt;PlaylistClickEvent&gt; is passed to any event handlers listening for the</span>
 <a name="l00035"></a>00035 <span class="comment">PlaylistCellClick event fired on the document object.  This event object also</span>
@@ -105,57 +105,84 @@
 <a name="l00038"></a>00038 <span class="comment">Note that the &lt;Songbird&gt; object must be accessed before any events will be raised.</span>
 <a name="l00039"></a>00039 <span class="comment">This will likely change in the future.</span>
 <a name="l00040"></a>00040 <span class="comment"></span>
-<a name="l00041"></a>00041 <span class="comment">Example:</span>
-<a name="l00042"></a>00042 <span class="comment">  (start code)</span>
-<a name="l00043"></a>00043 <span class="comment">  function onPlaylistCellClick( aEvent ) {</span>
-<a name="l00044"></a>00044 <span class="comment">    // we can get the property that was clicked on...</span>
-<a name="l00045"></a>00045 <span class="comment">    alert(aEvent.property);</span>
-<a name="l00046"></a>00046 <span class="comment">    </span>
-<a name="l00047"></a>00047 <span class="comment">    // or the &lt;MediaItem&gt;</span>
-<a name="l00048"></a>00048 <span class="comment">    alert(aEvent.item.guid);</span>
-<a name="l00049"></a>00049 <span class="comment">    </span>
-<a name="l00050"></a>00050 <span class="comment">    // as well as key states from MouseEvent</span>
-<a name="l00051"></a>00051 <span class="comment">    alert(aEvent.ctrlKey);</span>
-<a name="l00052"></a>00052 <span class="comment">  }</span>
-<a name="l00053"></a>00053 <span class="comment">  </span>
-<a name="l00054"></a>00054 <span class="comment">  // initialize the event system</span>
-<a name="l00055"></a>00055 <span class="comment">  songbird;</span>
-<a name="l00056"></a>00056 <span class="comment">  </span>
-<a name="l00057"></a>00057 <span class="comment">  // attach the event handler</span>
-<a name="l00058"></a>00058 <span class="comment">  document.addEventListener("PlaylistCellClick", onPlaylistCellClick, false);</span>
-<a name="l00059"></a>00059 <span class="comment">  (end code)</span>
-<a name="l00060"></a>00060 <span class="comment"></span>
-<a name="l00061"></a>00061 <span class="comment">  See Also:</span>
-<a name="l00062"></a>00062 <span class="comment">    &lt;MediaItem&gt;</span>
-<a name="l00063"></a>00063 <span class="comment">    &lt;http://developer.mozilla.org/en/docs/DOM:event&gt;</span>
-<a name="l00064"></a>00064 <span class="comment">    &lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</span>
-<a name="l00065"></a>00065 <span class="comment">*/</span>
-<a name="l00066"></a>00066 
-<a name="l00072"></a>00072 [scriptable, uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]
-<a name="l00073"></a><a class="code" href="interfacesb_i_playlist_click_event.html">00073</a>  interface <a class="code" href="interfacesb_i_playlist_click_event.html" title="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</a> : nsISupports
-<a name="l00074"></a>00074 {
-<a name="l00075"></a>00075   <span class="comment">/*</span>
-<a name="l00076"></a>00076 <span class="comment">  Prop: property</span>
-<a name="l00077"></a>00077 <span class="comment">  </span>
-<a name="l00078"></a>00078 <span class="comment">  The name of the property (column) that was clicked on</span>
-<a name="l00079"></a>00079 <span class="comment">  </span>
-<a name="l00080"></a>00080 <span class="comment">  Type: String</span>
+<a name="l00041"></a>00041 <span class="comment">Fired on:</span>
+<a name="l00042"></a>00042 <span class="comment">  document</span>
+<a name="l00043"></a>00043 <span class="comment"></span>
+<a name="l00044"></a>00044 <span class="comment">Properties inherited from MouseEvent:</span>
+<a name="l00045"></a>00045 <span class="comment">ctrlKey - true if the control key is down when the click occurred</span>
+<a name="l00046"></a>00046 <span class="comment">altKey - true if the alt key is down</span>
+<a name="l00047"></a>00047 <span class="comment">shiftKey - true if the shift key is down</span>
+<a name="l00048"></a>00048 <span class="comment">metaKey - true if the meta key is down</span>
+<a name="l00049"></a>00049 <span class="comment">button - which mouse button was pressed;</span>
+<a name="l00050"></a>00050 <span class="comment">         0 for primary, 1 for middle, and 2 for secondary.</span>
+<a name="l00051"></a>00051 <span class="comment">type - constant string, "PlaylistCellClick"</span>
+<a name="l00052"></a>00052 <span class="comment">target - the document object of the content page which displayed the playlist</span>
+<a name="l00053"></a>00053 <span class="comment">bubbles - contant true</span>
+<a name="l00054"></a>00054 <span class="comment">cancelable - constant true</span>
+<a name="l00055"></a>00055 <span class="comment">timeStamp - the time at which the click occurred, as milliseconds from epoch</span>
+<a name="l00056"></a>00056 <span class="comment"></span>
+<a name="l00057"></a>00057 <span class="comment">Properties inherited from MouseEvent, but not used:</span>
+<a name="l00058"></a>00058 <span class="comment">screenX</span>
+<a name="l00059"></a>00059 <span class="comment">screenY</span>
+<a name="l00060"></a>00060 <span class="comment">clientX</span>
+<a name="l00061"></a>00061 <span class="comment">clientY</span>
+<a name="l00062"></a>00062 <span class="comment">relatedTarget</span>
+<a name="l00063"></a>00063 <span class="comment">view</span>
+<a name="l00064"></a>00064 <span class="comment">detail</span>
+<a name="l00065"></a>00065 <span class="comment"></span>
+<a name="l00066"></a>00066 <span class="comment">Example:</span>
+<a name="l00067"></a>00067 <span class="comment">  (start code)</span>
+<a name="l00068"></a>00068 <span class="comment">  function onPlaylistCellClick( aEvent ) {</span>
+<a name="l00069"></a>00069 <span class="comment">    // we can get the property that was clicked on...</span>
+<a name="l00070"></a>00070 <span class="comment">    alert(aEvent.property);</span>
+<a name="l00071"></a>00071 <span class="comment">    </span>
+<a name="l00072"></a>00072 <span class="comment">    // or the &lt;MediaItem&gt;</span>
+<a name="l00073"></a>00073 <span class="comment">    alert(aEvent.item.guid);</span>
+<a name="l00074"></a>00074 <span class="comment">    </span>
+<a name="l00075"></a>00075 <span class="comment">    // as well as key states from MouseEvent</span>
+<a name="l00076"></a>00076 <span class="comment">    alert(aEvent.ctrlKey);</span>
+<a name="l00077"></a>00077 <span class="comment">  }</span>
+<a name="l00078"></a>00078 <span class="comment">  </span>
+<a name="l00079"></a>00079 <span class="comment">  // initialize the event system</span>
+<a name="l00080"></a>00080 <span class="comment">  songbird;</span>
 <a name="l00081"></a>00081 <span class="comment">  </span>
-<a name="l00082"></a>00082 <span class="comment">  See Also:</span>
-<a name="l00083"></a>00083 <span class="comment">    &lt;MediaItem::getProperty()&gt;</span>
-<a name="l00084"></a>00084 <span class="comment">  */</span>
-<a name="l00085"></a><a class="code" href="interfacesb_i_playlist_click_event.html#d1f910416b81b277102dd8026413816b">00085</a>   readonly attribute AString property;
-<a name="l00086"></a>00086   
-<a name="l00087"></a>00087   <span class="comment">/*</span>
-<a name="l00088"></a>00088 <span class="comment">  Prop: item</span>
-<a name="l00089"></a>00089 <span class="comment">  </span>
-<a name="l00090"></a>00090 <span class="comment">  The &lt;MediaItem&gt; that was clicked on</span>
-<a name="l00091"></a>00091 <span class="comment">  </span>
-<a name="l00092"></a>00092 <span class="comment">  Type: &lt;MediaItem&gt;</span>
-<a name="l00093"></a>00093 <span class="comment">  */</span>
-<a name="l00094"></a><a class="code" href="interfacesb_i_playlist_click_event.html#262e984ccab389d033ac636d167d3cdb">00094</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> item;
-<a name="l00095"></a>00095 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 12 15:42:09 2007 for Songbird by&nbsp;
+<a name="l00082"></a>00082 <span class="comment">  // attach the event handler</span>
+<a name="l00083"></a>00083 <span class="comment">  document.addEventListener("PlaylistCellClick", onPlaylistCellClick, false);</span>
+<a name="l00084"></a>00084 <span class="comment">  (end code)</span>
+<a name="l00085"></a>00085 <span class="comment"></span>
+<a name="l00086"></a>00086 <span class="comment">  See Also:</span>
+<a name="l00087"></a>00087 <span class="comment">    &lt;MediaItem&gt;</span>
+<a name="l00088"></a>00088 <span class="comment">    &lt;http://developer.mozilla.org/en/docs/DOM:event&gt;</span>
+<a name="l00089"></a>00089 <span class="comment">    &lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</span>
+<a name="l00090"></a>00090 <span class="comment">*/</span>
+<a name="l00091"></a>00091 
+<a name="l00097"></a>00097 [scriptable, uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]
+<a name="l00098"></a><a class="code" href="interfacesb_i_playlist_click_event.html">00098</a>  interface <a class="code" href="interfacesb_i_playlist_click_event.html" title="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</a> : nsISupports
+<a name="l00099"></a>00099 {
+<a name="l00100"></a>00100   <span class="comment">/*</span>
+<a name="l00101"></a>00101 <span class="comment">  Prop: property</span>
+<a name="l00102"></a>00102 <span class="comment">  </span>
+<a name="l00103"></a>00103 <span class="comment">  The name of the property (column) that was clicked on e.g.,</span>
+<a name="l00104"></a>00104 <span class="comment">             "http://songbirdnest.com/data/1.0#trackName".  See</span>
+<a name="l00105"></a>00105 <span class="comment">             &lt;MediaItem::getProperty()&gt; for standard properties.</span>
+<a name="l00106"></a>00106 <span class="comment">  </span>
+<a name="l00107"></a>00107 <span class="comment">  Type: String</span>
+<a name="l00108"></a>00108 <span class="comment">  </span>
+<a name="l00109"></a>00109 <span class="comment">  See Also:</span>
+<a name="l00110"></a>00110 <span class="comment">    &lt;MediaItem::getProperty()&gt;</span>
+<a name="l00111"></a>00111 <span class="comment">  */</span>
+<a name="l00112"></a><a class="code" href="interfacesb_i_playlist_click_event.html#d1f910416b81b277102dd8026413816b">00112</a>   readonly attribute AString property;
+<a name="l00113"></a>00113   
+<a name="l00114"></a>00114   <span class="comment">/*</span>
+<a name="l00115"></a>00115 <span class="comment">  Prop: item</span>
+<a name="l00116"></a>00116 <span class="comment">  </span>
+<a name="l00117"></a>00117 <span class="comment">  The &lt;MediaItem&gt; that corresponds to the row clicked on.</span>
+<a name="l00118"></a>00118 <span class="comment">  </span>
+<a name="l00119"></a>00119 <span class="comment">  Type: &lt;MediaItem&gt;</span>
+<a name="l00120"></a>00120 <span class="comment">  */</span>
+<a name="l00121"></a><a class="code" href="interfacesb_i_playlist_click_event.html#262e984ccab389d033ac636d167d3cdb">00121</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> item;
+<a name="l00122"></a>00122 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:20:59 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

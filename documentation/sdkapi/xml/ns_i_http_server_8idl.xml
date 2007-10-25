@@ -5,18 +5,18 @@
     <includes local="yes">nsIServerSocket.idl</includes>
     <includes local="yes">nsIPropertyBag.idl</includes>
     <incdepgraph>
-      <node id="456">
+      <node id="459">
         <label>nsIPropertyBag.idl</label>
       </node>
-      <node id="455">
+      <node id="458">
         <label>nsIServerSocket.idl</label>
       </node>
-      <node id="454">
+      <node id="457">
         <label>components/testharness/public/nsIHttpServer.idl</label>
         <link refid="nsIHttpServer.idl"/>
-        <childnode refid="455" relation="include">
+        <childnode refid="458" relation="include">
         </childnode>
-        <childnode refid="456" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
       </node>
     </incdepgraph>

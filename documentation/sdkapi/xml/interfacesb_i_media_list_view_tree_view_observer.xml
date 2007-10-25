@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="44" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_tree_view_observer_107033886644fcce4a5600e0430feab5f" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="45" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_tree_view_observer_1e33d0469091e407bfbc86260f6af64ab" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="46" bodyend="-1"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="47" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="48"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="49"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_tree_view_observer_139d85791bcf981159707f02fe5b405f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -88,16 +88,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="49"/>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_view_tree_view_observer_1f3c18c4c2c180ccb4fa64376a191e8da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListViewTreeViewObserver::cycleHeader</definition>
+        <argsstring>(in nsITreeColumn col)</argsstring>
+        <name>cycleHeader</name>
+        <param>
+          <type>in nsITreeColumn</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="51"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Observer to implement the nsITreeView methods that a <ref refid="interfacesb_i_media_list_view_tree_view" kindref="compound">sbIMediaListViewTreeView</ref> does not. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="42" bodyend="50"/>
+    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewTreeView.idl" bodystart="43" bodyend="52"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_tree_view_observer_17f0ece55f12034bb8609542d8ecc3d72" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeViewObserver</scope><name>canDrop</name></member>
+      <member refid="interfacesb_i_media_list_view_tree_view_observer_1f3c18c4c2c180ccb4fa64376a191e8da" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeViewObserver</scope><name>cycleHeader</name></member>
       <member refid="interfacesb_i_media_list_view_tree_view_observer_139d85791bcf981159707f02fe5b405f1" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeViewObserver</scope><name>drop</name></member>
       <member refid="interfacesb_i_media_list_view_tree_view_observer_1e33d0469091e407bfbc86260f6af64ab" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeViewObserver</scope><name>DROP_AFTER</name></member>
       <member refid="interfacesb_i_media_list_view_tree_view_observer_1bd177db3a4cf9b97cff746533f3d386e" prot="public" virt="non-virtual"><scope>sbIMediaListViewTreeViewObserver</scope><name>DROP_BEFORE</name></member>
