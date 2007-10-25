@@ -60,6 +60,8 @@ pref("browser.download.manager.openDelay", 0);
 pref("browser.download.manager.focusWhenStarting", false);
      // flashes this many times when opened - in theory
 pref("browser.download.manager.flashCount", 2);
+pref("browser.download.manager.displayedHistoryDays", 7);
+pref("browser.download.manager.addToRecentDocs", true);
 //pref("privacy.item.downloads",  true);
 //pref("browser.download.show_plugins_in_list", true);
 //pref("browser.download.hide_plugins_without_extensions", true);

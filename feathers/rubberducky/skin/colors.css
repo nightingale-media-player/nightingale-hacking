@@ -868,6 +868,59 @@ tabpanels {
 
 /** 
 *******************************************************************************
+NOTIFICATION HAT
+*******************************************************************************
+*/
+notification[type="warning"]
+{
+  background-color: #ffffcc; /** yellow */
+  border-bottom: 1px solid #eaeabb; /** yellow button */
+}
+
+.messageText,
+.messageText:hover,
+.messageText:active
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button 
+{
+  background-color: #eaeabb; /** yellow button */
+  border-top: 1px solid #ffffcc; /** yellow */
+  border-left: 1px solid #B3BAAC; /** Light Color 1 */
+  border-right: 1px solid #B3BAAC; /** Light Color 1 */
+  border-bottom: 1px solid #8A8F84; /** Light Color 2 */
+}
+
+notification > button > .button-box > .button-text
+{
+  color: #5c5f58; /** Selected Focus Row */
+}
+
+notification > button:hover > .button-box > .button-text
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button:active > .button-box > .button-text
+{
+  color: #0f100f; /** Groove */
+}
+
+notification > button:active
+{
+  color: #0f100f; /** Groove */
+  background-color: #eaeabb; /** yellow button */
+  border-bottom: 1px solid #ffffcc; /** yellow */
+  border-left: 1px solid #B3BAAC; /** Light Color 1 */
+  border-right: 1px solid #B3BAAC; /** Light Color 1 */
+  border-top: 1px solid #8A8F84; /** Light Color 2 */
+}
+
+
+/** 
+*******************************************************************************
 SCROLLBARS
 *******************************************************************************
 */ 
@@ -1355,7 +1408,7 @@ checkbox[checked="true"]:focus{
 
 checkbox:focus > hbox > label,
 checkbox[checked="true"]:focus > hbox > label{
-  color: #fffff1 !important; /** Light Color Brightest */  
+  color: #fffff1; /** Light Color Brightest */  
 }
 
 /** 
@@ -1433,12 +1486,6 @@ listbox:focus,
 listbox:focus > listitem[selected="true"] {  
    background-color: #0f100f; /** Groove */
    color: #FFFFFF;
-}
-
-richlistitem[selected="true"] > label,
-richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
-{
-  color: #202220; /** Button Shadow */ 
 }
 
 /* ::::: checkmark image ::::: */
@@ -1521,6 +1568,22 @@ richlistbox:focus > richlistitem[selected="true"]
   background-color: #B3BAAC; /** Light Color 1*/
   color: #0f100f; /** Groove */
 }
+
+/** This is bad bad bad, but fixing it requires making
+    labels inherit color, which will have side effects.
+    We will have to wait until 0.4 **/
+richlistitem[selected="true"] > label,
+richlistitem[selected="true"] > * > label,
+richlistitem[selected="true"] > * > * > label,
+richlistitem[selected="true"] > * > * > * > label,
+richlistitem[selected="true"] > description,
+richlistitem[selected="true"] > * > description,
+richlistitem[selected="true"] > * > * > description,
+richlistitem[selected="true"] > * > * > * > description
+{
+  color: #202220 !important; /** Button Shadow */ 
+}
+
 
 richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
   outline: 1px dotted #474948; /** Rubber Highlight */
@@ -1723,54 +1786,28 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
   color: #0f100f; /** Groove */
 }
 
+
 /** 
 *******************************************************************************
-NOTIFICATION HAT
+MOZILLA DOWNLOAD WINDOW
 *******************************************************************************
 */
-notification[type="warning"]
-{
-  background-color: #ffffcc; /** yellow */
-  border-bottom: 1px solid #eaeabb; /** yellow button */
+
+#downloadManager {
+  background-color: #313131 !important; /* color of the Main Window **/
 }
 
-.messageText,
-.messageText:hover,
-.messageText:active
-{
-  color: #0f100f; /** Groove */
+#downloadManager > #information {
+  background-color: black;
 }
 
-notification > button 
-{
-  background-color: #eaeabb; /** yellow button */
-  border-top: 1px solid #ffffcc; /** yellow */
-  border-left: 1px solid #B3BAAC; /** Light Color 1 */
-  border-right: 1px solid #B3BAAC; /** Light Color 1 */
-  border-bottom: 1px solid #8A8F84; /** Light Color 2 */
+#downloadManager > #downloadView {
+  -moz-border-radius: 0px;
+  border: none;
 }
 
-notification > button > .button-box > .button-text
-{
-  color: #5c5f58; /** Selected Focus Row */
-}
-
-notification > button:hover > .button-box > .button-text
-{
-  color: #0f100f; /** Groove */
-}
-
-notification > button:active > .button-box > .button-text
-{
-  color: #0f100f; /** Groove */
-}
-
-notification > button:active
-{
-  color: #0f100f; /** Groove */
-  background-color: #eaeabb; /** yellow button */
-  border-bottom: 1px solid #ffffcc; /** yellow */
-  border-left: 1px solid #B3BAAC; /** Light Color 1 */
-  border-right: 1px solid #B3BAAC; /** Light Color 1 */
-  border-top: 1px solid #8A8F84; /** Light Color 2 */
+#downloadManager > #search {
+  border-top-width: 1px;
+  border-top-color: #202220; 
+  border-top-style: solid;
 }
