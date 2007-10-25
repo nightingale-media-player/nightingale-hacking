@@ -121,11 +121,14 @@ sbDeviceManager::Initialize()
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add library manager observer");
 
-  // Since we depend on the library, we need to shut down with it
-  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+  // Since we depend on the library, we need to shut down before it.  The
+  // library itself shuts down on the library manager shutdown event, so we
+  // need to shut down before that.  Thus, we shut down on profile change
+  // teardown.
+  rv = observerService->AddObserver(this, "profile-change-teardown",
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                   "Failed to add profile shutdown observer");
+                   "Failed to add profile change teardown observer");
 
   // "xpcom-shutdown" is called right before the app will terminate
   rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
@@ -408,7 +411,7 @@ sbDeviceManager::Observe(nsISupports* aSubject,
                                           nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if (strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0) {
+  else if (strcmp(aTopic, "profile-change-teardown") == 0) {
     // The profile is about to be unloaded so finalize our devices
     rv = Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
