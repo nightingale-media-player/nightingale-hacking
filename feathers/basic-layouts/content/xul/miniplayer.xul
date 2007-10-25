@@ -81,7 +81,9 @@
       <sb-mini-player-controls id="miniplayer_controls" flex="1"/>
   
       <!-- WINDOW CONTROLS -->
+<!-- XXXsteve bug 5303 disable jumpto
       <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>    
+-->
       <sb-feathers-toggle-button id="miniplayer_feathers_button" popupanchor="bottomleft" 
           popupalign="topleft" class="miniplayer sb-player-button"/>
       <sb-sys-close-button id="miniplayer_close_button" class="miniplayer"/>
@@ -91,7 +93,9 @@
   </draggable>
 
   <keyset>
+<!-- XXXsteve bug 5303 disable jumpto
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
+-->
     <key id="feathers-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
   </keyset>
 

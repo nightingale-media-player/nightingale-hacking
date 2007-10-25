@@ -229,9 +229,11 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.10.key.readable",    "stop");
     SBDataSetStringValue("globalhotkey.10.action",          "playback.stop");
 
+/* XXXsteve bug 5303 disable jumpto
     SBDataSetStringValue("globalhotkey.11.key",            "meta-$74");
     SBDataSetStringValue("globalhotkey.11.key.readable",   meta_key_str + "-J");
     SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
+*/
   }
 }
 

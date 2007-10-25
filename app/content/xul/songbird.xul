@@ -93,7 +93,9 @@
     <hbox>
       <spacer width="5"/>
       <sb-mini-player-controls flex="1"/>
+<!-- XXXsteve bug 5303 disable jumpto
       <sb-player-jumpto-button id="video_btn_jump" class="miniplayer"/>    
+-->
       <sb-player-fullscreen-button id="video_btn_fullscreen" class="miniplayer"/>    
       <spacer width="5"/>
     </hbox>

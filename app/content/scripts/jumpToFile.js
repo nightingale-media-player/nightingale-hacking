@@ -678,7 +678,9 @@ try
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
+/* XXXsteve bug 5303 disable jumpto
       if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(jumptoHotkeyActions);
+*/
     }
     SBDataSetBoolValue("jumpto.nosavestate", false);
     if (SBDataGetIntValue("jumpto.visible")) {
@@ -692,7 +694,9 @@ try
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
+/* XXXsteve bug 5303 disable jumpto
       if (hotkeyactionsService) hotkeyactionsService.unregisterHotkeyActionBundle(jumptoHotkeyActions);
+*/
     }
   }
   
