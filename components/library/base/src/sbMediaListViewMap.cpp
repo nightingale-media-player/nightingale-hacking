@@ -260,24 +260,7 @@ sbMediaListViewMap::SetView(nsISupports *aParentKey,
 
   si.forget();
 
-  // And then into the reverse lookup maps
-  success = mParentLookup.Put( aView, aParentKey );
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-  success = mPageLookup.Put( aView, aPageKey );
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   return NS_OK;
-}
-
-PLDHashOperator PR_CALLBACK
-sbMediaListViewMap::ReleaseLookups( nsISupportsHashKey::KeyType aKey,
-                                    sbIMediaListView* aEntry,
-                                    void* aUserData )
-{
-  // Okay, we're done with this view.  Nuke it from the reverse lookup maps.
-  sbMediaListViewMap *viewMap = reinterpret_cast< sbMediaListViewMap * >( aUserData );
-  viewMap->mParentLookup.Remove( aEntry );
-  viewMap->mPageLookup.Remove( aEntry );
-  return PL_DHASH_NEXT;
 }
 
 /* void releaseViews (in nsISupports aParentKey); */
@@ -287,8 +270,6 @@ NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParentKey)
   if ( ! aParentKey ) // If NULL, release all.
   {
     // Supposedly, this will release everything.  If it doesn't, blame Ben!
-    mParentLookup.Clear();
-    mPageLookup.Clear();
     mViewMap.Clear(); 
   }
   else
@@ -296,9 +277,6 @@ NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParentKey)
     sbViewMapInner *innerMap = nsnull;
     if ( mViewMap.Get( aParentKey, &innerMap ) )
     {
-      // First we must release the reverse lookup entries
-      innerMap->Enumerate( (sbViewMapInner::EnumFunction)ReleaseLookups, this );
-
       // Then release the entire branch of the primary map.
       mViewMap.Remove( aParentKey ); // This line deletes the innerMap, automatically clearing it.  Supposedly.
     }
@@ -332,8 +310,6 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
 
     // Startup
     mViewMap.Init();
-    mParentLookup.Init();
-    mPageLookup.Init();
 
     return NS_OK;
   }

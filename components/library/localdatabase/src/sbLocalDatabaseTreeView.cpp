@@ -318,6 +318,7 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
     NS_ASSERTION(4 == refcnt, "~sbLocalDatabaseTreeView(): unexpected refcnt, leaking");
                  // be annoying in debug builds, this is bad, we leak
     NS_RELEASE(obs);
+    return;
   }
 
   rv = timer->InitWithFuncCallback(RemoveArrayObserver,
@@ -609,7 +610,7 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
   // Note that we do this here rather than in the code that restores selection
   // because we never get a callback for this fake row when repopulating the
   // tree.
-  if (mRealSelection && mFakeAllRow && mSelectionIsAll) {
+  if (mRealSelection && mFakeAllRow && mSelectionIsAll && mTreeBoxObject) {
     mSelectionChanging = PR_TRUE;
     rv = mRealSelection->Select(0);
     mSelectionChanging = PR_FALSE;

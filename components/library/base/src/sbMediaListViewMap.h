@@ -111,15 +111,7 @@ private:
   typedef nsClassHashtableMT< nsISupportsHashKey, sbViewStateInfo > sbViewMapInner;
   typedef nsClassHashtableMT< nsISupportsHashKey, sbViewMapInner > sbViewMap;
 
-  static PLDHashOperator PR_CALLBACK
-  ReleaseLookups( nsISupportsHashKey::KeyType aKey,
-                  sbIMediaListView* aEntry,
-                  void* aUserData );
-
-
   sbViewMap mViewMap;
-  nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mParentLookup; // for getContext
-  nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mPageLookup;   // for getContext
 };
 
 #endif /* __SB_MEDIALISTVIEWMAP_H__ */
