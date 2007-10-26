@@ -813,6 +813,12 @@ tabpanels {
   border-bottom: 1px solid #202220; /** Button Shadow */
 }
 
+/** The bar between the tabs and the tab panels. **/
+.tabs-bottom {
+  border-top: 1px solid #797f76 !important;
+  background-color: #313131;
+}
+
 /**
  * Tab Scrollbox Arrow Buttons
  */
