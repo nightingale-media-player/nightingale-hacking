@@ -1,11 +1,11 @@
 Index: Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/Makefile.in,v
-retrieving revision 1.391
-diff -u -p -r1.391 Makefile.in
---- Makefile.in	10 Sep 2007 17:36:17 -0000	1.391
-+++ Makefile.in	14 Sep 2007 18:05:26 -0000
-@@ -176,16 +176,14 @@ ifdef MOZ_CRASHREPORTER
+retrieving revision 1.393
+diff -u -p -r1.393 Makefile.in
+--- Makefile.in	10 Oct 2007 23:03:14 -0000	1.393
++++ Makefile.in	26 Oct 2007 02:58:07 -0000
+@@ -177,16 +177,14 @@ ifdef MOZ_CRASHREPORTER
  	  $(MAKE_SYM_STORE_PATH) >                                    \
  	  $(DIST)/crashreporter-symbols/$(BUILDID)/$(SYMBOL_ARCHIVE_BASENAME)-symbols.txt
  	echo packing symbols

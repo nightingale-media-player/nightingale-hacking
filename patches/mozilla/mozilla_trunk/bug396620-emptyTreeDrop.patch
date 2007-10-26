@@ -1,11 +1,11 @@
 Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
-retrieving revision 1.332
-diff -u -r1.332 nsTreeBodyFrame.cpp
---- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	11 Oct 2007 08:18:52 -0000	1.332
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	12 Oct 2007 19:26:57 -0000
-@@ -1264,6 +1264,12 @@
+retrieving revision 1.335
+diff -u -p -r1.335 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	15 Oct 2007 11:21:25 -0000	1.335
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	26 Oct 2007 03:01:05 -0000
+@@ -1264,6 +1264,12 @@ nsTreeBodyFrame::GetRowAt(PRInt32 aX, PR
    return row;
  }
  
@@ -18,7 +18,7 @@ diff -u -r1.332 nsTreeBodyFrame.cpp
  void
  nsTreeBodyFrame::CheckTextForBidi(nsAutoString& aText)
  {
-@@ -2601,7 +2607,9 @@
+@@ -2604,7 +2610,9 @@ nsTreeBodyFrame::HandleEvent(nsPresConte
          mSlots->mTimer = nsnull;
        }
  
@@ -29,7 +29,7 @@ diff -u -r1.332 nsTreeBodyFrame.cpp
          if (!mSlots->mTimer && mSlots->mDropOrient == nsITreeView::DROP_ON) {
            // Either there wasn't a timer running or it was just killed above.
            // If over a folder, start up a timer to open the folder.
-@@ -4228,6 +4236,14 @@
+@@ -4231,6 +4239,14 @@ nsTreeBodyFrame::ComputeDropPosition(nsG
          *aOrient = nsITreeView::DROP_AFTER;
      }
    }
@@ -48,10 +48,10 @@ Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.h
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.h,v
 retrieving revision 1.121
-diff -u -r1.121 nsTreeBodyFrame.h
+diff -u -p -r1.121 nsTreeBodyFrame.h
 --- layout/xul/base/src/tree/src/nsTreeBodyFrame.h	23 Aug 2007 15:57:55 -0000	1.121
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	12 Oct 2007 19:26:57 -0000
-@@ -241,6 +241,11 @@
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	26 Oct 2007 03:01:05 -0000
+@@ -241,6 +241,11 @@ protected:
    // coordinate system of this frame.
    PRInt32 GetRowAt(nscoord aX, nscoord aY);
  

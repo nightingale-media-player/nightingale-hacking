@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/tools/update-packaging/common.sh,v
 retrieving revision 1.9
 diff -u -p -r1.9 common.sh
 --- tools/update-packaging/common.sh	29 Mar 2007 14:11:40 -0000	1.9
-+++ tools/update-packaging/common.sh	19 Oct 2007 06:15:32 -0000
++++ tools/update-packaging/common.sh	26 Oct 2007 03:06:32 -0000
 @@ -35,7 +35,7 @@ copy_perm() {
  
  make_add_instruction() {
@@ -28,7 +28,7 @@ RCS file: /cvsroot/mozilla/tools/update-packaging/make_full_update.sh,v
 retrieving revision 1.9
 diff -u -p -r1.9 make_full_update.sh
 --- tools/update-packaging/make_full_update.sh	29 Mar 2007 14:11:40 -0000	1.9
-+++ tools/update-packaging/make_full_update.sh	19 Oct 2007 06:15:32 -0000
++++ tools/update-packaging/make_full_update.sh	26 Oct 2007 03:06:32 -0000
 @@ -38,6 +38,10 @@ targetfiles="update.manifest"
  
  mkdir -p "$workdir"
@@ -40,16 +40,18 @@ diff -u -p -r1.9 make_full_update.sh
  # Generate a list of all files in the target directory.
  pushd "$targetdir"
  if test $? -ne 0 ; then
-@@ -48,8 +52,6 @@ list_files files
+@@ -48,7 +52,9 @@ list_files files
  
  popd
  
 -> $manifest
--
++# XXXredfive temporarily remove this to keep from blowing away the
++# manifest created above.
++#> $manifest
+ 
  num_files=${#files[*]}
  
- for ((i=0; $i<$num_files; i=$i+1)); do
-@@ -67,8 +69,9 @@ for ((i=0; $i<$num_files; i=$i+1)); do
+@@ -67,8 +73,9 @@ for ((i=0; $i<$num_files; i=$i+1)); do
    targetfiles="$targetfiles \"$f\""
  done
  
