@@ -1,12 +1,10 @@
-? bug386826-xreonly-vistanorestartupdate.patch
-? sanity.diff
 Index: toolkit/xre/nsAppRunner.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
 retrieving revision 1.198
 diff -u -8 -p -r1.198 nsAppRunner.cpp
 --- toolkit/xre/nsAppRunner.cpp	19 Oct 2007 13:14:24 -0000	1.198
-+++ toolkit/xre/nsAppRunner.cpp	20 Oct 2007 01:16:11 -0000
++++ toolkit/xre/nsAppRunner.cpp	26 Oct 2007 01:29:57 -0000
 @@ -1553,17 +1553,17 @@ static nsresult LaunchChild(nsINativeApp
                              int needElevation = 0)
  {
@@ -94,7 +92,29 @@ diff -u -8 -p -r1.198 nsAppRunner.cpp
    EXCEPTIONREGISTRATIONRECORD excpreg;
  
  public:
-@@ -2623,24 +2601,48 @@ XRE_main(int argc, char* argv[], const n
+@@ -2564,19 +2542,18 @@ XRE_main(int argc, char* argv[], const n
+     appData.flags |= NS_XRE_ENABLE_CRASH_REPORTER;
+   }
+ 
+   if ((appData.flags & NS_XRE_ENABLE_CRASH_REPORTER) &&
+       NS_SUCCEEDED(
+          CrashReporter::SetExceptionHandler(appData.xreDirectory,
+                                             appData.crashReporterURL))) {
+     // pass some basic info from the app data
+-    if (appData.vendor)
+-      CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Vendor"),
+-                                     nsDependentCString(appData.vendor));
++    CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Vendor"),
++                                       NS_LITERAL_CSTRING("Songbird"));
+     if (appData.name)
+       CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("ProductName"),
+                                      nsDependentCString(appData.name));
+     if (appData.version)
+       CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Version"),
+                                      nsDependentCString(appData.version));
+     if (appData.buildID)
+       CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("BuildID"),
+@@ -2623,24 +2600,48 @@ XRE_main(int argc, char* argv[], const n
      if (::GetCurrentProcess(&psn) == noErr)
        ::SetFrontProcess(&psn);
    }
@@ -148,7 +168,7 @@ diff -u -8 -p -r1.198 nsAppRunner.cpp
    ScopedFPHandler handler;
  #endif /* XP_OS2 */
  
-@@ -3083,27 +3085,24 @@ XRE_main(int argc, char* argv[], const n
+@@ -3083,27 +3084,24 @@ XRE_main(int argc, char* argv[], const n
          if (noEMRestart && *noEMRestart && *noEMRestart == '1') {
            if (upgraded || needsRestart) {
              NS_WARNING("EM tried to force us to restart twice! Forcefully preventing that.");
@@ -176,7 +196,7 @@ diff -u -8 -p -r1.198 nsAppRunner.cpp
            cmdLine = do_CreateInstance("@mozilla.org/toolkit/command-line;1");
            NS_ENSURE_TRUE(cmdLine, 1);
  
-@@ -3190,20 +3189,17 @@ XRE_main(int argc, char* argv[], const n
+@@ -3190,20 +3188,17 @@ XRE_main(int argc, char* argv[], const n
      }
  
      // unlock the profile after ScopedXPCOMStartup object (xpcom) 
@@ -204,7 +224,7 @@ RCS file: /cvsroot/mozilla/toolkit/xre/nsXULAppAPI.h,v
 retrieving revision 1.25
 diff -u -8 -p -r1.25 nsXULAppAPI.h
 --- toolkit/xre/nsXULAppAPI.h	13 Oct 2007 05:47:04 -0000	1.25
-+++ toolkit/xre/nsXULAppAPI.h	20 Oct 2007 01:16:11 -0000
++++ toolkit/xre/nsXULAppAPI.h	26 Oct 2007 01:29:57 -0000
 @@ -398,9 +398,18 @@ XRE_API(nsresult,
                             nsXREAppData *aAppData))
  
@@ -230,8 +250,8 @@ RCS file: /cvsroot/mozilla/xulrunner/app/nsXULRunnerApp.cpp,v
 retrieving revision 1.36
 diff -u -8 -p -r1.36 nsXULRunnerApp.cpp
 --- xulrunner/app/nsXULRunnerApp.cpp	13 Oct 2007 05:47:04 -0000	1.36
-+++ xulrunner/app/nsXULRunnerApp.cpp	20 Oct 2007 01:16:12 -0000
-@@ -397,57 +397,51 @@ int main(int argc, char* argv[])
++++ xulrunner/app/nsXULRunnerApp.cpp	26 Oct 2007 01:29:57 -0000
+@@ -397,57 +397,65 @@ int main(int argc, char* argv[])
        rv = GetXULRunnerDir(argv[0], getter_AddRefs(regDir));
        if (NS_FAILED(rv))
          return 2;
@@ -241,49 +261,57 @@ diff -u -8 -p -r1.36 nsXULRunnerApp.cpp
    }
  
 -  const char *appDataFile = PR_GetEnv("XUL_APP_FILE");
++  nsCOMPtr<nsILocalFile> appDataLF;
++  const char *appDataFile;
 +  if (argc < 2) {
-+    Usage(argv[0]);
-+    return 1;
-+  }
  
 -  if (!(appDataFile && *appDataFile)) {
 -    if (argc < 2) {
-+  if (IsArg(argv[1], "app")) {
-+    if (argc == 2) {
++    appDataFile = PR_GetEnv("XUL_APP_FILE");
++    if (appDataFile && *appDataFile) {
++      nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
++      if (NS_FAILED(rv)) {
++        Output(PR_TRUE, "Invalid path found: '%s'", appDataFile);
++        return 1;
++      }
++    }
++    else {
        Usage(argv[0]);
        return 1;
      }
--
--    if (IsArg(argv[1], "app")) {
--      if (argc == 2) {
--        Usage(argv[0]);
--        return 1;
--      }
--      argv[1] = argv[0];
--      ++argv;
--      --argc;
--    }
--
--    appDataFile = argv[1];
++  }
++  else {
+ 
+     if (IsArg(argv[1], "app")) {
+       if (argc == 2) {
+         Usage(argv[0]);
+         return 1;
+       }
+       argv[1] = argv[0];
+       ++argv;
+       --argc;
+     }
+ 
+     appDataFile = argv[1];
      argv[1] = argv[0];
      ++argv;
      --argc;
--
+ 
 -    static char kAppEnv[MAXPATHLEN];
 -    PR_snprintf(kAppEnv, MAXPATHLEN, "XUL_APP_FILE=%s", appDataFile);
 -    PR_SetEnv(kAppEnv);
-   }
- 
-+  const char *appDataFile = argv[1];
-+  argv[1] = argv[0];
-+  ++argv;
-+  --argc;
-+
-   nsCOMPtr<nsILocalFile> appDataLF;
-   nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
-   if (NS_FAILED(rv)) {
-     Output(PR_TRUE, "Error: unrecognized application.ini path.\n");
-     return 2;
+-  }
+-
+-  nsCOMPtr<nsILocalFile> appDataLF;
+-  nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
+-  if (NS_FAILED(rv)) {
+-    Output(PR_TRUE, "Error: unrecognized application.ini path.\n");
+-    return 2;
++    nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
++    if (NS_FAILED(rv)) {
++      Output(PR_TRUE, "Error: unrecognized application.ini path.\n");
++      return 2;
++    }
    }
  
    AutoAppData appData(appDataLF);
