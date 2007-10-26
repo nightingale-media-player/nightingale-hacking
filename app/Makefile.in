@@ -39,11 +39,11 @@ ifeq (macosx,$(SB_PLATFORM))
 SONGBIRD_CONTENTS = $(srcdir)/Info.plist
 endif
 
-SUBDIRS = branding \
-          content \
-          skin \
-          preferences \
-          $(NULL)
+#SUBDIRS = branding \
+#          content \
+#          skin \
+#          preferences \
+#          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
