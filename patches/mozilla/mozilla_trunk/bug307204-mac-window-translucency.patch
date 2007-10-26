@@ -1,11 +1,11 @@
 Index: widget/src/cocoa/nsChildView.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
-retrieving revision 1.73
-diff -u -r1.73 nsChildView.h
---- widget/src/cocoa/nsChildView.h	17 Sep 2007 22:55:20 -0000	1.73
-+++ widget/src/cocoa/nsChildView.h	24 Sep 2007 10:02:20 -0000
-@@ -112,6 +112,10 @@
+retrieving revision 1.75
+diff -u -p -r1.75 nsChildView.h
+--- widget/src/cocoa/nsChildView.h	9 Oct 2007 18:46:31 -0000	1.75
++++ widget/src/cocoa/nsChildView.h	26 Oct 2007 18:28:52 -0000
+@@ -111,6 +111,10 @@ union nsPluginPort;
    NSMutableArray* mPendingDirtyRects;
    BOOL mPendingFullDisplay;
  
@@ -16,7 +16,7 @@ diff -u -r1.73 nsChildView.h
    // Holds our drag service across multiple drag calls. The reference to the
    // service is obtained when the mouse enters the view and is released when
    // the mouse exits or there is a drop. This prevents us from having to
-@@ -128,6 +132,7 @@
+@@ -127,6 +131,7 @@ union nsPluginPort;
  
  // Stop NSView hierarchy being changed during [ChildView drawRect:]
  - (void)delayedTearDown;
@@ -24,7 +24,7 @@ diff -u -r1.73 nsChildView.h
  @end
  
  
-@@ -296,12 +301,16 @@
+@@ -293,12 +298,16 @@ public:
    NS_IMETHOD        StartDrawPlugin();
    NS_IMETHOD        EndDrawPlugin();
    
@@ -46,10 +46,10 @@ diff -u -r1.73 nsChildView.h
 Index: widget/src/cocoa/nsChildView.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
-retrieving revision 1.256
-diff -u -r1.256 nsChildView.mm
---- widget/src/cocoa/nsChildView.mm	20 Sep 2007 08:56:42 -0000	1.256
-+++ widget/src/cocoa/nsChildView.mm	24 Sep 2007 10:02:23 -0000
+retrieving revision 1.267
+diff -u -p -r1.267 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	15 Oct 2007 12:35:57 -0000	1.267
++++ widget/src/cocoa/nsChildView.mm	26 Oct 2007 18:28:54 -0000
 @@ -46,7 +46,6 @@
  
  #include "nsCOMPtr.h"
@@ -58,7 +58,7 @@ diff -u -r1.256 nsChildView.mm
  #include "nsCRT.h"
  #include "nsplugindefs.h"
  #include "nsThreadUtils.h"
-@@ -150,8 +149,6 @@
+@@ -149,8 +148,6 @@ nsIWidget         * gRollupWidget   = ns
  
  - (BOOL)childViewHasPlugin;
  
@@ -67,7 +67,7 @@ diff -u -r1.256 nsChildView.mm
  - (void)processPendingRedraws;
  
  - (BOOL)maybeRerouteMouseEventToRollupWidget:(NSEvent *)anEvent;
-@@ -657,8 +654,34 @@
+@@ -656,8 +653,34 @@ void* nsChildView::GetNativeData(PRUint3
  
  #pragma mark -
  
@@ -103,7 +103,7 @@ diff -u -r1.256 nsChildView.mm
  NS_IMETHODIMP nsChildView::IsVisible(PRBool& outState)
  {
    if (!mVisible) {
-@@ -2071,10 +2094,17 @@
+@@ -2034,10 +2057,17 @@ NSEvent* gLastDragEvent = nil;
  }
  
  
@@ -123,7 +123,7 @@ diff -u -r1.256 nsChildView.mm
  }
  
  
-@@ -2200,11 +2230,6 @@
+@@ -2163,11 +2193,6 @@ NSEvent* gLastDragEvent = nil;
    PRBool isVisible;
    if (!mGeckoChild || NS_FAILED(mGeckoChild->IsVisible(isVisible)) || !isVisible)
      return;
@@ -135,7 +135,7 @@ diff -u -r1.256 nsChildView.mm
  
    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
  
-@@ -2291,19 +2316,6 @@
+@@ -2254,19 +2279,6 @@ NSEvent* gLastDragEvent = nil;
  }
  
  
@@ -155,7 +155,7 @@ diff -u -r1.256 nsChildView.mm
  // Allows us to turn off setting up the clip region
  // before each drawRect. We already clip within gecko.
  - (BOOL)wantsDefaultClipping
-@@ -2626,7 +2638,7 @@
+@@ -2589,7 +2601,7 @@ static nsEventStatus SendGeckoMouseEnter
  
  
  - (void)mouseMoved:(NSEvent*)theEvent
@@ -167,11 +167,11 @@ diff -u -r1.256 nsChildView.mm
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
-retrieving revision 1.40
-diff -u -r1.40 nsCocoaWindow.h
---- widget/src/cocoa/nsCocoaWindow.h	20 Sep 2007 08:56:42 -0000	1.40
-+++ widget/src/cocoa/nsCocoaWindow.h	24 Sep 2007 10:02:23 -0000
-@@ -189,6 +189,8 @@
+retrieving revision 1.42
+diff -u -p -r1.42 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	19 Oct 2007 15:47:58 -0000	1.42
++++ widget/src/cocoa/nsCocoaWindow.h	26 Oct 2007 18:28:54 -0000
+@@ -199,6 +199,8 @@ public:
      NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
      NS_IMETHOD CaptureRollupEvents(nsIRollupListener * aListener, PRBool aDoCapture, PRBool aConsumeRollupEvent);
      NS_IMETHOD GetAttention(PRInt32 aCycleCount);
@@ -180,29 +180,29 @@ diff -u -r1.40 nsCocoaWindow.h
  
      virtual gfxASurface* GetThebesSurface();
  
-@@ -202,6 +204,8 @@
+@@ -212,6 +214,8 @@ public:
      
      // nsIKBStateControl interface
      NS_IMETHOD ResetInputState();
 +    
 +    void MakeWindowTranslucent(PRBool aTranslucency);
  
- protected:
-   
+     NS_IMETHOD BeginSecureKeyboardInput();
+     NS_IMETHOD EndSecureKeyboardInput();
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.107
-diff -u -r1.107 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	20 Sep 2007 08:56:42 -0000	1.107
-+++ widget/src/cocoa/nsCocoaWindow.mm	24 Sep 2007 10:02:24 -0000
+retrieving revision 1.110
+diff -u -p -r1.110 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	19 Oct 2007 15:47:58 -0000	1.110
++++ widget/src/cocoa/nsCocoaWindow.mm	26 Oct 2007 18:28:55 -0000
 @@ -1,4 +1,4 @@
 -/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* -*- Mode: Objective-C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
  /* ***** BEGIN LICENSE BLOCK *****
   * Version: MPL 1.1/GPL 2.0/LGPL 2.1
   *
-@@ -64,6 +64,8 @@
+@@ -64,6 +64,8 @@ extern BOOL                gSomeMenuBarP
  
  #define NS_APPSHELLSERVICE_CONTRACTID "@mozilla.org/appshell/appShellService;1"
  
@@ -211,7 +211,7 @@ diff -u -r1.107 nsCocoaWindow.mm
  NS_IMPL_ISUPPORTS_INHERITED1(nsCocoaWindow, Inherited, nsPIWidgetCocoa)
  
  
-@@ -303,6 +305,7 @@
+@@ -311,6 +313,7 @@ nsresult nsCocoaWindow::StandardCreate(n
  
      rect.origin.y -= (newWindowFrame.size.height - rect.size.height);
      
@@ -219,7 +219,7 @@ diff -u -r1.107 nsCocoaWindow.mm
      if (mWindowType != eWindowType_popup)
        rect.origin.y -= ::GetMBarHeight();
  
-@@ -322,7 +325,7 @@
+@@ -334,7 +337,7 @@ nsresult nsCocoaWindow::StandardCreate(n
                                     backing:NSBackingStoreBuffered defer:NO];
      
      if (mWindowType == eWindowType_popup) {
@@ -228,7 +228,7 @@ diff -u -r1.107 nsCocoaWindow.mm
        [mWindow setLevel:NSPopUpMenuWindowLevel];
        [mWindow setHasShadow:YES];
  
-@@ -629,6 +632,44 @@
+@@ -641,6 +644,44 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
    return NS_OK;
  }
  
