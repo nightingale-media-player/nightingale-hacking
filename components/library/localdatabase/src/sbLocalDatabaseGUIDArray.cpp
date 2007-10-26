@@ -792,12 +792,6 @@ sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
     return NS_OK;
   }
 
-  // If we are fully cached and the rowid was not found, then we know that
-  // it does not exist in this array
-  if (mCache.Length() == mLength) {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
   // If no, we need to cache the entire guid array.  Find the first uncached
   // row so we can trigger the load
   PRUint32 firstUncached = 0;
@@ -809,7 +803,10 @@ sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
     }
   }
 
-  NS_ASSERTION(!found, "Unable to find first uncached row?");
+  // If all rows are cached, it was not found
+  if (!found && mLength == mCache.Length()) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
 
   rv = FetchRows(firstUncached, mLength);
   NS_ENSURE_SUCCESS(rv, rv);
