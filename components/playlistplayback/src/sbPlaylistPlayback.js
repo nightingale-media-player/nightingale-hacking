@@ -626,8 +626,16 @@ PlaylistPlayback.prototype = {
   },
   
   get currentIndex() {
-    if (this.playing) return this._playlistIndex.intValue;
-    return -1;
+    if (!this.playing) {
+      return -1;
+    }
+
+    try {
+      return this._playingView.getIndexForViewItemUID(this._playingViewItemUID);
+    }
+    catch(e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+      return -1;
+    }
   },
   
   get currentGUID() {
