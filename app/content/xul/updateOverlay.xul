@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <overlay id="update-wizard-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-  <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/updateOverlay.js"/>
-
 </overlay>
