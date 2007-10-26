@@ -40,22 +40,14 @@ class nsModuleComponentInfo;
 class nsIComponentManager;
 class nsIFile;
 
-class sbPropertyManager : public sbIPropertyManager,
-                          public nsIObserver
+class sbPropertyManager : public sbIPropertyManager
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
   NS_DECL_SBIPROPERTYMANAGER
 
   sbPropertyManager();
   virtual ~sbPropertyManager();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-    nsIFile* aPath,
-    const char* aLoaderStr,
-    const char* aType,
-    const nsModuleComponentInfo *aInfo);
 
   NS_METHOD Init();
   NS_METHOD CreateSystemProperties();

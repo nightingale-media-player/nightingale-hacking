@@ -74,8 +74,7 @@ static const nsModuleComponentInfo components[] =
     SB_PROPERTYMANAGER_DESCRIPTION,
     SB_PROPERTYMANAGER_CID,
     SB_PROPERTYMANAGER_CONTRACTID,
-    sbPropertyManagerConstructor,
-    sbPropertyManager::RegisterSelf
+    sbPropertyManagerConstructor
   },
   {
     SB_PROPERTYOPERATOR_DESCRIPTION,

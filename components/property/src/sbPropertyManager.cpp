@@ -33,7 +33,6 @@
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
-#include <nsIObserverService.h>
 #include <nsAutoPtr.h>
 #include <nsIStringBundle.h>
 #include "sbDatetimePropertyInfo.h"
@@ -56,9 +55,8 @@
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyManager,
-                              sbIPropertyManager,
-                              nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
+                              sbIPropertyManager)
 
 sbPropertyManager::sbPropertyManager()
 : mPropNamesLock(nsnull)
@@ -81,62 +79,12 @@ sbPropertyManager::~sbPropertyManager()
   }
 }
 
-/*static*/ NS_METHOD sbPropertyManager::RegisterSelf(nsIComponentManager* aCompMgr,
-                                                     nsIFile* aPath,
-                                                     const char* aLoaderStr,
-                                                     const char* aType,
-                                                     const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCAutoString contractId("service,");
-  contractId.Append(SB_PROPERTYMANAGER_CONTRACTID);
-
-  rv = categoryManager->AddCategoryEntry("app-startup",
-    SB_PROPERTYMANAGER_DESCRIPTION,
-    contractId.get(),
-    PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return rv;
-}
-
 NS_METHOD sbPropertyManager::Init()
 {
   nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+
+  rv = CreateSystemProperties();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = observerService->AddObserver(this, "app-startup", PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbPropertyManager::Observe(nsISupports* aSubject,
-                           const char* aTopic,
-                           const PRUnichar *aData)
-{
-  if (strcmp(aTopic, "app-startup") == 0) {
-    nsresult rv;
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
-
-    // We have to remove ourselves or we will stay alive until app shutdown.
-    if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, "app-startup");
-    }
-
-    // Now we create the system properties.
-    rv = CreateSystemProperties();
-    NS_ASSERTION(NS_SUCCEEDED(rv), "failed to create system properties");
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
