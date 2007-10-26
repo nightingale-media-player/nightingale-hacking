@@ -184,6 +184,23 @@ function SBVideoInitialize()
   {
     alert( "SBVideoInitialize\n" + err );
   }
+
+  /////////////////////////////////////////////////////
+  // HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK //
+  /////////////////////////////////////////////////////
+  // We want always set extensions.update.notifyUser //
+  // to true. This makes the extension manager check //
+  // at startup if it should ask the user if they    //
+  // want to install available extension updates.    //
+  // Really, we shouldn't need this but right now we //
+  // do.                                             //
+  // This is for bug #5401                           //
+  /////////////////////////////////////////////////////
+  try {
+    gPrefs.setBoolPref("extensions.update.notifyUser", true);
+  } catch (e) { 
+    dump('exception setting extensions.update.notifyUser: '+e+'\n');
+  }
 }
 
 /**
