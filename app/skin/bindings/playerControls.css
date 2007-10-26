@@ -61,6 +61,12 @@ Imported by bindings.css or directly into feathers.
   margin: 0px !important;  
 }
 
+.sb-player-button:focus > button > .button-box > .button-text,
+.sb-player-button > button:focus > .button-box > .button-text,
+.sb-player-button:focus > .button-box > .button-text
+{
+  border: 0px !important;
+}
 
 
 
