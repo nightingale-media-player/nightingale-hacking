@@ -1039,6 +1039,20 @@ button:active
   border-right-color: #202220; /** Button Shadow */ 
 }
 
+button:focus
+{
+  border: 1px solid;
+  border-top-color: #B3BAAC; /** Light Color 1 */
+  border-left-color: #797f76; /** Button Highlight */ 
+  border-bottom-color: #797f76; /** Button Highlight */ 
+  border-right-color: #797f76; /** Button Highlight */
+}
+
+button:focus > .button-box > label
+{
+  color: #feffff !important; /** Light Color Brightest */
+}
+
 button > dropmarker.button-menubutton-dropmarker,
 toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
 {
@@ -1071,7 +1085,6 @@ button[disabled="true"]:hover > hbox > label.button-text
 {
   color: #474948 !important; /** Rubber Highlight */
 }
-
 
 /** 
 *******************************************************************************
