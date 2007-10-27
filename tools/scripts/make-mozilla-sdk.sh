@@ -9,6 +9,7 @@ bin_files="regxpcom*
 
 # lib_files are relative to $objdir/dist/lib/
 lib_files="*js3250.*
+           *plc4.*
            *plds4.*
            *nspr4.*
            *unicharutil_external_s.*
