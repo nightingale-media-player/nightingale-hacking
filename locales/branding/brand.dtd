@@ -9,5 +9,5 @@
 
 <!-- Update the following prior to every release -->
 <!ENTITY releaseNotesURL       "http://www.songbirdnest.com/releasenotes">
-<!ENTITY window.main.title     "Songbird 0.3rc3pre">
-<!ENTITY window.dev.title      "Songbird 0.3rc3pre">
+<!ENTITY window.main.title     "Songbird 0.3.1pre">
+<!ENTITY window.dev.title      "Songbird 0.3.1pre">

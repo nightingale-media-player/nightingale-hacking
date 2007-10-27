@@ -1,5 +1,5 @@
-<!ENTITY window.main.title  "Songbird 0.3rc3pre" >
-<!ENTITY window.dev.title   "Songbird 0.3rc3pre" >
+<!ENTITY window.main.title  "Songbird 0.3.1pre" >
+<!ENTITY window.dev.title   "Songbird 0.3.1pre" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://www.songbirdnest.com/birdhouse/" >
