@@ -89,6 +89,8 @@
 #include <sbIMetadataJobManager.h>
 
 
+nsCString GetContentDispositionFilename(const nsACString &contentDisposition);
+
 /* *****************************************************************************
  *
  * Download device classes.

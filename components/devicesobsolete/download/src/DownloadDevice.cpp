@@ -50,6 +50,7 @@
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
+#include <nsCRT.h>
 #include <nsIDOMWindow.h>
 #include <nsILocalFile.h>
 #include <nsINetUtil.h>
@@ -60,9 +61,13 @@
 #include <nsITreeView.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
+#include <nsIUTF8ConverterService.h>
 #include <nsIWindowWatcher.h>
 #include <nsServiceManagerUtils.h>
 #include <nsNetUtil.h>
+#include <nsUnicharUtils.h>
+
+#include <prmem.h>
 
 /* Songbird imports. */
 #include <sbILibraryManager.h>
@@ -135,6 +140,347 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbDownloadDevice");
 #define LOG(args)   /* nothing */
 #endif
 
+// XXXAus: this should be moved into a base64 utilities class.
+static unsigned char *base = (unsigned char *)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+// XXXAus: this should be moved into a base64 utilities class.
+static PRInt32 codetovalue( unsigned char c )
+{
+  if( (c >= (unsigned char)'A') && (c <= (unsigned char)'Z') )
+  {
+    return (PRInt32)(c - (unsigned char)'A');
+  }
+  else if( (c >= (unsigned char)'a') && (c <= (unsigned char)'z') )
+  {
+    return ((PRInt32)(c - (unsigned char)'a') +26);
+  }
+  else if( (c >= (unsigned char)'0') && (c <= (unsigned char)'9') )
+  {
+    return ((PRInt32)(c - (unsigned char)'0') +52);
+  }
+  else if( (unsigned char)'+' == c )
+  {
+    return (PRInt32)62;
+  }
+  else if( (unsigned char)'/' == c )
+  {
+    return (PRInt32)63;
+  }
+  else
+  {
+    return -1;
+  }
+}
+
+// XXXAus: this should be moved into a base64 utilities class.
+static PRStatus decode4to3( const unsigned char    *src, 
+                           unsigned char          *dest )
+{
+  PRUint32 b32 = (PRUint32)0;
+  PRInt32 bits;
+  PRIntn i;
+
+  for( i = 0; i < 4; i++ )
+  {
+    bits = codetovalue(src[i]);
+    if( bits < 0 )
+    {
+      return PR_FAILURE;
+    }
+
+    b32 <<= 6;
+    b32 |= bits;
+  }
+
+  dest[0] = (unsigned char)((b32 >> 16) & 0xFF);
+  dest[1] = (unsigned char)((b32 >>  8) & 0xFF);
+  dest[2] = (unsigned char)((b32      ) & 0xFF);
+
+  return PR_SUCCESS;
+}
+
+// XXXAus: this should be moved into a base64 utilities class.
+static PRStatus decode3to2( const unsigned char    *src, 
+                           unsigned char          *dest )
+{
+  PRUint32 b32 = (PRUint32)0;
+  PRInt32 bits;
+  PRUint32 ubits;
+
+  bits = codetovalue(src[0]);
+  if( bits < 0 )
+  {
+    return PR_FAILURE;
+  }
+
+  b32 = (PRUint32)bits;
+  b32 <<= 6;
+
+  bits = codetovalue(src[1]);
+  if( bits < 0 )
+  {
+    return PR_FAILURE;
+  }
+
+  b32 |= (PRUint32)bits;
+  b32 <<= 4;
+
+  bits = codetovalue(src[2]);
+  if( bits < 0 )
+  {
+    return PR_FAILURE;
+  }
+
+  ubits = (PRUint32)bits;
+  b32 |= (ubits >> 2);
+
+  dest[0] = (unsigned char)((b32 >> 8) & 0xFF);
+  dest[1] = (unsigned char)((b32     ) & 0xFF);
+
+  return PR_SUCCESS;
+}
+
+// XXXAus: this should be moved into a base64 utilities class.
+static PRStatus decode2to1( const unsigned char    *src,
+                            unsigned char          *dest )
+{
+  PRUint32 b32;
+  PRUint32 ubits;
+  PRInt32 bits;
+
+  bits = codetovalue(src[0]);
+  if( bits < 0 )
+  {
+    return PR_FAILURE;
+  }
+
+  ubits = (PRUint32)bits;
+  b32 = (ubits << 2);
+
+  bits = codetovalue(src[1]);
+  if( bits < 0 )
+  {
+    return PR_FAILURE;
+  }
+
+  ubits = (PRUint32)bits;
+  b32 |= (ubits >> 4);
+
+  dest[0] = (unsigned char)b32;
+
+  return PR_SUCCESS;
+}
+
+// XXXAus: this should be moved into a base64 utilities class.
+static PRStatus decode( const unsigned char    *src,
+                        PRUint32                srclen,
+                        unsigned char          *dest )
+{
+  PRStatus rv;
+
+  while( srclen >= 4 )
+  {
+    rv = decode4to3(src, dest);
+    if( PR_SUCCESS != rv )
+    {
+      return PR_FAILURE;
+    }
+
+    src += 4;
+    dest += 3;
+    srclen -= 4;
+  }
+
+  switch( srclen )
+  {
+  case 3:
+    rv = decode3to2(src, dest);
+    break;
+  case 2:
+    rv = decode2to1(src, dest);
+    break;
+  case 1:
+    rv = PR_FAILURE;
+    break;
+  case 0:
+    rv = PR_SUCCESS;
+    break;
+  default:
+    PR_NOT_REACHED("coding error");
+  }
+
+  return rv;
+}
+
+// XXXAus: this should be moved into a base64 utilities class.
+char * SB_Base64Decode( const char *src,
+                        PRUint32    srclen,
+                        char       *dest )
+{
+  PRStatus status;
+  PRBool allocated = PR_FALSE;
+
+  if( (char *)0 == src )
+  {
+    return (char *)0;
+  }
+
+  if( 0 == srclen )
+  {
+    srclen = strlen(src);
+  }
+
+  if( srclen && (0 == (srclen & 3)) )
+  {
+    if( (char)'=' == src[ srclen-1 ] )
+    {
+      if( (char)'=' == src[ srclen-2 ] )
+      {
+        srclen -= 2;
+      }
+      else
+      {
+        srclen -= 1;
+      }
+    }
+  }
+
+  if( (char *)0 == dest )
+  {
+    PRUint32 destlen = ((srclen * 3) / 4);
+    dest = (char *)PR_MALLOC(destlen + 1);
+    if( (char *)0 == dest )
+    {
+      return (char *)0;
+    }
+    dest[ destlen ] = (char)0; /* null terminate */
+    allocated = PR_TRUE;
+  }
+
+  status = decode((const unsigned char *)src, srclen, (unsigned char *)dest);
+  if( PR_SUCCESS != status )
+  {
+    if( PR_TRUE == allocated )
+    {
+      PR_DELETE(dest);
+    }
+
+    return (char *)0;
+  }
+
+  return dest;
+}
+
+// XXXAus: this should be moved into a MIME utilities class.
+nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
+{
+  NS_NAMED_LITERAL_CSTRING(DISPOSITION_ATTACHEMENT, "attachment");
+  NS_NAMED_LITERAL_CSTRING(DISPOSITION_FILENAME, "filename=");
+
+  nsCAutoString unicodeDisposition(contentDisposition);
+  unicodeDisposition.StripWhitespace();
+
+  PRInt32 pos = unicodeDisposition.Find(DISPOSITION_ATTACHEMENT,
+    CaseInsensitiveCompare);
+  if(pos == -1 ) 
+    return EmptyCString();
+
+  pos = unicodeDisposition.Find(DISPOSITION_FILENAME,
+    CaseInsensitiveCompare);
+  if(pos == -1)
+    return EmptyCString();
+
+  pos += DISPOSITION_FILENAME.Length();
+
+  // if the string is quoted, we look for the next quote to know when the 
+  // filename ends.
+  PRInt32 endPos = -1;
+  if(unicodeDisposition.CharAt(pos) == '"') {
+
+    pos++;
+    endPos = unicodeDisposition.FindChar('\"', pos);
+
+    if(endPos == -1) 
+      return EmptyCString();
+  }
+  // if not, we find the next ';' or we take the rest.
+  else {
+    endPos = unicodeDisposition.FindChar(';', pos);
+
+    if(endPos == -1)  {
+      endPos = unicodeDisposition.Length() - 1;
+    }
+  }
+
+  nsCString filename(Substring(unicodeDisposition, pos, endPos - pos));
+
+  // string is encoded in a different character set.
+  if(StringBeginsWith(filename, NS_LITERAL_CSTRING("=?")) &&
+     StringEndsWith(filename, NS_LITERAL_CSTRING("?="))) {
+    
+    nsresult rv;
+    nsCOMPtr<nsIUTF8ConverterService> convServ = 
+      do_GetService("@mozilla.org/intl/utf8converterservice;1", &rv);
+    NS_ENSURE_SUCCESS(rv, EmptyCString());
+
+    pos = 2;
+    endPos = filename.FindChar('?', pos);
+
+    if(endPos == -1)
+      return EmptyCString();
+
+    // found the charset
+    nsCAutoString charset(Substring(filename, pos, endPos - pos));
+    pos = endPos + 1;
+
+    // find what encoding for the character set is used.
+    endPos = filename.FindChar('?', pos);
+
+    if(endPos == -1)
+      return EmptyCString();
+
+    nsCAutoString encoding(Substring(filename, pos, endPos - pos));
+    pos = endPos + 1;
+    
+    ToLowerCase(encoding);
+
+    // bad encoding.
+    if(!encoding.EqualsLiteral("b") &&
+       !encoding.EqualsLiteral("q")) {
+      return EmptyCString();
+    }
+
+    // end of actual string to decode marked by ?=
+    endPos = filename.FindChar('?', pos);
+    // didn't find end, bad string
+    if(endPos == -1 ||
+       filename.CharAt(endPos + 1) != '=')
+      return EmptyCString();
+
+    nsCAutoString convertedFilename;
+    nsCAutoString filenameToDecode(Substring(filename, pos, endPos - pos));
+    
+    if(encoding.EqualsLiteral("b")) {
+      char *str = SB_Base64Decode(filenameToDecode.get(), filenameToDecode.Length(), nsnull);
+
+      nsDependentCString strToConvert(str);
+      rv = convServ->ConvertStringToUTF8(strToConvert, charset.get(), PR_TRUE, convertedFilename);
+
+      PR_Free(str);
+    }
+    else if(encoding.EqualsLiteral("q")) {
+      NS_WARNING("XXX: No support for Q encoded strings!");
+    }
+
+    if(NS_SUCCEEDED(rv)) {
+      filename = convertedFilename;
+    }
+  }
+
+  ReplaceChars(filename, NS_LITERAL_CSTRING(FILE_ILLEGAL_CHARACTERS), '_');
+
+  return filename;
+}
 
 /* *****************************************************************************
  *
@@ -2879,32 +3225,54 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 
     if (bIsDirectory)
     {
-        // the destination file is a directory; make a complete filename
-        // based on the actual source URL now that we know the actual
-        // channel used
-        nsCOMPtr<nsIURI> pFinalSrcURI;
+        // check content disposition headers first. If there aren't any, we'll fall back
+        // to the final destination url filename.
 
-        nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &result);
-        NS_ENSURE_SUCCESS(result, result);
-
-        result = channel->GetURI(getter_AddRefs(pFinalSrcURI));
-        NS_ENSURE_SUCCESS(result, result);
-        
-        /* convert the uri into a URL */
-        nsCOMPtr<nsIURL> pFinalSrcURL = do_QueryInterface(pFinalSrcURI, &result);
-        NS_ENSURE_SUCCESS(result, result);
-
-        /* Get the unescaped file name from the URL. */
         nsCString escFileName;
-        result = pFinalSrcURL->GetFileName(escFileName);
-        NS_ENSURE_SUCCESS(result, result);
+        PRBool noContentDispositionHeaders = PR_TRUE;
+        nsCOMPtr<nsIHttpChannel> httpChannel = do_QueryInterface(aRequest, &result);
+        
+        if (NS_SUCCEEDED(result)) {
+          nsCAutoString contentDisposition;
+          result = httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("content-disposition"),
+                                                  contentDisposition);
+          
+          if (NS_SUCCEEDED(result) &&
+              contentDisposition.Length()) {
+            escFileName = GetContentDispositionFilename(contentDisposition);
+            if(escFileName.Length())
+              noContentDispositionHeaders = PR_FALSE;
+          }
+        }
+
+        if (noContentDispositionHeaders) {
+          // the destination file is a directory; make a complete filename
+          // based on the actual source URL now that we know the actual
+          // channel used
+          nsCOMPtr<nsIURI> pFinalSrcURI;
+
+          nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &result);
+          NS_ENSURE_SUCCESS(result, result);
+
+          result = channel->GetURI(getter_AddRefs(pFinalSrcURI));
+          NS_ENSURE_SUCCESS(result, result);
+
+          /* convert the uri into a URL */
+          nsCOMPtr<nsIURL> pFinalSrcURL = do_QueryInterface(pFinalSrcURI, &result);
+          NS_ENSURE_SUCCESS(result, result);
+
+          result = pFinalSrcURL->GetFileName(escFileName);
+          NS_ENSURE_SUCCESS(result, result);
+        }
+        
+        /* Get the unescaped file name from the URL. */
         nsCOMPtr<nsINetUtil> netUtil;
         netUtil = do_GetService("@mozilla.org/network/util;1", &result);
         NS_ENSURE_SUCCESS(result, result);
         nsCString fileName;
         result = netUtil->UnescapeString(escFileName,
-                                         nsINetUtil::ESCAPE_ALL,
-                                         fileName);
+          nsINetUtil::ESCAPE_URL_ONLY_NONASCII,
+          fileName);
         NS_ENSURE_SUCCESS(result, result);
 
         /* append to the path */
