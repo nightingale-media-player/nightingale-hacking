@@ -44,7 +44,7 @@ ifdef DEBUG
 DEBUG_EXT = .debug
 endif
 
-UPDATE_FILENAME_BASE = $(SB_APPNAME)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
+UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)_$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
 #
 # On OS X we need to diff from the 'Songbird.app' subdir.
