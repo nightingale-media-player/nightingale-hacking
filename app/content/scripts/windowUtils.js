@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -28,7 +28,7 @@
  * \file windowUtils.js
  * \brief Window Utility constants, functions and objects that are common
  * to all windows.
- * 
+ *
  * Note: This file is dependent on chrome://global/content/globalOverlay.js
  */
 
@@ -64,7 +64,7 @@ var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
 
 // log to JS console AND to the command line (in case of crashes)
 function SB_LOG (scopeStr, msg) {
-  msg = msg ? msg : ""; 
+  msg = msg ? msg : "";
   //This works, but adds everything as an Error
   //Components.utils.reportError( scopeStr + " : " + msg);
   gConsole.logStringMessage( scopeStr + " : " + msg );
@@ -82,7 +82,7 @@ var nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
  * \internal
  */
 function getPref(aFunc, aPreference, aDefaultValue) {
-  var prefs = 
+  var prefs =
     Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
   try {
     return prefs[aFunc](aPreference);
@@ -100,7 +100,7 @@ function getPref(aFunc, aPreference, aDefaultValue) {
  * \internal
  */
 function setPref(aFunc, aPreference, aValue) {
-  var prefs = 
+  var prefs =
     Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
   return prefs[aFunc](aPreference, aValue);
 }
@@ -164,10 +164,10 @@ function isMinimized() {
  * \brief Synchronize the maximize button with the current window state.
  * \internal
  */
-function syncMaxButton() 
+function syncMaxButton()
 {
   var maxButton = document.getElementById("sysbtn_maximize");
-  if (maxButton) 
+  if (maxButton)
   {
     if (isMaximized()) maxButton.setAttribute("checked", "true");
     else maxButton.removeAttribute("checked");
@@ -178,7 +178,7 @@ function syncMaxButton()
  * \brief Synchronize the resizers with the current window state.
  * \internal
  */
-function syncResizers() 
+function syncResizers()
 {
   if (isMaximized()) disableResizers();
   else enableResizers();
@@ -187,7 +187,7 @@ function syncResizers()
 /**
  * \brief Restore the window in the current context to unmaximized state.
  * \internal
- */	
+ */
 function restoreWindow()
 {
   if ( isMaximized() )
@@ -226,7 +226,7 @@ function onHide()
   var windowCloak =
     Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
-  windowCloak.cloak(window); 
+  windowCloak.cloak(window);
 
   // And try to focus another of our windows. We'll try to focus in this order:
   var windowList = ["Songbird:Main",
@@ -251,49 +251,37 @@ function onHide()
 
 }
 
-function onMinimumWindowSize()
+var gMinWidth = null;
+var gMinHeight = null;
+
+function onMinimumWindowSize(event)
 {
-/*
   //
   // SOMEDAY, we might be able to figure out how to properly constrain our
   // windows back to the proper min-width / min-height values for the document
   //
 
+  var resizeRequired = false;
 
-  // Yah, okay, this function only works if the content is within <sb-sys-outer-frame>
-  var outerframe = window.gOuterFrame;
-  if (!parent) parent = document.getElementById('frame_mini'); // grr, bad fallback hardcoding!
-  if ( parent ) {
-    var w_width = window.innerWidth;
-    var w_height = window.innerHeight;
-    var p_width = parent.boxObject.width + 4; // borders?!  ugh.
-    var p_height = parent.boxObject.height + 4;
-    var size = false;
-    // However, if in resizing the window size is different from the document's box object
-    if (w_width != p_width) {
-      // That means we found the document's min width.  Because you can't query it directly.
-      w_width = p_width;
-      size = true;
-    }
-    // However, if in resizing the window size is different from the document's box object
-    if (w_height != p_height) {
-      // That means we found the document's min height.  Because you can't query it directly.
-      w_height = p_height;
-      size = true;
-    }
-    if (size)
-    {
-      window.resizeTo(w_width, w_height);
-    }
+  var desiredWidth = gMinWidth;
+  if (this.outerWidth < desiredWidth) {
+    resizeRequired = true;
   }
-*/  
+
+  var desiredHeight = gMinHeight;
+  if (this.outerHeight < desiredHeight) {
+    resizeRequired = true;
+  }
+
+  if (resizeRequired) {
+    window.resizeTo(desiredWidth, desiredHeight);
+  }
 }
 
 /**
  * \brief Handles completion of resizing of the window in the current context.
  */
 function onWindowResizeComplete() {
-  onMinimumWindowSize();
   onWindowSaveSizeAndPosition();
 }
 
@@ -311,8 +299,8 @@ function onWindowSaveSizeAndPosition()
   if (!isMaximized() && !isMinimized()) {
   /*
     dump("******** onWindowSaveSizeAndPosition: root:" + root +
-                                    " root.w:" + SBDataGetIntValue(root+'.w') + 
-                                    " root.h:" + SBDataGetIntValue(root+'.h') + 
+                                    " root.w:" + SBDataGetIntValue(root+'.w') +
+                                    " root.h:" + SBDataGetIntValue(root+'.h') +
                                     "\n");
   */
     SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
@@ -328,8 +316,8 @@ function onWindowSavePosition()
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowSavePosition: root:" + root +
-                                  " root.w:" + SBDataGetIntValue(root+'.x') + 
-                                  " root.h:" + SBDataGetIntValue(root+'.y') + 
+                                  " root.w:" + SBDataGetIntValue(root+'.x') +
+                                  " root.h:" + SBDataGetIntValue(root+'.y') +
                                   "\n");
 */
   if (!(document.documentElement.boxObject.screenX == -32000 ||document.documentElement.boxObject.screenY == -32000)) { // never record the coordinates of a cloaked window !
@@ -367,7 +355,7 @@ function delayedActivate()
 // No forseen need to load _just_ size without position
 
 /**
- * \brief 
+ * \brief
  */
 function onWindowLoadSizeAndPosition()
 {
@@ -376,8 +364,8 @@ function onWindowLoadSizeAndPosition()
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowLoadSizeAndPosition: root:" + root +
-                                  " root.w:" + SBDataGetIntValue(root+'.w') + 
-                                  " root.h:" + SBDataGetIntValue(root+'.h') + 
+                                  " root.w:" + SBDataGetIntValue(root+'.w') +
+                                  " root.h:" + SBDataGetIntValue(root+'.h') +
                                   " box.w:" + document.documentElement.boxObject.width +
                                   " box.h:" + document.documentElement.boxObject.height +
                                   "\n");
@@ -398,7 +386,7 @@ function onWindowLoadSizeAndPosition()
 
   if ( rootW && rootH )
   {
-    // test if the window is resizable. if it is, and rootW/rootH are below 
+    // test if the window is resizable. if it is, and rootW/rootH are below
     // some limit, skip these steps so that we reload the default w/h from xul and css
     var resetsize = false;
     var resizers = document.getElementsByTagName("resizer");
@@ -420,15 +408,15 @@ function onWindowLoadSizeAndPosition()
 
     // also, if the desired w/h are larger than the screen, we should reset.
 
-    if (resizable && 
+    if (resizable &&
         ( ((minwidth && rootW < minwidth) || (minheight && rootH < minheight))
         || (rootW > screen.width || rootH > screen.height) ))
       resetsize = true;
 /*
     dump("resetsize = " + resetsize + "\n");
 */
-    
-    if (resizable && !resetsize) { 
+
+    if (resizable && !resetsize) {
       // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
       // YAY YAY YAY the windowregion hack actualy fixes this :D
       window.resizeTo( rootW, rootH );
@@ -439,7 +427,7 @@ function onWindowLoadSizeAndPosition()
       var diffW = rootW - document.documentElement.boxObject.width;
       var diffH = rootH - document.documentElement.boxObject.height;
       window.resizeTo( rootW + diffW, rootH + diffH);
-    } 
+    }
   }
   onWindowLoadPosition();
   // and of course, like focusing, maximizing at this stage won't work :( so introduce a small delay
@@ -531,7 +519,7 @@ function onWindowLoadPosition()
     var sysInfo =
       Components.classes["@mozilla.org/system-info;1"]
                 .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");                                          
+    platform = sysInfo.getProperty("name");
   }
   catch (e) {
     dump("System-info not available, trying the user agent string.\n");
@@ -571,11 +559,11 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
   if (!parentWindow) parentWindow = window;
   var titlebar = ",modal=no";
   if (SBDataGetBoolValue("accessibility.enabled")) {
-    titlebar += ",titlebar=yes"; 
+    titlebar += ",titlebar=yes";
     // if in accessible mode, resizable flag determines whether or not the window is resizable
   } else {
     titlebar += ",titlebar=no";
-    // if not in accessible mode, resizable flag does not determine if the window is resizable 
+    // if not in accessible mode, resizable flag does not determine if the window is resizable
     // or not, that's determined by the presence or absence of resizers in the xul.
     // on the other hand, if resizable=yes is present in the flags, that create a border
     // around the window in OSX, so remove it
@@ -599,18 +587,18 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
  * \param skipSave Skip saving window size and position.
  */
 function quitApp( skipSave )
-{  
+{
   if ( skipSave != true ) {
     onWindowSaveSizeAndPosition();
   }
-  
+
   // Why not stop playback, too?
   try {
     gPPS.stop();
   } catch (e) {
     dump("windowUtils.js:quitApp() Error: could not stop playback.\n");
   }
-  
+
   // Defer to toolkit/globalOverlay.js
   return goQuitApplication();
 }
@@ -622,7 +610,7 @@ function quitApp( skipSave )
  */
 function restartApp( skipSave )
 {
-  
+
   // Notify all windows that an application quit has been requested.
   var os = Components.classes["@mozilla.org/observer-service;1"]
                      .getService(Components.interfaces.nsIObserverService);
@@ -632,9 +620,9 @@ function restartApp( skipSave )
 
   // Something aborted the quit process.
   if (cancelQuit.data)
-    return;  
- 
-  // attempt to restart 
+    return;
+
+  // attempt to restart
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                      .getService(Components.interfaces.nsIAppStartup);
   as.quit(Components.interfaces.nsIAppStartup.eRestart |
@@ -695,7 +683,7 @@ function disableResizers() {
 
 /**
  * \brief Enable the real resizers.
- */	
+ */
 function enableResizers() {
   if (SBDataGetBoolValue("accessibility.enabled")) return;
   hideFakeResizers();
@@ -737,7 +725,7 @@ function getPlatformString()
     var sysInfo =
       Components.classes["@mozilla.org/system-info;1"]
                 .getService(Components.interfaces.nsIPropertyBag2);
-    return sysInfo.getProperty("name");                                          
+    return sysInfo.getProperty("name");
   }
   catch (e) {
     dump("System-info not available, trying the user agent string.\n");
@@ -758,7 +746,7 @@ function getPlatformString()
  */
 function checkAltF4(evt)
 {
-  if (evt.keyCode == 0x73 && evt.altKey) 
+  if (evt.keyCode == 0x73 && evt.altKey)
   {
     evt.preventDefault();
     quitApp();
@@ -772,8 +760,8 @@ var SBStringBundleBundle = Components.classes["@mozilla.org/intl/stringbundle;1"
 /**
  * \brief Lookup a string in the songbird.properties locale file.
  * \param key The key for the string.
- * \param dflt The 
- */ 
+ * \param dflt The
+ */
 function SBString( key, dflt )
 {
   // If there is no default, the key is the default.
@@ -792,17 +780,17 @@ function SBString( key, dflt )
 function binaryToHex(input)
 {
   var result = "";
-  
-  for (var i = 0; i < input.length; ++i) 
+
+  for (var i = 0; i < input.length; ++i)
   {
     var hex = input.charCodeAt(i).toString(16);
-  
+
     if (hex.length == 1)
       hex = "0" + hex;
-  
+
     result += hex;
   }
-  
+
   return result;
 }
 
@@ -816,26 +804,26 @@ function newURI(aURLString)
   var ioService =
     Components.classes["@mozilla.org/network/io-service;1"]
               .getService(Components.interfaces.nsIIOService);
-  
+
   try {
     return ioService.newURI(aURLString, null, null);
   }
   catch (e) { }
-  
+
   return null;
 }
 
-/** 
+/**
  * \brief List all properties on an object and display them in a message box.
  * \param obj The object.
  * \param objName The readable name of the object, helps format the output.
  */
-function listProperties(obj, objName) 
+function listProperties(obj, objName)
 {
     var columns = 3;
     var count = 0;
     var result = "";
-    for (var i in obj) 
+    for (var i in obj)
     {
         result += objName + "." + i + " = " + obj[i] + "\t\t\t";
         count = ++count % columns;
