@@ -261,21 +261,17 @@ function onMinimumWindowSize(event)
   // windows back to the proper min-width / min-height values for the document
   //
 
-  var resizeRequired = false;
-
   var desiredWidth = gMinWidth;
-  if (this.outerWidth < desiredWidth) {
-    resizeRequired = true;
+  if (this.outerWidth >= desiredWidth) {
+    desiredWidth = this.outerWidth;
   }
 
   var desiredHeight = gMinHeight;
-  if (this.outerHeight < desiredHeight) {
-    resizeRequired = true;
+  if (this.outerHeight >= desiredHeight) {
+    desiredHeight = this.outerHeight;
   }
 
-  if (resizeRequired) {
-    window.resizeTo(desiredWidth, desiredHeight);
-  }
+  window.resizeTo(desiredWidth, desiredHeight);
 }
 
 /**
