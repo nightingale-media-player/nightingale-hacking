@@ -505,6 +505,14 @@ function onWindowLoadPosition()
   var rootX = SBDataGetIntValue( root + ".x" );
   var rootY = SBDataGetIntValue( root + ".y" );
 
+  // Hack Bug 5286 - Detect when the window has been thrown
+  // offscreen by the buggy mac resize system.
+  if (rootX == 0 && rootY >= screen.height) {
+    var win = getXULWindowFromWindow(window);
+    if (win) win.center(null, true, true);
+    return;
+  }
+
   window.moveTo( rootX, rootY );
   // do the (more or less) same adjustment for x,y as we did for w,h
   var diffX = rootX - document.documentElement.boxObject.screenX;
