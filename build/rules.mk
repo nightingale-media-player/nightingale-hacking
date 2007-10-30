@@ -771,6 +771,24 @@ endif #SONGBIRD_PREFS
 
 #-----------------------
 
+ifdef SONGBIRD_PROFILE
+
+profile_files := $(addprefix $(SONGBIRD_PROFILEDIR)/,$(SONGBIRD_PROFILE))
+
+all:: $(profile_files)
+
+$(profile_files):: $(SONGBIRD_PROFILEDIR)
+
+$(profile_files):: $(SONGBIRD_PROFILEDIR)/%: $(srcdir)/%
+	$(CYGWIN_WRAPPER) $(CP) -dfp $^ $(SONGBIRD_PROFILEDIR)
+
+$(SONGBIRD_PROFILEDIR):
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_PROFILEDIR)
+
+endif #SONGBIRD_PROFILE
+
+#-----------------------
+
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
 ifeq (,$(wildcard $(SONGBIRD_PLUGINSDIR)))
