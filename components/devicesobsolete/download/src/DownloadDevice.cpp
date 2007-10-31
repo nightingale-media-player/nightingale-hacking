@@ -408,7 +408,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
     endPos = unicodeDisposition.FindChar(';', pos);
 
     if(endPos == -1)  {
-      endPos = unicodeDisposition.Length() - 1;
+      endPos = unicodeDisposition.Length();
     }
   }
 
