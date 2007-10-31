@@ -577,6 +577,9 @@ function getMargin() {
 
 function deferredComputeBottomMargin(nextJob) {
   margin = getMargin();
+  if (margin < 0) {
+    margin = getMargin();
+  }
   nextJob();
 }
 
