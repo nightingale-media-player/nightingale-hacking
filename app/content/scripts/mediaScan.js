@@ -155,6 +155,15 @@ function onPollScan()
 
   if (scanIsDone) {
     clearInterval(polling_interval);
+    
+    // We didn't find any items. Let's indicate this to the user.
+    if(count < 1) {
+      theTitle.value = SBString("media_scan.none", "Nothing");
+      theLabel.value = SBString("media_scan.complete", "Complete");
+      
+      theProgress.removeAttribute( "mode" );
+      document.documentElement.buttons = "accept";
+    }
   }
   else {
     var value = aFileScanQuery.getLastFileFound();
