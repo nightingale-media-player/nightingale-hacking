@@ -334,7 +334,7 @@ public:
                                        sbIMediaListListener *aMediaListListener);
   nsresult GetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
                                        sbIMediaListListener* *aMediaListListener);
-                                       
+  nsresult RemoveListenerForDeviceLibrary(const nsAString& aDeviceIdentifier);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mDeviceLibraries;
   nsInterfaceHashtableMT<nsStringHashKey, nsIMutableArray> mDeviceQueues;

@@ -642,9 +642,9 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = list->AddListener(listener,
                          PR_FALSE,
                          sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                           sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
-                           sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                           sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                         sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                         sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                         sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -923,6 +923,32 @@ sbDeviceBase::GetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
   NS_ENSURE_ARG_POINTER(aMediaListListener);
 
   if(mDeviceLibraryListeners.Get(aDeviceIdentifier, aMediaListListener)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_INVALID_ARG;
+}
+
+nsresult
+sbDeviceBase::RemoveListenerForDeviceLibrary(const nsAString& aDeviceIdentifier)
+{
+  nsCOMPtr<sbILibrary> library;
+  nsCOMPtr<sbIMediaListListener> listener;
+
+  if(mDeviceLibraryListeners.Get(aDeviceIdentifier, getter_AddRefs(listener)) &&
+     mDeviceLibraries.Get(aDeviceIdentifier, getter_AddRefs(library))) {
+    
+    nsresult rv;
+    nsCOMPtr<sbIMediaList> list;
+    
+    list = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = list->RemoveListener(listener);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mDeviceLibraryListeners.Remove(aDeviceIdentifier);
+
     return NS_OK;
   }
 
