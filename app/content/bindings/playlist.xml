@@ -2022,6 +2022,22 @@
   var ml = this.mediaListView.mediaList;
   var oldLength = ml.length;
 
+  var sort = this.mediaListView.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
   // If this media lists supports ordering, insert the item where it was
   // dropped
   var doInsert = false;
@@ -2040,6 +2056,10 @@
 
   if (source.equals(ml)) {
     var index = this.tree.view.selection.currentIndex;
+    if (!isAscending) {
+      index = this.mediaListView.length - (index + 1);
+    }
+
     if (doInsert) {
       ml.moveBefore(index, row);
     }
@@ -2076,6 +2096,22 @@
   var ml = this.mediaListView.mediaList;
   var oldLength = ml.length;
 
+  var sort = this.mediaListView.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
   // If this media lists supports ordering, insert the item where it was
   // dropped
   var doInsert = false;
@@ -2095,9 +2131,19 @@
   if (source.equals(ml)) {
     // Find the indexes of all the selected rows
     var indexes = [];
+    var viewLength = this.mediaListView.length;
     while (enumerator.hasMoreElements()) {
-      indexes.push(enumerator.getNext().index);
+      var index = enumerator.getNext().index;
+      if (!isAscending) {
+        index = viewLength - (index + 1);
+      }
+      indexes.push(index);
     }
+
+    if (!isAscending) {
+      indexes.reverse();
+    }
+
     if (doInsert) {
       ml.moveSomeBefore(indexes, indexes.length, row);
     }
