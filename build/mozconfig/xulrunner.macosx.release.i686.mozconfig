@@ -1,7 +1,5 @@
 mk_add_options MOZ_CO_PROJECT=xulrunner
 mk_add_options MOZ_CO_MODULE=mozilla/other-licenses/bsdiff,mozilla/tools/update-packaging
-#mk_add_options MOZ_CO_TAG=SONGBIRD_20070117_01_TAG
-mk_add_options MOZ_CO_DATE="Sat Oct 20 14:51:45 PDT 2007"
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-release
 mk_add_options MOZ_MAKE_FLAGS=-j4
 export MOZ_DEBUG_SYMBOLS=1
@@ -13,9 +11,7 @@ ac_add_options --enable-optimize="-O2 -gstabs+"
 ac_add_options --disable-debug
 ac_add_options --disable-tests
 ac_add_options --disable-javaxpcom
-ac_add_options --enable-svg --enable-canvas
 ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
 ac_add_options --with-macos-sdk=/Developer/SDKs/MacOSX10.4u.sdk
 ac_add_options --enable-extensions=default,inspector,venkman
-ac_add_app_options ppc --enable-prebinding
