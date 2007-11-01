@@ -75,6 +75,7 @@
 #ifdef MOZ_CRASHREPORTER
 #include <nsICrashReporter.h>
 #endif
+#include <nsICharsetDetectionObserver.h>
 #include <nsIFileProtocolHandler.h>
 #include <nsIURL.h>
 #include <nsStringGlue.h>
@@ -88,6 +89,7 @@
 /* TagLib imports. */
 #include <id3v2tag.h>
 #include <mp4itunestag.h>
+#include <apetag.h>
 #include <tag.h>
 #include <tfile.h>
 #include <xiphcomment.h>
@@ -104,7 +106,8 @@
  */
 
 class sbMetadataHandlerTaglib : public sbIMetadataHandler,
-                                public sbISeekableChannelListener
+                                public sbISeekableChannelListener,
+                                public nsICharsetDetectionObserver
 {
     /*
      * Taglib metadata handler configuration.
@@ -172,6 +175,8 @@ public:
 
     nsresult FactoryInit();
 
+    /* nsICharsetDetectionObserver */
+    NS_IMETHOD Notify(const char* aCharset, nsDetectionConfident aConf);
 
     /*
      * Private taglib metadata handler class services.
@@ -189,10 +194,26 @@ private:
 
 private:
     void ReadID3v2Tags(
-        TagLib::ID3v2::Tag          *pTag);
+        TagLib::ID3v2::Tag          *pTag,
+        const char                  *charset = 0);
 
     void AddID3v2Tag(
         TagLib::ID3v2::FrameListMap &frameListMap,
+        const char                  *frameID,
+        const char                  *metadataName,
+        const char                  *charset = 0);
+
+
+    /*
+     * Private taglib metadata handler APE services.
+     */
+
+private:
+    void ReadAPETags(
+        TagLib::APE::Tag          *pTag);
+
+    void AddAPETag(
+        TagLib::APE::ItemListMap &itemListMap,
         const char                  *frameID,
         const char                  *metadataName);
 
@@ -226,11 +247,19 @@ private:
 
 private:
     nsresult ReadMetadata();
+    
+    nsCString GuessCharset(
+        TagLib::Tag                 *pTag);
+    
+    TagLib::String ConvertCharset(
+        TagLib::String              aString,
+        const char                  *aCharset);
 
     void CompleteRead();
 
     PRBool ReadFile(
-        TagLib::File                *pTagFile);
+        TagLib::File                *pTagFile,
+        const char                  *aCharset = 0);
 
     PRBool ReadMPEGFile(
         const char                  *filePath);
@@ -258,6 +287,15 @@ private:
     void FixTrackDiscNumber(
         nsString                    numberKey,
         nsString                    totalKey);
+
+    /*
+     * Private charset detector members
+     */
+
+private:
+    // these apply only to the last thing being detected
+    char mLastCharset[0x40];
+    nsDetectionConfident mLastConfidence;
 };
 
 

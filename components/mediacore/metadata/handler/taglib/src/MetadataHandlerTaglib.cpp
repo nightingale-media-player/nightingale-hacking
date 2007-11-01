@@ -1,3 +1,4 @@
+// vim: indent=4
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -54,6 +55,8 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsIStandardURL.h>
+#include <nsICharsetDetector.h>
+#include <nsIUTF8ConverterService.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -93,14 +96,18 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerTaglib");
 #endif
 
 
+// the minimum number of chracters to feed into the charset detector
+#define GUESS_CHARSET_MIN_CHAR_COUNT 256
+
 /*******************************************************************************
  *
  * Taglib metadata handler nsISupports implementation.
  *
  ******************************************************************************/
 
-NS_IMPL_ISUPPORTS2(sbMetadataHandlerTaglib, sbIMetadataHandler,
-                                            sbISeekableChannelListener)
+NS_IMPL_ISUPPORTS3(sbMetadataHandlerTaglib, sbIMetadataHandler,
+                                            sbISeekableChannelListener,
+                                            nsICharsetDetectionObserver)
 
 
 /*******************************************************************************
@@ -655,13 +662,16 @@ static char *ID3v2Map[][2] =
  * ReadID3v2Tags
  *
  *   --> pTag                   ID3v2 tag object.
+ *   --> aCharset               The character set the tags are assumed to be in
+ *                              Pass in null to do no conversion
  *
  *   This function reads ID3v2 tags from the ID3v2 tag object specified by pTag.
  * The read tags are added to the set of metadata values.
  */
 
 void sbMetadataHandlerTaglib::ReadID3v2Tags(
-    TagLib::ID3v2::Tag          *pTag)
+    TagLib::ID3v2::Tag          *pTag,
+    const char                  *aCharset)
 {
     TagLib::ID3v2::FrameListMap frameListMap;
     int                         numMetadataEntries;
@@ -677,7 +687,7 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     /* Add the metadata entries. */
     numMetadataEntries = sizeof(ID3v2Map) / sizeof(ID3v2Map[0]);
     for (i = 0; i < numMetadataEntries; i++)
-        AddID3v2Tag(frameListMap, ID3v2Map[i][0], ID3v2Map[i][1]);
+        AddID3v2Tag(frameListMap, ID3v2Map[i][0], ID3v2Map[i][1], aCharset);
 }
 
 
@@ -687,6 +697,8 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
  *   --> frameListMap           Frame list map.
  *   --> frameID                ID3v2 frame ID.
  *   --> metadataName           Metadata name.
+ *   --> charset                The character set the tags are assumed to be in
+ *                              Pass in null to do no conversion
  *
  *   This function adds the ID3v2 tag with the ID3v2 frame ID specified by
  * frameID from the frame list map specified by frameListMap to the set of
@@ -696,7 +708,8 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
 void sbMetadataHandlerTaglib::AddID3v2Tag(
     TagLib::ID3v2::FrameListMap &frameListMap,
     const char                  *frameID,
-    const char                  *metadataName)
+    const char                  *metadataName,
+    const char                  *charset)
 {
     TagLib::ID3v2::FrameList    frameList;
 
@@ -714,13 +727,117 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
                       &length);
             length *= 1000;
             AddMetadataValue(metadataName, length);
+            return;
         }
 
         /* Just copy all other metadata. */
-        else
+        TagLib::String value = ConvertCharset(frameList.front()->toString(),
+                                              charset);
+        AddMetadataValue(metadataName, value);
+    }
+}
+
+
+/*******************************************************************************
+ *
+ * Private taglib metadata handler APE services.
+ *
+ ******************************************************************************/
+
+/*
+ * APEMap                     Map of APE tag names to Songbird metadata
+ *                            names.
+ */
+
+// see http://wiki.hydrogenaudio.org/index.php?title=APE_key
+static char *APEMap[][2] =
+{
+    { "Title", "trackName" },
+    { "Subtitle", "subtitle" },
+    { "Artist", "artistName" },
+    { "Album", "albumName" },
+    { "Debut album", "original_album" },
+    { "Publisher", "recordLabelName" },
+    { "Conductor", "conductor" },
+    { "Track", "trackNumber" },
+    { "Composer", "composerName" },
+    { "Comment", "comment" },
+    { "Copyright", "copyright_message" },
+    { "File", "source_url" },
+    { "Year", "year" },
+    { "Genre", "genre" }
+};
+
+
+/*
+ * ReadAPETags
+ *
+ *   --> pTag                   APE tag object.
+ *
+ *   This function reads APE tags from the APE tag object specified by pTag.
+ * The read tags are added to the set of metadata values.
+ */
+
+void sbMetadataHandlerTaglib::ReadAPETags(
+    TagLib::APE::Tag          *pTag)
+{
+    TagLib::APE::ItemListMap  itemListMap;
+    int                       numMetadataEntries;
+    int                       i;
+
+    /* Do nothing if no tags are present. */
+    if (!pTag) {
+        return;
+    }
+
+    /* Get the item list map. */
+    itemListMap = pTag->itemListMap();
+
+    /* Add the metadata entries. */
+    numMetadataEntries = sizeof(APEMap) / sizeof(APEMap[0]);
+    for (i = 0; i < numMetadataEntries; i++)
+        AddAPETag(itemListMap, APEMap[i][0], APEMap[i][1]);
+}
+
+
+/*
+ * AddAPETag
+ *
+ *   --> itemListMap            Item list map.
+ *   --> itemID                 APE item ID.
+ *   --> metadataName           Metadata name.
+ *
+ *   This function adds the APE tag with the APE frame ID specified by
+ * frameID from the frame list map specified by frameListMap to the set of
+ * metadata values with the metadata name specified by metadataName.
+ */
+
+void sbMetadataHandlerTaglib::AddAPETag(
+    TagLib::APE::ItemListMap    &itemListMap,
+    const char                  *itemID,
+    const char                  *metadataName)
+{
+    TagLib::APE::Item item;
+
+    /* Add the frame metadata. */
+    item = itemListMap[itemID];
+    if (!item.isEmpty())
+    {
+        /* Convert length to microseconds. */
+        if (!strcmp(metadataName, "length"))
         {
-            AddMetadataValue(metadataName, frameList.front()->toString());
+            PRInt32                     length;
+
+            PR_sscanf(item.toString().toCString(true),
+                      "%d",
+                      &length);
+            length *= 1000;
+            AddMetadataValue(metadataName, length);
+            return;
         }
+
+        /* Just copy all other metadata. */
+        AddMetadataValue(metadataName, item.toString());
     }
 }
 
@@ -940,6 +1057,9 @@ void sbMetadataHandlerTaglib::CompleteRead()
  * ReadFile
  *
  *   --> pTagFile               File from which to read.
+ *   --> aCharset               The character encoding to use for reading
+ *                              May be empty string (to mean no conversion)
+ *                              On Windows, may also be "CP_ACP"
  *
  *   <--                        True if file has valid metadata.
  *
@@ -948,7 +1068,8 @@ void sbMetadataHandlerTaglib::CompleteRead()
  */
 
 PRBool sbMetadataHandlerTaglib::ReadFile(
-    TagLib::File                *pTagFile)
+    TagLib::File                *pTagFile,
+    const char                  *aCharset)
 {
     TagLib::Tag                 *pTag;
     TagLib::AudioProperties     *pAudioProperties;
@@ -969,11 +1090,12 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     if (isValid)
     {
         pTag = pTagFile->tag();
-        AddMetadataValue("album", pTag->album());
-        AddMetadataValue("artist", pTag->artist());
-        AddMetadataValue("comment", pTag->comment());
-        AddMetadataValue("genre", pTag->genre());
-        AddMetadataValue("title", pTag->title());
+        // yay random charset guessing!
+        AddMetadataValue("album", ConvertCharset(pTag->album(), aCharset));
+        AddMetadataValue("artist", ConvertCharset(pTag->artist(), aCharset));
+        AddMetadataValue("comment", ConvertCharset(pTag->comment(), aCharset));
+        AddMetadataValue("genre", ConvertCharset(pTag->genre(), aCharset));
+        AddMetadataValue("title", ConvertCharset(pTag->title(), aCharset));
         AddMetadataValue("track_no", pTag->track());
         AddMetadataValue("year", pTag->year());
     }
@@ -991,6 +1113,183 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     }
 
     return (isValid);
+}
+
+
+/*
+ * GuessCharset
+ *
+ *   --> pTag                   The tags to look at
+ *
+ *   <--                        The best guess at the encoding the tags are in
+ *
+ *   This function looks at a a set of tags and tries to guess what charset 
+ *   (encoding) the tags are in.  Returns empty string to mean don't convert
+ *   (valid Unicode), and the literal "CP_ACP" if on Windows and best guess is
+ *   whatever the system locale is.
+ */
+
+nsCString sbMetadataHandlerTaglib::GuessCharset(
+    TagLib::Tag*                pTag)
+{
+    nsresult rv = NS_ERROR_FAILURE;
+    
+    // first, build a string consisting of some tags
+    TagLib::String tagString;
+    tagString += pTag->album();
+    tagString += pTag->artist();
+    tagString += pTag->title();
+    // comment and genre can end up confusing the detection; ignore them
+    //tagString += pTag->comment();
+    //tagString += pTag->genre();
+    
+    // first, figure out if this was from unicode - we do this by scanning
+    // the string for things that had more than 8 bits
+    TagLib::String::ConstIterator it;
+    for (it = tagString.begin(); it != tagString.end(); ++it) {
+        if (*it & ~0xFF) {
+            // this was Unicode; don't do any more guessing
+            return EmptyCString();
+        }
+    }
+
+    // look at the raw bytes
+    const char* data = tagString.toCString(false); // raw data
+    nsCString dataUTF8;
+    
+    // see if it's valid utf8; if yes, assume it _is_ indeed utf8
+    nsCOMPtr<nsIUTF8ConverterService> utf8Service =
+        do_GetService("@mozilla.org/intl/utf8converterservice;1");
+    if (utf8Service) {
+        rv = utf8Service->ConvertStringToUTF8(nsDependentCString(data, tagString.size()),
+                                              "utf-8",
+                                              PR_FALSE,
+                                              dataUTF8);
+        if (NS_SUCCEEDED(rv)) {
+            // this was utf8
+            return NS_LITERAL_CSTRING("utf-8");
+        }
+    }
+
+    // the metadata is in some 8-bit encoding; try to guess
+    mLastConfidence = eNoAnswerYet;
+    nsCOMPtr<nsICharsetDetector> detector = do_CreateInstance(
+        NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
+    if (detector) {
+        nsCOMPtr<nsICharsetDetectionObserver> observer =
+            do_QueryInterface( NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this) );
+        rv = detector->Init(observer);
+    }
+    if (detector && NS_SUCCEEDED(rv)) {
+        PRBool isDone = PR_FALSE;
+        // artificially inflate the buffer by repeating it a lot; this does
+        // in fact help with the detection
+        const PRUint32 chunkSize = tagString.size();
+        PRUint32 currentSize = 0;
+        while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
+            rv = detector->DoIt(data, chunkSize, &isDone);
+            if (NS_FAILED(rv) || isDone) {
+                break;
+            }
+            currentSize += chunkSize;
+        }
+        if (NS_SUCCEEDED(rv)) {
+            rv = detector->Done();
+        }
+        if (NS_SUCCEEDED(rv)) {
+            if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
+                return nsDependentCString(mLastCharset); // copied on return
+            }
+        }
+    }
+
+#if XP_WIN
+    // we have no idea what charset this is, but we know it's bad.
+    // for Windows only, assume CP_ACP
+    int len = tagString.size();
+
+    // make the call fail if it's not valid CP_ACP
+    int size = MultiByteToWideChar( CP_ACP, MB_ERR_INVALID_CHARS, data, len, nsnull, 0 );
+    if (size) {
+        // okay, so CP_ACP is usable
+        return NS_LITERAL_CSTRING("CP_ACP");
+    }
+#endif
+
+    // we truely know nothing
+    return EmptyCString();
+}
+
+/* nsICharsetDetectionObserver */
+NS_IMETHODIMP sbMetadataHandlerTaglib::Notify(
+    const char                  *aCharset,
+    nsDetectionConfident        aConf)
+{
+    unsigned int len = strlen(aCharset);
+    if (len > sizeof(mLastCharset) - 1) {
+        len = sizeof(mLastCharset) - 1;
+    }
+    memcpy(mLastCharset, aCharset, len);
+    mLastCharset[len] = '\0';
+    mLastConfidence = aConf;
+    return NS_OK;
+}
+
+TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
+    TagLib::String              aString,
+    const char                  *aCharset)
+{
+    if (!aCharset || !*aCharset) {
+        // no conversion
+        return aString;
+    }
+
+    const char* data = aString.toCString(false);
+#if XP_WIN
+    if (NS_LITERAL_CSTRING("CP_ACP").Equals(aCharset)) {
+        // convert to CP_ACP
+        int size = ::MultiByteToWideChar( CP_ACP,
+                                          MB_ERR_INVALID_CHARS,
+                                          data,
+                                          aString.size(),
+                                          nsnull,
+                                          0 );
+        if (size) {
+            // convert to CP_ACP
+            PRUnichar *wstr = reinterpret_cast< PRUnichar * >( NS_Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+            if (wstr) {
+                int read = MultiByteToWideChar( CP_ACP,
+                                                MB_ERR_INVALID_CHARS,
+                                                data,
+                                                aString.size(),
+                                                wstr,
+                                                size );
+                NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
+                
+                wstr[size] = '\0';
+                
+                TagLib::String strValue(wstr);
+                NS_Free(wstr);
+                return strValue;
+            }
+        }
+    }
+#endif
+
+    // convert via Mozilla
+    nsCOMPtr<nsIUTF8ConverterService> utf8Service =
+        do_GetService("@mozilla.org/intl/utf8converterservice;1");
+    if (utf8Service) {
+        nsDependentCString raw(data, aString.size());
+        nsCString converted;
+        nsresult rv = utf8Service->ConvertStringToUTF8(
+            raw, aCharset, PR_FALSE, converted);
+        if (NS_SUCCEEDED(rv))
+            return TagLib::String(converted.BeginReading(), TagLib::String::UTF8);
+    }
+
+    // failed to convert :(
+    return aString;
 }
 
 
@@ -1037,14 +1336,14 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
                 isValid = PR_FALSE;
         }
     }
-
+    
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile);
 
     /* Read the ID3v2 metadata. */
     if (NS_SUCCEEDED(result) && isValid)
-        ReadID3v2Tags(pTagFile->ID3v2Tag());
+        ReadXiphTags(pTagFile->xiphComment());
 
     /* File is invalid on any error. */
     if (NS_FAILED(result))
@@ -1102,6 +1401,10 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile);
 
+    /* Read the APE metadata */
+    if (NS_SUCCEEDED(result) && isValid)
+        ReadAPETags(pTagFile->APETag());
+
     /* File is invalid on any error. */
     if (NS_FAILED(result))
         isValid = PR_FALSE;
@@ -1154,13 +1457,20 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
         }
     }
 
+    /* Guess the charset */
+    nsCString charset = GuessCharset(pTagFile->tag());
+
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
-        isValid = ReadFile(pTagFile);
+        isValid = ReadFile(pTagFile, charset.BeginReading());
 
     /* Read the ID3v2 metadata. */
     if (NS_SUCCEEDED(result) && isValid)
-        ReadID3v2Tags(pTagFile->ID3v2Tag());
+        ReadID3v2Tags(pTagFile->ID3v2Tag(), charset.BeginReading());
+
+    /* Read the APE metadata */
+    if (NS_SUCCEEDED(result) && isValid)
+        ReadAPETags(pTagFile->APETag());
 
     /* File is invalid on any error. */
     if (NS_FAILED(result))
@@ -1310,35 +1620,11 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     if (value == TagLib::String::null)
         return (result);
 
-#if defined(XP_WIN)
-
-    const char *str = value.toCString(false);
-    size_t len = strlen(str);
-
-    int size = MultiByteToWideChar( CP_ACP, 0, str, len, nsnull, 0 );
-    PRUnichar *wstr = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
-    NS_ENSURE_TRUE(wstr, NS_ERROR_OUT_OF_MEMORY);
-
-    int read = MultiByteToWideChar( CP_ACP, 0, str, len, wstr, size );
-    NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
-
-    wstr[ size ] = 0;
-    nsAutoString strValue( wstr );
-    nsMemory::Free( wstr );
-
-    /* Add the metadata value. */
-    result = mpMetadataValues->SetValue
-                                (NS_ConvertUTF8toUTF16(name),
-                                 strValue,
-                                 0);
-
-#else
     /* Add the metadata value. */
     result = mpMetadataValues->SetValue
                                 (NS_ConvertUTF8toUTF16(name),
                                  NS_ConvertUTF8toUTF16(value.toCString(true)),
                                  0);
-#endif
 
     return (result);
 }

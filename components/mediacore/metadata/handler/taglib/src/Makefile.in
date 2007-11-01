@@ -53,6 +53,8 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/chardet \
+               $(MOZSDK_INCLUDE_DIR)/uconv \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
