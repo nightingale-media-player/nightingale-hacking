@@ -1366,6 +1366,21 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     }
   }
 
+  LOG(("Replaced Elements %d to %d",
+            aDestIndexOffset,
+            rowCount + aDestIndexOffset));
+
+  if (needsSorting) {
+    rv = SortRows(aDestIndexOffset + firstIndex,
+                  aDestIndexOffset + rowCount - 1,
+                  lastSortedValue,
+                  isFirstSort,
+                  PR_TRUE,
+                  isFirstSort == PR_TRUE,
+                  aIsNull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Record the indexes of the guids
   for (PRUint32 i = 0; i < rowCount; i++) {
     PRUint32 index = i + aDestIndexOffset;
@@ -1385,21 +1400,6 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     PRBool added = mRowidToIndexMap.Put(item->rowid, index);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
-  }
-
-  LOG(("Replaced Elements %d to %d",
-            aDestIndexOffset,
-            rowCount + aDestIndexOffset));
-
-  if (needsSorting) {
-    rv = SortRows(aDestIndexOffset + firstIndex,
-                  aDestIndexOffset + rowCount - 1,
-                  lastSortedValue,
-                  isFirstSort,
-                  PR_TRUE,
-                  isFirstSort == PR_TRUE,
-                  aIsNull);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   /*

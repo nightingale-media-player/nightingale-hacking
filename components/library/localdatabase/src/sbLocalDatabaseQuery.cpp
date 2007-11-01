@@ -60,6 +60,7 @@
 #define GETNULL_ALIAS    NS_LITERAL_STRING("_getnull")
 #define SORT_ALIAS       NS_LITERAL_STRING("_sort")
 #define DISTINCT_ALIAS   NS_LITERAL_STRING("_d")
+#define CONPROP_ALIAS    NS_LITERAL_STRING("_conprop")
 
 #define ORDINAL_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
 #define ISLIST_PROPERTY  NS_LITERAL_STRING(SB_PROPERTY_ISLIST)
@@ -352,13 +353,13 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
     // Join the properties tabe to apply the constraint
     rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                            PROPERTIES_TABLE,
-                           CONSTRAINT_ALIAS,
+                           CONPROP_ALIAS,
                            GUID_COLUMN,
                            MEDIAITEMS_ALIAS,
                            GUID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mBuilder->CreateMatchCriterionLong(CONSTRAINT_ALIAS,
+    rv = mBuilder->CreateMatchCriterionLong(CONPROP_ALIAS,
                                             PROPERTYID_COLUMN,
                                             sbISQLSelectBuilder::MATCH_EQUALS,
                                             GetPropertyId(mSorts->ElementAt(0).property),
@@ -367,7 +368,7 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
     rv = mBuilder->AddCriterion(criterion);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mBuilder->CreateMatchCriterionParameter(CONSTRAINT_ALIAS,
+    rv = mBuilder->CreateMatchCriterionParameter(CONPROP_ALIAS,
                                                  OBJSORTABLE_COLUMN,
                                                  sbISQLSelectBuilder::MATCH_EQUALS,
                                                  getter_AddRefs(criterion));
@@ -1310,14 +1311,17 @@ sbLocalDatabaseQuery::AddResortColumns()
   if (mIsFullLibrary) {
     rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, ROWID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     rv = mBuilder->AddColumn(CONSTRAINT_ALIAS, ORDINAL_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
 
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, ROWID_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddColumn(CONSTRAINT_ALIAS, ROWID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
