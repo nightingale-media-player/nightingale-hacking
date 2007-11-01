@@ -1532,11 +1532,24 @@
         <parameter name="evt"/>
         <body>
 <![CDATA[
+  // XXXAus: Useful for debugging, don't remove.
   //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
-
+  
   // Handle Ctrl-a
-  if (evt.charCode == 'a'.charCodeAt(0) && evt.ctrlKey) {
+  var isKeyValid = (evt.charCode == 'a'.charCodeAt(0));
+  var isDarwin = (getPlatformString() == "Darwin");
+
+if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
+       ( !isDarwin && isKeyValid && evt.ctrlKey)) {
+
+    // Prevent the default and stop propagation since
+    // we are handling this event completely.
+    // See bug #491 and #4546
+    evt.preventDefault();
+    evt.stopPropagation();
+    
     this.treeView.selection.selectAll();
+
     return;
   }
 
