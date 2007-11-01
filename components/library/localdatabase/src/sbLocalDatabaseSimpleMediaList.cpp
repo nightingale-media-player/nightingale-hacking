@@ -1376,6 +1376,11 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   rv = mFullArray->GetMediaItemIdByIndex(aIndex, &mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the old ordinal
+  nsString oldOrdinal;
+  rv = mFullArray->GetOrdinalByIndex(aIndex, oldOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the item at the from index with the new ordinal
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));
@@ -1388,6 +1393,9 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt32Parameter(1, mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(2, oldOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->Execute(&dbOk);
@@ -1430,6 +1438,10 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
     rv = mFullArray->GetMediaItemIdByIndex(aFromIndexArray[i], &mediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsString oldOrdinal;
+    rv = mFullArray->GetOrdinalByIndex(aFromIndexArray[i], oldOrdinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = query->AddQuery(mUpdateListItemOrdinalQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1437,6 +1449,9 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->BindInt32Parameter(1, mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(2, oldOrdinal);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1784,6 +1799,15 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
 
   rv = update->CreateMatchCriterionParameter(EmptyString(),
                                              NS_LITERAL_STRING("member_media_item_id"),
+                                             sbISQLSelectBuilder::MATCH_EQUALS,
+                                             getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->CreateMatchCriterionParameter(EmptyString(),
+                                             NS_LITERAL_STRING("ordinal"),
                                              sbISQLSelectBuilder::MATCH_EQUALS,
                                              getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
