@@ -847,7 +847,7 @@ PlaylistPlayback.prototype = {
       if (core.getPaused()) {
         core.play()
       } else {
-        this.playView( this._playingView, this._playlistIndex.intValue );
+        this.playView( this._playingView, this.currentIndex );
       }
     }
     // Otherwise figure out the default action
@@ -1026,7 +1026,7 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return this._playlistIndex;
+    return this.currentIndex;
   },
 
   get paused() {
@@ -1494,7 +1494,7 @@ PlaylistPlayback.prototype = {
       if ( this._set_metadata ) {
         //Get current item using current index and current playing view.
         var base   = "http://songbirdnest.com/data/1.0#";
-        var cur_index = this._playlistIndex.intValue;
+        var cur_index = this.currentIndex;
         var cur_item = this._playingView.getItemByIndex(cur_index);
         
         //Set metadata for this item
