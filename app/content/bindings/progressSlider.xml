@@ -35,8 +35,8 @@
     <content>
     <xul:box id="sb-progress-slider" sbid="sb-progress-slider" xbl:inherits="orient,class" flex="1">
       <xul:stack xbl:inherits="class" flex="1">
-        <xul:progressmeter id="sb-progress-slider-progress" sbid="sb-progress-slider-progress" class="sb-progress-slider" xbl:inherits="orient,class" flex="1"/>
-        <xul:slider id="sb-progress-slider-slider" sbid="sb-progress-slider-slider" class="sb-progress-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos,class" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" mousethrough="never"> 
+        <xul:progressmeter id="sb-progress-slider-progress" sbid="sb-progress-slider-progress" class="sb-progress-slider" xbl:inherits="orient,class,dir" flex="1"/>
+        <xul:slider id="sb-progress-slider-slider" sbid="sb-progress-slider-slider" class="sb-progress-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos,class,dir" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" mousethrough="never"> 
           <xul:thumb id="sb-progress-slider-thumb" sbid="sb-progress-slider-thumb" class="sb-progress-slider" xbl:inherits="class"/>  
         </xul:slider>
       </xul:stack>
