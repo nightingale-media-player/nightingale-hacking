@@ -284,7 +284,7 @@
   <binding id="sb-browser-stopreload-button">
 
     <content>
-      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-stoprefresh-button" flex="1">
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-stopreload-button" flex="1">
         <toolbarbutton id="sb-browser-stopreload-reload-button" class="sb-browser-stopreload-reload-button toolbarbutton-1 chromeclass-toolbar-additional"
                        anonid="reload-button"
                        label="&tooltip.browser.refresh;"

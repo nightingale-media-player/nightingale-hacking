@@ -247,7 +247,7 @@ function doEULA(aAcceptAction, aCancelAction)
       var eulaWindow =
         window.openDialog("chrome://songbird/content/xul/eula.xul",
                           "eula",
-                          "chrome,centerscreen,modal=no,titlebar=yes",
+                          "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
                           eulaData );
       eulaWindow.focus();
 

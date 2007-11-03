@@ -253,7 +253,7 @@ GENERAL RULES
 */
 
 #navigator-toolbox > toolbar > toolbarbutton,
-.sb-browser-stoprefresh-button > toolbarbutton
+.sb-browser-stopreload-button > toolbarbutton
 {
   min-height: 26px;
   min-width: 28px;  

@@ -37,11 +37,6 @@ Additional Songbird specific rules for the global skin.
 
 
 
-
-/* Use styled rather than native scroll bars */
-@import url("chrome://global/skin/xulscrollbars.css");
-
-
 /*
   Remove the platform-native styling from all elements.  This allows
   us to begin applying our own look and feel.

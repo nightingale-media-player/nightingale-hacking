@@ -754,11 +754,16 @@ TABBED BROWSER
 *******************************************************************************
 */ 
 
+tabs {
+  border-bottom: 1px solid #797f76;  /** Button Highlight */
+}
+
 .tabbrowser-strip
 {
   background-color: #202220;
 }
 
+/** Top tabs **/
 tab,
 .tabbrowser-tab {
   border-right: 1px solid #474948 !important; /** Rubber Highlight */
@@ -772,7 +777,6 @@ tab:not([selected="true"]),
   border-top: 1px solid #474948 !important; /** Rubber Highlight */
   border-left: 1px solid #474948 !important; /** Rubber Highlight */
   background-color: #313131;
-  margin-bottom: 1px;
 }
 tab:hover:not([selected="true"]),
 .tabbrowser-tab:hover:not([selected="true"]) {
@@ -780,7 +784,6 @@ tab:hover:not([selected="true"]),
   border-top: 1px solid #797f76 !important; /** Button Highlight */
   border-left: 1px solid #202220 !important; /** Button Shadow */
   background-color: #313131;
-  margin-bottom: 1px;
 }
 tab[selected="true"],
 .tabbrowser-tab[selected="true"] {
@@ -788,8 +791,40 @@ tab[selected="true"],
   border-top: 1px solid #797f76 !important; /** Button Highlight */
   border-left: 1px solid #474948 !important; /** Rubber Highlight */
   background-color: #313131;
-  margin-top: 2px;
 }
+
+
+/** Bottom tabs **/
+.tab-bottom {
+  border-top: 1px solid #313131 !important;
+  border-right: 1px solid #474948 !important; /** Rubber Highlight */
+  border-bottom: 1px solid #474948 !important; /** Rubber Highlight */
+  border-left: 1px solid #474948 !important; /** Rubber Highlight */
+  background-color: #313131;
+}
+.tab-bottom:not([selected="true"]) {
+  border-top: 1px solid #313131 !important;
+  border-right: 1px solid #474948 !important; /** Rubber Highlight */
+  border-bottom: 1px solid #474948 !important; /** Rubber Highlight */
+  border-left: 1px solid #474948 !important; /** Rubber Highlight */
+  background-color: #313131;
+}
+.tab-bottom:hover:not([selected="true"]) {
+  border-top: 1px solid #313131 !important;
+  border-right: 1px solid #202220 !important; /** Button Shadow */
+  border-bottom: 1px solid #202220 !important; /** Button Shadow */
+  border-left: 1px solid #202220 !important; /** Button Shadow */
+  background-color: #313131;
+}
+.tab-bottom[selected="true"] {
+  border-top: 1px solid #313131 !important;
+  border-right: 1px solid #797f76 !important; /** Button Highlight */
+  border-bottom: 1px solid #474948 !important; /** Rubber Highlight */
+  border-left: 1px solid #797f76 !important; /** Button Highlight */
+  background-color: #313131;
+}
+
+/** General tab styles **/
 
 label.tab-text
 {
@@ -803,7 +838,6 @@ tab[selected="true"] > hbox > label.tab-text,
 }
 
 tabpanels {
-  border-top: 1px outset #99A195;  
   background-color		: transparent;
 }
 
@@ -982,6 +1016,11 @@ scrollbar > slider
   background-color: #202220 !important;
   background-image: none !important; 
 } 
+
+scrollcorner {
+  background-color: #313131;
+}
+
 
 /* END SCROLLBARS **/
 

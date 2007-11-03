@@ -26,8 +26,11 @@
 //
  */
 -->
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/firstrun.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <dialog 
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -40,7 +43,11 @@
  ondialogaccept="return doClose('accept');"
  ondialogcancel="return doClose('cancel');"
  windowtype="Songbird:EULA"
+ hidechrome="true"
+ type="songbird" 
 >
+
+  <windowregion/>
 
   <!-- Astounding complexity! -->
   <browser id="songbird.eula" src="chrome://songbird/content/html/eula.html" flex="1"/>
@@ -49,6 +56,16 @@
             oncommand="onAcceptChanged()"/>
 
   <!-- And intrepid instructions! -->  
+
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
+  <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/>    
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/windowUtils.js" />
+
   <script>
   <![CDATA[
     var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
