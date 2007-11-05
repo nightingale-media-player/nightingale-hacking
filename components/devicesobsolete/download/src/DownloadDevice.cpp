@@ -848,8 +848,10 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     }
 
     /* Dispose of the device lock. */
-    if (mpDeviceMonitor)
+    if (mpDeviceMonitor) {
         nsAutoMonitor::DestroyMonitor(mpDeviceMonitor);
+        mpDeviceMonitor = nsnull;
+    }
 
     return (NS_OK);
 }
@@ -1795,6 +1797,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
     nsresult                    rv;
 
     /* Lock the download device. */
+    NS_ENSURE_STATE(mpDeviceMonitor);
     nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Handle case where download media list has already been initialized. */
