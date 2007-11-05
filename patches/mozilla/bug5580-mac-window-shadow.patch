@@ -1,0 +1,28 @@
+Index: widget/src/cocoa/nsCocoaWindow.mm
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
+retrieving revision 1.112
+diff -u -8 -p -r1.112 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	30 Oct 2007 04:03:43 -0000	1.112
++++ widget/src/cocoa/nsCocoaWindow.mm	5 Nov 2007 20:08:10 -0000
+@@ -353,16 +353,20 @@ nsresult nsCocoaWindow::StandardCreate(n
+ 
+         ChildView* newContentView = (ChildView*)mPopupContentView->GetNativeData(NS_NATIVE_WIDGET);
+         [mWindow setContentView:newContentView];
+       }
+     }
+     else if (mWindowType == eWindowType_invisible) {
+       [mWindow setLevel:kCGDesktopWindowLevelKey];
+     }
++    // XXXmatt: enable shadow for borderless Songbird window (bug 5580)
++    else if (features == NSBorderlessWindowMask) {
++      [mWindow setHasShadow:YES];
++    }
+ 
+     [mWindow setBackgroundColor:[NSColor whiteColor]];
+     [mWindow setContentMinSize:NSMakeSize(60, 60)];
+     [mWindow setReleasedWhenClosed:NO];
+ 
+     // setup our notification delegate. Note that setDelegate: does NOT retain.
+     mDelegate = [[WindowDelegate alloc] initWithGeckoWindow:this];
+     [mWindow setDelegate:mDelegate];
