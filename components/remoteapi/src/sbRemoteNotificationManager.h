@@ -56,6 +56,7 @@ public:
   ~sbRemoteNotificationManager();
 
   nsresult Init();
+  nsresult Cancel();
 
   nsresult Action(ActionType aType, sbILibrary* aLibrary);
 

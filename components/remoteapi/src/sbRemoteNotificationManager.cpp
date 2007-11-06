@@ -27,6 +27,7 @@
 #include "sbRemoteNotificationManager.h"
 
 #include <nsIStringBundle.h>
+#include <nsAutoPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
 
@@ -101,6 +102,28 @@ sbRemoteNotificationManager::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+nsresult
+sbRemoteNotificationManager::Cancel()
+{
+  if (!mTimer) {
+    return NS_OK;
+  }
+
+  nsRefPtr<sbRemoteNotificationManager> kungFuDeathGrip(this);
+  nsresult rv, rv2;
+  // clear the status bar text
+  mCurrentActionType = eNone;
+  rv = UpdateStatus();
+  
+  // and clear the timer (regardless of if the status bar was cleared)
+  // keep the return value so we always return the worst one
+  rv2 = mTimer->Cancel();
+  mTimer = nsnull;
+  
+  NS_ENSURE_SUCCESS(rv, rv);
+  return rv2;
 }
 
 nsresult
@@ -192,16 +215,7 @@ sbRemoteNotificationManager::Notify(nsITimer* aTimer)
   }
 
   // If we get here, there are no messages to display, so cancel the timer.
-  mCurrentActionType = eNone;
-  rv = UpdateStatus();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mTimer->Cancel();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mTimer = nsnull;
-
-  return NS_OK;
+  return Cancel();
 }
 
 nsresult

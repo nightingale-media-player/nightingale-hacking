@@ -332,6 +332,8 @@ sbRemotePlayer::~sbRemotePlayer()
   mRemObsHash.Clear();
   if (mDownloadCallback)
     mDownloadCallback->Finalize();
+  if (mNotificationMgr)
+    mNotificationMgr->Cancel();
 }
 
 nsresult
