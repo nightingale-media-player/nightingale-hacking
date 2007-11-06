@@ -99,7 +99,8 @@ SB_IMPL_CLASSINFO( sbSecurityMixin,
                    kSecurityMixinCID );
 
 sbSecurityMixin::sbSecurityMixin() 
-: mInterfacesCount(0)
+: mInterfacesCount(0),
+  mPrivileged(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -128,7 +129,8 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
                       const nsIID **aInterfacesArray, PRUint32 aInterfacesArrayLength,
                       const char **aMethodsArray, PRUint32 aMethodsArrayLength,
                       const char **aRPropsArray, PRUint32 aRPropsArrayLength,
-                      const char **aWPropsArray, PRUint32 aWPropsArrayLength)
+                      const char **aWPropsArray, PRUint32 aWPropsArrayLength,
+                      PRBool aPrivileged)
 {
   NS_ENSURE_ARG_POINTER(aOuter);
 
@@ -145,6 +147,7 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
 
   // set this only if we've succeeded
   mInterfacesCount = aInterfacesArrayLength;
+  mPrivileged = aPrivileged;
 
   return NS_OK;
 }
@@ -408,6 +411,12 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
                                             PRBool disableNotificationCheck)
 {
   LOG(( "sbSecurityMixin::GetPermissionForScopedName()"));
+
+  // If this instance was set to be privileged, skip the check
+  if (mPrivileged) {
+    return PR_TRUE;
+  }
+
   PRBool allowed = PR_FALSE;
 
   nsCOMPtr<nsIURI> codebase;
@@ -653,9 +662,8 @@ NS_IMETHODIMP
 sbSecurityMixin::GetNotificationDocument(nsIDOMDocument **aNotificationDocument)
 {
   NS_ENSURE_ARG_POINTER(aNotificationDocument);
-  
-  *aNotificationDocument = mNotificationDocument;
-  NS_ADDREF(*aNotificationDocument);
+
+  NS_IF_ADDREF(*aNotificationDocument = mNotificationDocument);
 
   return NS_OK;
 }

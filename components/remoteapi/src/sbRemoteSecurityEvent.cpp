@@ -93,7 +93,7 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteSecurityEvent,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSecurityEvent)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSecurityEvent)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER(sbRemoteSecurityEvent)
 
 sbRemoteSecurityEvent::sbRemoteSecurityEvent() :
   mHasAccess(PR_FALSE)

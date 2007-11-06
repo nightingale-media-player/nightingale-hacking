@@ -93,7 +93,9 @@ public:
   NS_DECL_SBISECURITYAGGREGATOR
 
   sbRemotePlayer();
-  static sbRemotePlayer* GetInstance();
+
+  nsresult Init();
+  nsresult InitPrivileged(nsIURI* aCodebase, nsIDOMWindow* aWindow);
 
   static NS_METHOD Register(nsIComponentManager* aCompMgr,
                             nsIFile* aPath,
@@ -116,6 +118,8 @@ public:
                                          PRBool aHasAccess,
                                          PRBool aIsTrusted);
 
+  PRBool IsPrivileged();
+
   static nsresult GetJSScopeNameFromScope( const nsACString &aScopeName,
                                            nsAString &aJSScopeName );
 
@@ -130,13 +134,15 @@ public:
   nsresult GetSiteScopeURL(nsAString &aURL);
   already_AddRefed<nsIURI> GetSiteScopeURI();
 
+  already_AddRefed<nsPIDOMWindow> GetWindow();
+
   static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
 
 protected:
   virtual ~sbRemotePlayer();
 
   // Helper Methods
-  nsresult Init();
+  nsresult InitInternal(nsPIDOMWindow* aWindow);
   nsresult AcquirePlaylistWidget();
   nsresult RegisterCommands( PRBool aUseDefaultCommands );
   nsresult UnregisterCommands();
@@ -157,6 +163,7 @@ protected:
   // Data members
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
+  PRBool mPrivileged;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
   nsCOMPtr<nsIIOService> mIOService;
   nsCOMPtr<nsIWeakReference> mWeakDownloadMediaList;
@@ -207,6 +214,7 @@ protected:
 
   nsRefPtr<sbRemoteNotificationManager> mNotificationMgr;
   nsCOMPtr<sbIMetrics> mMetrics;
+  nsCOMPtr<nsPIDOMWindow> mPrivWindow;
 };
 
 class sbRemotePlayerDownloadCallback : public sbIDeviceBaseCallback

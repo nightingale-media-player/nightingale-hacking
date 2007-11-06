@@ -91,6 +91,10 @@ sbRemoteSiteMediaItemSecurityMixin::CanGetProperty( const nsIID* aIID,
   nsresult rv = sbSecurityMixin::CanGetProperty( aIID, aPropertyName, _retval );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  if (mPrivileged) {
+    return NS_OK;
+  }
+
   nsDependentString propName(aPropertyName);
   if (propName.EqualsLiteral("contentSrc")) {
     nsCOMPtr<nsIURI> uri;

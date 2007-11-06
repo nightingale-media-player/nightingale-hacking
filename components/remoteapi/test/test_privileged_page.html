@@ -1,0 +1,112 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+function runTest(tester) {
+  // XXXsteve this test is basically copied from the remoteplayer test
+  var privsb = window.songbird;
+  try {
+
+    // access to libraries
+    var siteLib = privsb.siteLibrary;
+    var mainLib = privsb.libraries("main");
+    var webLib = privsb.libraries("web");
+    mainLib = privsb.mainLibrary;
+    webLib = privsb.webLibrary;
+
+    // readable properties
+    var junk = privsb.name;
+    junk = privsb.currentArtist;
+    junk = privsb.currentAlbum;
+    junk = privsb.currentTrack;
+    junk = privsb.playing;
+    junk = privsb.paused;
+    junk = privsb.repeat;
+    junk = privsb.shuffle;
+    junk = privsb.position;
+    junk = privsb.volume;
+    junk = privsb.mute;
+
+    // listeners
+    var listener = {
+      observe: function(a,b,c) {
+      }
+    }
+
+    // valid string should work
+    privsb.addListener("faceplate.playing", listener);
+    privsb.removeListener("faceplate.playing", listener);
+
+    // invalid string should throw
+    try {
+      privsb.addListener("foo.bar", listener);
+      tester.fail("did not throw: addListener('foo.bar')");
+    }
+    catch (e) {}
+
+    privsb.removeListener("foo.bar", listener);
+
+    // downloading - set in test_ file to go to tmpD/remoteapi_test/
+    var item = siteLib.createMediaItem(
+              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    var list = siteLib.createSimpleMediaList("testRemotePlayer1");
+    list.add(item);
+
+    privsb.downloadItem(item);
+    privsb.downloadList(list);
+
+    // Test the adding of properties
+    privsb.createTextProperty("Test_1_Text", "Test_Text", true, true, 0);
+    privsb.createDateTimeProperty("Test_1_DateTime", "Test_DateTime", true, true, 0);
+    privsb.createURIProperty("Test_1_URI", "Test_URI", true, true, 0);
+    privsb.createNumberProperty("Test_1_Number", "Test_Number", true, true, 0);
+    privsb.createImageProperty("Test_1_Image", "Test_Image", true, true, 0);
+    privsb.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
+    privsb.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
+    privsb.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
+
+    // We need to do this to give the web browser persists component a chance
+    // to tidy up, otherwise it will leak
+    tester.sleep(2000);
+
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_privileged_page.html</body>
+</html>

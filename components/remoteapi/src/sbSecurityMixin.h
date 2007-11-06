@@ -110,6 +110,7 @@ protected:
   // passed in to us by the mOuter ( in our Init() method )
   nsIID **mInterfaces;
   PRUint32 mInterfacesCount;
+  PRBool mPrivileged;
   nsTArray<nsCString> mMethods;
   nsTArray<nsCString> mRProperties;
   nsTArray<nsCString> mWProperties;

@@ -58,14 +58,15 @@ _class::Init()                                                                \
                     ( const nsIID** )iids, iidCount,                          \
                     sPublicMethods, NS_ARRAY_LENGTH(sPublicMethods),          \
                     sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),  \
-                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );\
+                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties),  \
+                    mRemotePlayer->IsPrivileged() );                          \
   NS_ENSURE_SUCCESS( rv, rv );                                                \
   NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(iidCount, iids);                      \
   mSecurityMixin = do_QueryInterface(                                         \
     NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );                     \
   NS_ENSURE_SUCCESS( rv, rv );                                                \
   /* pull the dom window from the js stack and context */                     \
-  nsCOMPtr<nsPIDOMWindow> privWindow = sbRemotePlayer::GetWindowFromJS();     \
+  nsCOMPtr<nsPIDOMWindow> privWindow = mRemotePlayer->GetWindow();            \
   if(privWindow) {                                                            \
     nsCOMPtr<nsIDOMDocument> domDoc;                                          \
     privWindow->GetDocument( getter_AddRefs(domDoc) );                        \
@@ -78,5 +79,35 @@ _class::Init()                                                                \
 
 #define SB_IMPL_SECURITYCHECKEDCOMP_INIT(_class)                              \
   SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM( _class, sbSecurityMixin, () )
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_CUSTOM( _class, _mixin, _mixinArgs ) \
+nsresult                                                                      \
+_class::Init()                                                                \
+{                                                                             \
+  LOG(( "%s::Init()", #_class ));                                             \
+  nsresult rv;                                                                \
+  nsRefPtr<_mixin> mixin = new _mixin _mixinArgs;                             \
+  NS_ENSURE_TRUE( mixin, NS_ERROR_OUT_OF_MEMORY );                            \
+  /* Get the list of IIDs to pass to the security mixin */                    \
+  nsIID **iids;                                                               \
+  PRUint32 iidCount;                                                          \
+  GetInterfaces( &iidCount, &iids );                                          \
+  /* initialize our mixin with approved interfaces, methods, properties */    \
+  rv = mixin->Init( (sbISecurityAggregator*)this,                             \
+                    ( const nsIID** )iids, iidCount,                          \
+                    sPublicMethods, NS_ARRAY_LENGTH(sPublicMethods),          \
+                    sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),  \
+                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties),  \
+                    PR_FALSE);                                                \
+  NS_ENSURE_SUCCESS( rv, rv );                                                \
+  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(iidCount, iids);                      \
+  mSecurityMixin = do_QueryInterface(                                         \
+    NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );                     \
+  NS_ENSURE_SUCCESS( rv, rv );                                                \
+  return NS_OK;                                                               \
+}
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER(_class)                     \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_CUSTOM( _class, sbSecurityMixin, () )
 
 #endif // __SB_REMOTE_API_H__

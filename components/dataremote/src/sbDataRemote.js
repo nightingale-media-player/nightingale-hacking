@@ -418,7 +418,8 @@ DataRemote.prototype = {
              .init(this, this._publicInterfaces, this._publicInterfaces.length,
                          this._publicMethods, this._publicMethods.length,
                          this._publicRProps, this._publicRProps.length,
-                         this._publicWProps, this._publicWProps.length);
+                         this._publicWProps, this._publicWProps.length,
+                         false);
 
     this._initializedSCC = true;
   },

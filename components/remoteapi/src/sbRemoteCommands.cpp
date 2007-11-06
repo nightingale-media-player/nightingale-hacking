@@ -100,7 +100,8 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteCommands)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteCommands)
 
-sbRemoteCommands::sbRemoteCommands()
+sbRemoteCommands::sbRemoteCommands(sbRemotePlayer* aRemotePlayer) :
+  mRemotePlayer(aRemotePlayer)
 {
 #ifdef PR_LOGGING
   if (!gRemoteCommandsLog) {
@@ -514,7 +515,7 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
   NS_ENSURE_ARG_POINTER(_retval);
   LOG(("sbRemoteCommands::Duplicate()"));
 
-  nsRefPtr<sbRemoteCommands> copy = new sbRemoteCommands();
+  nsRefPtr<sbRemoteCommands> copy = new sbRemoteCommands(mRemotePlayer);
   NS_ENSURE_TRUE( copy, NS_ERROR_OUT_OF_MEMORY );
 
   nsresult rv = copy->Init();

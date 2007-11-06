@@ -26,6 +26,7 @@
 
 #include "sbRemoteAPIService.h"
 #include "sbRemotePlayer.h"
+#include "sbRemotePlayerFactory.h"
 #include "sbSecurityMixin.h"
 #include "sbRemoteSecurityEvent.h"
 
@@ -35,13 +36,15 @@
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteAPIService, Init)
 
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbRemotePlayerFactory)
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSecurityMixin)
 NS_DECL_CI_INTERFACE_GETTER(sbSecurityMixin)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbRemoteSecurityEvent)
 NS_DECL_CI_INTERFACE_GETTER(sbRemoteSecurityEvent)
 
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbRemotePlayer, sbRemotePlayer::GetInstance)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemotePlayer, Init)
 NS_DECL_CI_INTERFACE_GETTER(sbRemotePlayer)
 
 // fill out data struct to register with component system
@@ -52,6 +55,12 @@ static const nsModuleComponentInfo components[] =
     SONGBIRD_REMOTEAPI_SERVICE_CID,
     SONGBIRD_REMOTEAPI_SERVICE_CONTRACTID,
     sbRemoteAPIServiceConstructor
+  },
+  {
+    SONGBIRD_REMOTEPLAYERFACTORY_CLASSNAME,
+    SONGBIRD_REMOTEPLAYERFACTORY_CID,
+    SONGBIRD_REMOTEPLAYERFACTORY_CONTRACTID,
+    sbRemotePlayerFactoryConstructor
   },
   {
     SONGBIRD_REMOTEPLAYER_CLASSNAME,

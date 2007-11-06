@@ -70,7 +70,7 @@ public:
 
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteCommands();
+  sbRemoteCommands(sbRemotePlayer* aRemotePlayer);
 
 protected:
   virtual ~sbRemoteCommands();
@@ -84,6 +84,8 @@ protected:
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+
+  nsRefPtr<sbRemotePlayer> mRemotePlayer;
 };
 
 #endif // __SB_REMOTE_COMMANDS_H__

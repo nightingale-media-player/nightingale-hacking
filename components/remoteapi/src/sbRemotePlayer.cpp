@@ -313,32 +313,15 @@ SB_IMPL_CLASSINFO( sbRemotePlayer,
                    0,
                    kRemotePlayerCID )
 
-sbRemotePlayer*
-sbRemotePlayer::GetInstance()
+sbRemotePlayer::sbRemotePlayer() :
+  mInitialized(PR_FALSE),
+  mPrivileged(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gRemotePlayerLog) {
     gRemotePlayerLog = PR_NewLogModule("sbRemotePlayer");
   }
-  LOG(("**** sbRemotePlayer::GetInstance() ****"));
 #endif
-
-  sbRemotePlayer *player = new sbRemotePlayer();
-  if (!player)
-    return nsnull;
-
-  // initialize the player
-  if (NS_FAILED(player->Init())) {
-    return nsnull;
-  }
-
-  // addref it before handing it back
-  NS_ADDREF(player);
-  return player;
-}
-
-sbRemotePlayer::sbRemotePlayer() : mInitialized(PR_FALSE)
-{
   LOG(("sbRemotePlayer::sbRemotePlayer()"));
 }
 
@@ -355,6 +338,65 @@ nsresult
 sbRemotePlayer::Init()
 {
   LOG(("sbRemotePlayer::Init()"));
+
+  nsresult rv;
+
+  // Don't set any scope information here -- wait for either the client to
+  // set it or set it when a site library is requested.
+  mScopeDomain.SetIsVoid(PR_TRUE);
+  mScopePath.SetIsVoid(PR_TRUE);
+  mSiteScopeURL.SetIsVoid(PR_TRUE);
+
+  // pull the dom window from the js stack and context
+  nsCOMPtr<nsPIDOMWindow> privWindow = sbRemotePlayer::GetWindowFromJS();
+  NS_ENSURE_TRUE(privWindow, NS_ERROR_UNEXPECTED);
+
+  mPrivileged = PR_FALSE;
+
+  rv = InitInternal(privWindow);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::InitPrivileged(nsIURI* aCodebase, nsIDOMWindow* aWindow)
+{
+  LOG(("sbRemotePlayer::InitPrivileged()"));
+
+  NS_ASSERTION(aCodebase, "aCodebase is null");
+  NS_ASSERTION(aWindow, "aWindow is null");
+
+  nsresult rv;
+
+  rv = sbURIChecker::CheckURI(mScopeDomain, mScopePath, aCodebase);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString spec;
+  rv = aCodebase->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mSiteScopeURL = NS_ConvertUTF8toUTF16(spec);
+
+  nsCOMPtr<nsPIDOMWindow> privWindow = do_QueryInterface(aWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mPrivileged = PR_TRUE;
+
+  rv = InitInternal(privWindow);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
+{
+  LOG(("sbRemotePlayer::InitInternal()"));
+
+  NS_ASSERTION(aWindow, "aWindow is null");
+
+  mPrivWindow = aWindow;
 
   nsresult rv;
   mGPPS = do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
@@ -382,7 +424,8 @@ sbRemotePlayer::Init()
                     (const nsIID**)iids, iidCount,
                     sPublicMethods,NS_ARRAY_LENGTH(sPublicMethods),
                     sPublicRProperties,NS_ARRAY_LENGTH(sPublicRProperties),
-                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
+                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties),
+                    mPrivileged );
   NS_ENSURE_SUCCESS( rv, rv );
   NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(iidCount, iids);
 
@@ -391,18 +434,9 @@ sbRemotePlayer::Init()
   NS_ENSURE_SUCCESS( rv, rv );
 
   //
-  // Hook up an event listener to listen to the unload event so we can
-  //   remove any commands from the PlaylistCommandsManager
-  //
-
-  // pull the dom window from the js stack and context
-  nsCOMPtr<nsPIDOMWindow> privWindow = sbRemotePlayer::GetWindowFromJS();
-  NS_ENSURE_STATE(privWindow);
-
-  //
   // Get the Content Document
   //
-  privWindow->GetDocument( getter_AddRefs(mContentDoc) );
+  mPrivWindow->GetDocument( getter_AddRefs(mContentDoc) );
   NS_ENSURE_STATE(mContentDoc);
 
   //
@@ -415,7 +449,7 @@ sbRemotePlayer::Init()
   //
   // Get the Chrome Document
   //
-  nsIDocShell *docShell = privWindow->GetDocShell();
+  nsIDocShell *docShell = mPrivWindow->GetDocShell();
   NS_ENSURE_STATE(docShell);
 
   // Step up to the chrome layer through the event handler
@@ -453,10 +487,6 @@ sbRemotePlayer::Init()
 
   rv = mNotificationMgr->Init();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mScopeDomain.SetIsVoid(PR_TRUE);
-  mScopePath.SetIsVoid(PR_TRUE);
-  mSiteScopeURL.SetIsVoid(PR_TRUE);
 
   // Set up download callbacks
   mDownloadCallback = new sbRemotePlayerDownloadCallback();
@@ -679,7 +709,7 @@ sbRemotePlayer::GetCommands( sbIRemoteCommands **aCommandsObject )
   nsresult rv;
   if (!mCommandsObject) {
     LOG(("sbRemotePlayer::GetCommands() -- creating it"));
-    mCommandsObject = new sbRemoteCommands();
+    mCommandsObject = new sbRemoteCommands(this);
     NS_ENSURE_TRUE( mCommandsObject, NS_ERROR_OUT_OF_MEMORY );
 
     rv = mCommandsObject->Init();
@@ -1968,8 +1998,9 @@ sbRemotePlayer::TakePlaybackControl( nsIURI* aURI )
 //
 // ---------------------------------------------------------------------------
 
-already_AddRefed<nsPIDOMWindow>
-sbRemotePlayer::GetWindowFromJS() {
+/* static */ already_AddRefed<nsPIDOMWindow>
+sbRemotePlayer::GetWindowFromJS()
+{
   LOG(("sbRemotePlayer::GetWindowFromJS()"));
   // Get the js context from the top of the stack. We may need to iterate
   // over these at some point in order to make sure we are sending events
@@ -1997,6 +2028,17 @@ sbRemotePlayer::GetWindowFromJS() {
   NS_ENSURE_TRUE( win, nsnull );
   NS_ADDREF( win.get() );
   return win.get();
+}
+
+already_AddRefed<nsPIDOMWindow>
+sbRemotePlayer::GetWindow()
+{
+  LOG(("sbRemotePlayer::GetWindow()"));
+  NS_ASSERTION(mPrivWindow, "mPrivWindow is null");
+
+  nsPIDOMWindow* window = mPrivWindow;
+  NS_ADDREF(window);
+  return window;
 }
 
 nsresult
@@ -2091,6 +2133,12 @@ sbRemotePlayer::DispatchSecurityEvent( nsIDOMDocument *aDoc,
   // Fire an event to the chrome system.
   PRBool dummy;
   return eventTarget->DispatchEvent( securityEvent, &dummy );
+}
+
+PRBool
+sbRemotePlayer::IsPrivileged()
+{
+  return mPrivileged;
 }
 
 /*static*/ nsresult 
