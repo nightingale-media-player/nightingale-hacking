@@ -280,8 +280,6 @@ case "$SB_PLATFORM" in
   windows)
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
-    AC_CHECK_PROG(AS, ml, ml)
-    if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, lib, lib)
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
     AC_CHECK_PROG(RC, rc, rc)
@@ -290,8 +288,6 @@ case "$SB_PLATFORM" in
   *)
     AC_CHECK_PROG(LD, ${CC}, ${CC})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
-    AC_CHECK_PROG(AS, as, as)
-    if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, ar, ar)
     if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
     AC_CHECK_PROG(RANLIB, ranlib, ranlib)
