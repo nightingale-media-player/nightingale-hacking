@@ -153,7 +153,7 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
     http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
     http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
-    http://songbirdnest.com/data/1.0#duration - The duration of this media, in milliseconds
+    http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
     http://songbirdnest.com/data/1.0#genre - The genre of this media
     http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
     http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
@@ -215,7 +215,7 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
     http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
     http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
-    http://songbirdnest.com/data/1.0#duration - The duration of this media, in milliseconds
+    http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
     http://songbirdnest.com/data/1.0#genre - The genre of this media
     http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
     http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
