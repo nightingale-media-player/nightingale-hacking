@@ -6,7 +6,7 @@ Title: Songbird Web Page API
 # You can also add a sub-title to your menu like this:
 # SubTitle: [subtitle]
 
-Footer: <div id="sb_header"><a href="http://www.songbirdnest.com" class="sb_logo" target="_top"><img src="../sb_logo_doc.gif" alt="Songbird logo" /></a><a href="http://www.songbirdnest.com" target="_top">Songbird</a> / <a href="http://developer.songbirdnest.com" target="_top">Development</a> / Songbird Add-Ons <acronym title="Application Program Interface">API</acronym> Documentation</div>
+Footer: <div id="sb_header"><a href="http://www.songbirdnest.com" class="sb_logo" target="_top"><img src="../sb_logo_doc.gif" alt="Songbird logo" /></a><a href="http://www.songbirdnest.com" target="_top">Songbird</a> / <a href="http://developer.songbirdnest.com" target="_top">Development</a> / Songbird Webpage <acronym title="Application Program Interface">API</acronym> Documentation</div>
 
 
 # --------------------------------------------------------------------------
