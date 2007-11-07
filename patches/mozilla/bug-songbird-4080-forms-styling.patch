@@ -1,0 +1,28 @@
+Songbird bug 4080 - allow themes to change text highlight color
+Index: layout/style/forms.css
+===================================================================
+RCS file: /cvsroot/mozilla/layout/style/forms.css,v
+retrieving revision 3.136
+diff -p -u -8 -r3.136 forms.css
+--- layout/style/forms.css	25 Jul 2007 00:11:23 -0000	3.136
++++ layout/style/forms.css	2 Nov 2007 01:32:42 -0000
+@@ -34,16 +34,19 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+ /** 
+   Styles for old GFX form widgets
+  **/ 
+  
+ 
++/* Songbird local hack - see http://bugzilla.songbirdnest.com/show_bug.cgi?id=4080 */
++@import url(chrome://songbird/skin/formsImport.css);
++
+ @namespace url(http://www.w3.org/1999/xhtml); /* set default namespace to HTML */
+ @namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+ 
+ *|*::-moz-fieldset-content {
+   display: block;
+   height: 100%;   /* Need this so percentage heights of kids work right */
+ }
+ 

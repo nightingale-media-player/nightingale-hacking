@@ -1,0 +1,65 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+***************************************************************************************************
+
+FORMS STYLES
+
+In Mozilla, certain things like CSS selection hightlight colors in text boxes
+cannot be modified by document-supplied style sheets.  These "native anonymous"
+elements can only be styled by special stylesheets included in the original
+Mozilla runtime.  As a workaround, resource://gre/res/forms.css has been
+modified to import this file to allow for the styling of these elements.
+
+Please note that as this file is included in every page loaded, including
+content pages loaded from remote websites, it should be kept as minimal as
+possible.  Prefer placing rules in other files, or at the very least, using very
+specific rules to prevent accidentally styling unintended elements.
+
+For more information, visit http://developer.songbirdnest.com/
+
+***************************************************************************************************
+*/ 
+
+/* set the namespaces for the elements to style.  Do not modify. */
+@namespace url(http://www.w3.org/1999/xhtml); /* set default namespace to HTML */
+@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+
+/* limit this stylesheet to only apply to chrome documents
+ * (do not apply to content web pages)
+ */
+@-moz-document url-prefix(chrome://) {
+
+  /* adjust the look of the selection in input boxes in xul documents only
+   * (do not modify HTML documents)
+   * e.g. <textbox/> elements
+   */
+  xul|*:root input > .anonymous-div::-moz-selection {
+    background-color: #feffff; /** Light Color Brightest */;
+    color: #1b1d1b; /** Rubber Shadow */
+  }
+}
