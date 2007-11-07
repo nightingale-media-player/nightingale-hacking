@@ -1204,10 +1204,34 @@ endif # XPI_NAME
 
 ifdef SONGBIRD_MAIN_APP
 
+# from mozilla/config/rules.mk (the Java rules section)
+# note that an extra slash was added between root-path and non-root-path to
+# account for non-standard mount points in msys
+# (C:/ vs C:/foo with missing trailing slash)
+# Cygwin and MSYS have their own special path form, but manifest tool expects
+# them to be in the DOS form (i.e. e:/builds/...).  This function
+# does the appropriate conversion on Windows, but is a noop on other systems.
+ifeq (windows,$(SB_PLATFORM))
+  ifneq (,$(CYGWIN_WRAPPER))
+    normalizepath = $(foreach p,$(1),$(shell cygpath -m $(p)))
+  else
+    # assume MSYS
+    #  We use 'pwd -W' to get DOS form of the path.  However, since the given path
+    #  could be a file or a non-existent path, we cannot call 'pwd -W' directly
+    #  on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
+    #  on it, then merge with the rest of the path.
+    root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
+    non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
+    normalizepath = $(foreach p,$(1),$(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1)))
+  endif
+else
+  normalizepath = $(1)
+endif
+
 ifeq (macosx,$(SB_PLATFORM))
 sb_executable_dir = $(SONGBIRD_MACOS)
 else
-sb_executable_dir = $(SONGBIRD_DISTDIR)
+sb_executable_dir = $(call normalizepath,$(SONGBIRD_DISTDIR))
 endif
 
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
