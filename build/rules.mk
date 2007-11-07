@@ -465,37 +465,37 @@ endif #STATIC_LIB
 ifdef C_SRCS
 
 ifdef C_FLAGS
-compile_flags = $(C_FLAGS)
+c_compile_flags = $(C_FLAGS)
 else
-compile_flags = $(CFLAGS)
+c_compile_flags = $(CFLAGS)
 ifdef C_EXTRA_FLAGS
-compile_flags += $(C_EXTRA_FLAGS)
+c_compile_flags += $(C_EXTRA_FLAGS)
 endif
 endif
 
 ifdef C_DEFS
-compile_defs = $(C_DEFS)
+c_compile_defs = $(C_DEFS)
 else
-compile_defs = $(ACDEFINES)
+c_compile_defs = $(ACDEFINES)
 ifdef C_EXTRA_DEFS
-compile_defs += $(C_EXTRA_DEFS)
+c_compile_defs += $(C_EXTRA_DEFS)
 endif
 endif
 
 ifdef C_INCLUDES
-compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(C_INCLUDES))
-compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(compile_includes_temp))
+c_compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(C_INCLUDES))
+c_compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(c_compile_includes_temp))
 endif
 
-compiler_objects = $(C_SRCS:.c=$(OBJ_SUFFIX))
+c_compiler_objects = $(C_SRCS:.c=$(OBJ_SUFFIX))
 
-$(compiler_objects) :%$(OBJ_SUFFIX): %.c
-	$(CYGWIN_WRAPPER) $(CC) $(compile_flags) $(compile_defs) $(compile_includes) $<
+$(c_compiler_objects) :%$(OBJ_SUFFIX): %.c
+	$(CYGWIN_WRAPPER) $(CC) $(c_compile_flags) $(c_compile_defs) $(c_compile_includes) $<
 
-c_compile: $(compiler_objects)
+c_compile: $(c_compiler_objects)
 
 c_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(compiler_objects) vc70.pdb vc71.pdb
+	$(CYGWIN_WRAPPER) $(RM) -f $(c_compiler_objects) vc70.pdb vc71.pdb
 
 .PHONY : c_compile c_clean
 
