@@ -37,11 +37,13 @@
 
 var label;
 var progressmeter;
+var cancelButton;
 var bundle,pbundle;
 var n_ext;
 var cur_ext;
 var destFile;
 var afailure = false;
+var userCancel = false;
 
 const BUNDLE_ERROR_XPIINSTALLFAILED = -1;
 const BUNDLE_ERROR_DOWNLOADFAILED   = -2;
@@ -49,6 +51,7 @@ const BUNDLE_ERROR_DOWNLOADFAILED   = -2;
 const VK_ENTER = 13;
 const VK_ESCAPE = 27;
 
+const NS_BINDING_ABORTED = 0x804B0002;
 
 /**
  * \brief Initialize the setupProgress dialog.
@@ -58,6 +61,7 @@ function init()
 {
   label = document.getElementById("setupprogress_label");
   progressmeter = document.getElementById("setupprogress_progress");
+  cancelButton = document.getElementById("setupprogress_cancel");
   bundle = window.arguments[0];
   pbundle = bundle.QueryInterface(Components.interfaces.sbPIBundle);
   pbundle.setNeedRestart(false);
@@ -95,6 +99,8 @@ function installNextXPI()
     downloading = songbirdStrings.GetStringFromName("setupprogress.downloading");
   } catch (e) {}
   label.setAttribute("value", downloading + " " + bundle.getExtensionAttribute(cur_ext, "name"));
+  cancelButton.removeAttribute("disabled");
+  userCancel = false;
   progressmeter.setAttribute("value", 0);
   
   for (var i=0;i<pbundle.installListenerCount;i++) 
@@ -187,17 +193,25 @@ var _downloadListener = {
   {
     if (aStateFlags & 16 /*this.STATE_STOP*/)
     {
-      try {
-        var file = Components.classes["@mozilla.org/file/local;1"]
-                        .createInstance(Components.interfaces.nsILocalFile);
-        file.initWithPath(_filename);
-        if (file.exists())
-          onExtensionDownloadComplete();
-        else
+      if ( (aStatus == NS_BINDING_ABORTED) && userCancel ) {
+        // User canceled so delete the downloaded file if any and
+        // skip this file and move on to the next one
+        deleteLastDownloadedFile();
+        // Give the user some time to notice the cancel.
+        setTimeout(installNextXPI, 2000);
+      } else {
+        try {
+          var file = Components.classes["@mozilla.org/file/local;1"]
+                          .createInstance(Components.interfaces.nsILocalFile);
+          file.initWithPath(_filename);
+          if (file.exists())
+            onExtensionDownloadComplete();
+          else
+            onExtensionDownloadError();
+        } catch (e) {
+          dump(e + "\n");
           onExtensionDownloadError();
-      } catch (e) {
-        dump(e + "\n");
-        onExtensionDownloadError();
+        }
       }
     }
   },
@@ -252,6 +266,29 @@ function downloadFile(url) {
   _browser.saveURI(aLocalURI, null, null, null, "", aLocalFile);
 
   return destFile;
+}
+
+function cancelDownload() {
+
+  if (!_browser) return;
+
+  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Components.interfaces.nsIStringBundleService);
+  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  var cancelling = "Cancelling" + " " + bundle.getExtensionAttribute(cur_ext, "name");
+  try {
+    var params = [ bundle.getExtensionAttribute(cur_ext, "name") ];
+    cancelling = songbirdStrings.formatStringFromName("setupprogress.cancelling",
+                                                      params, params.length);
+  } catch (e) {}
+  label.setAttribute("value", cancelling);
+  cancelButton.disabled = true;
+  progressmeter.setAttribute("value", 0);
+  userCancel = true;
+  
+  // Cancel the save, this will cause onStageChange to fire with a status
+  // of NS_BINDING_ABORTED
+  _browser.cancelSave();
 }
 
 /**

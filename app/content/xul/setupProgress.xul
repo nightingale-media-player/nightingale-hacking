@@ -26,6 +26,7 @@
 //
  */
 -->
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/setupprogress.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
@@ -41,10 +42,15 @@
   
   <!-- Astounding complexity! -->  
   
-  <label flex="1" id="setupprogress_label" value="&setupprogress.pleasewait;"/>
-  <spacer height="5" width="250"/>
-  <progressmeter flex="1" id="setupprogress_progress"/>
-  
+  <vbox>
+    <label flex="1" id="setupprogress_label" value="&setupprogress.pleasewait;"/>
+    <spacer height="5" width="250"/>
+    <progressmeter flex="1" id="setupprogress_progress"/>
+    <hbox class="setupprogress-buttonbar">
+      <button id="setupprogress_cancel" oncommand="cancelDownload();" label="&setupprogress.cancel;" />
+    </hbox>
+  </vbox>
+
   <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" 

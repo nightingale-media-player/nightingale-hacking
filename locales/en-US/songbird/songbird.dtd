@@ -199,6 +199,7 @@
 <!ENTITY setup.defaultlanguage    "Default Language">
 <!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setupprogress.cancel     "Cancel">
 
 <!ENTITY setup.noupdate.header "This version of Songbird is not compatible with your existing media library.">
 <!ENTITY setup.noupdate.description "Songbird has created a new, empty media library.  Your existing library has not been deleted, but it cannot be imported into or used by this version of Songbird.">
