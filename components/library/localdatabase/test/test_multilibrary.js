@@ -147,4 +147,6 @@ function runTest () {
   assertEqual(listener.addedItem.name, "Test");
   assertNotEqual(listener.addedItem.guid, list1GUID);
 
+  // clean up the listener so we don't count a bogus leak
+  listener.reset();
 }
