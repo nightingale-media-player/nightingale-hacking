@@ -473,6 +473,13 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (downstream.treeView) {
+      nsCOMPtr<nsITreeSelection> selection;
+      rv = downstream.treeView->GetSelection(getter_AddRefs(selection));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = selection->ClearSelection();
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = downstream.treeView->Rebuild();
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -484,7 +491,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
   // Tell the view to update its configuration.  It will first apply its
   // filters and then ask us for ours
   if (mMediaListView) {
-    rv = mMediaListView->UpdateViewArrayConfiguration();
+    rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -503,7 +510,7 @@ sbLocalDatabaseCascadeFilterSet::ClearAll()
   }
 
   if (mMediaListView) {
-    rv = mMediaListView->UpdateViewArrayConfiguration();
+    rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

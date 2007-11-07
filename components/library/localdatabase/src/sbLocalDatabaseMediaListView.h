@@ -85,7 +85,7 @@ public:
 
   sbILocalDatabaseGUIDArray* GetGUIDArray();
 
-  nsresult UpdateViewArrayConfiguration();
+  nsresult UpdateViewArrayConfiguration(PRBool aClearTreeSelection);
 
 private:
   typedef nsTArray<nsString> sbStringArray;

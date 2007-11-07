@@ -359,7 +359,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -957,7 +957,7 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
   }
 
   if (dirty) {
-    rv = UpdateViewArrayConfiguration();
+    rv = UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -977,7 +977,7 @@ sbLocalDatabaseMediaListView::ClearFilters()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1029,7 +1029,7 @@ sbLocalDatabaseMediaListView::SetSearch(sbIPropertyArray* aSearch)
   rv = ClonePropertyArray(aSearch, getter_AddRefs(mViewSearches));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1052,7 +1052,7 @@ sbLocalDatabaseMediaListView::ClearSearch()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1086,7 +1086,7 @@ sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
   rv = ClonePropertyArray(aSort, getter_AddRefs(mViewSort));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateListener();
@@ -1116,7 +1116,7 @@ sbLocalDatabaseMediaListView::ClearSort()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateListener();
@@ -1367,14 +1367,14 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
     }
   }
 
-  rv = UpdateViewArrayConfiguration();
+  rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
+sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSelection)
 {
   nsresult rv;
 
@@ -1515,8 +1515,18 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if (aClearTreeSelection && mTreeView) {
+    nsCOMPtr<nsITreeSelection> selection;
+    rv = mTreeView->GetSelection(getter_AddRefs(selection));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = selection->ClearSelection();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Invalidate the view array
   rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -675,32 +675,35 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
     // return blank
     case eNotCached:
     {
+      // Don't bother starting any requests for data while our row cache is
+      // dirty since the result would be invalid
+      if (!mCachedRowCountDirty) {
 
-      // If we already have a pending request, don't start another, just put
-      // this new request on deck.  If there is already a next request on deck,
-      // clobber it and reset its page's cache status.  The purpose of this is
-      // to prevent a lot of requests from getting stacked up if the user
-      // scrolls the list around a lot
+        // If we already have a pending request, don't start another, just put
+        // this new request on deck.  If there is already a next request on deck,
+        // clobber it and reset its page's cache status.  The purpose of this is
+        // to prevent a lot of requests from getting stacked up if the user
+        // scrolls the list around a lot
+        if (mGetByIndexAsyncPending) {
 
-      if (mGetByIndexAsyncPending) {
+          if (mNextGetByIndexAsync > -1) {
+            rv = SetPageCachedStatus(mNextGetByIndexAsync, eNotCached);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
 
-        if (mNextGetByIndexAsync > -1) {
-          rv = SetPageCachedStatus(mNextGetByIndexAsync, eNotCached);
+          mNextGetByIndexAsync = aIndex;
+          rv = SetPageCachedStatus(aIndex, ePending);
           NS_ENSURE_SUCCESS(rv, rv);
         }
+        else {
 
-        mNextGetByIndexAsync = aIndex;
-        rv = SetPageCachedStatus(aIndex, ePending);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
+          rv = SetPageCachedStatus(aIndex, ePending);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = SetPageCachedStatus(aIndex, ePending);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = mArray->GetGuidByIndexAsync(aIndex);
-        NS_ENSURE_SUCCESS(rv, rv);
-        mGetByIndexAsyncPending = PR_TRUE;
+          rv = mArray->GetGuidByIndexAsync(aIndex);
+          NS_ENSURE_SUCCESS(rv, rv);
+          mGetByIndexAsyncPending = PR_TRUE;
+        }
       }
 
       // Try our dirty cache so we can show something
@@ -786,6 +789,9 @@ sbLocalDatabaseTreeView::GetPageCachedStatus(PRUint32 aIndex,
     *aStatus = eNotCached;
   }
 
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
+         "GetPageCachedStatus(%d) = %d", this, aIndex, *aStatus));
+
   return NS_OK;
 }
 
@@ -793,6 +799,11 @@ nsresult
 sbLocalDatabaseTreeView::SetPageCachedStatus(PRUint32 aIndex,
                                              PageCacheStatus aStatus)
 {
+  if (aIndex >= mCachedRowCount) {
+    NS_WARNING("Attempt to set page cache status on invalid row");
+    return NS_OK;
+  }
+
   PRUint32 cell = aIndex / mFetchSize;
   PRBool success = mPageCacheStatus.Put(cell, (PRUint32) aStatus);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -1317,7 +1328,14 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
   nsresult rv;
   sbAutoSelectEventsSuppressed autoSelectEventsSuppressed(mRealSelection);
 
-  if (NS_SUCCEEDED(aResult) && !mCachedRowCountDirty) {
+  mGetByIndexAsyncPending = PR_FALSE;
+
+  // Ignore any outstanding callbacks while our row cache is dirty
+  if (mCachedRowCountDirty) {
+    return NS_OK;
+  }
+
+  if (NS_SUCCEEDED(aResult)) {
 
     // If there is a clear selection pending, clear the selection
     if (mRealSelection && mClearSelectionPending) {
@@ -1445,34 +1463,36 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
     TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex - "
            "InvalidateRange(%d, %d)", this, start, end));
 
+    rv = SetPageCachedStatus(aIndex, eCached);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+
     if (mTreeBoxObject) {
       rv = mTreeBoxObject->InvalidateRange(ArrayToTree(start),
                                            ArrayToTree(end));
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    rv = SetPageCachedStatus(aIndex, eCached);
+  }
+  else {
+    NS_WARNING("OnGetGuidByIndex called with error result");
+
+    // If we get here, there was some kind of error getting the rows from the
+    // array.  Mark the requested row as not cached.
+    rv = SetPageCachedStatus(aIndex, eNotCached);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    mGetByIndexAsyncPending = PR_FALSE;
-
-    // If there was another request on deck, send it now
-    if (mNextGetByIndexAsync > -1) {
-      rv = mArray->GetGuidByIndexAsync(mNextGetByIndexAsync);
-      NS_ENSURE_SUCCESS(rv, rv);
-      mNextGetByIndexAsync = -1;
-      mGetByIndexAsyncPending = PR_TRUE;
-    }
-
-    return NS_OK;
   }
 
-  // If we get here, there was some kind of error getting the rows from the
-  // array.  Mark the requested row as not cached.
-  rv = SetPageCachedStatus(aIndex, eNotCached);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If there was another request on deck, send it now
+  if (mNextGetByIndexAsync > -1) {
+    mNextGetByIndexAsync = -1;
+    rv = SetPageCachedStatus(mNextGetByIndexAsync, ePending);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mGetByIndexAsyncPending = PR_FALSE;
+    rv = mArray->GetGuidByIndexAsync(mNextGetByIndexAsync);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mGetByIndexAsyncPending = PR_TRUE;
+  }
 
   return NS_OK;
 }
@@ -2967,7 +2987,7 @@ sbLocalDatabaseTreeSelection::ClearSelection()
   mTreeView->mSelectionChanging = PR_FALSE;
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Simple clear the selection list when the entire selection is cleared
+  // Simply clear the selection list when the entire selection is cleared
   mTreeView->ClearSelectionList();
 
   // This method could have caused all rows to be selected, so check
