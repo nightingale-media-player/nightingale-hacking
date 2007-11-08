@@ -108,7 +108,11 @@ private:
   typedef nsCOMArray<sbIPropertyArray> sbPropertyArrayList;
   typedef nsCOMArray<sbIMediaListViewListener> sbViewListenerArray;
 
-  typedef nsresult (sbIMediaListViewListener::*ListenerFunc)(sbIMediaListView* aChangedView);
+  // This makes a typedef called ListenerFunc to any member function of
+  // sbIMediaListViewListener that has this signature:
+  //   nsresult sbIMediaListViewListener::func(sbIMediaListView*)
+  typedef NS_STDCALL_FUNCPROTO(nsresult, ListenerFunc, sbIMediaListViewListener,
+                               OnSortChanged, (sbIMediaListView*));
 
   static PLDHashOperator PR_CALLBACK
     CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
