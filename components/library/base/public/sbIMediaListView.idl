@@ -37,14 +37,15 @@ interface nsITreeView;
 interface sbICascadeFilterSet;
 interface sbIMediaItem;
 interface sbIMediaList;
+interface sbIMediaListView;
 interface sbIMutablePropertyArray;
 
 /**
-* \interface sbIMediaListViewState
-* \brief Saved state of a media list view
-*
-* \sa sbIMediaList
-*/
+ * \interface sbIMediaListViewState
+ * \brief Saved state of a media list view
+ *
+ * \sa sbIMediaList
+ */
 [scriptable, uuid(3635a8d5-3e36-49ea-9ca3-e8ddad962b34)]
 interface sbIMediaListViewState : nsISupports
 {
@@ -52,12 +53,37 @@ interface sbIMediaListViewState : nsISupports
 };
 
 /**
-* \interface sbIMediaListView
-* \brief A distinct view on a given media list
-*
-* \sa sbIMediaList
-*/
-[scriptable, uuid(8e28e517-9518-49aa-98d5-7f994872f87b)]
+ * \interface sbIMediaListViewListener
+ * \brief Saved state of a media list view
+ *
+ * \sa sbIMediaListView
+ */
+[scriptable, uuid(378fc540-9592-43df-908c-ed84ac0e1221)]
+interface sbIMediaListViewListener : nsISupports
+{
+  /**
+   * \brief Called when the view's filter configuration changes.
+   */
+  void onFilterChanged(in sbIMediaListView aChangedView);
+
+  /**
+   * \brief Called when the view's search changes.
+   */
+  void onSearchChanged(in sbIMediaListView aChangedView);
+
+  /**
+   * \brief Called when the view's sort configuration changes.
+   */
+  void onSortChanged(in sbIMediaListView aChangedView);
+};
+
+/**
+ * \interface sbIMediaListView
+ * \brief A distinct view on a given media list
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(986968d0-f01d-4a33-b042-ff54757efd2b)]
 interface sbIMediaListView : nsISupports
 {
   /**
@@ -137,5 +163,37 @@ interface sbIMediaListView : nsISupports
    * \return The state of this media list view
    */
   sbIMediaListViewState getState();
-};
 
+  /**
+   * \brief Add a listener to this view to be notified of changes to filter
+   *        configuration, search, and sort configuration.
+   *
+   * Calling addListener twice with the same listener and weak setting will be
+   * ignored. Calling twice with the same listener but different weak settings
+   * will cause two references to be stored, one weak and one strong.
+   *
+   * \param aListener The listener instance.
+   * \param aOwnsWeak [optional] Whether or not to hold a weak reference to the
+   *                  listener. If aOwnsWeak is true then aListener must be able
+   *                  to QI to nsISupportsWeakReference.
+   * \sa sbIMediaListViewListener
+   * \sa nsISupportsWeakReference
+   */
+  void addListener(in sbIMediaListViewListener aListener,
+                   [optional] in boolean aOwnsWeak);
+
+  /**
+   * \brief Remove a listener from the view.
+   *
+   * Calling removeListener with a listener that has not been previously added
+   * with addListener is a no-op.
+   *
+   * Calling removeListener with a listener that had both a weak and a strong
+   * reference stored (via two calls to addListener with different values for
+   * aOwnsWeak) will cause the weak listener to be removed first. A second call
+   * to removeListener is necessary to remove the strong reference.
+   *
+   * \param aListener The listener instance to remove.
+   */
+  void removeListener(in sbIMediaListViewListener aListener);
+};

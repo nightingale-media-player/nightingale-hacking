@@ -27,6 +27,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 
 #include <DatabaseQuery.h>
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -158,6 +159,41 @@ sbLocalDatabaseMediaListView::AddKeysToStringArrayCallback(nsStringHashKey::KeyT
   return PL_DHASH_NEXT;
 }
 
+/**
+ * This method churns through our listener table and resolves all listeners to
+ * strong references that are added to a COM Array. It also prunes invalid or
+ * dead weak references.
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListView::AddListenersToCOMArray(nsISupportsHashKey* aEntry,
+                                                     void* aUserData)
+{
+  sbViewListenerArray* array = static_cast<sbViewListenerArray*>(aUserData);
+  NS_ASSERTION(array, "Null aUserData!");
+
+  nsISupports* entry = aEntry->GetKey();
+  NS_ASSERTION(entry, "Null entry in hash!");
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaListViewListener> listener = do_QueryInterface(entry, &rv);
+  if (NS_FAILED(rv)) {
+    nsWeakPtr maybeWeak = do_QueryInterface(entry, &rv);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Listener doesn't QI to anything useful!");
+
+    listener = do_QueryReferent(maybeWeak);
+    if (!listener) {
+      // The listener died or was invalid. Remove it from our table so that we
+      // don't check it again.
+      return PL_DHASH_REMOVE;
+    }
+  }
+
+  PRBool success = array->AppendObject(listener);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrary* aLibrary,
                                                            sbLocalDatabaseMediaListBase* aMediaList,
                                                            nsAString& aDefaultSortProperty,
@@ -166,6 +202,7 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
+  mListenerTableLock(nsnull),
   mInvalidatePending(PR_FALSE),
   mInitializing(PR_FALSE)
 {
@@ -199,6 +236,10 @@ sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
   if (mTreeView) {
     mTreeView->ClearMediaListView();
   }
+
+  if (mListenerTableLock) {
+    nsAutoLock::DestroyLock(mListenerTableLock);
+  }
 }
 
 nsresult
@@ -223,6 +264,13 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
 
   PRBool success = mViewFilters.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  success = mListenerTable.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  mListenerTableLock =
+    nsAutoLock::NewLock("sbLocalDatabaseMediaListView::mListenerTableLock");
+  NS_ENSURE_TRUE(mListenerTableLock, NS_ERROR_OUT_OF_MEMORY);
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -637,6 +685,75 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::AddListener(sbIMediaListViewListener* aListener,
+                                          /* optional */ PRBool aOwnsWeak)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aOwnsWeak) {
+    nsWeakPtr weakRef = do_GetWeakReference(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    supports = do_QueryInterface(weakRef, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsAutoLock lock(mListenerTableLock);
+  if (mListenerTable.GetEntry(supports)) {
+    NS_WARNING("Attempted to add the same listener twice!");
+    return NS_OK;
+  }
+
+  if (!mListenerTable.PutEntry(supports)) {
+    NS_WARNING("Failed to add entry to listener table");
+    return NS_ERROR_FAILURE;
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::RemoveListener(sbIMediaListViewListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> weakSupports;
+
+  // Test to see if the listener supports weak references *and* a weak reference
+  // is in our table. If both conditions are met then that is the listener that
+  // will be removed. Otherwise remove a strong listener.
+  nsCOMPtr<nsISupportsWeakReference> maybeWeak = do_QueryInterface(supports, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsWeakPtr weakRef = do_GetWeakReference(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    weakSupports = do_QueryInterface(weakRef, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsAutoLock lock(mListenerTableLock);
+
+  // Lame, but we have to check this inside the lock.
+  if (weakSupports && mListenerTable.GetEntry(weakSupports)) {
+    supports = weakSupports;
+  }
+
+  NS_WARN_IF_FALSE(mListenerTable.GetEntry(supports),
+                   "Attempted to remove a listener that was never added!");
+
+  mListenerTable.RemoveEntry(supports);
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
                                                  sbIMutablePropertyArray** _retval)
@@ -796,6 +913,27 @@ sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+void
+sbLocalDatabaseMediaListView::NotifyListenersInternal(ListenerFunc aListenerFunc)
+{
+  sbViewListenerArray listeners;
+  {
+    // Take a snapshot of the listener array. This will return only strong
+    // references, so any weak refs that have died will not be included in this
+    // list.
+    nsAutoLock lock(mListenerTableLock);
+    mListenerTable.EnumerateEntries(AddListenersToCOMArray, &listeners);
+  }
+
+  sbIMediaListView* thisPtr = static_cast<sbIMediaListView*>(this);
+
+  PRInt32 count = listeners.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    sbIMediaListViewListener* listener = listeners.ObjectAt(index);
+    (listener->*aListenerFunc)(thisPtr);
+  }
 }
 
 // sbIFilterableMediaListView
@@ -959,6 +1097,9 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
   if (dirty) {
     rv = UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // And notify listeners
+    NotifyListenersFilterChanged();
   }
 
   return NS_OK;
@@ -979,6 +1120,9 @@ sbLocalDatabaseMediaListView::ClearFilters()
 
   rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // And notify listeners
+  NotifyListenersFilterChanged();
 
   return NS_OK;
 }
@@ -1032,6 +1176,9 @@ sbLocalDatabaseMediaListView::SetSearch(sbIPropertyArray* aSearch)
   rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // And notify listeners
+  NotifyListenersSearchChanged();
+
   return NS_OK;
 }
 
@@ -1054,6 +1201,9 @@ sbLocalDatabaseMediaListView::ClearSearch()
 
   rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // And notify listeners
+  NotifyListenersSearchChanged();
 
   return NS_OK;
 }
@@ -1092,6 +1242,9 @@ sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
   rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // And notify listeners
+  NotifyListenersSortChanged();
+
   return NS_OK;
 }
 
@@ -1111,6 +1264,9 @@ sbLocalDatabaseMediaListView::ClearSort()
       do_QueryInterface(mViewSort, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = propertyArray->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = propertyArray->AppendProperty(mDefaultSortProperty,
                                        NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1121,6 +1277,9 @@ sbLocalDatabaseMediaListView::ClearSort()
 
   rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // And notify listeners
+  NotifyListenersSortChanged();
 
   return NS_OK;
 }
@@ -1369,6 +1528,9 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
 
   rv = UpdateViewArrayConfiguration(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // And notify listeners
+  NotifyListenersFilterChanged();
 
   return NS_OK;
 }
@@ -1748,4 +1910,3 @@ sbLocalDatabaseMediaListView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

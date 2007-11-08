@@ -493,6 +493,14 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
   if (mMediaListView) {
     rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // And notify the view's listeners
+    if (fs.isSearch) {
+      mMediaListView->NotifyListenersSearchChanged();
+    }
+    else {
+      mMediaListView->NotifyListenersFilterChanged();
+    }
   }
 
   return NS_OK;
@@ -503,8 +511,21 @@ sbLocalDatabaseCascadeFilterSet::ClearAll()
 {
   nsresult rv;
 
+  PRBool filterChanged = PR_FALSE, searchChanged = PR_FALSE;
+
   for (PRUint32 i = 0; i < mFilters.Length(); i++) {
-    mFilters[i].values.Clear();
+    sbFilterSpec& fs = mFilters[i];
+
+    if (fs.isSearch) {
+      if (!searchChanged) {
+        searchChanged = PR_TRUE;
+      }
+    }
+    else if (!filterChanged) {
+      filterChanged = PR_TRUE;
+    }
+
+    fs.values.Clear();
     rv = ConfigureArray(i);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -512,6 +533,14 @@ sbLocalDatabaseCascadeFilterSet::ClearAll()
   if (mMediaListView) {
     rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // And notify the view's listeners
+    if (filterChanged) {
+      mMediaListView->NotifyListenersFilterChanged();
+    }
+    if (searchChanged) {
+      mMediaListView->NotifyListenersSearchChanged();
+    }
   }
 
   return NS_OK;
@@ -1518,4 +1547,3 @@ sbLocalDatabaseCascadeFilterSetState::ToString(nsAString& aStr)
 
   return NS_OK;
 }
-

@@ -149,7 +149,7 @@ function readFile(fileName) {
   var sstream = Cc["@mozilla.org/scriptableinputstream;1"]
                   .createInstance(Ci.nsIScriptableInputStream);
   fstream.init(file, -1, 0, 0);
-  sstream.init(fstream); 
+  sstream.init(fstream);
 
   var str = sstream.read(4096);
   while (str.length > 0) {
@@ -262,7 +262,7 @@ function assertList(list, data) {
   }
 
   var listener = new TestMediaListEnumerationListener();
-  
+
   listener.enumItemFunction = function onItem(list, item) {
     if (item.guid != a[this.count]) {
       fail("compare failed, index " + this.count + " got " + item.guid +
@@ -271,7 +271,7 @@ function assertList(list, data) {
     }
     return true;
   };
-  
+
   list.enumerateAllItems(listener, Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 }
 
@@ -290,35 +290,35 @@ TestMediaListListener.prototype = {
   get addedItem() {
     return this._addedItem;
   },
-  
+
   get removedItemBefore() {
     return this._removedItemBefore;
   },
-  
+
   get removedItemAfter() {
     return this._removedItemAfter;
   },
-  
+
   get updatedItem() {
     return this._updatedItem;
   },
-  
+
   get updatedProperties() {
     return this._updatedProperties;
   },
-  
+
   get batchBeginList() {
     return this._batchBeginList;
   },
-  
+
   get batchEndList() {
     return this._batchEndList;
   },
-  
+
   get listCleared() {
     return this._listCleared;
   },
-  
+
   set retval(value) {
     this._retval = value;
   },
@@ -333,22 +333,22 @@ TestMediaListListener.prototype = {
     this._listCleared = false;
     this._retval = false;
   },
-  
+
   onItemAdded: function onItemAdded(list, item) {
     this._addedItem = item;
     return this._retval;
   },
-  
+
   onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
     this._removedItemBefore = item;
     return this._retval;
   },
-  
+
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
     this._removedItemAfter = item;
     return this._retval;
   },
-  
+
   onItemUpdated: function onItemUpdated(list, item, properties) {
     this._updatedItem = item;
     this._updatedProperties = properties;
@@ -358,7 +358,7 @@ TestMediaListListener.prototype = {
   onBatchBegin: function onBatchBegin(list) {
     this._batchBeginList = list;
   },
-  
+
   onBatchEnd: function onBatchEnd(list) {
     this._batchEndList = list;
   },
@@ -371,7 +371,7 @@ TestMediaListListener.prototype = {
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
-  }  
+  }
 }
 
 function TestMediaListEnumerationListener() {
@@ -385,34 +385,34 @@ TestMediaListEnumerationListener.prototype = {
   _enumerationComplete: false,
   _items: null,
   _index: 0,
-  
+
   onEnumerationBegin: function onEnumerationBegin(list) {
     if (this._enumBeginFunction)
       return this._enumBeginFunction(list);
-      
+
     return true;
   },
-  
+
   onEnumeratedItem: function onEnumeratedItem(list, item) {
     var retval = true;
-    
+
     if (this._enumItemFunction)
       retval = this._enumItemFunction(list, item);
-      
+
     if (retval) {
       this._items.push(item);
     }
-      
+
     return retval;
   },
-  
+
   onEnumerationEnd: function onEnumerationEnd(list, result) {
     if (this._enumEndFunction)
       this._enumEndFunction(list, result);
     this._result = result;
     this._enumerationComplete = true;
   },
-  
+
   reset: function reset() {
     this._result = Cr.NS_OK;
     this._enumeratedItemCount = 0;
@@ -423,25 +423,25 @@ TestMediaListEnumerationListener.prototype = {
     this._index = 0;
     this._enumerationComplete = false;
   },
-  
+
   hasMoreElements: function hasMoreElements() {
     if (!this._enumerationComplete)
       throw Cr.NS_ERROR_NOT_AVAILABLE;
-      
+
     return this._index < this._items.length;
   },
-  
+
   getNext: function getNext() {
     if (!this._enumerationComplete)
       throw Cr.NS_ERROR_NOT_AVAILABLE;
-      
+
     return this._items[this._index++];
   },
 
   set enumBeginFunction(val) {
     this._enumBeginFunction = val;
   },
-  
+
   set enumItemFunction(val) {
     this._enumItemFunction = val;
   },
@@ -453,16 +453,61 @@ TestMediaListEnumerationListener.prototype = {
   get result() {
     return this._result;
   },
-  
+
   get count() {
     return this._items.length;
   },
-    
+
   QueryInterface: function QueryInterface(iid) {
     if (!iid.equals(Ci.sbIMediaListEnumerationListener) &&
         !iid.equals(Ci.nsISimpleEnumerator) &&
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  }
+}
+
+function TestMediaListViewListener() {
+}
+TestMediaListViewListener.prototype = {
+  _filterChanged: false,
+  _searchChanged: false,
+  _sortChanged: false,
+
+  get filterChanged() {
+    return this._filterChanged;
+  },
+
+  get searchChanged() {
+    return this._searchChanged;
+  },
+
+  get sortChanged() {
+    return this._sortChanged;
+  },
+
+  reset: function TMLVL_reset() {
+    this._filterChanged = false;
+    this._searchChanged = false;
+    this._sortChanged = false;
+  },
+
+  onFilterChanged: function TMLVL_onFilterChanged(view) {
+    this._filterChanged = true;
+  },
+
+  onSearchChanged: function TMLVL_onSearchChanged(view) {
+    this._searchChanged = true;
+  },
+
+  onSortChanged: function TMLVL_onSortChanged(view) {
+    this._sortChanged = true;
+  },
+
+  QueryInterface: function TMLVL_QueryInterface(iid) {
+    if (!iid.equals(Components.interfaces.sbIMediaListViewListener) &&
+        !iid.equals(Components.interfaces.nsISupportsWeakReference))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
 }
@@ -550,14 +595,14 @@ function loadMockDatabase() {
 function newFileURI(file) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);
-  
+
   return ioService.newFileURI(file);
 }
 
 function newURI(spec) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);
-  
+
   return ioService.newURI(spec, null, null);
 }
 
@@ -571,4 +616,3 @@ function getFile(fileName) {
   file.append(fileName);
   return file;
 }
-
