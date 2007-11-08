@@ -74,6 +74,8 @@ function runTest () {
   var SPS = Components.classes['@songbirdnest.com/servicepane/service;1'].getService(Components.interfaces.sbIServicePaneService);
   SPS.save();
 
+  BMS.QueryInterface(Components.interfaces.sbIServicePaneModule).shutdown();
+
   // Do a short sleep to wait for the uri checker to complete.  Without this,
   // we will leak some stuff on shutdown
   sleep(500);

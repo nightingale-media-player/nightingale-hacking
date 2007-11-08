@@ -248,6 +248,7 @@ function sbBookmarks_shutdown() {
   this._bookmarkNode = null;
   this._servicePane = null;
   this._stringBundle = null;
+  this._importAttempts = -1; // do not make any more attempts to import
   if (this._importTimer) {
     this._importTimer.cancel();
     this._importTimer = null;
