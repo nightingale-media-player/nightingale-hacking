@@ -39,7 +39,6 @@ interface nsIStringEnumerator;
 interface nsITreeView;
 interface sbICascadeFilterSet;
 interface sbILibrary;
-interface sbIMediaListBatchCallback;
 interface sbIMediaListEnumerationListener;
 interface sbIMediaListListener;
 interface sbIMediaListView;
@@ -47,14 +46,14 @@ interface sbIMediaListViewState;
 interface sbIPropertyArray;
 
 /**
- * \interface sbIMediaList
- * \brief A brief description of the contents of this interface
- *
- * A detailed description of this interface
- *
- * \sa List of "see also" interfaces
- */
-[scriptable, uuid(ba1128a6-03e3-46b2-b0d4-e93db3de91e5)]
+* \interface sbIMediaList
+* \brief A brief description of the contents of this interface
+*
+* A detailed description of this interface
+*
+* \sa List of "see also" interfaces
+*/
+[scriptable, uuid(3cb74885-8dd7-4261-a300-740da293e339)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -73,9 +72,9 @@ interface sbIMediaList : sbIMediaItem
   /*
   Const: ENUMERATIONTYPE_SNAPSHOT
 
-  If this constant is specified when calling <enumerateAllItems()> or
-  <enumerateItemsByProperty()>, the EnumerationListener will recieve
-  a copy of the <MediaItem> instead of the <MediaItem> present in
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()>, the EnumerationListener will recieve 
+  a copy of the <MediaItem> instead of the <MediaItem> present in 
   the <MediaList>.
 
   Note:
@@ -114,13 +113,13 @@ interface sbIMediaList : sbIMediaItem
   /*
   Const: ENUMERATIONTYPE_LOCKING
 
-  If this constant is specified when calling <enumerateAllItems()> or
-  <enumerateItemsByProperty()> the EnumerationListener will recieve
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()> the EnumerationListener will recieve 
   the actual <MediaItem> from the <MediaList>.
 
   Note:
     This is the _suggested_ constant to use when attempting to change a lot of properties
-    on <MediaItems>, or when you need to process them individually without calling any other
+    on <MediaItems>, or when you need to process them individually without calling any other 
     functions on the <MediaList> during enumeration.
 
   Example:
@@ -145,10 +144,10 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief The name of the media list
    */
-
+  
   /*
   Prop: name
-
+  
   The name of the media list.
 
   Type:
@@ -343,7 +342,7 @@ interface sbIMediaList : sbIMediaItem
     The <MediaItem> present at the requested index.
 
   Throws:
-    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE)
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
     when there is no <MediaItem> at the requested index.
 
   Example:
@@ -360,11 +359,11 @@ interface sbIMediaList : sbIMediaItem
     //Add same item twice. We now have mediaItem at index 0 and 1.
     mediaList.add(mediaItem);
     mediaList.add(mediaItem);
-
+    
     //Get the mediaitem at index 1.
     var sameMediaItem = mediaList.getItemByIndex(1);
     (end)
-
+  
   See Also:
     <getItemByGuid()>
     <indexOf()>
@@ -379,18 +378,18 @@ interface sbIMediaList : sbIMediaItem
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
-
+  
   /*
   Method: enumerateAllItems()
 
   Enumerate all <MediaItems> in the <MediaList>.
-
+  
   Prototype:
     enumerateAllItems(EnumerationListener enumListener, Number enumType)
 
   Parameters:
     enumListener - An EnumerationListener object. See example below.
-    enumType - The type of enumeration desired. Valid values for enumType
+    enumType - The type of enumeration desired. Valid values for enumType 
                are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
 
   Example:
@@ -414,7 +413,7 @@ interface sbIMediaList : sbIMediaItem
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
-
+  
   /*
   Method: enumerateItemsByProperty()
 
@@ -431,7 +430,7 @@ interface sbIMediaList : sbIMediaItem
     name - The name of the property to match.
     value - The value of the property to match.
     enumListener - The enumeration listener.
-    enumType - The type of enumeration desired. Valid values for enumType
+    enumType - The type of enumeration desired. Valid values for enumType 
                are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
 
   Example:
@@ -484,7 +483,7 @@ interface sbIMediaList : sbIMediaItem
     The index where the <MediaItem> was first found.
 
   Throws:
-    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE)
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
     when the <MediaItem> cannot be found.
 
   Example:
@@ -501,7 +500,7 @@ interface sbIMediaList : sbIMediaItem
     //Add same item twice. We now have mediaItem at index 0 and 1.
     mediaList.add(mediaItem);
     mediaList.add(mediaItem);
-
+    
     //Get the first occurrence of mediaItem.
     //The returned value in this case will be 0.
     var index = mediaList.indexOf(mediaItem, 0);
@@ -538,7 +537,7 @@ interface sbIMediaList : sbIMediaItem
     The *last* index where the <MediaItem> was first found.
 
   Throws:
-    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE)
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
     when the <MediaItem> cannot be found.
 
   Example:
@@ -603,7 +602,7 @@ interface sbIMediaList : sbIMediaItem
     //Add same item twice. We now have mediaItem at index 0 and 1.
     mediaList.add(mediaItem);
     mediaList.add(mediaItem);
-
+    
     //Check to see if mediaList contains mediaItem.
     //The returned value in this case will be true.
     var containsItem = mediaList.contains(mediaItem;
@@ -672,9 +671,9 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
-    //This example assumes you already have medialists in
+    //This example assumes you already have medialists in 
     //variables named mediaListFrom and mediaListTo.
-
+    
     //Add all mediaitems from mediaListFrom to mediaListTo.
     mediaListTo.addAll(mediaListFrom);
     (end)
@@ -765,7 +764,7 @@ interface sbIMediaList : sbIMediaItem
     //Add same item twice. We now have mediaItem at index 0 and 1.
     mediaList.add(mediaItem);
     mediaList.add(mediaItem);
-
+    
     //Remove the duplicate item.
     mediaList.removeByIndex(1);
     (end)
@@ -795,7 +794,7 @@ interface sbIMediaList : sbIMediaItem
     clear()
 
   Note:
-    This is the *preferred* way to remove all <MediaItems> from a <MediaList>
+    This is the *preferred* way to remove all <MediaItems> from a <MediaList> 
     because it is optimized for speed.
 
   Example:
@@ -869,12 +868,16 @@ interface sbIMediaList : sbIMediaItem
   sbIMediaListView createView([optional] in sbIMediaListViewState aState);
 
   /**
-   * \brief Runs the given callback with the given user data in batch mode.
-   *
-   * \sa sbIMediaListBatchCallback
+   * \brief Notify listeners that a batch update is about to begin.  Listeners
+   *        may choose to ignore other notifications until the batch is
+   *        complete.
    */
-  void runInBatchMode(in sbIMediaListBatchCallback aCallback,
-                      [optional] in nsISupports aUserData);
+  void beginUpdateBatch();
+
+  /**
+    * \brief Notify listeners that a batch update is complete
+    */
+  void endUpdateBatch();
 
   /*
    * \brief Return the distinct values in the list for a given property
@@ -895,7 +898,7 @@ interface sbIMediaList : sbIMediaItem
 
   Parameters:
     name - The name of the property for which all distinct values are desired.
-
+  
   Returns:
     Enumerator, contains Strings.
 
@@ -905,18 +908,9 @@ interface sbIMediaList : sbIMediaItem
 
   See Also:
     <enumerateItemsByProperty()>
-
+    
     <getProperty()>
   */
   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
 };
 
-/**
- * \interface sbIMediaListBatchCallback
- * \sa sbIMediaList
- */
-[scriptable, uuid(02e86553-31e9-4564-b2db-2756b6d5e52f)]
-interface sbIMediaListBatchCallback : nsISupports
-{
-  void runBatched(in nsISupports aUserData);
-};
