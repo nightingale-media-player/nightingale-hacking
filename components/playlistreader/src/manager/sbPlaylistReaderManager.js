@@ -102,10 +102,22 @@ CPlaylistReaderManager.prototype =
     return file.path;
   },
 
-  getFileExtension: function(aPath)
+  getFileExtension: function(aThing)
   {
+    var name = "";
+    if (aThing instanceof Ci.nsIURL) {
+      if ("" != aThing.fileExtension) {
+        return aThing.fileExtension;
+      }
+    }
+    if (aThing instanceof Ci.nsIURI) {
+      name = aThing.path;
+    }
+    if (aThing instanceof Ci.nsIFile) {
+      name = aThing.leafName;
+    }
     // find the file extension
-    var m = aPath.match(/\.([^\.\/]+)$/);
+    var m = /\.([^\.\/]+)$/(name);
     if (m) {
       return m[1];
     } else {
@@ -118,7 +130,7 @@ CPlaylistReaderManager.prototype =
   {
     const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 
-    var theExtension = this.getFileExtension(aURI.path);
+    var theExtension = this.getFileExtension(aURI);
 
     if (aURI instanceof Ci.nsIFileURL)
     {
@@ -235,7 +247,7 @@ CPlaylistReaderManager.prototype =
 
   read: function(aFile, aMediaList, aContentType, aAddDistinctOnly)
   {
-    var theExtension = this.getFileExtension(aFile.path);
+    var theExtension = this.getFileExtension(aFile);
     for (var r in this.m_Readers)
     {
       var aReader = this.m_Readers[r];
