@@ -1884,12 +1884,18 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   nsCOMPtr<nsIDOMWindow> window = do_QueryInterface( jsWindow, &rv );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
-  PRUint32 buttons =  nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* allow for visit */
-                      nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* cancel */
-                      nsIPromptService::BUTTON_POS_1_DEFAULT;
-
+  PRUint32 buttons;
   if (aScopedName) {
-    buttons += nsIPromptService::BUTTON_POS_2 * nsIPromptService::BUTTON_TITLE_IS_STRING;
+    // Used for all the security prompts
+    buttons = nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* allow for visit */
+              nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* cancel */
+              nsIPromptService::BUTTON_POS_2 * nsIPromptService::BUTTON_TITLE_IS_STRING + /* allow always */
+              nsIPromptService::BUTTON_POS_1_DEFAULT;
+  }
+  else {
+    // Used for playback control only
+    buttons =  nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_YES +
+               nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_NO;
   }
 
   PRInt32 allowed;
