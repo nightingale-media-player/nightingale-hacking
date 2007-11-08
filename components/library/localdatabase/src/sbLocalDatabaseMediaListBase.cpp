@@ -116,7 +116,7 @@ sbLocalDatabaseMediaListBase::GetNativeLibrary()
 /**
  * \brief Adds multiple filters to a GUID array.
  *
- * This method enumerates a hash table and calls AddFilter on a GUIDArray once 
+ * This method enumerates a hash table and calls AddFilter on a GUIDArray once
  * for each key. It constructs a string enumerator for the string array that
  * the hash table contains.
  *
@@ -130,11 +130,11 @@ sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
 {
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
-  
+
   // Make a string enumerator for the string array.
   nsCOMPtr<nsIStringEnumerator> valueEnum =
     new sbTArrayStringEnumerator(aEntry);
-  
+
   // If we failed then we're probably out of memory. Hope we do better on the
   // next key?
   NS_ENSURE_TRUE(valueEnum, PL_DHASH_NEXT);
@@ -142,7 +142,7 @@ sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
   // Unbox the guidArray.
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
     static_cast<sbILocalDatabaseGUIDArray*>(aUserData);
-  
+
   // Set the filter.
   nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
@@ -206,7 +206,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertiesInternal(sbStringArrayHa
   // name and all its associated values.
   PRUint32 filterCount =
     aPropertiesHash->EnumerateRead(AddFilterToGUIDArrayCallback, guidArray);
-  
+
   // Make sure we actually added some filters here. Otherwise something went
   // wrong and the results are not going to be what the caller expects.
   PRUint32 hashCount = aPropertiesHash->Count();
@@ -344,7 +344,7 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
                             unlocalizedName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // If the property doesn't exist just return an empty string.
   if (unlocalizedName.IsEmpty()) {
     aName.Assign(unlocalizedName);
@@ -717,7 +717,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
       PRBool success = propertyHash.Put(propertyName, stringArray);
       if (!success) {
         NS_WARNING("Failed to add string array to property hash!");
-        
+
         // Make sure to delete the new array, otherwise it will leak.
         NS_DELETEXPCOM(stringArray);
         continue;
@@ -998,15 +998,16 @@ sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPro
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::BeginUpdateBatch()
+sbLocalDatabaseMediaListBase::RunInBatchMode(sbIMediaListBatchCallback* aCallback,
+                                             nsISupports* aUserData)
 {
-  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
-  return NS_OK;
-}
+  NS_ENSURE_ARG_POINTER(aCallback);
 
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::EndUpdateBatch()
-{
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+
+  nsresult rv = aCallback->RunInBatchMode(aUserData);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "RunInBatchMode returned failure!");
+
   sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
   return NS_OK;
 }
@@ -1049,4 +1050,3 @@ sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
 
   return NS_OK;
 }
-

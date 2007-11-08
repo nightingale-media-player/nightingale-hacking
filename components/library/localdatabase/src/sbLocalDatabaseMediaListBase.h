@@ -159,16 +159,15 @@ private:
 class sbAutoBatchHelper
 {
 public:
-  sbAutoBatchHelper(sbLocalDatabaseMediaListBase* aList)
+  sbAutoBatchHelper(sbLocalDatabaseMediaListBase& aList)
   : mList(aList)
   {
-    NS_ASSERTION(aList, "Null pointer!");
-    mList->BeginUpdateBatch();
+    mList.BeginUpdateBatch();
   }
 
   ~sbAutoBatchHelper()
   {
-    mList->EndUpdateBatch();
+    mList.EndUpdateBatch();
   }
 
 private:
@@ -177,7 +176,7 @@ private:
   static void* operator new(size_t /*size*/) CPP_THROW_NEW {return 0;}
   static void operator delete(void* /*memory*/) { }
 
-  sbLocalDatabaseMediaListBase* mList;
+  sbLocalDatabaseMediaListBase& mList;
 };
 
 class sbGUIDArrayValueEnumerator : public nsIStringEnumerator

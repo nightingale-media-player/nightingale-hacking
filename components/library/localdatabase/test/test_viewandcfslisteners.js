@@ -1,0 +1,180 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+function runTest () {
+
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+
+  var library = createLibrary("test_viewandcfslisteners", null, false);
+  library.clear();
+
+  var playlist1 = library.createMediaList("simple");
+  var playlist2 = library.createMediaList("simple");
+
+  var items = [
+    ["The Beatles", "Abbey Road", "Come Together",  "ROCK"],
+    ["The Beatles", "Abbey Road", "Sun King",       "ROCK"],
+    ["The Beatles", "Let It Be",  "Get Back",       "POP"],
+    ["The Beatles", "Let It Be",  "Two Of Us",      "POP"],
+    ["The Doors",   "L.A. Woman", "L.A. Woman",     "ROCK"],
+    ["The Doors",   "L.A. Woman", "Love Her Madly", "ROCK"]
+  ];
+
+  function makeItem(i) {
+    var item = library.createMediaItem(
+      newURI("http://foo/" + i + ".mp3"),
+      SBProperties.createArray([
+        [SBProperties.artistName,items[i][0]],
+        [SBProperties.albumName, items[i][1]],
+        [SBProperties.trackName, items[i][2]],
+        [SBProperties.genre,     items[i][3]]
+     ]));
+    return item;
+  }
+
+  var item1 = makeItem(0);
+  var item2 = makeItem(1);
+  var item3 = makeItem(2);
+  var item4 = makeItem(3);
+  var item5 = makeItem(4);
+  var item6 = makeItem(5);
+
+  var view = library.createView();
+
+  var listener = new TestMediaListViewListener();
+  view.addListener(listener, false);
+
+  // Set up root libtary display filters
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.isList, "0"],
+    [SBProperties.hidden, "0"]
+  ]));
+
+  assertTrue(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  view.clearFilters();
+
+  assertTrue(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  view.setSearch(SBProperties.createArray([
+    [SBProperties.artistName, "The Doors"]
+  ]));
+
+  assertFalse(listener.filterChanged);
+  assertTrue(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  view.clearSearch();
+
+  assertFalse(listener.filterChanged);
+  assertTrue(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  view.setSort(SBProperties.createArray([
+    [SBProperties.artistName, "d"]
+  ]));
+
+  assertFalse(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertTrue(listener.sortChanged);
+  listener.reset();
+
+  view.clearSort();
+
+  assertFalse(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertTrue(listener.sortChanged);
+  listener.reset();
+
+  var cfs = view.cascadeFilterSet;
+  // Set up cfs
+  cfs.appendSearch(["*"], 1);
+  cfs.appendFilter(SBProperties.genre);
+  cfs.appendFilter(SBProperties.artistName);
+  cfs.appendFilter(SBProperties.albumName);
+
+  // Set a filter
+  cfs.set(1, ["ROCK"], 1);
+
+  assertTrue(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  cfs.clearAll();
+
+  assertTrue(listener.filterChanged);
+  assertTrue(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  // Set a search
+  cfs.set(0, ["Beat"], 1);
+
+  assertFalse(listener.filterChanged);
+  assertTrue(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  cfs.clearAll();
+
+  assertTrue(listener.filterChanged);
+  assertTrue(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  view.removeListener(listener);
+
+  // Test weak refences
+  view.addListener(listener, true);
+
+  // This shouldn't actually do anything
+  view.addListener(listener);
+
+  view.setFilters(SBProperties.createArray([
+    [SBProperties.isList, "0"],
+    [SBProperties.hidden, "0"]
+  ]));
+
+  assertTrue(listener.filterChanged);
+  assertFalse(listener.searchChanged);
+  assertFalse(listener.sortChanged);
+  listener.reset();
+
+  listener = null;
+  Components.utils.forceGC();
+
+  // This had better not crash.
+  view.clearFilters();
+}
