@@ -3272,14 +3272,19 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         nsCOMPtr<nsINetUtil> netUtil;
         netUtil = do_GetService("@mozilla.org/network/util;1", &result);
         NS_ENSURE_SUCCESS(result, result);
-        nsCString fileName;
+        nsCString leafName;
         result = netUtil->UnescapeString(escFileName,
-          nsINetUtil::ESCAPE_URL_ONLY_NONASCII,
-          fileName);
+          nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
+          leafName);
         NS_ENSURE_SUCCESS(result, result);
+        
+        /* strip out characters not valid in file names */
+        nsCString illegalChars(FILE_ILLEGAL_CHARACTERS);
+        illegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
+        ReplaceChars(leafName, illegalChars, '_');
 
         /* append to the path */
-        result = mpDstFile->Append(NS_ConvertUTF8toUTF16(fileName));
+        result = mpDstFile->Append(NS_ConvertUTF8toUTF16(leafName));
         NS_ENSURE_SUCCESS(result, result);
         /* ensure the filename is unique */
         result = sbDownloadDevice::MakeFileUnique(mpDstFile);

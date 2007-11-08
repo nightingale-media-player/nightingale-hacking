@@ -107,7 +107,7 @@ ReplaceChars(nsAString& aOldString,
   PRUint32 length = aOldString.Length();
   for (PRUint32 index = 0; index < length; index++) {
     PRUnichar currentChar = aOldString.CharAt(index);
-    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar, index);
+    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar);
     if (oldCharsIndex > -1)
       aOldString.Replace(index, 1, aNewChar);
   }
@@ -121,7 +121,7 @@ ReplaceChars(nsACString& aOldString,
   PRUint32 length = aOldString.Length();
   for (PRUint32 index = 0; index < length; index++) {
     char currentChar = aOldString.CharAt(index);
-    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar, index);
+    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar);
     if (oldCharsIndex > -1)
       aOldString.Replace(index, 1, aNewChar);
   }
