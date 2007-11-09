@@ -63,9 +63,6 @@
       // Paste it into the label
       var version = document.getElementById( "version_number" );
       version.value += ": " + user_agent;
-      
-      var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
-      version.value += " (" + appInfo.appBuildID + ") ";    
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
@@ -75,3 +72,4 @@
   ]]>
   </script>
 </dialog>
+
