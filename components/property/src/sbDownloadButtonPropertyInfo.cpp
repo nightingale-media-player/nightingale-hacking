@@ -43,7 +43,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
  * <mode>|<total size>|<current size>
  *
  * mode can be: 0 = none, 1 = new, 2 = starting, 3 = downloading, 4 = paused,
-                5 = complete
+                5 = complete, 6 = failed
  * total size and current size are in btyes.
  *
  */
@@ -98,6 +98,7 @@ sbDownloadButtonPropertyInfo::GetProgressMode(const nsAString& aValue,
     case sbDownloadButtonPropertyValue::eNone:
     case sbDownloadButtonPropertyValue::eNew:
     case sbDownloadButtonPropertyValue::eComplete:
+    case sbDownloadButtonPropertyValue::eFailed:
       *_retval = nsITreeView::PROGRESS_NONE;
       break;
     case sbDownloadButtonPropertyValue::eStarting:
@@ -168,6 +169,9 @@ sbDownloadButtonPropertyInfo::GetCellProperties(const nsAString& aValue,
       break;
     case sbDownloadButtonPropertyValue::ePaused:
       _retval.AssignLiteral("progressPaused");
+      break;
+    case sbDownloadButtonPropertyValue::eFailed:
+      _retval.AssignLiteral("progressFailed");
       break;
     default:
       _retval.Truncate();

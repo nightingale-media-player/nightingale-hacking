@@ -75,7 +75,8 @@ public:
     eStarting    = 2,
     eDownloading = 3,
     ePaused      = 4,
-    eComplete    = 5
+    eComplete    = 5,
+    eFailed      = 6
   };
 
   sbDownloadButtonPropertyValue(const nsAString& aValue) :
@@ -106,7 +107,7 @@ public:
     if (!mIsModeSet) {
       nsresult rv;
       PRInt32 mode = Substring(mValue, 0, mFirstPipe).ToInteger(&rv);
-      if (NS_SUCCEEDED(rv) && mode >= eNone && mode <= eComplete) {
+      if (NS_SUCCEEDED(rv) && mode >= eNone && mode <= eFailed) {
         mMode = Mode(mode);
       }
       mIsModeSet = PR_TRUE;

@@ -3001,13 +3001,19 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             result = NS_OK;
         }
 
-        /* Complete the transfer on success. */
-        if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
+        if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status)) {
+            /* Complete the transfer on success. */
             result = CompleteTransfer(aRequest);
-
-        /* Set the progress to complete.  Nothing to do on error. */
-        sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
-        property.value->SetMode(sbDownloadButtonPropertyValue::eComplete);
+            // Set the progress to complete.
+            sbAutoDownloadButtonPropertyValue property(mpMediaItem,
+                                                       mpStatusTarget);
+            property.value->SetMode(sbDownloadButtonPropertyValue::eComplete);
+        } else {
+            // Set the progress to error.
+            sbAutoDownloadButtonPropertyValue property(mpMediaItem,
+                                                       mpStatusTarget);
+            property.value->SetMode(sbDownloadButtonPropertyValue::eFailed);
+        }
 
         /* Set the final download status. */
         nsAutoString statusStr;

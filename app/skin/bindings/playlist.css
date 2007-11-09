@@ -287,6 +287,12 @@ In-cell Download Buttons
        background-position:center center;
        background-repeat:no-repeat;
 }
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressFailed )
+{
+       background: url(chrome://songbird/skin/tree/download/failed.png);
+       background-position:center center;
+       background-repeat:no-repeat;
+}
 
 /* Prevent the download button from appearing in the download playlist */
 playlist[list-customtype="download"] .sb-playlist-tree 
