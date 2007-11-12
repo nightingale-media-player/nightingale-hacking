@@ -1,17 +1,12 @@
 Index: widget/public/nsIWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
-retrieving revision 3.163
-diff -u -8 -p -r3.163 nsIWidget.h
---- widget/public/nsIWidget.h	30 Oct 2007 04:03:43 -0000	3.163
-+++ widget/public/nsIWidget.h	30 Oct 2007 18:51:21 -0000
-@@ -97,17 +97,17 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
- 
- // d9d02313-6a10-4b6d-9f15-18177e94047a
- 
- #define NS_IWIDGET_IID \
- { 0xd9d02313, 0x6a10, 0x4b6d, \
-   { 0x9f, 0x15, 0x18, 0x17, 0x7e, 0x94, 0x04, 0x7a } }
+retrieving revision 3.164
+diff -u -p -r3.164 nsIWidget.h
+--- widget/public/nsIWidget.h	9 Nov 2007 17:38:33 -0000	3.164
++++ widget/public/nsIWidget.h	12 Nov 2007 20:34:27 -0000
+@@ -100,7 +100,7 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
+   { 0xB9, 0x87, 0x35, 0x38, 0x56, 0x24, 0x97, 0x0D } }
  
  // Hide the native window systems real window type so as to avoid
 -// including native window system types and api's. This is necessary
@@ -19,17 +14,7 @@ diff -u -8 -p -r3.163 nsIWidget.h
  // to ensure cross-platform code.
  typedef void* nsNativeWidget;
  
- /**
-  * Border styles
-  */
- 
- enum nsWindowType {     // Don't alter previously encoded enum values - 3rd party apps may look at these
-@@ -678,27 +678,16 @@ class nsIWidget : public nsISupports {
-     /**
-      * Get the translucency of the top-level window that contains this
-      * widget.
-      * @param aTranslucent true if the window may have translucent or
-      *   transparent pixels
+@@ -681,17 +681,6 @@ class nsIWidget : public nsISupports {
       */
      NS_IMETHOD GetWindowTranslucency(PRBool& aTranslucent) = 0;
  
@@ -47,24 +32,14 @@ diff -u -8 -p -r3.163 nsIWidget.h
      /** 
       * Hide window chrome (borders, buttons) for this widget.
       *
-      */
-     NS_IMETHOD HideWindowChrome(PRBool aShouldHide) = 0;
- 
-     /**
-      * Put the toplevel window into or out of fullscreen mode.
 Index: widget/src/cocoa/nsChildView.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
-retrieving revision 1.75
-diff -u -8 -p -r1.75 nsChildView.h
---- widget/src/cocoa/nsChildView.h	9 Oct 2007 18:46:31 -0000	1.75
-+++ widget/src/cocoa/nsChildView.h	30 Oct 2007 18:51:22 -0000
-@@ -106,32 +106,37 @@ union nsPluginPort;
-   
-   // when menuForEvent: is called, we store its event here (strong)
-   NSEvent* mLastMenuForEventEvent;
-   
-   // rects that were invalidated during a draw, so have pending drawing
+retrieving revision 1.76
+diff -u -p -r1.76 nsChildView.h
+--- widget/src/cocoa/nsChildView.h	7 Nov 2007 07:36:10 -0000	1.76
++++ widget/src/cocoa/nsChildView.h	12 Nov 2007 20:34:27 -0000
+@@ -111,6 +111,10 @@ union nsPluginPort;
    NSMutableArray* mPendingDirtyRects;
    BOOL mPendingFullDisplay;
  
@@ -75,16 +50,7 @@ diff -u -8 -p -r1.75 nsChildView.h
    // Holds our drag service across multiple drag calls. The reference to the
    // service is obtained when the mouse enters the view and is released when
    // the mouse exits or there is a drop. This prevents us from having to
-   // re-establish the connection to the service manager many times per second
-   // when handling |draggingUpdated:| messages.
-   nsIDragService* mDragService;
-   
-   PRUint32 mLastModifierState;
- }
- 
- // these are sent to the first responder when the window key status changes
- - (void)viewsWindowDidBecomeKey;
- - (void)viewsWindowDidResignKey;
+@@ -127,6 +131,7 @@ union nsPluginPort;
  
  // Stop NSView hierarchy being changed during [ChildView drawRect:]
  - (void)delayedTearDown;
@@ -92,17 +58,7 @@ diff -u -8 -p -r1.75 nsChildView.h
  @end
  
  
- 
- //-------------------------------------------------------------------------
- //
- // nsTSMManager
- //
-@@ -288,22 +293,26 @@ public:
- 
-   NS_IMETHOD        GetAttention(PRInt32 aCycleCount);
- 
-   // nsIPluginWidget
-   NS_IMETHOD        GetPluginClipRect(nsRect& outClipRect, nsPoint& outOrigin, PRBool& outWidgetVisible);
+@@ -292,12 +297,16 @@ public:
    NS_IMETHOD        StartDrawPlugin();
    NS_IMETHOD        EndDrawPlugin();
    
@@ -121,24 +77,14 @@ diff -u -8 -p -r1.75 nsChildView.h
    
    void              LiveResizeStarted();
    void              LiveResizeEnded();
-   
- #ifdef ACCESSIBILITY
-   void              GetDocumentAccessible(nsIAccessible** aAccessible);
- #endif
- 
 Index: widget/src/cocoa/nsChildView.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
-retrieving revision 1.271
-diff -u -8 -p -r1.271 nsChildView.mm
---- widget/src/cocoa/nsChildView.mm	25 Oct 2007 21:24:20 -0000	1.271
-+++ widget/src/cocoa/nsChildView.mm	30 Oct 2007 18:51:24 -0000
-@@ -41,17 +41,16 @@
- 
- #include <unistd.h>
-  
- #include "nsChildView.h"
- #include "nsCocoaWindow.h"
+retrieving revision 1.277
+diff -u -p -r1.277 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	12 Nov 2007 17:16:15 -0000	1.277
++++ widget/src/cocoa/nsChildView.mm	12 Nov 2007 20:34:27 -0000
+@@ -46,7 +46,6 @@
  
  #include "nsCOMPtr.h"
  #include "nsToolkit.h"
@@ -146,17 +92,7 @@ diff -u -8 -p -r1.271 nsChildView.mm
  #include "nsCRT.h"
  #include "nsplugindefs.h"
  #include "nsThreadUtils.h"
- #include "nsIPrefService.h"
- #include "nsIPrefBranch.h"
- 
- #include "nsIFontMetrics.h"
- #include "nsIDeviceContext.h"
-@@ -144,18 +143,16 @@ nsIWidget         * gRollupWidget   = ns
- - (NSMenu*)contextMenu;
- - (TopLevelWindowData*)ensureWindowData;
- 
- - (void)setIsPluginView:(BOOL)aIsPlugin;
- - (BOOL)isPluginView;
+@@ -149,8 +148,6 @@ nsIWidget         * gRollupWidget   = ns
  
  - (BOOL)childViewHasPlugin;
  
@@ -164,18 +100,8 @@ diff -u -8 -p -r1.271 nsChildView.mm
 -
  - (void)processPendingRedraws;
  
- - (BOOL)maybeRerouteMouseEventToRollupWidget:(NSEvent *)anEvent;
- 
- + (BOOL)mouseEventIsOverRollupWidget:(NSEvent *)anEvent;
- 
- - (void)maybeInitContextMenuTracking;
- 
-@@ -651,18 +648,44 @@ void* nsChildView::GetNativeData(PRUint3
-     }
-   }
- 
-   return retVal;
- }
+ - (BOOL)ensureCorrectMouseEventTarget:(NSEvent *)anEvent;
+@@ -656,8 +653,34 @@ void* nsChildView::GetNativeData(PRUint3
  
  #pragma mark -
  
@@ -211,17 +137,7 @@ diff -u -8 -p -r1.271 nsChildView.mm
  NS_IMETHODIMP nsChildView::IsVisible(PRBool& outState)
  {
    if (!mVisible) {
-     outState = mVisible;
-   }
-   else {
-     // mVisible does not accurately reflect the state of a hidden tabbed view
-     // so verify that the view has a window as well
-@@ -2029,20 +2052,27 @@ NSEvent* gLastDragEvent = nil;
- // Make the origin of this view the topLeft corner (gecko origin) rather
- // than the bottomLeft corner (standard cocoa origin).
- - (BOOL)isFlipped
- {
-   return YES;
+@@ -2042,10 +2065,17 @@ NSEvent* gLastDragEvent = nil;
  }
  
  
@@ -241,17 +157,7 @@ diff -u -8 -p -r1.271 nsChildView.mm
  }
  
  
- -(void)setIsPluginView:(BOOL)aIsPlugin
- {
-   mIsPluginView = aIsPlugin;
- }
- 
-@@ -2158,21 +2188,16 @@ NSEvent* gLastDragEvent = nil;
- 
- // The display system has told us that a portion of our view is dirty. Tell
- // gecko to paint it
- - (void)drawRect:(NSRect)aRect
- {
+@@ -2171,11 +2201,6 @@ NSEvent* gLastDragEvent = nil;
    PRBool isVisible;
    if (!mGeckoChild || NS_FAILED(mGeckoChild->IsVisible(isVisible)) || !isVisible)
      return;
@@ -263,17 +169,7 @@ diff -u -8 -p -r1.271 nsChildView.mm
  
    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
  
-   nsRect geckoBounds;
-   mGeckoChild->GetBounds(geckoBounds);
- 
-   NSRect bounds = [self bounds];
-   nsRefPtr<gfxQuartzSurface> targetSurface =
-@@ -2249,32 +2274,16 @@ NSEvent* gLastDragEvent = nil;
-   CGContextSetRGBStrokeColor (cgContext, 1, 0, 0, 0.8);
-   CGContextSetLineWidth (cgContext, 4.0);
-   CGContextStrokeRect (cgContext,
-                        CGRectMake(aRect.origin.x, aRect.origin.y, aRect.size.width, aRect.size.height));
- #endif
+@@ -2262,22 +2287,6 @@ NSEvent* gLastDragEvent = nil;
  }
  
  
@@ -296,17 +192,7 @@ diff -u -8 -p -r1.271 nsChildView.mm
  // Allows us to turn off setting up the clip region
  // before each drawRect. We already clip within gecko.
  - (BOOL)wantsDefaultClipping
- {
-   return NO;
- }
- 
- 
-@@ -2587,17 +2596,17 @@ static nsEventStatus SendGeckoMouseEnter
- 
-   nsEventStatus status;
-   widget->DispatchEvent(&event, status);
-   return status;
- }
+@@ -2605,7 +2614,7 @@ static nsEventStatus SendGeckoMouseEnter
  
  
  - (void)mouseMoved:(NSEvent*)theEvent
@@ -315,24 +201,14 @@ diff -u -8 -p -r1.271 nsChildView.mm
    NSPoint windowEventLocation = [theEvent locationInWindow];
    NSPoint screenEventLocation = [mWindow convertBaseToScreen:windowEventLocation];
    NSPoint viewEventLocation = [self convertPoint:windowEventLocation fromView:nil];
- 
-   // Installing a mouseMoved handler on the EventMonitor target (in
-   // nsToolkit::RegisterForAllProcessMouseEvents()) means that some of the
-   // events received here come from other processes.  For this reason we need
-   // to avoid processing them unless they're over a context menu -- otherwise
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.43
-diff -u -8 -p -r1.43 nsCocoaWindow.h
+diff -u -p -r1.43 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	30 Oct 2007 04:03:43 -0000	1.43
-+++ widget/src/cocoa/nsCocoaWindow.h	30 Oct 2007 18:51:24 -0000
-@@ -232,30 +232,34 @@ public:
-     NS_IMETHOD SetColorMap(nsColorMap *aColorMap) { return NS_OK; }
-     NS_IMETHOD BeginResizingChildren(void) { return NS_OK; }
-     NS_IMETHOD EndResizingChildren(void) { return NS_OK; }
-     NS_IMETHOD GetPreferredSize(PRInt32& aWidth, PRInt32& aHeight) { return NS_OK; }
-     NS_IMETHOD SetPreferredSize(PRInt32 aWidth, PRInt32 aHeight) { return NS_OK; }
++++ widget/src/cocoa/nsCocoaWindow.h	12 Nov 2007 20:34:27 -0000
+@@ -237,6 +237,8 @@ public:
      NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
      NS_IMETHOD CaptureRollupEvents(nsIRollupListener * aListener, PRBool aDoCapture, PRBool aConsumeRollupEvent);
      NS_IMETHOD GetAttention(PRInt32 aCycleCount);
@@ -341,14 +217,7 @@ diff -u -8 -p -r1.43 nsCocoaWindow.h
      NS_IMETHOD SetWindowTitlebarColor(nscolor aColor);
  
      virtual gfxASurface* GetThebesSurface();
- 
-     // be notified that a some form of drag event needs to go into Gecko
-     virtual PRBool DragEvent(unsigned int aMessage, Point aMouseGlobal, UInt16 aKeyModifiers);
- 
-     // Helpers to prevent recursive resizing during live-resize
-     PRBool IsResizing () const { return mIsResizing; }
-     void StartResizing () { mIsResizing = PR_TRUE; }
-     void StopResizing () { mIsResizing = PR_FALSE; }
+@@ -251,6 +253,8 @@ public:
      
      // nsIKBStateControl interface
      NS_IMETHOD ResetInputState();
@@ -357,35 +226,20 @@ diff -u -8 -p -r1.43 nsCocoaWindow.h
  
      NS_IMETHOD BeginSecureKeyboardInput();
      NS_IMETHOD EndSecureKeyboardInput();
- 
- protected:
-   
-   nsIWidget*           mParent;         // if we're a popup, this is our parent [WEAK]
-   NSWindow*            mWindow;         // our cocoa window [STRONG]
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.112
-diff -u -8 -p -r1.112 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	30 Oct 2007 04:03:43 -0000	1.112
-+++ widget/src/cocoa/nsCocoaWindow.mm	30 Oct 2007 18:51:25 -0000
-@@ -1,9 +1,9 @@
+retrieving revision 1.115
+diff -u -p -r1.115 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	9 Nov 2007 19:00:02 -0000	1.115
++++ widget/src/cocoa/nsCocoaWindow.mm	12 Nov 2007 20:34:27 -0000
+@@ -1,4 +1,4 @@
 -/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* -*- Mode: Objective-C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
  /* ***** BEGIN LICENSE BLOCK *****
   * Version: MPL 1.1/GPL 2.0/LGPL 2.1
   *
-  * The contents of this file are subject to the Mozilla Public License Version
-  * 1.1 (the "License"); you may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at
-  * http://www.mozilla.org/MPL/
-  *
-@@ -60,16 +60,18 @@ extern NSMenu* sApplicationMenu; // Appl
- 
- // defined in nsChildView.mm
- extern nsIRollupListener * gRollupListener;
- extern nsIWidget         * gRollupWidget;
- extern BOOL                gSomeMenuBarPainted;
+@@ -66,6 +66,8 @@ extern BOOL                gSomeMenuBarP
  
  #define NS_APPSHELLSERVICE_CONTRACTID "@mozilla.org/appshell/appShellService;1"
  
@@ -394,17 +248,7 @@ diff -u -8 -p -r1.112 nsCocoaWindow.mm
  NS_IMPL_ISUPPORTS_INHERITED1(nsCocoaWindow, Inherited, nsPIWidgetCocoa)
  
  
- // A note on testing to see if your object is a sheet...
- // |mWindowType == eWindowType_sheet| is true if your gecko nsIWidget is a sheet
- // widget - whether or not the sheet is showing. |[mWindow isSheet]| will return
- // true *only when the sheet is actually showing*. Choose your test wisely.
- 
-@@ -307,16 +309,17 @@ nsresult nsCocoaWindow::StandardCreate(n
-      */
-     NSRect rect = geckoRectToCocoaRect(aRect);
-     
-     // compensate for difference between frame and content area height (e.g. title bar)
-     NSRect newWindowFrame = [NSWindow frameRectForContentRect:rect styleMask:features];
+@@ -313,6 +315,7 @@ nsresult nsCocoaWindow::StandardCreate(n
  
      rect.origin.y -= (newWindowFrame.size.height - rect.size.height);
      
@@ -412,17 +256,7 @@ diff -u -8 -p -r1.112 nsCocoaWindow.mm
      if (mWindowType != eWindowType_popup)
        rect.origin.y -= ::GetMBarHeight();
  
-     // NSLog(@"Top-level window being created at Cocoa rect: %f, %f, %f, %f\n",
-     //       rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
- 
-     Class windowClass = [NSWindow class];
-     // If we have a titlebar, we want to be able to control the titlebar color
-@@ -333,17 +336,17 @@ nsresult nsCocoaWindow::StandardCreate(n
-     else if (features == NSBorderlessWindowMask)
-       windowClass = [BorderlessWindow class];
- 
-     // Create the window
-     mWindow = [[windowClass alloc] initWithContentRect:rect styleMask:features 
+@@ -339,7 +342,7 @@ nsresult nsCocoaWindow::StandardCreate(n
                                     backing:NSBackingStoreBuffered defer:NO];
      
      if (mWindowType == eWindowType_popup) {
@@ -431,17 +265,7 @@ diff -u -8 -p -r1.112 nsCocoaWindow.mm
        [mWindow setLevel:NSPopUpMenuWindowLevel];
        [mWindow setHasShadow:YES];
  
-       // we need to make our content view a ChildView
-       mPopupContentView = new nsChildView();
-       if (mPopupContentView) {
-         NS_ADDREF(mPopupContentView);
- 
-@@ -640,16 +643,54 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
-   }
-   
-   if (mPopupContentView)
-       mPopupContentView->Show(bState);
- 
+@@ -646,6 +649,44 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
    return NS_OK;
  }
  
@@ -486,24 +310,14 @@ diff -u -8 -p -r1.112 nsCocoaWindow.mm
  
  NS_METHOD nsCocoaWindow::AddMouseListener(nsIMouseListener * aListener)
  {
-   nsBaseWidget::AddMouseListener(aListener);
- 
-   if (mPopupContentView)
-     mPopupContentView->AddMouseListener(aListener);
- 
 Index: widget/src/gtk2/nsWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.cpp,v
-retrieving revision 1.234
-diff -u -8 -p -r1.234 nsWindow.cpp
---- widget/src/gtk2/nsWindow.cpp	25 Oct 2007 06:51:23 -0000	1.234
-+++ widget/src/gtk2/nsWindow.cpp	30 Oct 2007 18:51:26 -0000
-@@ -3552,22 +3552,16 @@ nsWindow::UpdateTranslucentWindowAlphaIn
-     UpdateMaskBits(mTransparencyBitmap, mBounds.width, mBounds.height,
-                    aRect, aAlphas, aStride);
- 
-     if (!mNeedsShow) {
-         ApplyTransparencyBitmap();
+retrieving revision 1.235
+diff -u -p -r1.235 nsWindow.cpp
+--- widget/src/gtk2/nsWindow.cpp	7 Nov 2007 08:51:53 -0000	1.235
++++ widget/src/gtk2/nsWindow.cpp	12 Nov 2007 20:34:27 -0000
+@@ -3557,12 +3557,6 @@ nsWindow::UpdateTranslucentWindowAlphaIn
      }
      return NS_OK;
  }
@@ -516,24 +330,14 @@ diff -u -8 -p -r1.234 nsWindow.cpp
  #endif
  
  void
- nsWindow::GrabPointer(void)
- {
-     LOG(("GrabPointer %d\n", mRetryPointerGrab));
- 
-     mRetryPointerGrab = PR_FALSE;
 Index: widget/src/gtk2/nsWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.h,v
 retrieving revision 1.78
-diff -u -8 -p -r1.78 nsWindow.h
+diff -u -p -r1.78 nsWindow.h
 --- widget/src/gtk2/nsWindow.h	19 Sep 2007 06:37:56 -0000	1.78
-+++ widget/src/gtk2/nsWindow.h	30 Oct 2007 18:51:26 -0000
-@@ -341,17 +341,16 @@ public:
- 
-    void                ResizeTransparencyBitmap(PRInt32 aNewWidth, PRInt32 aNewHeight);
-    void                ApplyTransparencyBitmap();
- #ifdef MOZ_XUL
-    NS_IMETHOD          SetWindowTranslucency(PRBool aTransparent);
++++ widget/src/gtk2/nsWindow.h	12 Nov 2007 20:34:27 -0000
+@@ -346,7 +346,6 @@ public:
     NS_IMETHOD          GetWindowTranslucency(PRBool& aTransparent);
     nsresult            UpdateTranslucentWindowAlphaInternal(const nsRect& aRect,
                                                              PRUint8* aAlphas, PRInt32 aStride);
@@ -541,24 +345,14 @@ diff -u -8 -p -r1.78 nsWindow.h
  #endif
  
      gfxASurface       *GetThebesSurface();
- 
- #ifdef ACCESSIBILITY
-     static PRBool      sAccessibilityEnabled;
- #endif
- 
 Index: widget/src/xpwidgets/nsBaseWidget.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
-retrieving revision 1.163
-diff -u -8 -p -r1.163 nsBaseWidget.cpp
---- widget/src/xpwidgets/nsBaseWidget.cpp	30 Oct 2007 04:03:43 -0000	1.163
-+++ widget/src/xpwidgets/nsBaseWidget.cpp	30 Oct 2007 18:51:27 -0000
-@@ -524,21 +524,16 @@ NS_IMETHODIMP nsBaseWidget::SetWindowTra
-   return NS_ERROR_NOT_IMPLEMENTED;
- }
- 
- NS_IMETHODIMP nsBaseWidget::GetWindowTranslucency(PRBool& aTranslucent) {
-   aTranslucent = PR_FALSE;
+retrieving revision 1.164
+diff -u -p -r1.164 nsBaseWidget.cpp
+--- widget/src/xpwidgets/nsBaseWidget.cpp	9 Nov 2007 17:38:33 -0000	1.164
++++ widget/src/xpwidgets/nsBaseWidget.cpp	12 Nov 2007 20:34:27 -0000
+@@ -525,11 +525,6 @@ NS_IMETHODIMP nsBaseWidget::GetWindowTra
    return NS_OK;
  }
  
@@ -570,24 +364,14 @@ diff -u -8 -p -r1.163 nsBaseWidget.cpp
  //-------------------------------------------------------------------------
  //
  // Hide window borders/decorations for this widget
- //
- //-------------------------------------------------------------------------
- NS_IMETHODIMP nsBaseWidget::HideWindowChrome(PRBool aShouldHide)
- {
-   return NS_ERROR_NOT_IMPLEMENTED;
 Index: widget/src/xpwidgets/nsBaseWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
-retrieving revision 1.88
-diff -u -8 -p -r1.88 nsBaseWidget.h
---- widget/src/xpwidgets/nsBaseWidget.h	30 Oct 2007 04:03:43 -0000	1.88
-+++ widget/src/xpwidgets/nsBaseWidget.h	30 Oct 2007 18:51:27 -0000
-@@ -97,17 +97,16 @@ public:
-   virtual nsCursor        GetCursor();
-   NS_IMETHOD              SetCursor(nsCursor aCursor);
-   NS_IMETHOD              SetCursor(imgIContainer* aCursor,
-                                     PRUint32 aHotspotX, PRUint32 aHotspotY);
-   NS_IMETHOD              GetWindowType(nsWindowType& aWindowType);
+retrieving revision 1.89
+diff -u -p -r1.89 nsBaseWidget.h
+--- widget/src/xpwidgets/nsBaseWidget.h	9 Nov 2007 17:38:33 -0000	1.89
++++ widget/src/xpwidgets/nsBaseWidget.h	12 Nov 2007 20:34:27 -0000
+@@ -101,7 +101,6 @@ public:
    NS_IMETHOD              SetWindowType(nsWindowType aWindowType);
    NS_IMETHOD              SetWindowTranslucency(PRBool aTranslucent);
    NS_IMETHOD              GetWindowTranslucency(PRBool& aTranslucent);
@@ -595,8 +379,3 @@ diff -u -8 -p -r1.88 nsBaseWidget.h
    NS_IMETHOD              HideWindowChrome(PRBool aShouldHide);
    NS_IMETHOD              MakeFullScreen(PRBool aFullScreen);
    nsresult                MakeFullScreenInternal(PRBool aFullScreen);
-   virtual nsIRenderingContext* GetRenderingContext();
-   virtual nsIDeviceContext* GetDeviceContext();
-   virtual nsIToolkit*     GetToolkit();  
- #ifdef MOZ_CAIRO_GFX
-   virtual gfxASurface*    GetThebesSurface();

@@ -1,11 +1,83 @@
+Index: caps/src/nsScriptSecurityManager.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
+retrieving revision 1.325
+diff -u -p -r1.325 nsScriptSecurityManager.cpp
+--- caps/src/nsScriptSecurityManager.cpp	27 Oct 2007 01:46:09 -0000	1.325
++++ caps/src/nsScriptSecurityManager.cpp	12 Nov 2007 20:28:49 -0000
+@@ -560,6 +560,12 @@ nsScriptSecurityManager::CheckObjectAcce
+     if (!ssm)
+         return JS_FALSE;
+ 
++    nsCOMPtr<nsISupports> native;
++    nsresult rv =
++        sXPConnect->GetNativeOfJSObject(cx, obj,
++                                        NS_GET_IID(nsISupports),
++                                        getter_AddRefs(native));
++
+     // Get the object being accessed.  We protect these cases:
+     // 1. The Function.prototype.caller property's value, which might lead
+     //    an attacker up a call-stack to a function or another object from
+@@ -572,11 +578,13 @@ nsScriptSecurityManager::CheckObjectAcce
+ 
+     // Do the same-origin check -- this sets a JS exception if the check fails.
+     // Pass the parent object's class name, as we have no class-info for it.
+-    nsresult rv =
+-        ssm->CheckPropertyAccess(cx, target, JS_GetClass(cx, obj)->name, id,
+-                                 (mode & JSACC_WRITE) ?
+-                                 nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
+-                                 nsIXPCSecurityManager::ACCESS_GET_PROPERTY);
++    rv = ssm->CheckPropertyAccessImpl(( (mode & JSACC_WRITE) ?
++                                        nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
++                                        nsIXPCSecurityManager::ACCESS_GET_PROPERTY ),
++                                      nsnull, cx, target, native, nsnull,
++                                      nsnull, JS_GET_CLASS(cx, obj)->name, id,
++                                      nsnull);
++
+ 
+     if (NS_FAILED(rv))
+         return JS_FALSE; // Security check failed (XXX was an error reported?)
+@@ -841,14 +849,24 @@ nsScriptSecurityManager::CheckPropertyAc
+     nsXPIDLCString objectSecurityLevel;
+     if (checkedComponent)
+     {
+-        nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
+-        nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
+-        const nsIID* objIID;
+-        rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
+-        if (NS_SUCCEEDED(rv))
+-            rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
+-        if (NS_SUCCEEDED(rv))
+-            rv = interfaceInfo->GetIIDShared(&objIID);
++        const nsIID* objIID = nsnull;
++        if (aCallContext) {
++            // If we have a call context, find the wrapper and the IID
++            // with the member in question to pass to
++            // nsISecurityCheckedComponent, if not, pass a null IID
++            // and it's up to the implementation to decide if it wants
++            // to permit access or not.
++            nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
++            nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
++            rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
++            if (NS_SUCCEEDED(rv))
++                rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
++            if (NS_SUCCEEDED(rv))
++                rv = interfaceInfo->GetIIDShared(&objIID);
++        } else {
++            rv = NS_OK;
++        }
++
+         if (NS_SUCCEEDED(rv))
+         {
+             switch (aAction)
 Index: js/src/xpconnect/idl/nsIXPConnect.idl
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/idl/nsIXPConnect.idl,v
-retrieving revision 1.57
-diff -u -p -r1.57 nsIXPConnect.idl
---- js/src/xpconnect/idl/nsIXPConnect.idl	15 Sep 2007 18:15:01 -0000	1.57
-+++ js/src/xpconnect/idl/nsIXPConnect.idl	26 Oct 2007 02:29:04 -0000
-@@ -675,6 +675,17 @@ interface nsIXPConnect : nsISupports
+retrieving revision 1.63
+diff -u -p -r1.63 nsIXPConnect.idl
+--- js/src/xpconnect/idl/nsIXPConnect.idl	1 Nov 2007 22:51:58 -0000	1.63
++++ js/src/xpconnect/idl/nsIXPConnect.idl	12 Nov 2007 20:28:49 -0000
+@@ -677,6 +677,17 @@ interface nsIXPConnect : nsISupports
      void flagSystemFilenamePrefix(in string aFilenamePrefix);
  
      /**
@@ -29,7 +101,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/XPCDispConvert.cpp,v
 retrieving revision 1.17
 diff -u -p -r1.17 XPCDispConvert.cpp
 --- js/src/xpconnect/src/XPCDispConvert.cpp	31 Aug 2007 00:52:58 -0000	1.17
-+++ js/src/xpconnect/src/XPCDispConvert.cpp	26 Oct 2007 02:29:04 -0000
++++ js/src/xpconnect/src/XPCDispConvert.cpp	12 Nov 2007 20:28:49 -0000
 @@ -331,6 +331,7 @@ JSBool XPCDispConvert::JSToCOM(XPCCallCo
                  obj, 
                  &NSID_IDISPATCH,
@@ -41,11 +113,11 @@ diff -u -p -r1.17 XPCDispConvert.cpp
 Index: js/src/xpconnect/src/nsXPConnect.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/nsXPConnect.cpp,v
-retrieving revision 1.134
-diff -u -p -r1.134 nsXPConnect.cpp
---- js/src/xpconnect/src/nsXPConnect.cpp	18 Sep 2007 01:22:20 -0000	1.134
-+++ js/src/xpconnect/src/nsXPConnect.cpp	26 Oct 2007 02:29:04 -0000
-@@ -1112,7 +1112,7 @@ nsXPConnect::WrapJS(JSContext * aJSConte
+retrieving revision 1.141
+diff -u -p -r1.141 nsXPConnect.cpp
+--- js/src/xpconnect/src/nsXPConnect.cpp	5 Nov 2007 09:12:16 -0000	1.141
++++ js/src/xpconnect/src/nsXPConnect.cpp	12 Nov 2007 20:28:49 -0000
+@@ -1229,7 +1229,7 @@ nsXPConnect::WrapJS(JSContext * aJSConte
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -54,7 +126,7 @@ diff -u -p -r1.134 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -1138,7 +1138,7 @@ nsXPConnect::WrapJSAggregatedToNative(ns
+@@ -1255,7 +1255,7 @@ nsXPConnect::WrapJSAggregatedToNative(ns
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -63,8 +135,8 @@ diff -u -p -r1.134 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -2097,6 +2097,30 @@ nsXPConnect::OnDispatchedEvent(nsIThread
-     return NS_ERROR_UNEXPECTED;
+@@ -2226,6 +2226,30 @@ nsXPConnect::RemoveJSHolder(void* aHolde
+     return mRuntime->RemoveJSHolder(aHolder);
  }
  
 +/* void getNativeOfJSObject(in JSContextPtr aJSContext, in JSObjectPtr aJSObj, in nsIIDRef aIID, [iid_is(aIID),retval] out nsQIResult result); */
@@ -97,10 +169,10 @@ diff -u -p -r1.134 nsXPConnect.cpp
 Index: js/src/xpconnect/src/xpcconvert.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
-retrieving revision 1.115
-diff -u -p -r1.115 xpcconvert.cpp
---- js/src/xpconnect/src/xpcconvert.cpp	31 Aug 2007 00:52:58 -0000	1.115
-+++ js/src/xpconnect/src/xpcconvert.cpp	26 Oct 2007 02:29:04 -0000
+retrieving revision 1.116
+diff -u -p -r1.116 xpcconvert.cpp
+--- js/src/xpconnect/src/xpcconvert.cpp	25 Oct 2007 05:59:37 -0000	1.116
++++ js/src/xpconnect/src/xpcconvert.cpp	12 Nov 2007 20:28:49 -0000
 @@ -1030,7 +1030,7 @@ XPCConvert::JSData2Native(XPCCallContext
              }
  
@@ -147,11 +219,11 @@ diff -u -p -r1.115 xpcconvert.cpp
 Index: js/src/xpconnect/src/xpcprivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
-retrieving revision 1.234
-diff -u -p -r1.234 xpcprivate.h
---- js/src/xpconnect/src/xpcprivate.h	1 Oct 2007 00:31:22 -0000	1.234
-+++ js/src/xpconnect/src/xpcprivate.h	26 Oct 2007 02:29:04 -0000
-@@ -2357,6 +2357,12 @@ public:
+retrieving revision 1.240
+diff -u -p -r1.240 xpcprivate.h
+--- js/src/xpconnect/src/xpcprivate.h	1 Nov 2007 22:51:58 -0000	1.240
++++ js/src/xpconnect/src/xpcprivate.h	12 Nov 2007 20:28:49 -0000
+@@ -2401,6 +2401,12 @@ public:
                   REFNSIID aIID,
                   nsISupports* aOuter,
                   nsXPCWrappedJS** wrapper);
@@ -164,7 +236,7 @@ diff -u -p -r1.234 xpcprivate.h
  
      nsISomeInterface* GetXPTCStub() { return mXPTCStub; }
      JSObject* GetJSObject() const {return mJSObj;}
-@@ -2532,6 +2538,7 @@ public:
+@@ -2578,6 +2584,7 @@ public:
                                             void** dest, JSObject* src,
                                             const nsID* iid,
                                             nsISupports* aOuter,
@@ -175,11 +247,11 @@ diff -u -p -r1.234 xpcprivate.h
 Index: js/src/xpconnect/src/xpcwrappedjs.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappedjs.cpp,v
-retrieving revision 1.59
-diff -u -p -r1.59 xpcwrappedjs.cpp
---- js/src/xpconnect/src/xpcwrappedjs.cpp	31 Aug 2007 00:52:58 -0000	1.59
-+++ js/src/xpconnect/src/xpcwrappedjs.cpp	26 Oct 2007 02:29:04 -0000
-@@ -417,6 +417,68 @@ return_wrapper:
+retrieving revision 1.66
+diff -u -p -r1.66 xpcwrappedjs.cpp
+--- js/src/xpconnect/src/xpcwrappedjs.cpp	2 Nov 2007 15:48:00 -0000	1.66
++++ js/src/xpconnect/src/xpcwrappedjs.cpp	12 Nov 2007 20:28:49 -0000
+@@ -414,6 +414,68 @@ return_wrapper:
      return NS_OK;
  }
  
@@ -248,75 +320,3 @@ diff -u -p -r1.59 xpcwrappedjs.cpp
  nsXPCWrappedJS::nsXPCWrappedJS(XPCCallContext& ccx,
                                 JSObject* aJSObj,
                                 nsXPCWrappedJSClass* aClass,
-Index: caps/src/nsScriptSecurityManager.cpp
-===================================================================
-RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
-retrieving revision 1.323
-diff -u -p -r1.323 nsScriptSecurityManager.cpp
---- caps/src/nsScriptSecurityManager.cpp	6 Sep 2007 07:02:57 -0000	1.323
-+++ caps/src/nsScriptSecurityManager.cpp	26 Oct 2007 02:29:04 -0000
-@@ -565,6 +565,12 @@ nsScriptSecurityManager::CheckObjectAcce
-     if (!ssm)
-         return JS_FALSE;
- 
-+    nsCOMPtr<nsISupports> native;
-+    nsresult rv =
-+        sXPConnect->GetNativeOfJSObject(cx, obj,
-+                                        NS_GET_IID(nsISupports),
-+                                        getter_AddRefs(native));
-+
-     // Get the object being accessed.  We protect these cases:
-     // 1. The Function.prototype.caller property's value, which might lead
-     //    an attacker up a call-stack to a function or another object from
-@@ -577,11 +583,13 @@ nsScriptSecurityManager::CheckObjectAcce
- 
-     // Do the same-origin check -- this sets a JS exception if the check fails.
-     // Pass the parent object's class name, as we have no class-info for it.
--    nsresult rv =
--        ssm->CheckPropertyAccess(cx, target, JS_GetClass(cx, obj)->name, id,
--                                 (mode & JSACC_WRITE) ?
--                                 nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
--                                 nsIXPCSecurityManager::ACCESS_GET_PROPERTY);
-+    rv = ssm->CheckPropertyAccessImpl(( (mode & JSACC_WRITE) ?
-+                                        nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
-+                                        nsIXPCSecurityManager::ACCESS_GET_PROPERTY ),
-+                                      nsnull, cx, target, native, nsnull,
-+                                      nsnull, JS_GET_CLASS(cx, obj)->name, id,
-+                                      nsnull);
-+
- 
-     if (NS_FAILED(rv))
-         return JS_FALSE; // Security check failed (XXX was an error reported?)
-@@ -843,14 +851,24 @@ nsScriptSecurityManager::CheckPropertyAc
-     nsXPIDLCString objectSecurityLevel;
-     if (checkedComponent)
-     {
--        nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
--        nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
--        const nsIID* objIID;
--        rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
--        if (NS_SUCCEEDED(rv))
--            rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
--        if (NS_SUCCEEDED(rv))
--            rv = interfaceInfo->GetIIDShared(&objIID);
-+        const nsIID* objIID = nsnull;
-+        if (aCallContext) {
-+            // If we have a call context, find the wrapper and the IID
-+            // with the member in question to pass to
-+            // nsISecurityCheckedComponent, if not, pass a null IID
-+            // and it's up to the implementation to decide if it wants
-+            // to permit access or not.
-+            nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
-+            nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
-+            rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
-+            if (NS_SUCCEEDED(rv))
-+                rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
-+            if (NS_SUCCEEDED(rv))
-+                rv = interfaceInfo->GetIIDShared(&objIID);
-+        } else {
-+            rv = NS_OK;
-+        }
-+
-         if (NS_SUCCEEDED(rv))
-         {
-             switch (aAction)
