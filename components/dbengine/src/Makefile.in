@@ -67,11 +67,6 @@ endif
 
 endif
 
-ifeq (linux,$(SB_PLATFORM))
-C_EXTRA_FLAGS += -fno-stack-protector \
-                 $(NULL)
-endif
-
 ifdef DEBUG
   C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
                   $(NULL)
