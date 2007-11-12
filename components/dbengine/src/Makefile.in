@@ -35,13 +35,70 @@ else
 target_name = sbDBEngine
 endif
 
+ifeq (windows,$(SB_PLATFORM))
+C_FLAGS = -nologo \
+          -W3 \
+          -WL \
+          -Zi \
+          -GS \
+          -c \
+          -TC \
+          -FI "mozilla-config.h" \
+          -FI "xpcom/xpcom-config.h" \
+          $(NULL)
+
+C_EXTRA_DEFS += -DOS_WIN=1 \
+                $(NULL)
+
+ARFLAGS = -NOLOGO \
+          -MACHINE:X86 \
+          -SUBSYSTEM:WINDOWS \
+          $(NULL)
+
+ifdef DEBUG
+  C_FLAGS += -MTd \
+             -Od \
+             $(NULL)
+else
+  C_FLAGS += -MT \
+             -Ox \
+             $(NULL)
+endif
+
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+C_EXTRA_FLAGS += -fno-stack-protector \
+                 $(NULL)
+endif
+
+ifdef DEBUG
+  C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
+                  $(NULL)
+endif
+
+C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
+                -DSQLITE_OMIT_LOAD_EXTENSION=1 \
+                -DSQLITE_THREADSAFE=1 \
+                -DTEMP_STORE=2 \
+                -DNO_TCL \
+                $(NULL)
+
+C_SRCS = sqlite3.c \
+         $(NULL)
+
+C_INCLUDES = $(srcdir) \
+             $(MOZSDK_INCLUDE_DIR) \
+             $(NULL)
+
 CPP_SRCS = DatabaseEngineComponent.cpp \
            DatabaseEngine.cpp \
            DatabaseQuery.cpp \
            DatabaseResult.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
+CPP_INCLUDES = $(srcdir) \
+               $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
@@ -50,12 +107,13 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
-               $(SQLITE_DIR)/include \
                $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+                   $(C_SRCS:.c=$(OBJ_SUFFIX)) \
+                   $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -64,11 +122,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += sqlite \
-                                unicharutil_external_s \
-                                $(NULL)
-else
-  DYNAMIC_LIB_STATIC_IMPORTS += $(SQLITE_DIR)/lib/libsqlite3
+  DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_external_s
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
@@ -81,7 +135,6 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(SQLITE_DIR)/lib \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \

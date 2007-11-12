@@ -733,6 +733,10 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   nsAutoString strFilename;
   GetDBStorePath(dbGUID, pQuery, strFilename);
 
+#if defined(USE_SQLITE_SHARED_CACHE)
+  sqlite3_enable_shared_cache(1);
+#endif
+
   PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open16 failed!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
@@ -803,10 +807,6 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 
 #if defined(USE_SQLITE_BUSY_TIMEOUT)
   sqlite3_busy_timeout(pHandle, 60000);
-#endif
-
-#if defined(USE_SQLITE_SHARED_CACHE)
-  sqlite3_enable_shared_cache(1);
 #endif
 
   *ppHandle = pHandle;
@@ -1423,23 +1423,22 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         case SQLITE_BUSY:
           {
 #if defined(HARD_SANITY_CHECK)
-#if defined(XP_WIN)
-            OutputDebugStringA("SQLITE: BUSY\n");
-            OutputDebugStringW(PromiseFlatString(strQuery).get());
-            OutputDebugStringW(L"\n");
+            NS_WARNING("SQLITE: BUSY\n");
+            NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
+            nsCAutoString log;
 
+            log.Append(str);
+            log.AppendLiteral("\nWith SQLite Error: \n");
+            
             const char *szErr = sqlite3_errmsg(pDB);
-            OutputDebugStringA(szErr);
-            OutputDebugStringA("\n");
-#endif
+            log.Append(szErr);
+
+            NS_WARNING(log.get());
 #endif
             sqlite3_reset(pStmt);
+            sqlite3_sleep(25);
 
-            if(nRetryCount++ > SQLITE_MAX_RETRIES)
-            {
-              PR_Sleep(PR_MillisecondsToInterval(250));
-              retDB = SQLITE_ROW;
-            }
+            retDB = SQLITE_ROW;
           }
           break;
 

@@ -34,7 +34,7 @@
 
 // INCLUDES ===================================================================
 #include <nscore.h>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
 #include <deque>
 #include <list>
