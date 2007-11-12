@@ -44,23 +44,23 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(b776a7a8-6569-43a0-b7ed-ad7a804e8e64)]
+[scriptable, uuid(6f600a1a-0f5f-42e7-8ea5-d01faacac617)]
 interface sbIFilterableMediaListView : nsISupports
 {
   /**
-   * \brief A string enumerator of all the property names that can be used
+   * \brief A string enumerator of all the property IDs that can be used
    * in the filter
    */
   readonly attribute nsIStringEnumerator filterableProperties;
 
   /**
    * \brief Returns an array of all of the possible values for the
-   * given property.
-   * \param aPropertyName The property name to return values for
+   *        given property.
+   * \param aPropertyID The property ID to return values for
    * \return A string enumerator containing all the possible values for the
    *         given property
    */
-  nsIStringEnumerator getFilterValues(in AString aPropertyName);
+  nsIStringEnumerator getFilterValues(in AString aPropertyID);
 
   /**
    * \brief Get the current filter configuration
@@ -69,27 +69,27 @@ interface sbIFilterableMediaListView : nsISupports
 
   /**
    * \brief Set a new filter configuration.
-   * \param aPropertyArray Array of name value pairs used to filter the list
-   *        For each distinct property, the list of values in the filter for
-   *        that property will be replaced with the supplied values.  An empty
-   *        value will remove the property from the list of filters.
+   * \param aPropertyArray Array of property ID / value pairs used to filter
+   *        the list For each distinct property, the list of values in the
+   *        filter for that property will be replaced with the supplied values.
+   *        An empty value will remove the property from the list of filters.
    */
   void setFilters(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Update an existing filter
-   * \param aPropertyName Array of name value pairs to used to update the
-   *        current filter configuration.  For each distinct property, the list
-   *        of values in the filter for that propery will be appended to with
-   *        the supplied values.
+   * \param aPropertyArray Array of property ID / value pairs to used to update
+   *        the current filter configuration.  For each distinct property, the
+   *        list of values in the filter for that propery will be appended to
+   *        with the supplied values.
    */
   void updateFilters(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Remove property values from an existing filter
-   * \param aPropertyName Array of name value pairs to remove property value
-   *        pairs from the filter.  Each property value pair in the array
-   *        will be removed from the filter if it exists.
+   * \param aPropertyArray Array of property ID / value pairs to remove
+   *        property value pairs from the filter.  Each property value pair in
+   *        the array will be removed from the filter if it exists.
    */
   void removeFilters(in sbIPropertyArray aPropertyArray);
 

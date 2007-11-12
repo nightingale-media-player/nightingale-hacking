@@ -53,7 +53,7 @@ interface sbIPropertyArray;
 *
 * \sa List of "see also" interfaces
 */
-[scriptable, uuid(3cb74885-8dd7-4261-a300-740da293e339)]
+[scriptable, uuid(c4ba79a4-ebe9-4e0a-9ff1-4ef00370a0f4)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -406,10 +406,10 @@ interface sbIMediaList : sbIMediaItem
 
   /**
    * \brief Enumerate the media items in the list that match a given property
-   *        name and value.
+   *        ID and value.
    *
-   * \param aName - Property name to search.
-   * \param aValue - Property value to search.
+   * \param aPropertyID - Property ID to search.
+   * \param aPropertyValue - Property value to search.
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
@@ -424,10 +424,10 @@ interface sbIMediaList : sbIMediaItem
   an artistName value of "Tom Waits".
 
   Prototype:
-    enumerateItemsByProperty(String name, String value, EnumerationListener enumListener)
+    enumerateItemsByProperty(String id, String value, EnumerationListener enumListener)
 
   Parameters:
-    name - The name of the property to match.
+    id - The ID of the property to match.
     value - The value of the property to match.
     enumListener - The enumeration listener.
     enumType - The type of enumeration desired. Valid values for enumType 
@@ -442,16 +442,16 @@ interface sbIMediaList : sbIMediaItem
     <ENUMERATIONTYPE_LOCKING>
     <enumerateAllItems()>
   */
-  void enumerateItemsByProperty(in AString aPropertyName,
+  void enumerateItemsByProperty(in AString aPropertyID,
                                 in AString aPropertyValue,
                                 in sbIMediaListEnumerationListener aEnumerationListener,
                                 in unsigned short aEnumerationType);
 
   /**
-   * \brief Enumerate the media items that match a list of property names and
+   * \brief Enumerate the media items that match a list of property IDs and
    *        values.
    *
-   * \param aProperties - A list of property name/value pairs.
+   * \param aProperties - A list of property ID/value pairs.
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
@@ -881,7 +881,7 @@ interface sbIMediaList : sbIMediaItem
 
   /*
    * \brief Return the distinct values in the list for a given property
-   * \param aPropertyName Propery name to get distinct values for
+   * \param aPropertyID Propery ID to get distinct values for
    * \return String enumerator of distinct values for the given property
    */
 
@@ -894,10 +894,10 @@ interface sbIMediaList : sbIMediaItem
   values for example.
 
   Prototype:
-    Enumerator getDistinctValuesForProperty(String name)
+    Enumerator getDistinctValuesForProperty(String id)
 
   Parameters:
-    name - The name of the property for which all distinct values are desired.
+    id - The ID of the property for which all distinct values are desired.
   
   Returns:
     Enumerator, contains Strings.
@@ -911,6 +911,6 @@ interface sbIMediaList : sbIMediaItem
     
     <getProperty()>
   */
-  nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
+  nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
 };
 

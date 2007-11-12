@@ -47,7 +47,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
  * total size and current size are in btyes.
  *
  */
-sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyName,
+sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyID,
                                                            const nsAString& aDisplayName,
                                                            const nsAString& aLabel,
                                                            const PRBool aRemoteReadable,
@@ -55,7 +55,7 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
                                                            const PRBool aUserViewable,
                                                            const PRBool aUserEditable)
 {
-  mName = aPropertyName;
+  mID = aPropertyID;
   mDisplayName = aDisplayName;
   mLabel = aLabel;
   mUserViewable = aUserViewable;

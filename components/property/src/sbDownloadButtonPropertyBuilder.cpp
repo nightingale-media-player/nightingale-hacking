@@ -41,7 +41,7 @@ NS_IMETHODIMP
 sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(!mPropertyName.IsEmpty());
+  NS_ENSURE_STATE(!mPropertyID.IsEmpty());
 
   nsString displayName;
   nsresult rv = GetFinalDisplayName(displayName);
@@ -57,7 +57,7 @@ sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   }
 
   nsRefPtr<sbDownloadButtonPropertyInfo> pi =
-    new sbDownloadButtonPropertyInfo(mPropertyName,
+    new sbDownloadButtonPropertyInfo(mPropertyID,
                                      displayName,
                                      label,
                                      mRemoteReadable,

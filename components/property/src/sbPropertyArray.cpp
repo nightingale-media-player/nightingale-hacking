@@ -94,15 +94,15 @@ sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
   NS_ASSERTION(aProperty, "Don't hand me a null!");
   NS_ASSERTION(_retval, "Don't hand me a null!");
 
-  nsString name;
-  nsresult rv = aProperty->GetName(name);
+  nsString id;
+  nsresult rv = aProperty->GetId(id);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString value;
   rv = aProperty->GetValue(value);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return ValueIsValid(name, value, _retval);
+  return ValueIsValid(id, value, _retval);
 }
 
 /**
@@ -110,11 +110,11 @@ sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
  * property.
  */
 nsresult
-sbPropertyArray::ValueIsValid(const nsAString& aName,
+sbPropertyArray::ValueIsValid(const nsAString& aID,
                               const nsAString& aValue,
                               PRBool* _retval)
 {
-  NS_ASSERTION(!aName.IsEmpty(), "Don't pass an empty property name!");
+  NS_ASSERTION(!aID.IsEmpty(), "Don't pass an empty property id!");
   NS_ASSERTION(_retval, "Don't hand me a null!");
 
   if (aValue.IsVoid()) {
@@ -132,7 +132,7 @@ sbPropertyArray::ValueIsValid(const nsAString& aName,
   // This will actually *create* a new sbIPropertyInfo if one has not been
   // registered already...
   nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropManager->GetPropertyInfo(aName, getter_AddRefs(propInfo));
+  rv = mPropManager->GetPropertyInfo(aID, getter_AddRefs(propInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool valid;
@@ -358,22 +358,22 @@ sbPropertyArray::Clear()
  * See sbIMutablePropertyArray
  */
 NS_IMETHODIMP
-sbPropertyArray::AppendProperty(const nsAString& aName,
+sbPropertyArray::AppendProperty(const nsAString& aID,
                                 const nsAString& aValue)
 {
-  NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
   nsAutoLock lock(mArrayLock);
 
   if (mStrict) {
     PRBool valid;
-    nsresult rv = ValueIsValid(aName, aValue, &valid);
+    nsresult rv = ValueIsValid(aID, aValue, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
   }
 
-  nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aName, aValue);
+  nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aID, aValue);
   NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
   PRBool success = mArray.AppendObject(property);
@@ -444,7 +444,7 @@ sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
  * See sbIPropertyArray
  */
 NS_IMETHODIMP
-sbPropertyArray::GetPropertyValue(const nsAString& aName,
+sbPropertyArray::GetPropertyValue(const nsAString& aID,
                                   nsAString& _retval)
 {
   nsresult rv;
@@ -455,11 +455,11 @@ sbPropertyArray::GetPropertyValue(const nsAString& aName,
     nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
     NS_ENSURE_STATE(property);
 
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    nsAutoString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (propertyName.Equals(aName)) {
+    if (propertyID.Equals(aID)) {
       rv = property->GetValue(_retval);
       NS_ENSURE_SUCCESS(rv, rv);
       return NS_OK;
@@ -487,8 +487,8 @@ sbPropertyArray::ToString(nsAString& _retval)
     nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
     NS_ENSURE_STATE(property);
 
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    nsAutoString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString value;
@@ -496,7 +496,7 @@ sbPropertyArray::ToString(nsAString& _retval)
     NS_ENSURE_SUCCESS(rv, rv);
 
     buff.AppendLiteral("'");
-    buff.Append(propertyName);
+    buff.Append(propertyID);
     buff.AppendLiteral("' => ");
 
     buff.AppendLiteral("'");
@@ -543,15 +543,15 @@ sbPropertyArray::Read(nsIObjectInputStream* aStream)
   mArray.Clear();
   for (PRUint32 i = 0; i < length; i++) {
 
-    nsString name;
-    rv = aStream->ReadString(name);
+    nsString id;
+    rv = aStream->ReadString(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString value;
     rv = aStream->ReadString(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIProperty> property = new sbSimpleProperty(name, value);
+    nsCOMPtr<sbIProperty> property = new sbSimpleProperty(id, value);
     NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
     PRBool success = mArray.AppendObject(property);
@@ -581,15 +581,15 @@ sbPropertyArray::Write(nsIObjectOutputStream* aStream)
     nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
     NS_ENSURE_STATE(property);
 
-    nsString name;
-    rv = property->GetName(name);
+    nsString id;
+    rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aStream->WriteWStringZ(name.BeginReading());
+    rv = aStream->WriteWStringZ(id.BeginReading());
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aStream->WriteWStringZ(value.BeginReading());

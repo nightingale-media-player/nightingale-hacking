@@ -46,7 +46,7 @@ public:
   NS_DECL_SBICLICKABLEPROPERTYINFO
   NS_DECL_SBITREEVIEWPROPERTYINFO
 
-  sbImagePropertyInfo(const nsAString& aPropertyName,
+  sbImagePropertyInfo(const nsAString& aPropertyID,
                       const nsAString& aDisplayName,
                       const PRBool aRemoteReadable,
                       const PRBool aRemoteWritable,

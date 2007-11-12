@@ -48,7 +48,7 @@ protected:
 
   PRUint32 mNullSort;
   nsCOMPtr<sbIPropertyArray> mSortProfile;
-  nsString mName;
+  nsString mID;
   nsString mType;
   nsString mDisplayName;
   PRBool mUserViewable;

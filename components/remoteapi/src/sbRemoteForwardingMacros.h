@@ -31,17 +31,17 @@
   NS_IMETHOD GetGuid(nsAString & aGuid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetGuid(aGuid); } \
   NS_IMETHOD GetCreated(PRInt64 *aCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreated(aCreated); } \
   NS_IMETHOD GetUpdated(PRInt64 *aUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUpdated(aUpdated); } \
-  NS_IMETHOD GetPropertyNames(nsIStringEnumerator * *aPropertyNames) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyNames(aPropertyNames); } \
+  NS_IMETHOD GetPropertyIDs(nsIStringEnumerator * *aPropertyIDs) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyIDs(aPropertyIDs); } \
   NS_IMETHOD GetProperty(const nsAString & aName, nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperty(aName, _retval); } \
-  NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyNames, sbIPropertyArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyNames, _retval); } \
+  NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyIDs, sbIPropertyArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyIDs, _retval); } \
   NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
 
 #define NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETGETPROPERTY_SETPROPERTIES(_to) \
   NS_IMETHOD GetGuid(nsAString & aGuid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetGuid(aGuid); } \
   NS_IMETHOD GetCreated(PRInt64 *aCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreated(aCreated); } \
   NS_IMETHOD GetUpdated(PRInt64 *aUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUpdated(aUpdated); } \
-  NS_IMETHOD GetPropertyNames(nsIStringEnumerator * *aPropertyNames) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyNames(aPropertyNames); } \
-  NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyNames, sbIPropertyArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyNames, _retval); } \
+  NS_IMETHOD GetPropertyIDs(nsIStringEnumerator * *aPropertyIDs) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyIDs(aPropertyIDs); } \
+  NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyIDs, sbIPropertyArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyIDs, _retval); } \
   NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
 
 #endif // __SB_REMOTEFORWARDINGMACROS_H__

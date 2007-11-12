@@ -544,7 +544,7 @@ try
       for (var i = 0; i < properties.length; i++) {
         property = properties.getPropertyAt(i);
         // Continue adding terms until we get to the next property
-        if (previousProperty && property.name != previousProperty.name) {
+        if (previousProperty && property.id != previousProperty.id) {
           break;
         }
         terms.push(property.value);
@@ -571,12 +571,12 @@ try
       for (var i=0;i<n;i++) {
 	      var prop = properties.getPropertyAt(i);
 
-	      if (!this._isInCascadeFilterSet(view, prop.name)) continue;
+	      if (!this._isInCascadeFilterSet(view, prop.id)) continue;
 
 	      // Get the property info for the property
-	      var info = pm.getPropertyInfo(prop.name);
+	      var info = pm.getPropertyInfo(prop.id);
 	      
-        filters.push( [ prop.name, 
+        filters.push( [ prop.id,
                         prop.value,
                         info.displayName ] );
       }

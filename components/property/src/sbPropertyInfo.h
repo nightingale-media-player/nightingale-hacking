@@ -50,8 +50,8 @@ NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort);
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
 NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
 NS_IMETHOD SetSortProfile(sbIPropertyArray * aSortProfile) { return _to SetSortProfile(aSortProfile); } \
-NS_IMETHOD GetName(nsAString & aName) { return _to GetName(aName); } \
-NS_IMETHOD SetName(const nsAString & aName) { return _to SetName(aName); } \
+NS_IMETHOD GetId(nsAString & aID) { return _to GetId(aID); } \
+NS_IMETHOD SetId(const nsAString & aID) { return _to SetId(aID); } \
 NS_IMETHOD GetType(nsAString & aType) { return _to GetType(aType); } \
 NS_IMETHOD SetType(const nsAString & aType) { return _to SetType(aType); } \
 NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(aDisplayName); } \
@@ -108,8 +108,8 @@ protected:
   PRLock*   mSortProfileLock;
   nsCOMPtr<sbIPropertyArray> mSortProfile;
 
-  PRLock*   mNameLock;
-  nsString  mName;
+  PRLock*   mIDLock;
+  nsString  mID;
 
   PRLock*   mTypeLock;
   nsString  mType;

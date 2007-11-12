@@ -47,47 +47,47 @@ interface sbIPropertyArray;
 *
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(280006ad-3069-4d1b-9684-a647672ff856)]
+[scriptable, uuid(fe64ee8a-7df6-4046-85da-97ee1742ac21)]
 interface sbIPropertyManager : nsISupports
 {
   /**
-   * \brief An enumerator containing the names of all
+   * \brief An enumerator containing the ids of all
    * registered properties.
    */
-  readonly attribute nsIStringEnumerator propertyNames;
+  readonly attribute nsIStringEnumerator propertyIDs;
 
   /**
-   * \brief Get a property object from its name
-   * \param aName Name of the property
+   * \brief Get a property object from its id
+   * \param aID ID of the property
    * \return Property object for the given property, null if not found
    */
-  sbIPropertyInfo getPropertyInfo(in AString aName);
+  sbIPropertyInfo getPropertyInfo(in AString aID);
 
   /**
    * \brief Add a property into the system
    * \param aPropertyInfo Property to add into the system.  An exception is
-   *        thrown if the property's name is not unique
+   *        thrown if the property's ID is not unique
    */
   void addPropertyInfo(in sbIPropertyInfo aPropertyInfo);
 
   /**
-   * \brief Check for an property in the system by name
-   * \param aName Name of the property
+   * \brief Check for a property in the system by ID
+   * \param aID ID of the property
    * \return true if property is in system
    * \return false if property is not in system
    */
-  boolean hasProperty(in AString aName);
-  
+  boolean hasProperty(in AString aID);
+
   /**
    * \brief Helper to get a string bundle.
    */
   nsIStringBundle createBundle(in string aURLSpec);
-   
+
   /**
    * \brief Helper to get a display value, using a string name, from a bundle.
    */
   AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
-   
+
 };
 
 /**
@@ -120,7 +120,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
+[scriptable, uuid(769538d8-4e2b-457d-b76f-0db0150830a8)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -173,9 +173,9 @@ interface sbIPropertyInfo : nsISupports
   attribute sbIPropertyArray sortProfile;
 
   /**
-   * \brief Unique name for this property
+   * \brief Unique ID for this property
    */
-  attribute AString name;
+  attribute AString id;
 
   /**
    * \brief The type property.

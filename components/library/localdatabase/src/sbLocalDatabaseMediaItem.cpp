@@ -54,9 +54,9 @@ static void AppendInt(nsAString &str, PRInt64 val)
 }
 
 struct sbStaticProperty {
-  const char* mName;
+  const char* mPropertyID;
   const char* mColumn;
-  PRUint32    mID;
+  PRUint32    mDBID;
 };
 
 enum {
@@ -327,7 +327,7 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
   NS_ENSURE_ARG_POINTER(aCreated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mName), str);
+  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mPropertyID), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
@@ -349,7 +349,7 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
   NS_ENSURE_ARG_POINTER(aUpdated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropUpdated].mName), str);
+  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropUpdated].mPropertyID), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
@@ -363,7 +363,7 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
+sbLocalDatabaseMediaItem::GetPropertyIDs(nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -375,7 +375,7 @@ sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
 
   nsAutoLock lock(mPropertyBagLock);
 
-  rv = mPropertyBag->GetNames(_retval);
+  rv = mPropertyBag->GetIds(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -385,7 +385,7 @@ sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
+sbLocalDatabaseMediaItem::GetProperty(const nsAString& aID,
                                       nsAString& _retval)
 {
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
@@ -396,7 +396,7 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
 
   nsAutoLock lock(mPropertyBagLock);
 
-  rv = mPropertyBag->GetProperty(aName, _retval);
+  rv = mPropertyBag->GetProperty(aID, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -406,7 +406,7 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
+sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
                                       const nsAString& aValue)
 {
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
@@ -414,7 +414,7 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
 
   // XXXsk Don't let the GUID property to be set.  We shouldn't need this
   // if it were a read only property, so remvoe this when bug 3099 is fixed.
-  if (aName.EqualsLiteral(SB_PROPERTY_GUID)) {
+  if (aID.EqualsLiteral(SB_PROPERTY_GUID)) {
     NS_WARNING("Attempt to set a read-only property!");
     return NS_ERROR_INVALID_ARG;
   }
@@ -433,13 +433,13 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
     nsAutoLock lock(mPropertyBagLock);
 
     nsAutoString oldValue;
-    rv = mPropertyBag->GetProperty(aName, oldValue);
+    rv = mPropertyBag->GetProperty(aID, oldValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = properties->AppendProperty(aName, oldValue);
+    rv = properties->AppendProperty(aID, oldValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mPropertyBag->SetProperty(aName, aValue);
+    rv = mPropertyBag->SetProperty(aID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -472,11 +472,11 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString propertyName;
-    rv = property->GetName(propertyName);
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (propertyName.EqualsLiteral(SB_PROPERTY_GUID)) {
+    if (propertyID.EqualsLiteral(SB_PROPERTY_GUID)) {
       NS_WARNING("Attempt to set a read-only property!");
       return NS_ERROR_INVALID_ARG;
     }
@@ -494,22 +494,22 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
       rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString propertyName;
-      rv = property->GetName(propertyName);
+      nsString propertyID;
+      rv = property->GetId(propertyID);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString oldValue;
-      rv = mPropertyBag->GetProperty(propertyName, oldValue);
+      rv = mPropertyBag->GetProperty(propertyID, oldValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = properties->AppendProperty(propertyName, oldValue);
+      rv = properties->AppendProperty(propertyID, oldValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString value;
       rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mPropertyBag->SetProperty(propertyName, value);
+      rv = mPropertyBag->SetProperty(propertyID, value);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -550,32 +550,32 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
       rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString name;
-      rv = property->GetName(name);
+      nsString id;
+      rv = property->GetId(id);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString value;
-      rv = mPropertyBag->GetProperty(name, value);
+      rv = mPropertyBag->GetProperty(id, value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = properties->AppendProperty(name, value);
+      rv = properties->AppendProperty(id, value);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
   else {
-    nsCOMPtr<nsIStringEnumerator> names;
-    rv = mPropertyBag->GetNames(getter_AddRefs(names));
+    nsCOMPtr<nsIStringEnumerator> ids;
+    rv = mPropertyBag->GetIds(getter_AddRefs(ids));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString name;
-    while (NS_SUCCEEDED(names->GetNext(name))) {
+    nsString id;
+    while (NS_SUCCEEDED(ids->GetNext(id))) {
 
       nsAutoString value;
-      rv = mPropertyBag->GetProperty(name, value);
+      rv = mPropertyBag->GetProperty(id, value);
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (!value.IsVoid()) {
-        rv = properties->AppendProperty(name, value);
+        rv = properties->AppendProperty(id, value);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }

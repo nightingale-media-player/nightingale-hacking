@@ -39,9 +39,9 @@
 #define MAX_IN_LENGTH 5000
 
 struct sbStaticProperty {
-  const PRUnichar* mName;
+  const PRUnichar* mPropertyID;
   const PRUnichar* mColumn;
-  PRUint32         mID;
+  PRUint32         mDBID;
 };
 
 static sbStaticProperty sStaticProperties[] = {
@@ -90,10 +90,10 @@ static sbStaticProperty sStaticProperties[] = {
 static const PRUint32 sStaticPropertyCount = 8;
 
 static PRBool
-SB_IsTopLevelPropertyID(PRUint32 aPropertyID)
+SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    if(sStaticProperties[i].mID == aPropertyID)
+    if(sStaticProperties[i].mDBID == aPropertyDBID)
       return PR_TRUE;
   }
   return PR_FALSE;
@@ -103,7 +103,7 @@ static PRBool
 SB_IsTopLevelProperty(const nsAString& aProperty)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    if(aProperty.Equals(sStaticProperties[i].mName))
+    if(aProperty.Equals(sStaticProperties[i].mPropertyID))
       return PR_TRUE;
   }
   return PR_FALSE;
@@ -114,7 +114,20 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
                              nsAString& aColumnName)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    if(aProperty.Equals(sStaticProperties[i].mName)) {
+    if(aProperty.Equals(sStaticProperties[i].mPropertyID)) {
+      aColumnName.Assign(sStaticProperties[i].mColumn);
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+static nsresult
+SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
+                             nsAString& aColumnName)
+{
+  for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+    if(aPropertyDBID == sStaticProperties[i].mDBID) {
       aColumnName.Assign(sStaticProperties[i].mColumn);
       return NS_OK;
     }
@@ -129,7 +142,7 @@ SB_GetPropertyId(const nsAString& aProperty,
   nsresult rv;
   PRUint32 id;
 
-  rv = aPropertyCache->GetPropertyID(aProperty, &id);
+  rv = aPropertyCache->GetPropertyDBID(aProperty, &id);
   if (NS_FAILED(rv)) {
     return -1;
   }

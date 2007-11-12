@@ -34,8 +34,8 @@
 #include <nsIStringBundle.h>
 
 #define NS_FORWARD_SBIPROPERTYBUILDER_NO_GET(_to) \
-  NS_IMETHOD GetPropertyName(nsAString & aPropertyName) { return _to GetPropertyName(aPropertyName); } \
-  NS_IMETHOD SetPropertyName(const nsAString & aPropertyName) { return _to SetPropertyName(aPropertyName); } \
+  NS_IMETHOD GetPropertyID(nsAString & aPropertyID) { return _to GetPropertyID(aPropertyID); } \
+  NS_IMETHOD SetPropertyID(const nsAString & aPropertyID) { return _to SetPropertyID(aPropertyID); } \
   NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(aDisplayName); } \
   NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
   NS_IMETHOD GetDisplayNameKey(nsAString & aDisplayNameKey) { return _to GetDisplayNameKey(aDisplayNameKey); } \
@@ -72,7 +72,7 @@ protected:
 
   nsCOMPtr<nsIStringBundle> mBundle;
 
-  nsString mPropertyName;
+  nsString mPropertyID;
   nsString mDisplayName;
   nsString mDisplayNameKey;
   PRPackedBool mUserViewable;

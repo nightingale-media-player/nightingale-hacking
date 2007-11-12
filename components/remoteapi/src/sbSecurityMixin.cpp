@@ -228,7 +228,9 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
 }
 
 NS_IMETHODIMP
-sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, char **_retval)
+sbSecurityMixin::CanCallMethod(const nsIID *aIID,
+                               const PRUnichar *aMethodName,
+                               char **_retval)
 {
   // For some reasone we always get the IID for canCallMethod,
   //   so this works (see CanGetProperty)
@@ -262,7 +264,9 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
 }
 
 NS_IMETHODIMP
-sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval)
+sbSecurityMixin::CanGetProperty(const nsIID *aIID,
+                                const PRUnichar *aPropertyID,
+                                char **_retval)
 {
   // Because of the peculiarities of XPConnect, XPCWrappedNatives,
   //   XPCNativeWrappers (they're different), XPCWrappedJS and the nsISCC
@@ -270,19 +274,19 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   //   doesn't. So we can't verify IID here. Good thing we don't actually need
   //   it.  XXXredfive - file a bug!!!
   //NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
+  NS_ENSURE_ARG_POINTER(aPropertyID);
   NS_ENSURE_ARG_POINTER(_retval);
 
   LOG(( "sbSecurityMixin::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+        NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
 
   nsAutoString prop; 
-  nsDependentString inPropertyName(aPropertyName);
+  nsDependentString inPropertyID(aPropertyID);
 
-  GetScopedName( mRProperties, inPropertyName, prop ); 
+  GetScopedName( mRProperties, inPropertyID, prop ); 
   if ( prop.IsEmpty() ) {
     LOG(( "sbSecurityMixin::CanGetProperty(%s) - DENIED, unapproved property",
-          NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+          NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -299,7 +303,9 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
 }
 
 NS_IMETHODIMP
-sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval)
+sbSecurityMixin::CanSetProperty(const nsIID *aIID,
+                                const PRUnichar *aPropertyID,
+                                char **_retval)
 {
   // Because of the peculiarities of XPConnect, XPCWrappedNatives,
   //   XPCNativeWrappers (they're different), XPCWrappedJS and the nsISCC
@@ -307,19 +313,19 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   //   doesn't. So we can't verify IID here. Good thing we don't actually need
   //   it.  XXXredfive - file a bug!!!
   //NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
+  NS_ENSURE_ARG_POINTER(aPropertyID);
   NS_ENSURE_ARG_POINTER(_retval);
 
   LOG(( "sbSecurityMixin::CanSetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+        NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
 
-  nsAutoString prop; 
-  nsDependentString inPropertyName(aPropertyName);
+  nsAutoString prop;
+  nsDependentString inPropertyID(aPropertyID);
 
-  GetScopedName( mWProperties, inPropertyName, prop ); 
+  GetScopedName( mWProperties, inPropertyID, prop ); 
   if (prop.IsEmpty()) {
     LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED, unapproved property",
-          NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+          NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }

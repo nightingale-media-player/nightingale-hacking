@@ -41,7 +41,7 @@ NS_IMETHODIMP
 sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(!mPropertyName.IsEmpty());
+  NS_ENSURE_STATE(!mPropertyID.IsEmpty());
 
   nsString displayName;
   nsresult rv = GetFinalDisplayName(displayName);
@@ -62,7 +62,7 @@ sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   }
 
   nsRefPtr<sbSimpleButtonPropertyInfo> pi =
-    new sbSimpleButtonPropertyInfo(mPropertyName,
+    new sbSimpleButtonPropertyInfo(mPropertyID,
                                    displayName,
                                    hasLabel,
                                    label,

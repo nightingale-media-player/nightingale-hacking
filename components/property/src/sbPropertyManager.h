@@ -53,7 +53,7 @@ public:
   NS_METHOD CreateSystemProperties();
 private:
 
-  nsresult RegisterDateTime(const nsAString& aPropertyName,
+  nsresult RegisterDateTime(const nsAString& aPropertyID,
                             const nsAString& aDisplayKey,
                             PRInt32 aType,
                             nsIStringBundle* aStringBundle,
@@ -62,7 +62,7 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
-  nsresult RegisterNumber(const nsAString& aPropertyName,
+  nsresult RegisterNumber(const nsAString& aPropertyID,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
                           PRBool aUserViewable,
@@ -74,9 +74,9 @@ private:
                           PRBool aRemoteReadable,
                           PRBool aRemoteWritable);
 
-  nsresult RegisterProgress(const nsAString& aValuePropertyName,
+  nsresult RegisterProgress(const nsAString& aValuePropertyID,
                             const nsAString& aValueDisplayKey,
-                            const nsAString& aModePropertyName,
+                            const nsAString& aModePropertyID,
                             const nsAString& aModeDisplayKey,
                             nsIStringBundle* aStringBundle,
                             PRBool aUserViewable,
@@ -84,7 +84,7 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
-  nsresult RegisterText(const nsAString& aPropertyName,
+  nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
                         PRBool aUserViewable,
@@ -95,7 +95,7 @@ private:
                         PRBool aRemoteWritable,
                         sbIPropertyArray* aSortProfile = nsnull);
 
-  nsresult RegisterURI(const nsAString& aPropertyName,
+  nsresult RegisterURI(const nsAString& aPropertyID,
                        const nsAString& aDisplayKey,
                        nsIStringBundle* aStringBundle,
                        PRBool aUserViewable,
@@ -108,9 +108,9 @@ private:
                            PRBool aRemoteWritable);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
-  
-  PRLock* mPropNamesLock;
-  nsTArray<nsString> mPropNames;
+
+  PRLock* mPropIDsLock;
+  nsTArray<nsString> mPropIDs;
 };
 
 #endif /* __SBPROPERTYMANAGER_H__ */

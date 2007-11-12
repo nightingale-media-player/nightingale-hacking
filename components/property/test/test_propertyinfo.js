@@ -32,7 +32,7 @@ function testTextInfo() {
   var textInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Text;1"]
                   .createInstance(Ci.sbITextPropertyInfo);
 
-  assertEqual(textInfo.name, "");
+  assertEqual(textInfo.id, "");
   assertEqual(textInfo.type, "text");
   
   //Should fail.
@@ -43,12 +43,12 @@ function testTextInfo() {
     assertEqual(err.result, Cr.NS_ERROR_ALREADY_INITIALIZED);
   }
   
-  textInfo.name = "TextInfo";
-  assertEqual(textInfo.name, "TextInfo");
+  textInfo.id = "TextInfo";
+  assertEqual(textInfo.id, "TextInfo");
   
   //Should fail.
   try {
-    textInfo.name = "MyTextInfo";
+    textInfo.id = "MyTextInfo";
   } 
   catch(err) {
     assertEqual(err.result, Cr.NS_ERROR_ALREADY_INITIALIZED);
@@ -93,7 +93,7 @@ function testNumberInfo() {
   var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
                     .createInstance(Ci.sbINumberPropertyInfo);
   
-  numberInfo.name = "NumberInfo";
+  numberInfo.id = "NumberInfo";
   assertEqual(numberInfo.type, "number");
   
   var sample = "not a number";
@@ -152,7 +152,7 @@ function testUriInfo() {
   var uriInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
                   .createInstance(Ci.sbIURIPropertyInfo);
   
-  uriInfo.name = "URIInfo";
+  uriInfo.id = "URIInfo";
   assertEqual(uriInfo.type, "uri");
   
   var sample = "totally not a valid url";
@@ -179,7 +179,7 @@ function testDatetimeInfo() {
   var datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
                       .createInstance(Ci.sbIDatetimePropertyInfo);
                       
-  datetimeInfo.name = "DatetimeInfo";
+  datetimeInfo.id = "DatetimeInfo";
   assertEqual(datetimeInfo.type, "datetime");
   
   var sample = "0";
@@ -195,7 +195,7 @@ function testDatetimeInfo() {
   datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
                       .createInstance(Ci.sbIDatetimePropertyInfo);
   
-  datetimeInfo.name = "DatetimeInfoDuration";
+  datetimeInfo.id = "DatetimeInfoDuration";
   datetimeInfo.timeType = Ci.sbIDatetimePropertyInfo.TIMETYPE_DURATION;
   sample = "12431235123412499";
   log(datetimeInfo.format(sample));
@@ -208,7 +208,7 @@ function testBooleanInfo() {
   var booleanInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
                     .createInstance(Ci.sbIBooleanPropertyInfo);
   
-  booleanInfo.name = "BooleanInfo";
+  booleanInfo.id = "BooleanInfo";
   assertEqual(booleanInfo.type, "boolean");
   
   var sample = "not a boolean";

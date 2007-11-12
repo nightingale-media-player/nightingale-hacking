@@ -113,7 +113,7 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
 
   var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
                .createInstance(Ci.sbINumberPropertyInfo);
-  prop.name = SB_PROP_ISSUBSCRIPTION;
+  prop.id = SB_PROP_ISSUBSCRIPTION;
   prop.userViewable = false;
   prop.userEditable = false;
   prop.minValue = 0;
@@ -122,14 +122,14 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
 
   prop = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
            .createInstance(Ci.sbIURIPropertyInfo);
-  prop.name = SB_PROP_SUBSCRIPTIONURL;
+  prop.id = SB_PROP_SUBSCRIPTIONURL;
   prop.userViewable = false;
   prop.userEditable = false;
   propMan.addPropertyInfo(prop);
 
   var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
                .createInstance(Ci.sbINumberPropertyInfo);
-  prop.name = SB_PROP_SUBSCRIPTIONINTERVAL;
+  prop.id = SB_PROP_SUBSCRIPTIONINTERVAL;
   prop.userViewable = false;
   prop.userEditable = false;
   prop.minValue = 0;
@@ -137,7 +137,7 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
 
   var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
                .createInstance(Ci.sbINumberPropertyInfo);
-  prop.name = SB_PROP_SUBSCRIPTIONNEXTRUN;
+  prop.id = SB_PROP_SUBSCRIPTIONNEXTRUN;
   prop.userViewable = false;
   prop.userEditable = false;
   prop.minValue = 0;

@@ -85,7 +85,7 @@ interface sbIServicePaneNode : nsISupports
   /* \brief the uri of a stringbundle to use to translate the properties of this node */
   attribute AString stringbundle;
 
-  /* \brief space separated list of property names, used to style the tree cell */
+  /* \brief space separated list of property IDs, used to style the tree cell */
   attribute AString properties;
 
   

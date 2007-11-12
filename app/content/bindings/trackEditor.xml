@@ -260,14 +260,14 @@
 
           var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                        .getService(Components.interfaces.sbIPropertyManager);
-          var props = pm.propertyNames;
+          var props = pm.propertyIDs;
           while (props.hasMore()) {
-            var name = props.getNext();
-            var info = pm.getPropertyInfo(name);
+            var propertyID = props.getNext();
+            var info = pm.getPropertyInfo(propertyID);
 
             // create a control for that column using its data type and readonly status
 
-            if (this.isExcluded(name)) continue;
+            if (this.isExcluded(propertyID)) continue;
 
             var readablename = info.displayName;
             var type = info.type;
@@ -281,7 +281,7 @@
             else elem = document.createElement("dbedit_textbox");
             if (type == 'number') elem.setAttribute("numeric", true);
             if (ro != 0) elem.setAttribute("readonly", "true");
-            elem.setAttribute("column", name);
+            elem.setAttribute("column", propertyID);
             elem.setAttribute("flex", "1");
             // create a container for the element, add a descriptive label and a spacer to it
             var hbox = document.createElement("hbox");

@@ -154,12 +154,12 @@ sbRemoteMediaListBase::GetMediaList()
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteMediaListBase::SetProperty(const nsAString& aName,
+sbRemoteMediaListBase::SetProperty(const nsAString& aID,
                                    const nsAString& aValue)
 {
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NULL_POINTER);
 
-  nsresult rv = mMediaList->SetProperty(aName, aValue);
+  nsresult rv = mMediaList->SetProperty(aID, aValue);
   if (NS_SUCCEEDED(rv)) {
     mRemotePlayer->GetNotificationManager()
       ->Action(sbRemoteNotificationManager::eEditedItems, mLibrary);
@@ -244,7 +244,7 @@ sbRemoteMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener *aEnume
 }
 
 NS_IMETHODIMP
-sbRemoteMediaListBase::EnumerateItemsByProperty(const nsAString& aPropertyName,
+sbRemoteMediaListBase::EnumerateItemsByProperty(const nsAString& aPropertyID,
                                                 const nsAString& aPropertyValue,
                                                 sbIMediaListEnumerationListener* aEnumerationListener,
                                                 PRUint16 aEnumerationType)
@@ -255,7 +255,7 @@ sbRemoteMediaListBase::EnumerateItemsByProperty(const nsAString& aPropertyName,
     new sbMediaListEnumerationListenerWrapper(mRemotePlayer, aEnumerationListener));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = mMediaList->EnumerateItemsByProperty(aPropertyName,
+  nsresult rv = mMediaList->EnumerateItemsByProperty(aPropertyID,
                                                      aPropertyValue,
                                                      wrapper,
                                                      aEnumerationType);
@@ -404,7 +404,7 @@ sbRemoteMediaListBase::Remove(sbIMediaItem* aMediaItem)
 }
 
 NS_IMETHODIMP
-sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyName,
+sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyID,
                                                     nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -413,7 +413,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyNa
   // get enumeration of stuff
   nsCOMPtr<nsIStringEnumerator> enumeration;
   nsresult rv =
-    mMediaList->GetDistinctValuesForProperty( aPropertyName,
+    mMediaList->GetDistinctValuesForProperty( aPropertyID,
                                               getter_AddRefs(enumeration) );
   NS_ENSURE_SUCCESS( rv, rv );
 

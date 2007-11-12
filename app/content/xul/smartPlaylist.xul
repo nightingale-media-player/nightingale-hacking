@@ -233,7 +233,7 @@ function loadConditions()
     for (var i = 0; i < list.conditionCount; i++) {
       var condition = list.getConditionAt(i);
       conditions.push({
-        metadata: condition.propertyName,
+        metadata: condition.propertyID,
         condition: condition.operator.operator,
         value: condition.leftValue
       });
@@ -411,7 +411,7 @@ function doOK()
   var selectBy = document.getElementById("smart_selected_list");
   if (selectBy.value == "random") {
     list.randomSelection = true;
-    list.selectPropertyName = "";
+    list.selectPropertyID = "";
   }
   else {
     list.randomSelection = false;
@@ -431,7 +431,7 @@ function getValueForSelectBy(list) {
 
   var value;
   selectByList.forEach(function(e) {
-    if (e.property == list.selectPropertyName &&
+    if (e.property == list.selectPropertyID &&
         e.direction == list.selectDirection) {
       value = e.value;
     }
@@ -444,7 +444,7 @@ function setSelectBy(list, value) {
 
   selectByList.forEach(function(e) {
     if (e.value == value) {
-      list.selectPropertyName = e.property;
+      list.selectPropertyID = e.property;
       list.selectDirection = e.direction;
     }
   });

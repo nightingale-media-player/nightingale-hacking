@@ -41,13 +41,13 @@ NS_IMETHODIMP
 sbImagePropertyBuilder::Get(sbIPropertyInfo** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(!mPropertyName.IsEmpty());
+  NS_ENSURE_STATE(!mPropertyID.IsEmpty());
 
   nsString displayName;
   nsresult rv = GetFinalDisplayName(displayName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbImagePropertyInfo> pi = new sbImagePropertyInfo(mPropertyName,
+  nsRefPtr<sbImagePropertyInfo> pi = new sbImagePropertyInfo(mPropertyID,
                                                              displayName,
                                                              mRemoteReadable,
                                                              mRemoteWritable,

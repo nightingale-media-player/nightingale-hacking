@@ -78,7 +78,7 @@ function runTest () {
   library.clear();
   var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
                     .createInstance(Ci.sbINumberPropertyInfo);
-  numberInfo.name = "http://songbirdnest.com/data/1.0#testNumber";
+  numberInfo.id = "http://songbirdnest.com/data/1.0#testNumber";
   numberInfo.nullSort = Ci.sbIPropertyInfo.SORT_NULL_SMALL;
 
   var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]

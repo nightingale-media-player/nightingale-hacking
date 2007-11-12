@@ -122,11 +122,11 @@ function runTest () {
   var filters = view.currentFilter;
   assertEqual(filters.length, 3);
 
-  assertEqual(filters.getPropertyAt(0).name, SBProperties.artistName);
+  assertEqual(filters.getPropertyAt(0).id, SBProperties.artistName);
   assertEqual(filters.getPropertyAt(0).value, "AC/DC");
-  assertEqual(filters.getPropertyAt(1).name, SBProperties.artistName);
+  assertEqual(filters.getPropertyAt(1).id, SBProperties.artistName);
   assertEqual(filters.getPropertyAt(1).value, "a-ha");
-  assertEqual(filters.getPropertyAt(2).name, SBProperties.albumName);
+  assertEqual(filters.getPropertyAt(2).id, SBProperties.albumName);
   assertEqual(filters.getPropertyAt(2).value, "Back in Black");
 }
 

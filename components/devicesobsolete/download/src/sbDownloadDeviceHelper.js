@@ -183,7 +183,7 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
   var source = aMediaItem.getProperties();
   for (let i = 0; i < source.length; i++) {
     var prop = source.getPropertyAt(i);
-    if (prop.name != SBProperties.contentSrc) {
+    if (prop.id != SBProperties.contentSrc) {
       dest.appendElement(prop, false);
     }
   }

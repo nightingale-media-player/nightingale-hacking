@@ -45,7 +45,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbSimpleButtonPropertyInfo,
  * A disable state of 1 means the button is disabled, otherwise it is enabled
  *
  */
-sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyName,
+sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                                                        const nsAString& aDisplayName,
                                                        PRBool aHasLabel,
                                                        const nsAString& aLabel,
@@ -54,7 +54,7 @@ sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropert
                                                        const PRBool aUserViewable,
                                                        const PRBool aUserEditable)
 {
-  mName = aPropertyName;
+  mID = aPropertyID;
   mDisplayName = aDisplayName;
   mHasLabel = aHasLabel;
   mLabel = aLabel;

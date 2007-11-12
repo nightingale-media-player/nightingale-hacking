@@ -40,10 +40,10 @@ interface nsIStringBundle;
 * \interface sbIPropertyBuilder
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(9fa1e2e2-ffc5-4705-a527-8bac8e9b68c3)]
+[scriptable, uuid(9b1026c6-3896-49c6-a72f-4f4a2b21a6be)]
 interface sbIPropertyBuilder : nsISupports
 {
-  attribute AString propertyName;
+  attribute AString propertyID;
 
   attribute AString displayName;
 

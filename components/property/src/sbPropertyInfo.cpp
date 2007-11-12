@@ -95,7 +95,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyInfo, sbIPropertyInfo)
 sbPropertyInfo::sbPropertyInfo()
 : mNullSort(sbIPropertyInfo::SORT_NULL_SMALL)
 , mSortProfileLock(nsnull)
-, mNameLock(nsnull)
+, mIDLock(nsnull)
 , mTypeLock(nsnull)
 , mDisplayNameLock(nsnull)
 , mUserViewableLock(nsnull)
@@ -111,9 +111,9 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mSortProfileLock,
     "sbPropertyInfo::mSortProfileLock failed to create lock!");
 
-  mNameLock = PR_NewLock();
-  NS_ASSERTION(mNameLock,
-    "sbPropertyInfo::mNameLock failed to create lock!");
+  mIDLock = PR_NewLock();
+  NS_ASSERTION(mIDLock,
+    "sbPropertyInfo::mIDLock failed to create lock!");
 
   mTypeLock = PR_NewLock();
   NS_ASSERTION(mTypeLock,
@@ -154,8 +154,8 @@ sbPropertyInfo::~sbPropertyInfo()
     PR_DestroyLock(mSortProfileLock);
   }
 
-  if(mNameLock) {
-    PR_DestroyLock(mNameLock);
+  if(mIDLock) {
+    PR_DestroyLock(mIDLock);
   }
 
   if(mTypeLock) {
@@ -283,18 +283,18 @@ NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetName(nsAString & aName)
+NS_IMETHODIMP sbPropertyInfo::GetId(nsAString & aID)
 {
-  sbSimpleAutoLock lock(mNameLock);
-  aName = mName;
+  sbSimpleAutoLock lock(mIDLock);
+  aID = mID;
   return NS_OK;
 }
-NS_IMETHODIMP sbPropertyInfo::SetName(const nsAString &aName)
+NS_IMETHODIMP sbPropertyInfo::SetId(const nsAString &aID)
 {
-  sbSimpleAutoLock lock(mNameLock);
+  sbSimpleAutoLock lock(mIDLock);
 
-  if(mName.IsEmpty()) {
-    mName = aName;
+  if(mID.IsEmpty()) {
+    mID = aID;
     return NS_OK;
   }
 
@@ -324,8 +324,8 @@ NS_IMETHODIMP sbPropertyInfo::GetDisplayName(nsAString & aDisplayName)
   sbSimpleAutoLock lock(mDisplayNameLock);
 
   if(mDisplayName.IsEmpty()) {
-    sbSimpleAutoLock lock(mNameLock);
-    aDisplayName = mName;
+    sbSimpleAutoLock lock(mIDLock);
+    aDisplayName = mID;
   }
   else {
     aDisplayName = mDisplayName;

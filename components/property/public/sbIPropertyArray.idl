@@ -32,13 +32,13 @@
 #include "nsIArray.idl"
 #include "nsIMutableArray.idl"
 
-[scriptable, uuid(89915b4b-f252-4f45-8351-fd8560363b89)]
+[scriptable, uuid(478c1474-92c4-4fc4-8743-3f9f372b814d)]
 interface sbIProperty : nsISupports
 {
   /**
-   * Get the name of the property.
+   * Get the id of the property.
    */
-  readonly attribute AString name;
+  readonly attribute AString id;
 
   /**
    * Get the value of the property.
@@ -65,11 +65,11 @@ interface sbIPropertyArray : nsIArray
   /**
    * Gets the value for a property in the array
    *
-   * \param aName Name of the property to get the value for
+   * \param aID ID of the property to get the value for
    * \return Value of the property
    * \throws NS_ERROR_NOT_AVAILABLE if the property is not in the array
    */
-  AString getPropertyValue(in AString aName);
+  AString getPropertyValue(in AString aID);
 
   /**
    * Return the contents of the property array as a string
@@ -87,20 +87,20 @@ interface sbIPropertyArray : nsIArray
  * \interface sbIPropertyArray
  * \brief An interface to carry around arrays of nsIProperty instances
  */
-[scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
+[scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
 interface sbIMutablePropertyArray : sbIPropertyArray
 {
   /**
    * Adds a new property to the array
    *
-   * \param aName  The name of the property
+   * \param aID    The id of the property
    * \param aValue The value of the property
    *
    * \throws NS_ERROR_ILLEGAL_VALUE if the 'strict' attribute is true and aValue
    *         fails the 'validate' method of the sbIPropertyInfo represented by
    *         aName fails.
    */
-  void appendProperty(in AString aName,
+  void appendProperty(in AString aID,
                       in AString aValue);
 
   /**

@@ -451,7 +451,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     rv = aCurrentSort->GetPropertyAt(0, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = property->GetName(mCurrentSortProperty);
+    rv = property->GetId(mCurrentSortProperty);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString value;
@@ -1141,15 +1141,15 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
           rv = sortProfile->GetPropertyAt(i, getter_AddRefs(property));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          nsString propertyName;
-          rv = property->GetName(propertyName);
+          nsString propertyID;
+          rv = property->GetId(propertyID);
           NS_ENSURE_SUCCESS(rv, rv);
 
           nsString value;
           rv = property->GetValue(value);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = newSort->AppendProperty(propertyName,
+          rv = newSort->AppendProperty(propertyID,
                                        value.EqualsLiteral("a") ?
                                          NS_LITERAL_STRING("d") :
                                          NS_LITERAL_STRING("a"));
@@ -1587,11 +1587,11 @@ sbLocalDatabaseTreeView::GetTreeColumnForProperty(const nsAString& aProperty,
 sbLocalDatabaseTreeView::GetColumnPropertyInfo(nsITreeColumn* aColumn,
                                                sbIPropertyInfo** aPropertyInfo)
 {
-  nsAutoString propertyName;
-  nsresult rv = GetPropertyForTreeColumn(aColumn, propertyName);
+  nsString propertyID;
+  nsresult rv = GetPropertyForTreeColumn(aColumn, propertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropMan->GetPropertyInfo(propertyName, aPropertyInfo);
+  rv = mPropMan->GetPropertyInfo(propertyID, aPropertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1618,12 +1618,12 @@ sbLocalDatabaseTreeView::GetPropertyInfoAndCachedValue(PRInt32 aRow,
   nsresult rv = GetColumnPropertyInfo(aColumn, getter_AddRefs(pi));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString propertyName;
-  rv = pi->GetName(propertyName);
+  nsString propertyID;
+  rv = pi->GetId(propertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString value;
-  rv = bag->GetProperty(propertyName, aValue);
+  rv = bag->GetProperty(propertyID, aValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*aPropertyInfo = pi);
@@ -1800,18 +1800,18 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   }
 
   nsCOMPtr<nsIStringEnumerator> propertyEnumerator;
-  rv = mPropMan->GetPropertyNames(getter_AddRefs(propertyEnumerator));
+  rv = mPropMan->GetPropertyIDs(getter_AddRefs(propertyEnumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString propertyName;
-  while (NS_SUCCEEDED(propertyEnumerator->GetNext(propertyName))) {
+  nsString propertyID;
+  while (NS_SUCCEEDED(propertyEnumerator->GetNext(propertyID))) {
 
     nsAutoString value;
-    nsresult rv = bag->GetProperty(propertyName, value);
+    nsresult rv = bag->GetProperty(propertyID, value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIPropertyInfo> propInfo;
-    rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
+    rv = mPropMan->GetPropertyInfo(propertyID, getter_AddRefs(propInfo));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbITreeViewPropertyInfo> tvpi = do_QueryInterface(propInfo, &rv);
@@ -1914,8 +1914,8 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(properties);
 
-  nsAutoString propertyName;
-  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
+  nsAutoString propertyID;
+  nsresult rv = GetPropertyForTreeColumn(col, propertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Turn the property name into something that CSS can handle.  For example
@@ -1929,8 +1929,8 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
   NS_NAMED_LITERAL_STRING(badChars, BAD_CSS_CHARS);
   static const PRUnichar kHyphenChar = '-';
 
-  for (PRUint32 index = 0; index < propertyName.Length(); index++) {
-    PRUnichar testChar = propertyName.CharAt(index);
+  for (PRUint32 index = 0; index < propertyID.Length(); index++) {
+    PRUnichar testChar = propertyID.CharAt(index);
 
     // Short circuit for ASCII alphanumerics.
     if ((testChar >= 97 && testChar <= 122) || // a-z
@@ -1941,17 +1941,17 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
 
     PRInt32 badCharIndex= badChars.FindChar(testChar);
     if (badCharIndex > -1) {
-      if (index > 0 && propertyName.CharAt(index - 1) == kHyphenChar) {
-        propertyName.Replace(index, 1, nsnull, 0);
+      if (index > 0 && propertyID.CharAt(index - 1) == kHyphenChar) {
+        propertyID.Replace(index, 1, nsnull, 0);
         index--;
       }
       else {
-        propertyName.Replace(index, 1, kHyphenChar);
+        propertyID.Replace(index, 1, kHyphenChar);
       }
     }
   }
 
-  rv = TokenizeProperties(propertyName, properties);
+  rv = TokenizeProperties(propertyID, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -30,7 +30,7 @@ function runTest() {
                 
   var property = factory.createProperty("Foo", "Bar");
 
-  assertEqual(property.name, "Foo");
+  assertEqual(property.id, "Foo");
   assertEqual(property.value, "Bar");
   assertEqual(typeof(property.value), "string");
 

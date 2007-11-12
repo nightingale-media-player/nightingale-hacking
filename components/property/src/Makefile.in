@@ -40,7 +40,8 @@ sbProperties.jsm: sbProperties.jsm.in sbStandardProperties.h
 sbProperties.jsm: sbStandardProperties.pl
 	$(PERL) $< $(srcdir)
 
-CPP_SRCS = sbSimpleProperty.cpp \
+CPP_SRCS = sbPropertyManager.cpp \
+           sbSimpleProperty.cpp \
            sbPropertyArray.cpp \
            sbPropertyFactory.cpp \
            sbPropertyInfo.cpp \
@@ -48,7 +49,6 @@ CPP_SRCS = sbSimpleProperty.cpp \
            sbNumberPropertyInfo.cpp \
            sbURIPropertyInfo.cpp \
            sbDatetimePropertyInfo.cpp \
-           sbPropertyManager.cpp \
            sbPropertiesModule.cpp \
            sbDownloadButtonPropertyBuilder.cpp \
            sbDownloadButtonPropertyInfo.cpp \

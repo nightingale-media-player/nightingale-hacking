@@ -31,7 +31,7 @@
 
 var gProps = {};
 
-//// read the "Canonical" C++ property names
+//// read the "Canonical" C++ property IDs
 function readCPPProps() {
   // get the app directory
   var appDir = Components.classes["@mozilla.org/file/directory_service;1"]
@@ -55,7 +55,7 @@ function readCPPProps() {
   istream.init(file, 0x01 /*PR_RDONLY*/, 0400, 0);
   istream.QueryInterface(Components.interfaces.nsILineInputStream);
   
-  // read lines and look for the property names
+  // read lines and look for the property IDs
   do {
     var line = {};
     var hasMore = istream.readLine(line);

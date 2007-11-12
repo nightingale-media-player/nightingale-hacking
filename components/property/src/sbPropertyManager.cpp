@@ -59,23 +59,23 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
                               sbIPropertyManager)
 
 sbPropertyManager::sbPropertyManager()
-: mPropNamesLock(nsnull)
+: mPropIDsLock(nsnull)
 {
   PRBool success = mPropInfoHashtable.Init(32);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
-  mPropNamesLock = PR_NewLock();
-  NS_ASSERTION(mPropNamesLock,
-    "sbPropertyManager::mPropNamesLock failed to create lock!");
+  mPropIDsLock = PR_NewLock();
+  NS_ASSERTION(mPropIDsLock,
+    "sbPropertyManager::mPropIDsLock failed to create lock!");
 }
 
 sbPropertyManager::~sbPropertyManager()
 {
   mPropInfoHashtable.Clear();
 
-  if(mPropNamesLock) {
-    PR_DestroyLock(mPropNamesLock);
+  if(mPropIDsLock) {
+    PR_DestroyLock(mPropIDsLock);
   }
 }
 
@@ -89,16 +89,16 @@ NS_METHOD sbPropertyManager::Init()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyManager::GetPropertyNames(nsIStringEnumerator * *aPropertyNames)
+NS_IMETHODIMP sbPropertyManager::GetPropertyIDs(nsIStringEnumerator * *aPropertyIDs)
 {
-  NS_ENSURE_ARG_POINTER(aPropertyNames);
+  NS_ENSURE_ARG_POINTER(aPropertyIDs);
 
-  PR_Lock(mPropNamesLock);
-  *aPropertyNames = new sbTArrayStringEnumerator(&mPropNames);
-  PR_Unlock(mPropNamesLock);
+  PR_Lock(mPropIDsLock);
+  *aPropertyIDs = new sbTArrayStringEnumerator(&mPropIDs);
+  PR_Unlock(mPropIDsLock);
 
-  NS_ENSURE_TRUE(*aPropertyNames, NS_ERROR_OUT_OF_MEMORY);
-  NS_ADDREF(*aPropertyNames);
+  NS_ENSURE_TRUE(*aPropertyIDs, NS_ERROR_OUT_OF_MEMORY);
+  NS_ADDREF(*aPropertyIDs);
 
   return NS_OK;
 }
@@ -108,38 +108,39 @@ NS_IMETHODIMP sbPropertyManager::AddPropertyInfo(sbIPropertyInfo *aPropertyInfo)
   NS_ENSURE_ARG_POINTER(aPropertyInfo);
 
   nsresult rv;
-  nsAutoString name;
+  nsAutoString id;
   PRBool success = PR_FALSE;
 
-  rv = aPropertyInfo->GetName(name);
+  rv = aPropertyInfo->GetId(id);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  success = mPropInfoHashtable.Put(name, aPropertyInfo);
+  success = mPropInfoHashtable.Put(id, aPropertyInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  PR_Lock(mPropNamesLock);
-  mPropNames.AppendElement(name);
-  PR_Unlock(mPropNamesLock);
+  PR_Lock(mPropIDsLock);
+  mPropIDs.AppendElement(id);
+  PR_Unlock(mPropIDsLock);
 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPropertyInfo **_retval)
+NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
+                                                 sbIPropertyInfo **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
 
-  if(mPropInfoHashtable.Get(aName, _retval)) {
+  if(mPropInfoHashtable.Get(aID, _retval)) {
     return NS_OK;
   }
   else {
-    //Create default property (text) for new property name encountered.
+    //Create default property (text) for new property id encountered.
     nsresult rv;
     nsRefPtr<sbTextPropertyInfo> textProperty;
 
     textProperty = new sbTextPropertyInfo();
     NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-    rv = textProperty->SetName(aName);
+    rv = textProperty->SetId(aID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
@@ -148,7 +149,7 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
     //This is the only safe way to hand off the instance because the hash table
     //may have changed and returning the instance pointer above may yield a
     //stale pointer and cause a crash.
-    if(mPropInfoHashtable.Get(aName, _retval)) {
+    if(mPropInfoHashtable.Get(aID, _retval)) {
       return NS_OK;
     }
   }
@@ -156,12 +157,12 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-NS_IMETHODIMP sbPropertyManager::HasProperty(const nsAString &aName,
+NS_IMETHODIMP sbPropertyManager::HasProperty(const nsAString &aID,
                                              PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  if(mPropInfoHashtable.Get(aName, nsnull))
+  if(mPropInfoHashtable.Get(aID, nsnull))
     *_retval = PR_TRUE;
   else
     *_retval = PR_FALSE;
@@ -523,7 +524,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = dbBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = dbBuilder->SetPropertyName(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
+  rv = dbBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = dbBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
@@ -559,7 +560,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = rBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = rBuilder->SetPropertyName(NS_LITERAL_STRING(SB_PROPERTY_RATING));
+  rv = rBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_RATING));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = rBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.rating"));
@@ -595,7 +596,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 }
 
 nsresult
-sbPropertyManager::RegisterText(const nsAString& aPropertyName,
+sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 const nsAString& aDisplayKey,
                                 nsIStringBundle* aStringBundle,
                                 PRBool aUserViewable,
@@ -611,7 +612,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
   nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = textProperty->SetName(aPropertyName);
+  nsresult rv = textProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
@@ -658,7 +659,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
 }
 
 nsresult
-sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
+sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
                                     const nsAString& aDisplayKey,
                                     PRInt32 aType,
                                     nsIStringBundle* aStringBundle,
@@ -673,7 +674,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
     datetimeProperty(new sbDatetimePropertyInfo());
   NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = datetimeProperty->SetName(aPropertyName);
+  nsresult rv = datetimeProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = datetimeProperty->SetTimeType(aType);
@@ -708,7 +709,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
 }
 
 nsresult
-sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
+sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
                                const nsAString& aDisplayKey,
                                nsIStringBundle* aStringBundle,
                                PRBool aUserViewable,
@@ -721,7 +722,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
   nsRefPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = uriProperty->SetName(aPropertyName);
+  nsresult rv = uriProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
@@ -753,7 +754,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
 }
 
 nsresult
-sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
+sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
                                   const nsAString& aDisplayKey,
                                   nsIStringBundle* aStringBundle,
                                   PRBool aUserViewable,
@@ -770,7 +771,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
   nsRefPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = numberProperty->SetName(aPropertyName);
+  nsresult rv = numberProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aHasMinValue) {

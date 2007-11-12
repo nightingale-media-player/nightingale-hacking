@@ -59,8 +59,8 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETGETPROPERTY_SETPROPERTIES(mMediaItem);
 
-  NS_IMETHOD GetProperty(const nsAString& aName, nsAString& _retval);
-  NS_IMETHOD SetProperty(const nsAString& aName, const nsAString& aValue);
+  NS_IMETHOD GetProperty(const nsAString& aID, nsAString& _retval);
+  NS_IMETHOD SetProperty(const nsAString& aID, const nsAString& aValue);
   NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
 
   // sbIWrappedMediaItem interface

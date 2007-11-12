@@ -39,7 +39,7 @@ interface nsIURI;
  * \interface sbILocalDatabasePropertyCache
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
+[scriptable, uuid(c6ce50ff-38a5-49b8-987e-9597ce679ca1)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
   readonly attribute boolean writePending;
@@ -62,19 +62,19 @@ interface sbILocalDatabasePropertyCache : nsISupports
 
   void write();
 
-  unsigned long getPropertyID(in AString aProperty);
+  unsigned long getPropertyDBID(in AString aPropertyID);
 };
 
 /**
  * \interface sbILocalDatabaseResourcePropertyBag
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
+[scriptable, uuid(c09564c7-8623-47e2-8fd7-e551e2f028bf)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {
   readonly attribute AString guid;
   readonly attribute boolean writePending;
-  readonly attribute nsIStringEnumerator names;
+  readonly attribute nsIStringEnumerator ids;
 
   /**
    * \brief Returns a property value by key.
@@ -83,19 +83,19 @@ interface sbILocalDatabaseResourcePropertyBag : nsISupports
    * special "void" string that behaves just like an empty string except that
    * the IsVoid() method will return PR_TRUE for those who care.
    */
-  AString getProperty(in AString aName);
+  AString getProperty(in AString aPropertyID);
 
   /**
-   * \brief Returns a property value by property id.
+   * \brief Returns a property value by property database id.
    *
    * This method will *never* throw. If a value doesn't exist it will return a
    * special "void" string that behaves just like an empty string except that
    * the IsVoid() method will return PR_TRUE for those who care.
    */
-  AString getPropertyByID(in unsigned long aPropertyID);
+  AString getPropertyByID(in unsigned long aPropertyDBID);
 
-  void setProperty(in AString aName, in AString aValue);
-  void setPropertyByID(in unsigned long aPropertyID, in AString aValue);
+  void setProperty(in AString aPropertyID, in AString aValue);
+  void setPropertyByDBID(in unsigned long aPropertyDBID, in AString aValue);
 
   void write();
 };

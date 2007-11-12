@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbILibraryPropertiesManager
 */
-[scriptable, uuid(9f36cf73-a3c4-408b-9161-3ef59b8c3f2c)]
+[scriptable, uuid(2bcef7e9-e400-4367-a9bb-0b40c6a37ce9)]
 interface sbILibraryResource : nsISupports
 {
   /**
@@ -104,10 +104,10 @@ interface sbILibraryResource : nsISupports
   readonly attribute long long updated;
 
   /**
-   * \brief Returns a string enumerator of the names of all the properties
+   * \brief Returns a string enumerator of the IDs of all the properties
    *        set on this resource
    */
-  readonly attribute nsIStringEnumerator propertyNames;
+  readonly attribute nsIStringEnumerator propertyIDs;
 
   /**
    * \brief Get the value of a property of this resource
@@ -116,7 +116,7 @@ interface sbILibraryResource : nsISupports
    * special "void" string that behaves just like an empty string except that
    * the IsVoid() method will return PR_TRUE for those who care.
    *
-   * \param aName Name of the property to get
+   * \param aID ID of the property to get
    * \return Value of the requested property
    */
 
@@ -130,10 +130,10 @@ interface sbILibraryResource : nsISupports
   Get the value of a property for this library object.
 
   Prototype:
-    String getProperty(String name)
+    String getProperty(String id)
 
   Parameters:
-    name - The name property value requested.
+    id - The ID property value requested.
 
   Example:
     (start code)
@@ -181,11 +181,11 @@ interface sbILibraryResource : nsISupports
   See Also:
     <setProperty()>
   */
-  AString getProperty(in AString aName);
+  AString getProperty(in AString aID);
 
   /**
    * \brief Set the value of a property on this resource
-   * \param aName Name of the property to set
+   * \param aID ID of the property to set
    * \param aValue New value for the specified property
    */
 
@@ -195,7 +195,7 @@ interface sbILibraryResource : nsISupports
   Set the value of a property for this library object.
 
   Prototype:
-    setProperty(String name, String value)
+    setProperty(String id, String value)
 
   Example:
     (start code)
@@ -237,17 +237,17 @@ interface sbILibraryResource : nsISupports
   See Also:
     <getProperty()>
   */
-  void setProperty(in AString aName, in AString aValue);
+  void setProperty(in AString aID, in AString aValue);
 
   /**
    * \brief Get properties from this resource in a property array
-   * \param aPropertyNames A property array containing the names of the
+   * \param aPropertyIDs A property array containing the IDs of the
    *        properties you wish to retrieve.  The values of these properties
    *        are disregarded.  If this parameter is null or not specified, all
    *        properties will be returned
    * \return A property array containing the requested properties and values
    */
-  sbIPropertyArray getProperties([optional] in sbIPropertyArray aPropertyNames);
+  sbIPropertyArray getProperties([optional] in sbIPropertyArray aPropertyIDs);
 
   /**
    * \brief Sets the properties and values in the supplied property array to

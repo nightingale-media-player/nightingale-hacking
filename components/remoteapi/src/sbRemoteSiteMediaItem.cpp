@@ -85,18 +85,18 @@ NS_IMPL_ISUPPORTS_INHERITED0( sbRemoteSiteMediaItemSecurityMixin,
 
 NS_IMETHODIMP
 sbRemoteSiteMediaItemSecurityMixin::CanGetProperty( const nsIID* aIID,
-                                                    const PRUnichar* aPropertyName,
+                                                    const PRUnichar* aPropertyID,
                                                     char** _retval )
 {
-  nsresult rv = sbSecurityMixin::CanGetProperty( aIID, aPropertyName, _retval );
+  nsresult rv = sbSecurityMixin::CanGetProperty( aIID, aPropertyID, _retval );
   NS_ENSURE_SUCCESS( rv, rv );
 
   if (mPrivileged) {
     return NS_OK;
   }
 
-  nsDependentString propName(aPropertyName);
-  if (propName.EqualsLiteral("contentSrc")) {
+  nsDependentString propID(aPropertyID);
+  if (propID.EqualsLiteral("contentSrc")) {
     nsCOMPtr<nsIURI> uri;
     rv = mMediaItem->GetContentSrc(getter_AddRefs(uri));
     NS_ENSURE_SUCCESS( rv, rv );
@@ -150,18 +150,18 @@ sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
 }
 
 NS_IMETHODIMP
-sbRemoteSiteMediaItem::GetProperty(const nsAString & aName,
+sbRemoteSiteMediaItem::GetProperty(const nsAString & aID,
                                    nsAString & _retval)
 {
   LOG(("sbRemoteSiteMediaItem::GetProperty()"));
 
-  nsresult rv = sbRemoteMediaItem::GetProperty( aName, _retval );
-  if ( NS_SUCCEEDED(rv) || !aName.EqualsLiteral(SB_PROPERTY_CONTENTURL) ) {
+  nsresult rv = sbRemoteMediaItem::GetProperty( aID, _retval );
+  if ( NS_SUCCEEDED(rv) || !aID.EqualsLiteral(SB_PROPERTY_CONTENTURL) ) {
     return rv;
   }
 
   nsString contentURL;
-  rv = mMediaItem->GetProperty( aName, contentURL );
+  rv = mMediaItem->GetProperty( aID, contentURL );
   NS_ENSURE_SUCCESS( rv, rv );
 
   if (StringBeginsWith( contentURL, NS_LITERAL_STRING("file:") )) {

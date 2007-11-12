@@ -48,7 +48,7 @@ public:
   }
 
   NS_IMETHOD CanGetProperty( const nsIID* aIID,
-                             const PRUnichar* aPropertyName,
+                             const PRUnichar* aPropertyID,
                              char** _retval );
 private:
   // Weak ref, sbRemoteSiteMediaItem already owns this.
@@ -65,7 +65,7 @@ public:
   sbRemoteSiteMediaItem( sbRemotePlayer *aRemotePlayer,
                          sbIMediaItem *aMediaItem );
 
-  NS_IMETHOD GetProperty( const nsAString& aName,
+  NS_IMETHOD GetProperty( const nsAString& aID,
                           nsAString& _retval );
 
 protected:

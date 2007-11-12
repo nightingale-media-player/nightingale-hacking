@@ -145,13 +145,13 @@ sbImmutablePropertyInfo::GetSortProfile(sbIPropertyArray** aSortProfile)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetName(nsAString& aName)
+sbImmutablePropertyInfo::GetId(nsAString& aID)
 {
-  aName = mName;
+  aID = mID;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetName(const nsAString& aName)
+sbImmutablePropertyInfo::SetId(const nsAString& aID)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

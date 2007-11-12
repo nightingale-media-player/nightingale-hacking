@@ -42,13 +42,13 @@ public:
   sbSimpleProperty()
   { }
 
-  sbSimpleProperty(const nsAString& aName, const nsAString& aValue)
-  : mName(aName),
+  sbSimpleProperty(const nsAString& aID, const nsAString& aValue)
+  : mID(aID),
     mValue(aValue)
   { }
 
 private:
-  nsString mName;
+  nsString mID;
   nsString mValue;
 };
 

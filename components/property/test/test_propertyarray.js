@@ -24,10 +24,10 @@
 //
 */
 
-function assertPropertyData(property, name, value) {
+function assertPropertyData(property, id, value) {
   assertNotEqual(property, null);
   assertNotEqual(property, undefined);
-  assertEqual(property.name, name);
+  assertEqual(property.id, id);
   assertEqual(property.value, value);
 }
 
@@ -36,7 +36,7 @@ function dumpArray(array) {
   log ("dumpArray: " + array + " (count = " + count + ")");
   for (var index = 0; index < count; index++) {
     var prop = array.getPropertyAt(index);
-    log("array[" + index + "] = {name: " + prop.name + ", value: " +
+    log("array[" + index + "] = {id: " + prop.id + ", value: " +
         prop.value + "}");
   }
 }
@@ -48,9 +48,9 @@ function runTest() {
 
   // Test appendProperty.
   for (var index = 0; index < 15; index++) {
-    var name = "Property" + index;
+    var id = "Property" + index;
     var value = "Value" + index;
-    propertyArray.appendProperty(name, value);
+    propertyArray.appendProperty(id, value);
   }
   
   // Test length.
@@ -168,9 +168,9 @@ function runTest() {
     createInstance(Ci.sbIMutablePropertyArray);
 
   for (var index = 0; index < 10; index++) {
-    var name = "Property" + index;
+    var id = "Property" + index;
     var value = "Value" + index;
-    propertyArray.appendProperty(name, value);
+    propertyArray.appendProperty(id, value);
   }
   var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
   pipe.init(false, false, 0, 0xffffffff, null);

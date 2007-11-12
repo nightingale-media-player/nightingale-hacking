@@ -32,13 +32,13 @@ function runTest() {
     Cc["@songbirdnest.com/Songbird/Properties/Builder/DownloadButton;1"]
       .createInstance(Ci.sbIDownloadButtonPropertyBuilder);
 
-  builder.propertyName = prop;
+  builder.propertyID = prop;
   builder.labelKey = "property.download_button";
 
   var pi = builder.get();
 
   assertEqual(pi.type, "downloadbutton");
-  assertEqual(pi.name, prop);
+  assertEqual(pi.id, prop);
 
   assertEqual(pi.format(null),       "");
   assertEqual(pi.format("0|100|50"), "");

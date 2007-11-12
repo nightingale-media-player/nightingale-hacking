@@ -717,7 +717,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
         if (NS_SUCCEEDED(result))
         {
-            result = pURIPropertyInfo->SetName
+            result = pURIPropertyInfo->SetId
                                 (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION));
         }
         if (NS_SUCCEEDED(result))

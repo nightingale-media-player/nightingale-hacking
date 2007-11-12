@@ -39,13 +39,13 @@ interface sbIPropertyOperator;
  * \interface sbILocalDatabaseSmartMediaListCondition
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
+[scriptable, uuid(de8a4e47-1e46-435d-9316-04ddfd18be2d)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 {
   /**
-   * \brief The name of the property used in this condition.
+   * \brief The ID of the property used in this condition.
    */
-  readonly attribute AString propertyName;
+  readonly attribute AString propertyID;
 
   /**
    * \brief The operator used in this condition
@@ -119,10 +119,10 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   /**
    * \brief Property to select limited results by
    */
-  attribute AString selectPropertyName;
+  attribute AString selectPropertyID;
 
   /**
-   * \brief Direction to sort the selection property name, true for ascending,
+   * \brief Direction to sort the selection property, true for ascending,
    *        false for descending
    */
   attribute boolean selectDirection;
@@ -142,7 +142,7 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
    * \brief Add a condition or limiting condition.
    */
   sbILocalDatabaseSmartMediaListCondition
-    appendCondition(in AString aPropertyName,
+    appendCondition(in AString aPropertyID,
                     in sbIPropertyOperator aOperator,
                     in AString aLeftValue,
                     in AString aRightValue,

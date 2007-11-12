@@ -2460,7 +2460,7 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 
       if (info) {
         // set the data on the propinfo
-        rv = info->SetName(aPropertyID);
+        rv = info->SetId(aPropertyID);
         NS_ENSURE_SUCCESS( rv, rv );
         rv = info->SetDisplayName(aDisplayName);
         NS_ENSURE_SUCCESS( rv, rv );
@@ -2520,7 +2520,7 @@ sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
 
       // set all the common properties together
       if (builder) {
-        rv = builder->SetPropertyName(aPropertyID);
+        rv = builder->SetPropertyID(aPropertyID);
         NS_ENSURE_SUCCESS(rv, rv);
         rv = builder->SetDisplayName(aDisplayName);
         NS_ENSURE_SUCCESS(rv, rv);

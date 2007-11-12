@@ -976,19 +976,19 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString name;
-    rv = property->GetName(name);
+    nsString id;
+    rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 propertyId;
-    rv = mPropertyCache->GetPropertyID(name, &propertyId);
+    rv = mPropertyCache->GetPropertyDBID(id, &propertyId);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (SB_IsTopLevelPropertyID(propertyId)) {
+    if (SB_IsTopLevelProperty(propertyId)) {
       if (!update) {
         update = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -1009,7 +1009,7 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
       }
 
       nsAutoString columnName;
-      rv = SB_GetTopLevelPropertyColumn(name, columnName);
+      rv = SB_GetTopLevelPropertyColumn(id, columnName);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = update->AddAssignmentString(columnName, value);
@@ -1017,7 +1017,7 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
     }
     else {
       nsCOMPtr<sbIPropertyInfo> propertyInfo;
-      rv = propMan->GetPropertyInfo(name, getter_AddRefs(propertyInfo));
+      rv = propMan->GetPropertyInfo(id, getter_AddRefs(propertyInfo));
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString sortableValue;

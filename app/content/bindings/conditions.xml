@@ -156,10 +156,10 @@
 <![CDATA[
   var metadata = [];
 
-  var names = this._pm.propertyNames;
-  while (names.hasMore()) {
-    var info = this._pm.getPropertyInfo(names.getNext());
-    metadata.push({ name: info.displayName, value: info.name });
+  var ids = this._pm.propertyIDs;
+  while (ids.hasMore()) {
+    var info = this._pm.getPropertyInfo(ids.getNext());
+    metadata.push({ name: info.displayName, value: info.id });
   }
 
   var popup = document.getAnonymousElementByAttribute(this,

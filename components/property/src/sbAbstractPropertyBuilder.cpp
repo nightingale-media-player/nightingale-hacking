@@ -126,15 +126,15 @@ sbAbstractPropertyBuilder::Get(sbIPropertyInfo** _retval)
 }
 
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetPropertyName(nsAString& aPropertyName)
+sbAbstractPropertyBuilder::GetPropertyID(nsAString& aPropertyID)
 {
-  aPropertyName = mPropertyName;
+  aPropertyID = mPropertyID;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetPropertyName(const nsAString& aPropertyName)
+sbAbstractPropertyBuilder::SetPropertyID(const nsAString& aPropertyID)
 {
-  mPropertyName = aPropertyName;
+  mPropertyID = aPropertyID;
   return NS_OK;
 }
 

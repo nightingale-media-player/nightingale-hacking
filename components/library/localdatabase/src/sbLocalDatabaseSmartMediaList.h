@@ -77,7 +77,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_IMETHOD GetItemByGuid(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByGuid(aGuid, _retval); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByIndex(aIndex, _retval); } \
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
-  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyName, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperty(aPropertyName, aPropertyValue, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperty(aPropertyID, aPropertyValue, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD EnumerateItemsByProperties(sbIPropertyArray *aProperties, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperties(aProperties, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->IndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->LastIndexOf(aMediaItem, aStartFrom, _retval); } \
@@ -93,7 +93,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListViewState* aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
-  NS_IMETHOD GetDistinctValuesForProperty(const nsAString& aPropertyName, nsIStringEnumerator** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyName, _retval); } \
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString& aPropertyID, nsIStringEnumerator** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } \
   NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->BeginUpdateBatch(); } \
   NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); }
 
@@ -104,7 +104,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASESMARTMEDIALISTCONDITION
 
-  sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyName,
+  sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyID,
                                          sbIPropertyOperator* aOperator,
                                          const nsAString& aLeftValue,
                                          const nsAString& aRightValue,
@@ -117,7 +117,7 @@ public:
 protected:
   PRLock* mLock;
 
-  nsString mPropertyName;
+  nsString mPropertyID;
   nsCOMPtr<sbIPropertyOperator> mOperator;
 
   nsString mLeftValue;
@@ -219,7 +219,7 @@ private:
   PRUint32 mMatchType;
   PRUint32 mLimitType;
   PRUint64 mLimit;
-  nsString mSelectPropertyName;
+  nsString mSelectPropertyID;
   PRBool   mSelectDirection;
   PRBool   mRandomSelection;
   PRBool   mLiveUpdate;

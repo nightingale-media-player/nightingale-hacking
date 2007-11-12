@@ -66,9 +66,9 @@ function testProperties(library) {
   list.limit = 20;
   assertEqual(list.limit, 20);
 
-  assertEqual(list.selectPropertyName, "");
-  list.selectPropertyName = albumProp;
-  assertEqual(list.selectPropertyName, albumProp);
+  assertEqual(list.selectPropertyID, "");
+  list.selectPropertyID = albumProp;
+  assertEqual(list.selectPropertyID, albumProp);
 
   assertEqual(list.selectDirection, true);
   list.selectDirection = false;
@@ -95,7 +95,7 @@ function testConditions(library) {
   var condition1 = list.appendCondition(albumProp, op, "Back In Black", null, false);
   assertEqual(list.conditionCount, 1);
 
-  assertEqual(condition1.propertyName, albumProp);
+  assertEqual(condition1.propertyID, albumProp);
   assertEqual(condition1.operator, op);
   assertEqual(condition1.leftValue, "Back In Black");
   assertEqual(condition1.rightValue, null);
@@ -316,7 +316,7 @@ function testItemLimit(library) {
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
   list.limit = 5;
-  list.selectPropertyName = trackProp;
+  list.selectPropertyID = trackProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -351,7 +351,7 @@ function testUsecsLimit(library) {
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
   list.limit = 30 * 60 * 1000 * 1000;
-  list.selectPropertyName = trackProp;
+  list.selectPropertyID = trackProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -384,7 +384,7 @@ function testBytesLimit(library) {
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
   list.limit = 1500;
-  list.selectPropertyName = trackProp;
+  list.selectPropertyID = trackProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -410,7 +410,7 @@ function testMatchTypeNoneItemLimit(library) {
   list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
   list.limit = 25;
-  list.selectPropertyName = artistProp;
+  list.selectPropertyID = artistProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -436,7 +436,7 @@ function testMatchTypeNoneUsecLimit(library) {
 
   // 2 hours of music
   list.limit = 120 * 60 * 1000 * 1000;
-  list.selectPropertyName = artistProp;
+  list.selectPropertyID = artistProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -464,7 +464,7 @@ function testMatchTypeNoneBytesLimit(library) {
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
 
   list.limit = 40000;
-  list.selectPropertyName = artistProp;
+  list.selectPropertyID = artistProp;
   list.selectDirection = true;
 
   list.rebuild();
@@ -583,7 +583,7 @@ function testSerialize(library) {
   var guid = list.guid;
   list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
-  list.selectPropertyName = albumProp;
+  list.selectPropertyID = albumProp;
   list.selectDirection = false;
   list.limit = 123;
   list.randomSelection = true;
@@ -608,7 +608,7 @@ function testSerialize(library) {
 
   assertEqual(list.matchType, restoredList.matchType);
   assertEqual(list.limitType, restoredList.limitType);
-  assertEqual(list.selectPropertyName, restoredList.selectPropertyName);
+  assertEqual(list.selectPropertyID, restoredList.selectPropertyID);
   assertEqual(list.selectDirection, restoredList.selectDirection);
   assertEqual(list.limit, restoredList.limit);
   assertEqual(list.randomSelection, restoredList.randomSelection);
@@ -620,18 +620,18 @@ function testSerialize(library) {
   }
 }
 
-function getOperatorForProperty(propertyName, operator) {
+function getOperatorForProperty(propertyID, operator) {
 
   var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
-  var info = propMan.getPropertyInfo(propertyName);
+  var info = propMan.getPropertyInfo(propertyID);
   var op = info.getOperator(operator);
   return op;
 }
 
 function assertCondition(a, b) {
 
-  assertEqual(a.propertyName, b.propertyName);
+  assertEqual(a.propertyID, b.propertyID);
   assertEqual(a.operator.operator, b.operator.operator);
   assertEqual(a.leftValue, b.leftValue);
   assertEqual(a.rightValue, b.rightValue);

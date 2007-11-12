@@ -106,7 +106,7 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
   NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return _to GetIsEmpty(aIsEmpty); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return _to GetItemByIndex(aIndex, _retval); } \
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
-  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyName, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperty(aPropertyName, aPropertyValue, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperty(aPropertyID, aPropertyValue, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD EnumerateItemsByProperties(sbIPropertyArray *aProperties, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperties(aProperties, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return _to IndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return _to LastIndexOf(aMediaItem, aStartFrom, _retval); } \
@@ -114,7 +114,7 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return _to RemoveListener(aListener); } \
   NS_IMETHOD BeginUpdateBatch(void) { return _to BeginUpdateBatch(); } \
   NS_IMETHOD EndUpdateBatch(void) { return _to EndUpdateBatch(); } \
-  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyName, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyName, _retval); }
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbIDatabaseSimpleQueryCallback,

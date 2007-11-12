@@ -218,13 +218,13 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseSmartMediaListCondition,
                    sbILocalDatabaseSmartMediaListCondition)
 
-sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyName,
+sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyID,
                                                                                sbIPropertyOperator* aOperator,
                                                                                const nsAString& aLeftValue,
                                                                                const nsAString& aRightValue,
                                                                                PRBool aLimit)
 : mLock(nsnull)
-, mPropertyName(aPropertyName)
+, mPropertyID(aPropertyID)
 , mOperator(aOperator)
 , mLeftValue(aLeftValue)
 , mRightValue(aRightValue)
@@ -243,10 +243,10 @@ sbLocalDatabaseSmartMediaListCondition::~sbLocalDatabaseSmartMediaListCondition(
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaListCondition::GetPropertyName(nsAString& aPropertyName)
+sbLocalDatabaseSmartMediaListCondition::GetPropertyID(nsAString& aPropertyID)
 {
   nsAutoLock lock(mLock);
-  aPropertyName = mPropertyName;
+  aPropertyID = mPropertyID;
 
   return NS_OK;
 }
@@ -303,7 +303,7 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
   PRBool success = map.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  success = map.Put(NS_LITERAL_STRING("property"), mPropertyName);
+  success = map.Put(NS_LITERAL_STRING("property"), mPropertyID);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString op;
@@ -531,17 +531,17 @@ sbLocalDatabaseSmartMediaList::SetLimit(PRUint64 aLimit)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetSelectPropertyName(nsAString& aSelectPropertyName)
+sbLocalDatabaseSmartMediaList::GetSelectPropertyID(nsAString& aSelectPropertyID)
 {
-  aSelectPropertyName = mSelectPropertyName;
+  aSelectPropertyID = mSelectPropertyID;
 
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetSelectPropertyName(const nsAString& aSelectPropertyName)
+sbLocalDatabaseSmartMediaList::SetSelectPropertyID(const nsAString& aSelectPropertyID)
 {
   nsAutoLock lock(mConditionsLock);
-  mSelectPropertyName = aSelectPropertyName;
+  mSelectPropertyID = aSelectPropertyID;
 
   nsresult rv = WriteConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -616,7 +616,7 @@ sbLocalDatabaseSmartMediaList::SetLiveUpdate(PRBool aLiveUpdate)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyName,
+sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
                                                sbIPropertyOperator* aOperator,
                                                const nsAString& aLeftValue,
                                                const nsAString& aRightValue,
@@ -625,7 +625,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyName,
 {
   NS_ENSURE_ARG_POINTER(aOperator);
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_ARG(aPropertyName.Length() > 1);
+  NS_ENSURE_ARG(aPropertyID.Length() > 1);
 
   // Make sure the right value is void if the operator is anything else but
   // between
@@ -639,7 +639,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyName,
   };
 
   sbRefPtrCondition condition;
-  condition = new sbLocalDatabaseSmartMediaListCondition(aPropertyName,
+  condition = new sbLocalDatabaseSmartMediaListCondition(aPropertyID,
                                                          aOperator,
                                                          aLeftValue,
                                                          aRightValue,
@@ -717,7 +717,7 @@ sbLocalDatabaseSmartMediaList::Rebuild()
 
   // If we have a limit, either random or the selection property must be set
   if (mLimitType != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE) {
-    if (!(mRandomSelection || !mSelectPropertyName.IsEmpty()))
+    if (!(mRandomSelection || !mSelectPropertyID.IsEmpty()))
       return NS_ERROR_INVALID_ARG;
   }
 
@@ -864,7 +864,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
   // to get here
   NS_ENSURE_STATE(mLimitType != sbLocalDatabaseSmartMediaList::LIMIT_TYPE_NONE);
   NS_ENSURE_STATE(!mRandomSelection);
-  NS_ENSURE_STATE(!mSelectPropertyName.IsEmpty());
+  NS_ENSURE_STATE(!mSelectPropertyID.IsEmpty());
 
   NS_NAMED_LITERAL_STRING(kMediaItems,      "media_items");
   NS_NAMED_LITERAL_STRING(kMediaItemId,     "media_item_id");
@@ -984,7 +984,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
   // to get here
   NS_ENSURE_STATE(mLimitType != sbLocalDatabaseSmartMediaList::LIMIT_TYPE_NONE);
   NS_ENSURE_STATE(mRandomSelection);
-  NS_ENSURE_STATE(mSelectPropertyName.IsEmpty());
+  NS_ENSURE_STATE(mSelectPropertyID.IsEmpty());
 
   NS_NAMED_LITERAL_STRING(kMediaItemId, "media_item_id");
   NS_NAMED_LITERAL_STRING(kLimitBy,     "limitby");
@@ -1257,7 +1257,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   // Get the property info for this property.  If the property info is not
   // found, return not available
   nsCOMPtr<sbIPropertyInfo> info;
-  rv = mPropMan->GetPropertyInfo(aCondition->mPropertyName,
+  rv = mPropMan->GetPropertyInfo(aCondition->mPropertyID,
                                  getter_AddRefs(info));
   if (NS_FAILED(rv)) {
     if (rv == NS_ERROR_NOT_AVAILABLE) {
@@ -1272,7 +1272,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyName);
+  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
 
   rv = builder->SetBaseTableName(kMediaItems);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1337,8 +1337,8 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   rv = AddLimitColumnAndJoin(builder, baseAlias);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If there is a select property name, pull it into the result of the query
-  if (!mSelectPropertyName.IsEmpty()) {
+  // If there is a select property id, pull it into the result of the query
+  if (!mSelectPropertyID.IsEmpty()) {
     rv = AddSelectColumnAndJoin(builder, baseAlias, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1375,18 +1375,18 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   nsresult rv;
 
   // Get some stuff about the property
-  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyName);
+  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
   PRUint32 propertyId;
   nsAutoString columnName;
   nsCOMPtr<sbISQLBuilderCriterion> propertyCriterion;
 
   if (isTopLevelProperty) {
-    rv = SB_GetTopLevelPropertyColumn(aCondition->mPropertyName, columnName);
+    rv = SB_GetTopLevelPropertyColumn(aCondition->mPropertyID, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     columnName.Assign(kObjSortable);
-    rv = mPropertyCache->GetPropertyID(aCondition->mPropertyName, &propertyId);
+    rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &propertyId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aBuilder->CreateMatchCriterionLong(kConditionAlias,
@@ -1590,11 +1590,11 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
 
   nsresult rv;
 
-  if (SB_IsTopLevelProperty(mSelectPropertyName)) {
+  if (SB_IsTopLevelProperty(mSelectPropertyID)) {
     // If the select property is a top level property, just add it to the
     // column list off the base table
     nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(mSelectPropertyName, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mSelectPropertyID, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aBuilder->AddColumn(aBaseTableAlias, columnName);
@@ -1618,15 +1618,15 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
                            kGuid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 propertyId;
-    rv = mPropertyCache->GetPropertyID(mSelectPropertyName, &propertyId);
+    PRUint32 propertyDBID;
+    rv = mPropertyCache->GetPropertyDBID(mSelectPropertyID, &propertyDBID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
     rv = aBuilder->CreateMatchCriterionLong(kSelectAlias,
                                             kPropertyId,
                                             sbISQLBuilder::MATCH_EQUALS,
-                                            propertyId,
+                                            propertyDBID,
                                             getter_AddRefs(criterion));
     rv = aBuilder->AddCriterion(criterion);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1677,8 +1677,8 @@ sbLocalDatabaseSmartMediaList::AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuild
         NS_ENSURE_SUCCESS(rv, rv);
 
         PRUint32 propertyId;
-        rv = mPropertyCache->GetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
-                                           &propertyId);
+        rv = mPropertyCache->GetPropertyDBID(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
+                                             &propertyId);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<sbISQLBuilderCriterion> criterion;
@@ -1975,7 +1975,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   mMatchType = sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY;
   mLimitType = sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE;
   mLimit = 0;
-  mSelectPropertyName.Truncate();
+  mSelectPropertyID.Truncate();
   mSelectDirection = PR_TRUE;
   mRandomSelection = PR_FALSE;
   mLiveUpdate = PR_FALSE;
@@ -2018,8 +2018,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
     PR_sscanf(NS_LossyConvertUTF16toASCII(value).get(), "%llu", &mLimit);
   }
 
-  if (map.Get(NS_LITERAL_STRING("selectPropertyName"), &value)) {
-    mSelectPropertyName = value;
+  if (map.Get(NS_LITERAL_STRING("selectPropertyID"), &value)) {
+    mSelectPropertyID = value;
   }
 
   if (map.Get(NS_LITERAL_STRING("selectDirection"), &value)) {
@@ -2161,8 +2161,8 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   success = map.Put(NS_LITERAL_STRING("limit"), limit);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  success = map.Put(NS_LITERAL_STRING("selectPropertyName"),
-                    mSelectPropertyName);
+  success = map.Put(NS_LITERAL_STRING("selectPropertyID"),
+                    mSelectPropertyID);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString selectDirection;

@@ -124,7 +124,7 @@ function assertPropertyArray(a1, a2) {
   for(var i = 0; i < a1.length; i++) {
     var prop1 = a1.getPropertyAt(i);
     var prop2 = a2.getPropertyAt(i);
-    if (prop1.name != prop2.name) {
+    if (prop1.id != prop2.id) {
       fail("Names are different at index " + i + ", " +
            prop1 + " != " + prop2);
     }

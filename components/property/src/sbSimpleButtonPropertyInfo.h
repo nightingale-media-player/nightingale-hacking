@@ -48,7 +48,7 @@ public:
   NS_DECL_SBICLICKABLEPROPERTYINFO
   NS_DECL_SBITREEVIEWPROPERTYINFO
 
-  sbSimpleButtonPropertyInfo(const nsAString& aPropertyName,
+  sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                              const nsAString& aDisplayName,
                              PRBool aHasLabel,
                              const nsAString& aLabel,

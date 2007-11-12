@@ -88,9 +88,9 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 : mWritePendingCount(0),
   mPropertiesInCriterion(nsnull),
   mMediaItemsInCriterion(nsnull),
-  mLibrary(nsnull),
   mIsShuttingDown(PR_FALSE),
-  mFlushThreadMonitor(nsnull)
+  mFlushThreadMonitor(nsnull),
+  mLibrary(nsnull)
 {
   MOZ_COUNT_CTOR(sbLocalDatabasePropertyCache);
 #ifdef PR_LOGGING
@@ -280,7 +280,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
 
-    PRUint32 propertyId = sStaticProperties[i].mID;
+    PRUint32 propertyId = sStaticProperties[i].mDBID;
 
     nsCOMPtr<sbISQLUpdateBuilder> update =
       do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
@@ -290,7 +290,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString column;
-    GetColumnForPropertyID(propertyId, column);
+    SB_GetTopLevelPropertyColumn(propertyId, column);
 
     rv = update->AddAssignmentParameter(column);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -575,7 +575,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
               // XXXben FIX ME
               sbLocalDatabaseResourcePropertyBag* bagClassPtr =
                 static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-              rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
+              rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value);
 
               NS_ENSURE_SUCCESS(rv, rv);
             }
@@ -634,7 +634,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         // XXXben FIX ME
         sbLocalDatabaseResourcePropertyBag* bagClassPtr =
           static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-        rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
+        rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value);
 
         NS_ENSURE_SUCCESS(rv, rv);
       }
@@ -710,23 +710,23 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
     nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
 
     if(mCache.Get(guid, getter_AddRefs(bag)) && bag) {
-      nsCOMPtr<nsIStringEnumerator> names;
-      rv = aPropertyArray[i]->GetNames(getter_AddRefs(names));
+      nsCOMPtr<nsIStringEnumerator> ids;
+      rv = aPropertyArray[i]->GetIds(getter_AddRefs(ids));
       NS_ENSURE_SUCCESS(rv, rv);
 
       PRBool hasMore = PR_FALSE;
-      nsAutoString name, value;
+      nsString id, value;
 
-      while(NS_SUCCEEDED(names->HasMore(&hasMore)) && hasMore) {
-        rv = names->GetNext(name);
+      while(NS_SUCCEEDED(ids->HasMore(&hasMore)) && hasMore) {
+        rv = ids->GetNext(id);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = aPropertyArray[i]->GetProperty(name, value);
+        rv = aPropertyArray[i]->GetProperty(id, value);
         NS_ENSURE_SUCCESS(rv, rv);
 
         // XXXben FIX ME
         rv = static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get())
-          ->SetProperty(name, value);
+          ->SetProperty(id, value);
       }
 
       PR_Lock(mDirtyLock);
@@ -829,14 +829,14 @@ sbLocalDatabasePropertyCache::Write()
         //Enumerate dirty properties for this GUID.
         nsAutoString value;
         for(PRUint32 j = 0; j < dirtyPropsCount; j++) {
-          nsAutoString sql, propertyName;
+          nsString sql, propertyID;
 
           //If this isn't true, something is very wrong, so bail out.
-          PRBool success = GetPropertyName(dirtyProps[j], propertyName);
+          PRBool success = GetPropertyID(dirtyProps[j], propertyID);
           NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
           // Never change the guid
-          if (propertyName.EqualsLiteral(SB_PROPERTY_GUID)) {
+          if (propertyID.EqualsLiteral(SB_PROPERTY_GUID)) {
             continue;
           }
 
@@ -844,7 +844,7 @@ sbLocalDatabasePropertyCache::Write()
           NS_ENSURE_SUCCESS(rv, rv);
 
           //Top level properties need to be treated differently, so check for them.
-          if(SB_IsTopLevelPropertyID(dirtyProps[j])) {
+          if(SB_IsTopLevelProperty(dirtyProps[j])) {
   
             // Switch the query if we are updating the library resource
             nsString sql;
@@ -880,7 +880,7 @@ sbLocalDatabasePropertyCache::Write()
             }
             else {
               nsCOMPtr<sbIPropertyInfo> propertyInfo;
-              rv = mPropertyManager->GetPropertyInfo(propertyName,
+              rv = mPropertyManager->GetPropertyInfo(propertyID,
                                                      getter_AddRefs(propertyInfo));
               NS_ENSURE_SUCCESS(rv, rv);
   
@@ -963,12 +963,12 @@ sbLocalDatabasePropertyCache::Write()
 }
 
 NS_IMETHODIMP
-sbLocalDatabasePropertyCache::GetPropertyID(const nsAString& aProperty,
-                                            PRUint32* _retval)
+sbLocalDatabasePropertyCache::GetPropertyDBID(const nsAString& aPropertyID,
+                                              PRUint32* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  *_retval = GetPropertyIDInternal(aProperty);
+  *_retval = GetPropertyDBIDInternal(aPropertyID);
   return NS_OK;
 }
 
@@ -1055,20 +1055,20 @@ sbLocalDatabasePropertyCache::LoadProperties()
   nsresult rv;
   PRInt32 dbOk;
 
-  if (!mPropertyNameToID.IsInitialized()) {
-    PRBool success = mPropertyNameToID.Init(100);
+  if (!mPropertyIDToDBID.IsInitialized()) {
+    PRBool success = mPropertyIDToDBID.Init(100);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
   else {
-    mPropertyNameToID.Clear();
+    mPropertyIDToDBID.Clear();
   }
 
-  if (!mPropertyIDToName.IsInitialized()) {
-    PRBool success = mPropertyIDToName.Init(100);
+  if (!mPropertyDBIDToID.IsInitialized()) {
+    PRBool success = mPropertyDBIDToID.Init(100);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
   else {
-    mPropertyIDToName.Clear();
+    mPropertyDBIDToID.Clear();
   }
 
   nsCOMPtr<sbISQLSelectBuilder> builder =
@@ -1109,24 +1109,24 @@ sbLocalDatabasePropertyCache::LoadProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < rowCount; i++) {
-    nsAutoString propertyIDStr;
-    rv = result->GetRowCell(i, 0, propertyIDStr);
+    nsAutoString propertyDBIDStr;
+    rv = result->GetRowCell(i, 0, propertyDBIDStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+    PRUint32 propertyDBID = propertyDBIDStr.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString propertyName;
-    rv = result->GetRowCell(i, 1, propertyName);
+    nsString propertyID;
+    rv = result->GetRowCell(i, 1, propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool success = mPropertyIDToName.Put(propertyID, propertyName);
+    PRBool success = mPropertyDBIDToID.Put(propertyDBID, propertyID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-    TRACE(("Added %d => %s to property name cache", propertyID,
-           NS_ConvertUTF16toUTF8(propertyName).get()));
+    TRACE(("Added %d => %s to property name cache", propertyDBID,
+           NS_ConvertUTF16toUTF8(propertyID).get()));
 
-    success = mPropertyNameToID.Put(propertyName, propertyID);
+    success = mPropertyIDToDBID.Put(propertyID, propertyDBID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   }
@@ -1136,13 +1136,14 @@ sbLocalDatabasePropertyCache::LoadProperties()
    */
   for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
 
-    nsAutoString propertyName(sStaticProperties[i].mName);
-    PRBool success = mPropertyIDToName.Put(sStaticProperties[i].mID, propertyName);
+    nsString propertyID(sStaticProperties[i].mPropertyID);
+    PRBool success = mPropertyDBIDToID.Put(sStaticProperties[i].mDBID, propertyID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-    NS_ENSURE_TRUE(mPropertyNameToID.Put(
-      nsDependentString(sStaticProperties[i].mName), sStaticProperties[i].mID),
-      NS_ERROR_OUT_OF_MEMORY);
+    success = mPropertyIDToDBID.Put(nsDependentString(sStaticProperties[i].mPropertyID),
+                                    sStaticProperties[i].mDBID);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   }
 
   return NS_OK;
@@ -1164,11 +1165,11 @@ sbLocalDatabasePropertyCache::AddDirtyGUID(const nsAString &aGuid)
 }
 
 PRUint32
-sbLocalDatabasePropertyCache::GetPropertyIDInternal(const nsAString& aPropertyName)
+sbLocalDatabasePropertyCache::GetPropertyDBIDInternal(const nsAString& aPropertyID)
 {
   PRUint32 retval;
-  if (!mPropertyNameToID.Get(aPropertyName, &retval)) {
-    nsresult rv = InsertPropertyNameInLibrary(aPropertyName, &retval);
+  if (!mPropertyIDToDBID.Get(aPropertyID, &retval)) {
+    nsresult rv = InsertPropertyIDInLibrary(aPropertyID, &retval);
 
     if(NS_FAILED(rv)) {
       retval = 0;
@@ -1179,30 +1180,15 @@ sbLocalDatabasePropertyCache::GetPropertyIDInternal(const nsAString& aPropertyNa
 }
 
 PRBool
-sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
-                                              nsAString& aPropertyName)
+sbLocalDatabasePropertyCache::GetPropertyID(PRUint32 aPropertyDBID,
+                                            nsAString& aPropertyID)
 {
-  nsAutoString propertyName;
-  if (mPropertyIDToName.Get(aPropertyID, &propertyName)) {
-    aPropertyName = propertyName;
+  nsString propertyID;
+  if (mPropertyDBIDToID.Get(aPropertyDBID, &propertyID)) {
+    aPropertyID = propertyID;
     return PR_TRUE;
   }
   return PR_FALSE;
-}
-
-void
-sbLocalDatabasePropertyCache::GetColumnForPropertyID(PRUint32 aPropertyID,
-                                                     nsAString &aColumn)
-{
-  //XXX: This needs to use the property manager when it becomes available.
-  PRUint32 numTopLevelProps = sizeof(sStaticProperties) / sizeof(sbStaticProperty);
-  for(PRUint32 i = 0; i < numTopLevelProps; i++) {
-    if(sStaticProperties[i].mID == aPropertyID) {
-      aColumn = sStaticProperties[i].mColumn;
-      return;
-    }
-  }
-  return;
 }
 
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -1220,10 +1206,10 @@ PropertyIDToNameKeys(nsUint32HashKey::KeyType aPropertyID,
 }
 
 nsresult
-sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aPropertyName,
-                                                          PRUint32 *aPropertyID)
+sbLocalDatabasePropertyCache::InsertPropertyIDInLibrary(const nsAString& aPropertyID,
+                                                        PRUint32 *aPropertyDBID)
 {
-  NS_ENSURE_ARG_POINTER(aPropertyID);
+  NS_ENSURE_ARG_POINTER(aPropertyDBID);
   nsAutoString sql;
 
   nsresult rv = mPropertiesTableInsert->ToString(sql);
@@ -1233,7 +1219,7 @@ sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aProp
   rv = MakeQuery(sql, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindStringParameter(0, aPropertyName);
+  rv = query->BindStringParameter(0, aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sql.AssignLiteral("select last_insert_rowid()");
@@ -1253,17 +1239,17 @@ sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aProp
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString propertyIDStr;
-  rv = result->GetRowCell(0, 0, propertyIDStr);
+  nsAutoString propertyDBIDStr;
+  rv = result->GetRowCell(0, 0, propertyDBIDStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+  PRUint32 propertyDBID = propertyDBIDStr.ToInteger(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  *aPropertyID = propertyID;
+  *aPropertyDBID = propertyDBID;
 
-  mPropertyIDToName.Put(propertyID, nsAutoString(aPropertyName));
-  mPropertyNameToID.Put(nsAutoString(aPropertyName), propertyID);
+  mPropertyDBIDToID.Put(propertyDBID, nsAutoString(aPropertyID));
+  mPropertyIDToDBID.Put(nsAutoString(aPropertyID), propertyDBID);
 
   return NS_OK;
 }
@@ -1338,50 +1324,50 @@ sbLocalDatabaseResourcePropertyBag::GetWritePending(PRBool *aWritePending)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::GetNames(nsIStringEnumerator **aNames)
+sbLocalDatabaseResourcePropertyBag::GetIds(nsIStringEnumerator **aIDs)
 {
-  NS_ENSURE_ARG_POINTER(aNames);
+  NS_ENSURE_ARG_POINTER(aIDs);
 
-  nsTArray<PRUint32> propertyIDs;
-  mValueMap.EnumerateRead(PropertyBagKeysToArray, &propertyIDs);
+  nsTArray<PRUint32> propertyDBIDs;
+  mValueMap.EnumerateRead(PropertyBagKeysToArray, &propertyDBIDs);
 
   PRUint32 len = mValueMap.Count();
-  if (propertyIDs.Length() < len) {
+  if (propertyDBIDs.Length() < len) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
-  nsTArray<nsString> propertyNames;
+  nsTArray<nsString> propertyIDs;
   for (PRUint32 i = 0; i < len; i++) {
-    nsAutoString propertyName;
-    PRBool success = mCache->GetPropertyName(propertyIDs[i], propertyName);
+    nsString propertyID;
+    PRBool success = mCache->GetPropertyID(propertyDBIDs[i], propertyID);
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-    propertyNames.AppendElement(propertyName);
+    propertyIDs.AppendElement(propertyID);
   }
 
-  *aNames = new sbTArrayStringEnumerator(&propertyNames);
-  NS_ENSURE_TRUE(*aNames, NS_ERROR_OUT_OF_MEMORY);
-  NS_ADDREF(*aNames);
+  *aIDs = new sbTArrayStringEnumerator(&propertyIDs);
+  NS_ENSURE_TRUE(*aIDs, NS_ERROR_OUT_OF_MEMORY);
+  NS_ADDREF(*aIDs);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
+sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aPropertyID,
                                                 nsAString& _retval)
 {
-  PRUint32 propertyID = mCache->GetPropertyIDInternal(aName);
-  return GetPropertyByID(propertyID, _retval);
+  PRUint32 propertyDBID = mCache->GetPropertyDBIDInternal(aPropertyID);
+  return GetPropertyByID(propertyDBID, _retval);
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyID,
+sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
                                                     nsAString& _retval)
 {
-  if(aPropertyID > 0) {
+  if(aPropertyDBID > 0) {
     nsAutoLock lock(mDirtyLock);
     nsString* value;
 
-    if (mValueMap.Get(aPropertyID, &value)) {
+    if (mValueMap.Get(aPropertyDBID, &value)) {
       _retval = *value;
       return NS_OK;
     }
@@ -1393,14 +1379,15 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyID,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
+sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
                                                 const nsAString & aValue)
 {
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  PRUint32 propertyID = mCache->GetPropertyIDInternal(aName);
+  PRUint32 propertyDBID = mCache->GetPropertyDBIDInternal(aPropertyID);
 
-  nsresult rv = mPropertyManager->GetPropertyInfo(aName,
-    getter_AddRefs(propertyInfo));
+  nsresult rv;
+  rv = mPropertyManager->GetPropertyInfo(aPropertyID,
+                                         getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool valid = PR_FALSE;
@@ -1410,35 +1397,35 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
 #if defined(PR_LOGGING)
   if(NS_UNLIKELY(!valid)) {
     LOG(("Failed to set property %s with value %s",
-      NS_ConvertUTF16toUTF8(aName).get(),
+      NS_ConvertUTF16toUTF8(aPropertyID).get(),
       NS_ConvertUTF16toUTF8(aValue).get()));
   }
 #endif
 
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
 
-  if(propertyID == 0) {
-    rv = mCache->InsertPropertyNameInLibrary(aName, &propertyID);
+  if(propertyDBID == 0) {
+    rv = mCache->InsertPropertyIDInLibrary(aPropertyID, &propertyDBID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  return SetPropertyByID(propertyID, aValue);
+  return SetPropertyByDBID(propertyDBID, aValue);
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::SetPropertyByID(PRUint32 aPropertyID,
-                                                    const nsAString & aValue)
+sbLocalDatabaseResourcePropertyBag::SetPropertyByDBID(PRUint32 aPropertyDBID,
+                                                      const nsAString & aValue)
 {
   nsresult rv = NS_ERROR_INVALID_ARG;
-  if(aPropertyID > 0) {
-    rv = PutValue(aPropertyID, aValue);
+  if(aPropertyDBID > 0) {
+    rv = PutValue(aPropertyDBID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mCache->AddDirtyGUID(mGuid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PR_Lock(mDirtyLock);
-    mDirty.PutEntry(aPropertyID);
+    mDirty.PutEntry(aPropertyDBID);
     PR_Unlock(mDirtyLock);
 
     if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {

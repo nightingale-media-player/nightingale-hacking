@@ -67,7 +67,7 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   // sbILibraryResource
-  NS_IMETHOD SetProperty(const nsAString& aName, const nsAString& aValue);
+  NS_IMETHOD SetProperty(const nsAString& aID, const nsAString& aValue);
   NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
 
   // sbIMediaList
@@ -75,7 +75,7 @@ public:
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem** _retval);
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener,
                                PRUint16 aEnumerationType);
-  NS_IMETHOD EnumerateItemsByProperty(const nsAString& aPropertyName,
+  NS_IMETHOD EnumerateItemsByProperty(const nsAString& aPropertyID,
                                       const nsAString& aPropertyValue,
                                       sbIMediaListEnumerationListener* aEnumerationListener,
                                       PRUint16 aEnumerationType);
@@ -90,7 +90,7 @@ public:
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
-  NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyName,
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyID,
                                           nsIStringEnumerator **_retval);
 
   // sbIWrappedMediaList

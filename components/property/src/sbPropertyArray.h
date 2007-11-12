@@ -62,7 +62,7 @@ public:
 private:
   nsresult PropertyIsValid(sbIProperty* aProperty,
                            PRBool* _retval);
-  nsresult ValueIsValid(const nsAString& aName,
+  nsresult ValueIsValid(const nsAString& aID,
                         const nsAString& aValue,
                         PRBool* _retval);
 

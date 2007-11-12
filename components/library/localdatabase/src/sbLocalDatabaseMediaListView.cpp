@@ -783,15 +783,15 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
     rv = aSource->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = clone->AppendProperty(propertyName, value);
+    rv = clone->AppendProperty(propertyID, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -817,12 +817,12 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
     rv = aBag1->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString junk;
-    rv = aBag2->GetPropertyValue(propertyName, junk);
+    nsString junk;
+    rv = aBag2->GetPropertyValue(propertyID, junk);
     if (NS_SUCCEEDED(rv)) {
       *aHasCommonProperty = PR_TRUE;
       return NS_OK;
@@ -948,7 +948,7 @@ sbLocalDatabaseMediaListView::GetFilterableProperties(nsIStringEnumerator** aFil
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyName,
+sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyID,
                                               nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -963,7 +963,7 @@ sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyName,
   rv = query->AddQuery(mDistinctPropertyValuesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindStringParameter(0, aPropertyName);
+  rv = query->BindStringParameter(0, aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Flush the property cache
@@ -1066,18 +1066,18 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
     rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the name of the property. This will be the key for the hash table.
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    // Get the id of the property. This will be the key for the hash table.
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the property value
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbStringArray* stringArray;
-    PRBool arrayExists = mViewFilters.Get(propertyName, &stringArray);
+    PRBool arrayExists = mViewFilters.Get(propertyID, &stringArray);
     // If there is an array for this property, search the array for the value
     // and remove it
     if (arrayExists) {
@@ -1479,13 +1479,13 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
     rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the name of the property. This will be the key for the hash table.
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    // Get the id of the property. This will be the key for the hash table.
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the property value
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1493,30 +1493,30 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
     // property from the hash
     if (value.IsVoid()) {
       if (aReplace) {
-        mViewFilters.Remove(propertyName);
+        mViewFilters.Remove(propertyID);
       }
     }
     else {
       // Get the string array associated with the key. If it doesn't yet exist
       // then we need to create it.
       sbStringArray* stringArray;
-      PRBool arrayExists = mViewFilters.Get(propertyName, &stringArray);
+      PRBool arrayExists = mViewFilters.Get(propertyID, &stringArray);
 
       if (!arrayExists) {
         NS_NEWXPCOM(stringArray, sbStringArray);
         NS_ENSURE_TRUE(stringArray, NS_ERROR_OUT_OF_MEMORY);
 
         // Try to add the array to the hash table.
-        success = mViewFilters.Put(propertyName, stringArray);
+        success = mViewFilters.Put(propertyID, stringArray);
         NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
       }
 
       if (aReplace) {
         // If this is the first time we've seen this property, clear the
         // string array
-        if (!seenProperties.GetEntry(propertyName)) {
+        if (!seenProperties.GetEntry(propertyID)) {
           stringArray->Clear();
-          nsStringHashKey* successKey = seenProperties.PutEntry(propertyName);
+          nsStringHashKey* successKey = seenProperties.PutEntry(propertyID);
           NS_ENSURE_TRUE(successKey, NS_ERROR_OUT_OF_MEMORY);
         }
       }
@@ -1601,11 +1601,11 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     rv = mViewSearches->GetPropertyAt(index, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1615,7 +1615,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     }
 
     nsCOMPtr<sbIPropertyInfo> info;
-    rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+    rv = mPropMan->GetPropertyInfo(propertyID, getter_AddRefs(info));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString sortableValue;
@@ -1630,7 +1630,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       new sbTArrayStringEnumerator(&valueArray);
     NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = mArray->AddFilter(propertyName, valueEnum, PR_TRUE);
+    rv = mArray->AddFilter(propertyID, valueEnum, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1656,15 +1656,15 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       rv = mViewSort->GetPropertyAt(index, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString propertyName;
-      rv = property->GetName(propertyName);
+      nsString propertyID;
+      rv = property->GetId(propertyID);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString value;
+      nsString value;
       rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mArray->AddSort(propertyName, value.EqualsLiteral("a"));
+      mArray->AddSort(propertyID, value.EqualsLiteral("a"));
       NS_ENSURE_SUCCESS(rv, rv);
 
       hasSorts = PR_TRUE;

@@ -32,13 +32,13 @@ function runTest() {
     Cc["@songbirdnest.com/Songbird/Properties/Builder/Image;1"]
       .createInstance(Ci.sbIImagePropertyBuilder);
 
-  builder.propertyName = prop;
+  builder.propertyID = prop;
   builder.displayName = "Display";
 
   var pi = builder.get();
 
   assertEqual(pi.type, "image");
-  assertEqual(pi.name, prop);
+  assertEqual(pi.id, prop);
   assertEqual(pi.displayName, "Display");
 }
 

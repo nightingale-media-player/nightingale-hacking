@@ -595,7 +595,7 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
     do_CreateInstance(SB_TEXTPROPERTYINFO_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME));
+  rv = textProperty->SetId(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = textProperty->SetUserViewable(PR_FALSE);

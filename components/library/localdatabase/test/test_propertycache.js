@@ -49,7 +49,7 @@ function runTest () {
       assertEqual(bagCount.value, guidList.length);
 
       for(var i = 0; i < bagCount.value; i++) {
-        var e = bags[i].names;
+        var e = bags[i].ids;
         while(e.hasMore()) {
           var p = e.getNext();
           var guid = guidList[i];
@@ -68,7 +68,7 @@ function runTest () {
     var bags = cache.getProperties([guid], 1, bagCount);
     assertEqual(bagCount.value, 1);
 
-    var e = bags[0].names;
+    var e = bags[0].ids;
     while(e.hasMore()) {
       var p = e.getNext();
       assertEqual(item[p], bags[0].getProperty(p), p + " " + guid);

@@ -38,14 +38,14 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 #define MAX_RATING 5
 #define ZERO_HIT_WIDTH 4
 
-sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyName,
+sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
                                            const nsAString& aDisplayName,
                                            const PRBool aRemoteReadable,
                                            const PRBool aRemoteWritable,
                                            const PRBool aUserViewable,
                                            const PRBool aUserEditable)
 {
-  mName = aPropertyName;
+  mID = aPropertyID;
   mDisplayName = aDisplayName;
   mUserViewable = aUserViewable;
   mUserEditable = aUserEditable;

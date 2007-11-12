@@ -123,7 +123,7 @@ private:
 
   nsresult EnumerateAllItemsInternal(sbIMediaListEnumerationListener* aEnumerationListener);
 
-  nsresult EnumerateItemsByPropertyInternal(const nsAString& aName,
+  nsresult EnumerateItemsByPropertyInternal(const nsAString& aID,
                                             nsIStringEnumerator* aValueEnum,
                                             sbIMediaListEnumerationListener* aEnumerationListener);
 

@@ -48,7 +48,7 @@ public:
   NS_DECL_SBICLICKABLEPROPERTYINFO
   NS_DECL_SBITREEVIEWPROPERTYINFO
 
-  sbDownloadButtonPropertyInfo(const nsAString& aPropertyName,
+  sbDownloadButtonPropertyInfo(const nsAString& aPropertyID,
                                const nsAString& aDisplayName,
                                const nsAString& aLabel,
                                const PRBool aRemoteReadable,

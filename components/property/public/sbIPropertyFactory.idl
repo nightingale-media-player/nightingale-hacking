@@ -37,12 +37,12 @@ interface sbIProperty;
  * \interface sbIPropertyFactory
  * \brief An interface to create sbIProperty instances
  */
-[scriptable, uuid(9788d829-c1a5-4fad-9df3-d2b4263a4fce)]
+[scriptable, uuid(8fe178e8-7c9d-44fd-94e5-7b1efa786414)]
 interface sbIPropertyFactory : nsISupports
 {
   /**
    * Create a property
    */
-  sbIProperty createProperty(in AString aName,
+  sbIProperty createProperty(in AString aID,
                              in AString aValue);
 };

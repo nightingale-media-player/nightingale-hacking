@@ -75,12 +75,12 @@ public:
 
   nsresult AddDirtyGUID(const nsAString &aGuid);
 
-  PRUint32 GetPropertyIDInternal(const nsAString& aPropertyName);
-  PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
+  PRUint32 GetPropertyDBIDInternal(const nsAString& aPropertyID);
+  PRBool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
 
-  void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
-  nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName, PRUint32 *aPropertyID);
-  
+  nsresult InsertPropertyIDInLibrary(const nsAString& aPropertyID,
+                                     PRUint32 *aPropertyDBID);
+
 private:
   // Pending write count.
   PRUint32 mWritePendingCount;
@@ -92,8 +92,8 @@ private:
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
   // Cache the property name list
-  nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyIDToName;
-  nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyNameToID;
+  nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
+  nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
   // Used to template the properties select statement
   nsCOMPtr<sbISQLSelectBuilder> mPropertiesSelect;

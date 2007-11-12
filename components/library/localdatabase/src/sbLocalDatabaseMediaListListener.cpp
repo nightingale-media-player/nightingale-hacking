@@ -653,11 +653,11 @@ sbListenerInfo::ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties)
       rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-      nsAutoString name;
-      rv = property->GetName(name);
+      nsString id;
+      rv = property->GetId(id);
       NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-      if (mPropertyFilter.GetEntry(name)) {
+      if (mPropertyFilter.GetEntry(id)) {
         // Found, we should notify
         return PR_TRUE;
       }
@@ -720,11 +720,11 @@ sbListenerInfo::InitPropertyFilter(sbIPropertyArray* aPropertyFilter)
       rv = aPropertyFilter->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString name;
-      rv = property->GetName(name);
+      nsString id;
+      rv = property->GetId(id);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsStringHashKey* added = mPropertyFilter.PutEntry(name);
+      nsStringHashKey* added = mPropertyFilter.PutEntry(id);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
   }

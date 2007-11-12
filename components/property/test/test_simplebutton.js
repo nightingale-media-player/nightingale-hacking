@@ -32,13 +32,13 @@ function runTest() {
     Cc["@songbirdnest.com/Songbird/Properties/Builder/SimpleButton;1"]
       .createInstance(Ci.sbISimpleButtonPropertyBuilder);
 
-  builder.propertyName = prop;
+  builder.propertyID = prop;
   builder.displayName = "Display";
 
   var pi = builder.get();
 
   assertEqual(pi.type, "button");
-  assertEqual(pi.name, prop);
+  assertEqual(pi.id, prop);
   assertEqual(pi.displayName, "Display");
 
   assertEqual(pi.format(null),    null);

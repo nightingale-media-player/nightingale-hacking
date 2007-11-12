@@ -38,13 +38,13 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyFactory, sbIPropertyFactory)
  * See sbIPropertyFactory
  */
 NS_IMETHODIMP
-sbPropertyFactory::CreateProperty(const nsAString& aName,
+sbPropertyFactory::CreateProperty(const nsAString& aID,
                                   const nsAString& aValue,
                                   sbIProperty** _retval)
 {
-  NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
-  nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aName, aValue);
+  nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aID, aValue);
   NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
   NS_ADDREF(*_retval = property);

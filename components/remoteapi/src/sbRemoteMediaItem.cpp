@@ -151,7 +151,7 @@ sbRemoteMediaItem::GetMediaItem()
 
 /* from sbILibraryResource */
 NS_IMETHODIMP
-sbRemoteMediaItem::GetProperty(const nsAString & aName,
+sbRemoteMediaItem::GetProperty(const nsAString & aID,
                                nsAString & _retval)
 {
   NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
@@ -166,7 +166,7 @@ sbRemoteMediaItem::GetProperty(const nsAString & aName,
 
   // get the property info for the property being requested
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  rv = propertyManager->GetPropertyInfo(aName, getter_AddRefs(propertyInfo));
+  rv = propertyManager->GetPropertyInfo(aID, getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS( rv, rv );
 
   // ask if this property is remotely readable
@@ -181,11 +181,11 @@ sbRemoteMediaItem::GetProperty(const nsAString & aName,
   }
 
   // it all looks ok, pass this request on to the real media item
-  return mMediaItem->GetProperty(aName, _retval);
+  return mMediaItem->GetProperty(aID, _retval);
 }
 
 NS_IMETHODIMP
-sbRemoteMediaItem::SetProperty(const nsAString & aName,
+sbRemoteMediaItem::SetProperty(const nsAString & aID,
                                const nsAString & aValue)
 {
   NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
@@ -201,12 +201,12 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
   // Check to see if we have the property first, if not we must create it with
   // the right settings so websites can modify it.
   PRBool hasProp;
-  rv = propertyManager->HasProperty( aName, &hasProp );
+  rv = propertyManager->HasProperty( aID, &hasProp );
 
   // get the property info for the property being requested - this will create
   // it if it didn't already exist.
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  rv = propertyManager->GetPropertyInfo( aName, getter_AddRefs(propertyInfo) );
+  rv = propertyManager->GetPropertyInfo( aID, getter_AddRefs(propertyInfo) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // check to see if the prop already existed or if we created it
@@ -232,7 +232,7 @@ sbRemoteMediaItem::SetProperty(const nsAString & aName,
   }
   
   // it all looks ok, pass this request on to the real media item
-  rv = mMediaItem->SetProperty(aName, aValue);
+  rv = mMediaItem->SetProperty(aID, aValue);
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<sbILibrary> library;
     rv = mMediaItem->GetLibrary(getter_AddRefs(library));

@@ -164,7 +164,7 @@ sbLocalDatabaseMediaListBase::EnumerateAllItemsInternal(sbIMediaListEnumerationL
  * Internal method that may be inside the monitor.
  */
 nsresult
-sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& aName,
+sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& aID,
                                                                nsIStringEnumerator* aValueEnum,
                                                                sbIMediaListEnumerationListener* aEnumerationListener)
 {
@@ -178,7 +178,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the filter.
-  rv = guidArray->AddFilter(aName, aValueEnum, PR_FALSE);
+  rv = guidArray->AddFilter(aID, aValueEnum, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And make an enumerator to return the filtered items.
@@ -203,7 +203,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertiesInternal(sbStringArrayHa
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now that our hash table is set up we call AddFilter for each property
-  // name and all its associated values.
+  // id and all its associated values.
   PRUint32 filterCount =
     aPropertiesHash->EnumerateRead(AddFilterToGUIDArrayCallback, guidArray);
   
@@ -274,23 +274,23 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString name;
-    rv = property->GetName(name);
+    nsString id;
+    rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // We never want these properties to be copied to a new item
-    if (name.Equals(contentURLProperty) ||
-        name.Equals(createdProperty) ||
-        name.Equals(updatedProperty) ||
-        name.Equals(guidProperty)) {
+    if (id.Equals(contentURLProperty) ||
+        id.Equals(createdProperty) ||
+        id.Equals(updatedProperty) ||
+        id.Equals(guidProperty)) {
       continue;
     }
 
-    nsAutoString value;
+    nsString value;
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mutableArray->AppendProperty(name, value);
+    rv = mutableArray->AppendProperty(id, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -565,15 +565,15 @@ sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener*
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
+sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
                                                        const nsAString& aValue,
                                                        sbIMediaListEnumerationListener* aEnumerationListener,
                                                        PRUint16 aEnumerationType)
 {
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
-  // A property name must be specified.
-  NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  // A property id must be specified.
+  NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
 
@@ -583,7 +583,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> info;
-  rv = propMan->GetPropertyInfo(aName, getter_AddRefs(info));
+  rv = propMan->GetPropertyInfo(aID, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString sortableValue;
@@ -617,7 +617,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
 
       if (NS_SUCCEEDED(rv)) {
         if (beginEnumeration) {
-          rv = EnumerateItemsByPropertyInternal(aName, valueEnum,
+          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
                                                 aEnumerationListener);
         }
         else {
@@ -636,7 +636,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
 
       if (NS_SUCCEEDED(rv)) {
         if (beginEnumeration) {
-          rv = EnumerateItemsByPropertyInternal(aName, valueEnum,
+          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
                                                 aEnumerationListener);
         }
         else {
@@ -677,8 +677,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 
   // The guidArray needs AddFilter called only once per property with an
   // enumerator that contains all the values. We were given an array of
-  // name/value pairs, so this is a little tricky. We make a hash table that
-  // uses the property name for a key and an array of values as its data. Then
+  // id/value pairs, so this is a little tricky. We make a hash table that
+  // uses the property id for a key and an array of values as its data. Then
   // we load the arrays in a loop and finally call AddFilter as an enumeration
   // function.
 
@@ -700,21 +700,21 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     rv = aProperties->GetPropertyAt(index, getter_AddRefs(property));
     SB_CONTINUE_IF_FAILED(rv);
 
-    // Get the name of the property. This will be the key for the hash table.
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
+    // Get the id of the property. This will be the key for the hash table.
+    nsString propertyID;
+    rv = property->GetId(propertyID);
     SB_CONTINUE_IF_FAILED(rv);
 
     // Get the string array associated with the key. If it doesn't yet exist
     // then we need to create it.
     sbStringArray* stringArray;
-    PRBool arrayExists = propertyHash.Get(propertyName, &stringArray);
+    PRBool arrayExists = propertyHash.Get(propertyID, &stringArray);
     if (!arrayExists) {
       NS_NEWXPCOM(stringArray, sbStringArray);
       SB_CONTINUE_IF_FALSE(stringArray);
 
       // Try to add the array to the hash table.
-      PRBool success = propertyHash.Put(propertyName, stringArray);
+      PRBool success = propertyHash.Put(propertyID, stringArray);
       if (!success) {
         NS_WARNING("Failed to add string array to property hash!");
         
@@ -731,7 +731,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 
     // Make the value sortable and assign it
     nsCOMPtr<sbIPropertyInfo> info;
-    rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+    rv = propMan->GetPropertyInfo(propertyID, getter_AddRefs(info));
     SB_CONTINUE_IF_FAILED(rv);
 
     nsAutoString value;
@@ -971,7 +971,7 @@ sbLocalDatabaseMediaListBase::CreateView(sbIMediaListViewState* aState,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPropertyName,
+sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPropertyID,
                                                            nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -986,7 +986,7 @@ sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPro
   rv = guidArray->ClearSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = guidArray->AddSort(aPropertyName, PR_TRUE);
+  rv = guidArray->AddSort(aPropertyID, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbGUIDArrayValueEnumerator* enumerator =

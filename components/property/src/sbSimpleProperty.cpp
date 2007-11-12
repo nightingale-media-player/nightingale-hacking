@@ -32,9 +32,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbSimpleProperty, sbIProperty)
  * See sbIProperty
  */
 NS_IMETHODIMP
-sbSimpleProperty::GetName(nsAString& aName)
+sbSimpleProperty::GetId(nsAString& aID)
 {
-  aName.Assign(mName);
+  aID.Assign(mID);
   return NS_OK;
 }
 

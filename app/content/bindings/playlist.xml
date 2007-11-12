@@ -442,7 +442,7 @@
       for (var i = 0; i < properties.length; i++) {
         property = properties.getPropertyAt(i);
         // Continue adding terms until we get to the next property
-        if (previousProperty && property.name != previousProperty.name) {
+        if (previousProperty && property.id != previousProperty.id) {
           break;
         }
         terms.push(property.value);
@@ -708,7 +708,7 @@
   // Our new "column spec" is a whitespace separated string that looks like
   // this:
   // 
-  // "propertyName [20] [a] propertyName [40] [d]"
+  // "propertyID [20] [a] propertyID [40] [d]"
   //
   // The width and sort direction are optional.
   
@@ -795,11 +795,11 @@
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
   // show them
-  var propEnumerator = this._pm.propertyNames;
+  var propEnumerator = this._pm.propertyIDs;
   while (propEnumerator.hasMore()) {
-    var propertyName = propEnumerator.getNext();
-    if (!alreadyAdded[propertyName]) {
-      var propertyInfo = this._pm.getPropertyInfo(propertyName);
+    var propertyID = propEnumerator.getNext();
+    if (!alreadyAdded[propertyID]) {
+      var propertyInfo = this._pm.getPropertyInfo(propertyID);
       if(propertyInfo.userViewable) {
         this._appendColumn(propertyInfo,
                           columnMap.length,
@@ -1159,7 +1159,7 @@
         <body>
 <![CDATA[
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
-  treecol.setAttribute("bind", propertyInfo.name);
+  treecol.setAttribute("bind", propertyInfo.id);
   treecol.setAttribute("label", propertyInfo.displayName);
   treecol.setAttribute("flex", "1");
   if (width) {

@@ -1581,14 +1581,14 @@ nsresult sbMetadataJob::CreateDefaultItemName(const nsAString &aURLString,
 nsresult
 sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
                              sbIMutablePropertyArray* aProperties,
-                             const nsAString& aName,
+                             const nsAString& aID,
                              const nsAString& aValue)
 {
   NS_ASSERTION(aPropertyManager, "aPropertyManager is null");
   NS_ASSERTION(aProperties, "aProperties is null");
 
   nsCOMPtr<sbIPropertyInfo> info;
-  nsresult rv = aPropertyManager->GetPropertyInfo(aName, getter_AddRefs(info));
+  nsresult rv = aPropertyManager->GetPropertyInfo(aID, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isValid;
@@ -1596,7 +1596,7 @@ sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (isValid) {
-    rv = aProperties->AppendProperty(aName, aValue);
+    rv = aProperties->AppendProperty(aID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
