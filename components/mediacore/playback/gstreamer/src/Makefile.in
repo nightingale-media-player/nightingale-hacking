@@ -46,18 +46,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
       xpcom \
       xpcomglue_s \
-      gstreamer-0.10 \
-      gstinterfaces-0.10 \
-      gobject-2.0 \
-      gthread-2.0 \
-      gmodule-2.0 \
-      dl \
-      glib-2.0 \
-      xml2 \
       $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = \
       $(MOZSDK_LIB_DIR) \
+      $(NULL)
+
+DYNAMIC_LIB_EXTRA_FLAGS = \
+      $(GSTREAMER_LIBS) \
       $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)

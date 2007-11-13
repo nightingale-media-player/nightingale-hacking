@@ -194,6 +194,7 @@ UNZIPFLAGS_EXTRACT    = @UNZIPFLAGS_EXTRACT@
 XPIDLFLAGS_INCLUDE    = -I
 
 GSTREAMER_CFLAGS      = @GSTREAMER_CFLAGS@
+GSTREAMER_LIBS        = @GSTREAMER_LIBS@
 GTK_CFLAGS            = @GTK_CFLAGS@
 
 #------------------------------------------------------------------------------

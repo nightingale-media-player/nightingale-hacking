@@ -499,6 +499,7 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
+    AC_SUBST(GSTREAMER_LIBS)
     AC_SUBST(GTK_CFLAGS)
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
