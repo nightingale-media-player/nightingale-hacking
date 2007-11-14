@@ -41,6 +41,7 @@
           sbid="filter_tree"
           flex="1"
           onselect="_onFilterListSelect(event);"
+          ondblclick="_onFilterListDblClick(event);"
           enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
@@ -236,6 +237,19 @@
         </body>
       </method>
 
+      <method name="_onFilterListDblClick">
+        <body>
+          <![CDATA[
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                .getService(Components.interfaces.nsIWindowMediator);
+            var mainWin = wm.getMostRecentWindow("Songbird:Main");
+            if (mainWin && mainWin.window && mainWin.window.gBrowser) {
+              mainWin.window.gBrowser.currentPlaylist.sendPlayEvent();
+            }
+          ]]>
+        </body>
+      </method>
+      
       <method name="onChange">
         <body>
 <![CDATA[
