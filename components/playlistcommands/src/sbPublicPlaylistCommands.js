@@ -671,13 +671,11 @@ PublicPlaylistCommands.prototype = {
 
     this.m_webMediaHistoryToolbarCommands.setVisibleCallback
                                                     (plCmd_ShowForToolbarCheck);
-    this.m_webMediaHistoryToolbarCommands.setInitCallback(plCmd_DownloadInit);
-    this.m_webMediaHistoryToolbarCommands.setShutdownCallback(plCmd_DownloadShutdown);
 
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_WEBTOOLBAR,
                        this.m_webMediaHistoryToolbarCommands);
 
-    // Register these commands to the download playlist
+    // Register these commands to the web media history library
 
     this.m_mgr.registerPlaylistCommandsMediaItem
                                               (webListGUID,
@@ -808,6 +806,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
 
@@ -1300,6 +1299,7 @@ function getWebLibrary() {
       g_webLibrary = libraryManager.getLibrary(webListGUID); 
     }
   } catch(e) {
+    Components.utils.reportError(e);
   }
 
   return g_webLibrary;
