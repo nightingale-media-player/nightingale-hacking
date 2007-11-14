@@ -845,6 +845,8 @@ PublicPlaylistCommands.prototype = {
                                                this.m_downloadCommandsServicePane);
     
     g_downloadDevice = null;
+
+    g_webLibrary = null;
     
     // Un-register web playlist commands
     
@@ -885,6 +887,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_list_Rename.shutdown();
     this.m_defaultCommands.shutdown();
     this.m_webPlaylistCommands.shutdown();
+    this.m_webMediaHistoryToolbarCommands.shutdown();
     this.m_downloadCommands.shutdown();
     this.m_downloadToolbarCommands.shutdown();
     this.m_downloadCommandsServicePane.shutdown();
