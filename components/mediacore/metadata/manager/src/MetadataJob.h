@@ -1,32 +1,32 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
 /**
 * \file MetadataJob.h
-* \brief 
+* \brief
 */
 
 #ifndef __METADATA_JOB_H__
@@ -50,17 +50,19 @@
 #include <nsIStringBundle.h>
 #include <nsInterfaceHashtable.h>
 
-#include "sbILibraryManager.h"
-#include "sbIDatabaseQuery.h"
-#include "sbIDatabaseResult.h"
-#include "sbIDataRemote.h"
-#include "sbIMediaItem.h"
-#include "sbIMetadataManager.h"
-#include "sbIMetadataHandler.h"
-#include "sbIMetadataJob.h"
-#include "sbIMetadataValues.h"
+#include <sbILibraryManager.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbIDataRemote.h>
+#include <sbIMediaItem.h>
+#include <sbIMetadataManager.h>
+#include <sbIMetadataHandler.h>
+#include <sbIMetadataJob.h>
+#include <sbIMetadataValues.h>
 
 #include <set>
+
+#include <sbMediaListBatchCallback.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAJOB_CONTRACTID \
@@ -72,6 +74,8 @@
 // {C38FD6BD-3335-4392-A3DE-1855ECEDA4F8}
 #define SONGBIRD_METADATAJOB_CID \
 { 0xC38FD6BD, 0x3335, 0x4392, { 0xA3, 0xDE, 0x18, 0x55, 0xEC, 0xED, 0xA4, 0xF8 } }
+
+#define SBMETADATAJOB_DATABASE_GUID "sbMetadataJob"
 
 // FUNCTIONS ==================================================================
 
@@ -87,6 +91,7 @@ class sbMetadataJobProcessorThread;
 class sbMetadataJob : public sbIMetadataJob
 {
   friend class sbMetadataJobProcessorThread;
+  friend class sbMediaListBatchCallback;
 
 public:
   NS_DECL_ISUPPORTS
@@ -102,7 +107,7 @@ public:
     ((sbMetadataJob*)aClosure)->RunTimer();
   }
 
-  static inline nsString DATABASE_GUID() { return NS_LITERAL_STRING( "sbMetadataJob" ); }
+  static inline nsString DATABASE_GUID() { return NS_LITERAL_STRING( SBMETADATAJOB_DATABASE_GUID ); }
 
 protected:
   class jobitem_t
@@ -171,6 +176,9 @@ protected:
   static nsresult GetJobLibrary( sbIDatabaseQuery *aQuery, const nsAString& aTableName, sbILibrary **_retval );
   static nsresult DropJobTable( sbIDatabaseQuery *aQuery, const nsAString& aTableName );
 
+  static nsresult ProcessInitBatchFunc(nsISupports* aUserData);
+  static nsresult RunThreadBatchFunc(nsISupports* aUserData);
+
   void IncrementDataRemote();
   void DecrementDataRemote();
 
@@ -189,11 +197,11 @@ protected:
   nsCOMPtr<nsIObserver>         mObserver;
   nsCOMPtr<sbIURIMetadataHelper> mURIMetadataHelper;
   nsCOMPtr<sbILibrary>          mLibrary;
-  PRBool                        mCompleted;
-  PRBool                        mInitCompleted;
-  PRBool                        mInitExecuted;
-  PRBool                        mTimerCompleted;
-  PRBool                        mThreadCompleted;
+  PRPackedBool                  mCompleted;
+  PRPackedBool                  mInitCompleted;
+  PRPackedBool                  mInitExecuted;
+  PRPackedBool                  mTimerCompleted;
+  PRPackedBool                  mThreadCompleted;
 };
 
 class sbMetadataJobProcessorThread : public nsIRunnable
@@ -203,13 +211,8 @@ public:
 
   sbMetadataJobProcessorThread(sbMetadataJob* pMetadataJob) {
     NS_ASSERTION(pMetadataJob, "Null pointer!");
-    MOZ_COUNT_CTOR(sbMetadataJobProcessorThread);
     mMetadataJob = pMetadataJob;
     mShutdown = PR_FALSE;
-  }
-
-  ~sbMetadataJobProcessorThread() {
-    MOZ_COUNT_DTOR(sbMetadataJobProcessorThread);
   }
 
   NS_IMETHOD Run()

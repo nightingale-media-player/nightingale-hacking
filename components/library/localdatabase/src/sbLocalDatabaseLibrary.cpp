@@ -2957,7 +2957,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
 
     // Start a batch in both the library and all the lists that we are
     // removing from
-    sbAutoBatchHelper batchHelper(this);
+    sbAutoBatchHelper batchHelper(*this);
     sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
 
     map.EnumerateRead(NotifyListsBeforeItemRemoved, SB_IMEDIALIST_CAST(this));
@@ -2996,7 +2996,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     }
   }
   else { // isLibrary
-    sbAutoBatchHelper batchHelper(viewMediaList);
+    sbAutoBatchHelper batchHelper(*viewMediaList);
 
     // If this is a media list, just notify the list
     nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
@@ -3163,7 +3163,7 @@ sbLocalDatabaseLibrary::AddAll(sbIMediaList* aMediaList)
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   sbLibraryInsertingEnumerationListener listener(this);
   nsresult rv =
@@ -3191,7 +3191,7 @@ sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(beginEnumeration, NS_ERROR_ABORT);
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   PRBool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
@@ -3275,7 +3275,7 @@ sbLocalDatabaseLibrary::RemoveSome(nsISimpleEnumerator* aMediaItems)
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   // Use our enumeration listener to make this use the same code as all the
   // other remove methods.
@@ -3768,7 +3768,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
 
   {
-    sbAutoBatchHelper batchHelper(mLibrary);
+    sbAutoBatchHelper batchHelper(*mLibrary);
 
     // Bulk get all the property bags for the newly added items
     nsTArray<const PRUnichar*> guidArray(length);

@@ -149,28 +149,28 @@ function runTest () {
 
   listener.reset();
   listener.retval = false;
-  library.beginUpdateBatch();
 
-  // In batch, onItemUpdated returning false, should be notified
-  item.setProperty(SB_NS + "albumName", "foo");
-  assertEqual(listener.updatedItem, item);
+  library.runInBatchMode(function() {
 
-  listener.reset();
-  listener.retval = true;
+    // In batch, onItemUpdated returning false, should be notified
+    item.setProperty(SB_NS + "albumName", "foo");
+    assertEqual(listener.updatedItem, item);
 
-  // In batch, onItemUpdated returning true, should be notified since the
-  // last call returned true
-  item.setProperty(SB_NS + "albumName", "foo");
-  assertEqual(listener.updatedItem, item);
+    listener.reset();
+    listener.retval = true;
 
-  listener.reset();
-  listener.retval = true;
+    // In batch, onItemUpdated returning true, should be notified since the
+    // last call returned true
+    item.setProperty(SB_NS + "albumName", "foo");
+    assertEqual(listener.updatedItem, item);
 
-  // In batch, onItemUpdated returning true, should not be notified
-  item.setProperty(SB_NS + "albumName", "foo");
-  assertEqual(listener.updatedItem, null);
+    listener.reset();
+    listener.retval = true;
 
-  library.endUpdateBatch();
+    // In batch, onItemUpdated returning true, should not be notified
+    item.setProperty(SB_NS + "albumName", "foo");
+    assertEqual(listener.updatedItem, null);
+  });
 
   listener.reset();
   listener.retval = true;
@@ -191,8 +191,7 @@ function runTest () {
 
 function doSomethingThatFiresAllEvents(library) {
 
-  library.beginUpdateBatch();
-  library.endUpdateBatch();
+  library.runInBatchMode(function() {});
   var item = library.createMediaItem(newURI("http://foo.com/"), null, true);
   item.setProperty(SB_NS + "albumName", "foo");
   library.remove(item);
@@ -255,4 +254,3 @@ function createPropertyArray() {
   return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
            .createInstance(Ci.sbIMutablePropertyArray);
 }
-

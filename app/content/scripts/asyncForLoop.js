@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -64,25 +64,25 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     this.m_Delay         = aIntervalDelay;
     this.m_Interval      = null;
     this.m_AsyncState    = 0;
-    
+
     this.pushAsync = function()
     {
       this.m_AsyncState++;
     }
-    
+
     this.popAsync = function()
     {
       if ( --this.m_AsyncState < 0 )
         throw "UNBALANCED ASYNC HANDLER";
     }
-    
+
     this.cancel = function()
     {
       clearInterval( this.m_Interval );
       this.m_Interval = null;
       sbIAsyncForLoopArray[ this.m_Index ] = null; // Release things when we're done.
     }
-    
+
     this.step = function( index )
     {
       if ( this.m_Interval )
@@ -96,11 +96,12 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
             // either run a function or code to see if we are done processing
             if ( typeof( this.m_WhileEval ) == 'function' )
               step = this.m_WhileEval();
-            else          
+            else
               step = eval( this.m_WhileEval );
           }
           catch ( err )
           {
+            Components.utils.reportError(err);
             alert( "sbIAsyncForLoop::eval( this.m_WhileEval )\r\n" + this.m_WhileEval + "\r\n" + err );
           }
           // step will be false if we have processed everything.
@@ -111,22 +112,24 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
               // pop will be true if we found media, false otherwise
               if ( typeof( this.m_BodyEval ) == 'function' )
                 pop = this.m_BodyEval() == true;
-              else          
+              else
                 pop = eval( this.m_BodyEval ) == true;
             }
             catch ( err )
             {
+              Components.utils.reportError(err);
               alert( "sbIAsyncForLoop::eval( this.m_BodyEval )\r\n" + this.m_BodyEval + "\r\n" + err );
             }
             try
             {
               if ( typeof( this.m_StepEval ) == 'function' )
                 this.m_StepEval();
-              else          
+              else
                 eval( this.m_StepEval );
             }
             catch ( err )
             {
+              Components.utils.reportError(err);
               alert( "sbIAsyncForLoop::eval( this.m_StepEval )\r\n" + this.m_StepEval + "\r\n" + err );
             }
             // Optionally pop out of the m_StepsPer loop.
@@ -141,11 +144,12 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
             {
               if ( typeof( this.m_FinishedEval ) == 'function' )
                 this.m_FinishedEval();
-              else          
+              else
                 eval( this.m_FinishedEval );
             }
             catch ( err )
             {
+              Components.utils.reportError(err);
               alert( "sbIAsyncForLoop::eval( this.m_FinishedEval )\r\n" + this.m_FinishedEval + "\r\n" + err );
             }
             // Now we're done.  Shut off the Interval.
@@ -155,23 +159,25 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
         }
       }
     }
-    
+
     // And start things off
     try
     {
       if ( typeof( this.m_InitEval ) == 'function' )
         this.m_InitEval();
-      else          
+      else
         eval( this.m_InitEval );
     }
     catch ( err )
     {
+      Components.utils.reportError(err);
       alert( "sbIAsyncForLoop::eval( this.m_InitEval )\r\n" + this.m_InitEval + "\r\n" + err );
     }
     this.m_Interval = setInterval( "sbIAsyncForLoopArray[ " + this.m_Index + " ].step()", this.m_Delay );
   }
   catch ( err )
   {
+    Components.utils.reportError(err);
     alert( "sbIAsyncForLoop - construct\r\n" + err );
   }
 }
@@ -185,7 +191,7 @@ function f()
   this.i = 0;
 }
 var loop = new sbIAsyncForLoop
-( 
+(
   // aInitEval, aWhileEval, aStepEval, aBodyEval, aFinishedEval
   f, // "this.i = 0",
   "this.i <= 10",

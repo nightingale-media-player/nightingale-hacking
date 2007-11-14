@@ -696,7 +696,7 @@ sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   sbSimpleMediaListInsertingEnumerationListener listener(this);
   nsresult rv =
@@ -719,7 +719,7 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
   nsresult rv = listener.OnEnumerationBegin(nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   PRBool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
@@ -731,7 +731,7 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
     SB_CONTINUE_IF_FAILED(rv);
 
     rv = listener.OnEnumeratedItem(nsnull, item, nsnull);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnEnumeratedItem failed!");    
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnEnumeratedItem failed!");
   }
 
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
@@ -909,7 +909,7 @@ sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   rv = query->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1169,14 +1169,14 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListViewState* aState,
 }
 
 // sbILocalDatabaseSimpleMediaList
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetCopyListener(
   sbILocalDatabaseMediaListCopyListener * *aCopyListener)
 {
   NS_ENSURE_ARG_POINTER(aCopyListener);
 
   *aCopyListener = nsnull;
-  
+
   if(mCopyListener) {
     NS_ADDREF(*aCopyListener = mCopyListener);
   }
@@ -1425,7 +1425,7 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoBatchHelper batchHelper(this);
+  sbAutoBatchHelper batchHelper(*this);
 
   rv = query->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1831,7 +1831,7 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   //     where
   //       member_media_item_id = ?
   //     order by ordinal limit 1)
-  nsCOMPtr<sbISQLDeleteBuilder> deleteb = 
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
 
   rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
@@ -1950,7 +1950,7 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseSimpleMediaList::NotifyCopyListener(sbIMediaItem *aSourceItem,
                                                    sbIMediaItem *aDestItem)
 {
@@ -2027,4 +2027,3 @@ sbLocalDatabaseSimpleMediaList::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

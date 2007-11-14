@@ -78,6 +78,8 @@ public:
   PRUint32 GetPropertyDBIDInternal(const nsAString& aPropertyID);
   PRBool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
 
+  void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
+
   nsresult InsertPropertyIDInLibrary(const nsAString& aPropertyID,
                                      PRUint32 *aPropertyDBID);
 
@@ -131,7 +133,7 @@ private:
   // Dirty GUIDs
   PRLock* mDirtyLock;
   nsTHashtable<nsStringHashKey> mDirty;
-  
+
   // flushing on a background thread
   struct FlushQueryData {
     nsCOMPtr<sbIDatabaseQuery> query;

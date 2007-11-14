@@ -94,8 +94,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListViewState* aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString& aPropertyID, nsIStringEnumerator** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } \
-  NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->BeginUpdateBatch(); } \
-  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); }
+  NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); }
 
 class sbLocalDatabaseSmartMediaListCondition : public sbILocalDatabaseSmartMediaListCondition
 {
@@ -194,7 +193,7 @@ private:
   nsresult DropTempTable(const nsAString& aName);
 
   nsresult ExecuteQuery(const nsAString& aSql);
- 
+
   nsresult MakeTempTableName(nsAString& aName);
 
   nsresult GetMediaItemIdRange(PRUint32* aMin, PRUint32* aMax);
@@ -232,4 +231,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASESMARTMEDIALIST_H__ */
-

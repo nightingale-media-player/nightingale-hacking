@@ -52,6 +52,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/sqlbuilder/public \
                $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/library/base/src \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/sqlbuilder/src \
                $(topsrcdir)/components/include \

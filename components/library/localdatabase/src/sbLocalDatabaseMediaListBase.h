@@ -76,6 +76,8 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
                                      public sbLocalDatabaseMediaListListener,
                                      public sbIMediaList
 {
+  friend class sbAutoBatchHelper;
+
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
 
@@ -113,6 +115,13 @@ protected:
                                            sbIPropertyArray** _retval);
 
 private:
+  // These aren't meant to be called directly, use sbAutoBatchHelper.
+  void BeginUpdateBatch() {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+  }
+  void EndUpdateBatch() {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
+  }
 
   // This callback is meant to be used with an sbStringArrayHash.
   // aUserData should be a sbILocalDatabaseGUIDArray pointer.
@@ -159,25 +168,24 @@ private:
 class sbAutoBatchHelper
 {
 public:
-  sbAutoBatchHelper(sbLocalDatabaseMediaListBase* aList)
+  sbAutoBatchHelper(sbLocalDatabaseMediaListBase& aList)
   : mList(aList)
   {
-    NS_ASSERTION(aList, "Null pointer!");
-    mList->BeginUpdateBatch();
+    mList.BeginUpdateBatch();
   }
 
   ~sbAutoBatchHelper()
   {
-    mList->EndUpdateBatch();
+    mList.EndUpdateBatch();
   }
 
 private:
   // Not meant to be implemented. This makes it a compiler error to
   // attempt to create an object on the heap.
-  static void* operator new(size_t /*size*/) CPP_THROW_NEW {return 0;}
-  static void operator delete(void* /*memory*/) { }
+  static void* operator new(size_t /*size*/) CPP_THROW_NEW;
+  static void operator delete(void* /*memory*/);
 
-  sbLocalDatabaseMediaListBase* mList;
+  sbLocalDatabaseMediaListBase& mList;
 };
 
 class sbGUIDArrayValueEnumerator : public nsIStringEnumerator

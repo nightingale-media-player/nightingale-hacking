@@ -114,8 +114,8 @@ function runTest () {
   listListener.reset();
 
   // test begin/end update batch
-  library.beginUpdateBatch();
-  library.endUpdateBatch();
+  library.runInBatchMode(function() {});
+
   assertTrue(library.equals(libraryListener.batchBeginList));
   assertTrue(library.equals(libraryListener.batchEndList));
   assertEqual(listListener.batchBeginList, null);
@@ -124,8 +124,7 @@ function runTest () {
   libraryListener.reset();
   listListener.reset();
 
-  list.beginUpdateBatch();
-  list.endUpdateBatch();
+  list.runInBatchMode(function() {});
   assertEqual(libraryListener.batchBeginList, null);
   assertEqual(libraryListener.batchEndList, null);
   assertTrue(list.equals(listListener.batchBeginList));
@@ -134,4 +133,3 @@ function runTest () {
   list.removeListener(listListener);
   library.removeListener(libraryListener);
 }
-

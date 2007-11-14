@@ -190,21 +190,17 @@ try
               context.showPlaylist = true;
           }
 
-          // Let the view know that we're about to make a lot of changes.
-          mediaList.beginUpdateBatch();
-
-          // Only clear the list if we have anything to add.
-          if (mediaList.length) {
-            // This will need to be fixed for multiple frames with media urls
-            mediaList.clear();
-          }
-
-          // Use a try/finally construct to make sure that we call
-          // endUpdateBatch no matter what happens.
+          var self = this;
           var mediaItemsToScan;
-          try {
+
+          var batchFunction = function() {
+            // Only clear the list if we have anything to add.
+            if (mediaList.length) {
+              // This will need to be fixed for multiple frames with media urls
+              mediaList.clear();
+            }
             for (var index = 0; index < foundItemsLength; index++) {
-              var item = this.items[index];
+              var item = self.items[index];
               var mediaItem;
 
               if (item instanceof Components.interfaces.sbIMediaItem) {
@@ -225,9 +221,9 @@ try
 
                 // Set the originURL/Page values to remember our state.
                 var propArray = [
-                    [SBProperties.originPage, this.currentURL],
+                    [SBProperties.originPage, self.currentURL],
                     [SBProperties.originURL, url],
-                    [SBProperties.originPageTitle, this.currentTitle],
+                    [SBProperties.originPageTitle, self.currentTitle],
                     [SBProperties.downloadButton, "1|0|0"]
                   ];
                 // Add the track name if requested.
@@ -249,10 +245,9 @@ try
               }
               mediaList.add(mediaItem);
             }
-          } finally {
-            // Tell the view that it can redraw itself.
-            mediaList.endUpdateBatch();
-          }
+          };
+
+          mediaList.runInBatchMode(batchFunction);
 
           // Create a metadata task if there's anything to scan.
           if (mediaItemsToScan && mediaItemsToScan.length) {

@@ -112,8 +112,7 @@ typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return _to LastIndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return _to AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return _to RemoveListener(aListener); } \
-  NS_IMETHOD BeginUpdateBatch(void) { return _to BeginUpdateBatch(); } \
-  NS_IMETHOD EndUpdateBatch(void) { return _to EndUpdateBatch(); } \
+  NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return _to RunInBatchMode(aCallback, aUserData); } \
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,

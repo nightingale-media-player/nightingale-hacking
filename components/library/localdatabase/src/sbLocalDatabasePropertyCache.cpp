@@ -404,7 +404,7 @@ sbLocalDatabasePropertyCache::Shutdown()
       mIsShuttingDown = PR_TRUE;
       mon.Notify();
     }
-    
+
     // let the thread join
     mFlushThread->Shutdown();
     mFlushThread = nsnull;
@@ -703,7 +703,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   nsresult rv = NS_OK;
 
-  sbAutoBatchHelper batchHelper(mLibrary);
+  sbAutoBatchHelper batchHelper(*mLibrary);
 
   for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     nsAutoString guid(aGUIDArray[i]);
@@ -770,7 +770,7 @@ NS_IMETHODIMP
 sbLocalDatabasePropertyCache::Write()
 {
   NS_ASSERTION(mLibrary, "You didn't initalize!");
-  
+
   nsresult rv = NS_OK;
 
   { // deal with any queued up queries (to make sure we commit in order)
@@ -779,17 +779,17 @@ sbLocalDatabasePropertyCache::Write()
     while (!mUnflushedQueries.IsEmpty()) {
       PRInt32 dbOk;
       query = mUnflushedQueries[0].query;
-    
+
       rv = query->Execute(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-      
+
       rv = query->WaitForCompletion(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-      
+
       mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
-      
+
       mUnflushedQueries.RemoveElementAt(0);
     }
   }
@@ -798,20 +798,20 @@ sbLocalDatabasePropertyCache::Write()
   PRUint32 dirtyGuidCount;
   { // find the new dirty properties
     nsTArray<nsString> dirtyGuids;
-  
+
     //Lock it.
     nsAutoLock lock(mDirtyLock);
-  
+
     //Enumerate dirty GUIDs
     dirtyGuidCount = mDirty.EnumerateEntries(EnumDirtyGuids, (void *) &dirtyGuids);
-  
+
     if (!dirtyGuidCount)
       return NS_OK;
-  
+
     rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
-  
+
     //For each GUID, there's a property bag that needs to be processed as well.
     for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
       nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
@@ -845,7 +845,7 @@ sbLocalDatabasePropertyCache::Write()
 
           //Top level properties need to be treated differently, so check for them.
           if(SB_IsTopLevelProperty(dirtyProps[j])) {
-  
+
             // Switch the query if we are updating the library resource
             nsString sql;
             if (dirtyGuids[i].Equals(mLibraryResourceGUID)) {
@@ -860,10 +860,10 @@ sbLocalDatabasePropertyCache::Write()
 
             rv = query->AddQuery(sql);
             NS_ENSURE_SUCCESS(rv, rv);
-  
+
             rv = query->BindStringParameter(0, value);
             NS_ENSURE_SUCCESS(rv, rv);
-  
+
             rv = query->BindStringParameter(1, dirtyGuids[i]);
             NS_ENSURE_SUCCESS(rv, rv);
           }
@@ -871,10 +871,10 @@ sbLocalDatabasePropertyCache::Write()
             if (value.IsVoid()) {
               rv = query->AddQuery(mPropertiesDelete);
               NS_ENSURE_SUCCESS(rv, rv);
-  
+
               rv = query->BindStringParameter(0, dirtyGuids[i]);
               NS_ENSURE_SUCCESS(rv, rv);
-  
+
               rv = query->BindInt32Parameter(1, dirtyProps[j]);
               NS_ENSURE_SUCCESS(rv, rv);
             }
@@ -883,23 +883,23 @@ sbLocalDatabasePropertyCache::Write()
               rv = mPropertyManager->GetPropertyInfo(propertyID,
                                                      getter_AddRefs(propertyInfo));
               NS_ENSURE_SUCCESS(rv, rv);
-  
+
               nsString sortable;
               rv = propertyInfo->MakeSortable(value, sortable);
               NS_ENSURE_SUCCESS(rv, rv);
-    
+
               rv = query->AddQuery(mPropertiesInsertOrReplace);
               NS_ENSURE_SUCCESS(rv, rv);
-    
+
               rv = query->BindStringParameter(0, dirtyGuids[i]);
               NS_ENSURE_SUCCESS(rv, rv);
-    
+
               rv = query->BindInt32Parameter(1, dirtyProps[j]);
               NS_ENSURE_SUCCESS(rv, rv);
-    
+
               rv = query->BindStringParameter(2, value);
               NS_ENSURE_SUCCESS(rv, rv);
-    
+
               rv = query->BindStringParameter(3, sortable);
               NS_ENSURE_SUCCESS(rv, rv);
             }
@@ -914,7 +914,7 @@ sbLocalDatabasePropertyCache::Write()
     for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
       nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
       if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
-  
+
         // XXXben FIX ME
         sbLocalDatabaseResourcePropertyBag* bagLocal =
           static_cast<sbLocalDatabaseResourcePropertyBag *>(bag.get());
@@ -925,7 +925,7 @@ sbLocalDatabasePropertyCache::Write()
     //Clear dirty guid hastable.
     mDirty.Clear();
   }
-  
+
   // push the new query to the queue (in case it fails, we can retry)
   // (all this is to make sure we avoid holding mDirtyLock while waiting
   //  for the query to complete)
@@ -935,7 +935,7 @@ sbLocalDatabasePropertyCache::Write()
     newData->query = query;
     newData->dirtyGuidCount = dirtyGuidCount;
   }
-    
+
 
   //  now we can actually attempt to commit
   {
@@ -944,17 +944,17 @@ sbLocalDatabasePropertyCache::Write()
     while (!mUnflushedQueries.IsEmpty()) {
       PRInt32 dbOk;
       query = mUnflushedQueries[0].query;
-    
+
       rv = query->Execute(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-      
+
       rv = query->WaitForCompletion(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-      
+
       mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
-      
+
       mUnflushedQueries.RemoveElementAt(0);
     }
   }
