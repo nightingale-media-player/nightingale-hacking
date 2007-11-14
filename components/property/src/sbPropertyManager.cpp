@@ -43,6 +43,7 @@
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
+#include "sbOriginPageImagePropertyBuilder.h"
 
 #include <sbTArrayStringEnumerator.h>
 #include <sbIPropertyBuilder.h>
@@ -519,7 +520,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Download button
   nsRefPtr<sbDownloadButtonPropertyBuilder> dbBuilder =
     new sbDownloadButtonPropertyBuilder();
-  NS_ENSURE_TRUE(dbBuilder, rv);
+  NS_ENSURE_TRUE(dbBuilder, NS_ERROR_OUT_OF_MEMORY);
 
   rv = dbBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -555,7 +556,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   // Rating
   nsRefPtr<sbRatingPropertyBuilder> rBuilder = new sbRatingPropertyBuilder();
-  NS_ENSURE_TRUE(dbBuilder, rv);
+  NS_ENSURE_TRUE(rBuilder, NS_ERROR_OUT_OF_MEMORY);
 
   rv = rBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -566,13 +567,38 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = rBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.rating"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = rBuilder->Get(getter_AddRefs(propertyInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = rBuilder->SetRemoteReadable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = rBuilder->SetRemoteWritable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = rBuilder->Get(getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propertyInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Go To Source
+  nsRefPtr<sbOriginPageImagePropertyBuilder> iBuilder = new sbOriginPageImagePropertyBuilder();
+  NS_ENSURE_TRUE(iBuilder, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = iBuilder->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGEIMAGE));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.origin_page_image"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->SetRemoteReadable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->SetRemoteWritable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->Get(getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddPropertyInfo(propertyInfo);
@@ -590,7 +616,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-
 
   return NS_OK;
 }

@@ -222,6 +222,7 @@ try
                 // Set the originURL/Page values to remember our state.
                 var propArray = [
                     [SBProperties.originPage, self.currentURL],
+                    [SBProperties.originPageImage, "webOrigin"],
                     [SBProperties.originURL, url],
                     [SBProperties.originPageTitle, self.currentTitle],
                     [SBProperties.downloadButton, "1|0|0"]

@@ -307,6 +307,19 @@ playlist[list-customtype="download"] .sb-playlist-tree
       background-image: none;
 }
 
+/** 
+*******************************************************************************
+In-cell Origin Page Image (Source Column)
+*******************************************************************************
+*/
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image webOrigin )
+{
+  list-style-image: url(chrome://songbird/skin/icons/small-globe-sunken.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image unknownOrigin )
+{
+}
 
 /** 
 *******************************************************************************

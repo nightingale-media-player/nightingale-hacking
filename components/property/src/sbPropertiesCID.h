@@ -181,3 +181,14 @@
 #define SB_RATINGPROPERTYBUILDER_CONTRACTID            \
   "@songbirdnest.com/Songbird/Properties/Builder/Rating;1"
 
+#define SB_ORIGINPAGEIMAGEPROPERTYBUILDER_DESCRIPTION            \
+  "Songbird Image Property Builder"
+#define SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CID                    \
+  {   /*{91855adc-b618-4483-9b14-6a19b40c4253}*/                 \
+    0x91855adc,                                                  \
+    0xb618,                                                      \
+    0x4483,                                                      \
+    { 0x9b, 0x14, 0x6a, 0x19, 0xb4, 0xc, 0x42, 0x53 }            \
+  }
+#define SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CONTRACTID             \
+  "@songbirdnest.com/Songbird/Properties/Builder/Image;1"

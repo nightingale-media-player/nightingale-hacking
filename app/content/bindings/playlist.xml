@@ -1768,6 +1768,24 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             return;
           }
 
+          // Special case for the origin page image property. If it is clicked,
+          // go to the origin page url.
+          if (property == SBProperties.originPageImage) {
+            var originPageURI = item.getProperty(SBProperties.originPage);
+            var originPageImage = item.getProperty(SBProperties.originPageImage);
+            
+            var browser = SBGetBrowser();
+            
+            if(originPageURI && 
+               browser &&
+               originPageImage == "webOrigin") {
+              browser.loadURI(originPageURI, null, null, evt);
+            }
+            
+            evt.stopPropagation();
+            return;
+          }
+
           // Fire the click event
           fireEvent(this);
 

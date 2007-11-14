@@ -34,6 +34,7 @@
 #include "sbPropertyArray.h"
 #include "sbPropertyFactory.h"
 #include "sbPropertyManager.h"
+#include "sbOriginPageImagePropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbTextPropertyInfo.h"
@@ -55,6 +56,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSimpleButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImagePropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRatingPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbOriginPageImagePropertyBuilder, Init);
 
 static const nsModuleComponentInfo components[] =
 {
@@ -135,6 +137,12 @@ static const nsModuleComponentInfo components[] =
     SB_RATINGPROPERTYBUILDER_CID,
     SB_RATINGPROPERTYBUILDER_CONTRACTID,
     sbRatingPropertyBuilderConstructor
+  },
+  {
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_DESCRIPTION,
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CID,
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CONTRACTID,
+    sbOriginPageImagePropertyBuilderConstructor
   },
 };
 

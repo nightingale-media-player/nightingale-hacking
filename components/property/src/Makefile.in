@@ -52,6 +52,8 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbPropertiesModule.cpp \
            sbDownloadButtonPropertyBuilder.cpp \
            sbDownloadButtonPropertyInfo.cpp \
+           sbOriginPageImagePropertyBuilder.cpp \
+           sbOriginPageImagePropertyInfo.cpp \
            sbImmutablePropertyInfo.cpp \
            sbSimpleButtonPropertyBuilder.cpp \
            sbSimpleButtonPropertyInfo.cpp \
