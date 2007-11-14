@@ -85,6 +85,7 @@ PublicPlaylistCommands.prototype = {
   
   m_defaultCommands               : null,
   m_webPlaylistCommands           : null,
+  m_webMediaHistoryToolbarCommands: null,
   m_downloadCommands              : null,
   m_downloadToolbarCommands       : null,
   m_downloadCommandsServicePane   : null,
@@ -106,6 +107,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_ShowWebPlaylist           : null, // switch the outer playlist container to the web playlist
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
   m_cmd_CleanUpDownloads          : null, // clean up completed download items
+  m_cmd_ClearHistory              : null, // clear the web media history
   m_cmd_BurnToCD                  : null, // burn selected tracks to CD
   m_cmd_CopyToDevice              : null, // copy selected tracks to device
 
@@ -335,6 +337,32 @@ PublicPlaylistCommands.prototype = {
                                                            plCmd_IsAnyTrackSelected);
 
     // --------------------------------------------------------------------------
+    // The CLEAR HISTORY button
+    // --------------------------------------------------------------------------
+
+    this.m_cmd_ClearHistory = new PlaylistCommandsBuilder();
+
+    this.m_cmd_ClearHistory.appendAction
+                                      (null, 
+                                       "library_cmd_clearhistory",
+                                       "&command.clearhistory",
+                                       "&command.tooltip.clearhistory",
+                                       plCmd_ClearHistory_TriggerCallback);
+
+    this.m_cmd_ClearHistory.setCommandShortcut
+                                (null,
+                                 "library_cmd_clearhistory",
+                                 "&command.shortcut.key.clearhistory",
+                                 "&command.shortcut.keycode.clearhistory",
+                                 "&command.shortcut.modifiers.clearhistory",
+                                 true);
+
+    this.m_cmd_ClearHistory.setCommandEnabledCallback
+                                              (null,
+                                               "library_cmd_clearhistory",
+                                               plCmd_WebMediaHistoryHasItems);
+
+    // --------------------------------------------------------------------------
     // The SHOW DOWNLOAD PLAYLIST button
     // --------------------------------------------------------------------------
 
@@ -553,6 +581,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
+    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
     
@@ -629,6 +658,31 @@ PublicPlaylistCommands.prototype = {
 
     this.m_mgr.registerPlaylistCommandsMediaItem(webListGUID, "", this.m_webPlaylistCommands);
 
+    // --------------------------------------------------------------------------
+    // Construct and publish the web media history toolbar commands
+    // --------------------------------------------------------------------------
+    
+    this.m_webMediaHistoryToolbarCommands = new PlaylistCommandsBuilder();
+
+    this.m_webMediaHistoryToolbarCommands.appendPlaylistCommands
+                                            (null, 
+                                             "library_cmdobj_clearhistory",
+                                             this.m_cmd_ClearHistory);
+
+    this.m_webMediaHistoryToolbarCommands.setVisibleCallback
+                                                    (plCmd_ShowForToolbarCheck);
+    this.m_webMediaHistoryToolbarCommands.setInitCallback(plCmd_DownloadInit);
+    this.m_webMediaHistoryToolbarCommands.setShutdownCallback(plCmd_DownloadShutdown);
+
+    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_WEBTOOLBAR,
+                       this.m_webMediaHistoryToolbarCommands);
+
+    // Register these commands to the download playlist
+
+    this.m_mgr.registerPlaylistCommandsMediaItem
+                                              (webListGUID,
+                                               "",
+                                               this.m_webMediaHistoryToolbarCommands);
     // --------------------------------------------------------------------------
     // Construct and publish the download playlist commands
     // --------------------------------------------------------------------------
@@ -764,6 +818,7 @@ PublicPlaylistCommands.prototype = {
     
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST, this.m_webPlaylistCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_WEBTOOLBAR, this.m_webMediaHistoryToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST, this.m_downloadCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR, this.m_downloadToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
@@ -824,6 +879,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_ShowWebPlaylist.shutdown();
     this.m_cmd_PauseResumeDownload.shutdown();
     this.m_cmd_CleanUpDownloads.shutdown();
+    this.m_cmd_ClearHistory.shutdown();
     this.m_cmd_BurnToCD.shutdown();
     this.m_cmd_CopyToDevice.shutdown();
     this.m_cmd_list_Remove.shutdown();
@@ -1049,6 +1105,14 @@ function plCmd_CleanUpDownloads_TriggerCallback(aContext, aSubMenuId, aCommandId
   // Command buttons will update when device sends notification
 }
 
+// Called when the clear history action is triggered
+function plCmd_ClearHistory_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var wl = getWebLibrary();
+  if (wl) {
+    wl.clear();
+  }
+}
+
 // Called when the "burn to cd" action is triggered
 function plCmd_BurnToCD_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   // if something is selected, trigger the burn event on the playlist
@@ -1172,6 +1236,12 @@ function plCmd_DownloadHasCompletedItems(aContext, aSubMenuId, aCommandId, aHost
   return (device.completedItemCount > 0);
 }
 
+// Returns true if there are items in the web media history
+function plCmd_WebMediaHistoryHasItems(aContext, aSubMenuId, aCommandId, aHost) {
+  var wl = getWebLibrary();
+  return wl && !wl.isEmpty;
+}
+
 // Returns true if the supplied context contains a gBrowser object
 function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
   var window = unwrap(aContext.window);
@@ -1214,6 +1284,25 @@ function getDownloadDevice() {
   } catch(e) {
   }
   return null;
+}
+
+var g_webLibrary = null
+function getWebLibrary() {
+  try {
+    if (g_webLibrary == null) {
+      var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefBranch2);
+      var webListGUID = prefs.getComplexValue("songbird.library.web", 
+          Components.interfaces.nsISupportsString); 
+      var libraryManager = 
+        Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+        .getService(Components.interfaces.sbILibraryManager); 
+      g_webLibrary = libraryManager.getLibrary(webListGUID); 
+    }
+  } catch(e) {
+  }
+
+  return g_webLibrary;
 }
 
 function plCmd_ShowDefaultInToolbarCheck(aContext, aHost) {

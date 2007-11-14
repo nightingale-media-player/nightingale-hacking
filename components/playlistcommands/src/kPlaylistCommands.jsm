@@ -49,6 +49,7 @@ var kPlaylistCommands = {
   // Bundled commands
   MEDIAITEM_DEFAULT              : "{5a5d24dd-0fed-4be0-b200-ac1ed9095d1f}",
   MEDIAITEM_WEBPLAYLIST          : "{8ebde25c-79e9-4bdb-836d-e0d502b1a452}",
+  MEDIAITEM_WEBTOOLBAR           : "{9b68b4b3-2362-47c9-92df-0d73aa3fc504}",
   MEDIAITEM_DOWNLOADPLAYLIST     : "{0bc53d42-81d1-437a-9ae6-d8c214a2eb0f}",
   MEDIAITEM_DOWNLOADTOOLBAR      : "{c8f507b2-904f-4769-9112-6eb067fc91c3}",
 
