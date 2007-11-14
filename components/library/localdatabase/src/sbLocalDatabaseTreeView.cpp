@@ -32,11 +32,9 @@
 #include <nsIDOMElement.h>
 #include <nsIObjectOutputStream.h>
 #include <nsIObjectInputStream.h>
-#include <nsIObserverService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
-#include <nsITimer.h>
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
 #include <nsIVariant.h>
@@ -257,32 +255,6 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
 #endif
 }
 
-void
-RemoveArrayObserver(nsITimer* aTimer, void* aObserver)
-{
-  // this releases the observer on a timer, because we trigger mozbug 386912
-  // if we just try to let sbLocalDatabaseAsyncGUIDArray be a weak reference
-  nsresult rv;
-  
-  // this was addrefed when the timer was added
-  NS_RELEASE(aTimer);
-  
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1");
-  if (!observerService) {
-    // we can't do things right, just use the default nsCOMPtr dtor
-    LOG(("RemoveArrayObserver(): Failed to get observer service"));
-    return;
-  }
-  nsCOMPtr<nsIObserver> observer = dont_AddRef((nsIObserver*)aObserver);
-
-  rv = observerService->RemoveObserver(observer, "xpcom-shutdown-threads");
-  if (NS_FAILED(rv)) {
-    LOG(("RemoveArrayObserver(): Failed to remove observer"));
-    return;
-  }
-}
-
 sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 {
   MOZ_COUNT_DTOR(sbLocalDatabaseTreeView);
@@ -294,42 +266,6 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
     if (NS_SUCCEEDED(rv))
       mArray->RemoveAsyncListener(asyncListener);
   }
-  
-  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  if (!timer) {
-    LOG(("~sbLocalDatabaseTreeView(): Failed to get new timer"));
-    return;
-  }
-
-  nsCOMPtr<nsIObserver> obsptr = do_QueryInterface(mArray, &rv);
-  if (!obsptr) {
-    TRACE(("~sbLocalDatabaseTreeView(): Failed to get mArray observer"));
-    return;
-  }
-  nsIObserver* obs = obsptr.get();
-  nsrefcnt refcnt = obs->AddRef();
-  if (refcnt != 4) {
-    // the expected refcnt is 4:
-    // 1 for mArray
-    // 1 for observer service holding on to it
-    // 1 for obsptr
-    // 1 for the explicit addref we just did
-    LOG(("~sbLocalDatabaseTreeView(): unexpected refcnt %i != 4", refcnt));
-    NS_ASSERTION(4 == refcnt, "~sbLocalDatabaseTreeView(): unexpected refcnt, leaking");
-                 // be annoying in debug builds, this is bad, we leak
-    NS_RELEASE(obs);
-    return;
-  }
-
-  rv = timer->InitWithFuncCallback(RemoveArrayObserver,
-                                   obs,
-                                   100,
-                                   nsITimer::TYPE_ONE_SHOT);
-  if (NS_FAILED(rv)) {
-    TRACE(("Failed to set up timer: %08x", rv));
-    return;
-  }
-  timer.forget(); // this gets released when the timer fires
 }
 
 nsresult

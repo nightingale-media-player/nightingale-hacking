@@ -55,10 +55,11 @@ static PRLogModuleInfo* gLocalDatabaseAsyncGUIDArrayLog = nsnull;
 
 static const char kShutdownMessage[] = "xpcom-shutdown-threads";
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbLocalDatabaseAsyncGUIDArray,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
                               sbILocalDatabaseGUIDArray,
                               sbILocalDatabaseAsyncGUIDArray,
-                              nsIObserver)
+                              nsIObserver,
+                              nsISupportsWeakReference)
 
 sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
   mThreadShouldExit(PR_FALSE),
@@ -111,7 +112,7 @@ sbLocalDatabaseAsyncGUIDArray::Init()
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, kShutdownMessage, PR_FALSE);
+  rv = observerService->AddObserver(this, kShutdownMessage, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -276,7 +277,7 @@ sbLocalDatabaseAsyncGUIDArray::CloneAsyncArray(sbILocalDatabaseAsyncGUIDArray** 
 
   NS_ENSURE_ARG_POINTER(_retval);
 
-  sbLocalDatabaseAsyncGUIDArray* newArray;
+  nsRefPtr<sbLocalDatabaseAsyncGUIDArray> newArray;
   NS_NEWXPCOM(newArray, sbLocalDatabaseAsyncGUIDArray);
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 

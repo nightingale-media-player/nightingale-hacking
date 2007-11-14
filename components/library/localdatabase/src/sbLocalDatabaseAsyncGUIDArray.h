@@ -35,6 +35,7 @@
 #include <nsIObserver.h>
 #include <nsIRunnable.h>
 #include <nsStringGlue.h>
+#include <nsWeakReference.h>
 #include <nsTArray.h>
 #include <prlock.h>
 #include <prmon.h>
@@ -66,7 +67,8 @@ struct CommandSpec {
 typedef nsTArray<CommandSpec> sbCommandQueue;
 
 class sbLocalDatabaseAsyncGUIDArray : public sbILocalDatabaseAsyncGUIDArray,
-                                      public nsIObserver
+                                      public nsIObserver,
+                                      public nsSupportsWeakReference
 {
 public:
   friend class CommandProcessor;
