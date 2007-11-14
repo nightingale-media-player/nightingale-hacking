@@ -291,6 +291,13 @@ const SB_PROPERTY_ORIGINPAGE           = SB_PROPERTY_PREFACE + "originPage";
  * \deprecated Please see sbProperties.jsm.
  * \internal
  */
+const SB_PROPERTY_ORIGINPAGEIMAGE      = SB_PROPERTY_PREFACE + "originPageImage";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Please see sbProperties.jsm.
+ * \internal
+ */
 const SB_PROPERTY_ORIGINPAGETITLE      = SB_PROPERTY_PREFACE + "originPageTitle";
 
 /**
