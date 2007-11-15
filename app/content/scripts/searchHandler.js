@@ -458,7 +458,7 @@ const gSearchHandler = {
    * fully loads.  See also this.onBrowserLoad.
    */
   _switchToInternalSearch: function SearchHandler__switchToInternalSearch() {
-    var searchBar = this.getSearchBar()
+    var searchBar = this.getSearchBar();
     var songbirdEngine = this.getSongbirdSearchEngine();
      
     // Unless we are already in songbird live search mode,
@@ -523,12 +523,8 @@ const gSearchHandler = {
           this._previousSearchEngine = null;
           this._previousSearch = "";
         }
-        // If there is no previous engine then we should 
-        // switch to the web default
-        else 
-        {
-          searchBar.currentEngine = searchBar.searchService.defaultEngine;
-        }
+        // If there is no previous engine, it would have been due to the user
+        // manually choosing the internal engine.  Don't switch.
       }
     }
   },  
