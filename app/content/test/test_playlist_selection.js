@@ -50,7 +50,7 @@ function setupPlaylist() {
 
   var document = testWindow.document;
 
-  var playlist = document.createElementNS(XUL_NS, "playlist");
+  var playlist = document.createElementNS(XUL_NS, "sb-playlist");
   playlist.setAttribute("flex", "1");
   document.documentElement.appendChild(playlist);
   playlist.bind(library.createView(), null);

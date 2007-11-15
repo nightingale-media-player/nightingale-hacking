@@ -92,7 +92,7 @@ var SBDropObserver =
                               .getService(Components.interfaces.sbILibraryServicePaneService);
     }
 
-    if ( evt.target.tagName == "servicepane" ) {
+    if ( evt.target.localName == "sb-servicepane" ) {
       var node = null;
       try {
         node = evt.target.mTreePane.computeEventPosition(evt);
@@ -112,7 +112,7 @@ var SBDropObserver =
       }
     }
     
-    if ( evt.target.tagName == "playlist" ) {
+    if ( evt.target.localName == "sb-playlist" ) {
       var playlist = evt.target.QueryInterface(Ci.sbIPlaylistWidget);
       
       if(playlist.wrappedJSObject) {
@@ -149,7 +149,7 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
 
   var libraryResource = null;
 
-  if ( evt.target.tagName == "servicepane" ) {
+  if ( evt.target.localName == "sb-servicepane" ) {
     var node = null;
     try {
       node = evt.target.mTreePane.computeEventPosition(evt);
@@ -164,7 +164,7 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
     }
   }
   
-  if ( evt.target.tagName == "playlist" ) {
+  if ( evt.target.localName == "sb-playlist" ) {
     var playlist = evt.target;
   
     if(playlist.wrappedJSObject) {

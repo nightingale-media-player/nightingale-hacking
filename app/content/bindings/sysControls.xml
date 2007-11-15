@@ -467,9 +467,9 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom"/>
             </xul:vbox>
 
-            <xul:draggable id="sb-sys-outer-frame-children" sbid="children" class="sb-sys-outer-frame-chrome-background" flex="1" >
+            <xul:sb-draggable id="sb-sys-outer-frame-children" sbid="children" class="sb-sys-outer-frame-chrome-background" flex="1" >
               <children/>
-            </xul:draggable>
+            </xul:sb-draggable>
                   
             <xul:vbox>
               <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop" dir="topright" />

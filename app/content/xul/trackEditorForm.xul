@@ -44,33 +44,33 @@
     <vbox flex="1">
       <hbox align="center">
         <label id="trackeditor.label.guid"  value="&metadata.uuid;" width="96"/>
-        <dbedit_label id="trackeditor.guid" column="http://songbirdnest.com/data/1.0#GUID" flex="1"/>
+        <sb-dbedit-label id="trackeditor.guid" column="http://songbirdnest.com/data/1.0#GUID" flex="1"/>
       </hbox>
       <spacer height="3"/>
       <hbox align="center">
         <label id="trackeditor.label.url"  value="&metadata.url;" width="96"/>
-        <dbedit_label id="trackeditor.url" column="http://songbirdnest.com/data/1.0#contentURL" flex="1"/>
+        <sb-dbedit-label id="trackeditor.url" column="http://songbirdnest.com/data/1.0#contentURL" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.title"  value="&metadata.title;" width="96"/>
-        <dbedit_textbox id="trackeditor.title" column="http://songbirdnest.com/data/1.0#trackName" flex="1"/>
+        <sb-dbedit-textbox id="trackeditor.title" column="http://songbirdnest.com/data/1.0#trackName" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.artist"  value="&metadata.artist;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="http://songbirdnest.com/data/1.0#artistName" flex="1" />
+        <sb-dbedit-menulist editable="true" populateuniques="1" id="trackeditor.artist" column="http://songbirdnest.com/data/1.0#artistName" flex="1" />
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.album"  value="&metadata.album;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="http://songbirdnest.com/data/1.0#albumName" flex="1"/>
+        <sb-dbedit-menulist editable="true" populateuniques="1" id="trackeditor.album" column="http://songbirdnest.com/data/1.0#albumName" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.genre"  value="&metadata.genre;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="http://songbirdnest.com/data/1.0#genre" flex="1"/>
+        <sb-dbedit-menulist editable="true" populateuniques="1" id="trackeditor.genre" column="http://songbirdnest.com/data/1.0#genre" flex="1"/>
       </hbox>
       <spacer height="8"/> 
       <hbox align="center">
         <label id="trackeditor.label.length"  value="&metadata.length;" width="96"/>
-        <dbedit_label id="trackeditor.length" column="http://songbirdnest.com/data/1.0#duration" flex="1"/>
+        <sb-dbedit-label id="trackeditor.length" column="http://songbirdnest.com/data/1.0#duration" flex="1"/>
       </hbox>
     </vbox>
     <spacer width="3"/> 

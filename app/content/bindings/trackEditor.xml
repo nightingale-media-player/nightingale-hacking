@@ -277,8 +277,8 @@
             var ro = false;
             
             var elem;
-            if (ro != 0) elem = document.createElement("dbedit_label");
-            else elem = document.createElement("dbedit_textbox");
+            if (ro != 0) elem = document.createElement("sb-dbedit-label");
+            else elem = document.createElement("sb-dbedit-textbox");
             if (type == 'number') elem.setAttribute("numeric", true);
             if (ro != 0) elem.setAttribute("readonly", "true");
             elem.setAttribute("column", propertyID);

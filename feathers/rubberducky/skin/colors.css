@@ -71,7 +71,7 @@ wizard,
 dialog,
 window,
 prefwindow,
-playlist,
+sb-playlist,
 page
 {
   background-color: #313131; /* color of the Main Window **/
@@ -477,12 +477,12 @@ THE PLAYLIST
 *******************************************************************************
 */ 
 
-playlist
+sb-playlist
 {
   background-color: transparent !important;
 }
 
-playlist > stack > vbox
+sb-playlist > stack > vbox
 {
   background-color: transparent !important;
 }

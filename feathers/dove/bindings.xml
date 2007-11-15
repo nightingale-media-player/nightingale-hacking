@@ -9,14 +9,14 @@
   
   <binding id="samplebutton">
     <content>
-      <xul:multistatebutton>
+      <xul:sb-multistatebutton>
         <xul:groupbox>
           <xul:caption label="Sample MultiStateButton"/>
           <xul:label value="'State = ' + @multistatebutton_state@"/>
           <xul:label value="'Mouse is ' + (@multistatebutton_mouseover@ ? '' : 'not ') + 'over' "/>
           <xul:label value="'Mouse button is ' + (@multistatebutton_mousedown@ ? 'down' : 'up')"/>
         </xul:groupbox>
-      </xul:multistatebutton>
+      </xul:sb-multistatebutton>
     </content>
   </binding>
 
@@ -25,39 +25,39 @@
   <binding id="windowregion">
 
     <content>
-      <xul:windowregionset>
+      <xul:sb-windowregionset>
 
-        <xul:windowregionrect type="add" size="window"/>
+        <xul:sb-windowregionrect type="add" size="window"/>
 <!--        
 
 No more rounded corners....
 
 
-        <xul:windowregionrect type="sub" size="6,1" anchor="topleft" offsetx="0" offsety="0"/>
-        <xul:windowregionrect type="sub" size="4,1" anchor="topleft" offsetx="0" offsety="1"/>
-        <xul:windowregionrect type="sub" size="3,1" anchor="topleft" offsetx="0" offsety="2"/>
-        <xul:windowregionrect type="sub" size="2,1" anchor="topleft" offsetx="0" offsety="3"/>
-        <xul:windowregionrect type="sub" size="1,2" anchor="topleft" offsetx="0" offsety="4"/>
+        <xul:sb-windowregionrect type="sub" size="6,1" anchor="topleft" offsetx="0" offsety="0"/>
+        <xul:sb-windowregionrect type="sub" size="4,1" anchor="topleft" offsetx="0" offsety="1"/>
+        <xul:sb-windowregionrect type="sub" size="3,1" anchor="topleft" offsetx="0" offsety="2"/>
+        <xul:sb-windowregionrect type="sub" size="2,1" anchor="topleft" offsetx="0" offsety="3"/>
+        <xul:sb-windowregionrect type="sub" size="1,2" anchor="topleft" offsetx="0" offsety="4"/>
 
-        <xul:windowregionrect type="sub" size="6,1" anchor="topright" offsetx="0" offsety="0"/>
-        <xul:windowregionrect type="sub" size="4,1" anchor="topright" offsetx="0" offsety="1"/>
-        <xul:windowregionrect type="sub" size="3,1" anchor="topright" offsetx="0" offsety="2"/>
-        <xul:windowregionrect type="sub" size="2,1" anchor="topright" offsetx="0" offsety="3"/>
-        <xul:windowregionrect type="sub" size="1,2" anchor="topright" offsetx="0" offsety="4"/>
+        <xul:sb-windowregionrect type="sub" size="6,1" anchor="topright" offsetx="0" offsety="0"/>
+        <xul:sb-windowregionrect type="sub" size="4,1" anchor="topright" offsetx="0" offsety="1"/>
+        <xul:sb-windowregionrect type="sub" size="3,1" anchor="topright" offsetx="0" offsety="2"/>
+        <xul:sb-windowregionrect type="sub" size="2,1" anchor="topright" offsetx="0" offsety="3"/>
+        <xul:sb-windowregionrect type="sub" size="1,2" anchor="topright" offsetx="0" offsety="4"/>
 
-        <xul:windowregionrect type="sub" size="6,1" anchor="bottomleft" offsetx="0" offsety="0"/>
-        <xul:windowregionrect type="sub" size="4,1" anchor="bottomleft" offsetx="0" offsety="1"/>
-        <xul:windowregionrect type="sub" size="3,1" anchor="bottomleft" offsetx="0" offsety="2"/>
-        <xul:windowregionrect type="sub" size="2,1" anchor="bottomleft" offsetx="0" offsety="3"/>
-        <xul:windowregionrect type="sub" size="1,2" anchor="bottomleft" offsetx="0" offsety="4"/>
+        <xul:sb-windowregionrect type="sub" size="6,1" anchor="bottomleft" offsetx="0" offsety="0"/>
+        <xul:sb-windowregionrect type="sub" size="4,1" anchor="bottomleft" offsetx="0" offsety="1"/>
+        <xul:sb-windowregionrect type="sub" size="3,1" anchor="bottomleft" offsetx="0" offsety="2"/>
+        <xul:sb-windowregionrect type="sub" size="2,1" anchor="bottomleft" offsetx="0" offsety="3"/>
+        <xul:sb-windowregionrect type="sub" size="1,2" anchor="bottomleft" offsetx="0" offsety="4"/>
 
-        <xul:windowregionrect type="sub" size="6,1" anchor="bottomright" offsetx="0" offsety="0"/>
-        <xul:windowregionrect type="sub" size="4,1" anchor="bottomright" offsetx="0" offsety="1"/>
-        <xul:windowregionrect type="sub" size="3,1" anchor="bottomright" offsetx="0" offsety="2"/>
-        <xul:windowregionrect type="sub" size="2,1" anchor="bottomright" offsetx="0" offsety="3"/>
-        <xul:windowregionrect type="sub" size="1,2" anchor="bottomright" offsetx="0" offsety="4"/>
+        <xul:sb-windowregionrect type="sub" size="6,1" anchor="bottomright" offsetx="0" offsety="0"/>
+        <xul:sb-windowregionrect type="sub" size="4,1" anchor="bottomright" offsetx="0" offsety="1"/>
+        <xul:sb-windowregionrect type="sub" size="3,1" anchor="bottomright" offsetx="0" offsety="2"/>
+        <xul:sb-windowregionrect type="sub" size="2,1" anchor="bottomright" offsetx="0" offsety="3"/>
+        <xul:sb-windowregionrect type="sub" size="1,2" anchor="bottomright" offsetx="0" offsety="4"/>
 -->
-      </xul:windowregionset>
+      </xul:sb-windowregionset>
     </content>
 
   </binding>

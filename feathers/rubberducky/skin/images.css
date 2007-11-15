@@ -88,7 +88,7 @@ THE PLAYLIST
 */ 
 
 /* Put a Background behind your filterlists for extra style. */
-playlist
+sb-playlist
 {
   /*background-image: url( ... );*/ 
 }

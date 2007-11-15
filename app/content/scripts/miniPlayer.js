@@ -139,7 +139,7 @@ var gMiniplayer = {
   onDblClick: function onDblClick( evt )
   {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
-    if (evt.target.tagName == 'draggable') {
+    if (evt.target.localName == 'sb-draggable') {
       this.revertFeathers();
     }
   },

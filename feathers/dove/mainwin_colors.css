@@ -468,12 +468,12 @@ THE PLAYLIST
 ************************************************************************************************************************************************
 */ 
 
-playlist
+sb-playlist
 {
   background-color: #FFF !important;
 }
 
-playlist > stack > vbox
+sb-playlist > stack > vbox
 {
   background-color: transparent !important;
 }
@@ -484,7 +484,7 @@ playlist > stack > vbox
   background-color: transparent !important;  
 }
 
-playlist > stack > vbox > hbox
+sb-playlist > stack > vbox > hbox
 {
   background-color: #fff !important;
 }
@@ -551,7 +551,7 @@ playlist > stack > vbox > hbox
  color: #999 !important;
 }
 #playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
+sb-playlist > stack > vbox > hbox#playlist_toolbar_bkg
 { 
   border-top: 1px solid #eee;
 }

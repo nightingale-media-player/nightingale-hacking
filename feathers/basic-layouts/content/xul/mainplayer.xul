@@ -144,7 +144,7 @@
 
           <!-- SERVICE PANE -->
           <vbox id="servicepane_box">
-            <servicepane id="servicepane" flex="1" browser="content" />                  
+            <sb-servicepane id="servicepane" flex="1" browser="content" />                  
           </vbox>
 
           <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">

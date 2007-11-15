@@ -43,10 +43,10 @@
 >
 
   <!-- Astounding complexity! -->
-  <draggable flex="1">
+  <sb-draggable flex="1">
     <label id="version_number" value="&about.version;" />
     <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" flex="1"/>
-  </draggable>
+  </sb-draggable>
 
   <!-- And intrepid instructions! -->  
   <script>

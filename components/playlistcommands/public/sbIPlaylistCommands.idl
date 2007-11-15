@@ -45,7 +45,7 @@ interface nsISimpleEnumerator;
 *
 * Implementors that create their own specific database libraries and playlists
 * (eg: sbIDeviceBase) may also specify a commands object to be shown when the
-* tables are displayed in a <playlist> element.  This object's purpose is to
+* tables are displayed in a <sb-playlist> element.  This object's purpose is to
 * return abstract information that can be used by the playlist element to
 * autogenerate its xul button and menuitm elements.
 *

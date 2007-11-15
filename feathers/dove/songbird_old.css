@@ -535,7 +535,7 @@ THE PLAYLIST
 ************************************************************************************************************************************************
 */ 
 
-playlist
+sb-playlist
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
@@ -544,7 +544,7 @@ playlist
   background-color: #DBE1D8 !important;
 }
 
-playlist > stack > vbox
+sb-playlist > stack > vbox
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
@@ -554,7 +554,7 @@ playlist > stack > vbox
 }
 
 
-playlist > stack > vbox > tree
+sb-playlist > stack > vbox > tree
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
@@ -571,55 +571,55 @@ playlist > stack > vbox > tree
 }
 
 #playlist_toolbar_bkg,
-playlist > stack > vbox > hbox
+sb-playlist > stack > vbox > hbox
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: #FFF !important;
   height: 27px !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-row
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-row
 {
   margin: 0px !important;
   padding: 0px 0px 0px 0px !important;
   border: 0px solid #000 !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #EDF3F0 !important;
 }
 
-playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
+sb-playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
 {
   background-color: #FFF !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-cell
 {
   margin: 0px !important;
   padding: 0px 0px 0px 5px !important;
   border-right: 1px solid #DBE1D8 !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #99A195 !important;
 }
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   background-color: #4A4E48 !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #EEE !important;
   font-weight: bold !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
 {
  -moz-appearance: none !important; /* grrrr! */
  border: none !important;
@@ -630,13 +630,13 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
  height: 10px !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
 {
  background-color: #DAE0DD !important;
  color: #000 !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
+sb-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
@@ -667,7 +667,7 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-playlist > stack > vbox > hbox button 
+sb-playlist > stack > vbox > hbox button 
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 5px !important;
@@ -679,14 +679,14 @@ playlist > stack > vbox > hbox button
   padding-right: 8px !important;
   margin: 0px !important;
 }
-playlist > stack > vbox > hbox button:hover
+sb-playlist > stack > vbox > hbox button:hover
 {
   -moz-appearance: none !important; /* grrrr! */
   border: 1px solid #808583 !important;
   margin: 0px !important;
 }
-playlist > stack > vbox > hbox button:hover[disabled="true"],
-playlist > stack > vbox > hbox button[disabled="true"]
+sb-playlist > stack > vbox > hbox button:hover[disabled="true"],
+sb-playlist > stack > vbox > hbox button[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;

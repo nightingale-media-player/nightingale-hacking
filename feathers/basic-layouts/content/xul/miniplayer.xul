@@ -65,7 +65,7 @@
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" /> 
 
-  <draggable flex="1">
+  <sb-draggable flex="1">
     <hbox id="miniplayer_box" flex="1" align="center" pack="center">
       <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
   
@@ -90,7 +90,7 @@
       <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_right" 
           dir="right"/>
     </hbox>
-  </draggable>
+  </sb-draggable>
 
   <keyset>
 <!-- XXXsteve bug 5303 disable jumpto

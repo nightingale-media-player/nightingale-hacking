@@ -37,8 +37,8 @@ Imported by bindings.css or directly into feathers.
 
 
 
-playlist,
-playlist > stack > vbox,
+sb-playlist,
+sb-playlist > stack > vbox,
 .sb-playlist-tree,
 .sb-playlist-tree > treechildren::-moz-tree-row
 {
@@ -295,13 +295,13 @@ In-cell Download Buttons
 }
 
 /* Prevent the download button from appearing in the download playlist */
-playlist[list-customtype="download"] .sb-playlist-tree 
+sb-playlist[list-customtype="download"] .sb-playlist-tree 
    > treechildren::-moz-tree-cell( downloadbutton button )
 {
       background-image: none;
 }
 
-playlist[list-customtype="download"] .sb-playlist-tree 
+sb-playlist[list-customtype="download"] .sb-playlist-tree 
    > treechildren::-moz-tree-cell-text( downloadbutton button )
 {
       background-image: none;

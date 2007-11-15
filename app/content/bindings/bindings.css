@@ -66,7 +66,7 @@ sb-local-key {
   -moz-binding: url("chrome://songbird/content/bindings/localKey.xml#local-key") !important;
 }
 
-playlist {
+sb-playlist {
   -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist") !important;
 }
 
@@ -92,15 +92,15 @@ menupopup[type="search"] {
   -moz-binding: url("chrome://songbird/content/bindings/sbSearch.xml#sb-search-menupopup") !important;
 }
 
-multistatebutton {
+sb-multistatebutton {
   -moz-binding: url("chrome://songbird/content/bindings/multiStateButton.xml#multistatebutton") !important;
 }
 
-windowregionset {
+sb-windowregionset {
   -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionset") !important;
 }
 
-windowregionrect {
+sb-windowregionrect {
   -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionrect") !important;
 }
 
@@ -108,7 +108,7 @@ sb-autoscroll {
   -moz-binding: url("chrome://songbird/content/bindings/autoScroll.xml#autoscroll") !important;
 }
 
-servicepane {
+sb-servicepane {
   -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane") !important;
 }
 
@@ -236,15 +236,15 @@ sb-exttrackeditor-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/trackEditor.xml#exttrackeditor") !important;
 }
 
-dbedit_label {
+sb-dbedit-label {
   -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#label");
 }
 
-dbedit_textbox {
+sb-dbedit-textbox {
   -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#textbox") !important;
 }
 
-dbedit_menulist {
+sb-dbedit-menulist {
   -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#menulist") !important;
 }
 
@@ -390,7 +390,7 @@ sb-browser-stopreload-button {
 }
 
 /* DRAGGABLE */
-draggable {
+sb-draggable {
   -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;
 }
 
