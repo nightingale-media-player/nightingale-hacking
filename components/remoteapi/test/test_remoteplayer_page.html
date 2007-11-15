@@ -80,8 +80,7 @@ function runTest(tester) {
     songbird.removeListener("foo.bar", listener);
 
     // downloading - set in test_ file to go to tmpD/remoteapi_test/
-    var item = siteLib.createMediaItem(
-              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    var item = siteLib.createMediaItem("http://example.com/track.mp3");
     var list = siteLib.createSimpleMediaList("testRemotePlayer1");
     list.add(item);
 
@@ -95,7 +94,7 @@ function runTest(tester) {
     // controls - these need a core to be spun up, or a fake core added.
     // Need the mainpage UI for this one
     //songbird.play();
-    //songbird.playURL("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    //songbird.playURL("http://example.com/track2.mp3");
     //songbird.pause();
     //songbird.stop();
     //songbird.next();
