@@ -38,8 +38,10 @@
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/mainOverlay.js" />
 
-  <stringbundle id="bundlePreferences"
-                src="chrome://songbird/locale/songbird.properties"/>
+  <stringbundleset>
+    <stringbundle id="bundleSongbirdPreferences"
+                  src="chrome://songbird/locale/songbird.properties"/>
+  </stringbundleset>
 
  <prefWindow id="BrowserPreferences">
   <prefpane id="paneHotkeys"

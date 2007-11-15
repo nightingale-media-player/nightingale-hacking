@@ -34,7 +34,7 @@ var gRemoteAPIPane = {
   configureWhitelist: function (aType)
   {
     // get ref to the properties file string bundle
-    var bundlePreferences = document.getElementById("bundlePreferences");
+    var bundlePreferences = document.getElementById("bundleSongbirdPreferences");
 
     // set up a parmater object to pass to permission window
     var params = {
