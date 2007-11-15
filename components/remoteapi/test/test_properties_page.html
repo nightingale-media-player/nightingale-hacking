@@ -1,0 +1,256 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+    <script>
+function runTest(tester) {
+  try {
+    // All the standard properties
+    var props = tester.props;
+
+    var numericalPropNames = [
+      "ordinal",
+      "contentLength",
+      "trackNumber",
+      "discNumber",
+      "totalDiscs",
+      "totalTracks",
+      "playCount",
+      "skipCount",
+      "rating",                     // value [0-5]
+      "duration",
+      "lastPlayTime"
+    ];
+
+    var uriPropNames = [
+      "albumArtURL",
+      "originURL"
+    ];
+
+    var specialNames = [
+      "year"                        // 1877 min value
+    ];
+
+    var booleanPropNames = [
+      "hidden",                     // boolean  1/0
+      "isPartOfCompilation"         // boolean  1/0
+    ];
+
+    var nonRemoteReadableNames = [
+      "rapiScopeURL",
+      "created",
+      "updated",
+      "GUID",
+      "storageGUID",
+      "ordinal",
+      "contentMimeType",
+      "contentLength",
+      "isList",
+      "rapiSiteURL",
+      "customType",
+      "contentURL",
+      "isSortable"
+    ];
+
+    var nonRemoteWritableNames = [
+      "rapiScopeURL",
+      "contentURL",
+      "created",
+      "updated",
+      "GUID",
+      "storageGUID",
+      "ordinal",
+      "contentMimeType",
+      "contentLength",
+      "playCount",
+      "skipCount",
+      "isList",
+      "customType",
+      "downloadStatusTarget",
+      "rapiSiteURL",
+      "rapiSiteID",
+      "isSortable",
+      "originPage",
+      "originPageTitle",
+      "lastPlayTime",
+      "originURL"
+    ];
+
+    var library = songbird.libraries("main");
+    var item = library.createMediaItem("http://example.com/foo");
+
+    tester.log("");
+    tester.log("Writing to the properties");
+    tester.log("");
+    // loop over all stuff in props to make sure we don't miss anything
+    for (var stuff in props) {
+      // report which properties we can't write to.
+      if (nonRemoteWritableNames.indexOf(stuff) > -1) {
+        try {
+          item.setProperty(props[stuff], "FAIL");
+          tester.fail("Was able to set non-writable property.");
+        } catch (e) {
+          tester.log("property (!w)\t" + stuff);
+        }
+        continue;
+      }
+
+      // report the properties we can write to
+      tester.log("property ( w)\t" + stuff);
+
+      // year has a min value
+      if ( stuff == "year" ) {
+        item.setProperty(props[stuff], "1877");
+      }
+      // these properties get a number
+      else if (numericalPropNames.indexOf(stuff) > -1) {
+        item.setProperty(props[stuff], "4");
+      }
+      // these get special numbers
+      else if (booleanPropNames.indexOf(stuff) > -1) {
+        item.setProperty(props[stuff], "1");
+      }
+      // these get url format strings
+      else if (uriPropNames.indexOf(stuff) > -1) {
+        item.setProperty(props[stuff], "http://example.com/foo");
+      }
+      // everything else gets a test string
+      else {
+        item.setProperty(props[stuff], "test");
+      }
+    }
+
+    tester.log("");
+    tester.log("Reading the properties");
+    tester.log("");
+
+    // loop over all stuff in props to make sure we don't miss anything
+    for (var stuff in props) {
+      // report the non-readable names
+      if (nonRemoteReadableNames.indexOf(stuff) > -1) {
+        try {
+          item.getProperty(props[stuff]);
+          tester.fail("Was able to read non-readable property.");
+        } catch (e) {
+          tester.log("property (!r)\t" + stuff );
+        }
+        continue;
+      }
+
+      // We couldn't write to this properties so just check we can get them
+      if (nonRemoteWritableNames.indexOf(stuff) > -1) {
+        tester.log("property (ro)\t" + stuff );
+        item.getProperty(props[stuff]);
+        continue;
+      }
+
+      tester.log("property ( r)\t" + stuff );
+
+      // year has a min value
+      if ( stuff == "year" ) {
+        tester.assertEqual( item.getProperty(props[stuff]), "1877" );
+      }
+      // these properties get a number
+      else if (numericalPropNames.indexOf(stuff) > -1) {
+        tester.assertEqual( item.getProperty(props[stuff]), "4" );
+      }
+      // these get special numbers
+      else if (booleanPropNames.indexOf(stuff) > -1) {
+        tester.assertEqual( item.getProperty(props[stuff]), "1" );
+      }
+      // these get url format strings
+      else if (uriPropNames.indexOf(stuff) > -1) {
+        tester.assertEqual( item.getProperty(props[stuff]), "http://example.com/foo" );
+      }
+      // everything else gets a test string
+      else {
+        tester.assertEqual( item.getProperty(props[stuff]), "test" );
+      }
+    }
+
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+
+  tester.endRemoteAPITest();
+}
+
+function assertStringArray(tester, a, e) {
+  while (e.hasMore()) {
+    var s = e.getNext();
+    var i = a.indexOf(s);
+    if (i < 0) {
+      tester.fail("String '" + s + "' not in array");
+    }
+    a.splice(i, 1);
+  }
+  if (a.length > 0) {
+    tester.fail("Array contains stuff the enumerator did not: " + a);
+  }
+}
+
+function enumeratorToArray(e) {
+  var a = [];
+  while (e.hasMoreElements()) {
+    a.push(e.getNext());
+  }
+  return a;
+}
+
+function assertItemArray(tester, a, e) {
+  while (e.hasMoreElements()) {
+    var item = e.getNext();
+    var i = -1;
+    for (var j = 0; j < a.length; j++) {
+      if (a[j].equals(item)) {
+        i = j;
+      }
+    }
+    if (i < 0) {
+      tester.fail("Item '" + item.guid + "' not in array");
+    }
+    a.splice(i, 1);
+  }
+  if (a.length > 0) {
+    var guids = [];
+    for (var i = 0; i < a.length; i++) {
+      guids.push(a[i].guid);
+    }
+    tester.fail("Array contains stuff the enumerator did not: " + guids);
+  }
+}
+
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+    </script>
+  </head>
+  <body>test_remotelibrary_getters_page.html</body>
+</html>
+

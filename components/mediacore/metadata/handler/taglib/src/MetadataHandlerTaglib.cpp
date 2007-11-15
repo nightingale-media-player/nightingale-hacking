@@ -1,4 +1,3 @@
-// vim: indent=4
 /*
 //
 // BEGIN SONGBIRD GPL

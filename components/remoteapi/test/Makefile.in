@@ -32,26 +32,28 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = remoteapi
 
 SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
-                 $(srcdir)/test_empty.js \
-                 $(srcdir)/test_remotedownload.js \
-                 $(srcdir)/test_remotelibrary.js \
-                 $(srcdir)/test_remotelibrary_getters.js \
-                 $(srcdir)/test_remotemediaitem.js \
-                 $(srcdir)/test_remotemedialist.js \
-                 $(srcdir)/test_remoteplayer.js \
-                 $(srcdir)/test_empty_page.html \
-                 $(srcdir)/test_remotedownload_page.html \
-                 $(srcdir)/test_remotelibrary_page.html \
-                 $(srcdir)/test_remotelibrary_getters_page.html \
-                 $(srcdir)/test_remotemedialist_page.html \
-                 $(srcdir)/test_remotemediaitem_page.html \
-                 $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_crossLibAdd.js \
                  $(srcdir)/test_crossLibAdd_page.html \
+                 $(srcdir)/test_empty.js \
+                 $(srcdir)/test_empty_page.html \
+                 $(srcdir)/test_remotedownload.js \
+                 $(srcdir)/test_remotedownload_page.html \
+                 $(srcdir)/test_remotelibrary.js \
+                 $(srcdir)/test_remotelibrary_page.html \
+                 $(srcdir)/test_remotelibrary_getters.js \
+                 $(srcdir)/test_remotelibrary_getters_page.html \
+                 $(srcdir)/test_remotemediaitem.js \
+                 $(srcdir)/test_remotemediaitem_page.html \
+                 $(srcdir)/test_remotemedialist.js \
+                 $(srcdir)/test_remotemedialist_page.html \
+                 $(srcdir)/test_remoteplayer.js \
+                 $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_siteID.js \
                  $(srcdir)/test_siteID_page.html \
                  $(srcdir)/test_privileged.js \
                  $(srcdir)/test_privileged_page.html \
+                 $(srcdir)/test_properties.js \
+                 $(srcdir)/test_properties_page.html \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

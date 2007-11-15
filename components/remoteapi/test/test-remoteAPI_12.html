@@ -38,7 +38,7 @@
       function load() {
 
         siteLib = songbird.siteLibrary;
-        siteList = siteLib.createMediaList("simple");
+        siteList = siteLib.createSimpleMediaList("siteList");
 
         // Create new properties before assigning the medialist. It's also SUPER
         // important to creat properties before assinging value to them so they
@@ -100,6 +100,7 @@
         songbird.webPlaylist.appendColumn("http://songbirdnest.com/data/1.0#artistName");
         songbird.webPlaylist.appendColumn("http://songbirdnest.com/data/1.0#albumName");
         songbird.webPlaylist.appendColumn("http://songbirdnest.com/data/1.0#genre");
+        songbird.webPlaylist.appendColumn("http://songbirdnest.com/data/1.0#rating");
       }
 
       function hideColumns() {
@@ -123,6 +124,7 @@
           item.setProperty("http://example.com/buttonDefault", "pushDef");
           item.setProperty("http://example.com/button", "push"); 
           item.setProperty("http://example.com/downloadButton", "1|10|0"); 
+          item.setProperty("http://songbirdnest.com/data/1.0#rating", "4"); 
           siteList.add(item);
         }
       }

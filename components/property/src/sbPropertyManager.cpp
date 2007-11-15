@@ -617,6 +617,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // MediaListName
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                    NS_LITERAL_STRING("property.media_list_name"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
