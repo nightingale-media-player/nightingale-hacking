@@ -44,10 +44,12 @@
   </stringbundleset>
 
  <prefWindow id="BrowserPreferences">
+#ifdef XP_WIN
   <prefpane id="paneHotkeys"
             label="&hotkeys.prefpane;"
             insertafter="paneContent"
             src="chrome://songbird/content/xul/preferences/hotKeys.xul" />
+#endif
   <prefpane id="paneAddons"
             label="&prefpane.addons.label;"
             insertafter="paneTabs"
