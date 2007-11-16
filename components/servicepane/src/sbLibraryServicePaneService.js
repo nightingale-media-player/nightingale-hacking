@@ -1269,7 +1269,10 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
     } else {
       dump("sbLibraryServicePane__insertMediaListNode: ");
       dump("could not add media list to parent library ");
-      dump(parentLibraryNode.name + "\n");
+      if (parentLibraryNode)
+          dump(parentLibraryNode.name + "\n");
+      else
+          dump("\n");
       this._servicePane.root.appendChild(aNode);
     }
   }

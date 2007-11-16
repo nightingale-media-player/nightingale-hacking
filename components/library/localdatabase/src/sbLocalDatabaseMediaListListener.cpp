@@ -560,6 +560,9 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
 
   PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  for (PRUint32 i = 0; i < aCurrentBatchDepth; i++) {
+    mStopNotifiyingStack[i] = 0;
+  }
 
   InitPropertyFilter(aPropertyFilter);
 
@@ -596,6 +599,9 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener,
 
   PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  for (PRUint32 i = 0; i < aCurrentBatchDepth; i++) {
+    mStopNotifiyingStack[i] = 0;
+  }
 
   InitPropertyFilter(aPropertyFilter);
 
