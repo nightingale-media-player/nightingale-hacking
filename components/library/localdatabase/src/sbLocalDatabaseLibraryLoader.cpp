@@ -94,6 +94,9 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define SB_CUSTOMTYPE_WEB_LIBRARY                             \
   "web"
 
+#define DEFAULT_COLUMNSPEC_WEB_LIBRARY \
+  "http://songbirdnest.com/data/1.0#ordinal 42 http://songbirdnest.com/data/1.0#trackName 228 http://songbirdnest.com/data/1.0#duration 49 http://songbirdnest.com/data/1.0#artistName 151 http://songbirdnest.com/data/1.0#originPageImage 53 http://songbirdnest.com/data/1.0#created 150 d http://songbirdnest.com/data/1.0#downloadButton 102"
+
 
 template <class T>
 class sbAutoFreeXPCOMArray
@@ -214,13 +217,15 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
     EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_MAIN_LIBRARY),
                          NS_LITERAL_STRING(DBENGINE_GUID_MAIN_LIBRARY),
                          NS_LITERAL_STRING(SB_NAMEKEY_MAIN_LIBRARY),
-                         NS_LITERAL_STRING(SB_CUSTOMTYPE_MAIN_LIBRARY));
+                         NS_LITERAL_STRING(SB_CUSTOMTYPE_MAIN_LIBRARY),
+                         EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_WEB_LIBRARY),
                             NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY),
-                            NS_LITERAL_STRING(SB_CUSTOMTYPE_WEB_LIBRARY));
+                            NS_LITERAL_STRING(SB_CUSTOMTYPE_WEB_LIBRARY),
+                            NS_LITERAL_STRING(DEFAULT_COLUMNSPEC_WEB_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -230,7 +235,8 @@ nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
                                                    const nsAString& aDefaultDatabaseGUID,
                                                    const nsAString& aLibraryNameKey,
-                                                   const nsAString& aCustomType)
+                                                   const nsAString& aCustomType,
+                                                   const nsAString& aDefaultColumnSpec)
 {
   nsCAutoString resourceGUIDPrefKey(aLibraryGUIDPref);
 
@@ -352,11 +358,17 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 
   rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
                             aCustomType);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), 
                             NS_LITERAL_STRING("1"));
-
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDefaultColumnSpec.IsEmpty()) {
+    rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                              aDefaultColumnSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
