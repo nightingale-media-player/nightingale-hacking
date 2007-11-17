@@ -31,7 +31,7 @@
  * TODO:
  *  - implement lazy saving of dirty datasources.
  *  - handle module removal
- *  
+ *
  */
 
 function DEBUG(msg) {
@@ -95,7 +95,7 @@ ServicePaneNode.prototype.getInterfaces = function(count) {
 }
 
 ServicePaneNode.prototype.__defineGetter__ ('resource',
-  function () { 
+  function () {
     if (this._container) {
       return this._container.Resource;
     }
@@ -296,23 +296,23 @@ ServicePaneNode.prototype.appendChild = function(aChild) {
 
 ServicePaneNode.prototype.insertBefore = function(aNewNode, aAdjacentNode) {
   DEBUG('insertBefore('+aNewNode.id+', '+aAdjacentNode.id+')');
-  
+
   if (!this.isContainer) {
     throw this.id + ' is not a container';
   }
-  
+
   if (this.id != aAdjacentNode.parentNode.id) {
     throw aAdjacentNode.id + ' is not in ' + this.id;
   }
-  
+
   // unlink the node we're moving from where it is currently
   aNewNode.unlinkNode();
-  
+
   // work out where it should go
   var index = this._container.IndexOf(aAdjacentNode.resource);
-  
+
   DEBUG(' index='+index);
-  
+
   // add it back in there
   this._container.InsertElementAt(aNewNode.resource, index, true);
 }
@@ -325,9 +325,9 @@ ServicePaneNode.prototype.removeChild = function(aChild) {
   if (this._container.IndexOf(aChild.resource)< 0) {
     throw aChild.id + ' is not in ' + this.id;
   }
-  
+
   this._container.RemoveElement(aChild.resource, true);
-  
+
   aChild.clearNode();
 }
 
@@ -340,7 +340,7 @@ ServicePaneNode.prototype.replaceChild = function(aNewNode, aOldNode) {
   if (index < 0) {
     throw aOldNode.id + ' is not in ' + this.id;
   }
-  
+
   this.insertBefore(aNewNode, aOldNode);
   this.removeChild(aOldNode);
 }
@@ -368,7 +368,7 @@ ServicePaneNode.prototype.clearNode = function () {
       this.removeChild(children.getNext());
     }
   }
-  
+
   // then we need to find all our outgoing arcs
   var arcs = this._dataSource.ArcLabelsOut(this.resource);
   while (arcs.hasMoreElements()) {
@@ -427,7 +427,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
 
   var uri = IOSVC.newFileURI(path);
   // FIXME: does this handle non-latin paths on non-linux?
-  
+
   this._dataSource = RDFSVC.GetDataSourceBlocking(uri.spec);
   this._dataSourceWrapped = new dsTranslator(this._dataSource, this);
   this._dsSaver = new dsSaver(this._dataSource, 30*1000); // try to save every thirty seconds
@@ -456,10 +456,10 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
     var key = e.getNext().QueryInterface(Ci.nsISupportsCString);
     module_keys.push(key);
   }
-  
+
   // let's sort the list
   module_keys.sort()
-  
+
   // and lets create and init the modules in order
   for(var i=0; i<module_keys.length; i++) {
     var key = module_keys[i];
@@ -496,7 +496,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   while (node) {
     var value = parseInt(node.getAttributeNS(SP, 'Weight'));
     while (node.previousSibling) {
-      var prev_value = 
+      var prev_value =
           parseInt(node.previousSibling.getAttributeNS(SP, 'Weight'));
       if (prev_value > value) {
         this._root.insertBefore(node, node.previousSibling);
@@ -504,8 +504,8 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
         break;
       }
     }
- 
-    node = node.nextSibling; 
+
+    node = node.nextSibling;
   }
 
   DEBUG('ServicePaneService.init() ends');
@@ -547,13 +547,13 @@ ServicePaneService.prototype.__defineGetter__('dataSource', function () {
 });
 
 // for sbIServicePaneService.root
-ServicePaneService.prototype.__defineGetter__('root', function () { 
+ServicePaneService.prototype.__defineGetter__('root', function () {
   if (!this._initialized) { this.init(); }
   return this._root;
 });
 
 // FIXME: implement nsIClassInfo
-ServicePaneService.prototype.QueryInterface = 
+ServicePaneService.prototype.QueryInterface =
 function ServicePaneService_QueryInterface(iid) {
   if (!iid.equals(Ci.sbIServicePaneService) &&
     !iid.equals(Ci.nsIObserver) &&
@@ -585,7 +585,7 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
     /* no id supplied - make it anonymous */
     resource = RDFSVC.GetAnonymousResource();
   }
-  
+
   /* create an arc making the node hidden, thus creating the object in RDF */
   this._dataSource.Assert(resource,
               RDFSVC.GetResource(SP+'Hidden'),
@@ -593,19 +593,19 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
   if (aContainer) {
     RDFCU.MakeSeq(this._dataSource, resource);
   }
-  
+
   /* create the javascript proxy object */
   var node = new ServicePaneNode(this._dataSource, resource);
   DEBUG ('ServicePaneService.addNode: node.hidden='+node.hidden);
-  
+
   /* add the node to the parent */
   aParent.appendChild(node)
-  
+
   /* if the node is a container, make it open */
   if (aContainer) {
     node.isOpen = true;
   }
-  
+
   // by default nothing is editable
   node.editable = false;
   return node;
@@ -617,11 +617,11 @@ function ServicePaneService_removeNode(aNode) {
   if (aNode == null) {
     throw Ce('you need to supply a node to removeNode');
   }
-  
+
   if (aNode.id == this._root.id) {
     throw Ce("you can't remove the root node");
   }
-  
+
   if(aNode.parentNode) {
     // remove the node from it's parent
     aNode.parentNode.removeChild(aNode);
@@ -640,7 +640,7 @@ function ServicePaneService_getNode(aId) {
     /* the node has a "hidden" attribute so it must exist */
     return null;
   }
-  
+
   return new ServicePaneNode(this._dataSource, resource);
 }
 
@@ -660,8 +660,8 @@ function ServicePaneService_getNodeForURL(aURL) {
       aURL = aURL.substring(0,paramStart);
     }
   }
-  
-  
+
+
   var ncURL = RDFSVC.GetResource(NC+"URL");
   var url = RDFSVC.GetLiteral(aURL);
   var target = this._dataSource.GetSource(ncURL, url, true);
@@ -755,12 +755,12 @@ function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
   if (!node) {
     return false;
   }
-  
+
   // see if we can handle the drag and drop based on node properties
   if (this._canDropReorder(node, aDragSession, aOrientation)) {
     return true;
   }
-  
+
   // let the module that owns this node handle this
   if (node.contractid && Cc[node.contractid]) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
@@ -781,7 +781,7 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
   var type = this._canDropReorder(node, aDragSession, aOrientation);
   if (type) {
     // we're in business
-    
+
     // do the dance to get our data out of the dnd system
     // create an nsITransferable
     var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
@@ -797,15 +797,15 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
     // it's always a string. always.
     data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
     data = data.toString();
-    
+
     // for drag and drop reordering the data is just the servicepane uri
     var droppedNode = this.getNode(data);
-    
+
     // fail if we can't get the node
     if (!droppedNode) {
       return;
     }
-    
+
     if (aOrientation == 0) {
       // drop into
       // we should append the new node to the current node
@@ -831,7 +831,7 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
     }
     return;
   }
-  
+
   // or let the module that owns this node handle it
   if (node.contractid) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
@@ -848,13 +848,13 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
   if (!node) {
     return false;
   }
-  
+
   var success = false;
-  
+
   // create a transferable
   var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
     createInstance(Components.interfaces.nsITransferable);
-    
+
   // get drag types from the node data
   if (node.dndDragTypes) {
     var types = node.dndDragTypes.split(',');
@@ -869,7 +869,7 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
       success = true;
     }
   }
-    
+
   if (node.contractid && Cc[node.contractid]) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
     if (module) {
@@ -880,18 +880,18 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
       }
     }
   }
-  
+
   if (success) {
     aTransferable.value = transferable;
   }
-  
+
   DEBUG(' success='+success);
-  
+
   return success;
 }
 
 /**
- * Called when a node is renamed by the user.  
+ * Called when a node is renamed by the user.
  * Delegates to the module that owns the given node.
  */
 ServicePaneService.prototype.onRename =
@@ -901,7 +901,7 @@ function ServicePaneService_onRename(aID, aNewName) {
   if (!node || !node.editable) {
     return;
   }
-  
+
   // Pass the message on to the node owner
   if (node.contractid) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
@@ -923,7 +923,7 @@ function dsTranslator(inner, sps) {
 }
 dsTranslator.prototype = {
   // impl methods
-  
+
   // Try to translate a key based on a string bundle uri. Either return an
   // nsIRDFLiteral on success or null on failure.
   translateKey: function translateKey(stringbundleuri, key) {
@@ -936,22 +936,22 @@ dsTranslator.prototype = {
     if (!message) { return null; }
     return RDFSVC.GetLiteral(message);
   },
-  
+
   // Try to translate an RDF triple. Either return either the original or
   // the translated target
   translateTriple: function translateTriple(aSource, aProperty, aTarget) {
     // if there's no target, fail
     if (!aTarget) { return null; }
-    
+
     // if the target is not an nsIRDFLiteral, return it
     if (!(aTarget instanceof Ci.nsIRDFLiteral)) { return aTarget; }
-    
+
     // if the target does not begin with "&", return it
     if (aTarget.Value.length < 1 ||
         aTarget.Value[0] != '&') {
       return aTarget;
     }
-    
+
     // the key is the rest of aTarget.Value
     var key = aTarget.Value.substring(1);
 
@@ -960,19 +960,19 @@ dsTranslator.prototype = {
     //   a property on the node (http://songbirdnest.com/rdf/servicepane#stringbundle)
     //   the .stringbundle attribute on the associated module service
     //   the default stringbundle on the service pane service
-    
+
     // FIXME: after testing wrap each of these steps in try/catch
-    
+
     var node = this.sps.getNode(aSource.Value);
-    
+
     // the node's stringbundle
     if (node && node.stringbundle) {
       var translated = this.translateKey(node.stringbundle, key);
       if (translated) {
         return translated;
-      }        
+      }
     }
-    
+
     // the module's stringbundle
     if (node && node.contractid && Cc[node.contractid]) {
       var m = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
@@ -983,31 +983,29 @@ dsTranslator.prototype = {
         }
       }
     }
-    
+
     // the app's default stringbundle
     var translated = this.translateKey(STRINGBUNDLE, key)
     if (translated) {
       return translated;
     }
-    
+
     // couldn't translate it - let's just return the raw target
     return aTarget;
   },
-  
+
   // nsISupports
   QueryInterface: function QueryInterface(iid) {
-    if (this.inner.QueryInterface(iid)) {
-      return this;
-    }
+    return this.inner.QueryInterface(iid);
   },
-  
+
   // nsIRDFDataSource
   get URI() { return this.inner.URI; },
   GetSource: function GetSource(a,b,c) { return this.inner.GetSource(a,b,c); },
   GetSources: function GetSources(a,b,c) { return this.inner.GetSources(a,b,c); },
   GetTarget: function GetTarget(aSource, aProperty, aTruthValue) {
     var target = this.inner.GetTarget(aSource, aProperty, aTruthValue);
-    
+
     // is this property translatable
     if (this.properties[aProperty.Value]) {
       return this.translateTriple(aSource, aProperty, target);
@@ -1032,15 +1030,13 @@ dsTranslator.prototype = {
               targets.getNext());
         },
         QueryInterface: function QueryInterface(iid) {
-          if (targets.QueryInterface(iid)) {
-            return this;
-          }
+          return targets.QueryInterface(iid);
         }
       };
       return enumerator
     } else {
       return targets;
-    }    
+    }
   },
   Assert: function Assert(a,b,c,d) { this.inner.Assert(a,b,c,d); },
   Unassert: function Unassert(a,b,c) { this.inner.Unassert(a,b,c); },
@@ -1060,13 +1056,13 @@ dsTranslator.prototype = {
   hasArcOut: function hasArcOut(a,b) { this.inner.hasArcOut(a,b); },
   beginUpdateBatch: function beginUpdateBatch() { this.inner.beginUpdateBatch(); },
   endUpdateBatch: function endUpdateBatch() { this.inner.endUpdateBatch(); },
-  
+
   // nsIRDFRemoteDataSource
   get loaded() { return this.inner.loaded; },
   Init: function Init(a) { this.inner.Init(a); },
   Refresh: function Refresh(a) { this.inner.Refresh(a); },
   Flush: function Flush() { this.inner.Flush(); },
-  FlushTo: function FlushTo(a) { this.inner.FlushTo(a); },
+  FlushTo: function FlushTo(a) { this.inner.FlushTo(a); }
 };
 
 
@@ -1076,13 +1072,13 @@ function dsSaver(ds, frequency) {
   this.ds.QueryInterface(Ci.nsIRDFRemoteDataSource);
 
   this.dirty = false; // has the DS changed since it was last saved?
-  
+
   this.timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
   this.timer.init(this, frequency, Ci.nsITimer.TYPE_REPEATING_SLACK);
 
   Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
       .addObserver(this, 'quit-application', false);
-      
+
   this.ds.AddObserver(this);
 }
 dsSaver.prototype = {
@@ -1101,7 +1097,7 @@ dsSaver.prototype = {
     }
     return this;
   },
-  
+
   /* nsIObserver */
   observe: function dsSaver_observe(subject, topic, data) {
     switch (topic) {
@@ -1121,7 +1117,7 @@ dsSaver.prototype = {
       default:
     }
   },
-  
+
   /* nsIRDFObserver */
   onAssert: function dsSaver_onAssert(a, b, c, d) {
     this.dirty = true;
@@ -1136,7 +1132,7 @@ dsSaver.prototype = {
     this.dirty = true;
   },
   onBeginUpdateBatch: function dsSaver_onBeginUpdateBatch(a) { },
-  onEndUpdateBatch: function dsSaver_onEndUpdateBatch(a) { },
+  onEndUpdateBatch: function dsSaver_onEndUpdateBatch(a) { }
 }
 
 /**
@@ -1158,7 +1154,7 @@ function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
               .getService(Ci.nsICategoryManager);
           for (var i=0; i<CATEGORIES.length; i++) {
             var e = CATEGORIES[i];
-            catman.addCategoryEntry(e.category, e.entry, e.value, 
+            catman.addCategoryEntry(e.category, e.entry, e.value,
               true, true);
           }
         }
@@ -1223,4 +1219,3 @@ var NSGetModule = makeGetModule (
     entry: 'service-pane-service',
     value: 'service,@songbirdnest.com/servicepane/service;1'
   }]);
-

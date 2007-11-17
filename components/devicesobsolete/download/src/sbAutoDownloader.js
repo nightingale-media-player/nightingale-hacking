@@ -74,7 +74,7 @@ function DEBUG(msg) {
       dump(repr(msg));
     } else {
       dump(msg.toSource());
-    } 
+    }
   }
   dump('\n');
 }
@@ -85,7 +85,7 @@ function DEBUG(msg) {
 ////////////////////
 function sbAutoDownloader() {
   DEBUG();
-  
+
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
   obs.addObserver(this, 'songbird-library-manager-ready', false);
@@ -120,7 +120,7 @@ sbAutoDownloader.prototype.QueryInterface =
   /////////////////
  // nsIObserver //
 /////////////////
-sbAutoDownloader.prototype.observe = 
+sbAutoDownloader.prototype.observe =
 function sbAutoDownloader_observe(subject, topic, data) {
   DEBUG();
 
@@ -134,10 +134,10 @@ function sbAutoDownloader_observe(subject, topic, data) {
     // get the library manager
     this._libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
                              .getService(Ci.sbILibraryManager);
-                             
+
     // get the main library
     this._library = this._libraryManager.mainLibrary;
-    
+
     // watch for added items
     this._library.addListener(this, false,
         Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED);
@@ -151,7 +151,7 @@ function sbAutoDownloader_observe(subject, topic, data) {
     if (this._library) {
       this._library.removeListener(this);
     }
-    
+
     if (this._timer) {
       this._clearTimer();
     }
@@ -177,8 +177,8 @@ sbAutoDownloader.prototype.onItemAdded =
 function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
   DEBUG();
   if (aMediaItem.contentSrc.scheme.match(/^http/)) {
-    // XXXsteve Don't download items explicitly added by the download helper
-    if (aMediaItem.getProperty(SBProperties.downloadStatusTarget) == null) {
+    // Don't download items already in the download medialist.
+    if (!this._helper.downloadMediaList.contains(aMediaItem)) {
       this._queue.push(aMediaItem);
       if (!this._timer) {
         this._setUpTimer();

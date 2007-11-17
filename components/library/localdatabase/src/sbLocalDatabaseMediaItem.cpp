@@ -592,8 +592,12 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
                                  PRBool* _retval)
 {
-  NS_ENSURE_ARG_POINTER(aOtherLibraryResource);
   NS_ENSURE_ARG_POINTER(_retval);
+
+  if (!aOtherLibraryResource) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
 
   nsAutoString otherGUID;
   nsresult rv = aOtherLibraryResource->GetGuid(otherGUID);

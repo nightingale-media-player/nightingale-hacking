@@ -208,7 +208,7 @@ function sbDownloadDeviceHelper__ensureDestination()
   catch(e) {
     // Don't care if it fails
   }
-  
+
   var chromeFeatures = "modal,chrome,centerscreen,dialog=yes,resizable=no";
   var useTitlebar = false;
   try {
@@ -244,4 +244,3 @@ function sbDownloadDeviceHelper__ensureDestination()
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([sbDownloadDeviceHelper]);
 }
-

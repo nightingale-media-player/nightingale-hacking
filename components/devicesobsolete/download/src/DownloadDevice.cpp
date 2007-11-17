@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -32,7 +32,7 @@
  *******************************************************************************
  ******************************************************************************/
 
-/** 
+/**
 * \file  sbDownloadDevice.cpp
 * \brief Songbird DownloadDevice Component Implementation.
 */
@@ -173,7 +173,7 @@ static PRInt32 codetovalue( unsigned char c )
 }
 
 // XXXAus: this should be moved into a base64 utilities class.
-static PRStatus decode4to3( const unsigned char    *src, 
+static PRStatus decode4to3( const unsigned char    *src,
                            unsigned char          *dest )
 {
   PRUint32 b32 = (PRUint32)0;
@@ -200,7 +200,7 @@ static PRStatus decode4to3( const unsigned char    *src,
 }
 
 // XXXAus: this should be moved into a base64 utilities class.
-static PRStatus decode3to2( const unsigned char    *src, 
+static PRStatus decode3to2( const unsigned char    *src,
                            unsigned char          *dest )
 {
   PRUint32 b32 = (PRUint32)0;
@@ -382,7 +382,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
 
   PRInt32 pos = unicodeDisposition.Find(DISPOSITION_ATTACHEMENT,
     CaseInsensitiveCompare);
-  if(pos == -1 ) 
+  if(pos == -1 )
     return EmptyCString();
 
   pos = unicodeDisposition.Find(DISPOSITION_FILENAME,
@@ -392,7 +392,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
 
   pos += DISPOSITION_FILENAME.Length();
 
-  // if the string is quoted, we look for the next quote to know when the 
+  // if the string is quoted, we look for the next quote to know when the
   // filename ends.
   PRInt32 endPos = -1;
   if(unicodeDisposition.CharAt(pos) == '"') {
@@ -400,7 +400,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
     pos++;
     endPos = unicodeDisposition.FindChar('\"', pos);
 
-    if(endPos == -1) 
+    if(endPos == -1)
       return EmptyCString();
   }
   // if not, we find the next ';' or we take the rest.
@@ -417,9 +417,9 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
   // string is encoded in a different character set.
   if(StringBeginsWith(filename, NS_LITERAL_CSTRING("=?")) &&
      StringEndsWith(filename, NS_LITERAL_CSTRING("?="))) {
-    
+
     nsresult rv;
-    nsCOMPtr<nsIUTF8ConverterService> convServ = 
+    nsCOMPtr<nsIUTF8ConverterService> convServ =
       do_GetService("@mozilla.org/intl/utf8converterservice;1", &rv);
     NS_ENSURE_SUCCESS(rv, EmptyCString());
 
@@ -441,7 +441,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
 
     nsCAutoString encoding(Substring(filename, pos, endPos - pos));
     pos = endPos + 1;
-    
+
     ToLowerCase(encoding);
 
     // bad encoding.
@@ -459,7 +459,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
 
     nsCAutoString convertedFilename;
     nsCAutoString filenameToDecode(Substring(filename, pos, endPos - pos));
-    
+
     if(encoding.EqualsLiteral("b")) {
       char *str = SB_Base64Decode(filenameToDecode.get(), filenameToDecode.Length(), nsnull);
 
@@ -875,7 +875,7 @@ NS_IMETHODIMP sbDownloadDevice::AddCallback(
 
 /**
  * \brief Remove a device category handler callback.
- * 
+ *
  * \param aCallback The device category handler callback you wish to remove.
  */
 
@@ -889,7 +889,7 @@ NS_IMETHODIMP sbDownloadDevice::RemoveCallback(
 /**
  * \brief Get the device library representing the content
  * available on the device.
- * 
+ *
  * \param aDeviceIdentifier The unique device identifier.
  * \return The library for the specified device.
  */
@@ -926,7 +926,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
  * \brief Get preferred transfer location for item
  *
  * Get a transfer location for the specified media item. This enables
- * the device to determine where best to put this media item based on 
+ * the device to determine where best to put this media item based on
  * it's own set of criteria.
  *
  * \param aDeviceIdentifier The device unique identifier.
@@ -949,7 +949,7 @@ NS_IMETHODIMP sbDownloadDevice::GetTransferLocation(
  * \brief Transfer items to a library or destination.
  *
  * If you call this method with a library only, the device
- * will attempt to read the library's preferred transfer 
+ * will attempt to read the library's preferred transfer
  * destination and use it.
  *
  * If you call this method with a destination only, the device
@@ -1320,7 +1320,7 @@ NS_IMETHODIMP sbDownloadDevice::GetAvailableSpace(
 
 
 /**
- * \brief Returns a list of file extensions representing the 
+ * \brief Returns a list of file extensions representing the
  * formats supported by a specific device.
  *
  * \param aDeviceIdentifier The device unique identifier.
@@ -2543,13 +2543,22 @@ nsresult sbDownloadDevice::OpenDialog(
     NS_ENSURE_SUCCESS(rv, rv);
     PRInt32 pos = target.FindChar(',');
     if (pos >= 0) {
-        nsDependentSubstring libraryGuid(target, 0, pos);
         nsDependentSubstring mediaItemGuid(target, pos + 1);
+
+        nsString originalItemGuid;
+        rv = apMediaItem->GetGuid(originalItemGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (originalItemGuid.Equals(mediaItemGuid)) {
+          *apStatusTarget = nsnull;
+          return NS_OK;
+        }
 
         nsCOMPtr<sbILibraryManager> libraryManager =
           do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
+        nsDependentSubstring libraryGuid(target, 0, pos);
         nsCOMPtr<sbILibrary> library;
         rv = libraryManager->GetLibrary(libraryGuid, getter_AddRefs(library));
         if (rv != NS_ERROR_NOT_AVAILABLE) {
@@ -2757,11 +2766,11 @@ nsresult sbDownloadSession::Initiate()
       /* Keep a reference to the nsIFile pointing at the directory */
         nsCOMPtr<nsIFileURL>        pFileURL;
         nsCOMPtr<nsIFile>           pFile;
-        if (NS_SUCCEEDED(result)) 
+        if (NS_SUCCEEDED(result))
           pFileURL = do_QueryInterface(mpDstURI, &result);
-        if (NS_SUCCEEDED(result)) 
+        if (NS_SUCCEEDED(result))
           result = pFileURL->GetFile(getter_AddRefs(pFile));
-        if (NS_SUCCEEDED(result)) 
+        if (NS_SUCCEEDED(result))
           pDstFile = do_QueryInterface(pFile, &result);
     }
 
@@ -3240,12 +3249,12 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         nsCString escFileName;
         PRBool noContentDispositionHeaders = PR_TRUE;
         nsCOMPtr<nsIHttpChannel> httpChannel = do_QueryInterface(aRequest, &result);
-        
+
         if (NS_SUCCEEDED(result)) {
           nsCAutoString contentDisposition;
           result = httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("content-disposition"),
                                                   contentDisposition);
-          
+
           if (NS_SUCCEEDED(result) &&
               contentDisposition.Length()) {
             escFileName = GetContentDispositionFilename(contentDisposition);
@@ -3273,7 +3282,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
           result = pFinalSrcURL->GetFileName(escFileName);
           NS_ENSURE_SUCCESS(result, result);
         }
-        
+
         /* Get the unescaped file name from the URL. */
         nsCOMPtr<nsINetUtil> netUtil;
         netUtil = do_GetService("@mozilla.org/network/util;1", &result);
@@ -3283,7 +3292,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
           nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
           leafName);
         NS_ENSURE_SUCCESS(result, result);
-        
+
         /* strip out characters not valid in file names */
         nsCString illegalChars(FILE_ILLEGAL_CHARACTERS);
         illegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
@@ -3502,7 +3511,7 @@ void sbDownloadSession::UpdateDownloadDetails(
     /* Compute the remaining number of seconds to download. */
     if (mRate)
     {
-        remainingSecs = (PRUint32) 
+        remainingSecs = (PRUint32)
                     ((double(aProgressMax) - double(aProgress)) / mRate + 0.5);
     }
     else
@@ -4018,6 +4027,3 @@ sbAutoDownloadButtonPropertyValue::~sbAutoDownloadButtonPropertyValue()
   }
   MOZ_COUNT_DTOR(sbAutoDownloadButtonPropertyValue);
 }
-
-
-

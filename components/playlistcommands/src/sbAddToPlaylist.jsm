@@ -1,28 +1,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
+
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
@@ -36,13 +38,13 @@ const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist"
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
 const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
 
-EXPORTED_SYMBOLS = [ "addToPlaylistHelper", 
-                     "SBPlaylistCommand_AddToPlaylist" ]; 
+EXPORTED_SYMBOLS = [ "addToPlaylistHelper",
+                     "SBPlaylistCommand_AddToPlaylist" ];
 
 // ----------------------------------------------------------------------------
 // The "Add to playlist" dynamic command object
 // ----------------------------------------------------------------------------
-var SBPlaylistCommand_AddToPlaylist = 
+var SBPlaylistCommand_AddToPlaylist =
 {
   m_Context: {
     m_Playlist: null,
@@ -50,7 +52,7 @@ var SBPlaylistCommand_AddToPlaylist =
   },
 
   m_addToPlaylist: null,
-  
+
   m_root_commands :
   {
     m_Types: new Array
@@ -62,17 +64,17 @@ var SBPlaylistCommand_AddToPlaylist =
     (
       ADDTOPLAYLIST_MENU_ID
     ),
-    
+
     m_Names: new Array
     (
       ADDTOPLAYLIST_MENU_NAME
     ),
-    
+
     m_Tooltips: new Array
     (
       ADDTOPLAYLIST_MENU_TOOLTIP
     ),
-    
+
     m_Keys: new Array
     (
       ADDTOPLAYLIST_MENU_KEY
@@ -97,10 +99,10 @@ var SBPlaylistCommand_AddToPlaylist =
   _getMenu: function(aSubMenu)
   {
     var cmds;
-    
+
     cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
     if (cmds) return cmds;
-    
+
     switch (aSubMenu) {
       default:
         cmds = this.m_root_commands;
@@ -126,7 +128,7 @@ var SBPlaylistCommand_AddToPlaylist =
     if ( aIndex >= cmds.m_Ids.length ) return "";
     return cmds.m_Ids[ aIndex ];
   },
-  
+
   getCommandType: function( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
@@ -159,12 +161,12 @@ var SBPlaylistCommand_AddToPlaylist =
   {
   },
 
-  instantiateCustomCommand: function( aDocument, aId, aHost ) 
+  instantiateCustomCommand: function( aDocument, aId, aHost )
   {
     return null;
   },
 
-  refreshCustomCommand: function( aElement, aId, aHost ) 
+  refreshCustomCommand: function( aElement, aId, aHost )
   {
   },
 
@@ -227,12 +229,12 @@ var SBPlaylistCommand_AddToPlaylist =
     {
       // ADDTOPLAYLIST
       if (this.m_addToPlaylist.handleCommand(id)) return;
-      
+
       // ...
     }
   },
-  
-  // The object registered with the sbIPlaylistCommandsManager interface acts 
+
+  // The object registered with the sbIPlaylistCommandsManager interface acts
   // as a template for instances bound to specific playlist elements
 
   dupObject: function (obj) {
@@ -251,47 +253,47 @@ var SBPlaylistCommand_AddToPlaylist =
     return obj;
   },
 
-  initCommands: function(aHost) { 
-    this.m_addToPlaylist = new addToPlaylistHelper(); 
-    this.m_addToPlaylist.init(this); 
+  initCommands: function(aHost) {
+    this.m_addToPlaylist = new addToPlaylistHelper();
+    this.m_addToPlaylist.init(this);
   },
-  
-  shutdownCommands: function() { 
+
+  shutdownCommands: function() {
     if (!this.m_addToPlaylist) {
       dump("this.m_addToPlaylist is null in SBPlaylistCommand_AddToPlaylist ?!!\n");
       return;
     }
-    this.m_addToPlaylist.shutdown(); 
+    this.m_addToPlaylist.shutdown();
     this.m_addToPlaylist = null;
     this.m_Context = null;
   },
-  
+
   setContext: function( context )
   {
     var playlist = context.playlist;
     var window = context.window;
-    
+
     // Ah.  Sometimes, things are being secure.
-    
+
     if ( playlist && playlist.wrappedJSObject )
       playlist = playlist.wrappedJSObject;
-    
+
     if ( window && window.wrappedJSObject )
       window = window.wrappedJSObject;
-    
+
     this.m_Context.m_Playlist = playlist;
     this.m_Context.m_Window = window;
   },
-  
+
   QueryInterface : function(aIID)
   {
     if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
         !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
+        !aIID.equals(Components.interfaces.nsISupports))
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
-    
+
     return this;
   }
 }; // SBPlaylistCommand_AddToPlaylist declaration
@@ -326,7 +328,7 @@ addToPlaylistHelper.prototype = {
     this.removeLibraryListeners();
     this.m_libraryManager = null;
   },
-  
+
   removeLibraryListeners: function() {
     if (this.m_reglist) {
       for (var i in this.m_reglist) {
@@ -335,11 +337,11 @@ addToPlaylistHelper.prototype = {
     }
     this.m_reglist = new Array();
   },
-    
+
   makeListOfPlaylists: function( ) {
     // remove previous listeners
     this.removeLibraryListeners();
-    
+
     // todo: make this smarter :(
     var typearray = new Array('simple');
 
@@ -352,7 +354,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Keys = new Array();
     this.m_listofplaylists.m_Keycodes = new Array();
     this.m_listofplaylists.m_PlaylistCommands = new Array();
-    
+
     var libs = this.m_libraryManager.getLibraries();
     while (libs.hasMoreElements()) {
       var library = libs.getNext();
@@ -360,7 +362,7 @@ addToPlaylistHelper.prototype = {
       this.m_reglist.push(library);
       this.makePlaylistsForLibrary(library, typearray);
     }
-    
+
     if (this.m_listofplaylists.m_Types.length == 0) {
       this.m_listofplaylists.m_Types.push("action");
       this.m_listofplaylists.m_Ids.push("noplaylist");
@@ -380,7 +382,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Keys.push("");
     this.m_listofplaylists.m_Keycodes.push("");
     this.m_listofplaylists.m_PlaylistCommands.push(null);
-    
+
     this.m_listofplaylists.m_Types.push("action");
     this.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID);
     this.m_listofplaylists.m_Names.push("&command.addtoplaylist.createnew");
@@ -390,7 +392,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Keycodes.push("");
     this.m_listofplaylists.m_PlaylistCommands.push(null);
   },
-  
+
   makePlaylistsForLibrary: function(aLibrary, typearray) {
     this._makingList = true;
     var listener = {
@@ -411,9 +413,9 @@ addToPlaylistHelper.prototype = {
         if (hidden == "1") return true;
         var goodtype = false;
         for (var i in typearray) {
-          if (typearray[i] == item.type) { 
-            goodtype = true; 
-            break; 
+          if (typearray[i] == item.type) {
+            goodtype = true;
+            break;
           }
         }
         if (!goodtype) return true;
@@ -435,7 +437,7 @@ addToPlaylistHelper.prototype = {
         return true;
       }
     };
-    
+
     try {
 
       // Enumerate all lists in this library
@@ -443,7 +445,7 @@ addToPlaylistHelper.prototype = {
                                       listener,
                                       Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
     } catch (e) {
-      // this may happen if a playlist was leaked, and is still there 
+      // this may happen if a playlist was leaked, and is still there
       // in the aether refreshing its commands, ignore failure, this list
       // will never show up anymore anyway
     }
@@ -453,9 +455,9 @@ addToPlaylistHelper.prototype = {
   handleGetMenu: function(aSubMenu) {
     if (this.m_listofplaylists == null) {
       // handleGetMenu called before makeListOfPlaylists, this would cause infinite recursion :
-      // the command object would not find the menu either, would return null to getMenu which 
+      // the command object would not find the menu either, would return null to getMenu which
       // corresponds to the root menu, and it'd recurse infinitly.
-      throw Components.results.NS_ERROR_FAILURE; 
+      throw Components.results.NS_ERROR_FAILURE;
     }
     if (aSubMenu == ADDTOPLAYLIST_MENU_ID) return this.m_listofplaylists;
     return null;
@@ -478,38 +480,45 @@ addToPlaylistHelper.prototype = {
           var playlistguid = guids[1];
 
           this.addToPlaylist(libraryguid, playlistguid, context.m_Playlist);
-          
+
           return true;
         }
-      } 
+      }
     } catch (e) {
+      Components.utils.reportError(e);
       alert("addToPlaylist.js - handleCommand - " + e);
     }
     return false;
   },
-  
+
   addToPlaylist: function(libraryguid, playlistguid, sourceplaylist) {
     var library = this.m_libraryManager.getLibrary(libraryguid);
     var medialist;
-    if (libraryguid == playlistguid) medialist = library;
-    else medialist = library.getMediaItem(playlistguid);
-                
+    if (libraryguid == playlistguid)
+      medialist = library;
+    else
+      medialist = library.getMediaItem(playlistguid);
+
     if (medialist) {
-    
+
       var oldLength = medialist.length;
       var selection = sourceplaylist.treeView.selectedMediaItems;
+
       // Create an enumerator that wraps the enumerator we were handed since
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain
       // 'ol sbIMediaItems
 
       var unwrapper = {
         enumerator: selection,
-        
+
         hasMoreElements : function() {
           return this.enumerator.hasMoreElements();
         },
         getNext : function() {
-          return this.enumerator.getNext().mediaItem;
+          var item = this.enumerator.getNext().mediaItem;
+          item.setProperty(SBProperties.downloadStatusTarget,
+                           item.library.guid + "," + item.guid);
+          return item;
         },
         QueryInterface : function(iid) {
           if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
@@ -520,16 +529,17 @@ addToPlaylistHelper.prototype = {
       }
 
       medialist.addSome(unwrapper);
+
       var added = medialist.length - oldLength;
       sourceplaylist._reportAddedTracks(added, 0, medialist.name);
     }
   },
-  
+
   //-----------------------------------------------------------------------------
   _inbatch       : false,
   _deferredevent : false,
   _makingList    : false,
-  
+
   refreshCommands: function() {
     if (this.m_commands) {
       if (this.m_commands.m_Context && this.m_commands.m_Context.m_Playlist) {
@@ -562,37 +572,38 @@ addToPlaylistHelper.prototype = {
 
   onItemAdded: function onItemAdded(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
-      return true;
+    if (!this._inbatch) {
+      this.onUpdateEvent(item);
     }
-    this.onUpdateEvent(item);
+    return true;
   },
-  
+
   onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
+    return true;
   },
-  
+
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
-      return true;
+    if (!this._inbatch) {
+      this.onUpdateEvent(item);
     }
-    this.onUpdateEvent(item);
+    return true;
   },
-  
+
   onItemUpdated: function onItemUpdated(list, item, properties) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
-      return true;
+    if (!this._inbatch) {
+      this.onUpdateEvent(item);
     }
-    this.onUpdateEvent(item);
+    return true;
   },
 
   onListCleared: function onListCleared(list) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
-      return true;
+    if (!this._inbatch) {
+      this.onUpdateEvent(list);
     }
-    this.onUpdateEvent(list);
+    return true;
   },
 
   onBatchBegin: function onBatchBegin(list) {
@@ -600,25 +611,24 @@ addToPlaylistHelper.prototype = {
     this._inbatch = true;
     this._deferredevent = false;
   },
-  
+
   onBatchEnd: function onBatchEnd(list) {
     // stop deferring the events
     this._inbatch = false;
     // if an event was deferred, handle it
     if (this._deferredevent) {
       // since we're no longer in a batch, this does call refreshCommands
-      this.onUpdateEvent(list); 
+      this.onUpdateEvent(list);
     }
     this._deferredevent = false;
   },
-  
+
   onLibraryRegistered: function onLibraryRegistered(library) {
-    this.onUpdateEvent(library); 
+    this.onUpdateEvent(library);
   },
 
   onLibraryUnregistered: function onLibraryUnregistered(library) {
-    this.onUpdateEvent(library); 
+    this.onUpdateEvent(library);
   }
 
 };
-

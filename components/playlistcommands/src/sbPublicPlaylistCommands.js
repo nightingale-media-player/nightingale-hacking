@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -48,15 +48,18 @@ function SelectionUnwrapper(selection) {
 
 SelectionUnwrapper.prototype = {
   _selection: null,
-  
+
   hasMoreElements : function() {
     return this._selection.hasMoreElements();
   },
-  
+
   getNext : function() {
-    return this._selection.getNext().mediaItem;
+    var item = this._selection.getNext().mediaItem;
+    item.setProperty(SBProperties.downloadStatusTarget,
+                     item.library.guid + "," + item.guid);
+    return item;
   },
-  
+
   QueryInterface : function(iid) {
     if (iid.equals(Ci.nsISimpleEnumerator) ||
         iid.equals(Ci.nsISupports))
@@ -82,7 +85,7 @@ PublicPlaylistCommands.prototype = {
   classDescription: "Songbird Public Playlist Commands",
   classID:          Components.ID("{1126ee77-2d85-4f79-a07a-b014da404e53}"),
   contractID:       "@songbirdnest.com/Songbird/PublicPlaylistCommands;1",
-  
+
   m_defaultCommands               : null,
   m_webPlaylistCommands           : null,
   m_webMediaHistoryToolbarCommands: null,
@@ -95,7 +98,7 @@ PublicPlaylistCommands.prototype = {
   // Define various playlist commands, they will be exposed to the playlist commands
   // manager so that they can later be retrieved and concatenated into bigger
   // playlist commands objects.
-  
+
   // Commands that act on playlist items
   m_cmd_Play                      : null, // play the selected track
   m_cmd_Remove                    : null, // remove the selected track(s)
@@ -114,7 +117,7 @@ PublicPlaylistCommands.prototype = {
   // Commands that act on playlist themselves
   m_cmd_list_Remove               : null, // remove the selected playlist
   m_cmd_list_Rename               : null, // rename the selected playlist
-  
+
   // ==========================================================================
   // INIT
   // ==========================================================================
@@ -123,7 +126,7 @@ PublicPlaylistCommands.prototype = {
       // already initialized ! bail out !
       return;
     }
-    
+
     // Add an observer for the application shutdown event, so that we can
     // shutdown our commands
 
@@ -136,7 +139,7 @@ PublicPlaylistCommands.prototype = {
 
     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefBranch2);
-    
+
     // --------------------------------------------------------------------------
 
     // Build playlist command actions
@@ -147,20 +150,20 @@ PublicPlaylistCommands.prototype = {
     // instantiator. This makes one toolbar button and menu item, and two
     // shortcut keys.
     // --------------------------------------------------------------------------
-    
+
     const PlaylistCommandsBuilder = new Components.
-      Constructor("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1", 
+      Constructor("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1",
                   "sbIPlaylistCommandsBuilder");
 
     this.m_cmd_Play = new PlaylistCommandsBuilder();
 
     // The first item, always created
-    this.m_cmd_Play.appendAction(null, 
+    this.m_cmd_Play.appendAction(null,
                                  "library_cmd_play",
                                  "&command.play",
                                  "&command.tooltip.play",
                                  plCmd_Play_TriggerCallback);
-    
+
     this.m_cmd_Play.setCommandShortcut(null,
                                        "library_cmd_play",
                                        "&command.shortcut.key.play",
@@ -173,7 +176,7 @@ PublicPlaylistCommands.prototype = {
                                               plCmd_IsAnyTrackSelected);
 
     // The second item, only created by the keyboard shortcuts instantiator
-    this.m_cmd_Play.appendAction(null, 
+    this.m_cmd_Play.appendAction(null,
                                  "library_cmd_play2",
                                  "&command.play",
                                  "&command.tooltip.play",
@@ -195,21 +198,21 @@ PublicPlaylistCommands.prototype = {
                                               plCmd_IsShortcutsInstantiator);
 
     // --------------------------------------------------------------------------
-    // The REMOVE button, like the play button, is made of two commands, one that 
-    // is always there for all instantiators, the other that is only created by 
-    // the shortcuts instantiator. This makes one toolbar button and menu item, 
+    // The REMOVE button, like the play button, is made of two commands, one that
+    // is always there for all instantiators, the other that is only created by
+    // the shortcuts instantiator. This makes one toolbar button and menu item,
     // and two shortcut keys.
     // --------------------------------------------------------------------------
 
     this.m_cmd_Remove = new PlaylistCommandsBuilder();
 
     // The first item, always created
-    this.m_cmd_Remove.appendAction(null, 
+    this.m_cmd_Remove.appendAction(null,
                                    "library_cmd_remove",
                                    "&command.remove",
                                    "&command.tooltip.remove",
                                    plCmd_Remove_TriggerCallback);
-    
+
     this.m_cmd_Remove.setCommandShortcut(null,
                                          "library_cmd_remove",
                                          "&command.shortcut.key.remove",
@@ -222,7 +225,7 @@ PublicPlaylistCommands.prototype = {
                                                 plCmd_IsAnyTrackSelected);
 
     // The second item, only created by the keyboard shortcuts instantiator
-    this.m_cmd_Remove.appendAction(null, 
+    this.m_cmd_Remove.appendAction(null,
                                    "library_cmd_remove2",
                                    "&command.remove",
                                    "&command.tooltip.remove",
@@ -250,12 +253,12 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Edit = new PlaylistCommandsBuilder();
 
     // The first item, always created
-    this.m_cmd_Edit.appendAction(null, 
+    this.m_cmd_Edit.appendAction(null,
                                  "library_cmd_edit",
                                  "&command.edit",
                                  "&command.tooltip.edit",
                                  plCmd_Edit_TriggerCallback);
-    
+
     this.m_cmd_Edit.setCommandShortcut(null,
                                        "library_cmd_edit",
                                        "&command.shortcut.key.edit",
@@ -266,19 +269,19 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Edit.setCommandEnabledCallback(null,
                                               "library_cmd_edit",
                                               plCmd_IsAnyTrackSelected);
-    
+
     // --------------------------------------------------------------------------
     // The DOWNLOAD button
     // --------------------------------------------------------------------------
 
     this.m_cmd_Download = new PlaylistCommandsBuilder();
 
-    this.m_cmd_Download.appendAction(null, 
+    this.m_cmd_Download.appendAction(null,
                                      "library_cmd_download",
                                      "&command.download",
                                      "&command.tooltip.download",
                                      plCmd_Download_TriggerCallback);
-    
+
     this.m_cmd_Download.setCommandShortcut(null,
                                            "library_cmd_download",
                                            "&command.shortcut.key.download",
@@ -296,7 +299,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_AddToLibrary = new PlaylistCommandsBuilder();
 
-    this.m_cmd_AddToLibrary.appendAction(null, 
+    this.m_cmd_AddToLibrary.appendAction(null,
                                          "library_cmd_addtolibrary",
                                          "&command.addtolibrary",
                                          "&command.tooltip.addtolibrary",
@@ -319,7 +322,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_CopyTrackLocation = new PlaylistCommandsBuilder();
 
-    this.m_cmd_CopyTrackLocation.appendAction(null, 
+    this.m_cmd_CopyTrackLocation.appendAction(null,
                                               "library_cmd_copylocation",
                                               "&command.copylocation",
                                               "&command.tooltip.copylocation",
@@ -343,7 +346,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_ClearHistory = new PlaylistCommandsBuilder();
 
     this.m_cmd_ClearHistory.appendAction
-                                      (null, 
+                                      (null,
                                        "library_cmd_clearhistory",
                                        "&command.clearhistory",
                                        "&command.tooltip.clearhistory",
@@ -368,7 +371,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_ShowDownloadPlaylist = new PlaylistCommandsBuilder();
 
-    this.m_cmd_ShowDownloadPlaylist.appendAction(null, 
+    this.m_cmd_ShowDownloadPlaylist.appendAction(null,
                                                 "library_cmd_showdlplaylist",
                                                 "&command.showdlplaylist",
                                                 "&command.tooltip.showdlplaylist",
@@ -391,7 +394,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_PauseResumeDownload = new PlaylistCommandsBuilder();
 
-    this.m_cmd_PauseResumeDownload.appendAction(null, 
+    this.m_cmd_PauseResumeDownload.appendAction(null,
                                                 "library_cmd_pause",
                                                 "&command.pausedl",
                                                 "&command.tooltip.pause",
@@ -412,7 +415,7 @@ PublicPlaylistCommands.prototype = {
                                                     "library_cmd_pause",
                                                     plCmd_IsDownloadActive);
 
-    this.m_cmd_PauseResumeDownload.appendAction(null, 
+    this.m_cmd_PauseResumeDownload.appendAction(null,
                                                 "library_cmd_resume",
                                                 "&command.resumedl",
                                                 "&command.tooltip.resume",
@@ -436,7 +439,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_CleanUpDownloads = new PlaylistCommandsBuilder();
 
     this.m_cmd_CleanUpDownloads.appendAction
-                                      (null, 
+                                      (null,
                                        "library_cmd_cleanupdownloads",
                                        "&command.cleanupdownloads",
                                        "&command.tooltip.cleanupdownloads",
@@ -461,7 +464,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_ShowWebPlaylist = new PlaylistCommandsBuilder();
 
-    this.m_cmd_ShowWebPlaylist.appendAction(null, 
+    this.m_cmd_ShowWebPlaylist.appendAction(null,
                                             "library_cmd_showwebplaylist",
                                             "&command.showwebplaylist",
                                             "&command.tooltip.showwebplaylist",
@@ -484,7 +487,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_BurnToCD = new PlaylistCommandsBuilder();
 
-    this.m_cmd_BurnToCD.appendAction(null, 
+    this.m_cmd_BurnToCD.appendAction(null,
                                      "library_cmd_burntocd",
                                      "&command.burntocd",
                                      "&command.tooltip.burntocd",
@@ -509,7 +512,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_CopyToDevice = new PlaylistCommandsBuilder();
 
-    this.m_cmd_CopyToDevice.appendAction(null, 
+    this.m_cmd_CopyToDevice.appendAction(null,
                                          "library_cmd_device",
                                          "&command.device",
                                          "&command.tooltip.device",
@@ -534,7 +537,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_list_Remove = new PlaylistCommandsBuilder();
 
-    this.m_cmd_list_Remove.appendAction(null, 
+    this.m_cmd_list_Remove.appendAction(null,
                                        "playlist_cmd_remove",
                                        "&command.playlist.remove",
                                        "&command.tooltip.playlist.remove",
@@ -553,7 +556,7 @@ PublicPlaylistCommands.prototype = {
 
     this.m_cmd_list_Rename = new PlaylistCommandsBuilder();
 
-    this.m_cmd_list_Rename.appendAction(null, 
+    this.m_cmd_list_Rename.appendAction(null,
                                        "playlist_cmd_rename",
                                        "&command.playlist.rename",
                                        "&command.tooltip.playlist.rename",
@@ -567,9 +570,9 @@ PublicPlaylistCommands.prototype = {
                                              true);
 
     // --------------------------------------------------------------------------
-    
+
     // Publish atomic commands
-    
+
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PLAY, this.m_cmd_Play);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
@@ -584,37 +587,37 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
-    
+
     this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
-    
+
     // --------------------------------------------------------------------------
     // Construct and publish the main library commands
     // --------------------------------------------------------------------------
 
     this.m_defaultCommands = new PlaylistCommandsBuilder();
 
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_play",
                                                   this.m_cmd_Play);
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_remove",
                                                   this.m_cmd_Remove);
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_edit",
                                                   this.m_cmd_Edit);
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_addtoplaylist",
                                                   SBPlaylistCommand_AddToPlaylist);
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_burntocd",
                                                   this.m_cmd_BurnToCD);
-    this.m_defaultCommands.appendPlaylistCommands(null, 
+    this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_device",
                                                   this.m_cmd_CopyToDevice);
 
     this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
-    
+
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
 
     // --------------------------------------------------------------------------
@@ -623,26 +626,26 @@ PublicPlaylistCommands.prototype = {
 
     this.m_webPlaylistCommands = new PlaylistCommandsBuilder();
 
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_play",
                                                       this.m_cmd_Play);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_remove",
                                                       this.m_cmd_Remove);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_download",
                                                       this.m_cmd_Download);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_addtoplaylist",
                                                       SBPlaylistCommand_AddToPlaylist);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_addtolibrary",
                                                       this.m_cmd_AddToLibrary);
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_copylocation",
                                                       this.m_cmd_CopyTrackLocation);
     this.m_webPlaylistCommands.appendSeparator(null, "separator");
-    this.m_webPlaylistCommands.appendPlaylistCommands(null, 
+    this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                       "library_cmdobj_showdlplaylist",
                                                       this.m_cmd_ShowDownloadPlaylist);
 
@@ -661,11 +664,11 @@ PublicPlaylistCommands.prototype = {
     // --------------------------------------------------------------------------
     // Construct and publish the web media history toolbar commands
     // --------------------------------------------------------------------------
-    
+
     this.m_webMediaHistoryToolbarCommands = new PlaylistCommandsBuilder();
 
     this.m_webMediaHistoryToolbarCommands.appendPlaylistCommands
-                                            (null, 
+                                            (null,
                                              "library_cmdobj_clearhistory",
                                              this.m_cmd_ClearHistory);
 
@@ -684,16 +687,16 @@ PublicPlaylistCommands.prototype = {
     // --------------------------------------------------------------------------
     // Construct and publish the download playlist commands
     // --------------------------------------------------------------------------
-    
+
     this.m_downloadCommands = new PlaylistCommandsBuilder();
 
-    this.m_downloadCommands.appendPlaylistCommands(null, 
+    this.m_downloadCommands.appendPlaylistCommands(null,
                                                    "library_cmdobj_play",
                                                    this.m_cmd_Play);
-    this.m_downloadCommands.appendPlaylistCommands(null, 
+    this.m_downloadCommands.appendPlaylistCommands(null,
                                                    "library_cmdobj_remove",
                                                    this.m_cmd_Remove);
-    this.m_downloadCommands.appendPlaylistCommands(null, 
+    this.m_downloadCommands.appendPlaylistCommands(null,
                                                    "library_cmdobj_pauseresumedownload",
                                                    this.m_cmd_PauseResumeDownload);
 
@@ -715,15 +718,15 @@ PublicPlaylistCommands.prototype = {
     // --------------------------------------------------------------------------
     // Construct and publish the download toolbar commands
     // --------------------------------------------------------------------------
-    
+
     this.m_downloadToolbarCommands = new PlaylistCommandsBuilder();
 
     this.m_downloadToolbarCommands.appendPlaylistCommands
-                                            (null, 
+                                            (null,
                                              "library_cmdobj_cleanupdownloads",
                                              this.m_cmd_CleanUpDownloads);
     this.m_downloadToolbarCommands.appendPlaylistCommands
-                                          (null, 
+                                          (null,
                                            "library_cmdobj_pauseresumedownload",
                                            this.m_cmd_PauseResumeDownload);
 
@@ -745,11 +748,11 @@ PublicPlaylistCommands.prototype = {
     // --------------------------------------------------------------------------
     // Construct and publish the download service tree commands
     // --------------------------------------------------------------------------
-    
+
     this.m_downloadCommandsServicePane = new PlaylistCommandsBuilder();
 
     this.m_downloadCommandsServicePane.
-      appendPlaylistCommands(null, 
+      appendPlaylistCommands(null,
                              "library_cmdobj_pauseresumedownload",
                              this.m_cmd_PauseResumeDownload);
 
@@ -770,16 +773,16 @@ PublicPlaylistCommands.prototype = {
     // --------------------------------------------------------------------------
 
     this.m_serviceTreeDefaultCommands = new PlaylistCommandsBuilder();
-  
-    this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null, 
+
+    this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                             "servicetree_cmdobj_remove",
                                             this.m_cmd_list_Remove);
-    this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null, 
+    this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                             "servicetree_cmdobj_rename",
                                             this.m_cmd_list_Rename);
-    
+
     this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
-  
+
     // Register these commands to simple and smart playlists
 
     this.m_mgr.registerPlaylistCommandsMediaList( "", "simple", this.m_serviceTreeDefaultCommands );
@@ -812,9 +815,9 @@ PublicPlaylistCommands.prototype = {
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
-                                     
-    // Un-publish bundled commands                                 
-    
+
+    // Un-publish bundled commands
+
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST, this.m_webPlaylistCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_WEBTOOLBAR, this.m_webMediaHistoryToolbarCommands);
@@ -822,43 +825,43 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR, this.m_downloadToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
-    
+
 
     // Un-register download playlist commands
-    
+
     var downloadListGUID =
       prefs.getComplexValue("songbird.library.download",
                             Components.interfaces.nsISupportsString);
 
-    this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, 
+    this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID,
                                                    "",
                                                    this.m_downloadCommands);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem
-                                              (downloadListGUID, 
+                                              (downloadListGUID,
                                                "",
                                                this.m_downloadToolbarCommands);
 
     this.m_mgr.unregisterPlaylistCommandsMediaList
-                                              (downloadListGUID, 
+                                              (downloadListGUID,
                                                "",
                                                this.m_downloadCommandsServicePane);
-    
+
     g_downloadDevice = null;
 
     g_webLibrary = null;
-    
+
     // Un-register web playlist commands
-    
+
     var webListGUID =
       prefs.getComplexValue("songbird.library.web",
                             Components.interfaces.nsISupportsString);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem(webListGUID,
                                                    "",
-                                                   this.m_webPlaylistCommands); 
-    // Un-register servicetree commands 
-    
+                                                   this.m_webPlaylistCommands);
+    // Un-register servicetree commands
+
     this.m_mgr.
       unregisterPlaylistCommandsMediaList("",
                                           "simple",
@@ -868,7 +871,7 @@ PublicPlaylistCommands.prototype = {
                                           "smart",
                                           this.m_serviceTreeDefaultCommands);
 
-    // Shutdown all command objects, this ensures that no external reference 
+    // Shutdown all command objects, this ensures that no external reference
     // remains in their internal arrays
     this.m_cmd_Play.shutdown();
     this.m_cmd_Remove.shutdown();
@@ -900,7 +903,7 @@ PublicPlaylistCommands.prototype = {
 
     obs.removeObserver(this, "quit-application");
   },
-  
+
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
     switch (aTopic) {
@@ -937,7 +940,7 @@ function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_Edit_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
     var playlist = unwrap(aContext.playlist);
-    if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) || 
+    if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) ||
         playlist.mediaListView.treeView.selectionCount > 1 ) {
       // Trigger the edit event on the playlist, this will spawn
       // the multiple tracks editor
@@ -982,18 +985,18 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
         }
       };
 
-      playlist.mediaList.enumerateAllItems(allItems, 
+      playlist.mediaList.enumerateAllItems(allItems,
         Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-      
+
       var itemEnum = ArrayConverter.enumerator(allItems.items);
       onBrowserTransfer(itemEnum);
     }
-    
+
     // And show the download table in the chrome playlist if possible.
     var browser = window.gBrowser;
     if (browser) browser.mCurrentTab.switchToDownloadView();
   }
-  catch( err )          
+  catch( err )
   {
     LOG( "plCmd_Download_TriggerCallback Error:" + err );
   }
@@ -1005,20 +1008,20 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
     Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
               .getService(Components.interfaces.sbILibraryManager);
   var mediaList = libraryManager.mainLibrary;
-  
+
   var playlist = unwrap(aContext.playlist);
   var treeView = playlist.treeView;
   var selectionCount = treeView.selectionCount;
-  
+
   var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
-  
+
   var oldLength = mediaList.length;
   mediaList.addSome(unwrapper);
 
   var itemsAdded = mediaList.length - oldLength;
   playlist._reportAddedTracks(itemsAdded,
-                              selectionCount - itemsAdded, 
-                              mediaList.name); 
+                              selectionCount - itemsAdded,
+                              mediaList.name);
 }
 
 // Called when the "copy track location" action is triggered
@@ -1033,18 +1036,18 @@ function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandI
                                                              SBProperties.contentURL);
   var columnObj = playlist.tree.columns.getColumnFor(columnElem);
   var rangeCount = playlist.mediaListView.treeView.selection.getRangeCount();
-  for (var i=0; i < rangeCount; i++) 
+  for (var i=0; i < rangeCount; i++)
   {
     var start = {};
     var end = {};
     playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
     for( var c = start.value; c <= end.value; c++ )
     {
-      if (c >= playlist.mediaListView.treeView.rowCount) 
+      if (c >= playlist.mediaListView.treeView.rowCount)
       {
-        continue; 
+        continue;
       }
-      
+
       var val = playlist.mediaListView.treeView.getCellText(c, columnObj);
       if (clipboardtext != "") clipboardtext += "\n";
       clipboardtext += val;
@@ -1132,12 +1135,12 @@ function plCmd_CopyToDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   }
 }
 
-// Called when the "remove playlist" action is triggered 
+// Called when the "remove playlist" action is triggered
 function plCmd_RemoveList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   unwrap(aContext.medialist).library.remove(aContext.medialist);
 }
 
-// Called when the "rename playlist" action is triggered 
+// Called when the "rename playlist" action is triggered
 function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var window = unwrap(aContext.window);
   var medialist = unwrap(aContext.medialist);
@@ -1150,7 +1153,7 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
                               .getService(Components.interfaces.sbILibraryServicePaneService);
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(medialist);
-    
+
     if (node) {
       // Ask the service pane to start editing our new node
       // so that the user can give it a name
@@ -1294,12 +1297,12 @@ function getWebLibrary() {
     if (g_webLibrary == null) {
       var prefs = Components.classes["@mozilla.org/preferences-service;1"]
         .getService(Components.interfaces.nsIPrefBranch2);
-      var webListGUID = prefs.getComplexValue("songbird.library.web", 
-          Components.interfaces.nsISupportsString); 
-      var libraryManager = 
+      var webListGUID = prefs.getComplexValue("songbird.library.web",
+          Components.interfaces.nsISupportsString);
+      var libraryManager =
         Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-        .getService(Components.interfaces.sbILibraryManager); 
-      g_webLibrary = libraryManager.getLibrary(webListGUID); 
+        .getService(Components.interfaces.sbILibraryManager);
+      g_webLibrary = libraryManager.getLibrary(webListGUID);
     }
   } catch(e) {
     Components.utils.reportError(e);
@@ -1382,7 +1385,7 @@ function plCmd_DownloadInit(aContext, aHost) {
     refreshCommands: function() {
       var playlist = unwrap(this.context.playlist);
       if (playlist)
-        playlist.refreshCommands(); 
+        playlist.refreshCommands();
     }
   };
 
@@ -1413,8 +1416,8 @@ var g_dataRemoteService = null;
 function dataRemote(aKey, aRoot) {
   if (!g_dataRemoteService) {
     g_dataRemoteService = new Components.
-      Constructor( "@songbirdnest.com/Songbird/DataRemote;1", 
-                  Ci.sbIDataRemote, 
+      Constructor( "@songbirdnest.com/Songbird/DataRemote;1",
+                  Ci.sbIDataRemote,
                   "init");
   }
   return g_dataRemoteService(aKey, aRoot);

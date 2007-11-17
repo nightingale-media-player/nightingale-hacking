@@ -43,12 +43,12 @@
         </vbox>
         <vbox id="sb-playlist" flex="1"  style="margin: 0px;padding: 0px;">
           <!-- Playlist Filters -->
-          <hbox 
-            id="sb-playlist-filters" 
-            sbid="filter_parent" 
-            class="sb-playlist-filters" 
-            style="min-height: 60px;" 
-            flex="1" 
+          <hbox
+            id="sb-playlist-filters"
+            sbid="filter_parent"
+            class="sb-playlist-filters"
+            style="min-height: 60px;"
+            flex="1"
             hidden="false">
           </hbox>
 
@@ -113,10 +113,10 @@
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist_context_search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
-              </xul:menu>   
+              </xul:menu>
               <xul:menu id="playlist_context_lyrics" label="&playlist.context.lyrics;">
                 <xul:menupopup id="playlist_context_lyrics_popup" type="search" label="" searchterm="" enginetags="lyrics" />
-              </xul:menu>              
+              </xul:menu>
               <children/>
             </popup>
           </popupset>
@@ -158,7 +158,7 @@
   // Install our special keyNavigate function. The signature must match the
   // keyNavigate method in tree.xml.
   this.tree.keyNavigate = this._treeKeyNavigate;
-  
+
   // Load the drag and drop helper, if needed
   if (typeof(nsDragAndDrop) == "undefined") {
     var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
@@ -236,7 +236,7 @@
       <field name="tree" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-tree");
       </field>
-      
+
       <!-- XXXben This is here to fix a bug where 'this.tree.view' will return
                   null even when the tree actually has a view. Remove once that
                   works as expected. -->
@@ -248,7 +248,7 @@
           return this.tree.view || this._treeView;
         ]]>
         </getter>
-        
+
         <setter>
         <![CDATA[
           return this.tree.view = this._treeView = val;
@@ -372,7 +372,7 @@
 
       <!-- Cached reference to the Songbird string bundle -->
       <field name="_stringbundle">null;</field>
-      
+
       <!-- Internal and external storage of the given commands? -->
       <field name="_commands">null;</field>
       <field name="commands">null;</field>
@@ -426,7 +426,7 @@
         .getService(this._Ci.sbIPropertyManager)
       </field>
 
-      <!-- Helper property to get and set the search query that is 
+      <!-- Helper property to get and set the search query that is
            filtering this playlist.
         -->
       <property name="searchFilter" >
@@ -456,14 +456,14 @@
         </getter>
         <setter>
 <![CDATA[
-  if (!this.mediaListView || !this.mediaListView.cascadeFilterSet) 
+  if (!this.mediaListView || !this.mediaListView.cascadeFilterSet)
   {
     throw("Playlist: Unable to set searchFilter. No mediaListView or cascadeFilterSet.");
   }
-  
+
   // Attempt to set the search filter on the playlist
   var filters = this.mediaListView.cascadeFilterSet;
-  
+
   // The search is always the first filter in the cascade set
   if (val == "" || val == null) {
     filters.set(0, [], 0);
@@ -472,12 +472,12 @@
     var valArray = val.split(" ");
     filters.set(0, valArray, valArray.length);
   }
-  return val;  
+  return val;
 ]]>
-        </setter>        
-      </property>      
-      
-      
+        </setter>
+      </property>
+
+
       <!-- Expose the human readable name of this playlist
            Note: mediaList.name always returns "" at the moment?
         -->
@@ -487,11 +487,11 @@
   // Attempt to get the search filter on the playlist
   if (this.mediaListView && this.mediaListView.mediaList) {
     return this.mediaListView.mediaList.name;
-  } 
+  }
   return "";
 ]]>
         </getter>
-      </property>       
+      </property>
 
       <!-- sbIPlaylistWidget - Initialization and Control -->
       <method name="bind">
@@ -548,7 +548,7 @@
     }
 
     // only removes the commands elements
-    this.removeCommands(); 
+    this.removeCommands();
     // actually removes any reference to command objects
     this._toolbar.destroy();
     this._shortcuts.destroy();
@@ -589,18 +589,18 @@
 
     <method name="_generateFilters">
       <body>
-<![CDATA[    
+<![CDATA[
   // Hide the playlist splitter
   var psplitter =
     document.getAnonymousElementByAttribute(this, "sbid", "filter_splitter");
   psplitter.setAttribute("hidden","true");
 
-  // Get and empty the parent    
+  // Get and empty the parent
   var parent =
     document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
   this._removeAllChildren(parent);
   this._splitters = [];
-  
+
   if (this.getAttribute("hidefilters") != "true") {
     // Create the filters based upon the cascadeFilterSet data.
     var cfs = this.mediaListView.cascadeFilterSet;
@@ -611,17 +611,17 @@
       if (cfs.isSearch(i)) {
         continue;
       }
-    
+
       // And start creating the filter
       var filterlist = document.createElementNS(this._XUL_NS, "sb-filterlist");
       filterlist.setAttribute("enableColumnDrag", "false");
       //filterlist.setAttribute("hidecolumnpicker", "true");
       filterlist.setAttribute("flex", "1");
-      
+
       parent.appendChild(filterlist);
       filterlist.bind(cfs, i);
       filters.push(filterlist);
-      
+
       if (i < length - 1) {
         var splitter = document.createElement("sb-smart-splitter");
         splitter.setAttribute("id", "filter_splitter" );
@@ -650,12 +650,12 @@
       splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
     }
   }
-  
+
   // If we didn't actually add any filters then hide the filter box.
   if (!parent.firstChild) {
     parent.setAttribute("hidden", "true");
   } else {
-    // Once we know we have at least one filter, show the playlist splitter. 
+    // Once we know we have at least one filter, show the playlist splitter.
     psplitter.removeAttribute("hidden");
   }
 ]]>
@@ -677,9 +677,9 @@
         <parameter name="col"/>
         <body>
 <![CDATA[
-  if (row == null) 
+  if (row == null)
     row = this.edit_row;
-  if (col == null) 
+  if (col == null)
     col = this.edit_col;
   if (row >= 0 && col.index >= 0)
     this.tree.startEditing(row, col);
@@ -704,21 +704,21 @@
 <![CDATA[
   // Make sure this is set back to our default (undefined) value.
   this._columnSpecOrigin = 0;
-  
+
   // Our new "column spec" is a whitespace separated string that looks like
   // this:
-  // 
+  //
   // "propertyID [20] [a] propertyID [40] [d]"
   //
   // The width and sort direction are optional.
-  
+
   // Try to get this info from 3 places, in this order:
-  // 
+  //
   // 1. In the "columnSpec" property for the medialist.
   // 2. In the "defaultColumnSpec" property for the medialist.
   // 3. Hardcoded (or persisted) in XUL on the "columnSpec" attribute.
   // 4. A fun hardcoded list as a last resort.
-  
+
   var columnMap = [];
   var medialist = this.mediaListView.mediaList;
   columnMap =
@@ -728,23 +728,23 @@
       this._getColumnMap(medialist.getProperty(SBProperties.defaultColumnSpec),
                          2);
   }
-  
+
   if (!columnMap.length) {
     columnMap =
       this._getColumnMap(medialist.library.getProperty(SBProperties.defaultColumnSpec),
                          3);
   }
-  
+
   if (!columnMap.length) {
     columnMap =
       this._getColumnMap(medialist.library.getProperty(SBProperties.columnSpec),
                          4);
   }
-  
+
   if (!columnMap.length) {
     columnMap = this._getColumnMap(this.getAttribute("columnSpec"), 5);
   }
-  
+
   if (!columnMap.length) {
     columnMap =
       this._parseColumnSpec(SBProperties.ordinal + " 55 " +
@@ -755,7 +755,7 @@
                             SBProperties.genre + " 70");
     this._columnSpecOrigin = 6;
   }
-  
+
   if (!columnMap.length) {
     throw new Error("Couldn't get columnMap!");
   }
@@ -862,16 +862,16 @@
 
             // split based on whitespace.
             var tokens = strippedSpec[1].split(/\s+/);
-            
+
             var columns = [];
             var columnIndex = -1;
             var seenSort = false;
-            
+
             for (var index = 0; index < tokens.length; index++) {
               var token = tokens[index];
               if (!token)
                 throw new Error("Zero-length token");
-              
+
               if (isNaN(parseInt(token))) {
                 if (token.length == 1 && (token == "a" || token == "d")) {
                   // This is a sort specifier
@@ -880,7 +880,7 @@
                   }
                   // Multiple sorts will be ignored!
                   if (!seenSort) {
-                    var column = columns[columnIndex];                    
+                    var column = columns[columnIndex];
                     column.sort = token == "a" ? "ascending" : "descending";
                     seenSort = true;
                   }
@@ -899,7 +899,7 @@
                 column.width = token;
               }
             }
-            
+
             return columns;
           ]]>
         </body>
@@ -928,7 +928,7 @@
         </body>
       </method>
 
-      <!-- sbIPlaylistWidget -->  
+      <!-- sbIPlaylistWidget -->
       <method name="appendColumn">
         <parameter name="aPropertyID"/>
         <parameter name="aWidth"/>
@@ -1192,7 +1192,7 @@
   var splitter = document.createElementNS(this._XUL_NS, "splitter");
   splitter.setAttribute("class", "tree-splitter");
   splitter.setAttribute("ordinal", ordinal + 1);
-  
+
   this._treecols.appendChild(splitter);
   if (this.tree.columns) {
     this.tree.columns.invalidateColumns();
@@ -1231,7 +1231,7 @@
           columnInfo.sort = sortKey;
         }
       }
-      
+
       columns.push(columnInfo);
     }
   }
@@ -1241,7 +1241,7 @@
 
   var columnSpec = "";
   var first = true;
-  
+
   function writeColumnInfo(columnInfo) {
     var newString;
     if (first) {
@@ -1251,7 +1251,7 @@
     else {
       newString = " ";
     }
-    
+
     newString += columnInfo.property;
     if (columnInfo.width) {
       newString += " " + columnInfo.width;
@@ -1261,9 +1261,9 @@
     }
     columnSpec += newString;
   }
-  
+
   columns.forEach(writeColumnInfo);
-  
+
   // Sanity check, don't write a bad string.
   try {
     var parsedColumns = this._parseColumnSpec(columnSpec);
@@ -1311,13 +1311,13 @@
 ]]>
         </body>
       </method>
-      
+
       <method name="setCommands">
         <parameter name="commands"/>
         <body>
         <![CDATA[
           // Out with the old
-          this.removeCommands(); 
+          this.removeCommands();
           if (this.getAttribute("hidecommands") != "true") {
               // In with the new
               this._commands = this.commands = commands;
@@ -1534,7 +1534,7 @@
 <![CDATA[
   // XXXAus: Useful for debugging, don't remove.
   //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
-  
+
   // Handle Ctrl-a
   var isKeyValid = (evt.charCode == 'a'.charCodeAt(0));
   var isDarwin = (getPlatformString() == "Darwin");
@@ -1547,7 +1547,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     // See bug #491 and #4546
     evt.preventDefault();
     evt.stopPropagation();
-    
+
     this.treeView.selection.selectAll();
 
     return;
@@ -1670,16 +1670,16 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
   // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
   this._context_x = evt.screenX;
   this._context_y = evt.screenY;
-  
-  // XXXlone -- there is still a bug when opening the context menu in webplaylists 
-  // inside tabs, when another tab has a playlist opened inside a browser (for instance, 
+
+  // XXXlone -- there is still a bug when opening the context menu in webplaylists
+  // inside tabs, when another tab has a playlist opened inside a browser (for instance,
   // it is showing the library)... wtf.
-  
+
   //dump("this._context_x = " + this._context_x + "\n");
   //dump("this._context_y = " + this._context_y + "\n");
-  
+
   document.popupNode = null;
-  
+
   this._context_popup.showPopup(tree, this._context_x, this._context_y,
                                 "context", null, null, null);
 
@@ -1760,7 +1760,10 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             return;
           }
 
-          // Special case for the download button propery.  If it is clicked,
+          // XXXben Remove these special cases. Fire the event and add handlers
+          // to catch them elsewhere.
+
+          // Special case for the download button propery. If it is clicked,
           // start the download
           if (property == SBProperties.downloadButton) {
             this._downloadItem(item);
@@ -1773,15 +1776,15 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           if (property == SBProperties.originPageImage) {
             var originPageURI = item.getProperty(SBProperties.originPage);
             var originPageImage = item.getProperty(SBProperties.originPageImage);
-            
+
             var browser = SBGetBrowser();
-            
-            if(originPageURI && 
+
+            if(originPageURI &&
                browser &&
                originPageImage == "webOrigin") {
               browser.loadURI(originPageURI, null, null, evt);
             }
-            
+
             evt.stopPropagation();
             return;
           }
@@ -2102,6 +2105,8 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     }
   }
   else {
+    item.setProperty(SBProperties.downloadStatusTarget,
+                     item.library.guid + "," + item.guid);
     if (doInsert) {
       ml.insertBefore(row, item);
     }
@@ -2196,7 +2201,10 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         return enumerator.hasMoreElements();
       },
       getNext : function() {
-        return enumerator.getNext().mediaItem;
+        var item = enumerator.getNext().mediaItem;
+        item.setProperty(SBProperties.downloadStatusTarget,
+                         item.library.guid + "," + item.guid);
+        return item;
       },
       QueryInterface : function(iid) {
         if (iid.equals(self._Ci.nsISimpleEnumerator) ||
@@ -2230,7 +2238,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         var library = ml.library;
         var oldLength = ml.length;
         var badEntries = 0;
-        
+
         var ioService = Components.classes["@mozilla.org/network/io-service;1"]
           .getService(Components.interfaces.nsIIOService);
 
@@ -2244,18 +2252,18 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 
           var prettyName;
           var url;
-          
+
           if (item instanceof this._Ci.nsIFile) {
 
             //XXXAus: We probably want to make this scan for media and insert at the correct
             //position in the future, instead of just importing.
-                        
+
             //Skip over directories. The default drop handler will get them for us.
             if(item.isDirectory()) {
               badEntries++;
               continue;
             }
-            
+
             var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                             .getService(Components.interfaces.nsIIOService);
             var fileHandler = ioService.getProtocolHandler("file")
@@ -2277,7 +2285,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           }
 
           var separator = url.indexOf("\n");
-          if (separator != -1) 
+          if (separator != -1)
           {
             prettyName = url.substr(separator+1);
             url = url.substr(0,separator);
@@ -2294,7 +2302,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           // skip import of the item if it exists in this library
           var item = this.getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
           if (!item) {
-          
+
             var uri = null;
             try {
               uri = ioService.newURI(url, null, null);
@@ -2303,12 +2311,12 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
               log(e);
               uri = null;
             }
-                
+
             if (!uri) {
               badEntries++;
               continue;
             }
-            
+
             try {
               item = library.createMediaItem(uri);
             }
@@ -2316,19 +2324,19 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
               log(e);
               item = null;
             }
-            
+
             if(!item) {
               badEntries++;
               continue;
             }
-            
+
             var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
               .getService(Components.interfaces.sbIMetadataJobManager);
-            
+
             items.appendElement(item, false);
             n++;
           }
-          
+
           if (item) {
             if (ml instanceof this._Ci.sbIOrderableMediaList) {
               var doInsert = false;
@@ -2351,19 +2359,19 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 
         var added = ml.length - oldLength;
         var dups = dataarray.length - added - badEntries;
-        
+
         if (added || dups)
           this._reportAddedTracks(added, dups);
-          
+
         if (n > 0) {
           metadataJobMgr.newJob(items, 5);
           // XXX lone> todo: select items and ensure visible (bug 3879)
         }
-        
+
         ]]>
       </body>
     </method>
-    
+
     <method name="getFirstItemByProperty">
       <parameter name="aMediaList"/>
       <parameter name="aProperty"/>
@@ -2420,7 +2428,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
       // No name, leave it blank
     }
   }
-  
+
   msg += " " + name;
 
   // Append the message about already present items (if any)
@@ -2594,20 +2602,20 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     this._addItems(context.source, context.items, context.count, row, orientation);
     return;
   }
-  
+
   var array = [];
   data = this._getTransferDataForFlavor("application/x-moz-file", array);
   if (data) {
     this._addExternalFiles(array, row, orientation);
     return;
   }
-  
+
   data = this._getTransferDataForFlavor("text/x-moz-url", array);
   if (data) {
     this._addExternalFiles(array, row, orientation);
     return;
   }
-  
+
   data = this._getTransferDataForFlavor("text/unicode", array);
   if (data) {
     this._addExternalFiles(array, row, orientation);
@@ -2619,7 +2627,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     this._addExternalFiles(array, row, orientation);
     return;
   }
-  
+
 ]]>
         </body>
       </method>
@@ -2660,7 +2668,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
       <method name="onDragStart">
         <parameter name="event"/>
         <parameter name="xferData"/>
-        <parameter name="dragAction"/> 
+        <parameter name="dragAction"/>
         <body>
 <![CDATA[
   try {
@@ -2844,7 +2852,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 ]]>
         </body>
       </method>
-      
+
       <method name="getSupportedFlavours">
         <body>
 <![CDATA[
@@ -2920,7 +2928,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           }
         </body>
       </method>
-      
+
       <method name="_reportError">
         <parameter name="message"/>
         <parameter name="error"/>
