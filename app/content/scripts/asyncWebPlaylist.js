@@ -345,37 +345,73 @@ try
         return false;
       }
 
-      // Try to see if we've already found and scanned this url
-      var listener = {
-        foundItem: null,
-        onEnumerationBegin: function onEnumerationBegin() {
-          return this.foundItem == null;
+      var observer = {
+        url : "",
+        manager : null,
+        onStartRequest : function(aRequest,aContext) {
         },
-        onEnumeratedItem: function onEnumeratedItem(list, item) {
-          this.foundItem = item;
-          return false; // Just take the first item found
-        },
-        onEnumerationEnd: function onEnumerationEnd() {
-          return;
+        onStopRequest : function(aRequest, aContext, aStatusCode) {
+          this.manager.popAsync();
+          try {
+            if (aStatusCode == 0) {
+              // Get the redirected URL.
+              var uriChecker =
+                aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
+              if ( uriChecker ) {
+                var url = uriChecker.baseChannel.URI.spec;
+                
+                // Try to see if we've already found and scanned this url
+                var listener = {
+                  foundItem: null,
+                  onEnumerationBegin: function onEnumerationBegin() {
+                    return this.foundItem == null;
+                  },
+                  onEnumeratedItem: function onEnumeratedItem(list, item) {
+                    this.foundItem = item;
+                    return false; // Just take the first item found
+                  },
+                  onEnumerationEnd: function onEnumerationEnd() {
+                    return;
+                  }
+                };
+
+                var library = aMediaListView.mediaList.library;
+                library.enumerateItemsByProperty(SBProperties.originURL, url, listener,
+                                                 sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+                library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
+                                                 sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+                if (listener.foundItem) {
+                  this.manager.items.push(listener.foundItem);
+                }
+                else {
+                  this.manager.items.push(url);
+                }
+
+                this.manager.seenURLs.push(url);
+
+                // Only one synchronous database call per ui frame.
+                return true;
+              }
+            }
+          } catch( e ) {
+            alert( "AsyncWebplaylist default urlobserver\n\n" + e );
+          }
         }
       };
-
-      var library = aMediaListView.mediaList.library;
-      library.enumerateItemsByProperty(SBProperties.originURL, url, listener,
-                                       sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-      library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
-                                       sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-      if (listener.foundItem) {
-        this.items.push(listener.foundItem);
-      }
-      else {
-        this.items.push(url);
-      }
-
-      this.seenURLs.push(url);
-
-      // Only one synchronous database call per ui frame.
-      return true;
+      
+      observer.manager = this;
+      observer.url = url;
+      
+      var checker = Components.classes["@mozilla.org/network/urichecker;1"].createInstance(Components.interfaces.nsIURIChecker);
+      var uri = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURI);
+      
+      uri.spec = url;
+      checker.init(uri);
+      checker.asyncCheck(observer, null);
+      
+      this.pushAsync();
+      
+      retval = true;
     };
 
     href_loop.handleEmbedURL = function( url )
