@@ -48,7 +48,7 @@ function load() {
   siteLib = songbird.siteLibrary;
   siteLib.name = "Site Lib";
   siteLib.scanMediaOnCreation = false;
-  siteList = siteLib.createMediaList("simple");
+  siteList = siteLib.createSimpleMediaList("Site List");
   songbird.webPlaylist.mediaList = siteList;
 
   try {

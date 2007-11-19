@@ -95,9 +95,8 @@
       // toggle between web and empty playlist
       var togglePlaylist = function() {
         if ( !playlist1 ) {
-          playlist1 = siteLib.createMediaList("simple");
-          playlist1.name = "foo - empty";
-          var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+          playlist1 = siteLib.createSimpleMediaList("foo");
+          var item = siteLib.createMediaItem("http://www.example.com/foo.mp3");
           playlist1.add(item);
         }
 
@@ -110,21 +109,20 @@
       }
 
       var addTrack = function addTrack() {
-        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+        item = siteLib.createMediaItem("http://www.example.com/foobar.mp3");
         originalWeb.add(item);
       }
 
       var setWebPlaylist = function setWebPlaylist() {
-        mediaList = siteLib.createMediaList("simple");
-        var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+        mediaList = siteLib.createSimpleMediaList("Test list - 2 songs");
+        var item = siteLib.createMediaItem("http://www.example.com/justone.mp3");
         mediaList.add(item);
 
         siteLib.scanMediaOnCreation = false;
 
-        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+        item = siteLib.createMediaItem("http://www.example.com/asdfjkl.mp3");
         mediaList.add(item);
 
-        mediaList.name = "Test List - 2 songs";
         setPlaylist(mediaList);
 
         siteLib.scanMediaOnCreation = true;
@@ -139,7 +137,7 @@
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = false;
           siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
-                                         callback);
+                                         callback );
         }
         else {
           setPlaylist(m3uMediaList);
@@ -155,7 +153,7 @@
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = true;
           siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u",
-                                         callback);
+                                         callback );
         }
         else {
           setPlaylist(m3uMediaList);
@@ -184,7 +182,7 @@
 
       var addSiteMediaList = function addSiteMediaList() {
         if (siteLib)
-          testml1 = siteLib.createMediaList("simple");
+          testml1 = siteLib.createSimpleMediaList("testml1");
       }
 
       var removeSiteMediaList = function removeSiteMediaList() {
@@ -194,7 +192,7 @@
 
       var addMainMediaList = function addMainMediaList() {
         if (mainLib)
-          testml2 = mainLib.createMediaList("simple");
+          testml2 = mainLib.createSimpleMediaList("testml2");
       }
 
       var removeMainMediaList = function removeMainMediaList() {

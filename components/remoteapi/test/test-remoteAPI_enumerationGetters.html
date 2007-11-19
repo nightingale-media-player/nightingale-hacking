@@ -33,11 +33,11 @@
       var outputDiv; 
       var siteLib = songbird.siteLibrary;
       var mainLib = songbird.mainLibrary;
-      var siteList = siteLib.createMediaList("simple");
-      siteList.name = "My Foo List";
+      var siteList = siteLib.createSimpleMediaList("My Foo List");
 
       function load() {
         outputDiv = document.getElementById("output");
+        setTimeout(5000, getArtists());
       }
 
       function unload() {

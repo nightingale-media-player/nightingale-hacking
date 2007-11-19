@@ -35,12 +35,10 @@
         var mainLib = songbird.mainLibrary;
         var siteLib = songbird.siteLibrary;
 
-        var siteList = siteLib.createMediaList("simple");
-        siteList.name = "Poop";
+        var siteList = siteLib.createSimpleMediaList("Poop");
         mainLib.add(siteList);
 
-        siteList = siteLib.createMediaList("simple");
-        siteList.name = "Poop2";
+        siteList = siteLib.createSimpleMediaList("Poop2");
 
         var item = siteLib.createMediaItem("http://foo.com/bar.mp3");
         siteList.add(item);

@@ -38,7 +38,7 @@
       function load() {
         siteLib = songbird.siteLibrary;
 
-        siteList = siteLib.createMediaList("simple");
+        siteList = siteLib.createSimpleMediaList("list1");
         var item = siteLib.createMediaItem("http://ccmixter.org/people/3rd_attempt/3rd_attempt_-_September_(Melancholic_Guitar_Mix).mp3");
         siteList.add(item);
         item = siteLib.createMediaItem("http://ccmixter.org/people/presse/presse_-_Got_To_Rock_Funkerror_.mp3");
@@ -83,8 +83,7 @@
 
       function addListToMain() {
         var item = siteLib.createMediaItem("http://ccmixter.org/people/Briareus/Briareus_-_In_A_Day.mp3");
-        var list = siteLib.createMediaList("simple");
-        list.name = "testName";
+        var list = siteLib.createSimpleMediaList("testName");
         list.add(item);
         songbird.mainLibrary.add(list);
       }
