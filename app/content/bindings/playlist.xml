@@ -1781,7 +1781,9 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 
             if(originPageURI &&
                browser &&
-               originPageImage == "webOrigin") {
+               originPageImage != null &&
+               originPageImage != "" &&
+               originPageImage != "unknownOrigin") {
               browser.loadURI(originPageURI, null, null, evt);
             }
 
