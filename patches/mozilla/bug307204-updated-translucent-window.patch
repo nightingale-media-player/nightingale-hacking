@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
 retrieving revision 3.164
 diff -u -p -r3.164 nsIWidget.h
 --- widget/public/nsIWidget.h	9 Nov 2007 17:38:33 -0000	3.164
-+++ widget/public/nsIWidget.h	16 Nov 2007 18:15:16 -0000
++++ widget/public/nsIWidget.h	19 Nov 2007 23:10:55 -0000
 @@ -100,7 +100,7 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
    { 0xB9, 0x87, 0x35, 0x38, 0x56, 0x24, 0x97, 0x0D } }
  
@@ -38,7 +38,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
 retrieving revision 1.76
 diff -u -p -r1.76 nsChildView.h
 --- widget/src/cocoa/nsChildView.h	7 Nov 2007 07:36:10 -0000	1.76
-+++ widget/src/cocoa/nsChildView.h	16 Nov 2007 18:15:16 -0000
++++ widget/src/cocoa/nsChildView.h	19 Nov 2007 23:10:55 -0000
 @@ -111,6 +111,10 @@ union nsPluginPort;
    NSMutableArray* mPendingDirtyRects;
    BOOL mPendingFullDisplay;
@@ -83,7 +83,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
 retrieving revision 1.277
 diff -u -p -r1.277 nsChildView.mm
 --- widget/src/cocoa/nsChildView.mm	12 Nov 2007 17:16:15 -0000	1.277
-+++ widget/src/cocoa/nsChildView.mm	16 Nov 2007 18:15:16 -0000
++++ widget/src/cocoa/nsChildView.mm	19 Nov 2007 23:10:55 -0000
 @@ -46,7 +46,6 @@
  
  #include "nsCOMPtr.h"
@@ -207,7 +207,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.43
 diff -u -p -r1.43 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	30 Oct 2007 04:03:43 -0000	1.43
-+++ widget/src/cocoa/nsCocoaWindow.h	16 Nov 2007 18:15:16 -0000
++++ widget/src/cocoa/nsCocoaWindow.h	19 Nov 2007 23:10:55 -0000
 @@ -237,6 +237,8 @@ public:
      NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
      NS_IMETHOD CaptureRollupEvents(nsIRollupListener * aListener, PRBool aDoCapture, PRBool aConsumeRollupEvent);
@@ -229,10 +229,10 @@ diff -u -p -r1.43 nsCocoaWindow.h
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.116
-diff -u -p -r1.116 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	16 Nov 2007 02:54:00 -0000	1.116
-+++ widget/src/cocoa/nsCocoaWindow.mm	16 Nov 2007 18:15:16 -0000
+retrieving revision 1.117
+diff -u -p -r1.117 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	17 Nov 2007 12:49:04 -0000	1.117
++++ widget/src/cocoa/nsCocoaWindow.mm	19 Nov 2007 23:10:55 -0000
 @@ -1,4 +1,4 @@
 -/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* -*- Mode: Objective-C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -256,7 +256,7 @@ diff -u -p -r1.116 nsCocoaWindow.mm
      if (mWindowType != eWindowType_popup)
        rect.origin.y -= ::GetMBarHeight();
  
-@@ -339,7 +342,7 @@ nsresult nsCocoaWindow::StandardCreate(n
+@@ -340,7 +343,7 @@ nsresult nsCocoaWindow::StandardCreate(n
                                     backing:NSBackingStoreBuffered defer:NO];
      
      if (mWindowType == eWindowType_popup) {
@@ -265,7 +265,7 @@ diff -u -p -r1.116 nsCocoaWindow.mm
        [mWindow setLevel:NSPopUpMenuWindowLevel];
        [mWindow setHasShadow:YES];
  
-@@ -646,6 +649,44 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
+@@ -647,6 +650,44 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
    return NS_OK;
  }
  
@@ -316,7 +316,7 @@ RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.cpp,v
 retrieving revision 1.236
 diff -u -p -r1.236 nsWindow.cpp
 --- widget/src/gtk2/nsWindow.cpp	13 Nov 2007 16:12:12 -0000	1.236
-+++ widget/src/gtk2/nsWindow.cpp	16 Nov 2007 18:15:16 -0000
++++ widget/src/gtk2/nsWindow.cpp	19 Nov 2007 23:10:55 -0000
 @@ -3547,12 +3547,6 @@ nsWindow::UpdateTranslucentWindowAlphaIn
      return NS_OK;
  }
@@ -336,7 +336,7 @@ RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.h,v
 retrieving revision 1.79
 diff -u -p -r1.79 nsWindow.h
 --- widget/src/gtk2/nsWindow.h	13 Nov 2007 16:12:12 -0000	1.79
-+++ widget/src/gtk2/nsWindow.h	16 Nov 2007 18:15:16 -0000
++++ widget/src/gtk2/nsWindow.h	19 Nov 2007 23:10:55 -0000
 @@ -345,7 +345,6 @@ public:
     NS_IMETHOD          GetWindowTranslucency(PRBool& aTransparent);
     nsresult            UpdateTranslucentWindowAlphaInternal(const nsRect& aRect,
@@ -351,7 +351,7 @@ RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
 retrieving revision 1.164
 diff -u -p -r1.164 nsBaseWidget.cpp
 --- widget/src/xpwidgets/nsBaseWidget.cpp	9 Nov 2007 17:38:33 -0000	1.164
-+++ widget/src/xpwidgets/nsBaseWidget.cpp	16 Nov 2007 18:15:16 -0000
++++ widget/src/xpwidgets/nsBaseWidget.cpp	19 Nov 2007 23:10:55 -0000
 @@ -525,11 +525,6 @@ NS_IMETHODIMP nsBaseWidget::GetWindowTra
    return NS_OK;
  }
@@ -370,7 +370,7 @@ RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
 retrieving revision 1.89
 diff -u -p -r1.89 nsBaseWidget.h
 --- widget/src/xpwidgets/nsBaseWidget.h	9 Nov 2007 17:38:33 -0000	1.89
-+++ widget/src/xpwidgets/nsBaseWidget.h	16 Nov 2007 18:15:16 -0000
++++ widget/src/xpwidgets/nsBaseWidget.h	19 Nov 2007 23:10:55 -0000
 @@ -101,7 +101,6 @@ public:
    NS_IMETHOD              SetWindowType(nsWindowType aWindowType);
    NS_IMETHOD              SetWindowTranslucency(PRBool aTranslucent);
