@@ -720,6 +720,10 @@ sbLibraryConstraintGroup::Add(const nsAString& aProperty,
   if (mConstraintGroup.Get(aProperty, &existing)) {
     nsString* success = existing->AppendElements(*aArray);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    // We own this array and since we're not sticking it into the hastable
+    // we must delete it
+    delete aArray;
   }
   else {
     PRBool success = mConstraintGroup.Put(aProperty, aArray);
