@@ -42,6 +42,7 @@ CPP_SRCS = sbLibraryConstraints.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/library/base/public \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/base/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
@@ -64,6 +65,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+
+ifdef DEBUG
+moz_utils = sbMozStringUtils_d
+else
+moz_utils = sbMozStringUtils
+endif
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
                       $(DYNAMIC_LIB) \

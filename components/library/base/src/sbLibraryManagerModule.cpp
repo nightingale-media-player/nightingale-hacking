@@ -30,15 +30,16 @@
  */
 
 #include <nsIGenericFactory.h>
+#include "sbLibraryCID.h"
 #include "sbLibraryConstraints.h"
 #include "sbLibraryManager.h"
 #include "sbMediaListViewMap.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLibraryManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaListViewMap, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryFilter);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibrarySearch);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibrarySort);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraintBuilder);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraint);
 
 static nsModuleComponentInfo components[] =
 {
@@ -57,22 +58,22 @@ static nsModuleComponentInfo components[] =
     sbMediaListViewMap::RegisterSelf
   },
   {
-    SONGBIRD_LIBRARYFILTER_CLASSNAME,
-    SONGBIRD_LIBRARYFILTER_CID,
-    SONGBIRD_LIBRARYFILTER_CONTRACTID,
-    sbLibraryFilterConstructor,
-  },
-  {
-    SONGBIRD_LIBRARYSEARCH_CLASSNAME,
-    SONGBIRD_LIBRARYSEARCH_CID,
-    SONGBIRD_LIBRARYSEARCH_CONTRACTID,
-    sbLibrarySearchConstructor,
-  },
-  {
     SONGBIRD_LIBRARYSORT_CLASSNAME,
     SONGBIRD_LIBRARYSORT_CID,
     SONGBIRD_LIBRARYSORT_CONTRACTID,
-    sbLibrarySortConstructor,
+    sbLibrarySortConstructor
+  },
+  {
+    SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CLASSNAME,
+    SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID,
+    SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID,
+    sbLibraryConstraintBuilderConstructor
+  },
+  {
+    SONGBIRD_LIBRARY_CONSTRAINT_CLASSNAME,
+    SONGBIRD_LIBRARY_CONSTRAINT_CID,
+    SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID,
+    sbLibraryConstraintConstructor
   }
 };
 

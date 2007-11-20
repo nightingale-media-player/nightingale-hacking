@@ -27,6 +27,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 
 #include <DatabaseQuery.h>
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
@@ -51,6 +52,7 @@
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
 #include <sbIMediaList.h>
+#include <sbLibraryCID.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStandardProperties.h>
@@ -98,27 +100,6 @@ static PRLogModuleInfo* sMediaListViewLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
-                                                           sbStringArray* aEntry,
-                                                           void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-  sbStringArrayHash* stringArrayHash =
-    static_cast<sbStringArrayHash*>(aUserData);
-  NS_ASSERTION(stringArrayHash, "Could not cast user data");
-
-  sbStringArray* newStringArray = new sbStringArray(*aEntry);
-  NS_ENSURE_TRUE(newStringArray, PL_DHASH_STOP);
-
-  PRBool success = stringArrayHash->Put(aKey, newStringArray);
-  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
-
-  return PL_DHASH_NEXT;
-}
 
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseMediaListView::AddValuesToArrayCallback(nsStringHashKey::KeyType aKey,
@@ -262,10 +243,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, NS_ERROR_INVALID_ARG);
   }
 
-  PRBool success = mViewFilters.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  success = mListenerTable.Init();
+  PRBool success = mListenerTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mListenerTableLock =
@@ -332,18 +310,10 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     rv = SetSort(sort);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMutablePropertyArray> search;
-    rv = state->GetSearch(getter_AddRefs(search));
+    rv = state->GetSearch(getter_AddRefs(mViewSearch));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = SetSearch(search);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMutablePropertyArray> filter;
-    rv = state->GetFilter(getter_AddRefs(filter));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = SetFilters(filter);
+    rv = state->GetFilter(getter_AddRefs(mViewFilter));
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -358,13 +328,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = SetSort(sort);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMutablePropertyArray> search;
-    search = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = SetSearch(search);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -615,6 +578,33 @@ sbLocalDatabaseMediaListView::GetIndexForViewItemUID(const nsAString& aViewItemU
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetDistinctValuesForProperty(const nsAString& aPropertyID,
+                                                           nsIStringEnumerator** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  nsresult rv = mArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetIsDistinct(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->ClearSorts();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->AddSort(aPropertyID, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbGUIDArrayValueEnumerator* enumerator =
+    new sbGUIDArrayValueEnumerator(guidArray);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = enumerator);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -650,20 +640,17 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
   rv = ClonePropertyArray(mViewSort, getter_AddRefs(sort));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMutablePropertyArray> search;
-  rv = ClonePropertyArray(mViewSearches, getter_AddRefs(search));
+  nsCOMPtr<sbILibraryConstraint> filter;
+  rv = GetFilterConstraint(getter_AddRefs(filter));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMutablePropertyArray> filter =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  nsCOMPtr<sbILibraryConstraint> search;
+  rv = GetSearchConstraint(getter_AddRefs(search));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mViewFilters.EnumerateRead(AddValuesToArrayCallback,
-                             filter);
-
-  nsRefPtr<sbLocalDatabaseCascadeFilterSetState> filterSet;
+  nsRefPtr<sbLocalDatabaseCascadeFilterSetState> filterSetState;
   if (mCascadeFilterSet) {
-    rv = mCascadeFilterSet->GetState(getter_AddRefs(filterSet));
+    rv = mCascadeFilterSet->GetState(getter_AddRefs(filterSetState));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -677,11 +664,11 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
     new sbLocalDatabaseMediaListViewState(sort,
                                           search,
                                           filter,
-                                          filterSet,
+                                          filterSetState,
                                           treeViewState);
   NS_ENSURE_TRUE(state, NS_ERROR_OUT_OF_MEMORY);
-
   NS_ADDREF(*_retval = state);
+
   return NS_OK;
 }
 
@@ -835,39 +822,101 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
 }
 
 nsresult
+sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag,
+                                                sbILibraryConstraint* aConstraint,
+                                                PRBool* aHasCommonProperty)
+{
+  NS_ASSERTION(aBag, "aBag is null");
+  NS_ASSERTION(aConstraint, "aConstraint is null");
+  NS_ASSERTION(aHasCommonProperty, "aHasCommonProperty is null");
+
+  PRUint32 length;
+  nsresult rv = aBag->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIProperty> property;
+    rv = aBag->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString propertyID;
+    rv = property->GetId(propertyID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 groupCount;
+    rv = aConstraint->GetGroupCount(&groupCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 j = 0; j < groupCount; j++) {
+      nsCOMPtr<sbILibraryConstraintGroup> group;
+      rv = aConstraint->GetGroup(j, getter_AddRefs(group));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool hasProperty;
+      rv = group->HasProperty(propertyID, &hasProperty);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (hasProperty) {
+        *aHasCommonProperty = PR_TRUE;
+        return NS_OK;
+      }
+    }
+  }
+
+  *aHasCommonProperty = PR_FALSE;
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aProperties,
                                                       PRBool* aShouldCauseInvalidation)
 {
   NS_ASSERTION(aProperties, "aProperties is null");
   NS_ASSERTION(aShouldCauseInvalidation, "aShouldCauseInvalidation is null");
+  nsresult rv;
+
+  PRBool hasCommon;
+  *aShouldCauseInvalidation = PR_TRUE;
 
   // If one of the updated proprties is involved in the current sort, filter,
   // or search, we should invalidate
-  nsCOMPtr<sbIPropertyArray> props;
 
   // Search sort
-  nsresult rv = GetCurrentSort(getter_AddRefs(props));
+  nsCOMPtr<sbIPropertyArray> props;
+  rv = GetCurrentSort(getter_AddRefs(props));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
+  rv = HasCommonProperty(aProperties, props, &hasCommon);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (*aShouldCauseInvalidation)
+  if (hasCommon) {
     return NS_OK;
+  }
 
   // Search filter
-  rv = GetCurrentFilter(getter_AddRefs(props));
+  nsCOMPtr<sbILibraryConstraint> filter;
+  rv = GetFilterConstraint(getter_AddRefs(filter));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (*aShouldCauseInvalidation)
-    return NS_OK;
+  if (filter) {
+    rv = HasCommonProperty(aProperties, filter, &hasCommon);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasCommon) {
+      return NS_OK;
+    }
+  }
 
   // Search search
-  rv = GetCurrentSearch(getter_AddRefs(props));
+  nsCOMPtr<sbILibraryConstraint> search;
+  rv = GetSearchConstraint(getter_AddRefs(search));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (*aShouldCauseInvalidation)
-    return NS_OK;
+  if (search) {
+    rv = HasCommonProperty(aProperties, search, &hasCommon);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasCommon) {
+      return NS_OK;
+    }
+  }
+
+  *aShouldCauseInvalidation = PR_FALSE;
 
   return NS_OK;
 }
@@ -938,263 +987,211 @@ sbLocalDatabaseMediaListView::NotifyListenersInternal(ListenerFunc aListenerFunc
 
 // sbIFilterableMediaListView
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetFilterableProperties(nsIStringEnumerator** aFilterableProperties)
+sbLocalDatabaseMediaListView::GetFilterConstraint(sbILibraryConstraint** aFilterConstraint)
 {
-  NS_ENSURE_ARG_POINTER(aFilterableProperties);
-
-  // Get this from the property manager?
-  return NS_ERROR_NOT_IMPLEMENTED;
-
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyID,
-                                              nsIStringEnumerator** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsresult rv;
-  PRInt32 dbOk;
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mDistinctPropertyValuesQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aPropertyID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Flush the property cache
-  nsCOMPtr<sbILocalDatabasePropertyCache> propCache;
-  rv = mLibrary->GetPropertyCache(getter_AddRefs(propCache));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propCache->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbDatabaseResultStringEnumerator* values =
-    new sbDatabaseResultStringEnumerator(result);
-  NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = values->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = values);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetCurrentFilter(sbIPropertyArray** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_POINTER(aFilterConstraint);
 
   nsresult rv;
 
-  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  nsCOMPtr<sbILibraryConstraintBuilder> builder =
+    do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mViewFilters.EnumerateRead(AddValuesToArrayCallback, propertyArray);
-
-  // Add filters from the cascade filter list, if any
-  if (mCascadeFilterSet) {
-    rv = mCascadeFilterSet->AddFilters(propertyArray);
+  if (mViewFilter) {
+    rv = builder->IncludeConstraint(mViewFilter, nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ADDREF(*_retval = propertyArray);
-  return NS_OK;
-}
+  // Add filters from the cascade filter list, if any
+  PRBool changed = PR_FALSE;
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->AddFilters(builder, &changed);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::SetFilters(sbIPropertyArray* aPropertyArray)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-#ifdef PR_LOGGING
-  nsAutoString buff;
-  aPropertyArray->ToString(buff);
-  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - SetFilters(%s)",
-         this, NS_LossyConvertUTF16toASCII(buff).get()));
-#endif
+  if (mViewFilter || changed) {
+    nsCOMPtr<sbILibraryConstraint> constraint;
+    rv = builder->Get(getter_AddRefs(constraint));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = UpdateFiltersInternal(aPropertyArray, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::UpdateFilters(sbIPropertyArray* aPropertyArray)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
-  nsresult rv = UpdateFiltersInternal(aPropertyArray, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ADDREF(*aFilterConstraint = constraint);
+  }
+  else {
+    *aFilterConstraint = nsnull;
+  }
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
+sbLocalDatabaseMediaListView::SetFilterConstraint(sbILibraryConstraint* aFilterConstraint)
 {
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
   nsresult rv;
 
-  PRUint32 propertyCount;
-  rv = aPropertyArray->GetLength(&propertyCount);
+  // We currently don't support filters with multiple properties in each group
+  // This should go away when we support generalized library constraints for
+  // filters (see bug 5955)
+  if (aFilterConstraint) {
+    PRUint32 groupCount;
+    rv = aFilterConstraint->GetGroupCount(&groupCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // ensure we got something
-  NS_ENSURE_STATE(propertyCount);
-
-  PRBool dirty = PR_FALSE;
-  for (PRUint32 index = 0; index < propertyCount; index++) {
-
-    // Get the property.
-    nsCOMPtr<sbIProperty> property;
-    rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
+    for (PRUint32 i = 0; i < groupCount; i++) {
+      nsCOMPtr<sbILibraryConstraintGroup> group;
+      rv = aFilterConstraint->GetGroup(i, getter_AddRefs(group));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the id of the property. This will be the key for the hash table.
-    nsString propertyID;
-    rv = property->GetId(propertyID);
+      nsCOMPtr<nsIStringEnumerator> properties;
+      rv = group->GetProperties(getter_AddRefs(properties));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the property value
-    nsString value;
-    rv = property->GetValue(value);
+      nsString junk;
+      rv = properties->GetNext(junk);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    sbStringArray* stringArray;
-    PRBool arrayExists = mViewFilters.Get(propertyID, &stringArray);
-    // If there is an array for this property, search the array for the value
-    // and remove it
-    if (arrayExists) {
+      PRBool HasMore;
+      rv = properties->HasMore(&HasMore);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-      PRUint32 length = stringArray->Length();
-      // Do this backwards so we don't have to deal with the array shifting
-      // on us.  Also, be sure to remove multiple copies of the same string.
-      for (PRInt32 i = length - 1; i >= 0; i--) {
-        if (stringArray->ElementAt(i).Equals(value)) {
-          stringArray->RemoveElementAt(i);
-          dirty = PR_TRUE;
+      if (HasMore) {
+        return NS_ERROR_INVALID_ARG;
         }
       }
     }
+
+  mViewFilter = aFilterConstraint;
+
+  // Clear filters from the cascade filter list, if any
+  if (!aFilterConstraint && mCascadeFilterSet) {
+    rv = mCascadeFilterSet->ClearFilters();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (dirty) {
     rv = UpdateViewArrayConfiguration(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // And notify listeners
     NotifyListenersFilterChanged();
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::ClearFilters()
-{
-  mViewFilters.Clear();
-
-  nsresult rv;
-
-  // Clear filters from the cascade filter list, if any
-  if (mCascadeFilterSet) {
-    rv = mCascadeFilterSet->ClearFilters();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = UpdateViewArrayConfiguration(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // And notify listeners
-  NotifyListenersFilterChanged();
 
   return NS_OK;
 }
 
 // sbISearchableMediaListView
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetSearchableProperties(nsIStringEnumerator** aSearchableProperties)
+sbLocalDatabaseMediaListView::GetSearchConstraint(sbILibraryConstraint** aSearchConstraint)
 {
-  NS_ENSURE_ARG_POINTER(aSearchableProperties);
-  // To be implemented by property manager?
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetCurrentSearch(sbIPropertyArray** aCurrentSearch)
-{
-  NS_ENSURE_ARG_POINTER(aCurrentSearch);
+  NS_ENSURE_ARG_POINTER(aSearchConstraint);
 
   nsresult rv;
 
-  nsCOMPtr<sbIMutablePropertyArray> propertyArray;
-  rv = ClonePropertyArray(mViewSearches, getter_AddRefs(propertyArray));
+  nsCOMPtr<sbILibraryConstraintBuilder> builder =
+    do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add filters from the cascade filter list, if any
-  if (mCascadeFilterSet) {
-    rv = mCascadeFilterSet->AddSearches(propertyArray);
+  if (mViewSearch) {
+    rv = builder->IncludeConstraint(mViewSearch, nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ADDREF(*aCurrentSearch = propertyArray);
-  return NS_OK;
-}
+  // Add searches from the cascade filter list, if any
+  PRBool changed = PR_FALSE;
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->AddSearches(builder, &changed);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::SetSearch(sbIPropertyArray* aSearch)
-{
-  NS_ENSURE_ARG_POINTER(aSearch);
-#ifdef PR_LOGGING
-  nsAutoString buff;
-  aSearch->ToString(buff);
-  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - SetSearch(%s)",
-         this, NS_LossyConvertUTF16toASCII(buff).get()));
-#endif
+  if (mViewSearch || changed) {
+    nsCOMPtr<sbILibraryConstraint> constraint;
+    rv = builder->Get(getter_AddRefs(constraint));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv;
-
-  rv = ClonePropertyArray(aSearch, getter_AddRefs(mViewSearches));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateViewArrayConfiguration(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // And notify listeners
-  NotifyListenersSearchChanged();
+    NS_ADDREF(*aSearchConstraint = constraint);
+  }
+  else {
+    *aSearchConstraint = nsnull;
+  }
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::ClearSearch()
+sbLocalDatabaseMediaListView::SetSearchConstraint(sbILibraryConstraint* aSearchConstraint)
 {
   nsresult rv;
 
-  nsCOMPtr<nsIMutableArray> array = do_QueryInterface(mViewSearches, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Searches can only be specified as multiple groups of the same properties,
+  // each properties in the group having the same value.  This check should
+  // go away once we fully support a generalized library constraint for
+  // a search (see bug 5955)
+  if (aSearchConstraint) {
+    PRUint32 groupCount;
+    rv = aSearchConstraint->GetGroupCount(&groupCount);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = array->Clear();
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbILibraryConstraintGroup> firstGroup;
+    rv = aSearchConstraint->GetGroup(0, getter_AddRefs(firstGroup));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool equals;
+    for (PRUint32 i = 0; i < groupCount; i++) {
+
+      nsCOMPtr<sbILibraryConstraintGroup> group;
+      rv = aSearchConstraint->GetGroup(i, getter_AddRefs(group));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // The property list of each group must be the same
+      nsCOMPtr<nsIStringEnumerator> firstGroupProperties;
+      rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIStringEnumerator> properties;
+      rv = group->GetProperties(getter_AddRefs(properties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = SB_StringEnumeratorEquals(firstGroupProperties, properties, &equals);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!equals) {
+        return NS_ERROR_INVALID_ARG;
+      }
+
+      // The values of each property in a single group must be the same
+      rv = group->GetProperties(getter_AddRefs(properties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString firstProperty;
+      rv = properties->GetNext(firstProperty);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool hasMore;
+      while (NS_SUCCEEDED(properties->HasMore(&hasMore)) && hasMore) {
+        nsString property;
+        rv = properties->GetNext(property);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIStringEnumerator> firstPropertyValues;
+        rv = group->GetValues(firstProperty,
+                              getter_AddRefs(firstPropertyValues));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIStringEnumerator> values;
+        rv = group->GetValues(property, getter_AddRefs(values));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = SB_StringEnumeratorEquals(firstPropertyValues, values, &equals);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!equals) {
+          return NS_ERROR_INVALID_ARG;
+        }
+      }
+    }
+  }
+
+  mViewSearch = aSearchConstraint;
 
   // Clear searches from the cascade filter list, if any
-  if (mCascadeFilterSet) {
+  if (!aSearchConstraint && mCascadeFilterSet) {
     rv = mCascadeFilterSet->ClearSearches();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1448,93 +1445,6 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
   return NS_OK;
 }
 
-/**
- * \brief Updates the internal filter map with a contents of a property bag.
- *        In replace mode, the value list for each distinct property in the
- *        bag is first cleared before the values in the bag are added.  When
- *        not in replace mode, the new values in the bag are simply appended
- *        to each property's list of values.
- */
-nsresult
-sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
-                                                    PRBool aReplace)
-{
-  nsresult rv;
-
-  PRUint32 propertyCount;
-  rv = aPropertyArray->GetLength(&propertyCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // ensure we got something
-  NS_ENSURE_STATE(propertyCount);
-
-  nsTHashtable<nsStringHashKey> seenProperties;
-  PRBool success = seenProperties.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  for (PRUint32 index = 0; index < propertyCount; index++) {
-
-    // Get the property.
-    nsCOMPtr<sbIProperty> property;
-    rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the id of the property. This will be the key for the hash table.
-    nsString propertyID;
-    rv = property->GetId(propertyID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the property value
-    nsString value;
-    rv = property->GetValue(value);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If the string is null and we are replacing, we should delete the
-    // property from the hash
-    if (value.IsVoid()) {
-      if (aReplace) {
-        mViewFilters.Remove(propertyID);
-      }
-    }
-    else {
-      // Get the string array associated with the key. If it doesn't yet exist
-      // then we need to create it.
-      sbStringArray* stringArray;
-      PRBool arrayExists = mViewFilters.Get(propertyID, &stringArray);
-
-      if (!arrayExists) {
-        NS_NEWXPCOM(stringArray, sbStringArray);
-        NS_ENSURE_TRUE(stringArray, NS_ERROR_OUT_OF_MEMORY);
-
-        // Try to add the array to the hash table.
-        success = mViewFilters.Put(propertyID, stringArray);
-        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-      }
-
-      if (aReplace) {
-        // If this is the first time we've seen this property, clear the
-        // string array
-        if (!seenProperties.GetEntry(propertyID)) {
-          stringArray->Clear();
-          nsStringHashKey* successKey = seenProperties.PutEntry(propertyID);
-          NS_ENSURE_TRUE(successKey, NS_ERROR_OUT_OF_MEMORY);
-        }
-      }
-      // Now we need a slot for the property value.
-      nsString* appended = stringArray->AppendElement(value);
-      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
-    }
-  }
-
-  rv = UpdateViewArrayConfiguration(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // And notify listeners
-  NotifyListenersFilterChanged();
-
-  return NS_OK;
-}
-
 nsresult
 sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSelection)
 {
@@ -1545,93 +1455,123 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     return NS_OK;
   }
 
-  // Update filters
   rv = mArray->ClearFilters();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbStringArray filterProperties;
-  mViewFilters.EnumerateRead(AddKeysToStringArrayCallback, &filterProperties);
-  PRUint32 length = filterProperties.Length();
-  for (PRUint32 i = 0; i < length; i++) {
-
-    sbStringArray* values;
-    PRBool success = mViewFilters.Get(filterProperties[i], &values);
-    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
-    nsCOMPtr<sbIPropertyInfo> info;
-    rv = mPropMan->GetPropertyInfo(filterProperties[i], getter_AddRefs(info));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    sbStringArray sortableValues;
+  // Update filters
+  // XXXsteve Eventually we should simply pass the library constraint directly
+  // to the guid array
+  if (mViewFilter) {
+    PRUint32 groupCount;
+    rv = mViewFilter->GetGroupCount(&groupCount);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 valueCount = values->Length();
-    for (PRUint32 j = 0; j < valueCount; j++) {
+    for (PRUint32 i = 0; i < groupCount; i++) {
 
-      nsAutoString sortableValue;
-      // Top level properties are not searched as sortable
-      if (SB_IsTopLevelProperty(filterProperties[i])) {
-        sortableValue = values->ElementAt(j);
+      nsCOMPtr<sbILibraryConstraintGroup> group;
+      rv = mViewFilter->GetGroup(i, getter_AddRefs(group));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIStringEnumerator> properties;
+      rv = group->GetProperties(getter_AddRefs(properties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // XXXsteve We only support one property in a group
+      nsString property;
+      rv = properties->GetNext(property);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIStringEnumerator> values;
+      rv = group->GetValues(property, getter_AddRefs(values));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Top level properties are not filtered as sortable
+      if (!SB_IsTopLevelProperty(property)) {
+
+    nsCOMPtr<sbIPropertyInfo> info;
+        rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIStringEnumerator> sortable =
+          new sbMakeSortableStringEnumerator(info, values);
+        NS_ENSURE_TRUE(sortable, NS_ERROR_OUT_OF_MEMORY);
+
+        values = sortable;
       }
-      else {
-        rv = info->MakeSortable(values->ElementAt(j), sortableValue);
+
+      // Set the filter.
+      rv = mArray->AddFilter(property, values, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      nsString* appended = sortableValues.AppendElement(sortableValue);
-      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
     }
-
-    // Make a string enumerator for the string array.
-    nsCOMPtr<nsIStringEnumerator> valueEnum =
-      new sbTArrayStringEnumerator(&sortableValues);
-    NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
-
-    // Set the filter.
-    rv = mArray->AddFilter(filterProperties[i], valueEnum, PR_FALSE);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
-  }
 
   // Update searches
-  PRUint32 propertyCount;
-  rv = mViewSearches->GetLength(&propertyCount);
+  // XXXsteve Eventually we should simply pass the library constraint directly
+  // to the guid array
+  if (mViewSearch) {
+    PRUint32 groupCount;
+    rv = mViewSearch->GetGroupCount(&groupCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Since we know each group has the same properies, just use the properties
+    // from the first group to assemble the data
+    nsCOMPtr<sbILibraryConstraintGroup> firstGroup;
+    rv = mViewSearch->GetGroup(0, getter_AddRefs(firstGroup));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIStringEnumerator> firstGroupProperties;
+    rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 index = 0; index < propertyCount; index++) {
+    PRBool hasMore;
+    while (NS_SUCCEEDED(firstGroupProperties->HasMore(&hasMore)) && hasMore) {
+      nsString property;
+      rv = firstGroupProperties->GetNext(property);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIProperty> property;
-    rv = mViewSearches->GetPropertyAt(index, getter_AddRefs(property));
+      // Collect the values for this property from each group
+      sbStringArray allValues;
+      for (PRUint32 i = 0; i < groupCount; i++) {
+        nsCOMPtr<sbILibraryConstraintGroup> group;
+        rv = mViewSearch->GetGroup(i, getter_AddRefs(group));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString propertyID;
-    rv = property->GetId(propertyID);
+        nsCOMPtr<nsIStringEnumerator> values;
+        rv = group->GetValues(property, getter_AddRefs(values));
     NS_ENSURE_SUCCESS(rv, rv);
 
+        PRBool hasMoreValues;
+        while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
     nsString value;
-    rv = property->GetValue(value);
+          rv = values->GetNext(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Treat a search with an emtpy search as if it wasn't there
-    if (value.IsEmpty()) {
-      continue;
+          nsString* added = allValues.AppendElement(value);
+          NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    nsCOMPtr<sbIPropertyInfo> info;
-    rv = mPropMan->GetPropertyInfo(propertyID, getter_AddRefs(info));
+        nsCOMPtr<nsIStringEnumerator> allValuesEnum =
+          new sbTArrayStringEnumerator(&allValues);
+        NS_ENSURE_TRUE(allValuesEnum, NS_ERROR_OUT_OF_MEMORY);
+
+        // Top level properties are not filtered as sortable
+        if (!SB_IsTopLevelProperty(property)) {
+
+          nsCOMPtr<sbIPropertyInfo> info;
+          rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString sortableValue;
-    rv = info->MakeSortable(value, sortableValue);
+          nsCOMPtr<nsIStringEnumerator> sortable =
+            new sbMakeSortableStringEnumerator(info, allValuesEnum);
+          NS_ENSURE_TRUE(sortable, NS_ERROR_OUT_OF_MEMORY);
+
+          allValuesEnum = sortable;
+        }
+
+        rv = mArray->AddFilter(property, allValuesEnum, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    sbStringArray valueArray(1);
-    nsString* successString = valueArray.AppendElement(sortableValue);
-    NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
-
-    nsCOMPtr<nsIStringEnumerator> valueEnum =
-      new sbTArrayStringEnumerator(&valueArray);
-    NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = mArray->AddFilter(propertyID, valueEnum, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
+  }
+    }
   }
 
   // Add configuration from the cascade filter list, if any
@@ -1910,3 +1850,36 @@ sbLocalDatabaseMediaListView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
+
+NS_IMPL_ISUPPORTS1(sbMakeSortableStringEnumerator, nsIStringEnumerator)
+
+sbMakeSortableStringEnumerator::sbMakeSortableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
+                                                               nsIStringEnumerator* aValues) :
+  mPropertyInfo(aPropertyInfo),
+  mValues(aValues)
+{
+  NS_ASSERTION(aPropertyInfo, "aPropertyInfo is null");
+  NS_ASSERTION(aValues, "aValues is null");
+}
+
+NS_IMETHODIMP
+sbMakeSortableStringEnumerator::HasMore(PRBool* _retval)
+{
+  return mValues->HasMore(_retval);
+}
+
+NS_IMETHODIMP
+sbMakeSortableStringEnumerator::GetNext(nsAString& _retval)
+{
+  nsresult rv;
+
+  nsString value;
+  rv = mValues->GetNext(value);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInfo->MakeSortable(value, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

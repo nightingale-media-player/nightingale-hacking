@@ -26,6 +26,8 @@
 
 // For Songbird properties.
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+
 const SBJUMPTOINDEXRETRYCOUNT = 3;    // Retries for highlighting new item
 const SBJUMPTOINDEXDELAY      = 500;  // Delay in milliseconds to hightlight
 
@@ -897,9 +899,12 @@ function SBDisplayViewForListAndPlayItem(list, item) {
     currentPlayListView = list.createView();
 
     // filter the view to just the single item
-    //var filter = SBProperties.createArray([[SBProperties.GUID, item.guid]]);
-    var filter = SBProperties.createArray([[SBProperties.contentURL, item.contentSrc.spec]]);
-    currentPlayListView.setFilters(filter);
+    var filter = LibraryUtils.createConstraint([
+      [
+        [SBProperties.GUID, [item.guid]]
+      ]
+    ]);
+    currentPlayListView.filterConstraint = filter;
     indexOfItem = currentPlayListView.getIndexForItem(item);
   }
 

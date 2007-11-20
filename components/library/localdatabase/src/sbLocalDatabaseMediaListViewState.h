@@ -52,8 +52,8 @@ public:
   NS_DECLARE_STATIC_IID_ACCESSOR(SB_ILOCALDATABASEMEDIALISTVIEWSTATE_IID)
 
   NS_IMETHOD GetSort(sbIMutablePropertyArray** aSort) = 0;
-  NS_IMETHOD GetSearch(sbIMutablePropertyArray** aSearch) = 0;
-  NS_IMETHOD GetFilter(sbIMutablePropertyArray** aFilter) = 0;
+  NS_IMETHOD GetSearch(sbILibraryConstraint** aSearch) = 0;
+  NS_IMETHOD GetFilter(sbILibraryConstraint** aFilter) = 0;
   NS_IMETHOD GetFilterSet(sbLocalDatabaseCascadeFilterSetState** aFilterSet) = 0;
   NS_IMETHOD GetTreeViewState(sbLocalDatabaseTreeViewState** aTreeViewState) = 0;
 };
@@ -75,22 +75,22 @@ public:
 
   // sbILocalDatabaseMediaListViewState
   NS_IMETHOD GetSort(sbIMutablePropertyArray** aSort);
-  NS_IMETHOD GetSearch(sbIMutablePropertyArray** aSearch);
-  NS_IMETHOD GetFilter(sbIMutablePropertyArray** aFilter);
+  NS_IMETHOD GetSearch(sbILibraryConstraint** aSearch);
+  NS_IMETHOD GetFilter(sbILibraryConstraint** aFilter);
   NS_IMETHOD GetFilterSet(sbLocalDatabaseCascadeFilterSetState** aFilterSet);
   NS_IMETHOD GetTreeViewState(sbLocalDatabaseTreeViewState** aTreeViewState);
 
   sbLocalDatabaseMediaListViewState();
   sbLocalDatabaseMediaListViewState(sbIMutablePropertyArray* aSort,
-                                    sbIMutablePropertyArray* aSearch,
-                                    sbIMutablePropertyArray* aFilter,
+                                    sbILibraryConstraint* aSearch,
+                                    sbILibraryConstraint* aFilter,
                                     sbLocalDatabaseCascadeFilterSetState* aFilterSet,
                                     sbLocalDatabaseTreeViewState* aTreeViewState);
 private:
   PRBool mInitialized;
   nsCOMPtr<sbIMutablePropertyArray> mSort;
-  nsCOMPtr<sbIMutablePropertyArray> mSearch;
-  nsCOMPtr<sbIMutablePropertyArray> mFilter;
+  nsCOMPtr<sbILibraryConstraint> mSearch;
+  nsCOMPtr<sbILibraryConstraint> mFilter;
   nsRefPtr<sbLocalDatabaseCascadeFilterSetState> mFilterSet;
   nsRefPtr<sbLocalDatabaseTreeViewState> mTreeViewState;
 };

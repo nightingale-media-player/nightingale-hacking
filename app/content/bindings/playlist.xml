@@ -432,24 +432,18 @@
       <property name="searchFilter" >
         <getter>
 <![CDATA[
-  // Attempt to get the search filter on the playlist
-  if (this.mediaListView && this.mediaListView.currentSearch) {
-    var properties = this.mediaListView.currentSearch;
-    if (properties.length > 0) {
-      var terms = [];
-      var property = null;
-      var previousProperty = null;
-      for (var i = 0; i < properties.length; i++) {
-        property = properties.getPropertyAt(i);
-        // Continue adding terms until we get to the next property
-        if (previousProperty && property.id != previousProperty.id) {
-          break;
-        }
-        terms.push(property.value);
-        previousProperty = property;
-      }
-      return terms.join(" ");
+  // XXXsteve We need a better way to discover the actual search terms
+  // rather than reverse engineer it from the search constaint
+  if (this.mediaListView && this.mediaListView.searchConstraint) {
+    var search = this.mediaListView.searchConstraint;
+    var terms = [];
+    var groupCount = search.groupCount;
+    for (var i = 0; i < groupCount; i++) {
+      var group = search.getGroup(i);
+      var property = group.properties.getNext();
+      terms.push(group.getValues(property).getNext());
     }
+    return terms.join(" ");
   }
   return "";
 ]]>

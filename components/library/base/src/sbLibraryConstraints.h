@@ -29,90 +29,81 @@
 
 #include <sbILibraryConstraints.h>
 
+#include <nsAutoPtr.h>
+#include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsIClassInfo.h>
 #include <nsISerializable.h>
 
-#define SONGBIRD_LIBRARYFILTER_DESCRIPTION                 \
-  "Songbird Library Filter"
-#define SONGBIRD_LIBRARYFILTER_CONTRACTID                  \
-  "@songbirdnest.com/Songbird/Library/Filter;1"
-#define SONGBIRD_LIBRARYFILTER_CLASSNAME                   \
-  "Songbird Library Filter"
-#define SONGBIRD_LIBRARYFILTER_CID                         \
-{ /* 4aaf2da9-4ecb-4666-abca-a6326efe28bc */               \
-  0x4aaf2da9,                                              \
-  0x4ecb,                                                  \
-  0x4666,                                                  \
-  { 0xab, 0xca, 0xa6, 0x32, 0x6e, 0xfe, 0x28, 0xbc }       \
-}
+class sbLibraryConstraint;
+class sbLibraryConstraintGroup;
+typedef nsTArray<nsString> sbStringArray;
+typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbConstraintGroup;
+typedef nsRefPtr<sbLibraryConstraintGroup> sbConstraintGroupRefPtr;
+typedef nsTArray<sbConstraintGroupRefPtr> sbConstraintArray;
 
-class sbLibraryFilter : public sbILibraryFilter,
-                        public nsISerializable,
-                        public nsIClassInfo
+class sbLibraryConstraintBuilder : public sbILibraryConstraintBuilder
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBILIBRARYFILTER
-  NS_DECL_NSISERIALIZABLE
-  NS_DECL_NSICLASSINFO
+  NS_DECL_SBILIBRARYCONSTRAINTBUILDER
 
-  sbLibraryFilter();
-
+  nsresult Init();
 private:
-  PRBool mInitialized;
-  nsString mProperty;
-  nsTArray<nsString> mValues;
+  nsresult EnsureConstraint();
+  nsRefPtr<sbLibraryConstraint> mConstraint;
 };
 
-#define SONGBIRD_LIBRARYSEARCH_DESCRIPTION                 \
-  "Songbird Library Search"
-#define SONGBIRD_LIBRARYSEARCH_CONTRACTID                  \
-  "@songbirdnest.com/Songbird/Library/Search;1"
-#define SONGBIRD_LIBRARYSEARCH_CLASSNAME                   \
-  "Songbird Library Search"
-#define SONGBIRD_LIBRARYSEARCH_CID                         \
-{ /* e83ec34f-dea0-4749-8d93-c18a9dc5f52c */               \
-  0xe83ec34f,                                              \
-  0xdea0,                                                  \
-  0x4749,                                                  \
-  { 0x8d, 0x93, 0xc1, 0x8a, 0x9d, 0xc5, 0xf5, 0x2c }       \
-}
-
-class sbLibrarySearch : public sbILibrarySearch,
-                        public nsISerializable,
-                        public nsIClassInfo
+class sbLibraryConstraint : public sbILibraryConstraint,
+                            public nsISerializable,
+                            public nsIClassInfo
 {
+friend class sbLibraryConstraintBuilder;
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBILIBRARYSEARCH
+  NS_DECL_SBILIBRARYCONSTRAINT
   NS_DECL_NSISERIALIZABLE
   NS_DECL_NSICLASSINFO
 
-  sbLibrarySearch();
+  sbLibraryConstraint();
 
 private:
+  nsresult Init();
+  nsresult Intersect();
+  nsresult AddToCurrent(const nsAString& aProperty, sbStringArray* aArray);
+  PRBool IsValid();
+
   PRBool mInitialized;
-  nsString mProperty;
-  PRBool mIsAll;
-  nsTArray<nsString> mValues;
+  sbConstraintArray mConstraint;
 };
 
-#define SONGBIRD_LIBRARYSORT_DESCRIPTION                   \
-  "Songbird Library Sort"
-#define SONGBIRD_LIBRARYSORT_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Library/Sort;1"
-#define SONGBIRD_LIBRARYSORT_CLASSNAME                     \
-  "Songbird Library Sort"
-#define SONGBIRD_LIBRARYSORT_CID                           \
-{ /* ac85b1e9-c3e1-456a-af0f-4161d36938df */               \
-  0xac85b1e9,                                              \
-  0xc3e1,                                                  \
-  0x456a,                                                  \
-  { 0xaf, 0x0f, 0x41, 0x61, 0xd3, 0x69, 0x38, 0xdf }       \
-}
+class sbLibraryConstraintGroup : public sbILibraryConstraintGroup
+{
+friend class sbLibraryConstraint;
+friend class sbLibraryConstraintBuilder;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILIBRARYCONSTRAINTGROUP
+
+  sbLibraryConstraintGroup();
+
+private:
+  nsresult Init();
+  PRBool IsEmpty();
+  nsresult Add(const nsAString& aProperty, sbStringArray* aArray);
+  nsresult Read(nsIObjectInputStream* aStream);
+  nsresult Write(nsIObjectOutputStream* aStream);
+
+  static PLDHashOperator PR_CALLBACK
+    AddKeysToArrayCallback(nsStringHashKey::KeyType aKey,
+                           sbStringArray* aEntry,
+                           void* aUserData);
+
+  PRBool mInitialized;
+  sbConstraintGroup mConstraintGroup;
+};
 
 class sbLibrarySort : public sbILibrarySort,
                       public nsISerializable,

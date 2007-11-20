@@ -60,6 +60,12 @@
             throw new Error("Import of sbProperties module failed");
         }
 
+        if (typeof(LibraryUtils) == "undefined") {
+          Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+          if (!SBProperties)
+            throw new Error("Import of LibraryUtils module failed");
+        }
+
         // OVERLAY TARGET ID MATCHES ELEMENT NAME
         this.box.setAttribute("id", "sb-player-volume-slider" );
         
@@ -836,10 +842,7 @@
 
               // Filter the view as if it is being shown in the UI to determine
               // if this library actually has anything playable in it
-              view.setFilters(SBProperties.createArray([
-                [SBProperties.isList, "0"],
-                [SBProperties.hidden, "0"]
-              ]));
+              view.filterConstraint = LibraryUtils.standardFilterConstraint;
               if (view.length > 0) {
                 this.gPPS.playView(view, 0);
               }

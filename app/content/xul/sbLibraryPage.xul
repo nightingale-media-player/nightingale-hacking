@@ -77,13 +77,17 @@ if (typeof(SBProperties) == "undefined") {
     throw new Error("Import of sbProperties module failed!");
 }
 
-if (typeof(kPlaylistCommands) == "undefined") {
-  Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
-  if (!SBProperties)
-    throw new Error("Import of kPlaylistCommands module failed!");
+if (typeof(LibraryUtils) == "undefined") {
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+  if (!LibraryUtils)
+    throw new Error("Import of sbLibraryUtils module failed!");
 }
 
-Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+if (typeof(kPlaylistCommands) == "undefined") {
+  Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
+  if (!kPlaylistCommands)
+    throw new Error("Import of kPlaylistCommands module failed!");
+}
 
 try
 {
@@ -192,10 +196,7 @@ try
 
           // By default, we never want to show lists and hidden things in the
           // playlist
-          view.setFilters(SBProperties.createArray([
-            [SBProperties.isList, "0"],
-            [SBProperties.hidden, "0"]
-          ]));
+          view.filterConstraint = LibraryUtils.standardFilterConstraint;
 
           var filter = view.cascadeFilterSet;
           filter.appendSearch([

@@ -32,8 +32,7 @@
 
 #include "nsISupports.idl"
 
-interface nsIStringEnumerator;
-interface sbIPropertyArray;
+interface sbILibraryConstraint;
 
 /**
 * \interface sbIFilterableMediaListView
@@ -44,58 +43,12 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(6f600a1a-0f5f-42e7-8ea5-d01faacac617)]
+[scriptable, uuid(79d48f19-3d80-4c23-b89d-de6438abad4c)]
 interface sbIFilterableMediaListView : nsISupports
 {
   /**
-   * \brief A string enumerator of all the property IDs that can be used
-   * in the filter
+   * \brief Get or set the current filter constraint
    */
-  readonly attribute nsIStringEnumerator filterableProperties;
-
-  /**
-   * \brief Returns an array of all of the possible values for the
-   *        given property.
-   * \param aPropertyID The property ID to return values for
-   * \return A string enumerator containing all the possible values for the
-   *         given property
-   */
-  nsIStringEnumerator getFilterValues(in AString aPropertyID);
-
-  /**
-   * \brief Get the current filter configuration
-   */
-  readonly attribute sbIPropertyArray currentFilter;
-
-  /**
-   * \brief Set a new filter configuration.
-   * \param aPropertyArray Array of property ID / value pairs used to filter
-   *        the list For each distinct property, the list of values in the
-   *        filter for that property will be replaced with the supplied values.
-   *        An empty value will remove the property from the list of filters.
-   */
-  void setFilters(in sbIPropertyArray aPropertyArray);
-
-  /**
-   * \brief Update an existing filter
-   * \param aPropertyArray Array of property ID / value pairs to used to update
-   *        the current filter configuration.  For each distinct property, the
-   *        list of values in the filter for that propery will be appended to
-   *        with the supplied values.
-   */
-  void updateFilters(in sbIPropertyArray aPropertyArray);
-
-  /**
-   * \brief Remove property values from an existing filter
-   * \param aPropertyArray Array of property ID / value pairs to remove
-   *        property value pairs from the filter.  Each property value pair in
-   *        the array will be removed from the filter if it exists.
-   */
-  void removeFilters(in sbIPropertyArray aPropertyArray);
-
-  /**
-   * \brief Clears the current filter configuration
-   */
-  void clearFilters();
+  attribute sbILibraryConstraint filterConstraint;
 };
 

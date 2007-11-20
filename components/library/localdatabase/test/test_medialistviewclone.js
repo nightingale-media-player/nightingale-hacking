@@ -31,23 +31,32 @@
 function runTest () {
 
   Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
   var library = createLibrary("test_medialistviewclone", null, false);
   library.clear();
 
   var view = library.createView();
+
   var cfs = view.cascadeFilterSet;
 
   view.setSort(SBProperties.createArray([
     [SBProperties.artistName, "a"]
   ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ]
+  ]);
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
-
-  cfs.appendSearch(["*"], 1);
+  cfs.appendSearch([
+    SBProperties.artistName,
+    SBProperties.albumName,
+    SBProperties.trackName
+  ], 3);
   cfs.appendFilter(SBProperties.genre);
   cfs.appendFilter(SBProperties.artistName);
   cfs.appendFilter(SBProperties.albumName);
@@ -61,15 +70,29 @@ function runTest () {
   assertPropertyArray(clone.currentSort, SBProperties.createArray([
     [SBProperties.artistName, "a"]
   ]));
-  assertPropertyArray(clone.currentSearch, SBProperties.createArray([
-    ["*", "Beat"]
-  ]));
-  assertPropertyArray(clone.currentFilter, SBProperties.createArray([
-    [SBProperties.isList,      "0"],
-    [SBProperties.hidden,      "0"],
-    [SBProperties.genre,       "ROCK"], 
-    [SBProperties.artistName,  "The Beatles"]
-  ]));
+
+  assertTrue(clone.searchConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["Beat"]],
+      [SBProperties.albumName,  ["Beat"]],
+      [SBProperties.trackName,  ["Beat"]]
+    ]
+  ])));
+
+  assertTrue(clone.filterConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ],
+    [
+      [SBProperties.genre, ["ROCK"]]
+    ],
+    [
+      [SBProperties.artistName, ["The Beatles"]]
+    ]
+  ])));
 
   var cloneCfs = clone.cascadeFilterSet;
   assertEqual(cfs.length, cloneCfs.length);
@@ -95,18 +118,33 @@ function runTest () {
   ois.close();
 
   var newView = library.createView(newState);
+
   assertPropertyArray(newView.currentSort, SBProperties.createArray([
     [SBProperties.artistName, "a"]
   ]));
-  assertPropertyArray(newView.currentSearch, SBProperties.createArray([
-    ["*", "Beat"]
-  ]));
-  assertPropertyArray(newView.currentFilter, SBProperties.createArray([
-    [SBProperties.isList,      "0"],
-    [SBProperties.hidden,      "0"],
-    [SBProperties.genre,       "ROCK"], 
-    [SBProperties.artistName,  "The Beatles"]
-  ]));
+  assertTrue(newView.searchConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["Beat"]],
+      [SBProperties.albumName,  ["Beat"]],
+      [SBProperties.trackName,  ["Beat"]]
+    ]
+  ])));
+
+  assertTrue(newView.filterConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ],
+    [
+      [SBProperties.genre, ["ROCK"]]
+    ],
+    [
+      [SBProperties.artistName, ["The Beatles"]]
+    ]
+  ])));
+
   var newCfs = newView.cascadeFilterSet;
   assertEqual(cfs.length, newCfs.length);
   for (let i = 0; i < cfs.length; i++) {

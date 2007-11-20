@@ -31,6 +31,7 @@
 function runTest () {
 
   Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
   var library = createLibrary("test_viewandcfs", null, false);
   library.clear();
@@ -80,17 +81,28 @@ function runTest () {
     item6
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray());
+
+  assertEqual(view.searchConstraint, null);
+  assertEqual(view.filterConstraint, null);
+
+  var filter = LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ]
+  ]);
 
   // Set up root libtary display filters
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
+  view.filterConstraint = filter;
 
   // Set up cfs
-  cfs.appendSearch(["*"], 1);
+  cfs.appendSearch([
+    SBProperties.artistName,
+    SBProperties.albumName,
+    SBProperties.trackName
+  ], 3);
   cfs.appendFilter(SBProperties.genre);
   cfs.appendFilter(SBProperties.artistName);
   cfs.appendFilter(SBProperties.albumName);
@@ -104,11 +116,8 @@ function runTest () {
     item6
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
+  assertEqual(view.searchConstraint, null);
+  assertTrue(view.filterConstraint.equals(filter));
 
   // Set a filter
   cfs.set(1, ["ROCK"], 1);
@@ -120,12 +129,18 @@ function runTest () {
     item6
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"],
-    [SBProperties.genre,  "ROCK"]
-  ]));
+  assertEqual(view.searchConstraint, null);
+  assertTrue(view.filterConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ],
+    [
+      [SBProperties.genre, ["ROCK"]]
+    ]
+  ])));
 
   cfs.set(2, ["The Beatles"], 1);
 
@@ -134,13 +149,21 @@ function runTest () {
     item2
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray([
-    [SBProperties.isList,      "0"],
-    [SBProperties.hidden,      "0"],
-    [SBProperties.genre,       "ROCK"], 
-    [SBProperties.artistName,  "The Beatles"]
-  ]));
+  assertEqual(view.searchConstraint, null);
+  assertTrue(view.filterConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ],
+    [
+      [SBProperties.genre, ["ROCK"]]
+    ],
+    [
+      [SBProperties.artistName, ["The Beatles"]]
+    ]
+  ])));
 
   // Clear the filter set.  This should revert to the root library display
   // filters
@@ -155,12 +178,8 @@ function runTest () {
     item6
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
-
+  assertEqual(view.searchConstraint, null);
+  assertTrue(view.filterConstraint.equals(filter));
   // Set a search
   cfs.set(0, ["Beat"], 1);
 
@@ -171,17 +190,18 @@ function runTest () {
     item4
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray([
-    ["*", "Beat"]
-  ]));
-  assertPropertyArray(view.currentFilter, SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
+  assertTrue(view.searchConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["Beat"]],
+      [SBProperties.albumName,  ["Beat"]],
+      [SBProperties.trackName,  ["Beat"]]
+    ]
+  ])));
+  assertTrue(view.filterConstraint.equals(filter));
 
   // Clearing the filters and searches on the view should remove all filters
   // and views
-  view.clearFilters();
+  view.filterConstraint = null;
 
   assertView(view, [
     item1,
@@ -190,12 +210,16 @@ function runTest () {
     item4
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray([
-    ["*", "Beat"]
-  ]));
-  assertPropertyArray(view.currentFilter, SBProperties.createArray());
+  assertTrue(view.searchConstraint.equals(LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["Beat"]],
+      [SBProperties.albumName,  ["Beat"]],
+      [SBProperties.trackName,  ["Beat"]]
+    ]
+  ])));
+  assertEqual(view.filterConstraint, null);
 
-  view.clearSearch();
+  view.searchConstraint = null;
 
   assertView(view, [
     playlist1,
@@ -208,8 +232,8 @@ function runTest () {
     item6
   ]);
 
-  assertPropertyArray(view.currentSearch, SBProperties.createArray());
-  assertPropertyArray(view.currentFilter, SBProperties.createArray());
+  assertEqual(view.searchConstraint, null);
+  assertEqual(view.filterConstraint, null);
 }
 
 function assertView(view, list) {
@@ -222,27 +246,6 @@ function assertView(view, list) {
     if (!view.getItemByIndex(i).equals(list[i])) {
       fail("View is different than list at index " + i + ", " +
            view.getItemByIndex(i).guid + " != " + list[i].guid);
-    }
-  }
-
-}
-
-function assertPropertyArray(a1, a2) {
-  if (a1.length != a2.length) {
-    fail("Property array lengths differ, " + a1 +
-         " != " + a2);
-  }
-
-  for(var i = 0; i < a1.length; i++) {
-    var prop1 = a1.getPropertyAt(i);
-    var prop2 = a2.getPropertyAt(i);
-    if (prop1.id != prop2.id) {
-      fail("Names are different at index " + i + ", " +
-           prop1 + " != " + prop2);
-    }
-    if (prop1.value != prop2.value) {
-      fail("Values are different at index " + i + ", " +
-           prop1 + " != " + prop2);
     }
   }
 

@@ -46,20 +46,6 @@
 #include <prlock.h>
 #include <sbILibraryLoader.h>
 
-#define SONGBIRD_LIBRARYMANAGER_DESCRIPTION                \
-  "Songbird Library Manager"
-#define SONGBIRD_LIBRARYMANAGER_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/library/Manager;1"
-#define SONGBIRD_LIBRARYMANAGER_CLASSNAME                  \
-  "Songbird Library Manager"
-#define SONGBIRD_LIBRARYMANAGER_CID                        \
-{ /* ff27fd1d-183d-4c6d-89e7-1cd489f18bb9 */               \
-  0xff27fd1d,                                              \
-  0x183d,                                                  \
-  0x4c6d,                                                  \
-  { 0x89, 0xe7, 0x1c, 0xd4, 0x89, 0xf1, 0x8b, 0xb9 }       \
-}
-
 #define SB_PREFBRANCH_LIBRARY    "songbird.library."
 
 #define SB_PREF_MAIN_LIBRARY     SB_PREFBRANCH_LIBRARY "main"

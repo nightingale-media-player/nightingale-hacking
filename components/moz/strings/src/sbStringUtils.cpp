@@ -27,6 +27,8 @@
 #include "sbStringUtils.h"
 
 #include <prprf.h>
+#include <nsDataHashtable.h>
+#include <nsIStringEnumerator.h>
 
 PRInt32
 nsString_FindCharInSet(const nsAString& aString,
@@ -79,5 +81,66 @@ ToInteger64(const nsAString& str, nsresult* rv)
     *rv = NS_OK;
   }
   return result;
+}
+
+nsresult
+SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
+                          nsIStringEnumerator* aRight,
+                          PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aLeft);
+  NS_ENSURE_ARG_POINTER(aRight);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsDataHashtable<nsStringHashKey, PRUint32> leftValues;
+  PRBool success = leftValues.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(aLeft->HasMore(&hasMore)) && hasMore) {
+    nsString value;
+    rv = aLeft->GetNext(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 count = 1;
+    if (leftValues.Get(value, &count)) {
+      count++;
+    }
+
+    PRBool success = leftValues.Put(value, count);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  while (NS_SUCCEEDED(aRight->HasMore(&hasMore)) && hasMore) {
+    nsString value;
+    rv = aRight->GetNext(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 count;
+    if (!leftValues.Get(value, &count)) {
+      *_retval = PR_FALSE;
+      return NS_OK;
+    }
+
+    count--;
+    if (count) {
+      PRBool success = leftValues.Put(value, count);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    }
+    else {
+      leftValues.Remove(value);
+    }
+  }
+
+  if (leftValues.Count() == 0) {
+    *_retval = PR_TRUE;
+  }
+  else {
+    *_retval = PR_FALSE;
+  }
+
+  return NS_OK;
 }
 

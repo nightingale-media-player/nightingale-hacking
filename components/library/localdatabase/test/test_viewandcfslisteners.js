@@ -27,6 +27,7 @@
 function runTest () {
 
   Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
   var library = createLibrary("test_viewandcfslisteners", null, false);
   library.clear();
@@ -68,33 +69,39 @@ function runTest () {
   view.addListener(listener, false);
 
   // Set up root libtary display filters
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ]
+  ]);
 
   assertTrue(listener.filterChanged);
   assertFalse(listener.searchChanged);
   assertFalse(listener.sortChanged);
   listener.reset();
 
-  view.clearFilters();
+  view.filterConstraint = null;
 
   assertTrue(listener.filterChanged);
   assertFalse(listener.searchChanged);
   assertFalse(listener.sortChanged);
   listener.reset();
 
-  view.setSearch(SBProperties.createArray([
-    [SBProperties.artistName, "The Doors"]
-  ]));
+  view.searchConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["The Doors"]]
+    ]
+  ]);
 
   assertFalse(listener.filterChanged);
   assertTrue(listener.searchChanged);
   assertFalse(listener.sortChanged);
   listener.reset();
 
-  view.clearSearch();
+  view.searchConstraint = null;
 
   assertFalse(listener.filterChanged);
   assertTrue(listener.searchChanged);
@@ -162,10 +169,14 @@ function runTest () {
   // This shouldn't actually do anything
   view.addListener(listener);
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.isList, "0"],
-    [SBProperties.hidden, "0"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.isList, ["0"]]
+    ],
+    [
+      [SBProperties.hidden, ["0"]]
+    ]
+  ]);
 
   assertTrue(listener.filterChanged);
   assertFalse(listener.searchChanged);
@@ -176,5 +187,6 @@ function runTest () {
   Components.utils.forceGC();
 
   // This had better not crash.
-  view.clearFilters();
+  view.filterConstraint = null;
 }
+

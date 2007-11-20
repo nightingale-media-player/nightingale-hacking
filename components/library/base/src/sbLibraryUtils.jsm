@@ -23,8 +23,79 @@
 // END SONGBIRD GPL
 //
 */
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
-EXPORTED_SYMBOLS = ["BatchHelper", "MultiBatchHelper"];
+EXPORTED_SYMBOLS = ["BatchHelper", "MultiBatchHelper", "LibraryUtils"];
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+var LibraryUtils = {
+  _manager: null,
+  get manager() {
+    if (!this._manager) {
+      this._manager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Ci.sbILibraryManager);
+    }
+    return this._manager;
+  },
+
+  _standardFilterConstraint: null,
+  get standardFilterConstraint() {
+    if (!this._standardFilterConstraint) {
+      this._standardFilterConstraint = this.createConstraint([
+        [
+          [SBProperties.isList, ["0"]]
+        ],
+        [
+          [SBProperties.hidden, ["0"]]
+        ]
+      ]);
+    }
+    return this._standardFilterConstraint;
+  },
+
+  createConstraint: function(aObject) {
+    var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                    .createInstance(Ci.sbILibraryConstraintBuilder);
+    aObject.forEach(function(aGroup, aIndex) {
+      aGroup.forEach(function(aPair) {
+        var property = aPair[0];
+        var values = aPair[1];
+        var enumerator = {
+          a: values,
+          i: 0,
+          hasMore: function() {
+            return this.i < this.a.length;
+          },
+          getNext: function() {
+            return this.a[this.i++];
+          }
+        };
+        builder.includeList(property, enumerator);
+      });
+      if (aIndex < aObject.length - 1) {
+        builder.intersect();
+      }
+    });
+    return builder.get();
+  },
+
+  createStandardSearchConstraint: function(aSearchString) {
+    var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                    .createInstance(Ci.sbILibraryConstraintBuilder);
+    var a = aSearchString.split(" ");
+    for (var i = 0; i < a.length; i++) {
+      builder.include(SBProperties.artistName, a[i]);
+      builder.include(SBProperties.albumName, a[i]);
+      builder.include(SBProperties.trackName, a[i]);
+      if (i + 1 < a.length) {
+        builder.intersect();
+      }
+    }
+    return builder.get();
+  }
+}
 
 function BatchHelper() {
   this._depth = 0;

@@ -31,56 +31,81 @@
 
 #include "nsISupports.idl"
 
-%{C++
-#include "nsTArray.h"
-#include "nsStringGlue.h"
-%}
-
-[ptr] native StringArray(nsTArray<nsString>);
+interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
+interface sbILibraryConstraint;
+interface sbILibraryConstraintGroup;
 
 /**
- * \interface sbILibraryFilter
- * \brief A filter that can be applied to a media list view
+ * \interface sbILibraryConstraintBuilder
+ *
+ * A library constraint is used to apply a filter or a search to a view.  A
+ * constraint consits of:
+ *
+ * - A property/ value pair that selects a set of items from the view's media
+ *   list
+ * - The result of each of the pairs are combined into a group of distinct
+ *   items
+ * - Multiple groups may be intersected with each other
+ *
  */
-[scriptable, uuid(31e0f6c8-c59e-4a58-b608-1b445719d5a5)]
-interface sbILibraryFilter : nsISupports
+[scriptable, uuid(2890d9a4-68b5-4b7a-8f88-3cd05d05416c)]
+interface sbILibraryConstraintBuilder : nsISupports
 {
-  void init(in AString aProperty,
-            in unsigned long aCount,
-            [array, size_is(aCount)] in wstring aValues);
-  [noscript] void initNative(in AString aProperty, in StringArray aValues);
+  /**
+   * \brief Add an existing constraint to the builder
+   * \param aConstraint The constraint to add
+   */
+  sbILibraryConstraintBuilder includeConstraint(in sbILibraryConstraint aConstraint);
 
-  readonly attribute AString property;
+  /**
+   * \brief Add a property / value pair to the current group
+   * \param aProperty The property to add
+   * \param aValue The value to add
+   */
+  sbILibraryConstraintBuilder include(in AString aProperty,
+                                      in AString aValue);
 
-  void getValues(out unsigned long count,
-                 [retval, array, size_is(count)] out wstring values);
+  /**
+   * \brief Adds a property / value pair to the current group for each of the
+   *        values supplied in the value list.  This is a shortcut to calling
+   *        include for every value with the same property.
+   * \param aProperty The property to add
+   * \param aValue The values to add
+   */
+  sbILibraryConstraintBuilder includeList(in AString aProperty,
+                                          in nsIStringEnumerator aValues);
 
-  [noscript] StringArray getValuesNative();
+  /**
+   * \brief Completes the current group and starts a new one.  Each group
+   *        will be intersected in the result.
+   */
+  sbILibraryConstraintBuilder intersect();
 
+  /**
+   * \brief Returns the constructed constraint
+   */
+  sbILibraryConstraint get();
+};
+
+[scriptable, uuid(c271cafb-fc06-4e56-bd01-368458117618)]
+interface sbILibraryConstraint : nsISupports
+{
+  readonly attribute unsigned long groupCount;
+  readonly attribute nsISimpleEnumerator groups;
+  sbILibraryConstraintGroup getGroup(in unsigned long aIndex);
+
+  boolean equals(in sbILibraryConstraint aOtherConstraint);
   AString toString();
 };
 
-/**
- * \interface sbILibrarySearch
- * \brief A search that can be applied to a media list view
- */
-[scriptable, uuid(ccc03dd2-5b8a-4148-a581-a4e3790b25ff)]
-interface sbILibrarySearch : nsISupports
+[scriptable, uuid(37793a91-e229-4642-9c16-290b84e24b87)]
+interface sbILibraryConstraintGroup : nsISupports
 {
-  void init(in AString aProperty,
-            in boolean aIsAll,
-            in unsigned long count,
-            [array, size_is(count)] in wstring values);
-  [noscript] void initNative(in AString aProperty,
-                             in boolean aIsAll,
-                             in StringArray aValues);
-
-  readonly attribute AString property;
-  readonly attribute boolean isAll;
-  void getValues(out unsigned long count,
-                 [retval, array, size_is(count)] out wstring values);
-  [noscript] StringArray getValuesNative();
-
+  readonly attribute nsIStringEnumerator properties;
+  nsIStringEnumerator getValues(in AString aProperty);
+  boolean hasProperty(in AString aProperty);
+  boolean equals(in sbILibraryConstraintGroup aOtherGroup);
   AString toString();
 };
 

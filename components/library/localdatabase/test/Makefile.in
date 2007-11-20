@@ -63,6 +63,8 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_filterednotifications.js \
                  $(srcdir)/test_viewandcfs.js \
                  $(srcdir)/test_viewandcfslisteners.js \
+                 $(srcdir)/test_viewdistinctvalues.js \
+                 $(srcdir)/test_viewinvalidation.js \
                  $(srcdir)/test_medialistviewclone.js \
                  $(srcdir)/test_allowduplicates.js \
                  $(srcdir)/test_guid_property.js \
@@ -72,8 +74,6 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \
                  $(srcdir)/simple_media_lists.txt \
-                 $(srcdir)/data_filterable_view_album.txt \
-                 $(srcdir)/data_filterable_sml101_album.txt \
                  $(srcdir)/data_sort_trackname_asc.txt \
                  $(srcdir)/data_sort_trackname_desc.txt \
                  $(srcdir)/data_sort_playcount_asc.txt \

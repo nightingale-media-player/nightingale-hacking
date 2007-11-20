@@ -1467,6 +1467,7 @@
           this._playlist.setAttribute('persist', 'columnSpec');
           this._playlist.setAttribute('editable', 'true');
           this._playlist.setAttribute('minheight', '0');
+          this._playlist.setAttribute('hidefilters', 'true');
           this._playlist.setAttribute('columnSpec',
               SBProperties.ordinal + ' 20 a ' +
               SBProperties.trackName + ' 375 ' +
@@ -2172,7 +2173,7 @@
         if (this.canDrop(event, session)) {
           var playlist = this.innerPlaylist;
           playlist._dropOnTree(playlist.mediaListView.length,
-                               Components.interfaces.DROP_AFTER);
+                               Components.interfaces.sbIMediaListViewTreeViewObserver.DROP_AFTER);
         }
       ]]></handler>
     </handlers>

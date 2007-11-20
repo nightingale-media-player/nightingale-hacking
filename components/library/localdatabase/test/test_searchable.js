@@ -30,34 +30,99 @@
 
 function runTest () {
 
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+
   var library = createLibrary("test_searchable");
 
   // Tests with view media list
   var list = library;
   var view = list.createView();
 
-  var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
-  view.setSearch(pa);
+  var search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]]
+    ]
+  ]);
+
+  view.searchConstraint = search;
   assertEqual(view.length, 10);
+
+  search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]],
+      [SBProperties.trackName,  ["AC/DC"]]
+    ],
+    [
+      [SBProperties.artistName, ["Thrill"]],
+      [SBProperties.trackName,  ["Thrill"]]
+    ]
+  ]);
+  view.searchConstraint = search;
+  assertEqual(view.length, 1);
+
+  view.searchConstraint = null;
+  assertEqual(view.length, library.length);
+
+  // Test unsupported constraints
+  search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]],
+      [SBProperties.albumName,  ["AC/DC"]]
+    ],
+    [
+      [SBProperties.artistName, ["Thrill"]],
+      [SBProperties.trackName,  ["Thrill"]]
+    ]
+  ]);
+
+  try {
+    view.searchConstraint = search;
+    fail("did not throw");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
+  search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]],
+      [SBProperties.trackName,  ["foo"]],
+      [SBProperties.albumName,  ["foo"]]
+    ],
+    [
+      [SBProperties.artistName, ["Thrill"]],
+      [SBProperties.trackName,  ["Thrill"]],
+      [SBProperties.albumName,  ["Thrill"]]
+    ]
+  ]);
+
+  try {
+    view.searchConstraint = search;
+    fail("did not throw");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
 
   // Test with simple media list
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   view = list.createView();
-  pa = createPropertyArray();
-  pa.appendProperty("*", "AC/DC");
-  view.setSearch(pa);
+  search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]]
+    ]
+  ]);
+  view.searchConstraint = search;
   assertEqual(view.length, 10);
 
-  view.clearSearch();
+  view.searchConstraint = null;
   assertEqual(view.length, 20);
-  
   
   // Test the search box
   searchBoxTest("ac dc", 10);
   searchBoxTest("you ace", 4);
   searchBoxTest("of to the", 2);
-  
 }
 
 function searchBoxTest(searchTerm, resultViewLength) {

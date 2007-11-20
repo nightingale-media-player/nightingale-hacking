@@ -30,51 +30,41 @@
 
 function runTest () {
 
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+
   var library = createLibrary("test_search_escaping");
 
   // Test with simple media list
   var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var view = list.createView();
-  var pa = createPropertyArray();
-  pa.appendProperty("*", "AC/DC");
-  view.setSearch(pa);
-  assertEqual(view.length, 10);
 
-  view.clearSearch();
-  assertEqual(view.length, 20);
-  
-  pa.removeElementAt(0);
-  view.setSearch(pa);
-  assertEqual(view.length, 20);
-
-  // look for "%" - should not match anything (and not part of the LIKE query)
-  pa.appendProperty("*", "%");
-  view.setSearch(pa);
+  var search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["%"]]
+    ]
+  ]);
+  view.searchConstraint = search;
   assertEqual(view.length, 0);
 
-  view.clearSearch();
+  view.searchConstraint = null;
   view.getItemByIndex(2)
       .setProperty("http://songbirdnest.com/data/1.0#artistName", "Some%thing");
-  view.setSearch(pa);
+  view.searchConstraint = search;
   assertEqual(view.length, 1);
   
-  pa.removeElementAt(0);
-  pa.appendProperty("*", "\\");
-  view.setSearch(pa);
+ search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["\\"]]
+    ]
+  ]);
+  view.searchConstraint = search;
   assertEqual(view.length, 0);
 
-  view.clearSearch();
+  view.searchConstraint = null;
   view.getItemByIndex(0)
       .setProperty("http://songbirdnest.com/data/1.0#artistName", "Some\\thing");
-  pa.removeElementAt(0);
-  pa.appendProperty("*", "\\");
-  view.setSearch(pa);
+  view.searchConstraint = search;
   assertEqual(view.length, 1);
-}
-
-function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-           .createInstance(Ci.nsIMutableArray)
-           .QueryInterface(Ci.sbIMutablePropertyArray);
 }
 

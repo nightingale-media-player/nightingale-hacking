@@ -53,8 +53,7 @@ class sbLocalDatabaseLibrary;
 class sbLocalDatabaseMediaListView;
 class sbLocalDatabaseTreeView;
 class sbLocalDatabaseTreeViewState;
-class sbILibraryFilter;
-class sbILibrarySearch;
+class sbILibraryConstraintBuilder;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
@@ -84,9 +83,11 @@ public:
 
   nsresult AddConfiguration(sbILocalDatabaseGUIDArray* aArray);
 
-  nsresult AddFilters(sbIMutablePropertyArray* aArray);
+  nsresult AddFilters(sbILibraryConstraintBuilder* aBuilder,
+                      PRBool* aChanged);
 
-  nsresult AddSearches(sbIMutablePropertyArray* aArray);
+  nsresult AddSearches(sbILibraryConstraintBuilder* aBuilder,
+                       PRBool* aChanged);
 
   nsresult ClearFilters();
 
@@ -100,6 +101,13 @@ public:
 
 private:
   struct sbFilterSpec {
+    sbFilterSpec() :
+      isSearch(PR_FALSE),
+      cachedValueCount(0),
+      invalidationPending(PR_FALSE)
+    {
+    }
+
     PRBool isSearch;
     nsString property;
     sbStringArray propertyList;
@@ -183,6 +191,7 @@ private:
 class sbLocalDatabaseCascadeFilterSetState : public nsISerializable
 {
 friend class sbLocalDatabaseCascadeFilterSet;
+  typedef nsTArray<nsString> sbStringArray;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISERIALIZABLE
@@ -191,8 +200,9 @@ public:
 
   struct Spec {
     PRBool isSearch;
-    nsCOMArray<sbILibrarySearch> searches;
-    nsCOMPtr<sbILibraryFilter> filter;
+    nsString property;
+    sbStringArray propertyList;
+    sbStringArray values;
     nsRefPtr<sbLocalDatabaseTreeViewState> treeViewState;
   };
 

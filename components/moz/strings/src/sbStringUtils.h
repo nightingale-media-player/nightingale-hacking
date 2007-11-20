@@ -29,6 +29,8 @@
 
 #include <nsStringGlue.h>
 
+class nsIStringEnumerator;
+
 /// @see nsString::FindCharInSet
 PRInt32 nsString_FindCharInSet(const nsAString& aString,
                                const char *aPattern,
@@ -37,6 +39,10 @@ PRInt32 nsString_FindCharInSet(const nsAString& aString,
 void AppendInt(nsAString& str, PRUint64 val);
 
 PRUint64 ToInteger64(const nsAString& str, nsresult* rv = nsnull);
+
+nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
+                                   nsIStringEnumerator* aRight,
+                                   PRBool* _retval);
 
 #endif /* __SBSTRINGUTILS_H__ */
 

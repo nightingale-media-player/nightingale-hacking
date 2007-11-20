@@ -31,70 +31,116 @@
 function runTest () {
 
   Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
   var values;
   var outValues;
   var outValuesCount = {};
 
-  var filter = Cc["@songbirdnest.com/Songbird/Library/Filter;1"]
-                 .createInstance(Ci.sbILibraryFilter);
+  var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                  .createInstance(Ci.sbILibraryConstraintBuilder);
 
   try {
-    filter.property;
-    fail("Did not throw");
+    builder.get();
+    fail("did not throw");
   }
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_UNEXPECTED);
   }
 
-  values = ["value1", "value2", "value3"];
-  filter.init(SBProperties.artistName, values.length, values);
-
   try {
-    filter.init(SBProperties.artistName, values.length, values);
-    fail("Did not throw");
+    builder.intersect();
+    fail("did not throw");
   }
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_UNEXPECTED);
   }
 
-  assertEqual(filter.property, SBProperties.artistName);
-  assertArrays(filter.getValues(outValuesCount), values);
-
-  var newFilter = writeAndRead(filter);
-  assertEqual(newFilter.property, SBProperties.artistName);
-  assertArrays(newFilter.getValues(outValuesCount), values);
-
-  var search = Cc["@songbirdnest.com/Songbird/Library/Search;1"]
-                 .createInstance(Ci.sbILibrarySearch);
-
   try {
-    search.property;
-    fail("Did not throw");
+    builder.include(SBProperties.artistName, "The Beatles")
+           .intersect()
+           .get();
+    fail("did not throw");
   }
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_UNEXPECTED);
   }
 
-  values = ["value1", "value2", "value3"];
-  search.init(SBProperties.artistName, true, values.length, values);
+  builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+              .createInstance(Ci.sbILibraryConstraintBuilder);
 
-  try {
-    search.init(SBProperties.artistName, true, values.length, values);
-    fail("Did not throw");
-  }
-  catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_UNEXPECTED);
-  }
+  var c = builder.include(SBProperties.artistName, "The Beatles").get();
+  assertEqual(c.groupCount, 1);
+  var g = c.getGroup(0);
+  assertEqual(g.properties.getNext(), SBProperties.artistName);
+  assertEqual(g.getValues(SBProperties.artistName).getNext(), "The Beatles");
 
-  assertEqual(search.property, SBProperties.artistName);
-  assertEqual(search.isAll, true);
-  assertArrays(search.getValues(outValuesCount), values);
+  c = builder.include(SBProperties.artistName, "The Beatles")
+             .intersect()
+             .include(SBProperties.albumName, "Abbey Road")
+             .include(SBProperties.albumName, "Let It Be").get();
 
-  var newSearch = writeAndRead(search);
-  assertEqual(newSearch.property, SBProperties.artistName);
-  assertEqual(newSearch.isAll, true);
-  assertArrays(newSearch.getValues(outValuesCount), values);
+  assertEqual(c.groupCount, 2);
+  var g = c.getGroup(0);
+  assertEqual(g.properties.getNext(), SBProperties.artistName);
+  assertEqual(g.getValues(SBProperties.artistName).getNext(), "The Beatles");
+  g = c.getGroup(1);
+  assertEqual(g.properties.getNext(), SBProperties.albumName);
+  var values = g.getValues(SBProperties.albumName);
+  assertEqual(values.getNext(), "Abbey Road");
+  assertEqual(values.getNext(), "Let It Be");
+
+  // Test equality
+  var c1 = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["hello"]],
+      [SBProperties.artistName, ["world"]]
+    ]
+  ]);
+
+  var c2 = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["world", "hello"]]
+    ]
+  ]);
+  assertTrue(c1.equals(c2));
+
+  c1 = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["hello"]]
+    ],
+    [
+      [SBProperties.albumName, ["world"]],
+      [SBProperties.trackName, ["trackName"]],
+      [SBProperties.genre, ["rock", "pop", "jazz"]]
+    ]
+  ]);
+
+  c2 = LibraryUtils.createConstraint([
+    [
+      [SBProperties.genre, ["rock", "pop", "jazz"]],
+      [SBProperties.albumName, ["world"]],
+      [SBProperties.trackName, ["trackName"]]
+    ],
+    [
+      [SBProperties.artistName, ["hello"]],
+    ]
+  ]);
+  assertTrue(c1.equals(c2));
+
+  c2 = LibraryUtils.createConstraint([
+    [
+      [SBProperties.genre, ["rock", "pop", "jazz"]],
+      [SBProperties.trackName, ["trackName"]]
+    ],
+    [
+      [SBProperties.artistName, ["hello"]],
+    ]
+  ]);
+  assertFalse(c1.equals(c2));
+
+  var newC2 = writeAndRead(c2);
+  assertTrue(c2.equals(newC2));
 
   var sort = Cc["@songbirdnest.com/Songbird/Library/Sort;1"]
                .createInstance(Ci.sbILibrarySort);

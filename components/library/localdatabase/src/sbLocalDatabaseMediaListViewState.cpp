@@ -59,8 +59,8 @@ sbLocalDatabaseMediaListViewState::sbLocalDatabaseMediaListViewState() :
 }
 
 sbLocalDatabaseMediaListViewState::sbLocalDatabaseMediaListViewState(sbIMutablePropertyArray* aSort,
-                                                                     sbIMutablePropertyArray* aSearch,
-                                                                     sbIMutablePropertyArray* aFilter,
+                                                                     sbILibraryConstraint* aSearch,
+                                                                     sbILibraryConstraint* aFilter,
                                                                      sbLocalDatabaseCascadeFilterSetState* aFilterSet,
                                                                      sbLocalDatabaseTreeViewState* aTreeViewState) :
   mInitialized(PR_TRUE),
@@ -71,8 +71,6 @@ sbLocalDatabaseMediaListViewState::sbLocalDatabaseMediaListViewState(sbIMutableP
   mTreeViewState(aTreeViewState)
 {
   NS_ASSERTION(aSort, "aSort is null");
-  NS_ASSERTION(aSearch, "aSearch is null");
-  NS_ASSERTION(aFilter, "aFilter is null");
 }
 
 // sbILocalDatabaseMediaListViewState
@@ -87,22 +85,22 @@ sbLocalDatabaseMediaListViewState::GetSort(sbIMutablePropertyArray** aSort)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewState::GetSearch(sbIMutablePropertyArray** aSearch)
+sbLocalDatabaseMediaListViewState::GetSearch(sbILibraryConstraint** aSearch)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(aSearch);
 
-  NS_ADDREF(*aSearch = mSearch);
+  NS_IF_ADDREF(*aSearch = mSearch);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewState::GetFilter(sbIMutablePropertyArray** aFilter)
+sbLocalDatabaseMediaListViewState::GetFilter(sbILibraryConstraint** aFilter)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(aFilter);
 
-  NS_ADDREF(*aFilter = mFilter);
+  NS_IF_ADDREF(*aFilter = mFilter);
   return NS_OK;
 }
 
@@ -142,14 +140,24 @@ sbLocalDatabaseMediaListViewState::ToString(nsAString& aString)
   buff.Append(temp);
 
   buff.AppendLiteral(" search: ");
+  if (mSearch) {
   rv = mSearch->ToString(temp);
   NS_ENSURE_SUCCESS(rv, rv);
   buff.Append(temp);
+  }
+  else {
+    buff.AppendLiteral("null");
+  }
 
   buff.AppendLiteral(" filter: ");
+  if (mFilter) {
   rv = mFilter->ToString(temp);
   NS_ENSURE_SUCCESS(rv, rv);
   buff.Append(temp);
+  }
+  else {
+    buff.AppendLiteral("null");
+  }
 
   buff.AppendLiteral(" filterSet: [");
   if (mFilterSet) {
@@ -187,15 +195,27 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
   mSort = do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool hasSearch;
+  rv = aStream->ReadBoolean(&hasSearch);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (hasSearch) {
   rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
   mSearch = do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  PRBool hasFilter;
+  rv = aStream->ReadBoolean(&hasFilter);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (hasFilter) {
   rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
   mFilter = do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool hasFilterSet;
   rv = aStream->ReadBoolean(&hasFilterSet);
@@ -240,11 +260,27 @@ sbLocalDatabaseMediaListViewState::Write(nsIObjectOutputStream* aStream)
   rv = aStream->WriteObject(mSort, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (mSearch) {
+    rv = aStream->WriteBoolean(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   rv = aStream->WriteObject(mSearch, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aStream->WriteBoolean(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  if (mFilter) {
+    rv = aStream->WriteBoolean(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   rv = aStream->WriteObject(mFilter, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aStream->WriteBoolean(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   if (mFilterSet) {
     rv = aStream->WriteBoolean(PR_TRUE);

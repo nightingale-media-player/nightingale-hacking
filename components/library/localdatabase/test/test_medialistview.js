@@ -31,6 +31,7 @@
 function runTest () {
 
   Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
   var library = createLibrary("test_medialistview");
 
@@ -42,9 +43,11 @@ function runTest () {
 
   var view = list.createView();
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.artistName, "AC/DC"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]]
+    ]
+  ]);
 
   for (var i = 0; i < view.length; i++) {
     var viewItem = view.getItemByIndex(i);
@@ -79,9 +82,11 @@ function runTest () {
     assertEqual(listIndex, list.indexOf(viewItem, 0));
   }
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.artistName, "The Dirtbombs"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["The Dirtbombs"]]
+    ]
+  ]);
 
   for (var i = 0; i < view.length; i++) {
     var viewItem = view.getItemByIndex(i);
@@ -98,9 +103,11 @@ function runTest () {
   forceCache(view);
   assertEqual(view.getIndexForItem(item), 69);
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.artistName, "AC/DC"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["AC/DC"]]
+    ]
+  ]);
 
   assertEqual(view.getIndexForItem(item), 4);
   forceCache(view);
@@ -111,9 +118,11 @@ function runTest () {
   forceCache(view);
   assertEqual(view.getIndexForItem(item3), 2);
 
-  view.setFilters(SBProperties.createArray([
-    [SBProperties.artistName, "The Dirtbombs"]
-  ]));
+  view.filterConstraint = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["The Dirtbombs"]]
+    ]
+  ]);
 
   assertEqual(view.getIndexForItem(item3), 1);
   forceCache(view);

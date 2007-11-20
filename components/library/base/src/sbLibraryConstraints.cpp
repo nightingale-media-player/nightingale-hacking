@@ -25,148 +25,371 @@
 */
 
 #include "sbLibraryConstraints.h"
+#include "sbLibraryCID.h"
 
+#include <nsArrayEnumerator.h>
+#include <nsCOMArray.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIStringEnumerator.h>
 #include <nsMemory.h>
 
-static NS_DEFINE_CID(kLibraryFilterCID,
-                     SONGBIRD_LIBRARYFILTER_CID);
+#include <sbTArrayStringEnumerator.h>
+#include <sbStringUtils.h>
 
-NS_IMPL_ISUPPORTS3(sbLibraryFilter,
-                   sbILibraryFilter,
+/*
+ * sbLibraryConstraintBuilder
+ */
+NS_IMPL_ISUPPORTS1(sbLibraryConstraintBuilder,
+                   sbILibraryConstraintBuilder)
+
+
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::IncludeConstraint(sbILibraryConstraint* aConstraint,
+                                              sbILibraryConstraintBuilder** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aConstraint);
+  nsresult rv;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 groupCount;
+  rv = aConstraint->GetGroupCount(&groupCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < groupCount; i++) {
+    nsCOMPtr<sbILibraryConstraintGroup> group;
+    rv = aConstraint->GetGroup(i, getter_AddRefs(group));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIStringEnumerator> properties;
+    rv = group->GetProperties(getter_AddRefs(properties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool hasMore;
+    while (NS_SUCCEEDED(properties->HasMore(&hasMore)) && hasMore) {
+      nsString property;
+      rv = properties->GetNext(property);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIStringEnumerator> values;
+      rv = group->GetValues(property, getter_AddRefs(values));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = IncludeList(property, values, nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (i + 1 < groupCount) {
+      rv = Intersect(nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+
+  if (_retval) {
+    NS_ADDREF(*_retval = this);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::Include(const nsAString& aProperty,
+                                    const nsAString& aValue,
+                                    sbILibraryConstraintBuilder** _retval)
+{
+  NS_ENSURE_ARG(!aProperty.IsEmpty());
+
+  nsresult rv;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: VALIDATE VALUES
+  nsAutoPtr<sbStringArray> array(new sbStringArray);
+  NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+  nsString* success = array->AppendElement(aValue);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  // If this fails, the nsAutoPtr will free array.  Otherwise the ownership
+  // is transfered to the callee
+  rv = mConstraint->AddToCurrent(aProperty, array);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  array.forget();
+
+  if (_retval) {
+    NS_ADDREF(*_retval = this);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::IncludeList(const nsAString& aProperty,
+                                        nsIStringEnumerator* aValues,
+                                        sbILibraryConstraintBuilder** _retval)
+{
+  NS_ENSURE_ARG(!aProperty.IsEmpty());
+
+  nsresult rv;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: VALIDATE VALUES
+  nsAutoPtr<sbStringArray> array(new sbStringArray);
+  NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(aValues->HasMore(&hasMore)) && hasMore) {
+    nsString value;
+    rv = aValues->GetNext(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString* success = array->AppendElement(value);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  // If this fails, the nsAutoPtr will free array.  Otherwise the ownership
+  // is transfered to the callee
+  rv = mConstraint->AddToCurrent(aProperty, array);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  array.forget();
+
+  if (_retval) {
+    NS_ADDREF(*_retval = this);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::Intersect(sbILibraryConstraintBuilder** _retval)
+{
+  nsresult rv;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_STATE(mConstraint->IsValid());
+
+  rv = mConstraint->Intersect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (_retval) {
+    NS_ADDREF(*_retval = this);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::Get(sbILibraryConstraint** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_STATE(mConstraint->IsValid());
+
+  NS_ADDREF(*_retval = mConstraint);
+  mConstraint = nsnull;
+
+  return NS_OK;
+}
+
+nsresult
+sbLibraryConstraintBuilder::EnsureConstraint()
+{
+  if (mConstraint) {
+    return NS_OK;
+  }
+
+  nsRefPtr<sbLibraryConstraint> constraint = new sbLibraryConstraint();
+  NS_ENSURE_TRUE(constraint, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = constraint->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mConstraint = constraint;
+
+  return NS_OK;
+}
+
+/*
+ * sbLibraryConstraint
+ */
+
+static NS_DEFINE_CID(kLibraryConstraintCID,
+                     SONGBIRD_LIBRARY_CONSTRAINT_CID);
+
+NS_IMPL_ISUPPORTS3(sbLibraryConstraint,
+                   sbILibraryConstraint,
                    nsISerializable,
                    nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbLibraryFilter,
-                             sbILibraryFilter,
+NS_IMPL_CI_INTERFACE_GETTER3(sbLibraryConstraint,
+                             sbILibraryConstraint,
                              nsISerializable,
                              nsIClassInfo)
 
-sbLibraryFilter::sbLibraryFilter() :
+sbLibraryConstraint::sbLibraryConstraint() :
   mInitialized(PR_FALSE)
 {
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::Init(const nsAString& aProperty,
-                      PRUint32 aCount,
-                      const PRUnichar** aValues)
-{
-  NS_ENSURE_ARG_POINTER(aValues);
-  NS_ENSURE_STATE(!mInitialized);
-
-  mProperty = aProperty;
-
-  for (PRUint32 i = 0; i < aCount; i++) {
-    nsString value(aValues[i]);
-    nsString* added = mValues.AppendElement(value);
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  mInitialized = PR_TRUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibraryFilter::InitNative(const nsAString& aProperty,
-                            nsTArray<nsString>* aValues)
-{
-  NS_ENSURE_ARG_POINTER(aValues);
-  NS_ENSURE_STATE(!mInitialized);
-
-  mProperty = aProperty;
-
-  for (PRUint32 i = 0; i < aValues->Length(); i++) {
-    nsString* added = mValues.AppendElement(aValues->ElementAt(i));
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  mInitialized = PR_TRUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibraryFilter::GetProperty(nsAString& aProperty)
+sbLibraryConstraint::GetGroupCount(PRUint32* aGroupCount)
 {
   NS_ENSURE_STATE(mInitialized);
-  aProperty = mProperty;
+  NS_ENSURE_ARG_POINTER(aGroupCount);
+
+  *aGroupCount = mConstraint.Length();
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetValues(PRUint32* aCount, PRUnichar*** aValues)
+sbLibraryConstraint::GetGroups(nsISimpleEnumerator** aGroups)
 {
   NS_ENSURE_STATE(mInitialized);
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aValues);
+  NS_ENSURE_ARG_POINTER(aGroups);
 
-  *aCount = mValues.Length();
-  *aValues = (PRUnichar **) nsMemory::Alloc(sizeof(PRUnichar*) * (*aCount));
-  NS_ENSURE_TRUE(*aValues, NS_ERROR_OUT_OF_MEMORY);
-
-  for (PRUint32 i = 0; i < *aCount; i++) {
-    (*aValues)[i] = ToNewUnicode(mValues[i]);
+  nsCOMArray<sbILibraryConstraintGroup> array;
+  PRUint32 length = mConstraint.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    PRBool success = array.AppendObject(mConstraint[i]);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
+  nsresult rv = NS_NewArrayEnumerator(aGroups, array);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetValuesNative(nsTArray<nsString>** _retval)
+sbLibraryConstraint::GetGroup(PRUint32 aIndex,
+                              sbILibraryConstraintGroup** _retval)
 {
+  NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = &mValues;
+  NS_ENSURE_TRUE(aIndex < mConstraint.Length(), NS_ERROR_INVALID_ARG);
+
+  NS_ADDREF(*_retval = mConstraint[aIndex]);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::ToString(nsAString& aString)
+sbLibraryConstraint::Equals(sbILibraryConstraint* aOtherConstraint,
+                            PRBool* _retval)
+{
+  NS_ENSURE_STATE(mInitialized);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  if (!aOtherConstraint) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  PRUint32 groupCount;
+  rv = aOtherConstraint->GetGroupCount(&groupCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mConstraint.Length() != groupCount) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  nsCOMArray<sbILibraryConstraintGroup> matchesRemaining(groupCount);
+  for (PRUint32 i = 0; i < groupCount; i++) {
+
+    nsCOMPtr<sbILibraryConstraintGroup> otherGroup;
+    rv = aOtherConstraint->GetGroup(i, getter_AddRefs(otherGroup));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = matchesRemaining.AppendObject(otherGroup);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  for (PRUint32 i = 0; i < groupCount; i++) {
+    for (PRInt32 j = 0; j < matchesRemaining.Count(); j++) {
+      PRBool equals;
+      rv = mConstraint[i]->Equals(matchesRemaining[j], &equals);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (equals) {
+        matchesRemaining.RemoveObjectAt(j);
+      }
+    }
+  }
+
+  *_retval = matchesRemaining.Count() == 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraint::ToString(nsAString& _retval)
 {
   NS_ENSURE_STATE(mInitialized);
 
   nsString buff;
-  buff.AssignLiteral("filter: property = '");
-  buff.Append(mProperty);
-  buff.AppendLiteral("' values = [");
-  for (PRUint32 i = 0; i < mValues.Length(); i++) {
-    buff.AppendLiteral("'");
-    buff.Append(mValues[i]);
-    buff.AppendLiteral("'");
-    if (i + 1 < mValues.Length()) {
+  buff.AssignLiteral("[");
+
+  PRUint32 length = mConstraint.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+    buff.AppendLiteral("[");
+
+    nsString temp;
+    nsresult rv = mConstraint[i]->ToString(temp);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    buff.Append(temp);
+    buff.AppendLiteral("]");
+    if (i + 1 < length) {
       buff.AppendLiteral(", ");
     }
-  }
-  buff.AppendLiteral("]");
 
-  aString = buff;
+  }
+
+  buff.AppendLiteral("]");
+  _retval = buff;
   return NS_OK;
 }
 
 // nsISerializable
 NS_IMETHODIMP
-sbLibraryFilter::Read(nsIObjectInputStream* aStream)
+sbLibraryConstraint::Read(nsIObjectInputStream* aStream)
 {
+  NS_ENSURE_STATE(!mInitialized);
   NS_ENSURE_ARG_POINTER(aStream);
 
   nsresult rv;
-
-  rv = aStream->ReadString(mProperty);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 length;
   rv = aStream->Read32(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    nsString value;
-    rv = aStream->ReadString(value);
+    sbConstraintGroupRefPtr group = new sbLibraryConstraintGroup();
+    NS_ENSURE_TRUE(group, NS_ERROR_OUT_OF_MEMORY);
+
+    nsresult rv = group->Read(aStream);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString* added = mValues.AppendElement(value);
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    sbConstraintGroupRefPtr* success = mConstraint.AppendElement(group);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   mInitialized = PR_TRUE;
@@ -175,22 +398,19 @@ sbLibraryFilter::Read(nsIObjectInputStream* aStream)
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::Write(nsIObjectOutputStream* aStream)
+sbLibraryConstraint::Write(nsIObjectOutputStream* aStream)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(aStream);
 
   nsresult rv;
 
-  rv = aStream->WriteWStringZ(mProperty.BeginReading());
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 length = mValues.Length();
+  PRUint32 length = mConstraint.Length();
   rv = aStream->Write32(length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    rv = aStream->WriteWStringZ(mValues[i].BeginReading());
+    rv = mConstraint[i]->Write(aStream);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -199,13 +419,13 @@ sbLibraryFilter::Write(nsIObjectOutputStream* aStream)
 
 // nsIClassInfo
 NS_IMETHODIMP
-sbLibraryFilter::GetInterfaces(PRUint32* count, nsIID*** array)
+sbLibraryConstraint::GetInterfaces(PRUint32* count, nsIID*** array)
 {
-  return NS_CI_INTERFACE_GETTER_NAME(sbLibraryFilter)(count, array);
+  return NS_CI_INTERFACE_GETTER_NAME(sbLibraryConstraint)(count, array);
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetHelperForLanguage(PRUint32 language,
+sbLibraryConstraint::GetHelperForLanguage(PRUint32 language,
                                       nsISupports** _retval)
 {
   *_retval = nsnull;
@@ -213,190 +433,311 @@ sbLibraryFilter::GetHelperForLanguage(PRUint32 language,
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetContractID(char** aContractID)
+sbLibraryConstraint::GetContractID(char** aContractID)
 {
   *aContractID = nsnull;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetClassDescription(char** aClassDescription)
+sbLibraryConstraint::GetClassDescription(char** aClassDescription)
 {
   *aClassDescription = nsnull;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetClassID(nsCID** aClassID)
+sbLibraryConstraint::GetClassID(nsCID** aClassID)
 {
   *aClassID = nsnull;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+sbLibraryConstraint::GetImplementationLanguage(PRUint32* aImplementationLanguage)
 {
   *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetFlags(PRUint32* aFlags)
+sbLibraryConstraint::GetFlags(PRUint32* aFlags)
 {
   *aFlags = 0;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibraryFilter::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+sbLibraryConstraint::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   NS_ENSURE_ARG_POINTER(aClassIDNoAlloc);
-  *aClassIDNoAlloc = kLibraryFilterCID;
+  *aClassIDNoAlloc = kLibraryConstraintCID;
   return NS_OK;
 }
 
-static NS_DEFINE_CID(kLibrarySearchCID,
-                     SONGBIRD_LIBRARYSEARCH_CID);
-
-NS_IMPL_ISUPPORTS3(sbLibrarySearch,
-                   sbILibrarySearch,
-                   nsISerializable,
-                   nsIClassInfo)
-
-NS_IMPL_CI_INTERFACE_GETTER3(sbLibrarySearch,
-                             sbILibrarySearch,
-                             nsISerializable,
-                             nsIClassInfo)
-
-sbLibrarySearch::sbLibrarySearch() :
-  mInitialized(PR_FALSE),
-  mIsAll(PR_FALSE)
+nsresult
+sbLibraryConstraint::Init()
 {
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::Init(const nsAString& aProperty,
-                      PRBool aIsAll,
-                      PRUint32 aCount,
-                      const PRUnichar** aValues)
-{
-  NS_ENSURE_ARG_POINTER(aValues);
-  NS_ENSURE_STATE(!mInitialized);
-
-  mProperty = aProperty;
-  mIsAll = aIsAll;
-
-  for (PRUint32 i = 0; i < aCount; i++) {
-    nsString value(aValues[i]);
-    nsString* added = mValues.AppendElement(value);
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-  }
-
   mInitialized = PR_TRUE;
-  return NS_OK;
+  return Intersect();
 }
 
-NS_IMETHODIMP
-sbLibrarySearch::InitNative(const nsAString& aProperty,
-                            PRBool aIsAll,
-                            nsTArray<nsString>* aValues)
+nsresult
+sbLibraryConstraint::Intersect()
 {
-  NS_ENSURE_ARG_POINTER(aValues);
-  NS_ENSURE_STATE(!mInitialized);
+  sbConstraintGroupRefPtr group = new sbLibraryConstraintGroup();
+  NS_ENSURE_TRUE(group, NS_ERROR_OUT_OF_MEMORY);
 
-  mProperty = aProperty;
-  mIsAll = aIsAll;
+  nsresult rv = group->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 i = 0; i < aValues->Length(); i++) {
-    nsString* added = mValues.AppendElement(aValues->ElementAt(i));
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-  }
+  sbConstraintGroupRefPtr* success = mConstraint.AppendElement(group);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  mInitialized = PR_TRUE;
   return NS_OK;
 }
 
+nsresult
+sbLibraryConstraint::AddToCurrent(const nsAString& aProperty,
+                                  sbStringArray* aArray)
+{
+  PRUint32 length = mConstraint.Length();
+  NS_ENSURE_TRUE(length, NS_ERROR_UNEXPECTED);
+
+  nsresult rv = mConstraint[length - 1]->Add(aProperty, aArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+PRBool
+sbLibraryConstraint::IsValid()
+{
+  PRUint32 length = mConstraint.Length();
+  NS_ENSURE_TRUE(length, NS_ERROR_UNEXPECTED);
+
+  return !mConstraint[length - 1]->IsEmpty();
+}
+
+/*
+ * sbLibraryConstraintGroup
+ */
+
+NS_IMPL_ISUPPORTS1(sbLibraryConstraintGroup,
+                   sbILibraryConstraintGroup)
+
+sbLibraryConstraintGroup::sbLibraryConstraintGroup() :
+  mInitialized(PR_FALSE)
+{
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+sbLibraryConstraintGroup::AddKeysToArrayCallback(nsStringHashKey::KeyType aKey,
+                                                 sbStringArray* aEntry,
+                                                 void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+
+  sbStringArray* array = static_cast<sbStringArray*>(aUserData);
+  NS_ASSERTION(array, "null userdata");
+
+  nsString* success = array->AppendElement(aKey);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 NS_IMETHODIMP
-sbLibrarySearch::GetProperty(nsAString& aProperty)
+sbLibraryConstraintGroup::GetProperties(nsIStringEnumerator** aProperties)
 {
   NS_ENSURE_STATE(mInitialized);
-  aProperty = mProperty;
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsAutoTArray<nsString, 10> array;
+  mConstraintGroup.EnumerateRead(AddKeysToArrayCallback, &array);
+  nsCOMPtr<nsIStringEnumerator> enumerator =
+    new sbTArrayStringEnumerator(&array);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  enumerator.forget(aProperties);
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibrarySearch::GetIsAll(PRBool* aIsAll)
+sbLibraryConstraintGroup::GetValues(const nsAString& aProperty,
+                                    nsIStringEnumerator** _retval)
 {
   NS_ENSURE_STATE(mInitialized);
-  NS_ENSURE_ARG_POINTER(aIsAll);
-
-  *aIsAll = mIsAll;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetValues(PRUint32* aCount, PRUnichar*** aValues)
-{
-  NS_ENSURE_STATE(mInitialized);
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aValues);
-
-  *aCount = mValues.Length();
-  *aValues = (PRUnichar **) nsMemory::Alloc(sizeof(PRUnichar*) * (*aCount));
-  NS_ENSURE_TRUE(*aValues, NS_ERROR_OUT_OF_MEMORY);
-
-  for (PRUint32 i = 0; i < *aCount; i++) {
-    (*aValues)[i] = ToNewUnicode(mValues[i]);
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetValuesNative(nsTArray<nsString>** _retval)
-{
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = &mValues;
+
+  sbStringArray* array;
+  if (!mConstraintGroup.Get(aProperty, &array)) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<nsIStringEnumerator> enumerator =
+    new sbTArrayStringEnumerator(array);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  enumerator.forget(_retval);
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLibrarySearch::ToString(nsAString& aString)
+sbLibraryConstraintGroup::HasProperty(const nsAString& aProperty,
+                                      PRBool* _retval)
 {
   NS_ENSURE_STATE(mInitialized);
+  NS_ENSURE_ARG_POINTER(_retval);
 
+  *_retval = mConstraintGroup.Get(aProperty, nsnull);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintGroup::Equals(sbILibraryConstraintGroup* aOtherGroup,
+                                 PRBool* _retval)
+{
+  NS_ENSURE_STATE(mInitialized);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  *_retval = PR_FALSE;
+
+  if (!aOtherGroup) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIStringEnumerator> properties;
+  rv = GetProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringEnumerator> otherProperties;
+  rv = aOtherGroup->GetProperties(getter_AddRefs(otherProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool equals;
+  rv = SB_StringEnumeratorEquals(properties, otherProperties, &equals);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!equals) {
+    return NS_OK;
+  }
+
+  sbStringArray propertyArray;
+  mConstraintGroup.EnumerateRead(AddKeysToArrayCallback, &propertyArray);
+  PRUint32 propertyCount = propertyArray.Length();
+  NS_ENSURE_TRUE(propertyCount == mConstraintGroup.Count(),
+                 NS_ERROR_UNEXPECTED);
+
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+
+    nsCOMPtr<nsIStringEnumerator> values;
+    rv = GetValues(propertyArray[i], getter_AddRefs(values));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIStringEnumerator> otherValues;
+    rv = aOtherGroup->GetValues(propertyArray[i], getter_AddRefs(otherValues));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SB_StringEnumeratorEquals(values, otherValues, &equals);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!equals) {
+      return NS_OK;
+    }
+  }
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLibraryConstraintGroup::ToString(nsAString& _retval)
+{
+  NS_ENSURE_STATE(mInitialized);
   nsString buff;
-  buff.AssignLiteral("search: property = '");
-  buff.Append(mProperty);
-  buff.AppendLiteral("' is all = ");
-  buff.AppendLiteral(mIsAll ? "yes" : "no");
-  buff.AppendLiteral(" values = [");
-  for (PRUint32 i = 0; i < mValues.Length(); i++) {
-    buff.AppendLiteral("'");
-    buff.Append(mValues[i]);
-    buff.AppendLiteral("'");
-    if (i + 1 < mValues.Length()) {
+
+  nsAutoTArray<nsString, 10> properties;
+  mConstraintGroup.EnumerateRead(AddKeysToArrayCallback, &properties);
+
+  PRUint32 propertyCount = properties.Length();
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    buff.Append(properties[i]);
+    buff.AppendLiteral(": [");
+    sbStringArray* values;
+    PRBool success = mConstraintGroup.Get(properties[i], &values);
+    NS_ENSURE_SUCCESS(success, NS_ERROR_UNEXPECTED);
+    PRUint32 valueCount = values->Length();
+    for (PRUint32 j = 0; j < valueCount; j++) {
+      buff.AppendLiteral("'");
+      buff.Append(values->ElementAt(j));
+      buff.AppendLiteral("'");
+
+      if (j + 1 < valueCount) {
+        buff.AppendLiteral(", ");
+      }
+    }
+    buff.AppendLiteral("]");
+
+    if (i + 1 < valueCount) {
       buff.AppendLiteral(", ");
     }
   }
-  buff.AppendLiteral("]");
 
-  aString = buff;
+  _retval = buff;
+
   return NS_OK;
 }
 
-// nsISerializable
-NS_IMETHODIMP
-sbLibrarySearch::Read(nsIObjectInputStream* aStream)
+nsresult
+sbLibraryConstraintGroup::Init()
 {
-  NS_ENSURE_ARG_POINTER(aStream);
+  PRBool success = mConstraintGroup.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  mInitialized = PR_TRUE;
+
+  return NS_OK;
+}
+
+inline PRBool
+sbLibraryConstraintGroup::IsEmpty()
+{
+  return mConstraintGroup.Count() == 0;
+}
+
+nsresult
+sbLibraryConstraintGroup::Add(const nsAString& aProperty,
+                              sbStringArray* aArray)
+{
+  NS_ASSERTION(aArray, "sbStringArray is null");
+
+  sbStringArray* existing;
+  if (mConstraintGroup.Get(aProperty, &existing)) {
+    nsString* success = existing->AppendElements(*aArray);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+  else {
+    PRBool success = mConstraintGroup.Put(aProperty, aArray);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbLibraryConstraintGroup::Read(nsIObjectInputStream* aStream)
+{
+  NS_ENSURE_STATE(!mInitialized);
+  NS_ASSERTION(aStream, "aStream is null");
 
   nsresult rv;
 
-  rv = aStream->ReadString(mProperty);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aStream->ReadBoolean(&mIsAll);
+  rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 length;
@@ -404,100 +745,65 @@ sbLibrarySearch::Read(nsIObjectInputStream* aStream)
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    nsString value;
-    rv = aStream->ReadString(value);
+    nsString property;
+    rv = aStream->ReadString(property);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString* added = mValues.AppendElement(value);
-    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-  }
+    PRUint32 valueCount;
+    rv = aStream->Read32(&valueCount);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mInitialized = PR_TRUE;
+    sbStringArray* array = new sbStringArray;
+    NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+    for (PRUint32 j = 0; j < valueCount; j++) {
+      nsString value;
+      rv = aStream->ReadString(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString* added = array->AppendElement(value);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    PRBool success = mConstraintGroup.Put(property, array);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbLibrarySearch::Write(nsIObjectOutputStream* aStream)
+nsresult
+sbLibraryConstraintGroup::Write(nsIObjectOutputStream* aStream)
 {
   NS_ENSURE_STATE(mInitialized);
-  NS_ENSURE_ARG_POINTER(aStream);
-
+  NS_ASSERTION(aStream, "aStream is null");
   nsresult rv;
 
-  rv = aStream->WriteWStringZ(mProperty.BeginReading());
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoTArray<nsString, 10> array;
+  mConstraintGroup.EnumerateRead(AddKeysToArrayCallback, &array);
 
-  rv = aStream->WriteBoolean(mIsAll);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 length = mValues.Length();
+  PRUint32 length = array.Length();
   rv = aStream->Write32(length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    rv = aStream->WriteWStringZ(mValues[i].BeginReading());
+    rv = aStream->WriteWStringZ(array[i].BeginReading());
     NS_ENSURE_SUCCESS(rv, rv);
+
+    sbStringArray* values;
+    PRBool success = mConstraintGroup.Get(array[i], &values);
+    NS_ENSURE_SUCCESS(success, NS_ERROR_UNEXPECTED);
+
+    PRUint32 valueCount = values->Length();
+    rv = aStream->Write32(valueCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 j = 0; j < valueCount; j++) {
+      rv = aStream->WriteWStringZ(values->ElementAt(j).BeginReading());
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
-  return NS_OK;
-}
-
-// nsIClassInfo
-NS_IMETHODIMP
-sbLibrarySearch::GetInterfaces(PRUint32* count, nsIID*** array)
-{
-  return NS_CI_INTERFACE_GETTER_NAME(sbLibrarySearch)(count, array);
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetHelperForLanguage(PRUint32 language,
-                                      nsISupports** _retval)
-{
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetContractID(char** aContractID)
-{
-  *aContractID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetClassDescription(char** aClassDescription)
-{
-  *aClassDescription = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetClassID(nsCID** aClassID)
-{
-  *aClassID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetImplementationLanguage(PRUint32* aImplementationLanguage)
-{
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetFlags(PRUint32* aFlags)
-{
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLibrarySearch::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
-{
-  NS_ENSURE_ARG_POINTER(aClassIDNoAlloc);
-  *aClassIDNoAlloc = kLibrarySearchCID;
   return NS_OK;
 }
 

@@ -33,6 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIMutableArray;
+interface nsIStringEnumerator;
 interface nsITreeView;
 interface sbICascadeFilterSet;
 interface sbIMediaItem;
@@ -83,7 +84,7 @@ interface sbIMediaListViewListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(986968d0-f01d-4a33-b042-ff54757efd2b)]
+[scriptable, uuid(53cefc7c-0967-4cab-84bd-11b52b1bf081)]
 interface sbIMediaListView : nsISupports
 {
   /**
@@ -148,6 +149,13 @@ interface sbIMediaListView : nsISupports
    * \return Index of media item the identifer identifies.
    */
   unsigned long getIndexForViewItemUID(in AString aViewItemUID);
+
+  /*
+   * \brief Return the distinct values in the view for a given property
+   * \param aPropertyID Propery ID to get distinct values for
+   * \return String enumerator of distinct values for the given property
+   */
+  nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
 
   /**
    * \brief Create a clone of this view.  This will return a copy with the

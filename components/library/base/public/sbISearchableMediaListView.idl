@@ -32,8 +32,7 @@
 
 #include "nsISupports.idl"
 
-interface nsIStringEnumerator;
-interface sbIPropertyArray;
+interface sbILibraryConstraint;
 
 /**
 * \interface sbISearchableMediaListView
@@ -44,30 +43,12 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]
+[scriptable, uuid(39af55eb-da6f-4ee8-9df2-5d5dd777c459)]
 interface sbISearchableMediaListView : nsISupports
 {
   /**
-   * \brief Get a list of all the properties that can be searched
+   * \brief Get or set the current search configuration
    */
-  readonly attribute nsIStringEnumerator searchableProperties;
-
-  /**
-   * \brief The current search
-   */
-  readonly attribute sbIPropertyArray currentSearch;
-
-  /**
-   * \brief Set a new search
-   * \param aSearch A property bag of search parameters.  The keys map to
-   * properties and the values are the search value for each property.  A
-   * key with value "*" will search all properties.
-   */
-  void setSearch(in sbIPropertyArray aSearch);
-
-  /**
-   * \brief Clear the search
-   */
-  void clearSearch();
+  attribute sbILibraryConstraint searchConstraint;
 };
 

@@ -53,6 +53,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // For Songbird properties.
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 /**
  * An implementation of nsIURIContentListener that prevents audio and video
@@ -128,8 +129,12 @@ sbMediaContentListener.prototype = {
     }
 
     var view = library.createView();
-    var filter = SBProperties.createArray([[SBProperties.contentURL, url]]);
-    view.setFilters(filter);
+    var filter = LibraryUtils.createConstraint([
+      [
+        [SBProperties.contentURL, url]
+      ]
+    ]);
+    view.filterConstraint = filter;;
 
     aPPS.playView(view, 0);
   },

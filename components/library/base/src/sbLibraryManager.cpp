@@ -29,6 +29,7 @@
 * \brief Songbird Library Manager Implementation.
 */
 #include "sbLibraryManager.h"
+#include "sbLibraryCID.h"
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>

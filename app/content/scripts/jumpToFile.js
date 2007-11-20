@@ -394,10 +394,7 @@ try
   function _applySearch() {
     var search = document.getElementById("jumpto.textbox").value;
     if (source_search != "") search = source_search + " " + search;
-    var propArray = Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                              .createInstance(Components.interfaces.sbIMutablePropertyArray);
-    propArray.appendProperty("*", search);
-    jumpto_view.setSearch(propArray);
+    jumpto_view.searchConstraint = LibraryUtils.createStandardSearchConstraint(search);
   }
   
   function onJumpToPlay(event) {
@@ -536,19 +533,16 @@ try
   }
 
   function _getSearchString( view ) {
-    var properties = view.currentSearch;
-    if (properties.length) {
+    // XXXsteve We need a better way to discover the actual search terms
+    // rather than reverse engineer it from the search constaint
+    var search = view.searchConstraint;
+    if (search) {
       var terms = [];
-      var property = null;
-      var previousProperty = null;
-      for (var i = 0; i < properties.length; i++) {
-        property = properties.getPropertyAt(i);
-        // Continue adding terms until we get to the next property
-        if (previousProperty && property.id != previousProperty.id) {
-          break;
-        }
-        terms.push(property.value);
-        previousProperty = property;
+      var groupCount = search.groupCount;
+      for (var i = 0; i < groupCount; i++) {
+        var group = search.getGroup(i);
+        var property = group.properties.getNext();
+        terms.push(group.getValues(property).getNext());
       }
       return terms.join(" ");
     }
@@ -556,30 +550,34 @@ try
   }
 
   function _resetSearchString( view ) {
-    view.clearSearch();
+    view.searchConstraint = null;
   }
     
   function _getFilters( view ) {
-    var filters = [];
-    var properties = view.currentFilter;
 
-    if (properties) {
+    var filters = [];
+
+    var filter = view.filterConstraint;
+    if (!filter) {
+      return filters;
+    }
 	    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
 					    .getService(Components.interfaces.sbIPropertyManager);
-      var n = properties.length;
-      var filters = [];
-      for (var i=0;i<n;i++) {
-	      var prop = properties.getPropertyAt(i);
+    var groupCount = filter.groupCount;
+    for (var i = 0; i < groupCount; i++) {
+      var group = filter.getGroup(i);
+      var properties = group.properties;
+      while (properties.hasMore()) {
+        var prop = properties.getNext();
 
-	      if (!this._isInCascadeFilterSet(view, prop.id)) continue;
-
-	      // Get the property info for the property
-	      var info = pm.getPropertyInfo(prop.id);
+        if (this._isInCascadeFilterSet(view, prop)) {
+          var info = pm.getPropertyInfo(prop);
 	      
-        filters.push( [ prop.id,
-                        prop.value,
+          filters.push( [ prop,
+                          group.getValues(prop).getNext(),
                         info.displayName ] );
       }
+    }
     }
     return filters;
   }
@@ -594,7 +592,7 @@ try
   }
 
   function _resetFilters( view ) {
-    view.clearFilters();
+    view.filterConstraint = null;
   }
   
   function _mixedCase(str) {

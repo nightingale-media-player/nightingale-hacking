@@ -63,7 +63,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabaseMediaListView.h"
-#include <sbLibraryConstraints.h>
+#include <sbLibraryCID.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>

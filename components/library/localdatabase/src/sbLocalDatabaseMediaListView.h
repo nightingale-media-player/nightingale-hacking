@@ -53,6 +53,7 @@
 class nsIURI;
 class sbIDatabaseQuery;
 class sbIDatabaseResult;
+class sbILibraryConstraint;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbLocalDatabaseLibrary;
 class sbLocalDatabaseTreeView;
@@ -104,7 +105,6 @@ public:
 
 private:
   typedef nsTArray<nsString> sbStringArray;
-  typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
   typedef nsCOMArray<sbIPropertyArray> sbPropertyArrayList;
   typedef nsCOMArray<sbIMediaListViewListener> sbViewListenerArray;
 
@@ -113,11 +113,6 @@ private:
   //   nsresult sbIMediaListViewListener::func(sbIMediaListView*)
   typedef NS_STDCALL_FUNCPROTO(nsresult, ListenerFunc, sbIMediaListViewListener,
                                OnSortChanged, (sbIMediaListView*));
-
-  static PLDHashOperator PR_CALLBACK
-    CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
-                                 sbStringArray* aEntry,
-                                 void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
     AddValuesToArrayCallback(nsStringHashKey::KeyType aKey,
@@ -135,9 +130,6 @@ private:
 
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
-  nsresult UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
-                                 PRBool aReplace);
-
   nsresult CreateQueries();
 
   nsresult Invalidate();
@@ -147,6 +139,10 @@ private:
 
   nsresult HasCommonProperty(sbIPropertyArray* aBag1,
                              sbIPropertyArray* aBag2,
+                             PRBool* aHasCommonProperty);
+
+  nsresult HasCommonProperty(sbIPropertyArray* aBag,
+                             sbILibraryConstraint* aConstraint,
                              PRBool* aHasCommonProperty);
 
   nsresult ShouldCauseInvalidation(sbIPropertyArray* aProperties,
@@ -184,13 +180,13 @@ private:
   // Tree view for this view, if any
   nsRefPtr<sbLocalDatabaseTreeView> mTreeView;
 
-  // Map of current view filter configuration
-  sbStringArrayHash mViewFilters;
+  // Curent filter configuration
+  nsCOMPtr<sbILibraryConstraint> mViewFilter;
 
-  // Current search filter configuration
-  nsCOMPtr<sbIMutablePropertyArray> mViewSearches;
+  // Current search configuration
+  nsCOMPtr<sbILibraryConstraint> mViewSearch;
 
-  // Current sort filter configuration
+  // Current sort configuration
   nsCOMPtr<sbIMutablePropertyArray> mViewSort;
 
   // Query to return list of values for a given property
@@ -214,6 +210,20 @@ private:
   // If true, changing the sort/search/filter will not update the view array
   // configuration or listener settings
   PRPackedBool mInitializing;
+};
+
+class sbMakeSortableStringEnumerator : public nsIStringEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTRINGENUMERATOR
+
+  sbMakeSortableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
+                                 nsIStringEnumerator* aValues);
+
+private:
+  nsCOMPtr<sbIPropertyInfo> mPropertyInfo;
+  nsCOMPtr<nsIStringEnumerator> mValues;
 };
 
 #endif /* __SB_LOCALDATABASEMEDIALISTVIEW_H__ */

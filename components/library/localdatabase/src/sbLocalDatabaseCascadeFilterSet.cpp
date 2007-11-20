@@ -55,7 +55,6 @@
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbISearchableMediaListView.h>
-#include <sbLibraryConstraints.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStandardProperties.h>
@@ -134,9 +133,6 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mMediaListView->GetMediaList(getter_AddRefs(mMediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateListener(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // If there is any state to restore, restore it
   if (aState) {
 #ifdef DEBUG
@@ -148,83 +144,20 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
              this, supports.get(), NS_LossyConvertUTF16toASCII(buff).get()));
     }
 #endif
-    PRUint16 filterIndex;
-    nsTArray<nsString>* values;
+
     for (PRUint32 i = 0; i < aState->mFilters.Length(); i++) {
 
       sbLocalDatabaseCascadeFilterSetState::Spec& spec = aState->mFilters[i];
 
-      if (spec.isSearch) {
-        nsTArray<const PRUnichar*> propertyPtrs;
-        nsTArray<const PRUnichar*> valuePtrs;
-        PRBool isAll = PR_FALSE;
-        for (PRInt32 j = 0; j < spec.searches.Count(); j++) {
-          nsCOMPtr<sbILibrarySearch> search = spec.searches[j];
+      sbFilterSpec* fs = mFilters.AppendElement();
+      NS_ENSURE_TRUE(fs, NS_ERROR_OUT_OF_MEMORY);
 
-          // A single search should be the combination of a list of searches,
-          // with each search ANDed with each other (and an individual search's
-          // values are ORed).  Until this is fixed, we will just use the value
-          // list from the first element
-          if (j == 0) {
-            rv = search->GetValuesNative(&values);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            for (PRUint32 k = 0; k < values->Length(); k++) {
-              const PRUnichar** success =
-                valuePtrs.AppendElement(values->ElementAt(k).BeginReading());
-              NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-            }
-          }
-
-          rv = search->GetIsAll(&isAll);
-          NS_ENSURE_SUCCESS(rv, rv);
-          if (isAll) {
-            break;
-          }
-
-          nsString property;
-          rv = search->GetProperty(property);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          const PRUnichar** success =
-            propertyPtrs.AppendElement(property.BeginReading());
-          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-        }
-
-        if (isAll) {
-          const PRUnichar* all = NS_LITERAL_STRING("*").get();
-          rv = AppendSearch(&all, 1, &filterIndex);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-        else {
-          rv = AppendSearch(propertyPtrs.Elements(),
-                            propertyPtrs.Length(),
-                            &filterIndex);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-        rv = Set(filterIndex, valuePtrs.Elements(), valuePtrs.Length());
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        nsString property;
-        rv = spec.filter->GetProperty(property);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = spec.filter->GetValuesNative(&values);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = AppendFilter(property, &filterIndex);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsTArray<const PRUnichar*> valuePtrs;
-        for (PRUint32 j = 0; j < values->Length(); j++) {
-          const PRUnichar** success =
-            valuePtrs.AppendElement(values->ElementAt(j).BeginReading());
-          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-        }
-
-        rv = Set(filterIndex, valuePtrs.Elements(), valuePtrs.Length());
-        NS_ENSURE_SUCCESS(rv, rv);
+      fs->isSearch = spec.isSearch;
+      fs->property = spec.property;
+      nsString* added = fs->propertyList.AppendElements(spec.propertyList);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+      added = fs->values.AppendElements(spec.values);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
         if (spec.treeViewState) {
           nsRefPtr<sbLocalDatabaseTreeView> treeView =
@@ -232,16 +165,24 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
           NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
           rv = treeView->Init(mMediaListView,
-                              mFilters[filterIndex].array,
+                            fs->array,
                               nsnull,
                               spec.treeViewState);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          mFilters[filterIndex].treeView = treeView;
-        }
+        fs->treeView = treeView;
       }
+
+      rv = ConfigureFilterArray(fs, NS_LITERAL_STRING(SB_PROPERTY_CREATED));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = ConfigureArray(i);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+
+  rv = UpdateListener(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -298,8 +239,6 @@ sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
 
   fs->isSearch = PR_FALSE;
   fs->property = aProperty;
-  fs->invalidationPending = PR_FALSE;
-  fs->cachedValueCount = 0;
 
   rv = ConfigureFilterArray(fs, aProperty);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -328,12 +267,17 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 
   nsresult rv;
 
+  // A filter set can only have one search
+  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+    if (mFilters[i].isSearch) {
+      return NS_ERROR_INVALID_ARG;
+    }
+  }
+
   sbFilterSpec* fs = mFilters.AppendElement();
   NS_ENSURE_TRUE(fs, NS_ERROR_OUT_OF_MEMORY);
 
   fs->isSearch = PR_TRUE;
-  fs->invalidationPending = PR_FALSE;
-  fs->cachedValueCount = 0;
 
   for (PRUint32 i = 0; i < aPropertyArrayCount; i++) {
     if (aPropertyArray[i]) {
@@ -747,21 +691,30 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
 }
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::AddFilters(sbIMutablePropertyArray* mArray)
+sbLocalDatabaseCascadeFilterSet::AddFilters(sbILibraryConstraintBuilder* aBuilder,
+                                            PRBool* aChanged)
 {
-  NS_ENSURE_ARG_POINTER(mArray);
+  NS_ENSURE_ARG_POINTER(aBuilder);
+  NS_ENSURE_ARG_POINTER(aChanged);
   nsresult rv;
 
+  *aChanged = PR_FALSE;
   PRUint32 numFilters = mFilters.Length();
   for (PRUint32 i = 0; i < numFilters; i++) {
     const sbFilterSpec& filter = mFilters[i];
 
-    if (!filter.isSearch) {
-      PRUint32 numValues = filter.values.Length();
-      for (PRUint32 j = 0; j < numValues; j++) {
-        rv = mArray->AppendProperty(filter.property, filter.values[j]);
+    if (!filter.isSearch && filter.values.Length()) {
+      *aChanged = PR_TRUE;
+
+      rv = aBuilder->Intersect(nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIStringEnumerator> values =
+        new sbTArrayStringEnumerator(&filter.values);
+      NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = aBuilder->IncludeList(filter.property, values, nsnull);
         NS_ENSURE_SUCCESS(rv, rv);
-      }
     }
   }
 
@@ -769,20 +722,33 @@ sbLocalDatabaseCascadeFilterSet::AddFilters(sbIMutablePropertyArray* mArray)
 }
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::AddSearches(sbIMutablePropertyArray* mArray)
+sbLocalDatabaseCascadeFilterSet::AddSearches(sbILibraryConstraintBuilder* aBuilder,
+                                             PRBool* aChanged)
 {
-  NS_ENSURE_ARG_POINTER(mArray);
+  NS_ENSURE_ARG_POINTER(aBuilder);
+  NS_ENSURE_ARG_POINTER(aChanged);
   nsresult rv;
 
+  *aChanged = PR_FALSE;
   PRUint32 numFilters = mFilters.Length();
   for (PRUint32 i = 0; i < numFilters; i++) {
     const sbFilterSpec& filter = mFilters[i];
 
     if (filter.isSearch && filter.values.Length()) {
+
       PRUint32 numProperties = filter.propertyList.Length();
-      for (PRUint32 j = 0; j < numProperties; j++) {
-        for (PRUint32 k = 0; k < filter.values.Length(); k++) {
-          rv = mArray->AppendProperty(filter.propertyList[j], filter.values[k]);
+      PRUint32 numValues = filter.values.Length();
+      for (PRUint32 j = 0; j < numValues; j++) {
+        *aChanged = PR_TRUE;
+        for (PRUint32 k = 0; k < numProperties; k++) {
+          rv = aBuilder->Include(filter.propertyList[k],
+                                 filter.values[j],
+                                 nsnull);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        if (j + 1 < numValues) {
+          rv = aBuilder->Intersect(nsnull);
           NS_ENSURE_SUCCESS(rv, rv);
         }
       }
@@ -845,39 +811,20 @@ sbLocalDatabaseCascadeFilterSet::GetState(sbLocalDatabaseCascadeFilterSetState**
       state->mFilters.AppendElement();
     NS_ENSURE_TRUE(spec, NS_ERROR_OUT_OF_MEMORY);
 
-    if (fs.isSearch) {
-      spec->isSearch = PR_TRUE;
+    spec->isSearch = fs.isSearch;
+    spec->property = fs.property;
 
-      for (PRUint32 j = 0; j < fs.propertyList.Length(); j++) {
+    nsString* added = spec->propertyList.AppendElements(fs.propertyList);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
-        nsCOMPtr<sbILibrarySearch> search =
-          do_CreateInstance(SONGBIRD_LIBRARYSEARCH_CONTRACTID, &rv);
-
-        rv = search->InitNative(fs.propertyList[j],
-                                fs.propertyList[j].EqualsLiteral("*"),
-                                &fs.values);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRBool success = spec->searches.AppendObject(search);
-        NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
-      }
-    }
-    else {
-      spec->isSearch = PR_FALSE;
-
-      spec->filter = do_CreateInstance(SONGBIRD_LIBRARYFILTER_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = spec->filter->InitNative(fs.property, &fs.values);
-      NS_ENSURE_SUCCESS(rv, rv);
+    added = spec->values.AppendElements(fs.values);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
       if (fs.treeView) {
         rv = fs.treeView->GetState(getter_AddRefs(spec->treeViewState));
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
-
-  }
 
 #ifdef DEBUG
     {
@@ -1418,21 +1365,31 @@ sbLocalDatabaseCascadeFilterSetState::Read(nsIObjectInputStream* aStream)
     NS_ENSURE_TRUE(spec, NS_ERROR_OUT_OF_MEMORY);
 
     rv = aStream->ReadBoolean(&spec->isSearch);
-    if (spec->isSearch) {
-      PRUint32 numSearches;
-      rv = aStream->Read32(&numSearches);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbILibrarySearch> search;
-      rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(search));
+    rv = aStream->ReadString(spec->property);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool success = spec->searches.AppendObject(search);
-      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    PRUint32 propertyListLength;
+    rv = aStream->Read32(&propertyListLength);
+    for (PRUint32 j = 0; j < propertyListLength; j++) {
+      nsString property;
+      rv = aStream->ReadString(property);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString* added = spec->propertyList.AppendElement(property);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
-    else {
-      rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(spec->filter));
+
+    PRUint32 valuesength;
+    rv = aStream->Read32(&valuesength);
+    for (PRUint32 j = 0; j < valuesength; j++) {
+      nsString value;
+      rv = aStream->ReadString(value);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString* added = spec->values.AppendElement(value);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
     PRBool hasTreeViewState;
@@ -1461,39 +1418,48 @@ sbLocalDatabaseCascadeFilterSetState::Write(nsIObjectOutputStream* aStream)
 
   nsresult rv;
 
-  rv = aStream->Write32(mFilters.Length());
+  PRUint32 length = mFilters.Length();
+  rv = aStream->Write32(length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
-    rv = aStream->WriteBoolean(mFilters[i].isSearch);
+  for (PRUint32 i = 0; i < length; i++) {
+    Spec& fs = mFilters[i];
+
+    rv = aStream->WriteBoolean(fs.isSearch);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mFilters[i].isSearch) {
-      PRUint32 numSearches = mFilters[i].searches.Count();
-      rv = aStream->Write32(numSearches);
+    rv = aStream->WriteWStringZ(fs.property.BeginReading());
       NS_ENSURE_SUCCESS(rv, rv);
-      for (PRUint32 j = 0; j < numSearches; j++) {
-        rv = aStream->WriteObject(mFilters[i].searches[j], PR_TRUE);
+
+    PRUint32 propertyListLength = fs.propertyList.Length();
+    rv = aStream->Write32(propertyListLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 j = 0; j < propertyListLength; j++) {
+      rv = aStream->WriteWStringZ(fs.propertyList[j].BeginReading());
         NS_ENSURE_SUCCESS(rv, rv);
       }
-    }
-    else {
-      rv = aStream->WriteObject(mFilters[i].filter, PR_TRUE);
+
+    PRUint32 valuesLength = fs.values.Length();
+    rv = aStream->Write32(valuesLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 j = 0; j < valuesLength; j++) {
+      rv = aStream->WriteWStringZ(fs.values[j].BeginReading());
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    if (mFilters[i].treeViewState) {
+    if (fs.treeViewState) {
       rv = aStream->WriteBoolean(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mFilters[i].treeViewState->Write(aStream);
+      rv = fs.treeViewState->Write(aStream);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
       rv = aStream->WriteBoolean(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
   }
 
   return NS_OK;
@@ -1507,40 +1473,47 @@ sbLocalDatabaseCascadeFilterSetState::ToString(nsAString& aStr)
 
   PRUint32 numFilters = mFilters.Length();
   for (PRUint32 i = 0; i < numFilters; i++) {
+    Spec& fs = mFilters[i];
 
-    if (mFilters[i].isSearch) {
-      PRUint32 numSearches = mFilters[i].searches.Count();
-      buff.AppendLiteral("search [");
-      for (PRUint32 j = 0; j < numSearches; j++) {
-        nsString tmp;
-        rv = mFilters[i].searches[j]->ToString(tmp);
-        NS_ENSURE_SUCCESS(rv, rv);
-        buff.Append(tmp);
-        if (j + 1 < numSearches) {
+    if (fs.isSearch) {
+      buff.AppendLiteral("search [[");
+      PRUint32 propertyListLength = fs.propertyList.Length();
+      for (PRUint32 j = 0; j < propertyListLength; j++) {
+        buff.Append(fs.propertyList[j]);
+        if (j + 1 < propertyListLength) {
           buff.AppendLiteral(", ");
         }
       }
-      buff.AppendLiteral("]");
+      buff.AppendLiteral("] ");
     }
     else {
       buff.AppendLiteral("filter [");
-      nsString tmp;
-      rv = mFilters[i].filter->ToString(tmp);
-      NS_ENSURE_SUCCESS(rv, rv);
-      buff.Append(tmp);
-      if (mFilters[i].treeViewState) {
+      buff.Append(fs.property);
+      buff.AppendLiteral(" ");
+    }
+
+    buff.AppendLiteral("values [");
+
+    PRUint32 valesLength = fs.values.Length();
+    for (PRUint32 j = 0; j < valesLength; j++) {
+      buff.Append(fs.values[j]);
+      if (j + 1 < valesLength) {
         buff.AppendLiteral(", ");
-        rv = mFilters[i].treeViewState->ToString(tmp);
-        NS_ENSURE_SUCCESS(rv, rv);
-        buff.Append(tmp);
+      }
       }
       buff.AppendLiteral("]");
+
+    if (fs.treeViewState) {
+      buff.AppendLiteral("treeView: ");
+      nsString tmp;
+      rv = fs.treeViewState->ToString(tmp);
+      NS_ENSURE_SUCCESS(rv, rv);
+      buff.Append(tmp);
     }
 
     if (i + 1 < numFilters) {
       buff.AppendLiteral(", ");
     }
-
   }
 
   aStr = buff;
