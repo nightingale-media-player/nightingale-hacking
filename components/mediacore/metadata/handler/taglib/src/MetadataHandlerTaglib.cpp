@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -62,10 +62,6 @@
 #include <prprf.h>
 #include <unicharutil/nsUnicharUtils.h>
 #include <nsMemory.h>
-
-/* Taglib imports. */
-#include <fileref.h>
-#include <tfile.h>
 
 #include <flacfile.h>
 #include <mpcfile.h>
@@ -299,9 +295,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
                                                         (urlSpec,
                                                          getter_AddRefs(pFile));
         }
-        
+
         if (NS_SUCCEEDED(result)) {
-          
+
           nsAutoString path;
           result = pFile->GetPath(path);
 
@@ -1122,51 +1118,76 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
  *
  *   <--                        The best guess at the encoding the tags are in
  *
- *   This function looks at a a set of tags and tries to guess what charset 
+ *   This function looks at a a set of tags and tries to guess what charset
  *   (encoding) the tags are in.  Returns empty string to mean don't convert
  *   (valid Unicode), and the literal "CP_ACP" if on Windows and best guess is
  *   whatever the system locale is.
  */
 
-nsCString sbMetadataHandlerTaglib::GuessCharset(
-    TagLib::Tag*                pTag)
+void sbMetadataHandlerTaglib::GuessCharset(
+    TagLib::Tag*                pTag,
+    nsACString&                 _retval)
 {
-    nsresult rv = NS_ERROR_FAILURE;
-    
+    nsresult rv;
+
     // first, build a string consisting of some tags
     TagLib::String tagString;
     tagString += pTag->album();
     tagString += pTag->artist();
     tagString += pTag->title();
+
     // comment and genre can end up confusing the detection; ignore them
     //tagString += pTag->comment();
     //tagString += pTag->genre();
-    
-    // first, figure out if this was from unicode - we do this by scanning
-    // the string for things that had more than 8 bits
-    TagLib::String::ConstIterator it;
-    for (it = tagString.begin(); it != tagString.end(); ++it) {
-        if (*it & ~0xFF) {
-            // this was Unicode; don't do any more guessing
-            return EmptyCString();
+
+    // first, figure out if this was from unicode - we do this by scanning the
+    // string for things that had more than 8 bits.
+
+    // XXXben We can't use the TagLib::String iterators here because TagLib was
+    //        not compiled with -fshort_wchar whereas this component (and
+    //        mozilla) are. Iterate manually instead.
+    const char* data = tagString.toCString(true);
+    NS_ConvertUTF8toUTF16 expandedData(data);
+
+    const PRUnichar *begin, *end;
+    expandedData.BeginReading(&begin, &end);
+
+    PRBool is7Bit = PR_TRUE;
+    while (begin < end) {
+        PRUnichar character = *begin++;
+        if (character & ~0xFF) {
+            _retval.Truncate();
+            return;
+        }
+        if (character & 0x80) {
+            is7Bit = PR_FALSE;
         }
     }
 
-    // look at the raw bytes
-    const char* data = tagString.toCString(false); // raw data
-    nsCString dataUTF8;
-    
+    if (is7Bit) {
+        _retval.AssignLiteral("us-ascii");
+        return;
+    }
+
+    // XXXben The code below is going to run *slowly*, but hopefully we already
+    //        exited for UTF16 and ASCII.
+
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
     nsCOMPtr<nsIUTF8ConverterService> utf8Service =
         do_GetService("@mozilla.org/intl/utf8converterservice;1");
     if (utf8Service) {
+        // look at the raw bytes
+        data = tagString.toCString(); // raw data
+
+        nsCString dataUTF8;
         rv = utf8Service->ConvertStringToUTF8(nsDependentCString(data, tagString.size()),
                                               "utf-8",
                                               PR_FALSE,
                                               dataUTF8);
         if (NS_SUCCEEDED(rv)) {
             // this was utf8
-            return NS_LITERAL_CSTRING("utf-8");
+            _retval.AssignLiteral("utf-8");
+            return;
         }
     }
 
@@ -1177,27 +1198,30 @@ nsCString sbMetadataHandlerTaglib::GuessCharset(
     if (detector) {
         nsCOMPtr<nsICharsetDetectionObserver> observer =
             do_QueryInterface( NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this) );
+        NS_ASSERTION(observer, "Um! We're supposed to be implementing this...");
+
         rv = detector->Init(observer);
-    }
-    if (detector && NS_SUCCEEDED(rv)) {
-        PRBool isDone = PR_FALSE;
-        // artificially inflate the buffer by repeating it a lot; this does
-        // in fact help with the detection
-        const PRUint32 chunkSize = tagString.size();
-        PRUint32 currentSize = 0;
-        while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
-            rv = detector->DoIt(data, chunkSize, &isDone);
-            if (NS_FAILED(rv) || isDone) {
-                break;
+        if (NS_SUCCEEDED(rv)) {
+            PRBool isDone;
+            // artificially inflate the buffer by repeating it a lot; this does
+            // in fact help with the detection
+            const PRUint32 chunkSize = tagString.size();
+            PRUint32 currentSize = 0;
+            while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
+                rv = detector->DoIt(data, chunkSize, &isDone);
+                if (NS_FAILED(rv) || isDone) {
+                    break;
+                }
+                currentSize += chunkSize;
             }
-            currentSize += chunkSize;
-        }
-        if (NS_SUCCEEDED(rv)) {
-            rv = detector->Done();
-        }
-        if (NS_SUCCEEDED(rv)) {
-            if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
-                return nsDependentCString(mLastCharset); // copied on return
+            if (NS_SUCCEEDED(rv)) {
+                rv = detector->Done();
+            }
+            if (NS_SUCCEEDED(rv)) {
+                if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
+                    _retval.Assign(mLastCharset);
+                    return;
+                }
             }
         }
     }
@@ -1211,12 +1235,13 @@ nsCString sbMetadataHandlerTaglib::GuessCharset(
     int size = MultiByteToWideChar( CP_ACP, MB_ERR_INVALID_CHARS, data, len, nsnull, 0 );
     if (size) {
         // okay, so CP_ACP is usable
-        return NS_LITERAL_CSTRING("CP_ACP");
+        _retval.AssignLiteral("CP_ACP");
+        return;
     }
 #endif
 
     // we truely know nothing
-    return EmptyCString();
+    _retval.Truncate();
 }
 
 /* nsICharsetDetectionObserver */
@@ -1224,12 +1249,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Notify(
     const char                  *aCharset,
     nsDetectionConfident        aConf)
 {
-    unsigned int len = strlen(aCharset);
-    if (len > sizeof(mLastCharset) - 1) {
-        len = sizeof(mLastCharset) - 1;
-    }
-    memcpy(mLastCharset, aCharset, len);
-    mLastCharset[len] = '\0';
+    mLastCharset.AssignLiteral(aCharset);
     mLastConfidence = aConf;
     return NS_OK;
 }
@@ -1245,7 +1265,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 
     const char* data = aString.toCString(false);
 #if XP_WIN
-    if (NS_LITERAL_CSTRING("CP_ACP").Equals(aCharset)) {
+    if (strcmp("CP_ACP", aCharset) == 0) {
         // convert to CP_ACP
         int size = ::MultiByteToWideChar( CP_ACP,
                                           MB_ERR_INVALID_CHARS,
@@ -1264,9 +1284,9 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
                                                 wstr,
                                                 size );
                 NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
-                
+
                 wstr[size] = '\0';
-                
+
                 TagLib::String strValue(wstr);
                 NS_Free(wstr);
                 return strValue;
@@ -1335,7 +1355,7 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
                 isValid = PR_FALSE;
         }
     }
-    
+
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile);
@@ -1457,7 +1477,8 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     }
 
     /* Guess the charset */
-    nsCString charset = GuessCharset(pTagFile->tag());
+    nsCString charset;
+    GuessCharset(pTagFile->tag(), charset);
 
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
@@ -1707,5 +1728,3 @@ void sbMetadataHandlerTaglib::FixTrackDiscNumber(
                          totalInt);
     }
 }
-
-
