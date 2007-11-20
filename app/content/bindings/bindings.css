@@ -260,6 +260,10 @@ menupopup[type="feathers"] {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menupopup") !important;
 }
 
+sb-feathers-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menuitems") !important;
+}
+
 sb-feathers-toggle-button {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-togglebutton") !important;
 }

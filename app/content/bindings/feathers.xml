@@ -34,13 +34,14 @@
 
 
   <!--
-    A menupopup that allows selection of feathers skin and layout
+    A binding that adds sibling menu elements that allows selection of feathers
+    skin and layout
   -->
-  <binding id="feathers-menupopup" 
-           extends="chrome://global/content/bindings/popup.xml#popup">
-    <implementation type="application/x-javascript">
+  <binding id="feathers-menuitems">
+    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
       <constructor>
         <![CDATA[
+          this._addedElements = [];
           this._feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                      .getService(Components.interfaces.sbIFeathersManager);
           this._currentLayout = null;
@@ -53,17 +54,50 @@
                         .getService(Components.interfaces.nsIStringBundleService);
           this._stringBundle = stringBundleService.createBundle( 
                       "chrome://songbird/locale/songbird.properties" );
+
+          this.parentNode.addEventListener("popupshowing", this, false);
+          this.parentNode.addEventListener("command", this, false);
+
+          // We need to explicitly call onPopupShowing() here since the first
+          // time this constructor is called it is after the popupshowing event
+          // has fired.
+          this.onPopupShowing();
         ]]>
       </constructor>
 
       <destructor>
         <![CDATA[
+          this.parentNode.removeEventListener("command", this, false);
+          this.parentNode.removeEventListener("popupshowing", this, false);
           this._feathersManager = null;
           this._currentLayout = null;
           this._currentSkin = null;
           this._stringBundle = null;
         ]]>
       </destructor>
+
+      <method name="handleEvent">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            switch(event.type) {
+              case "popupshowing":
+                // Only handle "popupshowing" event from our parent popup
+                if (event.target == this.parentNode) {
+                  this.onPopupShowing();
+                }
+              break;
+              case "command":
+                var handled = this.onCommand(event.target);
+                if (handled) {
+                  event.stopPropagation();
+                  event.preventDefault();
+                }
+              break;
+            }
+          ]]>
+        </body>
+      </method>
 
       <!--
         Called just before the popup appears.
@@ -94,16 +128,18 @@
                                           .getService(Components.interfaces.nsIURLFormatter);
                 var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
                 gBrowser.loadURI(getMoreURL);
+                return true;
                 break;
                 
               case "feathers.item":
                 var layoutURL = item.getAttribute("layoutURL"); 
                 var skinName = item.getAttribute("skinName");
                 this._feathersManager.switchFeathers(layoutURL, skinName);
+                return true;
                 break;
                 
               default:
-                dump("feathers.xml: feathers menu oncommand: unknown menu item\n");
+                return false;
                 break;
             }          
           ]]>
@@ -115,10 +151,10 @@
       <method name="_cleanMenu">
         <body>
           <![CDATA[
-            var children = this.childNodes;
-            for (var i = children.length - 1; i >= 0; --i) {
-              this.removeChild(children[i]);
-            }
+            this._addedElements.forEach(function(e) {
+              this.parentNode.removeChild(e);
+            }, this);
+            this._addedElements = [];
           ]]>
         </body>
       </method>
@@ -131,60 +167,80 @@
       <method name="_buildFeathersMenu">
         <body>
           <![CDATA[
-            try {  
-              
-              this._currentLayout = this._feathersManager.currentLayoutURL; 
-              this._currentSkin = this._feathersManager.currentSkinName;
+            this._currentLayout = this._feathersManager.currentLayoutURL; 
+            this._currentSkin = this._feathersManager.currentSkinName;
 
-              var className = this.parentNode.getAttribute("class");
-              
-              // Add a section with the layouts available for the current skin
-              this._appendSelectedFeathersSection();
-              
-              
-              // Add a menu for each skin
-              var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
-                                             Components.interfaces.sbISkinDescription);              
-              
-              for (var i=0; i < skins.length; i++) {
-                var skin = skins[i];
-                
-                // Get all layouts for this skin
-                var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skin.internalName), 
-                                                 Components.interfaces.sbILayoutDescription);
+            var className = this.parentNode.getAttribute("class");
+            
+            // Add a section with the layouts available for the current skin
+            this._appendSelectedFeathersSection();
 
-                // Skip skins with no compatible layouts
-                if (layouts.length == 0) continue;
-                
-                // Build a menu for this skin
-                var skinMenu = this._makeSkinMenu(skin);
-                
-                // Attach a menuitem for each compatible layout
-                for (var j = 0; j < layouts.length; j++) {
-                  var item = this._makeLayoutMenuItem(skin, layouts[j]);
-                  // Hack: remove the extra checked state.
-                  // (We may want this back later) 
-                  item.removeAttribute("type");
-                  item.removeAttribute("checked");                  
-                  skinMenu.firstChild.appendChild(item);
-                }
-                
-                this.appendChild(skinMenu);
+            // Add the "All Feathers" menu
+            var allFeathersLabel = "feathers.allfeathers";
+            try {
+              allFeathersLabel =
+                this._stringBundle.GetStringFromName(allFeathersLabel);
+            }
+            catch (e) { 
+            }
+
+            var allFeathers = document.createElement("menu");
+            allFeathers.setAttribute("label", allFeathersLabel);
+
+            var allFeathersPopup = document.createElement("menupopup");
+            allFeathers.appendChild(allFeathersPopup);
+
+            this._addToMenu(allFeathers);
+
+            // Add a menu for each skin
+            var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
+                                           Components.interfaces.sbISkinDescription);              
+            
+            for (var i=0; i < skins.length; i++) {
+              var skin = skins[i];
+              
+              // Get all layouts for this skin
+              var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skin.internalName), 
+                                               Components.interfaces.sbILayoutDescription);
+
+              // Skip skins with no compatible layouts
+              if (layouts.length == 0) continue;
+              
+              // Build a menu for this skin
+              var skinMenu = this._makeSkinMenu(skin);
+              
+              // Attach a menuitem for each compatible layout
+              for (var j = 0; j < layouts.length; j++) {
+                var item = this._makeLayoutMenuItem(skin, layouts[j]);
+                // Hack: remove the extra checked state.
+                // (We may want this back later) 
+                item.removeAttribute("type");
+                item.removeAttribute("checked");                  
+                skinMenu.firstChild.appendChild(item);
               }
               
-              // If the current window has a browser/servicepane, then add a link
-              // to get more feathers.
-              // NOTE: This is brittle. Please change this once we have a proper API.
-              if (typeof(gBrowser) != "undefined") {
-                this._appendGetMoreFeathers();
-              }
-            } catch (e) {
-              dump( "Feathers MenuPopup XBL: Error in _buildFeathersMenu: " + e.toString()  + "\n");
+              allFeathersPopup.appendChild(skinMenu);
+            }
+            
+            // If the current window has a browser/servicepane, then add a link
+            // to get more feathers.
+            // NOTE: This is brittle. Please change this once we have a proper API.
+            if (typeof(gBrowser) != "undefined") {
+              this._appendGetMoreFeathers(allFeathersPopup);
             }
           ]]>
         </body>
       </method>
 
+      <method name="_addToMenu">
+        <parameter name="element"/>
+        <body>
+          <![CDATA[
+            this.parentNode.insertBefore(element, this);
+            this._addedElements.push(element);
+          ]]>
+        </body>
+      </method>
 
       <!-- Return a menu with menupopup for the given layout -->
       <method name="_makeSkinMenu">
@@ -243,19 +299,17 @@
             item.setAttribute("disabled", "true");
             item.setAttribute("class", "feathers-menu-selected-skin-title");
             
-            this.appendChild(item);
+            this._addToMenu(item);
             
             var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skin.internalName), 
                                              Components.interfaces.sbILayoutDescription);
-          
+            
             // Attach a menuitem for each compatible layout
             for (var j = 0; j < layouts.length; j++) {
               var item = this._makeLayoutMenuItem(skin, layouts[j]);
               item.setAttribute("class", "feathers-menu-selected-skin");
-              this.appendChild(item);
-            }         
-            
-            this.appendChild(document.createElement("menuseparator"));
+              this._addToMenu(item);
+            }
           ]]>
         </body>
       </method>
@@ -263,9 +317,10 @@
       
       <!-- Adds a "Get More" menu item that links to the addons site -->
       <method name="_appendGetMoreFeathers">
+        <parameter name="menupopup"/>
         <body>
           <![CDATA[
-            this.appendChild(document.createElement("menuseparator"));
+            menupopup.appendChild(document.createElement("menuseparator"));
             var item = document.createElement("menuitem");
 
             var getMoreText;
@@ -279,7 +334,7 @@
             
             item.setAttribute("label", getMoreText);
             item.setAttribute("name", "feathers.getmore");
-            this.appendChild(item);
+            menupopup.appendChild(item);
           ]]>
         </body>
       </method>
@@ -301,40 +356,26 @@
       </method>
 
     </implementation>
-    
-    <handlers>
-      <handler event="command">
-        <![CDATA[
-          this.onCommand(event.target);
-          
-          // We've handled this event, so prevent
-          // others from hearing about it.
-          event.stopPropagation();
-          event.preventDefault();
-        ]]>
-      </handler>
-      <handler event="popupshowing">
-        <![CDATA[
-          if (event.target == this) {
-            this.onPopupShowing();
-          }
-        ]]>
-      </handler>
-      <handler event="popuphidden">
-        <![CDATA[        
-          if (event.target == this) {
-            // Should we do anything here?
-          }
-        ]]>
-      </handler>
-    </handlers>
   </binding>
 
-
-
-
-
-
+  <!--
+    A menupopup that allows selection of feathers skin and layout
+  -->
+  <binding id="feathers-menupopup"
+           extends="chrome://global/content/bindings/popup.xml#popup">
+    <implementation>
+      <constructor>
+<![CDATA[
+  // Note that we need to use createElement() here to insert the
+  // sb-feathers-menutiems element since if we put it in the XBL content,
+  // it would come out as anonymous and sb-feathers-menuitems would not work
+  // properly
+  var item = document.createElement("sb-feathers-menuitems");
+  this.appendChild(item);
+]]>
+      </constructor>
+    </implementation>
+  </binding>
 
   <!--
    Clickhold button that embeds the feathers-menupopup menu. 

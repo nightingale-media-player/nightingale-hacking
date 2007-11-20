@@ -186,6 +186,7 @@
 
 <!ENTITY locale.language          "Language" >
 <!ENTITY menu.feathers            "Feathers" >
+<!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
 
 <!ENTITY setup.title              "Songbird Setup Options" >
@@ -222,6 +223,7 @@
 <!ENTITY menu.file.watch.accesskey    "W" >
 <!ENTITY locale.language.accesskey    "L" >
 <!ENTITY menu.feathers.accesskey      "r" >
+<!ENTITY menu.view.accesskey          "V" >
 <!ENTITY menu.preferences.accesskey   "O" >
 <!ENTITY menu.extensions.accesskey    "A" >
 <!ENTITY menu.viewpagesource.accesskey "V" >

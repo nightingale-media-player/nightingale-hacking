@@ -110,8 +110,10 @@
       </menupopup>
     </menu>
 
-    <menu id="feathers-menu" label="&menu.feathers;" accesskey="&menu.feathers.accesskey;">
-      <menupopup type="feathers"/>
+    <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
+      <menupopup id="menu_View">
+        <sb-feathers-menuitems id="menuitem_view_feathers"/>
+      </menupopup>
     </menu>
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
