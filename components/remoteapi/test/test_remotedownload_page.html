@@ -77,9 +77,13 @@ function runTest(tester) {
     // before the auto-download queue is serviced, they will be placed back in
     // to the download media list.  Wait a bit for all that to happen and then
     // clear the download media list.
-    // Also, we need to sleep to process the pending download device callbacks.
     tester.sleep(1000);
     dlList.clear();
+
+    // Sleep to allow processing of pending download device callbacks.  Clearing
+    // of the download media list may intiate a transfer complete callback if
+    // an in-progress download was aborted.
+    tester.sleep(1);
 
     // test download events
     item = siteLib.createMediaItem
