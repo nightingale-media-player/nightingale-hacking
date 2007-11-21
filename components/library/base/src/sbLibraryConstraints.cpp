@@ -116,12 +116,9 @@ sbLibraryConstraintBuilder::Include(const nsAString& aProperty,
   nsString* success = array->AppendElement(aValue);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  // If this fails, the nsAutoPtr will free array.  Otherwise the ownership
-  // is transfered to the callee
-  rv = mConstraint->AddToCurrent(aProperty, array);
+  // Transfer ownership of array to the callee
+  rv = mConstraint->AddToCurrent(aProperty, array.forget());
   NS_ENSURE_SUCCESS(rv, rv);
-
-  array.forget();
 
   if (_retval) {
     NS_ADDREF(*_retval = this);
@@ -156,12 +153,9 @@ sbLibraryConstraintBuilder::IncludeList(const nsAString& aProperty,
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  // If this fails, the nsAutoPtr will free array.  Otherwise the ownership
-  // is transfered to the callee
-  rv = mConstraint->AddToCurrent(aProperty, array);
+  // Transfer ownership of array to the callee
+  rv = mConstraint->AddToCurrent(aProperty, array.forget());
   NS_ENSURE_SUCCESS(rv, rv);
-
-  array.forget();
 
   if (_retval) {
     NS_ADDREF(*_retval = this);
@@ -715,19 +709,21 @@ sbLibraryConstraintGroup::Add(const nsAString& aProperty,
                               sbStringArray* aArray)
 {
   NS_ASSERTION(aArray, "sbStringArray is null");
+  nsAutoPtr<sbStringArray> array(aArray);
 
   sbStringArray* existing;
   if (mConstraintGroup.Get(aProperty, &existing)) {
-    nsString* success = existing->AppendElements(*aArray);
+    nsString* success = existing->AppendElements(*array);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-    // We own this array and since we're not sticking it into the hastable
-    // we must delete it
-    delete aArray;
+    // Let the nsAutoPtr delete the array since we've copied its contents
+    // in to the hashtable
   }
   else {
-    PRBool success = mConstraintGroup.Put(aProperty, aArray);
+    PRBool success = mConstraintGroup.Put(aProperty, array);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    // We've transfered ownership to the hashtable so forget it
+    array.forget();
   }
 
   return NS_OK;
