@@ -40,11 +40,11 @@ function runTest(tester) {
 
     // downloading - set in test_ file to go to tmpD/remoteapi_test/
     var item = siteLib.createMediaItem(
-              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+      "http://ccmixter.org/people/Sawtooth/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3");
     var list = siteLib.createSimpleMediaList("testRemoteDownload1");
     list.add(item);
-    item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/" +
-            "presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+    item = siteLib.createMediaItem(
+      "http://ccmixter.org/people/Vanchy/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3");
     list.add(item);
 
     tester.log("Downloading an item...");
@@ -62,8 +62,8 @@ function runTest(tester) {
     dlList.clear();
 
     // test additions to the list
-    item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/" +
-            "presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+    item = siteLib.createMediaItem(
+      "http://ccmixter.org/people/DJBLUE/DJBLUE_-_Hear_Me.mp3");
 
     tester.log("Adding an item to the download medialist...");
     dlList.add(item);
@@ -73,8 +73,8 @@ function runTest(tester) {
     dlList.clear();
 
     // test download events
-    item = siteLib.createMediaItem
-                    ("http://www.songbirdnest.com/nonexistent/nonexistent.mp3");
+    item = siteLib.createMediaItem (
+      "http://ccmixter.org/people/Loveshadow/Loveshadow_-_Shadow_Games(_Radio_Mix).mp3");
 
     var downloadStarted = false;
     function onDownloadStart(event) {
