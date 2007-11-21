@@ -42,10 +42,12 @@
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
+#include <nsIProxyObjectManager.h>
 #include <nsIURI.h>
 #include <nsIURIFixup.h>
 #include <nsIWritablePropertyBag2.h>
 #include <nsMemory.h>
+#include <nsProxyRelease.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
@@ -372,6 +374,54 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   return NS_OK;
 }
 
+//sbDeviceBaseCallbackProxy class.
+NS_IMPL_THREADSAFE_ADDREF(sbDeviceBaseCallbackProxy)
+NS_IMPL_THREADSAFE_RELEASE(sbDeviceBaseCallbackProxy)
+
+sbDeviceBaseCallbackProxy::sbDeviceBaseCallbackProxy()
+{
+}
+
+sbDeviceBaseCallbackProxy::~sbDeviceBaseCallbackProxy()
+{
+  // Release callback proxy from the owning thread.
+  if (mCallbackProxy && mOwningThread)
+  {
+    sbIDeviceBaseCallback *callbackProxy = nsnull;
+    mCallbackProxy.swap(callbackProxy);
+    NS_ProxyRelease(mOwningThread, callbackProxy);
+  }
+}
+
+nsresult sbDeviceBaseCallbackProxy::Init(sbIDeviceBaseCallback* aCallback)
+{
+  NS_ASSERTION(aCallback, "aCallback is null");
+
+  nsCOMPtr<nsIProxyObjectManager> proxyObjectManager;
+  nsresult rv;
+
+  // Get the callback owning thread so proxy can be released on it.
+  nsCOMPtr<nsIThread> thread;
+  rv = NS_GetCurrentThread(getter_AddRefs(thread));
+  NS_ENSURE_SUCCESS(rv, rv);
+  mOwningThread = do_QueryInterface(thread, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Proxy callback so callbacks can be made from other threads.
+  proxyObjectManager = do_CreateInstance("@mozilla.org/xpcomproxy;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = proxyObjectManager->GetProxyForObject
+                                  (NS_PROXY_TO_CURRENT_THREAD,
+                                   NS_GET_IID(sbIDeviceBaseCallback),
+                                   aCallback,
+                                   nsIProxyObjectManager::INVOKE_ASYNC |
+                                   nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                                   getter_AddRefs(mCallbackProxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return (NS_OK);
+}
+
 //sbDeviceBase class.
 sbDeviceBase::sbDeviceBase()
 {
@@ -403,7 +453,16 @@ sbDeviceBase::AddCallback(sbIDeviceBaseCallback* aCallback)
 {
   NS_ENSURE_ARG_POINTER(aCallback);
 
-  if(mDeviceCallbacks.Put(aCallback, aCallback)) {
+  nsRefPtr<sbDeviceBaseCallbackProxy> callbackProxy;
+  nsresult rv;
+
+  // Proxy callback so callbacks can be made from other threads.
+  callbackProxy = new sbDeviceBaseCallbackProxy();
+  NS_ENSURE_TRUE(callbackProxy, NS_ERROR_OUT_OF_MEMORY);
+  rv = callbackProxy->Init(aCallback);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mDeviceCallbacks.Put(aCallback, callbackProxy)) {
     return NS_OK;
   }
 
@@ -421,10 +480,10 @@ sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback* aCallback)
 }
 
 PR_STATIC_CALLBACK(PLDHashOperator)
-EnumDeviceCallback(nsISupports *key, sbIDeviceBaseCallback *data, void *closure)
+EnumDeviceCallback(nsISupports *key, sbDeviceBaseCallbackProxy *data, void *closure)
 {
   nsCOMArray<sbIDeviceBaseCallback> *array = static_cast<nsCOMArray<sbIDeviceBaseCallback> *>(closure);
-  array->AppendObject(data);
+  array->AppendObject(data->mCallbackProxy);
   return PL_DHASH_NEXT;
 }
 

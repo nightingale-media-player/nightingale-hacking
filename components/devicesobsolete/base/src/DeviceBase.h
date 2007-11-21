@@ -42,12 +42,14 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 
+#include <nsAutoPtr.h>
 #include <nsIMutableArray.h>
 #include <nsInterfaceHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 #include <nsIURI.h>
+#include <nsRefPtrHashtable.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -114,6 +116,24 @@ protected:
   nsCOMPtr<sbIDeviceBase> mDevice;
   nsString mDeviceIdentifier;
 
+};
+
+class sbDeviceBaseCallbackProxy
+{
+public:
+    NS_IMETHOD_(nsrefcnt) AddRef(void);
+    NS_IMETHOD_(nsrefcnt) Release(void);
+
+    sbDeviceBaseCallbackProxy();
+    virtual ~sbDeviceBaseCallbackProxy();
+    nsresult Init(sbIDeviceBaseCallback* aCallback);
+
+    nsCOMPtr<sbIDeviceBaseCallback> mCallbackProxy;
+    nsCOMPtr<nsIEventTarget> mOwningThread;
+
+protected:
+    nsAutoRefCnt mRefCnt;
+    NS_DECL_OWNINGTHREAD
 };
 
 class sbDeviceBase
@@ -338,7 +358,7 @@ public:
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mDeviceLibraries;
   nsInterfaceHashtableMT<nsStringHashKey, nsIMutableArray> mDeviceQueues;
-  nsInterfaceHashtableMT<nsISupportsHashKey, sbIDeviceBaseCallback> mDeviceCallbacks;
+  nsRefPtrHashtableMT<nsISupportsHashKey, sbDeviceBaseCallbackProxy> mDeviceCallbacks;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mDeviceStates;
 
   nsInterfaceHashtableMT<nsStringHashKey, sbIMediaListListener> mDeviceLibraryListeners;
