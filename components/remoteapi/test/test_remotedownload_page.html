@@ -72,6 +72,15 @@ function runTest(tester) {
     tester.log("Clearing the download list...");
     dlList.clear();
 
+    // Items added to the download media list are picked up and queued by the
+    // auto-downloader.  If the items are removed from the download media list
+    // before the auto-download queue is serviced, they will be placed back in
+    // to the download media list.  Wait a bit for all that to happen and then
+    // clear the download media list.
+    // Also, we need to sleep to process the pending download device callbacks.
+    tester.sleep(1000);
+    dlList.clear();
+
     // test download events
     item = siteLib.createMediaItem (
       "http://ccmixter.org/people/Loveshadow/Loveshadow_-_Shadow_Games(_Radio_Mix).mp3");
