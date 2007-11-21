@@ -1,0 +1,28 @@
+Index: toolkit/xre/MacLaunchHelper.m
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/MacLaunchHelper.m,v
+retrieving revision 1.8
+diff -u -8 -p -r1.8 MacLaunchHelper.m
+--- toolkit/xre/MacLaunchHelper.m	11 Oct 2006 15:53:40 -0000	1.8
++++ toolkit/xre/MacLaunchHelper.m	1 Nov 2007 23:45:24 -0000
+@@ -76,15 +76,20 @@ void LaunchChildMac(int aArgc, char** aA
+ 
+     // Nothing can be done to handle failure, relaunch anyway.
+   }
+ #endif /* __ppc__ */
+ 
+   for (i = 1; i < aArgc; ++i) 
+     [args addObject: [NSString stringWithCString: aArgv[i]]];
+   
++  // If we're currently active, our child should be also
++  if ([NSApp isActive]) {
++    [args addObject: @"-foreground"];
++  }
++  
+   [child setCurrentDirectoryPath:[[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent]];
+   [child setLaunchPath:[[NSBundle mainBundle] executablePath]];
+   [child setArguments:args];
+   [child launch];
+   [pool release];
+ }
+ 
