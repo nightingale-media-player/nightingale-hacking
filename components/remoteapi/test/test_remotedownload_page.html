@@ -82,8 +82,8 @@ function runTest(tester) {
     dlList.clear();
 
     // test download events
-    item = siteLib.createMediaItem (
-      "http://ccmixter.org/people/Loveshadow/Loveshadow_-_Shadow_Games(_Radio_Mix).mp3");
+    item = siteLib.createMediaItem
+                    ("http://www.songbirdnest.com/nonexistent/nonexistent.mp3");
 
     var downloadStarted = false;
     function onDownloadStart(event) {
