@@ -74,6 +74,9 @@ pref("browser.link.open_newwindow.restriction", 0);
 pref('browser.tabs.enabled', true);
 pref("browser.tabs.loadDivertedInBackground", false);
 
+// Default columns for the web playlist
+pref("songbird.webplaylist.columnspec",  "http://songbirdnest.com/data/1.0#ordinal 28 a http://songbirdnest.com/data/1.0#trackName 300 http://songbirdnest.com/data/1.0#duration 38 http://songbirdnest.com/data/1.0#artistName 169 http://songbirdnest.com/data/1.0#albumName 159 http://songbirdnest.com/data/1.0#downloadButton 83");
+
 // Dynamic Skin Switching
 pref("extensions.dss.enabled", false);
 

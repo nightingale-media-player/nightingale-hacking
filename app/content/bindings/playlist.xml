@@ -127,7 +127,6 @@
     <implementation
       implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver"
       type="application/x-javascript"
-      name="songbird_playlist"
     >
 
       <constructor>
@@ -185,6 +184,16 @@
   };
   this.addEventListener("mousedown",
                         this._onMouseDownClosure,
+                        true);
+                        
+                        
+  // Add a capturing listener so we can swallow command events
+  // in cases such as column restoreNaturalOrder.
+  this._onCommandClosure = function(event) {
+    self._onCommand(event);
+  };
+  this.addEventListener("command",
+                        this._onCommandClosure,
                         true);
 
 ]]>
@@ -387,16 +396,23 @@
       <!-- Used to implement draggable smart splitters -->
       <field name="_down">0</field>
       <field name="_lastpos">0</field>
+      
+      <!-- Indicates that the column metadata should be saved -->
       <field name="_columnSpecIsDirty">false</field>
+
+      <!-- Indicates that the column metadata should not
+           be used as the default -->      
+      <field name="_suppressSaveAsDefaultColumnSpec">false</field>
 
       <!-- Where the columnSpec came from. Possible values:
         0: undefined
         1: "contentSpec" property on the medialist
-        2: "defaultColumnSpec" property on the medialist
-        3: "defaultColumnSpec" property on the medialist library
-        4: "contentSpec" property on the medialist library
-        5: XUL "columnSpec" attribute
-        6: Our last-ditch hardcoded list
+        2: Preference indicated by "useColumnSpecPreference" attribute
+        3: "defaultColumnSpec" property on the medialist
+        4: "defaultColumnSpec" property on the medialist library
+        5: "contentSpec" property on the medialist library
+        6: XUL "columnSpec" attribute
+        7: Our last-ditch hardcoded list
       -->
       <field name="_columnSpecOrigin">0</field>
 
@@ -495,6 +511,15 @@
         <parameter name="collapse"/>
         <body>
 <![CDATA[
+
+  // Make sure we save the column spec
+  // for the existing view
+  if (this._columnSpecIsDirty) {
+    this._saveColumnSpec();
+  }
+
+  this._suppressSaveAsDefaultColumnSpec = false;
+
   this.mediaListView = mediaListView;
   this.treeView = mediaListView.treeView;
 
@@ -555,6 +580,10 @@
 
     this.removeEventListener("mousedown",
                             this._onMouseDownClosure,
+                            true);
+                            
+    this.removeEventListener("command",
+                            this._onCommandClosure,
                             true);
 
     for (var s = 0; s < this._splitters.length; s++) {
@@ -706,37 +735,53 @@
   //
   // The width and sort direction are optional.
 
-  // Try to get this info from 3 places, in this order:
-  //
-  // 1. In the "columnSpec" property for the medialist.
-  // 2. In the "defaultColumnSpec" property for the medialist.
-  // 3. Hardcoded (or persisted) in XUL on the "columnSpec" attribute.
-  // 4. A fun hardcoded list as a last resort.
+  // Try to get this info from the following places:
+  //      1: "columnSpec" property on the medialist
+  //      2: Preference indicated by XUL "useColumnSpecPreference" attribute
+  //      3: "defaultColumnSpec" property on the medialist
+  //      4: "defaultColumnSpec" property on the medialist library
+  //      5: "columnSpec" property on the medialist library
+  //      6: XUL "columnSpec" attribute
+  //      7: Our last-ditch hardcoded list
 
   var columnMap = [];
   var medialist = this.mediaListView.mediaList;
+ 
   columnMap =
     this._getColumnMap(medialist.getProperty(SBProperties.columnSpec), 1);
+
+  if (!columnMap.length && this.hasAttribute("useColumnSpecPreference") ) {
+    var pref = this.getAttribute("useColumnSpecPreference");
+    
+    try {
+      if (Application.prefs.has(pref)) {
+        columnMap =
+            this._getColumnMap(Application.prefs.get(pref).value,
+                               2);
+      }
+    } catch (e) {}
+  }
+    
   if (!columnMap.length) {
     columnMap =
       this._getColumnMap(medialist.getProperty(SBProperties.defaultColumnSpec),
-                         2);
-  }
-
-  if (!columnMap.length) {
-    columnMap =
-      this._getColumnMap(medialist.library.getProperty(SBProperties.defaultColumnSpec),
                          3);
   }
 
   if (!columnMap.length) {
     columnMap =
-      this._getColumnMap(medialist.library.getProperty(SBProperties.columnSpec),
+      this._getColumnMap(medialist.library.getProperty(SBProperties.defaultColumnSpec),
                          4);
   }
 
   if (!columnMap.length) {
-    columnMap = this._getColumnMap(this.getAttribute("columnSpec"), 5);
+    columnMap =
+      this._getColumnMap(medialist.library.getProperty(SBProperties.columnSpec),
+                         5);
+  }
+
+  if (!columnMap.length) {
+    columnMap = this._getColumnMap(this.getAttribute("columnSpec"), 6);
   }
 
   if (!columnMap.length) {
@@ -747,7 +792,7 @@
                             SBProperties.artistName + " 222 a " +
                             SBProperties.albumName + " 222 " +
                             SBProperties.genre + " 70");
-    this._columnSpecOrigin = 6;
+    this._columnSpecOrigin = 7;
   }
 
   if (!columnMap.length) {
@@ -805,6 +850,26 @@
     }
   }
 
+
+  // If the columns were initialized from some defaults..
+  if ( this._columnSpecOrigin != 1 && 
+       this._columnSpecOrigin != 2 &&
+       this._columnSpecOrigin != 6 )
+  {
+
+    // Make sure we save the spec for this playlist.
+    // If we don't, then this playlist will change if the default
+    // changes, and the user will be confused.
+    this._columnSpecIsDirty = true;
+    
+    // If this is not a library, then we probably do not want
+    // the sort hint from the default spec.
+    if ( !(medialist instanceof Components.interfaces.sbILibrary)) {
+      sortProperty = null;
+    }
+  }
+
+  // If there is no sort, default to the ordinal column 
   if (!sortProperty) {
     sortProperty = SBProperties.ordinal;
     sortDirection = "ascending";
@@ -821,6 +886,34 @@
 ]]>
         </body>
       </method>
+
+
+      <method name="_restoreDefaultColumns">
+        <body>
+<![CDATA[
+  // Remove the columnSpec for this list
+  var medialist = this.mediaListView.mediaList;
+  medialist.setProperty(SBProperties.columnSpec, null);
+ 
+  // Reset the columnSpec pref, if we have one
+  if (this.hasAttribute("useColumnSpecPreference")) {
+    var pref = this.getAttribute("useColumnSpecPreference");
+    
+    try {
+      if (Application.prefs.has(pref)) {
+        Application.prefs.get(pref).reset();
+      }
+    } catch (e) {}
+  }
+    
+  // Then rebuild the columns
+  this._columnSpecIsDirty = false;
+  this._suppressSaveAsDefaultColumnSpec = false;  
+  this._setupColumns();
+]]>
+        </body>
+      </method>
+
 
       <method name="_getColumnMap">
         <parameter name="columnSpec"/>
@@ -918,6 +1011,7 @@
     column.element.setAttribute("hidden", "true");
   });
   this._columnSpecIsDirty = true;
+  this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
       </method>
@@ -930,6 +1024,7 @@
 <![CDATA[
   this.insertColumnBefore(aPropertyID, "", aWidth);
   this._columnSpecIsDirty = true;
+  this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
       </method>
@@ -999,6 +1094,7 @@
     mover.element.setAttribute("width", aWidth);
   }
   this._columnSpecIsDirty = true;
+  this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
       </method>
@@ -1074,6 +1170,7 @@
   }
   mover.element.setAttribute("hidden", "true");
   this._columnSpecIsDirty = true;
+  this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
       </method>
@@ -1100,6 +1197,8 @@
 <![CDATA[
   var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
   ldtv.setSort(aPropertyID, aIsAscending);
+  this._columnSpecIsDirty = true;
+  this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
       </method>
@@ -1274,20 +1373,18 @@
   var mediaList = this.mediaListView.mediaList;
   mediaList.setProperty(SBProperties.columnSpec, columnSpec);
 
-  // Write the column spec to the default column spec for this list's library
-  // only if the list is not actually the library
-  if (mediaList instanceof this._Ci.sbILibrary) {
-    return;
+  // Consider saving this spec as a default
+  if (!this._suppressSaveAsDefaultColumnSpec) {
+  
+    // The only time we want to save the column spec as a default is if 
+    // multiple playlists are sharing a column spec using a preference.
+    if (this.hasAttribute("useColumnSpecPreference")) {
+      var pref = this.getAttribute("useColumnSpecPreference");
+      Application.prefs.setValue(pref, columnSpec);
+    }
   }
-
-  // The download playlist should not modify the default column spec
-  var ddh = this._Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                    .getService(this._Ci.sbIDownloadDeviceHelper);
-  if (ddh.downloadMediaList.equals(mediaList)) {
-    return;
-  }
-
-  mediaList.library.setProperty(SBProperties.defaultColumnSpec, columnSpec);
+    
+  this._columnSpecIsDirty = false;
 ]]>
         </body>
       </method>
@@ -2041,6 +2138,26 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         ]]>
       </body>
     </method>
+
+
+
+    <method name="_onCommand">
+      <parameter name="event"/>
+      <body>
+<![CDATA[
+
+  // Catch the "Restore Default Columns" colpicker menu item
+  if (event.originalTarget && 
+      event.originalTarget.getAttribute("anonid") == "menuitem")
+  {
+    event.stopPropagation();
+    this._restoreDefaultColumns();
+  }
+]]>
+      </body>
+    </method>
+
+
 
     <method name="_addItem">
       <parameter name="source"/>

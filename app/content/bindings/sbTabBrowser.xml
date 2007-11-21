@@ -1464,17 +1464,18 @@
           this._playlist.setAttribute('height', '200');
           this._playlist.setAttribute('hidden', 'true');
           this._playlist.setAttribute('enableColumnDrag', 'true');
-          this._playlist.setAttribute('persist', 'columnSpec');
           this._playlist.setAttribute('editable', 'true');
           this._playlist.setAttribute('minheight', '0');
           this._playlist.setAttribute('hidefilters', 'true');
           this._playlist.setAttribute('columnSpec',
-              SBProperties.ordinal + ' 20 a ' +
-              SBProperties.trackName + ' 375 ' +
-              SBProperties.duration + ' 50 ' +
-              SBProperties.artistName + ' 222 ' +
-              SBProperties.albumName + ' 222 ' +
-              SBProperties.downloadButton + ' 90');
+              SBProperties.ordinal + ' 28 a ' +
+              SBProperties.trackName + ' 300 ' +
+              SBProperties.duration + ' 38 ' +
+              SBProperties.artistName + ' 169 ' +
+              SBProperties.albumName + ' 159 ' +
+              SBProperties.downloadButton + ' 83');
+          this._playlist.setAttribute('useColumnSpecPreference', 
+                                      'songbird.webplaylist.columnspec');
 
           // add some events, eh?
           this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
