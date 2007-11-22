@@ -1,0 +1,843 @@
+Index: toolkit/components/places/public/nsIFaviconService.idl
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/places/public/nsIFaviconService.idl,v
+retrieving revision 1.6
+diff -p -u -4 -r1.6 nsIFaviconService.idl
+--- toolkit/components/places/public/nsIFaviconService.idl	25 Mar 2007 12:28:30 -0000	1.6
++++ toolkit/components/places/public/nsIFaviconService.idl	22 Nov 2007 02:20:04 -0000
+@@ -39,9 +39,9 @@
+ #include "nsISupports.idl"
+ 
+ interface nsIURI;
+ 
+-[scriptable, uuid(91f635a4-2531-4f3d-89ef-81403a685f44)]
++[scriptable, uuid(f6d59e5a-7562-4a51-aa14-ef569f4d5e1e)]
+ interface nsIFaviconService : nsISupports
+ {
+   /**
+    * Declares that a given page uses a favicon with the given URI.
+@@ -95,11 +95,15 @@ interface nsIFaviconService : nsISupport
+    * @param aForceReload
+    *        Unset is normal behavior, we will only try to reload the favicon
+    *        if we don't have it or if it has expired from the cache. If set,
+    *        it will always try to reload the favicon.
++   * @param aExpiration
++   *        Time in microseconds since the epoch when this favicon expires.
++   *        Until this time, we won't try to load it again.
+    */
+   void setAndLoadFaviconForPage(in nsIURI aPage, in nsIURI aFavicon,
+-                                in boolean aForceReload);
++                                in boolean aForceReload,
++                                [optional] in PRTime aExpiration);
+ 
+   /**
+    * Stores the data of a given favicon. You must specify the MIME type
+    * unless you're clearing the data.
+Index: toolkit/components/places/src/nsFaviconService.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.cpp,v
+retrieving revision 1.16
+diff -p -u -4 -r1.16 nsFaviconService.cpp
+--- toolkit/components/places/src/nsFaviconService.cpp	5 Sep 2007 20:23:54 -0000	1.16
++++ toolkit/components/places/src/nsFaviconService.cpp	22 Nov 2007 02:20:04 -0000
+@@ -82,9 +82,9 @@ class FaviconLoadListener : public nsISt
+ {
+ public:
+   FaviconLoadListener(nsFaviconService* aFaviconService,
+                       nsIURI* aPageURI, nsIURI* aFaviconURI,
+-                      nsIChannel* aChannel);
++                      nsIChannel* aChannel, PRTime aExpiration);
+ 
+   NS_DECL_ISUPPORTS
+   NS_DECL_NSIREQUESTOBSERVER
+   NS_DECL_NSISTREAMLISTENER
+@@ -98,8 +98,10 @@ private:
+   nsCOMPtr<nsIChannel> mChannel;
+   nsCOMPtr<nsIURI> mPageURI;
+   nsCOMPtr<nsIURI> mFaviconURI;
+ 
++  PRTime mExpiration;
++
+   nsCString mData;
+ };
+ 
+ 
+@@ -380,15 +382,17 @@ nsFaviconService::SendFaviconNotificatio
+ // nsFaviconService::SetAndLoadFaviconForPage
+ 
+ NS_IMETHODIMP
+ nsFaviconService::SetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
+-                                           PRBool aForceReload)
++                                           PRBool aForceReload,
++                                           PRTime aExpiration)
+ {
+ #ifdef LAZY_ADD
+   nsNavHistory* historyService = nsNavHistory::GetHistoryService();
+   NS_ENSURE_TRUE(historyService, NS_ERROR_OUT_OF_MEMORY);
+   return historyService->AddLazyLoadFaviconMessage(aPage, aFavicon,
+-                                                   aForceReload);
++                                                   aForceReload,
++                                                   aExpiration);
+ #else
+   return DoSetAndLoadFaviconForPage(aPage, aFavicon, aForceReload);
+ #endif
+ }
+@@ -397,9 +401,10 @@ nsFaviconService::SetAndLoadFaviconForPa
+ // nsFaviconService::DoSetAndLoadFaviconForPage
+ 
+ nsresult
+ nsFaviconService::DoSetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
+-                                             PRBool aForceReload)
++                                             PRBool aForceReload,
++                                             PRTime aExpiration)
+ {
+   nsCOMPtr<nsIURI> page(aPage);
+ 
+   // don't load favicons when history is disabled
+@@ -521,9 +526,9 @@ nsFaviconService::DoSetAndLoadFaviconFor
+   rv = ioservice->NewChannelFromURI(aFavicon, getter_AddRefs(channel));
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   nsCOMPtr<nsIStreamListener> listener =
+-    new FaviconLoadListener(this, page, aFavicon, channel);
++    new FaviconLoadListener(this, page, aFavicon, channel, aExpiration);
+   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+   nsCOMPtr<nsIInterfaceRequestor> listenerRequestor =
+     do_QueryInterface(listener, &rv);
+   NS_ENSURE_SUCCESS(rv, rv);
+@@ -806,13 +811,14 @@ NS_IMPL_ISUPPORTS4(FaviconLoadListener,
+ // FaviconLoadListener::FaviconLoadListener
+ 
+ FaviconLoadListener::FaviconLoadListener(nsFaviconService* aFaviconService,
+                                          nsIURI* aPageURI, nsIURI* aFaviconURI,
+-                                         nsIChannel* aChannel) :
++                                         nsIChannel* aChannel, PRTime aExpiration) :
+   mFaviconService(aFaviconService),
+   mChannel(aChannel),
+   mPageURI(aPageURI),
+-  mFaviconURI(aFaviconURI)
++  mFaviconURI(aFaviconURI),
++  mExpiration(aExpiration)
+ {
+ }
+ 
+ 
+@@ -887,28 +893,30 @@ FaviconLoadListener::OnStopRequest(nsIRe
+     mFaviconService->AddFailedFavicon(mFaviconURI);
+     return NS_OK;
+   }
+ 
+-  // Expire this favicon in one day. An old version of this actually extracted
+-  // the expiration time from the cache. But what if people (especially web
+-  // developers) get a bad favicon or change it? The problem is that we're not
+-  // aware when the icon has been reloaded in the cache or cleared. This way
+-  // we'll always pick up any changes in the cache after a day. In most cases
+-  // re-set favicons will come from the cache anyway and reloading them is not
+-  // very expensive.
+-  PRTime expiration = PR_Now() +
+-                      (PRInt64)(24 * 60 * 60) * (PRInt64)PR_USEC_PER_SEC;
++  if (!mExpiration) {
++    // Expire this favicon in one day. An old version of this actually extracted
++    // the expiration time from the cache. But what if people (especially web
++    // developers) get a bad favicon or change it? The problem is that we're not
++    // aware when the icon has been reloaded in the cache or cleared. This way
++    // we'll always pick up any changes in the cache after a day. In most cases
++    // re-set favicons will come from the cache anyway and reloading them is not
++    // very expensive.
++    mExpiration = PR_Now() +
++                  (PRInt64)(24 * 60 * 60) * (PRInt64)PR_USEC_PER_SEC;
++  }
+ 
+   // save the favicon data
+   rv = mFaviconService->SetFaviconData(mFaviconURI,
+                reinterpret_cast<PRUint8*>(const_cast<char*>(mData.get())),
+-               mData.Length(), mimeType, expiration);
++               mData.Length(), mimeType, mExpiration);
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   // set the favicon for the page
+   PRBool hasData;
+   rv = mFaviconService->SetFaviconUrlForPageInternal(mPageURI, mFaviconURI,
+-                                                     &hasData, &expiration);
++                                                     &hasData, &mExpiration);
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   mFaviconService->SendFaviconNotifications(mPageURI, mFaviconURI);
+   mFaviconService->UpdateBookmarkRedirectFavicon(mPageURI, mFaviconURI);
+Index: toolkit/components/places/src/nsFaviconService.h
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.h,v
+retrieving revision 1.7
+diff -p -u -4 -r1.7 nsFaviconService.h
+--- toolkit/components/places/src/nsFaviconService.h	5 Jun 2007 23:18:47 -0000	1.7
++++ toolkit/components/places/src/nsFaviconService.h	22 Nov 2007 02:20:04 -0000
+@@ -80,9 +80,9 @@ public:
+   }
+ 
+   // internal version called by history when done lazily
+   nsresult DoSetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
+-                                      PRBool aForceReload);
++                                      PRBool aForceReload, PRTime aExpiration);
+ 
+   // addition to API for strings to prevent excessive parsing of URIs
+   nsresult GetFaviconLinkForIconString(const nsCString& aIcon, nsIURI** aOutput);
+   void GetFaviconSpecForIconString(const nsCString& aIcon, nsACString& aOutput);
+Index: toolkit/components/places/src/nsNavHistory.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.cpp,v
+retrieving revision 1.196
+diff -p -u -4 -r1.196 nsNavHistory.cpp
+--- toolkit/components/places/src/nsNavHistory.cpp	20 Nov 2007 23:45:34 -0000	1.196
++++ toolkit/components/places/src/nsNavHistory.cpp	22 Nov 2007 02:20:04 -0000
+@@ -438,20 +438,20 @@ nsNavHistory::BackupDBFile()
+   // move the database file to a uniquely named backup
+   nsCOMPtr<nsIFile> profDir;
+   nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
+                               getter_AddRefs(profDir));
+-  
++
+   nsCOMPtr<nsIFile> corruptBackup;
+   rv = profDir->Clone(getter_AddRefs(corruptBackup));
+   NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+   rv = corruptBackup->Append(DB_CORRUPT_FILENAME);
+   NS_ENSURE_SUCCESS(rv, rv);
+   rv = corruptBackup->CreateUnique(nsIFile::NORMAL_FILE_TYPE, 0600);
+   NS_ENSURE_SUCCESS(rv, rv);
+   return mDBFile->MoveTo(profDir, DB_CORRUPT_FILENAME);
+ }
+-  
++
+ // nsNavHistory::InitDBFile
+ nsresult
+ nsNavHistory::InitDBFile(PRBool aForceInit)
+ {
+@@ -463,9 +463,9 @@ nsNavHistory::InitDBFile(PRBool aForceIn
+   rv = profDir->Clone(getter_AddRefs(mDBFile));
+   NS_ENSURE_SUCCESS(rv, rv);
+   rv = mDBFile->Append(DB_FILENAME);
+   NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+   // if forcing, backup and remove the old file
+   if (aForceInit) {
+     rv = BackupDBFile();
+     NS_ENSURE_SUCCESS(rv, rv);
+@@ -474,29 +474,29 @@ nsNavHistory::InitDBFile(PRBool aForceIn
+   // file exists?
+   PRBool dbExists;
+   rv = mDBFile->Exists(&dbExists);
+   NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+   // open the database
+   mDBService = do_GetService(MOZ_STORAGE_SERVICE_CONTRACTID, &rv);
+   NS_ENSURE_SUCCESS(rv, rv);
+   rv = mDBService->OpenDatabase(mDBFile, getter_AddRefs(mDBConn));
+   if (rv == NS_ERROR_FILE_CORRUPTED) {
+     dbExists = PR_FALSE;
+-  
++
+     // backup file
+     rv = BackupDBFile();
+     NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+     // create new db file, and try to open again
+     rv = profDir->Clone(getter_AddRefs(mDBFile));
+     NS_ENSURE_SUCCESS(rv, rv);
+     rv = mDBFile->Append(DB_FILENAME);
+     NS_ENSURE_SUCCESS(rv, rv);
+     rv = mDBService->OpenDatabase(mDBFile, getter_AddRefs(mDBConn));
+   }
+   NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+   // if the db didn't previously exist, or was corrupted, re-import bookmarks.
+   if (!dbExists) {
+     nsCOMPtr<nsIPrefBranch> prefs(do_GetService("@mozilla.org/preferences-service;1"));
+     if (prefs) {
+@@ -565,9 +565,9 @@ nsNavHistory::InitDB(PRBool *aDoImport)
+   // Get the places schema version, which we store in the user_version PRAGMA
+   PRInt32 DBSchemaVersion;
+   rv = mDBConn->GetSchemaVersion(&DBSchemaVersion);
+   NS_ENSURE_SUCCESS(rv, rv);
+-   
++
+   if (PLACES_SCHEMA_VERSION != DBSchemaVersion) {
+     // Migration How-to:
+     //
+     // 1. increment PLACES_SCHEMA_VERSION.
+@@ -579,9 +579,9 @@ nsNavHistory::InitDB(PRBool *aDoImport)
+     // blow away your sqlite file. Subsequent up/downgrades have backwards and
+     // forward migration code.
+     //
+     // XXX Backup places.sqlite to places-{version}.sqlite when doing db migration?
+-    
++
+     if (DBSchemaVersion < PLACES_SCHEMA_VERSION) {
+       // Upgrading
+ 
+       // Migrate anno tables up to V3
+@@ -606,9 +606,9 @@ nsNavHistory::InitDB(PRBool *aDoImport)
+ 
+     } else {
+       // Downgrading
+ 
+-      // XXX Need to prompt user or otherwise notify of 
++      // XXX Need to prompt user or otherwise notify of
+       // potential dataloss when downgrading.
+ 
+       // XXX Downgrades from >V6 must add migration code here.
+ 
+@@ -715,9 +715,9 @@ nsNavHistory::InitDB(PRBool *aDoImport)
+         "CREATE INDEX moz_historyvisits_pageindex ON moz_historyvisits (place_id)"));
+     NS_ENSURE_SUCCESS(rv, rv);
+ 
+     // This makes a big difference in startup time for large profiles because of
+-    // finding bookmark redirects using the referring page. 
++    // finding bookmark redirects using the referring page.
+     rv = mDBConn->ExecuteSimpleSQL(NS_LITERAL_CSTRING(
+         "CREATE INDEX moz_historyvisits_fromindex ON moz_historyvisits (from_visit)"));
+     NS_ENSURE_SUCCESS(rv, rv);
+ 
+@@ -903,11 +903,11 @@ nsNavHistory::InitStatements()
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   // mFoldersWithAnnotationQuery
+   rv = mDBConn->CreateStatement(NS_LITERAL_CSTRING(
+-    "SELECT annos.item_id, annos.content FROM moz_anno_attributes attrs " 
++    "SELECT annos.item_id, annos.content FROM moz_anno_attributes attrs "
+     "JOIN moz_items_annos annos ON attrs.id = annos.anno_attribute_id "
+-    "WHERE attrs.name = ?1"), 
++    "WHERE attrs.name = ?1"),
+     getter_AddRefs(mFoldersWithAnnotationQuery));
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   return NS_OK;
+@@ -921,9 +921,9 @@ nsNavHistory::InitStatements()
+ //    NOTE: This may cause data-loss if downgrading!
+ //    Only use this for migration if you're sure that bookmarks.html
+ //    and the target version support all bookmarks fields.
+ nsresult
+-nsNavHistory::ForceMigrateBookmarksDB(mozIStorageConnection* aDBConn) 
++nsNavHistory::ForceMigrateBookmarksDB(mozIStorageConnection* aDBConn)
+ {
+   // drop bookmarks tables
+   nsresult rv = aDBConn->ExecuteSimpleSQL(NS_LITERAL_CSTRING("DROP TABLE IF EXISTS moz_bookmarks"));
+   NS_ENSURE_SUCCESS(rv, rv);
+@@ -947,9 +947,9 @@ nsNavHistory::ForceMigrateBookmarksDB(mo
+ }
+ 
+ // nsNavHistory::MigrateV3Up
+ nsresult
+-nsNavHistory::MigrateV3Up(mozIStorageConnection* aDBConn) 
++nsNavHistory::MigrateV3Up(mozIStorageConnection* aDBConn)
+ {
+   // if type col is already there, then a partial update occurred.
+   // return, making no changes, and allowing db version to be updated.
+   nsCOMPtr<mozIStorageStatement> statement;
+@@ -973,9 +973,9 @@ nsNavHistory::MigrateV3Up(mozIStorageCon
+ }
+ 
+ // nsNavHistory::MigrateV6Up
+ nsresult
+-nsNavHistory::MigrateV6Up(mozIStorageConnection* aDBConn) 
++nsNavHistory::MigrateV6Up(mozIStorageConnection* aDBConn)
+ {
+   // if dateAdded & lastModified cols are already there, then a partial update occurred.
+   // return, making no changes, and allowing db version to be updated.
+   nsCOMPtr<mozIStorageStatement> statement;
+@@ -1393,9 +1393,9 @@ nsNavHistory::LoadPrefs()
+   mPrefBranch->GetIntPref(PREF_BROWSER_HISTORY_EXPIRE_DAYS, &mExpireDays);
+   if (NS_FAILED(mPrefBranch->GetIntPref(PREF_BROWSER_HISTORY_EXPIRE_VISITS,
+                                         &mExpireVisits)))
+     mExpireVisits = EXPIRATION_CAP_VISITS;
+-  
++
+   PRBool oldCompleteOnlyTyped = mAutoCompleteOnlyTyped;
+   mPrefBranch->GetBoolPref(PREF_AUTOCOMPLETE_ONLY_TYPED,
+                            &mAutoCompleteOnlyTyped);
+   if (oldCompleteOnlyTyped != mAutoCompleteOnlyTyped) {
+@@ -1542,9 +1542,9 @@ nsNavHistory::GetUpdateRequirements(cons
+         query->Uri() != nsnull)
+       nonTimeBasedItems = PR_TRUE;
+   }
+ 
+-  // Whenever there is a maximum number of results, 
++  // Whenever there is a maximum number of results,
+   // and we are not a bookmark query we must requery. This
+   // is because we can't generally know if any given addition/change causes
+   // the item to be in the top N items in the database.
+   if (aOptions->MaxResults() > 0)
+@@ -2123,9 +2123,9 @@ PRBool IsHistoryMenuQuery(const nsCOMArr
+   if (aQueries.Count() != 1)
+     return PR_FALSE;
+ 
+   nsNavHistoryQuery *aQuery = aQueries[0];
+- 
++
+   if (aOptions->QueryType() != nsINavHistoryQueryOptions::QUERY_TYPE_HISTORY)
+     return PR_FALSE;
+ 
+   if (aOptions->ResultType() != nsINavHistoryQueryOptions::RESULTS_AS_URI)
+@@ -2150,27 +2150,27 @@ PRBool IsHistoryMenuQuery(const nsCOMArr
+ 
+   if (aQuery->MinVisits() != -1 || aQuery->MaxVisits() != -1)
+     return PR_FALSE;
+ 
+-  if (aQuery->BeginTime() || aQuery->BeginTimeReference()) 
++  if (aQuery->BeginTime() || aQuery->BeginTimeReference())
+     return PR_FALSE;
+ 
+-  if (aQuery->EndTime() || aQuery->EndTimeReference()) 
++  if (aQuery->EndTime() || aQuery->EndTimeReference())
+     return PR_FALSE;
+ 
+-  if (!aQuery->SearchTerms().IsEmpty()) 
++  if (!aQuery->SearchTerms().IsEmpty())
+     return PR_FALSE;
+ 
+-  if (aQuery->OnlyBookmarked()) 
++  if (aQuery->OnlyBookmarked())
+     return PR_FALSE;
+ 
+   if (aQuery->DomainIsHost() || !aQuery->Domain().IsEmpty())
+     return PR_FALSE;
+ 
+-  if (aQuery->AnnotationIsNot() || !aQuery->Annotation().IsEmpty()) 
++  if (aQuery->AnnotationIsNot() || !aQuery->Annotation().IsEmpty())
+     return PR_FALSE;
+ 
+-  if (aQuery->UriIsPrefix() || aQuery->Uri()) 
++  if (aQuery->UriIsPrefix() || aQuery->Uri())
+     return PR_FALSE;
+ 
+   if (aQuery->Folders().Length() > 0)
+     return PR_FALSE;
+@@ -2178,9 +2178,9 @@ PRBool IsHistoryMenuQuery(const nsCOMArr
+   return PR_TRUE;
+ }
+ 
+ static
+-PRBool NeedToFilterResultSet(const nsCOMArray<nsNavHistoryQuery>& aQueries, 
++PRBool NeedToFilterResultSet(const nsCOMArray<nsNavHistoryQuery>& aQueries,
+                              nsNavHistoryQueryOptions *aOptions)
+ {
+   // optimize the case where we just want a list with no grouping: this
+   // directly fills in the results and we avoid a copy of the whole list
+@@ -2213,18 +2213,18 @@ PRBool NeedToFilterResultSet(const nsCOM
+ }
+ 
+ nsresult
+ nsNavHistory::ConstructQueryString(const nsCOMArray<nsNavHistoryQuery>& aQueries,
+-                                   nsNavHistoryQueryOptions *aOptions, 
++                                   nsNavHistoryQueryOptions *aOptions,
+                                    nsCString &queryString)
+ {
+   PRInt32 sortingMode = aOptions->SortingMode();
+   if (sortingMode < 0 ||
+       sortingMode > nsINavHistoryQueryOptions::SORT_BY_ANNOTATION_DESCENDING) {
+     return NS_ERROR_INVALID_ARG;
+   }
+ 
+-  // for the very special query for the history menu 
++  // for the very special query for the history menu
+   // we generate a super-optimized SQL query
+   if (IsHistoryMenuQuery(aQueries, aOptions)) {
+     // visit_type <> 4 == TRANSITION_EMBED
+     // visit_type <> 0 == undefined (see bug #375777 for details)
+@@ -2261,17 +2261,17 @@ nsNavHistory::ConstructQueryString(const
+     // resulting in a lot of these entries. This filters those visits out.
+     // 4 == TRANSITION_EMBED
+     // 0 == undefined (see bug #375777 for details)
+     commonConditions.AssignLiteral(
+-      "h.hidden <> 1 AND v.visit_type <> 4 AND v.visit_type <> 0 "); 
++      "h.hidden <> 1 AND v.visit_type <> 4 AND v.visit_type <> 0 ");
+   }
+ 
+   // Query string: Output parameters should be in order of kGetInfoIndex_*
+   // WATCH OUT: nsNavBookmarks::Init also creates some statements that share
+   // these same indices for passing to RowToResult. If you add something to
+   // this, you also need to update the bookmark statements to keep them in
+   // sync!
+-  
++
+   nsCAutoString groupBy;
+   if (asVisits) {
+     // if we want visits, this is easy, just combine all possible matches
+     // between the history and visits table and do our query.
+@@ -2307,9 +2307,9 @@ nsNavHistory::ConstructQueryString(const
+         "LEFT OUTER JOIN moz_historyvisits v ON b.fk = v.place_id "
+         "LEFT OUTER JOIN moz_favicons f ON h.favicon_id = f.id ");
+       groupBy = NS_LITERAL_CSTRING(" GROUP BY b.id");
+     } else {
+-      // XXX: implement support for nsINavHistoryQueryOptions::QUERY_TYPE_UNIFIED 
++      // XXX: implement support for nsINavHistoryQueryOptions::QUERY_TYPE_UNIFIED
+       return NS_ERROR_NOT_IMPLEMENTED;
+     }
+   }
+ 
+@@ -2496,9 +2496,9 @@ nsNavHistory::GetQueryResults(nsNavHisto
+     }
+   } else {
+     rv = ResultsAsList(statement, aOptions, aResults);
+     NS_ENSURE_SUCCESS(rv, rv);
+-  } 
++  }
+ 
+   return NS_OK;
+ }
+ 
+@@ -2552,9 +2552,9 @@ nsNavHistory::EndUpdateBatch()
+ }
+ 
+ NS_IMETHODIMP
+ nsNavHistory::RunInBatchMode(nsINavHistoryBatchCallback* aCallback,
+-                             nsISupports* aUserData) 
++                             nsISupports* aUserData)
+ {
+   NS_ENSURE_STATE(mLock);
+   NS_ENSURE_ARG_POINTER(aCallback);
+ 
+@@ -2815,9 +2815,9 @@ nsNavHistory::RemovePagesFromHost(const 
+ 
+   PRBool hasMore = PR_FALSE;
+   while ((statement->ExecuteStep(&hasMore) == NS_OK) && hasMore) {
+     nsCAutoString thisURIString;
+-    if (NS_FAILED(statement->GetUTF8String(1, thisURIString)) || 
++    if (NS_FAILED(statement->GetUTF8String(1, thisURIString)) ||
+         thisURIString.IsEmpty())
+       continue; // no URI
+     if (!deletedURIs.AppendCString(thisURIString))
+       return NS_ERROR_OUT_OF_MEMORY;
+@@ -2854,14 +2854,14 @@ nsNavHistory::RemovePagesFromHost(const 
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   // finally, delete the actual moz_places records that are
+   // - not bookmarked
+-  // - do not have EXPIRE_NEVER annotations 
++  // - do not have EXPIRE_NEVER annotations
+   rv = mDBConn->ExecuteSimpleSQL(NS_LITERAL_CSTRING(
+     "DELETE FROM moz_places WHERE id IN (") + deletedPlaceIds +
+       NS_LITERAL_CSTRING(") AND id NOT IN (") + deletedPlaceIdsBookmarked +
+       NS_LITERAL_CSTRING(") AND id NOT IN (") + deletedPlaceIdsWithAnno +
+-      NS_LITERAL_CSTRING(")")); 
++      NS_LITERAL_CSTRING(")"));
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   transaction.Commit();
+ 
+@@ -2937,9 +2937,9 @@ nsNavHistory::HidePage(nsIURI *aURI)
+ 
+   // don't need to do anything if we've never heard of this page
+   if (!alreadyVisited)
+     return NS_OK;
+- 
++
+   // modify the existing page if necessary
+ 
+   PRInt32 oldHiddenState = 0;
+   rv = dbSelectStatement->GetInt32(1, &oldHiddenState);
+@@ -3197,9 +3197,9 @@ nsNavHistory::AddVisitChain(nsIURI* aURI
+     // has a bookmark selected. We don't handle drag-and-drop operations.
+     // note:  the link may have also come from a new window (set to load a homepage)
+     // or on start up (if we've set to load the home page or restore tabs)
+     // we treat these as TRANSITION_LINK (if they are top level) or
+-    // TRANSITION_EMBED (if not top level).  We don't want to to add visits to 
++    // TRANSITION_EMBED (if not top level).  We don't want to to add visits to
+     // history without a transition type.
+     if (CheckIsRecentEvent(&mRecentTyped, spec))
+       transitionType = nsINavHistoryService::TRANSITION_TYPED;
+     else if (CheckIsRecentEvent(&mRecentBookmark, spec))
+@@ -3384,9 +3384,9 @@ nsNavHistory::AddDocumentRedirect(nsICha
+ 
+   return NS_OK;
+ }
+ 
+-nsresult 
++nsresult
+ nsNavHistory::OnIdle()
+ {
+   nsresult rv;
+   nsCOMPtr<nsIIdleService> idleService =
+@@ -3511,16 +3511,18 @@ nsNavHistory::Observe(nsISupports *aSubj
+ // nsNavHistory::AddLazyLoadFaviconMessage
+ 
+ nsresult
+ nsNavHistory::AddLazyLoadFaviconMessage(nsIURI* aPage, nsIURI* aFavicon,
+-                                        PRBool aForceReload)
++                                        PRBool aForceReload,
++                                        PRTime aExpiration)
+ {
+   LazyMessage message;
+   nsresult rv = message.Init(LazyMessage::Type_Favicon, aPage);
+   NS_ENSURE_SUCCESS(rv, rv);
+   rv = aFavicon->Clone(getter_AddRefs(message.favicon));
+   NS_ENSURE_SUCCESS(rv, rv);
+   message.alwaysLoadFavicon = aForceReload;
++  message.expirationTime = aExpiration;
+   return AddLazyMessage(message);
+ }
+ 
+ 
+@@ -3606,9 +3608,10 @@ nsNavHistory::CommitLazyMessages()
+           nsCString spec;
+           message.uri->GetSpec(spec);
+           faviconService->DoSetAndLoadFaviconForPage(message.uri,
+                                                      message.favicon,
+-                                                     message.alwaysLoadFavicon);
++                                                     message.alwaysLoadFavicon,
++                                                     message.expirationTime);
+         }
+         break;
+       }
+       default:
+@@ -3678,9 +3681,9 @@ nsNavHistory::QueryToSelectClause(nsNavH
+     *aClause += NS_LITERAL_CSTRING("h.visit_count <= ") + paramString;
+     (*aParamCount) ++;
+   }
+ 
+-  
++
+   if (aOptions->QueryType() != nsINavHistoryQueryOptions::QUERY_TYPE_BOOKMARKS &&
+       aQuery->OnlyBookmarked()) {
+     // only bookmarked, has no affect on bookmarks-only queries
+     if (!aClause->IsEmpty())
+@@ -3970,9 +3973,9 @@ const PRInt64 UNDEFINED_URN_VALUE = -1;
+ // Create a urn (like
+ // urn:places-persist:place:group=0&group=1&sort=1&type=1,,%28local%20files%29)
+ // to be used to persist the open state of this container in localstore.rdf
+ nsresult
+-CreatePlacesPersistURN(nsNavHistoryQueryResultNode *aResultNode, 
++CreatePlacesPersistURN(nsNavHistoryQueryResultNode *aResultNode,
+                       PRInt64 aValue, const nsCString& aTitle, nsCString& aURN)
+ {
+   nsCAutoString uri;
+   nsresult rv = aResultNode->GetUri(uri);
+@@ -4014,23 +4017,23 @@ nsNavHistory::GroupByDay(nsNavHistoryQue
+     dates[i] = nsnull;
+ 
+   nsCAutoString dateNames[numDays];
+   // special case: Today
+-  GetStringFromName(NS_LITERAL_STRING("finduri-AgeInDays-is-0").get(),  
++  GetStringFromName(NS_LITERAL_STRING("finduri-AgeInDays-is-0").get(),
+                     dateNames[0]);
+-  // special case: Yesterday 
+-  GetStringFromName(NS_LITERAL_STRING("finduri-AgeInDays-is-1").get(),  
++  // special case: Yesterday
++  GetStringFromName(NS_LITERAL_STRING("finduri-AgeInDays-is-1").get(),
+                     dateNames[1]);
+   for (PRInt32 curDay = 2; curDay <= numDays-2; curDay++) {
+     // common case:  "<curDay> days ago"
+     GetAgeInDaysString(curDay, NS_LITERAL_STRING("finduri-AgeInDays-is").get(),
+                        dateNames[curDay]);
+   }
+   // special case:  "Older than <numDays-2> days"
+-  GetAgeInDaysString(numDays-2, 
++  GetAgeInDaysString(numDays-2,
+                      NS_LITERAL_STRING("finduri-AgeInDays-isgreater").get(),
+                      dateNames[numDays-1]);
+-    
++
+   PRTime normalizedNow = NormalizeTimeRelativeToday(PR_Now());
+ 
+   for (PRInt32 i = 0; i < aSource.Count(); i ++) {
+     if (!aSource[i]->IsURI()) {
+@@ -4051,9 +4054,9 @@ nsNavHistory::GroupByDay(nsNavHistoryQue
+       nsresult rv = CreatePlacesPersistURN(aResultNode, ageInDays, EmptyCString(), urn);
+       NS_ENSURE_SUCCESS(rv, rv);
+ 
+       // need to create an entry for this date
+-      dates[ageInDays] = new nsNavHistoryContainerResultNode(urn, 
++      dates[ageInDays] = new nsNavHistoryContainerResultNode(urn,
+           curDateName,
+           EmptyCString(),
+           nsNavHistoryResultNode::RESULT_TYPE_DAY,
+           PR_TRUE,
+@@ -4141,9 +4144,9 @@ nsNavHistory::GroupByHost(nsNavHistoryQu
+         return NS_ERROR_OUT_OF_MEMORY;
+ 
+       if (! hosts.Put(curHostName, curTopGroup))
+         return NS_ERROR_OUT_OF_MEMORY;
+-   
++
+       rv = aDest->AppendObject(curTopGroup);
+       NS_ENSURE_SUCCESS(rv, rv);
+     }
+     if (! curTopGroup->mChildren.AppendObject(aSource[i]))
+@@ -4155,14 +4158,14 @@ nsNavHistory::GroupByHost(nsNavHistoryQu
+ PRInt64
+ nsNavHistory::GetTagsFolder()
+ {
+   // cache our tags folder
+-  // note, we can't do this in nsNavHistory::Init(), 
++  // note, we can't do this in nsNavHistory::Init(),
+   // as getting the bookmarks service would initialize it.
+   if (mTagsFolder == -1) {
+     nsNavBookmarks* bookmarks = nsNavBookmarks::GetBookmarksService();
+     NS_ENSURE_TRUE(bookmarks, -1);
+-    
++
+     nsresult rv = bookmarks->GetTagsFolder(&mTagsFolder);
+     NS_ENSURE_SUCCESS(rv, -1);
+   }
+   return mTagsFolder;
+@@ -4205,9 +4208,9 @@ nsNavHistory::GroupByFolder(nsNavHistory
+       rv = CreatePlacesPersistURN(aResultNode, parentId, NS_ConvertUTF16toUTF8(title), urn);
+       NS_ENSURE_SUCCESS(rv, rv);
+ 
+       // create parent node
+-      folderNode = new nsNavHistoryContainerResultNode(urn, 
++      folderNode = new nsNavHistoryContainerResultNode(urn,
+         NS_ConvertUTF16toUTF8(title),
+         EmptyCString(),
+         nsNavHistoryResultNode::RESULT_TYPE_FOLDER,
+         PR_TRUE, EmptyCString(), aResultNode->mOptions);
+@@ -4272,9 +4275,9 @@ nsNavHistory::URIHasTag(nsIURI* aURI, co
+ //   - tags
+ //   - limit count
+ //   - excludingLivemarkItems
+ //
+-// Note:  changes to filtering in FilterResultSet() 
++// Note:  changes to filtering in FilterResultSet()
+ // may require changes to NeedToFilterResultSet()
+ 
+ nsresult
+ nsNavHistory::FilterResultSet(nsNavHistoryQueryResultNode* aQueryNode,
+@@ -4321,10 +4324,10 @@ nsNavHistory::FilterResultSet(nsNavHisto
+   }
+ 
+   if (!parentAnnotationToExclude.IsEmpty()) {
+     // find all the folders that have the annotation we are excluding
+-    // and save off their item ids. when doing filtering, 
+-    // if a result's parent item id matches a saved item id, 
++    // and save off their item ids. when doing filtering,
++    // if a result's parent item id matches a saved item id,
+     // the result should be excluded
+     mozStorageStatementScoper scope(mFoldersWithAnnotationQuery);
+ 
+     rv = mFoldersWithAnnotationQuery->BindUTF8StringParameter(0, parentAnnotationToExclude);
+@@ -4352,9 +4355,9 @@ nsNavHistory::FilterResultSet(nsNavHisto
+       rv = bookmarks->GetFolderIdForItem(aSet[nodeIndex]->mItemId, &parentId);
+       NS_ENSURE_SUCCESS(rv, rv);
+     }
+ 
+-    // if we are excluding items by parent annotation, 
++    // if we are excluding items by parent annotation,
+     // exclude items who's parent is a folder with that annotation
+     if (!parentAnnotationToExclude.IsEmpty() && (parentFoldersToExclude.IndexOf(parentId) != -1))
+       continue;
+ 
+@@ -4436,14 +4439,14 @@ nsNavHistory::FilterResultSet(nsNavHisto
+       appendNode = PR_TRUE;
+     }
+     if (appendNode)
+       aFiltered->AppendObject(aSet[nodeIndex]);
+-      
++
+     // stop once we've seen max results
+     // unless our options apply to containers, in which case we need to
+     // handle max results after sorting, see FillChildren()
+-    if (!aOptions->ApplyOptionsToContainers() && 
+-        aOptions->MaxResults() > 0 && 
++    if (!aOptions->ApplyOptionsToContainers() &&
++        aOptions->MaxResults() > 0 &&
+         aFiltered->Count() >= aOptions->MaxResults())
+       break;
+   }
+ 
+@@ -4832,9 +4835,9 @@ nsNavHistory::GetAgeInDaysString(PRInt32
+   nsAutoString intString;
+   intString.AppendInt(aInt);
+   const PRUnichar* strings[1] = { intString.get() };
+   nsXPIDLString value;
+-  nsresult rv = mBundle->FormatStringFromName(aName, strings, 
++  nsresult rv = mBundle->FormatStringFromName(aName, strings,
+                                               1, getter_Copies(value));
+   if (NS_SUCCEEDED(rv))
+     CopyUTF16toUTF8(value, aResult);
+   else
+@@ -5003,9 +5006,9 @@ nsNavHistory::RemoveDuplicateURIs()
+         "SET place_id = ?1 "
+         "WHERE place_id IN (SELECT id FROM moz_places WHERE id <> ?1 AND url = ?2)"),
+       getter_AddRefs(annoStatement));
+   NS_ENSURE_SUCCESS(rv, rv);
+-  
++
+   // this query deletes all duplicate uris except the choosen id
+   nsCOMPtr<mozIStorageStatement> deleteStatement;
+   rv = mDBConn->CreateStatement(
+       NS_LITERAL_CSTRING("DELETE FROM moz_places WHERE url = ?1 AND id <> ?2"),
+@@ -5050,9 +5053,9 @@ nsNavHistory::RemoveDuplicateURIs()
+     rv = annoStatement->BindUTF8StringParameter(1, url);
+     NS_ENSURE_SUCCESS(rv, rv);
+     rv = annoStatement->Execute();
+     NS_ENSURE_SUCCESS(rv, rv);
+-    
++
+     // remove duplicate uris from moz_places
+     rv = deleteStatement->BindUTF8StringParameter(0, url);
+     NS_ENSURE_SUCCESS(rv, rv);
+     rv = deleteStatement->BindInt64Parameter(1, id);
+Index: toolkit/components/places/src/nsNavHistory.h
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.h,v
+retrieving revision 1.113
+diff -p -u -4 -r1.113 nsNavHistory.h
+--- toolkit/components/places/src/nsNavHistory.h	21 Nov 2007 21:41:17 -0000	1.113
++++ toolkit/components/places/src/nsNavHistory.h	22 Nov 2007 02:20:04 -0000
+@@ -156,9 +156,9 @@ public:
+    * Adds a lazy message for adding a favicon. Used by the favicon service so
+    * that favicons are handled lazily just like page adds.
+    */
+   nsresult AddLazyLoadFaviconMessage(nsIURI* aPage, nsIURI* aFavicon,
+-                                     PRBool aForceReload);
++                                     PRBool aForceReload, PRTime aExpiration);
+ #endif
+ 
+   /**
+    * Returns the database ID for the given URI, or 0 if not found and autoCreate
+@@ -440,8 +440,9 @@ protected:
+       isRedirect = PR_FALSE;
+       isToplevel = PR_FALSE;
+       time = 0;
+       alwaysLoadFavicon = PR_FALSE;
++      expirationTime = 0;
+     }
+ 
+     // call this with common parms to initialize. Caller is responsible for
+     // setting other elements manually depending on type.
+@@ -470,8 +471,9 @@ protected:
+ 
+     // valid when type == LAZY_FAVICON
+     nsCOMPtr<nsIURI> favicon;
+     PRBool alwaysLoadFavicon;
++    PRTime expirationTime;
+   };
+   nsTArray<LazyMessage> mLazyMessages;
+   nsCOMPtr<nsITimer> mLazyTimer;
+   PRBool mLazyTimerSet;
+@@ -481,9 +483,9 @@ protected:
+   static void LazyTimerCallback(nsITimer* aTimer, void* aClosure);
+   void CommitLazyMessages();
+ #endif
+ 
+-  nsresult ConstructQueryString(const nsCOMArray<nsNavHistoryQuery>& aQueries, 
++  nsresult ConstructQueryString(const nsCOMArray<nsNavHistoryQuery>& aQueries,
+                                 nsNavHistoryQueryOptions *aOptions,
+                                 nsCString &queryString);
+ 
+   nsresult QueryToSelectClause(nsNavHistoryQuery* aQuery,
+@@ -501,9 +503,9 @@ protected:
+   nsresult ResultsAsList(mozIStorageStatement* statement,
+                          nsNavHistoryQueryOptions* aOptions,
+                          nsCOMArray<nsNavHistoryResultNode>* aResults);
+ 
+-  void GetAgeInDaysString(PRInt32 aInt, const PRUnichar *aName, 
++  void GetAgeInDaysString(PRInt32 aInt, const PRUnichar *aName,
+                           nsACString& aResult);
+ 
+   void GetStringFromName(const PRUnichar *aName, nsACString& aResult);
+ 
