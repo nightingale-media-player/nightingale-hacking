@@ -786,12 +786,12 @@
 
   if (!columnMap.length) {
     columnMap =
-      this._parseColumnSpec(SBProperties.ordinal + " 55 " +
-                            SBProperties.trackName + " 350 " +
-                            SBProperties.duration + " 50 " +
-                            SBProperties.artistName + " 222 a " +
-                            SBProperties.albumName + " 222 " +
-                            SBProperties.genre + " 70");
+      this._parseColumnSpec(SBProperties.trackName + " 265 " +
+                            SBProperties.duration + " 43 " +
+                            SBProperties.artistName + " 177 a " +
+                            SBProperties.albumName + " 159 " +
+                            SBProperties.genre + " 53 " +
+                            SBProperties.rating + " 80");
     this._columnSpecOrigin = 7;
   }
 
@@ -800,6 +800,42 @@
   }
 
   this._removeAllChildren(this._treecols);
+
+
+  // If the columns were initialized from some defaults..
+  if ( this._columnSpecOrigin != 1 && 
+       this._columnSpecOrigin != 2 &&
+       this._columnSpecOrigin != 6 )
+  {
+
+    // Make sure we save the spec for this playlist.
+    // If we don't, then this playlist will change if the default
+    // changes, and the user will be confused.
+    this._columnSpecIsDirty = true;
+    
+    // If this is a playlist inited from defaults, we may need
+    // to tweak the column spec a little
+    if ( !(medialist instanceof Components.interfaces.sbILibrary)) {
+
+      // All playlists should have an ordinal column
+      var hasOrdinal = columnMap.some(function(columnInfo) {
+           return columnInfo.property == SBProperties.ordinal;
+         });
+      
+      if (!hasOrdinal) {
+        columnMap.unshift({
+            property: SBProperties.ordinal,
+            sort: "ascending"
+          });
+      }
+      
+      // We probably do not want the sort hint from the default spec.
+      sortProperty = SBProperties.ordinal;
+      sortDirection = "ascending";
+    }
+  }
+
+
 
   // Get the list of columns from the property manager and add them to the
   // tree
@@ -847,25 +883,6 @@
         addedColumns++;
         ordinal += 2;
       }
-    }
-  }
-
-
-  // If the columns were initialized from some defaults..
-  if ( this._columnSpecOrigin != 1 && 
-       this._columnSpecOrigin != 2 &&
-       this._columnSpecOrigin != 6 )
-  {
-
-    // Make sure we save the spec for this playlist.
-    // If we don't, then this playlist will change if the default
-    // changes, and the user will be confused.
-    this._columnSpecIsDirty = true;
-    
-    // If this is not a library, then we probably do not want
-    // the sort hint from the default spec.
-    if ( !(medialist instanceof Components.interfaces.sbILibrary)) {
-      sortProperty = null;
     }
   }
 
@@ -1383,7 +1400,7 @@
       Application.prefs.setValue(pref, columnSpec);
     }
   }
-    
+         
   this._columnSpecIsDirty = false;
 ]]>
         </body>

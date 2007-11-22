@@ -113,12 +113,9 @@
                 "&chrome://songbird/locale/songbird.properties#device.download"
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
-#define SB_DOWNLOAD_COL_SPEC SB_PROPERTY_TRACKNAME " 235 "                     \
-                             SB_PROPERTY_ARTISTNAME " 152 "                    \
-                             SB_PROPERTY_ALBUMNAME " 152 "                     \
-                             SB_PROPERTY_CONTENTMIMETYPE " 50 "                \
-                             SB_PROPERTY_DOWNLOAD_DETAILS " 250 "              \
-                             SB_PROPERTY_DOWNLOADBUTTON
+#define SB_DOWNLOAD_COL_SPEC \
+  "http://songbirdnest.com/data/1.0#ordinal 25 http://songbirdnest.com/data/1.0#trackName 143 http://songbirdnest.com/data/1.0#artistName 115 http://songbirdnest.com/data/1.0#albumName 115 http://songbirdnest.com/data/1.0#contentMimeType 41 http://songbirdnest.com/data/1.0#downloadDetails 264 http://songbirdnest.com/data/1.0#downloadButton 73"
+                             
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"

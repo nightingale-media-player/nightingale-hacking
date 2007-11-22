@@ -95,7 +95,7 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
   "web"
 
 #define DEFAULT_COLUMNSPEC_WEB_LIBRARY \
-  "http://songbirdnest.com/data/1.0#ordinal 42 http://songbirdnest.com/data/1.0#trackName 228 http://songbirdnest.com/data/1.0#duration 49 http://songbirdnest.com/data/1.0#artistName 151 http://songbirdnest.com/data/1.0#originPageImage 53 http://songbirdnest.com/data/1.0#created 150 d http://songbirdnest.com/data/1.0#downloadButton 102"
+  "http://songbirdnest.com/data/1.0#trackName 264 http://songbirdnest.com/data/1.0#duration 56 http://songbirdnest.com/data/1.0#artistName 209 http://songbirdnest.com/data/1.0#originPageImage 44 http://songbirdnest.com/data/1.0#created 119 d http://songbirdnest.com/data/1.0#downloadButton 83"
 
 
 template <class T>
