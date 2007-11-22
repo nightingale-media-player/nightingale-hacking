@@ -100,7 +100,7 @@ var StorageFormatter = {
 
       scaled = bytes / Math.pow(BASE, magnitude);
       // Round the value to a single decimal point
-      scaled = scaled.toFixed(1);
+      scaled = Math.round(scaled * 10) / 10;
     }
 
     scaled += " " + this.shortUnits[gMagnitudes[magnitude]];
