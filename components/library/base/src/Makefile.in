@@ -75,6 +75,7 @@ endif
 DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
+                      $(srcdir)/sbStorageFormatter.jsm \
                       $(DYNAMIC_LIB) \
                       $(NULL)
 
