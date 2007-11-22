@@ -1658,12 +1658,14 @@ PlaylistPlayback.prototype = {
     }
 
     // Conditions for skip track:
-    //   1) haven't counted the track as played
-    //   2) playing for more than 2 seconds
-    //   3) playing for less than 15 seconds
-    if ( !this._hasIncPlayCount &&
+    //   1) We are not moving backward ( incr <= -1 )
+    //   2) haven't counted the track as played
+    //   3) playing for more than 2 seconds
+    //   4) playing for less than 20 seconds
+    if ( parseInt(incr) > -1 &&
+         !this._hasIncPlayCount &&
          (this._beenPlayingCount * LOOP_DURATION) > (2 * 1000) &&
-         (this._beenPlayingCount * LOOP_DURATION) < (15 * 1000) ) {
+         (this._beenPlayingCount * LOOP_DURATION) < (20 * 1000) ) {
       var count = this._playingItem.getProperty(SBProperties.skipCount);
       this._playingItem.setProperties(
         SBProperties.createArray([
