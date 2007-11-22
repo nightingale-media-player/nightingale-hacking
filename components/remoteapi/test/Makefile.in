@@ -42,6 +42,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotelibrary_page.html \
                  $(srcdir)/test_remotelibrary_getters.js \
                  $(srcdir)/test_remotelibrary_getters_page.html \
+                 $(srcdir)/test_remotelibrary_enumerator.js \
+                 $(srcdir)/test_remotelibrary_enumerator_page.html \
                  $(srcdir)/test_remotemediaitem.js \
                  $(srcdir)/test_remotemediaitem_page.html \
                  $(srcdir)/test_remotemedialist.js \

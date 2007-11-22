@@ -38,6 +38,7 @@ XPIDL_SRCS = \
              sbIRemoteSecurityEvent.idl \
              sbIRemoteWebPlaylist.idl \
              sbIRemotePlayerFactory.idl \
+             sbIScriptableFilterResult.idl \
              sbISecurityAggregator.idl \
              sbISecurityMixin.idl \
              $(NULL)

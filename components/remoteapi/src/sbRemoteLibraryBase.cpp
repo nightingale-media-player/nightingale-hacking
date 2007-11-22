@@ -26,7 +26,6 @@
 
 #include "sbRemoteLibraryBase.h"
 #include "sbRemotePlayer.h"
-#include "sbRemoteWrappingSimpleEnumerator.h"
 
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
@@ -41,11 +40,14 @@
 #include <nsIPrefService.h>
 #include <nsIPresShell.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIWindowWatcher.h>
 #include <sbILibrary.h>
+#include <sbILibraryConstraints.h>
 #include <sbILibraryManager.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIMetadataJobManager.h>
@@ -54,6 +56,7 @@
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
 
+#include <jsapi.h>
 #include <nsArrayEnumerator.h>
 #include <nsCOMArray.h>
 #include <nsEnumeratorUtils.h>
@@ -70,6 +73,9 @@
 #include "sbRemoteMediaList.h"
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteAPIUtils.h"
+#include "sbScriptableFilter.h"
+#include "sbScriptableFilterItems.h"
+#include "sbScriptableFunction.h"
 #include <sbStandardProperties.h>
 #include "sbURIChecker.h"
 
@@ -83,6 +89,7 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 #undef LOG
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
+#define TRACE(args) PR_LOG(gLibraryLog, PR_LOG_DEBUG, args)
 
 // Observer for the PlaylistReader that notifies the callback and optionally
 // launches a metadata job when the playlist is loaded.
@@ -252,16 +259,18 @@ struct sbRemoteLibraryScopeURLSet {
 };
 
 
-NS_IMPL_ISUPPORTS9( sbRemoteLibraryBase,
-                    nsISecurityCheckedComponent,
-                    sbISecurityAggregator,
-                    sbIRemoteMediaList,
-                    sbIMediaList,
-                    sbIWrappedMediaList,
-                    sbIWrappedMediaItem,
-                    sbIMediaItem,
-                    sbILibraryResource,
-                    sbIRemoteLibrary )
+NS_IMPL_ISUPPORTS11( sbRemoteLibraryBase,
+                     nsISecurityCheckedComponent,
+                     nsIXPCScriptable,
+                     sbISecurityAggregator,
+                     sbIRemoteMediaList,
+                     sbIMediaList,
+                     sbIWrappedMediaList,
+                     sbIWrappedMediaItem,
+                     sbIMediaItem,
+                     sbILibraryResource,
+                     sbIRemoteLibrary,
+                     sbIScriptableFilterResult )
 
 sbRemoteLibraryBase::sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer) :
   mShouldScan(PR_TRUE),
@@ -607,45 +616,10 @@ sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
-{
-  LOG(("sbRemoteLibraryBase::GetArtists()"));
-  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                       _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
-{
-  LOG(("sbRemoteLibraryBase::GetAlbums()"));
-
-  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                       _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
-{
-  LOG(("sbRemoteLibraryBase::GetGenres()"));
-
-  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_GENRE),
-                                       _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
-{
-  LOG(("sbRemoteLibraryBase::GetYears()"));
-
-  return GetDistinctValuesForProperty( NS_LITERAL_STRING(SB_PROPERTY_YEAR),
-                                       _retval );
-}
-
-NS_IMETHODIMP
 sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
 {
   LOG(("sbRemoteLibraryBase::GetPlaylists()"));
-
+  
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
@@ -662,15 +636,9 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
   nsCOMPtr<nsISimpleEnumerator> playlistEnum;
   if ( NS_SUCCEEDED(mEnumerationResult) ) {
     // Make an enumerator for the contents of mEnumerationArray.
-    if ( mEnumerationArray.Count() ) {
-      rv = NS_NewArrayEnumerator( getter_AddRefs(playlistEnum),
-                                  mEnumerationArray );
-    }
-    else {
-      rv = NS_NewEmptyEnumerator( getter_AddRefs(playlistEnum) );
-    }
-
-    if ( NS_FAILED(rv) ) {
+    playlistEnum =
+      new sbScriptableFilterItems( mEnumerationArray, mRemotePlayer );
+    if ( !playlistEnum ) {
       NS_WARNING("Failed to make array enumerator");
     }
   }
@@ -684,20 +652,154 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
     return NS_OK;
   }
 
-  nsRefPtr<sbRemoteWrappingSimpleEnumerator> wrapped(
-           new sbRemoteWrappingSimpleEnumerator(mRemotePlayer, playlistEnum) );
-  NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
-
-  rv = wrapped->Init();
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  NS_ADDREF( *_retval = wrapped );
+  NS_ADDREF( *_retval = playlistEnum );
 
   // Reset the array and result codes for next time.
   mEnumerationArray.Clear();
   mEnumerationResult = NS_ERROR_NOT_INITIALIZED;
 
   return rv;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                          sbIScriptableFilterResult
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetArtists()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaListView> view;
+  rv = mRemMediaList->CreateView( nsnull, getter_AddRefs(view) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface( view, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsRefPtr<sbScriptableFilter> filter =
+    new sbScriptableFilter( filterView,
+                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                            mRemotePlayer );
+  NS_ENSURE_TRUE( filter, NS_ERROR_OUT_OF_MEMORY );
+  
+  NS_ADDREF(*_retval = filter);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetAlbums()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaListView> view;
+  rv = mRemMediaList->CreateView( nsnull, getter_AddRefs(view) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface( view, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsRefPtr<sbScriptableFilter> filter =
+    new sbScriptableFilter( filterView,
+                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                            mRemotePlayer);
+  NS_ENSURE_TRUE( filter, NS_ERROR_OUT_OF_MEMORY );
+  
+  NS_ADDREF(*_retval = filter);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetGenres()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaListView> view;
+  rv = mRemMediaList->CreateView( nsnull, getter_AddRefs(view) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface( view, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsRefPtr<sbScriptableFilter> filter =
+    new sbScriptableFilter( filterView,
+                            NS_LITERAL_STRING(SB_PROPERTY_GENRE),
+                            mRemotePlayer);
+  NS_ENSURE_TRUE( filter, NS_ERROR_OUT_OF_MEMORY );
+  
+  NS_ADDREF(*_retval = filter);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetYears()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaListView> view;
+  rv = mRemMediaList->CreateView( nsnull, getter_AddRefs(view) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface( view, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsRefPtr<sbScriptableFilter> filter =
+    new sbScriptableFilter( filterView,
+                            NS_LITERAL_STRING(SB_PROPERTY_YEAR),
+                            mRemotePlayer );
+  NS_ENSURE_TRUE( filter, NS_ERROR_OUT_OF_MEMORY );
+  
+  NS_ADDREF(*_retval = filter);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetItems( nsISupports** _retval )
+{
+  LOG(("sbRemoteLibraryBase::Items()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaListView> view;
+  rv = mRemMediaList->CreateView( nsnull, getter_AddRefs(view) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface( view, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsRefPtr<sbScriptableFilterItems> items =
+    new sbScriptableFilterItems( filterView, mRemotePlayer);
+  NS_ENSURE_TRUE( items, NS_ERROR_OUT_OF_MEMORY );
+  
+  *_retval = NS_ISUPPORTS_CAST( nsIXPCScriptable*, items );
+  NS_ADDREF(*_retval);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetConstraint(sbILibraryConstraint * *aConstraint)
+{
+  nsresult rv;
+  nsCOMPtr<sbILibraryConstraintBuilder> builder =
+    do_CreateInstance( "@songbirdnest.com/Songbird/Library/ConstraintBuilder;1",
+                       &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  return builder->Get(aConstraint);
 }
 
 // ---------------------------------------------------------------------------
@@ -756,6 +858,182 @@ sbRemoteLibraryBase::OnEnumerationEnd( sbIMediaList *aMediaList,
                                        nsresult aStatusCode )
 {
   mEnumerationResult = aStatusCode;
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                           nsIXPCScriptable
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetClassName( char * *aClassName )
+{
+  NS_ENSURE_ARG_POINTER(aClassName);
+  *aClassName = ToNewCString( NS_LITERAL_CSTRING("SongbirdLibrary") );
+  NS_ENSURE_TRUE( aClassName, NS_ERROR_OUT_OF_MEMORY );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetScriptableFlags( PRUint32 *aScriptableFlags )
+{
+  NS_ENSURE_ARG_POINTER(aScriptableFlags);
+  // XXX Mook: USE_JSSTUB_FOR_ADDPROPERTY is needed to define things on the
+  //           prototype properly; even with it set scripts cannot add
+  //           properties onto the object (because they're not allow to *set*)
+  *aScriptableFlags = USE_JSSTUB_FOR_ADDPROPERTY |
+                      DONT_ENUM_STATIC_PROPS |
+                      DONT_ENUM_QUERY_INTERFACE |
+                      WANT_GETPROPERTY |
+                      ALLOW_PROP_MODS_DURING_RESOLVE |
+                      DONT_REFLECT_INTERFACE_NAMES ;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
+                                  JSContext * cx,
+                                  JSObject * obj,
+                                  jsval id,
+                                  jsval * vp,
+                                  PRBool *_retval )
+{
+  TRACE(("sbRemoteLibraryBase::GetProperty()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_POINTER(vp);
+  
+  nsresult rv;
+ 
+  *_retval = PR_FALSE;
+  
+  if ( !JSVAL_IS_STRING(id) ) {
+    // we don't care about non-strings
+    return NS_OK;
+  }
+  
+  nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(JSVAL_TO_STRING(id)),
+                          ::JS_GetStringLength(JSVAL_TO_STRING(id)));
+
+  TRACE(( "   Getting property %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
+  
+  nsCOMPtr<nsISupports> supports;
+  
+  { // getArtists(), getAlbums(), getGenres(), getYears()
+    nsCOMPtr<nsIStringEnumerator> stringEnum;
+    if ( jsid.EqualsLiteral("getArtists") ) {
+      rv = GetArtists( getter_AddRefs(stringEnum) );
+      NS_ENSURE_SUCCESS( rv, rv );
+    } else if ( jsid.EqualsLiteral("getAlbums") ) {
+      rv = GetAlbums( getter_AddRefs(stringEnum) );
+      NS_ENSURE_SUCCESS( rv, rv );
+    } else if ( jsid.EqualsLiteral("getGenres") ) {
+      rv = GetGenres( getter_AddRefs(stringEnum) );
+      NS_ENSURE_SUCCESS( rv, rv );
+    } else if ( jsid.EqualsLiteral("getYears") ) {
+      rv = GetYears( getter_AddRefs(stringEnum) );
+      NS_ENSURE_SUCCESS( rv, rv );
+    }
+  
+    if ( stringEnum ) {
+      // make the callable wrapper
+      nsRefPtr<sbScriptableFunction> func =
+        new sbScriptableFunction( stringEnum, nsIStringEnumerator::GetIID() );
+      NS_ENSURE_TRUE( stringEnum, NS_ERROR_OUT_OF_MEMORY );
+      
+      supports = NS_ISUPPORTS_CAST( nsIXPCScriptable*, func );
+    }
+  }
+
+  if ( jsid.EqualsLiteral("getPlaylists") ) {
+    nsCOMPtr<nsISimpleEnumerator> simpleEnum;
+    rv = GetPlaylists( getter_AddRefs(simpleEnum) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsRefPtr<sbScriptableFunction> func =
+      new sbScriptableFunction( simpleEnum, nsISimpleEnumerator::GetIID() );
+    NS_ENSURE_TRUE( simpleEnum, NS_ERROR_OUT_OF_MEMORY );
+    
+    supports = NS_ISUPPORTS_CAST( nsIXPCScriptable*, func );
+  }
+
+  if (supports) {
+    // do the security check
+    char* access;
+    nsIID iid = nsISupports::GetIID();
+    // note that an error return value also means access denied
+    rv = mSecurityMixin->CanCallMethod( &iid,
+                                        jsid.BeginReading(),
+                                        &access );
+    PRBool canCallMethod = NS_SUCCEEDED(rv);
+    if (canCallMethod) {
+      canCallMethod = !strcmp( access, "AllAccess" );
+      NS_Free(access);
+    }
+
+    if ( !canCallMethod ) {
+      JSAutoRequest ar(cx);
+      
+      // get an error message
+      nsCOMPtr<nsIStringBundleService> bundleService =
+        do_GetService( NS_STRINGBUNDLE_CONTRACTID, &rv );
+      NS_ENSURE_SUCCESS( rv, rv );
+      nsCOMPtr<nsIStringBundle> bundle;
+      rv = bundleService->CreateBundle( "chrome://global/locale/security/caps.properties",
+                                        getter_AddRefs(bundle) );
+      NS_ENSURE_SUCCESS( rv, rv );
+
+      char* classNameC;
+      rv = this->GetClassName(&classNameC);
+      NS_ENSURE_SUCCESS( rv, rv );
+      nsString className =
+        NS_ConvertASCIItoUTF16( nsDependentCString(classNameC) );
+      NS_Free(classNameC);
+
+      nsString errorMessage;
+      const PRUnichar *formatStrings[] = {
+        className.get(),
+        jsid.get()
+      };
+      rv = bundle->FormatStringFromName( NS_LITERAL_STRING("CallMethodDenied").get(),
+                                         formatStrings,
+                                         sizeof(formatStrings) / sizeof(formatStrings[0]),
+                                         getter_Copies(errorMessage) );
+      NS_ENSURE_SUCCESS( rv, rv );
+      
+      JSString *jsstr = JS_NewUCStringCopyN( cx,
+                                             reinterpret_cast<const jschar*>( errorMessage.get() ),
+                                             errorMessage.Length() );
+      if (jsstr)
+        JS_SetPendingException( cx, STRING_TO_JSVAL(jsstr) );
+      
+      *_retval = JS_FALSE;
+      return NS_OK;
+    }
+  
+    // send it along to JS
+    nsCOMPtr<nsIXPConnect> xpc;
+    rv = wrapper->GetXPConnect( getter_AddRefs(xpc) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    nsCOMPtr<nsIXPConnectJSObjectHolder> objHolder;
+    rv = xpc->WrapNative( cx,
+                          obj,
+                          supports,
+                          nsISupports::GetIID(),
+                          getter_AddRefs(objHolder) );
+    NS_ENSURE_SUCCESS( rv, rv );
+  
+    JSObject* obj = nsnull;
+    rv = objHolder->GetJSObject( &obj );
+    NS_ENSURE_SUCCESS( rv, rv );
+  
+    *vp = OBJECT_TO_JSVAL(obj);
+    *_retval = PR_TRUE;
+    return NS_SUCCESS_I_DID_SOMETHING;
+  }
+  
   return NS_OK;
 }
 

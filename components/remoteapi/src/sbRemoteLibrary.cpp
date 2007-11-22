@@ -55,6 +55,13 @@ const static char* sPublicRProperties[] =
 
     // sbIRemoteLibrary
     "library_read:scanMediaOnCreation",
+    "library_read:playlists",
+    
+    // sbIScriptableFilterResult
+    "library_read:artists",
+    "library_read:albums",
+    "library_read:genres",
+    "library_read:years",
 
     // nsIClassInfo
     "classinfo:classDescription",
@@ -68,12 +75,14 @@ const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
     "library_write:createMediaListFromURL",
     "library_read:getMediaList",
+    "library_read:getPlaylists",
+    "library_read:getMediaListBySiteID",
+
+    // sbIScriptableFilterResult
     "library_read:getArtists",
     "library_read:getAlbums",
     "library_read:getGenres",
     "library_read:getYears",
-    "library_read:getPlaylists",
-    "library_read:getMediaListBySiteID",
 
     // different from the ones in sbILibrary
     "library_write:createSimpleMediaList",
@@ -102,7 +111,8 @@ NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteLibrary,
                               sbRemoteLibraryBase,
                               nsIClassInfo )
 
-NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteLibrary,
+NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteLibrary,
+                              sbIScriptableFilterResult,
                               sbISecurityAggregator,
                               sbIRemoteLibrary,
                               sbIRemoteMediaList,

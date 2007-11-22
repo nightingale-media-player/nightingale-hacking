@@ -63,6 +63,10 @@ CPP_SRCS = sbRemoteAPIModule.cpp \
            sbSecurityMixin.cpp \
            sbURIChecker.cpp \
            sbRemotePlayerFactory.cpp \
+           sbScriptableFilter.cpp \
+           sbScriptableFilterResult.cpp \
+           sbScriptableFilterItems.cpp \
+           sbScriptableFunction.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \

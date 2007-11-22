@@ -1,0 +1,231 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbIScriptableFilterResult.idl
+ * \brief A collection of media items as a result of a filter
+ */
+
+#include "nsISupports.idl"
+#include "sbIRemoteMediaList.idl"
+
+interface sbILibraryConstraint;
+interface sbIMediaItem;
+interface nsIStringEnumerator;
+
+/*
+Class: FilterResult
+
+A <FilterResult> is the object that results from a library filtering operation.
+*/
+/**
+ * \interface sbIScriptableFilterResult
+ * \brief The result of a filtering expression in a library
+ *
+ * A scriptable filter result is the intermediate object that is returned from
+ *   filtering on a library via predefined properties.  This is the object
+ *   returned from an expression such as songbird.mainLibrary.artists.Bob
+ *
+ */
+[scriptable, uuid(4a1ebcf3-a68a-4fb9-bda0-8cbeb62d6cf2)]
+interface sbIScriptableFilterResult : nsISupports
+{
+  /*
+  Group: FilterResult Properties
+  */
+  /*
+  Property: artists
+
+  Get an hash of all of the unique artist names in the <Library>.
+
+  Prototype:
+    Object artists
+
+  Returns:
+    An object containing all of the unique artist names that exist in
+    the <Library> as property names
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique artists.
+    var artists = library.artists;
+
+    for (var artist in artists) {
+      //The artist name (ie. "Justice")
+      alert(artist);
+    }
+    (end)
+
+  See Also:
+    <albums>
+    <genres>
+    <years>
+    <items>
+  */
+  readonly attribute nsIStringEnumerator artists;
+  
+  /*
+  Property: albums
+
+  Get an hash of all of the unique album names in the <Library>.
+
+  Prototype:
+    Object albums
+
+  Returns:
+    An object containing all of the unique album names that exist in
+    the <Library> as property names
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique albums.
+    var albums = library.albums;
+
+    for (var album in albums) {
+      //The album name (ie. "Cross")
+      alert(album);
+    }
+    (end)
+
+  See Also:
+    <artists>
+    <albums>
+    <years>
+    <items>
+  */
+  readonly attribute nsIStringEnumerator albums;
+
+  /*
+  Property: genres
+
+  Get an hash of all of the unique genres in the <Library>.
+
+  Prototype:
+    Object genres
+
+  Returns:
+    An object containing all of the unique genres that exist in
+    the <Library> as property names
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique genres.
+    var genres = library.genres;
+
+    for (var genre in genres) {
+      //The genre (ie. "Electronic")
+      alert(genre);
+    }
+
+    (end)
+
+  See Also:
+    <artists>
+    <albums>
+    <years>
+    <items>
+  */
+  readonly attribute nsIStringEnumerator genres;
+
+  /*
+  Property: years
+
+  Get an hash of all of the unique years in the <Library>.
+
+  Prototype:
+    Object years
+
+  Returns:
+    An object containing all of the unique years that exist in
+    the <Library> as property names
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Get unique years.
+    var years = library.years;
+
+    for (var year in years) {
+      //The year (ie. "2007")
+      alert(year);
+    }
+    (end)
+
+  See Also:
+    <artists>
+    <albums>
+    <genres>
+    <items>
+  */
+  readonly attribute nsIStringEnumerator years;
+
+  /*
+  Property: items
+  
+  Get a collection of <MediaItems> that match the current filter
+  
+  Prototype:
+    Object items
+  
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Get all items in the album "Hello" by the artist "Pancake"
+    var items = library.albums["Hello"].artists["Pancake"].items;
+    for each (var item in items) {
+      // do something with this item
+      alert(item.contentSrc);
+    }
+    (end)
+  
+  See Also:
+    <artists>
+    <albums>
+    <genres>
+    <years>
+    <MediaItem>
+  */
+  
+  readonly attribute nsISupports items;
+  
+  /**
+   * Get the underlying constraints (may be null)
+   */
+  [noscript] readonly attribute sbILibraryConstraint constraint;
+};

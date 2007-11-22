@@ -32,9 +32,11 @@
 #include "sbRemoteMediaList.h"
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteSiteMediaItem.h"
+#include "sbXPCScriptableStub.h"
 
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
+#include <nsIXPCScriptable.h>
 #include <sbILibrary.h>
 #include <sbILibraryResource.h>
 #include <sbIMediaList.h>
@@ -44,6 +46,7 @@
 #include <sbIRemoteLibrary.h>
 #include <sbIRemoteMediaList.h>
 #include <sbIRemotePlayer.h>
+#include <sbIScriptableFilterResult.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
 #include <sbIWrappedMediaList.h>
@@ -63,15 +66,18 @@ class sbRemotePlayer;
 //               derived classes must impl.
 class sbRemoteLibraryBase : public nsIClassInfo,
                             public nsISecurityCheckedComponent,
+                            public sbIScriptableFilterResult,
                             public sbISecurityAggregator,
                             public sbIRemoteLibrary,
                             public sbIRemoteMediaList,
                             public sbIWrappedMediaList,
                             public sbIMediaList,
-                            public sbIMediaListEnumerationListener
+                            public sbIMediaListEnumerationListener,
+                            public sbXPCScriptableStub
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_SBISCRIPTABLEFILTERRESULT
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
@@ -83,6 +89,11 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
+  
+  // nsIXPCScriptable
+  NS_IMETHOD GetClassName(char * *aClassName);
+  NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
+  NS_IMETHOD GetProperty(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, jsval * vp, PRBool *_retval);
 
   // sbIWrappedMediaList
   virtual already_AddRefed<sbIMediaItem> GetMediaItem();

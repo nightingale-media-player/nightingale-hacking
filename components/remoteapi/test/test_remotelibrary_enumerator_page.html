@@ -1,0 +1,189 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+    <script>
+function runTest(tester) {
+  try {
+    var SB_NS = "http://songbirdnest.com/data/1.0#";
+
+    var data = [
+      ["Artist1", "Album1", "2001", "ROCK"],
+      ["Artist1", "Album1", "2001", "ROCK"],
+      ["Artist2", "Album1", "2001", "ROCK"],
+      ["Artist2", "Album1", "2001", "ROCK"],
+      ["Artist1", "Album2", "2002", "ROCK"],
+      ["Artist1", "Album2", "2002", "ROCK"],
+      ["Artist1", "Album3", "2004", "JAZZ"],
+      ["Artist1", "Album3", "2004", "JAZZ"],
+      ["Artist2", "Album2", "2002", "ROCK"],
+      ["Artist3", "Hello World", "2005", "JAZZ"]
+    ];
+    var library = songbird.siteLibrary;
+    library.clear();
+
+    tester.assertFalse(library.getArtists().hasMore(),
+                       "Unexpected pre-existing artists");
+    tester.assertFalse(library.getAlbums().hasMore(),
+                       "Unexpected pre-existing albums");
+    tester.assertFalse(library.getYears().hasMore(),
+                       "Unexpected pre-existing years");
+    tester.assertFalse(library.getGenres().hasMore(),
+                       "Unexpected pre-existing genres");
+
+    for (var i = 0; i < data.length; i++) {
+      var item = library.createMediaItem("http://example.com/foo" + i);
+      item.setProperty(SB_NS + "artistName", data[i][0]);
+      item.setProperty(SB_NS + "albumName",  data[i][1]);
+      item.setProperty(SB_NS + "year",       data[i][2]);
+      item.setProperty(SB_NS + "genre",      data[i][3]);
+    }
+    
+    assertItemArray(tester, ["Artist1", "Artist2", "Artist3"], library.artists);
+    assertItemArray(tester, ["Album1", "Album2", "Album3", "Hello World"], library.albums);
+    assertItemArray(tester, ["2001", "2002", "2004", "2005"], library.years);
+    assertItemArray(tester, ["JAZZ", "ROCK"], library.genres);
+    
+    assertStringArray(tester,
+                      ["Artist1", "Artist2", "Artist3"],
+                      library.getArtists());
+    assertStringArray(tester,
+                      ["Album1", "Album2", "Album3", "Hello World"],
+                      library.getAlbums());
+    assertStringArray(tester,
+                      ["2001", "2002", "2004", "2005"],
+                      library.getYears());
+    assertStringArray(tester,
+                      ["ROCK", "JAZZ"],
+                      library.getGenres());
+    
+    tester.assertTrue("Artist1" in library.artists);
+    tester.assertFalse("artist1" in library.artists); // case sensitivity
+    tester.assertTrue(library.artists.Artist1);
+    tester.assertFalse(library.artists.Bob); // undefined
+    tester.assertFalse(library.artists.Artist1.albums.BadAlbum);
+    
+    tester.assertEqual(library.artists.length, 3);
+    tester.assertEqual(library.albums.length, 4);
+    tester.assertEqual(library.years.length, 4);
+    tester.assertEqual(library.genres.length, 2);
+    
+    tester.assertEqual(library.artists["Artist1"].artists.length, 1);
+    tester.assertFalse("Artist2" in library.artists["Artist1"].artists);
+    tester.assertFalse(library.artists["Artist1"].artists["Artist2"]);
+
+    // filter for the same artist
+    tester.assertEqual(library.artists.Artist1, library.artists.Artist1);
+    // filter for the same artist/album combination (in different order)
+    tester.assertEqual(library.artists.Artist1.albums.Album1,
+                       library.albums.Album1.artists.Artist1);
+    // filter for different artists
+    tester.assertNotEqual(library.artists.Artist1,
+                          library.artists.Artist2);
+    // filter for different axes (even though the content is the same)
+    tester.assertNotEqual(library.artists.Artist3,
+                          library.albums["Hello World"]);
+
+    // check items
+    tester.assertEqual(library.albums.Album3.items,
+                       library.albums.Album3.items);
+    // same items, one with an extra constraint
+    tester.assertEqual(library.albums.Album3.items,
+                       library.albums.Album3.artists.Artist1.items);
+    // two sets of items, of different lengths
+    tester.assertNotEqual(library.artists.Artist1.items,
+                          library.artists.Artist2.items);
+    // two sets of items, both of two items, but different contents
+    tester.assertNotEqual(library.artists.Artist1.albums.Album2.items,
+                          library.artists.Artist2.albums.Album1.items);
+
+    var items = library.artists["Artist2"].albums["Album2"].items;
+    var count = 0;
+    for each (var i in items) {
+      tester.assertEqual(i.getProperty(SB_NS + "year"), 2002);
+      ++count;
+    }
+    tester.assertEqual(count, 1);
+    tester.assertEqual(items.length, 1);
+    
+    // access names with spaces using array notation
+    tester.assertEqual(library.albums["Hello World"].items.length, 1);
+
+    // check for playlists
+    for (var i in library.playlists) {
+      tester.fail("found playlists in the library");
+    }
+    tester.assertEqual(library.playlists.length, 0);
+    
+    library.createSimpleMediaList("hello", "");
+    var count = 0;
+    for (var i in library.playlists) {
+      ++count;
+    }
+    tester.assertEqual(count, 1);
+    tester.assertEqual(library.playlists.length, 1);
+    
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+
+  tester.endRemoteAPITest();
+}
+
+function assertStringArray(tester, a, e) {
+  while (e.hasMore()) {
+    var s = e.getNext();
+    var i = a.indexOf(s);
+    if (i < 0) {
+      tester.fail("String '" + s + "' not in array");
+    }
+    a.splice(i, 1);
+  }
+  if (a.length > 0) {
+    tester.fail("Array contains stuff the enumerator did not: " + a);
+  }
+}
+
+function assertItemArray(tester, a, e) {
+  tester.assertEqual(a.length, e.length);
+  for (var i in e) {
+    var j = a.shift();
+    tester.assertTrue(i == j, "item not found: " + i + " != " + j);
+  }
+  tester.assertTrue(0 == a.length, "missing items: " + a);
+}
+
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+    </script>
+  </head>
+  <body>test_remotelibrary_enumerator_page.html</body>
+</html>
+
