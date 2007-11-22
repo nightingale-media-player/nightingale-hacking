@@ -454,6 +454,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Last skipped time
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LASTSKIPTIME),
+                        NS_LITERAL_STRING("property.last_skip_time"),
+                        sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
+                        stringBundle, PR_TRUE, PR_FALSE, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Number of times song was skipped
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT),
                       NS_LITERAL_STRING("property.skip_count"),

@@ -263,6 +263,13 @@ const SB_PROPERTY_PLAYCOUNT            = SB_PROPERTY_PREFACE + "playCount";
  * \deprecated Please see sbProperties.jsm.
  * \internal
  */
+const SB_PROPERTY_LASTSKIPTIME         = SB_PROPERTY_PREFACE + "lastSkipTime";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Please see sbProperties.jsm.
+ * \internal
+ */
 const SB_PROPERTY_SKIPCOUNT            = SB_PROPERTY_PREFACE + "skipCount";
 
 /**

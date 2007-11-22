@@ -52,6 +52,7 @@
 #define SB_PROPERTY_ALBUMARTURL             "http://songbirdnest.com/data/1.0#albumArtURL"
 #define SB_PROPERTY_LASTPLAYTIME            "http://songbirdnest.com/data/1.0#lastPlayTime"
 #define SB_PROPERTY_PLAYCOUNT               "http://songbirdnest.com/data/1.0#playCount"
+#define SB_PROPERTY_LASTSKIPTIME            "http://songbirdnest.com/data/1.0#lastSkipTime"
 #define SB_PROPERTY_SKIPCOUNT               "http://songbirdnest.com/data/1.0#skipCount"
 #define SB_PROPERTY_RATING                  "http://songbirdnest.com/data/1.0#rating"
 #define SB_PROPERTY_ORIGINURL               "http://songbirdnest.com/data/1.0#originURL"

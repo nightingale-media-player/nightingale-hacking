@@ -56,6 +56,9 @@ const sbIMediaListView         = Components.interfaces.sbIMediaListView;
 
 const DEBUG = false;
 
+// number of milliseconds for timer calling the playback loop
+const LOOP_DURATION = 250;
+
 /**
  * ----------------------------------------------------------------------------
  * Global variables
@@ -1312,9 +1315,11 @@ PlaylistPlayback.prototype = {
     this._playing.boolValue = false;
     this._stopNextLoop = false;
     this._lookForPlayingCount = 0;
+    this._beenPlayingCount = 0;
+    this._hasIncPlayCount = false;
     this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                   .createInstance( Components.interfaces.nsITimer );
-    this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
+    this._timer.initWithCallback( this, LOOP_DURATION, 1 ) // TYPE_REPEATING_SLACK
   },
   
   _stopPlayerLoop: function () {
@@ -1353,6 +1358,26 @@ PlaylistPlayback.prototype = {
         this._set_metadata = true;
       this._metadataLen.intValue = len;
       this._metadataPos.intValue = pos;
+
+      // Conditions to increment play count:
+      //   1) we haven't incremented yet
+      //   2a) we played for at least 240 seconds (matching audioscrobbler)
+      //   2b) or more than half the track (matching audioscrobbler)
+      // This also catches when a track reaches the end. The fetching
+      // of length has been getting us 0 all the time on the last loop
+      // so we enter this scope and set the playcount.
+      if ( !this._hasIncPlayCount &&
+           ( (this._beenPlayingCount * LOOP_DURATION) > (240 * 1000) || 
+             (this._beenPlayingCount * LOOP_DURATION) > (len/2) ) ) {
+        var count = this._playingItem.getProperty(SBProperties.playCount);
+        this._playingItem.setProperties(
+          SBProperties.createArray([
+            [SBProperties.playCount, ++count],
+            [SBProperties.lastPlayTime, Date.now()]
+          ])
+        );
+        this._hasIncPlayCount = true;
+      }
       
       // Ignore metadata when paused.
       if ( core.getPlaying() && ! core.getPaused() ) {
@@ -1494,7 +1519,6 @@ PlaylistPlayback.prototype = {
         
       if ( this._set_metadata ) {
         //Get current item using current index and current playing view.
-        var base   = "http://songbirdnest.com/data/1.0#";
         var cur_index = this.currentIndex;
         var cur_item = this._playingView.getItemByIndex(cur_index);
         
@@ -1523,6 +1547,9 @@ PlaylistPlayback.prototype = {
     
     LOG("_onPollCompleted - isPlaying? " + isPlaying);
     LOG("_onPollCompleted - stop next loop? " + this._stopNextLoop);
+    LOG("_onPollCompleted - incremented play count? " + this._hasIncPlayCount);
+    LOG("_onPollCompleted - lookForPlayingCount: " + this._lookForPlayingCount);
+    LOG("_onPollCompleted - beenPlayingCount: " + this._beenPlayingCount);
     
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
     if ( isPlaying && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
@@ -1536,7 +1563,9 @@ PlaylistPlayback.prototype = {
       
         this._metadataPollCount = 0; // start the count again.
         this._lookForPlayingCount = 0;
+        this._beenPlayingCount = 0;
         this._stopNextLoop = false;
+        this._hasIncPlayCount = false;
       }
       // OH OH!  If our position isn't moving, go to the next track!
       else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
@@ -1544,11 +1573,11 @@ PlaylistPlayback.prototype = {
         LOG("_onPollCompleted - position is not moving.");
         
         // After 10 seconds, give up and go to the next one?
-        if ( this._lookForPlayingCount++ > 80 )
+        if ( (LOOP_DURATION * this._lookForPlayingCount++) > (10 * 1000) )
           this.next();
       }
       else {
-        
+
         LOG("_onPollCompleted - reset the counters.");
         
         // Boring, reset the counters.
@@ -1557,6 +1586,8 @@ PlaylistPlayback.prototype = {
       }      
       // Then remember we saw it
       this._seenPlaying.boolValue = true;
+      // keep track of number of times through the playing loop
+      this._beenPlayingCount++;
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
     else if ( (this._seenPlaying.boolValue || ( len < 0.0 )) &&
@@ -1581,9 +1612,10 @@ PlaylistPlayback.prototype = {
       LOG("_onPollCompleted - lookForPlayingCount: " + this._lookForPlayingCount);
       
       // After 10 seconds or fatal error, give up and go to the next one?
-      if ( ( this._lookForPlayingCount++ > 80 ) || ( len < -1 ) ) {
+      if ( ( (LOOP_DURATION * this._lookForPlayingCount++) > (10 * 1000) ) ||
+           ( len < -1 ) ) {
       
-      LOG("_onPollCompleted - lookForPlayingCount > 80 or ERROR.");
+        LOG("_onPollCompleted - lookForPlayingCount > 10 seconds or ERROR.");
       
         if ( ! this._stopNextLoop )
           this._playNextPrev(1);
@@ -1624,6 +1656,26 @@ PlaylistPlayback.prototype = {
       this.play();
       return;
     }
+
+    // Conditions for skip track:
+    //   1) haven't counted the track as played
+    //   2) playing for more than 2 seconds
+    //   3) playing for less than 15 seconds
+    if ( !this._hasIncPlayCount &&
+         (this._beenPlayingCount * LOOP_DURATION) > (2 * 1000) &&
+         (this._beenPlayingCount * LOOP_DURATION) < (15 * 1000) ) {
+      var count = this._playingItem.getProperty(SBProperties.skipCount);
+      this._playingItem.setProperties(
+        SBProperties.createArray([
+          [SBProperties.skipCount, ++count],
+          [SBProperties.lastSkipTime, Date.now()]
+        ])
+      );
+    }
+    else if (this._hasIncPlayCount) {
+      this._playingItem.setProperty(SBProperties.lastPlayTime, Date.now());
+    }
+
 
     // Get the index of the item that just finished from the view using the
     // stored view item UID.  This is so we can determine the "next" track
@@ -1700,32 +1752,37 @@ PlaylistPlayback.prototype = {
   },
   
   _setItemMetadata: function( aItem, aTitle, aLength, aAlbum, aArtist, aGenre ) {
-    var base   = "http://songbirdnest.com/data/1.0#";
     
     if ( !aItem ) {
       return;
     }
+
+    var propertyArray =
+      Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                .createInstance(Components.interfaces.sbIMutablePropertyArray);
       
     if ( aTitle && aTitle.length ) {
-      aItem.setProperty(base + "trackName", aTitle);
+      propertyArray.appendProperty(SBProperties.trackName, aTitle);
     }
 
     if ( aLength && aLength != 0 ) {
       aLength = aLength * 1000;
-      aItem.setProperty(base + "duration", aLength);
+      propertyArray.appendProperty(SBProperties.duration, aLength);
     }
 
     if ( aAlbum && aAlbum.length ) {
-      aItem.setProperty(base + "albumName", aAlbum);
+      propertyArray.appendProperty(SBProperties.albumName, aAlbum);
     }
 
     if ( aArtist && aArtist.length ) {
-      aItem.setProperty(base + "artistName", aArtist);
+      propertyArray.appendProperty(SBProperties.artistName, aArtist);
     }
 
     if ( aGenre && aGenre.length ) {
-      aItem.setProperty(base + "genre", aGenre);
+      propertyArray.appendProperty(SBProperties.genre, aGenre);
     }
+
+    aItem.setProperties(propertyArray);
   },
   
   _updateCurrentInfoFromView: function(aView, aIndex)
@@ -1734,13 +1791,13 @@ PlaylistPlayback.prototype = {
     this._playlistIndex.intValue = aIndex;
 
     var item   = aView.getItemByIndex(aIndex);
-    var base   = "http://songbirdnest.com/data/1.0#";
     var url    = item.contentSrc.spec;
-    var title  = item.getProperty(base + "trackName");
-    var artist = item.getProperty(base + "artistName");
-    var album  = item.getProperty(base + "albumName");
-    var genre  = item.getProperty(base + "genre");
-    var duration = item.getProperty(base + "duration");
+    var title  = item.getProperty(SBProperties.trackName);
+    var artist = item.getProperty(SBProperties.artistName);
+    var album  = item.getProperty(SBProperties.albumName);
+    var genre  = item.getProperty(SBProperties.genre);
+    var duration = item.getProperty(SBProperties.duration);
+    this._playingItem = item;
 
     // Clear the data remotes
     this._playURL.stringValue = "";
