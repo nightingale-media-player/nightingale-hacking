@@ -83,7 +83,7 @@ function runTest(tester) {
     // Sleep to allow processing of pending download device callbacks.  Clearing
     // of the download media list may intiate a transfer complete callback if
     // an in-progress download was aborted.
-    tester.sleep(1);
+    tester.sleep(1000);
 
     // test download events
     item = siteLib.createMediaItem
