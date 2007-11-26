@@ -87,8 +87,6 @@
 /*
  * SB_DOWNLOAD_DEVICE_CATEGORY  Download device category name.
  * SB_DOWNLOAD_DEVICE_ID        Download device identifier.
- * SB_PROPERTY_DESTINATION      Destination property ID.
- * SB_PROPERTY_DESTINATION_NAME Destination property display name.
  * SB_DOWNLOAD_DIR_DR           Default download directory data remote.
  * SB_TMP_DIR                   Songbird temporary directory name.
  * SB_DOWNLOAD_TMP_DIR          Download device temporary directory name.
@@ -104,8 +102,6 @@
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
                             NS_LITERAL_STRING("Songbird Download Device").get()
 #define SB_DOWNLOAD_DEVICE_ID   "download"
-#define SB_PROPERTY_DESTINATION "http://songbirdnest.com/data/1.0#destination"
-#define SB_PROPERTY_DESTINATION_NAME "property.destination"
 #define SB_DOWNLOAD_DIR_DR "download.folder"
 #define SB_TMP_DIR "Songbird"
 #define SB_DOWNLOAD_TMP_DIR "DownloadDevice"
@@ -695,40 +691,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     /* Create the device transfer queue. */
     if (NS_SUCCEEDED(result))
         result = CreateTransferQueue(mDeviceIdentifier);
-
-    /* Create the download destination property. */
-    if (NS_SUCCEEDED(result))
-    {
-        nsString                    displayName;
-
-        pPropertyManager =
-                do_GetService
-                    ("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
-                     &result);
-        if (NS_SUCCEEDED(result))
-        {
-            pURIPropertyInfo =
-                        do_CreateInstance
-                            ("@songbirdnest.com/Songbird/Properties/Info/URI;1",
-                             &result);
-        }
-        if (NS_SUCCEEDED(result))
-        {
-            result = pURIPropertyInfo->SetId
-                                (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION));
-        }
-        if (NS_SUCCEEDED(result))
-        {
-            result = pPropertyManager->GetStringFromName
-                            (mpStringBundle,
-                             NS_LITERAL_STRING(SB_PROPERTY_DESTINATION_NAME),
-                             displayName);
-        }
-        if (NS_SUCCEEDED(result))
-            result = pURIPropertyInfo->SetDisplayName(displayName);
-        if (NS_SUCCEEDED(result))
-            result = pPropertyManager->AddPropertyInfo(pURIPropertyInfo);
-    }
 
     /* Get the default download directory data remote. */
     if (NS_SUCCEEDED(result))

@@ -163,6 +163,10 @@ function sbAutoDownloader_observe(subject, topic, data) {
         // it's already in the download playlist
         continue;
       }
+      if (item.getProperty(SBProperties.destination)) {
+        // it's already been processed by the download device
+        continue;
+      }
       this._helper.downloadItem(item);
     }
     this._clearTimer();

@@ -67,6 +67,7 @@
 #define SB_PROPERTY_COLUMNSPEC              "http://songbirdnest.com/data/1.0#columnSpec"
 #define SB_PROPERTY_DEFAULTCOLUMNSPEC       "http://songbirdnest.com/data/1.0#defaultColumnSpec"
 #define SB_PROPERTY_CUSTOMTYPE              "http://songbirdnest.com/data/1.0#customType"
+#define SB_PROPERTY_DESTINATION             "http://songbirdnest.com/data/1.0#destination"
 #define SB_PROPERTY_DOWNLOADBUTTON          "http://songbirdnest.com/data/1.0#downloadButton"
 #define SB_PROPERTY_DOWNLOAD_STATUS_TARGET  "http://songbirdnest.com/data/1.0#downloadStatusTarget"
 #define SB_PROPERTY_DOWNLOAD_DETAILS        "http://songbirdnest.com/data/1.0#downloadDetails"

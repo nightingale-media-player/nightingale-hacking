@@ -365,6 +365,13 @@ const SB_PROPERTY_CUSTOMTYPE           = SB_PROPERTY_PREFACE + "customType";
 
 /**
  * \brief Part of standard set of properties.
+ * \deprecated Needed for unit tests to pass.  Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_DESTINATION          = SB_PROPERTY_PREFACE + "destination";
+
+/**
+ * \brief Part of standard set of properties.
  * \deprecated Please see sbProperties.jsm.
  * \internal
  */
