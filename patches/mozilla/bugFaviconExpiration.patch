@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/toolkit/components/places/public/nsIFaviconService.id
 retrieving revision 1.6
 diff -p -u -4 -r1.6 nsIFaviconService.idl
 --- toolkit/components/places/public/nsIFaviconService.idl	25 Mar 2007 12:28:30 -0000	1.6
-+++ toolkit/components/places/public/nsIFaviconService.idl	22 Nov 2007 02:20:04 -0000
++++ toolkit/components/places/public/nsIFaviconService.idl	26 Nov 2007 19:17:26 -0000
 @@ -39,9 +39,9 @@
  #include "nsISupports.idl"
  
@@ -36,10 +36,10 @@ diff -p -u -4 -r1.6 nsIFaviconService.idl
 Index: toolkit/components/places/src/nsFaviconService.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.cpp,v
-retrieving revision 1.16
-diff -p -u -4 -r1.16 nsFaviconService.cpp
---- toolkit/components/places/src/nsFaviconService.cpp	5 Sep 2007 20:23:54 -0000	1.16
-+++ toolkit/components/places/src/nsFaviconService.cpp	22 Nov 2007 02:20:04 -0000
+retrieving revision 1.17
+diff -p -u -4 -r1.17 nsFaviconService.cpp
+--- toolkit/components/places/src/nsFaviconService.cpp	22 Nov 2007 00:44:33 -0000	1.17
++++ toolkit/components/places/src/nsFaviconService.cpp	26 Nov 2007 19:17:26 -0000
 @@ -82,9 +82,9 @@ class FaviconLoadListener : public nsISt
  {
  public:
@@ -62,27 +62,30 @@ diff -p -u -4 -r1.16 nsFaviconService.cpp
  };
  
  
-@@ -380,15 +382,17 @@ nsFaviconService::SendFaviconNotificatio
+@@ -380,29 +382,30 @@ nsFaviconService::SendFaviconNotificatio
  // nsFaviconService::SetAndLoadFaviconForPage
  
  NS_IMETHODIMP
  nsFaviconService::SetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
 -                                           PRBool aForceReload)
-+                                           PRBool aForceReload,
-+                                           PRTime aExpiration)
++                                           PRBool aForceReload, PRTime aExpiration)
  {
+   NS_ENSURE_ARG_POINTER(aPage);
+   NS_ENSURE_ARG_POINTER(aFavicon);
+ 
  #ifdef LAZY_ADD
    nsNavHistory* historyService = nsNavHistory::GetHistoryService();
    NS_ENSURE_TRUE(historyService, NS_ERROR_OUT_OF_MEMORY);
    return historyService->AddLazyLoadFaviconMessage(aPage, aFavicon,
 -                                                   aForceReload);
-+                                                   aForceReload,
-+                                                   aExpiration);
++                                                   aForceReload, aExpiration);
  #else
-   return DoSetAndLoadFaviconForPage(aPage, aFavicon, aForceReload);
+-  return DoSetAndLoadFaviconForPage(aPage, aFavicon, aForceReload);
++  return DoSetAndLoadFaviconForPage(aPage, aFavicon, aForceReload, aExpiration);
  #endif
  }
-@@ -397,9 +401,10 @@ nsFaviconService::SetAndLoadFaviconForPa
+ 
+ 
  // nsFaviconService::DoSetAndLoadFaviconForPage
  
  nsresult
@@ -94,7 +97,7 @@ diff -p -u -4 -r1.16 nsFaviconService.cpp
    nsCOMPtr<nsIURI> page(aPage);
  
    // don't load favicons when history is disabled
-@@ -521,9 +526,9 @@ nsFaviconService::DoSetAndLoadFaviconFor
+@@ -524,9 +527,9 @@ nsFaviconService::DoSetAndLoadFaviconFor
    rv = ioservice->NewChannelFromURI(aFavicon, getter_AddRefs(channel));
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -105,7 +108,7 @@ diff -p -u -4 -r1.16 nsFaviconService.cpp
    nsCOMPtr<nsIInterfaceRequestor> listenerRequestor =
      do_QueryInterface(listener, &rv);
    NS_ENSURE_SUCCESS(rv, rv);
-@@ -806,13 +811,14 @@ NS_IMPL_ISUPPORTS4(FaviconLoadListener,
+@@ -809,13 +812,14 @@ NS_IMPL_ISUPPORTS4(FaviconLoadListener,
  // FaviconLoadListener::FaviconLoadListener
  
  FaviconLoadListener::FaviconLoadListener(nsFaviconService* aFaviconService,
@@ -122,7 +125,7 @@ diff -p -u -4 -r1.16 nsFaviconService.cpp
  }
  
  
-@@ -887,28 +893,30 @@ FaviconLoadListener::OnStopRequest(nsIRe
+@@ -890,28 +894,30 @@ FaviconLoadListener::OnStopRequest(nsIRe
      mFaviconService->AddFailedFavicon(mFaviconURI);
      return NS_OK;
    }
@@ -170,7 +173,7 @@ RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.h,v
 retrieving revision 1.7
 diff -p -u -4 -r1.7 nsFaviconService.h
 --- toolkit/components/places/src/nsFaviconService.h	5 Jun 2007 23:18:47 -0000	1.7
-+++ toolkit/components/places/src/nsFaviconService.h	22 Nov 2007 02:20:04 -0000
++++ toolkit/components/places/src/nsFaviconService.h	26 Nov 2007 19:17:26 -0000
 @@ -80,9 +80,9 @@ public:
    }
  
@@ -185,10 +188,10 @@ diff -p -u -4 -r1.7 nsFaviconService.h
 Index: toolkit/components/places/src/nsNavHistory.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.cpp,v
-retrieving revision 1.196
-diff -p -u -4 -r1.196 nsNavHistory.cpp
---- toolkit/components/places/src/nsNavHistory.cpp	20 Nov 2007 23:45:34 -0000	1.196
-+++ toolkit/components/places/src/nsNavHistory.cpp	22 Nov 2007 02:20:04 -0000
+retrieving revision 1.197
+diff -p -u -4 -r1.197 nsNavHistory.cpp
+--- toolkit/components/places/src/nsNavHistory.cpp	25 Nov 2007 02:38:17 -0000	1.197
++++ toolkit/components/places/src/nsNavHistory.cpp	26 Nov 2007 19:17:26 -0000
 @@ -438,20 +438,20 @@ nsNavHistory::BackupDBFile()
    // move the database file to a uniquely named backup
    nsCOMPtr<nsIFile> profDir;
@@ -695,7 +698,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
          EmptyCString(),
          nsNavHistoryResultNode::RESULT_TYPE_FOLDER,
          PR_TRUE, EmptyCString(), aResultNode->mOptions);
-@@ -4272,9 +4275,9 @@ nsNavHistory::URIHasTag(nsIURI* aURI, co
+@@ -4347,9 +4350,9 @@ nsNavHistory::URIHasAnyTagFromTerms(cons
  //   - tags
  //   - limit count
  //   - excludingLivemarkItems
@@ -706,7 +709,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
  
  nsresult
  nsNavHistory::FilterResultSet(nsNavHistoryQueryResultNode* aQueryNode,
-@@ -4321,10 +4324,10 @@ nsNavHistory::FilterResultSet(nsNavHisto
+@@ -4396,10 +4399,10 @@ nsNavHistory::FilterResultSet(nsNavHisto
    }
  
    if (!parentAnnotationToExclude.IsEmpty()) {
@@ -719,7 +722,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
      mozStorageStatementScoper scope(mFoldersWithAnnotationQuery);
  
      rv = mFoldersWithAnnotationQuery->BindUTF8StringParameter(0, parentAnnotationToExclude);
-@@ -4352,9 +4355,9 @@ nsNavHistory::FilterResultSet(nsNavHisto
+@@ -4427,9 +4430,9 @@ nsNavHistory::FilterResultSet(nsNavHisto
        rv = bookmarks->GetFolderIdForItem(aSet[nodeIndex]->mItemId, &parentId);
        NS_ENSURE_SUCCESS(rv, rv);
      }
@@ -730,7 +733,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
      if (!parentAnnotationToExclude.IsEmpty() && (parentFoldersToExclude.IndexOf(parentId) != -1))
        continue;
  
-@@ -4436,14 +4439,14 @@ nsNavHistory::FilterResultSet(nsNavHisto
+@@ -4507,14 +4510,14 @@ nsNavHistory::FilterResultSet(nsNavHisto
        appendNode = PR_TRUE;
      }
      if (appendNode)
@@ -748,7 +751,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
        break;
    }
  
-@@ -4832,9 +4835,9 @@ nsNavHistory::GetAgeInDaysString(PRInt32
+@@ -4903,9 +4906,9 @@ nsNavHistory::GetAgeInDaysString(PRInt32
    nsAutoString intString;
    intString.AppendInt(aInt);
    const PRUnichar* strings[1] = { intString.get() };
@@ -759,7 +762,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
    if (NS_SUCCEEDED(rv))
      CopyUTF16toUTF8(value, aResult);
    else
-@@ -5003,9 +5006,9 @@ nsNavHistory::RemoveDuplicateURIs()
+@@ -5074,9 +5077,9 @@ nsNavHistory::RemoveDuplicateURIs()
          "SET place_id = ?1 "
          "WHERE place_id IN (SELECT id FROM moz_places WHERE id <> ?1 AND url = ?2)"),
        getter_AddRefs(annoStatement));
@@ -770,7 +773,7 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
    nsCOMPtr<mozIStorageStatement> deleteStatement;
    rv = mDBConn->CreateStatement(
        NS_LITERAL_CSTRING("DELETE FROM moz_places WHERE url = ?1 AND id <> ?2"),
-@@ -5050,9 +5053,9 @@ nsNavHistory::RemoveDuplicateURIs()
+@@ -5121,9 +5124,9 @@ nsNavHistory::RemoveDuplicateURIs()
      rv = annoStatement->BindUTF8StringParameter(1, url);
      NS_ENSURE_SUCCESS(rv, rv);
      rv = annoStatement->Execute();
@@ -784,10 +787,10 @@ diff -p -u -4 -r1.196 nsNavHistory.cpp
 Index: toolkit/components/places/src/nsNavHistory.h
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.h,v
-retrieving revision 1.113
-diff -p -u -4 -r1.113 nsNavHistory.h
---- toolkit/components/places/src/nsNavHistory.h	21 Nov 2007 21:41:17 -0000	1.113
-+++ toolkit/components/places/src/nsNavHistory.h	22 Nov 2007 02:20:04 -0000
+retrieving revision 1.114
+diff -p -u -4 -r1.114 nsNavHistory.h
+--- toolkit/components/places/src/nsNavHistory.h	25 Nov 2007 02:38:17 -0000	1.114
++++ toolkit/components/places/src/nsNavHistory.h	26 Nov 2007 19:17:26 -0000
 @@ -156,9 +156,9 @@ public:
     * Adds a lazy message for adding a favicon. Used by the favicon service so
     * that favicons are handled lazily just like page adds.
