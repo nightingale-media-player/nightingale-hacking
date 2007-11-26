@@ -31,13 +31,38 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 var LibraryUtils = {
-  _manager: null,
+
   get manager() {
-    if (!this._manager) {
-      this._manager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Ci.sbILibraryManager);
+    var manager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+                  getService(Ci.sbILibraryManager);
+    if (manager) {
+      // Succeeded in getting the library manager, don't do this again.
+      this.__defineGetter__("manager", function() {
+        return manager;
+      });
     }
-    return this._manager;
+    return manager;
+  },
+
+  get mainLibrary() {
+    return this.manager.mainLibrary;
+  },
+
+  get webLibrary() {
+    var webLibraryGUID = Cc["@mozilla.org/preferences-service;1"].
+                         getService(Ci.nsIPrefBranch).
+                         getCharPref("songbird.library.web");
+    var webLibrary = this.manager.getLibrary(webLibraryGUID);
+    delete webLibraryGUID;
+
+    if (webLibrary) {
+      // Succeeded in getting the web library, don't ever do this again.
+      this.__defineGetter__("webLibrary", function() {
+        return webLibrary;
+      });
+    }
+
+    return webLibrary;
   },
 
   _standardFilterConstraint: null,
@@ -170,4 +195,3 @@ function MultiBatchHelper_isActive(aLibrary)
   var batch = this.get(aLibrary);
   return batch.isActive();
 }
-

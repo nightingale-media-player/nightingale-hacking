@@ -710,6 +710,13 @@ function sbLibraryServicePane_getLibraryResourceForNode(aNode) {
 sbLibraryServicePane.prototype._doesLibrarySupportListType =
 function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
   //logcall(arguments);
+
+  // XXXben SUPER HACK to keep new playlists from being added to the web
+  //        library. We should really fix this with our policy system.
+  if (aLibrary.equals(LibraryUtils.webLibrary)) {
+    return false;
+  }
+
   var types = aLibrary.mediaListTypes;
   while (types.hasMore()) {
     if(aListType == types.getNext())  {
