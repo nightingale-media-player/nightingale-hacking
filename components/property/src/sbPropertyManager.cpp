@@ -311,37 +311,52 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
 
   //Album name
+  nsCOMPtr<sbIMutablePropertyArray> albumSortProfile =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumSortProfile->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                     NS_LITERAL_STRING("property.album_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, albumSortProfile);
 
   //Artist name
-  nsCOMPtr<sbIMutablePropertyArray> sortProfile =
+  nsCOMPtr<sbIMutablePropertyArray> artistSortProfile =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sortProfile->SetStrict(PR_FALSE);
+  rv = artistSortProfile->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                   NS_LITERAL_STRING("a"));
+  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                   NS_LITERAL_STRING("a"));
+  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                   NS_LITERAL_STRING("a"));
+  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, sortProfile);
+                    PR_TRUE, PR_TRUE, artistSortProfile);
 
   //Duration (in usecs)
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
