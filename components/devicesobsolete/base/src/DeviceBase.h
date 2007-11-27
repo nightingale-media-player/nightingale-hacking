@@ -350,6 +350,8 @@ public:
    */
   nsresult InitDeviceState(const nsAString& aDeviceIdentifier);
 
+  nsresult ClearDeviceState(const nsAString& aDeviceIdentifier);
+
   nsresult SetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
                                        sbIMediaListListener *aMediaListListener);
   nsresult GetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,

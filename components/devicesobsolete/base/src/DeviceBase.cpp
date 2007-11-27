@@ -962,6 +962,15 @@ sbDeviceBase::InitDeviceState(const nsAString& aDeviceIdentifier)
   return NS_ERROR_OUT_OF_MEMORY;
 }
 
+nsresult
+sbDeviceBase::ClearDeviceState(const nsAString& aDeviceIdentifier)
+{
+  mDeviceStates.Remove(aDeviceIdentifier);
+
+  return NS_OK;
+}
+
+
 nsresult 
 sbDeviceBase::SetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
                                           sbIMediaListListener *aMediaListListener)

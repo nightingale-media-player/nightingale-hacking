@@ -2081,6 +2081,38 @@
       <field name="_dragTimeout">350</field>
       <field name="_dragTimer">null</field>
 
+      <method name="backWithDefault">
+        <body>
+          <![CDATA[
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            var uriSpec;
+
+            // Try going back in the history
+            try {
+              if (history.index > 0) {
+                uriSpec =
+                    history.getEntryAtIndex(history.index - 1, false).URI.spec;
+              }
+            } catch (e) { }
+
+            // Use the main library as default
+            if (!uriSpec) {
+              var libraryManager =
+                  Components
+                        .classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+              uriSpec =
+                    "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
+                    libraryManager.mainLibrary.guid;
+            }
+
+            // Go back
+            browser.loadURI(uriSpec, null, null);
+          ]]>
+        </body>
+      </method>
+
       <method name="logStringMessage">
         <parameter name="aString"/>
         <body>
