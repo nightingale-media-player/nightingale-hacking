@@ -1069,8 +1069,27 @@
     if (aBeforePropertyID && bind == aBeforePropertyID) {
       beforeColumnIndex = i;
     }
-    if (col.element.getAttribute("hidden") == "false") {
+    if (!col.element.hasAttribute("hidden") ||
+        col.element.getAttribute("hidden") != "true") {
       lastVisibleIndex = i;
+    }
+  }
+
+  // If we didn't find the column, check to see if it has been added
+  // to the system as a property after our bind call. Add it hidden.
+  if (columnIndex < 0) {
+    if (this._pm.hasProperty(aPropertyID)) {
+      var propertyInfo = this._pm.getPropertyInfo(aPropertyID);
+      if (propertyInfo.userViewable) {
+        this._appendColumn(propertyInfo,
+                           true,
+                           null,
+                           (columns.length * 2));
+        columnIndex = columns.length;
+
+        // get the new array of columns
+        columns = this._getSortedColumnArray();
+      }
     }
   }
 
@@ -1103,7 +1122,7 @@
     }
   }
 
-  mover.element.setAttribute("hidden", "false");
+  mover.element.removeAttribute("hidden");
 
   // set the width if it isn't already set and we got one passed in
   var width = mover.element.getAttribute("width");
@@ -1227,7 +1246,8 @@
   var a = [];
   for (var i = 0; i < columns.length; i++) {
     var column = columns.getColumnAt(i);
-    if (column.element.getAttribute("hidden") != "true") {
+    if (!column.element.hasAttribute("hidden") ||
+        column.element.getAttribute("hidden") != "true") {
       a.push(column);
     }
   }
@@ -1322,7 +1342,8 @@
   // Gather the column information for the columns that are not hidden
   for (var i = 0; i < treecolList.length; i++) {
     var col = treecolList[i];
-    if (col.getAttribute("hidden") != "true") {
+    if (!col.hasAttribute("hidden") ||
+        col.getAttribute("hidden") != "true" ) {
       var columnInfo = { property: col.getAttribute("bind"),
                          ordinal:  col.getAttribute("ordinal"),
                          width:    col.width };
@@ -1707,7 +1728,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
       if (!item)
         continue;
 
-      var isHidden = item.hasAttribute("hidden");
+      var isHidden = item.getAttribute("hidden") == "true";
 
       if (aShow && isHidden) {
         item.removeAttribute("hidden");
