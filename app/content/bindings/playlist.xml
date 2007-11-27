@@ -1954,12 +1954,13 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             }
           }
         }
-        else {
-          // Else just fire the event
-          fireEvent(this);
-        }
+
+        // Always fire the event.
+        fireEvent(this);
+        
       }
     }
+    
     this._lastClickIndex = this.tree.currentIndex;
     this._lastClickTimestamp = evt.timeStamp;
   }

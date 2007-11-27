@@ -32,15 +32,25 @@
   <script type="application/javascript">
     function onload() {
       document.addEventListener("PlaylistCellClick", onplaylistclick, false);
-      songbird;
+      songbird.createImageProperty("logo-image", "logo");     
+
+        var list = songbird.siteLibrary.createSimpleMediaList("MyList");
+        var item = songbird.siteLibrary.createMediaItem("http://mirrors.creativecommons.org/ccmixter/contrib/Wired/David%20Byrne%20-%20My%20Fair%20Lady.mp3");
+        
+        item.setProperty("logo-image", "http://developer.songbirdnest.com/webpage-api/docs/0.3/sb_logo_doc.gif");
+
+        list.add(item);
+        
+        songbird.webPlaylist.mediaList = list;
+        songbird.webPlaylist.appendColumn("logo-image", 20);
     }
     function onplaylistclick(event) {
       var myDiv = document.getElementById("output");
-      myDiv.appendChild(document.createTextNode(event.button));
-      myDiv.appendChild(document.createTextNode(event.ctrlKey));
+      myDiv.appendChild(document.createTextNode(event.button + ", "));
+      myDiv.appendChild(document.createTextNode(event.ctrlKey + ", "));
       myDiv.appendChild(document.createTextNode(event.property));
       if ("item" in event) {
-        myDiv.appendChild(document.createTextNode(event.item.guid));
+        myDiv.appendChild(document.createTextNode(", " + event.item.guid));
       }
       myDiv.appendChild(document.createElement("br"));
     }
@@ -49,10 +59,6 @@
 <body>
   <h1>Excercise the Remote Library API</h1>
   
-  <p> Force a web playlist to appear. <br>
-    <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
-    <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
-  </p>
   <h2>Instructions</h2>
   <p>
     Click on the items in the playlist.
