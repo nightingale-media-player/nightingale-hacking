@@ -2682,6 +2682,13 @@ nsresult sbDownloadSession::Initiate()
     /* Set the origin URL */
     if (NS_SUCCEEDED(result))
     {
+      // Check if the origin URL is already set, if not copy from ContentSrc
+      // We do this so that we don't overwrite the originURL with a downloaded
+      // file location, then we can still see the original originURL.
+      nsAutoString currentOriginURL;
+      result = mpMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                        currentOriginURL);
+      if (currentOriginURL.IsEmpty()) {
         nsCOMPtr<nsIURI> pSrcURI;
         nsCString srcSpec;
         result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
@@ -2697,6 +2704,7 @@ nsresult sbDownloadSession::Initiate()
               "Failed to set originURL, this item may be duplicated later \
                because it's origin cannot be tracked!");
         }
+      }
     }
 
     /* Get the status target, if any */
