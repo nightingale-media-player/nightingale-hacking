@@ -75,13 +75,6 @@ function runTest(tester) {
     // Sleep to allow processing of pending download device callbacks.
     tester.sleep(1000);
 
-    // After sleeping, the database gets corrupted and adding items to the
-    // download media list fails and generates "SQL logic error or missing
-    // database" and "columns media_item_id, ordinal are not unique" warnings.
-    // Clearing the download list clears this condition.
-    // XXXeps: determine root cause and fix.  See bug #5991.
-    dlList.clear();
-
     // test download events
     item = siteLib.createMediaItem
                     ("http://www.songbirdnest.com/nonexistent/nonexistent.mp3");

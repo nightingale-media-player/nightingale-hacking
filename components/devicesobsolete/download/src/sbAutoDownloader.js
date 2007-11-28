@@ -159,6 +159,10 @@ function sbAutoDownloader_observe(subject, topic, data) {
     while (this._queue.length) {
       var item = this._queue.shift();
       var playlist = this._helper.downloadMediaList;
+      if (!this._library.contains(item)) {
+        // it's been removed from the library
+        continue;
+      }
       if (playlist.contains(item)) {
         // it's already in the download playlist
         continue;
