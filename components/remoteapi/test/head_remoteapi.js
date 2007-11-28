@@ -71,10 +71,23 @@ function setNoAccess() {
   setRapiPref("library_write_disable", true);
 }
 
+function setDefaultAccess() {
+  log("");
+  log("--------------------------------------------------------------------------------");
+  log("******************** Setting Default Access for RemoteAPI **********************");
+  log("--------------------------------------------------------------------------------");
+  log("");
+  setRapiPref("playback_control_disable", false);
+  setRapiPref("playback_read_disable", false);
+  setRapiPref("library_read_disable", true);
+  setRapiPref("library_write_disable", true);
+}
+
 function cleanup() {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Ci.sbILibraryManager);
   libraryManager.mainLibrary.clear();
+  setDefaultAccess();
 }
 
 function endWindowTest(e) {
@@ -240,3 +253,4 @@ function setTempDownloadDir() {
 }
 
 initMockCore();
+setDefaultAccess();
