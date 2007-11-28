@@ -643,7 +643,7 @@ PlaylistPlayback.prototype = {
   },
   
   get currentGUID() {
-    if (this.playing) return this._playingRef.stringValue;
+    if (this.playing) return this._playingItem.guid;
     return null;
   },
   
