@@ -2936,6 +2936,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
            "aStateFlags 0x%.8x aStatus 0x%.8x",
            this, aWebProgress, aRequest, aStateFlags, aStatus));
 
+    PRBool                      complete = PR_FALSE;
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
@@ -2977,9 +2978,15 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             result = NS_OK;
         }
 
-        if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status)) {
-            /* Complete the transfer on success. */
+        /* Complete the transfer on success. */
+        if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
+        {
             result = CompleteTransfer(aRequest);
+            if (NS_SUCCEEDED(result))
+                complete = PR_TRUE;
+        }
+
+        if (complete) {
             // Set the progress to complete.
             sbAutoDownloadButtonPropertyValue property(mpMediaItem,
                                                        mpStatusTarget);
@@ -2993,7 +3000,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
         /* Set the final download status. */
         nsAutoString statusStr;
-        if (NS_SUCCEEDED(status))
+        if (complete)
             statusStr.Assign(mCompleteStr);
         else
             statusStr.Assign(mErrorStr);
