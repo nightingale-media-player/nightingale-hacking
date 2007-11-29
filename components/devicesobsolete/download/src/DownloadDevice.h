@@ -326,6 +326,8 @@ class sbDownloadSession : public nsIWebProgressListener
 
     void Shutdown();
 
+    PRBool IsSuspended();
+
 
     /* *************************************************************************
      *

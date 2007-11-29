@@ -134,7 +134,9 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbDownloadDevice");
 #endif
 
 // XXXAus: this should be moved into a base64 utilities class.
+/* XXXErik: comment out to prevent unused warnings
 static unsigned char *base = (unsigned char *)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+ */
 
 // XXXAus: this should be moved into a base64 utilities class.
 static PRInt32 codetovalue( unsigned char c )
@@ -269,7 +271,7 @@ static PRStatus decode( const unsigned char    *src,
                         PRUint32                srclen,
                         unsigned char          *dest )
 {
-  PRStatus rv;
+  PRStatus rv = PR_SUCCESS;
 
   while( srclen >= 4 )
   {
@@ -2017,11 +2019,18 @@ nsresult sbDownloadDevice::RunTransferQueue()
 
     /* Update device state. */
     if (mpDownloadSession)
-        SetDeviceState(mDeviceIdentifier, STATE_DOWNLOADING);
+    {
+        if (!mpDownloadSession->IsSuspended())
+            SetDeviceState(mDeviceIdentifier, STATE_DOWNLOADING);
+        else
+            SetDeviceState(mDeviceIdentifier, STATE_DOWNLOAD_PAUSED);
+    }
     else
+    {
         SetDeviceState(mDeviceIdentifier, STATE_IDLE);
+    }
 
-    return (result);
+    return result;
 }
 
 
@@ -2794,24 +2803,30 @@ nsresult sbDownloadSession::Suspend()
     TRACE(("sbDownloadSession[0x%.8x] - Suspend", this));
     NS_ENSURE_STATE(!mShutdown);
 
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
-    if (mpRequest) {
-      /* Suspend the request. */
-      if (NS_SUCCEEDED(result))
-          result = mpRequest->Suspend();
-      if (NS_SUCCEEDED(result))
-          mSuspended = PR_TRUE;
+    /* Do nothing if already suspended. */
+    if (mSuspended)
+        return NS_OK;
 
-      sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
-      property.value->SetMode(sbDownloadButtonPropertyValue::ePaused);
-
+    /* Suspend request. */
+    if (mpRequest)
+    {
+        rv = mpRequest->Suspend();
+        NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    return (result);
+    /* Update the download media item download button property. */
+    sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+    property.value->SetMode(sbDownloadButtonPropertyValue::ePaused);
+
+    /* Mark session as suspended. */
+    mSuspended = PR_TRUE;
+
+    return NS_OK;
 }
 
 
@@ -2826,23 +2841,30 @@ nsresult sbDownloadSession::Resume()
     TRACE(("sbDownloadSession[0x%.8x] - Resume", this));
     NS_ENSURE_STATE(!mShutdown);
 
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
-    if (mpRequest) {
-      /* Resume the request. */
-      if (NS_SUCCEEDED(result))
-          result = mpRequest->Resume();
-      if (NS_SUCCEEDED(result))
-          mSuspended = PR_FALSE;
+    /* Do nothing if not suspended. */
+    if (!mSuspended)
+        return NS_OK;
 
-      sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
-      property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
+    /* Resume the request. */
+    if (mpRequest)
+    {
+        rv = mpRequest->Resume();
+        NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    return (result);
+    /* Update the download media item download button property. */
+    sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
+    property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
+
+    /* Mark session as not suspended. */
+    mSuspended = PR_FALSE;
+
+    return NS_OK;
 }
 
 
@@ -2884,6 +2906,24 @@ void sbDownloadSession::Shutdown()
       mpWebBrowser = nsnull;
     }
 
+}
+
+
+/*
+ * IsSuspended
+ *
+ *   <-- PR_TRUE                Download session is suspended.
+ *
+ *   This function returns PR_TRUE if the download session is suspended;
+ * otherwise, it returns PR_FALSE.
+ */
+
+PRBool sbDownloadSession::IsSuspended()
+{
+    /* Lock the session. */
+    nsAutoLock lock(mpSessionLock);
+
+    return mSuspended;
 }
 
 
@@ -2951,13 +2991,13 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
         /* Do nothing if download has not stopped or if shutting down. */
         if (!(aStateFlags & STATE_STOP) || mShutdown)
-            return (NS_OK);
+            return NS_OK;
 
         /* Do nothing on abort. */
         /* XXXeps This is a workaround for the fact that shutdown */
         /* isn't called until after channel is aborted.          */
         if (status == NS_ERROR_ABORT)
-            return (NS_OK);
+            return NS_OK;
 
         /* Check HTTP response status. */
         if (NS_SUCCEEDED(status))
@@ -3019,16 +3059,23 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     /* outside of session lock to prevent deadlock.      */
     mpDownloadDevice->SessionCompleted(this, status);
 
-    // Clean up
-    mpRequest = nsnull;
-    if (mpWebBrowser) {
-        mpWebBrowser->CancelSave();
-        mpWebBrowser->SetProgressListener(nsnull);
-    }
-    mpWebBrowser = nsnull;
-    mpMediaItem = nsnull;
+    /* Clean up within a session lock. */
+    {
+        /* Lock the session. */
+        nsAutoLock lock(mpSessionLock);
 
-    return (NS_OK);
+        /* Clean up. */
+        mpRequest = nsnull;
+        if (mpWebBrowser)
+        {
+            mpWebBrowser->CancelSave();
+            mpWebBrowser->SetProgressListener(nsnull);
+        }
+        mpWebBrowser = nsnull;
+        mpMediaItem = nsnull;
+    }
+
+    return NS_OK;
 }
 
 
@@ -3075,18 +3122,35 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
            this, aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress,
            aCurTotalProgress, aMaxTotalProgress));
 
-    if (mShutdown) {
-        return NS_OK;
+    PRBool                      suspendRequest = PR_FALSE;
+
+    /* Update session state inside lock. */
+    {
+        /* Lock the session. */
+        nsAutoLock lock(mpSessionLock);
+
+        /* Do nothing if shutting down. */
+        if (mShutdown)
+            return NS_OK;
+
+        /* Save the request.  Suspend request */
+        /* if download session is suspended.  */
+        if (!mpRequest)
+        {
+            mpRequest = aRequest;
+            suspendRequest = mSuspended;
+        }
     }
 
-    if (!mpRequest) {
-        mpRequest = aRequest;
-    }
+    /* Suspend request if needed.  Ignore suspension       */
+    /* errors since there's nothing to be done about them. */
+    if (suspendRequest)
+        aRequest->Suspend();
 
     /* Update progress. */
     UpdateProgress(aCurSelfProgress, aMaxSelfProgress);
 
-    return (NS_OK);
+    return NS_OK;
 }
 
 
