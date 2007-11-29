@@ -163,7 +163,7 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"]:active {
    -moz-background-clip: padding;
 }
 scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"][disabled="true"] {
-   background-image: url("chrome://songbird/skin/arrow/arrow_disabled.png");
+   background-image: url("chrome://songbird/skin/arrow/arrow-up-disabled.png");
 }
 
 
