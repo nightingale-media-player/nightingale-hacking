@@ -45,10 +45,8 @@ interface sbIAddOnPanesInstantiator : nsISupports
                    in AString aContentTitle, 
                    in PRInt32 aContentDefaultWidth, 
                    in PRInt32 aContentDefaultHeight);
-  void collapse();
-  void expand();
-  void toggle();
-  readonly attribute PRBool collapsed;
+  void reset();
+  attribute PRBool collapsed;
 };
 
 

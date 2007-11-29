@@ -144,7 +144,7 @@
 
           <!-- SERVICE PANE -->
           <vbox id="servicepane_box">
-            <sb-servicepane id="servicepane" flex="1" browser="content" />                  
+            <sb-servicepane id="servicepane" flex="1" browser="content" />
           </vbox>
 
           <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
@@ -167,6 +167,11 @@
                              />
             </vbox>
           </vbox>
+          <sb-smart-splitter collapse="after" orient="horizontal" state="collapsed"
+                             stateid="addon_pane_sidebar" id="addon_pane_sidebar_splitter">
+            <grippy flex="1"/>
+          </sb-smart-splitter>
+          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar" orient="horizontal"/>
         </hbox>
       </vbox>
       
@@ -180,6 +185,7 @@
 
   </sb-sys-outer-frame>
 </window>
+
 
 
 

@@ -113,6 +113,7 @@
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
       <menupopup id="menu_View">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
+	<sb-addon-pane-menuitems id="menuitem_view_addon_panes"/>
       </menupopup>
     </menu>
 

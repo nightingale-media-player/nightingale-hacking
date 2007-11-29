@@ -68,8 +68,11 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (event.attrName == "state")
+          if (event.attrName == "state") {
+            this.savePosition();
+            this.saveState();
             this.doAutoShowHide();
+          }
         ]]>
       </body>
     </method>
@@ -141,8 +144,7 @@
                 metrics_inc(metricscategory, metricsid, null);
             }
             
-            // make sure we save the state either way
-            SBDataSetBoolValue( root + "collapsed", collapsed );
+            this.saveState();
             
             // trigger an event (name of the event is the name of the state) for custom handlers
             var e = document.createEvent("Events");
@@ -176,6 +178,19 @@
             if (resizeafter.width != "") SBDataSetIntValue( root + "after.width", resizeafter.width );
           }
         }
+      </body>
+    </method>
+    
+    <method name="saveState">
+      <!-- parameter name="override"/ -->
+      <body>
+        var state = this.getAttribute( "state" );
+        var collapsed = (state == "collapsed");
+        var id = this.getAttribute("stateid");
+        if (!id || id == "") id = this.id;
+        
+        var root = "splitter." + id + ".";
+        SBDataSetBoolValue( root + "collapsed", collapsed );
       </body>
     </method>
 
@@ -290,7 +305,15 @@
             }
           }
           if (!sizeonly) {
-            this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
+            var state = SBDataGetStringValue( root + "collapsed" );
+            if (state == "") {
+              // no state set, use the attribute
+              state = this.getAttribute("state");
+            } else {
+              // use the stored value
+              state = SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open";
+            }
+            this.setAttribute( "state", state );
             this.doAutoShowHide();
           }
         ]]>

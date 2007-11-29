@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!--
+  an addon pane is a place where extensions (and potentially web content) can
+  add content for display in a frame, similar to Firefox's sidebar / web panels.
+-->
+
+<xbl:bindings
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <xbl:binding id="sb-addon-pane">
+    <!-- a single addon pane (with associated title bar) -->
+    <xbl:content>
+      <vbox flex="1">
+        <hbox>
+          <button type="menu" mousethrough="never">
+            <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
+                       anonid="menu">
+              <menuitem label="&menu.addon-pane.hide;"
+                        anonid="menuitem_hide"/>
+              <menuseparator/>
+              <menuitem label="&menu.addon-pane.recommended;" disabled="true"/>
+              <dummy anonid="items_recommended_start"/>
+              <dummy anonid="items_recommended_end"/>
+              <menu label="&menu.addon-pane.other;" anonid="">
+                <menupopup anonid="items_all">
+                  <dummy anonid="items_all_start"/>
+                  <dummy anonid="items_all_end"/>
+                </menupopup>
+              </menu>
+              <menuseparator/>
+              <!--
+              <menu label="&menu.addon-pane.title;">
+                <menupopup anonid="title_popup">
+                  <menuitem label="&menu.addon-pane.title.show;" type="radio" value=""/>
+                  <menuitem label="&menu.addon-pane.title.auto;" type="radio"/>
+                  <menuitem label="&menu.addon-pane.title.hide;" type="radio"/>
+                </menupopup>
+              </menu>
+              <menuseparator/>
+              -->
+              <menuitem label="&menu.addon-pane.get;"/>
+            </menupopup>
+          </button>
+          <label anonid="header" default="&menu.addon-pane.title.default;"/>
+        </hbox>
+        <browser anonid="content" flex="1" type="chrome"/>
+      </vbox>
+    </xbl:content>
+    
+    <xbl:implementation implements="sbIAddOnPanesInstantiator">
+      <xbl:constructor><![CDATA[
+        var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+                                   .getService(Components.interfaces.sbIAddOnPanes);
+        addonpanes.registerInstantiator(this);
+      ]]></xbl:constructor>
+      <xbl:property name="contentTitle" readonly="true">
+        <xbl:getter>
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
+          return elem.value;
+        </xbl:getter>
+      </xbl:property>
+      <xbl:property name="contentUrl" readonly="true">
+        <xbl:getter>
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
+          return elem.currentURI.spec;
+        </xbl:getter>
+      </xbl:property>
+      <xbl:property name="contentGroup" readonly="true">
+        <xbl:getter>
+          return this.getAttribute("contentgroup");
+        </xbl:getter>
+      </xbl:property>
+      <xbl:property name="popup" readonly="true">
+        <xbl:getter><![CDATA[
+          this.buildMenu();
+          var popup = document.getAnonymousElementByAttribute(this, "anonid", "menu");
+          popup = popup.cloneNode(true);
+          popup.removeAttribute("onpopupshowing");
+          return popup;
+        ]]></xbl:getter>
+      </xbl:property>
+      <xbl:property name="collapsed">
+        <xbl:getter>
+          return this.hasAttribute("collapsed");
+        </xbl:getter>
+        <xbl:setter>
+          if (val) {
+            this.setAttribute("collapsed", true);
+            this._getElem("content").loadURI("about:blank", null, null);
+          } else {
+            this.removeAttribute("collapsed");
+          }
+          var splitter = document.getElementById(this.id + "_splitter");
+          if (splitter) {
+            if (val)
+              splitter.setAttribute("collapsed", true);
+            else
+              splitter.removeAttribute("collapsed");
+          }
+          document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
+                  .collapsed = val;
+          document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
+                  .nextSibling.collapsed = val;
+          return val;
+        </xbl:setter>
+      </xbl:property>
+      <xbl:method name="buildMenu">
+        <xbl:parameter name="aEvent"/>
+        <xbl:body><![CDATA[
+          // eagerly build the whole menu, since we need to loop through the whole
+          // list anyway
+
+          if (aEvent && aEvent.originalTarget.getAttribute("anonid") != "menu") {
+            // this is a sub-menu even bubbling up
+            return true;
+          }
+          
+          // set the static commands
+          this._getElem("menuitem_hide").setAttribute("oncommand",
+                                                      "document.getElementById('" + this.id + "').collapsed = true");
+          
+          var startRecommend = this._getElem("items_recommended_start");
+          var endRecommend = this._getElem("items_recommended_end");
+          var startAll = this._getElem("items_all_start");
+          var endAll = this._getElem("items_all_end");
+          
+          // remove the previously made items
+          while (startRecommend.nextSibling && startRecommend.nextSibling != endRecommend) {
+            startRecommend.parentNode.removeChild(startRecommend.nextSibling);
+          }
+          while (startAll.nextSibling && startAll.nextSibling != endAll) {
+            startAll.parentNode.removeChild(startAll.nextSibling);
+          }
+          
+          // find the items
+          var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+                                     .getService(Components.interfaces.sbIAddOnPanes);
+          var recommended = [];
+          var all = [];
+          var enumerator = addonpanes.contentList;
+          var contentGroup = this.getAttribute("contentgroup");
+          while (enumerator.hasMoreElements()) {
+            debugger;
+            var item = enumerator.getNext();
+            item.QueryInterface(Components.interfaces.sbIAddOnPaneInfo);
+            var isRecommended = false;
+            if (item.suggestedContentGroup.split(";").indexOf(contentGroup) != -1) {
+              recommended.push(item);
+            } else {
+              all.push(item);
+            }
+          }
+          
+          // sort by title
+          function addonPaneSorter(x, y) {
+            if (x.contentTitle < y.contentTitle) return -1;
+            if (y.contentTitle < x.contentTitle) return 1;
+            return 0;
+          }
+          
+          // actually generate the menu items
+          function buildList(aEndMarker, aArray, aBinding) {
+            aArray.sort(addonPaneSorter);
+            for each (var item in aArray) {
+              var elem = document.createElement("menuitem");
+              elem.setAttribute("label", item.contentTitle);
+              elem.setAttribute("url", item.contentUrl);
+              elem.setAttribute("type", "radio")
+              if (item.contentUrl == aBinding.contentUrl) {
+                elem.setAttribute("checked", true);
+              }
+              // since the menu item can be cloned, we embed an oncommand
+              // that carries enough information to call this binding again
+              // with the menu item being used.  This is unfortunately quite ugly.
+              var oncommand = function(aEvent, aId) {
+                var binding = document.getElementById(aId);
+                var menuitem = aEvent.target;
+                binding.loadContent(menuitem.getAttribute("url"),
+                                    menuitem.getAttribute("label"),
+                                    0, 0);
+              }
+              elem.setAttribute("oncommand",
+                                "(" + uneval(oncommand) + ")(event, '" + aBinding.id + "')");
+              aEndMarker.parentNode.insertBefore(elem, aEndMarker);
+            }
+          }
+          buildList(endRecommend, recommended, this);
+          buildList(endAll, all, this);
+          
+        ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="loadContent">
+        <xbl:parameter name="aContentUrl"/>
+        <xbl:parameter name="aContentTitle"/>
+        <xbl:parameter name="aContentDefaultWidth"/>
+        <xbl:parameter name="aContentDefaultHeight"/>
+        <xbl:body><![CDATA[
+          this.collapsed = (aContentUrl == "about:blank");
+          this._getElem("content").loadURI(aContentUrl, null, null);
+          var header = this._getElem("header");
+          header.value = aContentTitle || header.getAttribute("default");
+        ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="reset">
+        <xbl:body>
+          this.loadContent("about:blank", null, 0, 0);
+        </xbl:body>
+      </xbl:method>
+      <xbl:method name="_getElem">
+        <xbl:parameter name="aId"/>
+        <xbl:body><![CDATA[
+          return document.getAnonymousElementByAttribute(this, "anonid", aId);
+        ]]></xbl:body>
+      </xbl:method>
+
+    </xbl:implementation>
+    
+    <xbl:handlers>
+    </xbl:handlers>
+  </xbl:binding>
+  <xbl:binding id="sb-addon-pane-menupopup">
+    <!-- a menu popup for the view menu (to clone the menupopups from the addon pane) -->
+    <xbl:implementation>
+      <xbl:constructor><![CDATA[
+      try{
+        this._menu = null;
+        var self = this;
+        this.parentNode.addEventListener("popupshowing", function(event){ self.show(event); }, false);
+        // since this is run the first time the popup is being shown,
+        // we need to explicitly create the menu
+        this.show(null);
+        } catch(e){Components.utils.reportError(e);throw(e);}
+      ]]></xbl:constructor>
+      <xbl:method name="show">
+        <xbl:parameter name="aEvent"/>
+        <xbl:body><![CDATA[
+      try{
+          if (aEvent && aEvent.originalTarget != this.parentNode)
+            // this was being bubbled up; ignore
+            return;
+          var target = document.getElementById(this.getAttribute("target"));
+          var popup = target.popup;
+          if (this._menu) {
+            this._menu.replaceChild(popup, this._menu.firstChild)
+          } else {
+            this._menu = document.createElement("menu");
+            this._menu.setAttribute("label", this.getAttribute("label"));
+            this.parentNode.insertBefore(this._menu, this);
+            this._menu.appendChild(popup);
+          }
+        } catch(e){Components.utils.reportError(e);throw(e);}
+        ]]></xbl:body>
+      </xbl:method>
+    </xbl:implementation>
+  </xbl:binding>
+  <xbl:binding id="sb-addon-pane-menuitems">
+    <!-- the placeholder for the menu items in the view menu -->
+    <xbl:implementation>
+      <xbl:constructor><![CDATA[
+      try{
+        var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+                                   .getService(Components.interfaces.sbIAddOnPanes);
+        var enumerator = addonpanes.instantiatorsList;
+        while (enumerator.hasMoreElements()) {
+          var instantiator = enumerator.getNext();
+          instantiator.QueryInterface(Components.interfaces.sbIAddOnPanesInstantiator);
+          instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
+          var item = document.createElement("sb-addon-pane-menupopup");
+          item.setAttribute("label", instantiator.contentGroup);
+          item.setAttribute("target", instantiator.id);
+          this.parentNode.appendChild(item);
+        }
+        } catch(e) { Components.utils.reportError(e)}
+      ]]></xbl:constructor>
+    </xbl:implementation>
+  </xbl:binding>
+</xbl:bindings>

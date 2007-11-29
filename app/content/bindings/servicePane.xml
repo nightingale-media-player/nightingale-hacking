@@ -46,13 +46,11 @@
                 style="-moz-binding:url(#toolbar)"
                 anonid="toolbar" />
         </xul:vbox>
-        <!--
-        <xul:sb-smart-splitter>
-          <xul:grippy/>
-        </xul:sb-smart-splitter>
-        <xul:vbox style="-moz-binding:url(#extensions)" flex="1"
-              anonid="extensions" />
-        -->
+	<xul:sb-smart-splitter collapse="after" orient="vertical" state="collapsed"
+			   stateid="addon_pane_servicepane" id="addon_pane_servicepane_splitter">
+	  <xul:grippy flex="1"/>
+	</xul:sb-smart-splitter>
+	<xul:sb-addon-pane id="addon_pane_servicepane" contentgroup="songbird-servicepane"/>
       </xul:vbox>
     </content>
     <implementation>

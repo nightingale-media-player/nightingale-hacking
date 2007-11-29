@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = addonmetadata \
+          addonpanes \
           bundle \
           commandline \
           contenthandling \

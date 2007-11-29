@@ -54,6 +54,16 @@
 <!ENTITY menu.control.resume.button    "Resume" >
 <!ENTITY menu.control.stop.button      "Stop" >
 
+<!ENTITY menu.addon-pane.hide          "Hide">
+<!ENTITY menu.addon-pane.recommended   "Recommended Extensions">
+<!ENTITY menu.addon-pane.other         "Other Extensions">
+<!ENTITY menu.addon-pane.title         "Title Bar">
+<!ENTITY menu.addon-pane.title.show    "Show">
+<!ENTITY menu.addon-pane.title.auto    "Auto Show/Hide">
+<!ENTITY menu.addon-pane.title.hide    "Hide">
+<!ENTITY menu.addon-pane.title.default "[untitled]">
+<!ENTITY menu.addon-pane.get           "Get More Extensions...">
+
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-Ons..." >
 
