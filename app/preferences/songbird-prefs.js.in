@@ -239,3 +239,16 @@ pref("songbird.mediacore.audioOut", "directsound");
 pref("songbird.mediacore.normalize", false);
 #endif
 
+//
+// Sanitize prefs
+//
+pref("privacy.sanitize.promptOnSanitize", true);
+pref("privacy.sanitize.sanitizeOnShutdown", false);
+pref("privacy.sanitize.didShutdownSanitize", false);
+pref("privacy.item.history", true);
+pref("privacy.item.formdata", true);
+pref("privacy.item.passwords", true);
+pref("privacy.item.downloads", true);
+pref("privacy.item.cookies", true);
+pref("privacy.item.cache", true);
+pref("privacy.item.sessions", true);

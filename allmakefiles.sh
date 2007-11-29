@@ -110,6 +110,8 @@ dependencies/vendor/mozilla/browser/themes/pinstripe/browser/Makefile
 dependencies/vendor/mozilla/browser/themes/winstripe/browser/Makefile
 dependencies/vendor/mozilla/browser/components/search/Makefile
 dependencies/vendor/mozilla/browser/components/places/Makefile
+dependencies/vendor/mozilla/browser/components/Makefile
+dependencies/vendor/mozilla/browser/base/Makefile
 "
 
 
