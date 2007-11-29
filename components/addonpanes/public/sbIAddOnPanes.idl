@@ -34,40 +34,47 @@ interface nsISimpleEnumerator;
  * \sa sbAddOnPanes.js
  */
 
-[scriptable, uuid(f768570e-4026-4dd8-8c4a-a9dfbd0c6cc1)]
-interface sbIAddOnPanesInstantiator : nsISupports
-{
-  readonly attribute AString contentGroup; 
-  readonly attribute AString contentUrl; 
-  readonly attribute AString contentTitle; 
-
-  void loadContent(in AString aContentUrl, 
-                   in AString aContentTitle, 
-                   in PRInt32 aContentDefaultWidth, 
-                   in PRInt32 aContentDefaultHeight);
-  void hide();
-  attribute PRBool collapsed;
-};
-
-
-[scriptable, uuid(296a0efc-baf2-416d-9392-c2f2fd8a4a80)]
+[scriptable, uuid(e90b700f-8cfc-4dbd-a39c-bb128a2766a2)]
 interface sbIAddOnPaneInfo : nsISupports
 {
   readonly attribute AString contentUrl;
   readonly attribute AString contentTitle;
+  readonly attribute AString contentIcon;
   readonly attribute PRInt32 defaultWidth;
   readonly attribute PRInt32 defaultHeight;
   readonly attribute AString suggestedContentGroup; 
 };
 
   
+[scriptable, uuid(cb0623d3-cdd3-4582-af71-7d9ef0b460bf)]
+interface sbIAddOnPanesInstantiator : nsISupports
+{
+  readonly attribute AString contentGroup; 
+  readonly attribute AString contentUrl; 
+  readonly attribute AString contentTitle; 
+  readonly attribute AString contentIcon; 
+
+  void loadContent(in sbIAddOnPaneInfo aPane);
+  void hide();
+  attribute PRBool collapsed;
+};
+
+[scriptable, uuid(25ba9d3b-804a-4c05-9481-bfe48dfeb266)]
+interface sbIAddOnPanesListener : nsISupports
+{
+  void onRegisterContent(in sbIAddOnPaneInfo aPane);
+  void onUnregisterContent(in sbIAddOnPaneInfo aPane);
+  void onRegisterInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
+  void onUnregisterInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
+};
+
 /**
  * \interface sbIAddOnPanes sbIAddOnPanes.h
  * \brief Songbird AddOnPanes Interface
  * This is the main addon panes management interface, used to register and list panes and instantiators.
  */
       
-[scriptable, uuid(64dbfa0b-9ca6-42fe-a81e-caab24ad7a5b)]
+[scriptable, uuid(ab8b67a5-4485-4c95-bffe-9987e8a19e1d)]
 interface sbIAddOnPanes : nsISupports
 {
   void registerInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
@@ -75,6 +82,7 @@ interface sbIAddOnPanes : nsISupports
 
   void registerContent(in AString aContentUrl,
                        in AString aContentTitle,
+                       in AString aContentIcon,
                        in PRInt32 aDefaultWidth,
                        in PRInt32 aDefaultHeight,
                        in AString aSuggestedContentGroup,
@@ -87,6 +95,8 @@ interface sbIAddOnPanes : nsISupports
   readonly attribute nsISimpleEnumerator contentList;
   readonly attribute nsISimpleEnumerator instantiatorsList;
   sbIAddOnPaneInfo getPaneInfo(in AString aContentUrl);
+  void addListener(in sbIAddOnPanesListener aListener);
+  void removeListener(in sbIAddOnPanesListener aListener);
 };
 
 

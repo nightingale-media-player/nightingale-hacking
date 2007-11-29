@@ -51,6 +51,7 @@ AddOnPanes.prototype = {
   _contentList: [],
   _instantiatorsList: [],
   _delayedInstantiations: [],
+  _listenersList: [],
   
   makeEnumerator: function(enumeratedtable) {
     return {
@@ -73,12 +74,14 @@ AddOnPanes.prototype = {
 
   makeAddOnPaneInfo: function(aContentUrl,
                               aContentTitle,
+                              aContentIcon,
                               aSuggestedContentGroup,
                               aDefaultWidth,
                               aDefaultHeight) {
     return {
       get contentUrl() { return aContentUrl; },
       get contentTitle() { return aContentTitle; },
+      get contentIcon() { return aContentIcon; },
       get suggestedContentGroup() { return aSuggestedContentGroup; },
       get defaultWidth() { return aDefaultWidth; },
       get defaultHeight() { return aDefaultHeight; },
@@ -109,6 +112,7 @@ AddOnPanes.prototype = {
   
   registerContent: function(aContentUrl,
                             aContentTitle,
+                            aContentIcon,
                             aDefaultWidth,
                             aDefaultHeight,
                             aSuggestedContentGroup,
@@ -117,10 +121,12 @@ AddOnPanes.prototype = {
     if (!info) {
       info = this.makeAddOnPaneInfo(aContentUrl,
                                     aContentTitle,
+                                    aContentIcon,
                                     aSuggestedContentGroup,
                                     aDefaultWidth,
                                     aDefaultHeight);
       this._contentList.push(info);
+      for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onRegisterContent(info);
       // if we have never seen this pane, show it in its prefered group
       var known = SB_NewDataRemote("addonpane.known." + aContentUrl, null);
       if (!known.boolValue) {
@@ -143,7 +149,9 @@ AddOnPanes.prototype = {
           if (this._instantiatorsList[j].contentUrl == aContentUrl)
             this._instantiatorsList[j].hide();
         }
+        var info = this._contentList[i];
         this._contentList.splice(i, 1);
+        for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onUnregisterContent(info);
         return;
       }
     }
@@ -151,6 +159,7 @@ AddOnPanes.prototype = {
   
   registerInstantiator: function(aInstantiator) {
     this._instantiatorsList.push(aInstantiator);
+    for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onRegisterInstantiator(aInstantiator);
     this.processDelayedInstantiations();
   },
 
@@ -158,6 +167,7 @@ AddOnPanes.prototype = {
     for (var i=0;i<this.instantiatorsList.length;i++) {
       if (this.instantiatorsList[i] == aInstantiator) {
         this.instantiatorsList.splice(i, 1);
+        for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onUnregisterInstantiator(aInstantiator);
         return;
       }
     }
@@ -188,10 +198,7 @@ AddOnPanes.prototype = {
   tryInstantiation: function(info) {
     var instantiator = this.getFirstInstantiatorForGroup(info.suggestedContentGroup);
     if (instantiator) {
-      instantiator.loadContent(info.contentUrl,
-                                info.contentTitle,
-                                info.defaultWidth,
-                                info.defaultHeight);
+      instantiator.loadContent(info);
       instantiator.collapsed = false;
       return true;
     }
@@ -213,6 +220,19 @@ AddOnPanes.prototype = {
       }
     } else {
       throw new Error("Content URL was not found in list of registered panes");
+    }
+  },
+  
+  addListener: function(aListener) {
+    this._listenersList.push(aListener);
+  },
+  
+  removeListener: function(aListener) {
+    for (var i=0;i<this._listenersList.length;i++) {
+      if (this._listenersList[i] == aListener) {
+        this._listenersList.splice(i, 1);
+        return;
+      }
     }
   },
   

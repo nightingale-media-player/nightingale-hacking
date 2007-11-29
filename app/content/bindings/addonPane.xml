@@ -97,6 +97,11 @@
           return elem.currentURI.spec;
         </xbl:getter>
       </xbl:property>
+      <xbl:property name="contentIcon" readonly="true">
+        <xbl:getter>
+          return ""; // todo
+        </xbl:getter>
+      </xbl:property>
       <xbl:property name="contentGroup" readonly="true">
         <xbl:getter>
           return this.getAttribute("contentgroup");
@@ -207,9 +212,12 @@
               var oncommand = function(aEvent, aId) {
                 var binding = document.getElementById(aId);
                 var menuitem = aEvent.target;
-                binding.loadContent(menuitem.getAttribute("url"),
-                                    menuitem.getAttribute("label"),
-                                    0, 0);
+                binding.loadContent({ contentUrl: menuitem.getAttribute("url"),
+                             contentTitle: menuitem.getAttribute("label"), 
+                             contentIcon: null,
+                             defaultHeight: 0,
+                             defaultWidth: 0,
+                             suggestedContentGroup: null });
               }
               elem.setAttribute("oncommand",
                                 "(" + uneval(oncommand) + ")(event, '" + aBinding.id + "')");
@@ -222,20 +230,23 @@
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="loadContent">
-        <xbl:parameter name="aContentUrl"/>
-        <xbl:parameter name="aContentTitle"/>
-        <xbl:parameter name="aContentDefaultWidth"/>
-        <xbl:parameter name="aContentDefaultHeight"/>
+        <xbl:parameter name="aInfo"/>
         <xbl:body><![CDATA[
-          this.collapsed = (aContentUrl == "about:blank");
-          this._getElem("content").loadURI(aContentUrl, null, null);
+          this.collapsed = (aInfo.contentUrl == "about:blank");
+          this._getElem("content").loadURI(aInfo.contentUrl, null, null);
           var header = this._getElem("header");
-          header.value = aContentTitle || header.getAttribute("default");
+          header.value = aInfo.contentTitle || header.getAttribute("default");
         ]]></xbl:body>
       </xbl:method>
-      <xbl:method name="reset">
+      <xbl:method name="hide">
         <xbl:body>
-          this.loadContent("about:blank", null, 0, 0);
+          // todo: collapse before unloading content
+          this.loadContent({ contentUrl: "about:blank",
+                             contentTitle: null, 
+                             contentIcon: null,
+                             defaultHeight: 0,
+                             defaultWidth: 0,
+                             suggestedContentGroup: null });
         </xbl:body>
       </xbl:method>
       <xbl:method name="_getElem">
