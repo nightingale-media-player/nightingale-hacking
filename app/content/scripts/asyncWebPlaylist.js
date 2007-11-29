@@ -241,7 +241,7 @@ try
                                       SBProperties.originURL,
                                       originURL,
                                       listener,
-                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                      Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
                   if (listener.items.length > 0) {
                     mainLibraryHasItem = true;
                   }
