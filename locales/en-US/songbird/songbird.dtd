@@ -362,3 +362,6 @@
 <!ENTITY window.browser.titlemenuseparator " - " >
 <!ENTITY window.browser.titlepreface       "" >
 
+<!ENTITY prefs.homepage.label          "Home Page" >
+<!ENTITY prefs.homepage.url.label          "URL:" >
+<!ENTITY prefs.homepage.url.accesskey          "" >
