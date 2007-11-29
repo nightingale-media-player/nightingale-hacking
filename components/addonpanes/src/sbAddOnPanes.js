@@ -27,6 +27,11 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_ADDONPANES_IID = Components.interfaces.sbIAddOnPanes;
 
+function SB_NewDataRemote(a,b) {
+  return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
+                    "sbIDataRemote", "init"))(a,b);
+}
+
 function AddOnPanes() {
 }
 
@@ -66,9 +71,38 @@ AddOnPanes.prototype = {
     };
   },
 
+  makeAddOnPaneInfo: function(aContentUrl,
+                              aContentTitle,
+                              aSuggestedContentGroup,
+                              aDefaultWidth,
+                              aDefaultHeight) {
+    return {
+      get contentUrl() { return aContentUrl; },
+      get contentTitle() { return aContentTitle; },
+      get suggestedContentGroup() { return aSuggestedContentGroup; },
+      get defaultWidth() { return aDefaultWidth; },
+      get defaultHeight() { return aDefaultHeight; },
+      QueryInterface : function(iid) {
+        if (iid.equals(Components.interfaces.sbIAddOnPaneInfo) ||
+            iid.equals(Components.interfaces.nsISupports))
+          return this;
+        throw Components.results.NS_NOINTERFACE;
+      }
+    };
+  },
+
+  getPaneInfo: function(aContentUrl) {
+    for (var i=0;i<this._contentList.length;i++) {
+      if (this._contentList[i].contentUrl == aContentUrl) 
+        return this._contentList[i];
+    }
+    return null;
+  },
+
   get contentList() {
     return this.makeEnumerator(this._contentList);
   },
+  
   get instantiatorsList() {
     return this.makeEnumerator(this._instantiatorsList);
   },
@@ -77,35 +111,40 @@ AddOnPanes.prototype = {
                             aContentTitle,
                             aDefaultWidth,
                             aDefaultHeight,
-                            aSuggestedContentGroup) {
-  
-    var info = {
-      get contentUrl() { return aContentUrl; },
-      get contentTitle() { return aContentTitle; },
-      get defaultWidth() { return aDefaultWidth; },
-      get defaultHeight() { return aDefaultHeight; },
-      get suggestedContentGroup() { return aSuggestedContentGroup; },
-      QueryInterface : function(iid) {
-        if (iid.equals(Components.interfaces.sbIAddOnPaneInfo) ||
-            iid.equals(Components.interfaces.nsISupports))
-          return this;
-        throw Components.results.NS_NOINTERFACE;
-      }
-      
-    }
-    this._contentList.push(info);
-    if (!this.inDb(aContentUrl)) {
-      this.saveToDb(info);
-      if (!this.tryInstantiation(info)) {
-        this._delayedInstantiations.push(info);
+                            aSuggestedContentGroup,
+                            aAutoShow) {
+    var info = this.getPaneInfo(aContentUrl);
+    if (!info) {
+      info = this.makeAddOnPaneInfo(aContentUrl,
+                                    aContentTitle,
+                                    aSuggestedContentGroup,
+                                    aDefaultWidth,
+                                    aDefaultHeight);
+      this._contentList.push(info);
+      // if we have never seen this pane, show it in its prefered group
+      var known = SB_NewDataRemote("addonpane.known." + aContentUrl, null);
+      if (!known.boolValue) {
+        if (aAutoShow) {
+          if (!this.tryInstantiation(info)) {
+            this._delayedInstantiations.push(info);
+          }
+        }
+        // remember we've seen this pane, let the pane hosts reload on their own if they need to
+        known.boolValue = true;
       }
     }
   },
   
   unregisterContent: function(aContentUrl) {
-    for (var i=0;i<this.contentList.length;i++) {
-      if (this.contentList[i].contentUrl == aContentUrl) {
-        this.contentList.splice(i, 1);
+    for (var i=0;i<this._contentList.length;i++) {
+      if (this._contentList[i].contentUrl == aContentUrl) {
+        // any instantiator currently hosting this url should be emptied
+        for (var j=0;j<this._instantiatorsList.length;j++) {
+          if (this._instantiatorsList[j].contentUrl == aContentUrl)
+            this._instantiatorsList[j].hide();
+        }
+        this._contentList.splice(i, 1);
+        return;
       }
     }
   },
@@ -119,21 +158,19 @@ AddOnPanes.prototype = {
     for (var i=0;i<this.instantiatorsList.length;i++) {
       if (this.instantiatorsList[i] == aInstantiator) {
         this.instantiatorsList.splice(i, 1);
+        return;
       }
     }
   },
   
-  inDb: function(aContentUrl) {
-    return false;
-  },
-  
-  saveInDb: function(aContentUrl) {
-  },
-  
   getFirstInstantiatorForGroup: function(aContentGroup) {
-    for (var i=0;i<this._instantiatorsList.length;i++) {
-      if (this._instantiatorsList[i].contentGroup.toUpperCase() == aContentGroup.toUpperCase()) 
-        return this._instantiatorsList[i];
+    var groups = aContentGroup.split(";");
+    for (var j=0;j<groups.length;j++) {
+      var ugroup = groups[j].toUpperCase();
+      for (var i=0;i<this._instantiatorsList.length;i++) {
+        if (this._instantiatorsList[i].contentGroup.toUpperCase() == ugroup) 
+          return this._instantiatorsList[i];
+      }
     }
     return null;
   },
@@ -142,7 +179,7 @@ AddOnPanes.prototype = {
     var table = [];
     for (var i=0;i<this._delayedInstantiations.length;i++) {
       var info = this._delayedInstantiations[i];
-      if (this.tryInstantiation(info)) continue;
+      if (!this.isValidPane(info) || this.tryInstantiation(info)) continue;
       table.push(info);
     }
     this._delayedInstantiations = table;
@@ -155,10 +192,28 @@ AddOnPanes.prototype = {
                                 info.contentTitle,
                                 info.defaultWidth,
                                 info.defaultHeight);
-      instantiator.expand();
+      instantiator.collapsed = false;
       return true;
     }
     return false;
+  },
+  
+  isValidPane: function(pane) {
+    for (var i=0;i<this._contentList.length;i++) {
+      if (this._contentList[i] == info) return true;
+    }
+    return false;
+  },
+
+  showPane: function(aContentUrl) {
+    var info = this.getPaneInfo(aContentUrl);
+    if (info) {
+      if (!this.tryInstantiation(info)) {
+        this._delayedInstantiations.push(info);
+      }
+    } else {
+      throw new Error("Content URL was not found in list of registered panes");
+    }
   },
   
   /**

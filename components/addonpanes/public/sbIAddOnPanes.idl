@@ -45,7 +45,7 @@ interface sbIAddOnPanesInstantiator : nsISupports
                    in AString aContentTitle, 
                    in PRInt32 aContentDefaultWidth, 
                    in PRInt32 aContentDefaultHeight);
-  void reset();
+  void hide();
   attribute PRBool collapsed;
 };
 
@@ -77,12 +77,16 @@ interface sbIAddOnPanes : nsISupports
                        in AString aContentTitle,
                        in PRInt32 aDefaultWidth,
                        in PRInt32 aDefaultHeight,
-                       in AString aSuggestedContentGroup);
+                       in AString aSuggestedContentGroup,
+                       in PRBool aAutoShow);
   
   void unregisterContent(in AString aContentUrl);
 
+  void showPane(in AString aContentUrl);
+
   readonly attribute nsISimpleEnumerator contentList;
   readonly attribute nsISimpleEnumerator instantiatorsList;
+  sbIAddOnPaneInfo getPaneInfo(in AString aContentUrl);
 };
 
 
