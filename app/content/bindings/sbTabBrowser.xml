@@ -210,9 +210,9 @@
           if ( !SBDataGetBoolValue( "firstrun.tabs.restore" ) ) {
             //
             // If we have never run the app before, load this keen stuff!@
-            var birdhouseURL = SBDataGetStringValue( "url.birdhouse" );
+            var homePageURL = this.homePage;
             var firstrunURL = SBDataGetStringValue( "url.firstrun" );
-            this.loadURI(birdhouseURL, null, null, null, 'current');
+            this.loadURI(homePageURL, null, null, null, 'current');
             this.loadURI(firstrunURL, null, null, null, 'tab');
             SBDataSetBoolValue( "firstrun.tabs.restore", true );
           } else {
@@ -1067,16 +1067,7 @@
       </method>
       <property name="homePage">
         <getter><![CDATA[
-          var browserHome = Application.prefs.get("browser.startup.homepage");
-          if (!browserHome) {
-            browserHome = Application.prefs.get("songbird.url.birdhouse");
-            if (!browserHome) {
-              throw new Error("Cannot find 'songbird.url.birdhouse' preference");
-            }
-            Application.prefs.setValue("browser.startup.homepage",
-                                       browserHome.value);
-          }
-          return browserHome.value;
+          return Application.prefs.get("browser.startup.homepage").value;
         ]]></getter>
         <setter><![CDATA[
           Application.prefs.setValue("browser.startup.homepage", val);

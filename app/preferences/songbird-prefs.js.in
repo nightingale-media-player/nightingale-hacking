@@ -219,7 +219,7 @@ pref("songbird.rapi.library_write_notify", true);
 
 // Songbird default urls
 pref("songbird.url.addons", "http://addons.songbirdnest.com/");
-pref("songbird.url.birdhouse", "http://birdhouse.songbirdnest.com/");
+pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
 pref("songbird.url.firstrun", "http://birdhouse.songbirdnest.com/firstrun/");
 pref("songbird.url.bookmarks", "http://bundles.songbirdnest.com/bookmarks.xml");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
