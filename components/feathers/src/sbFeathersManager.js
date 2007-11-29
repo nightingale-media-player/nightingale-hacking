@@ -1104,6 +1104,26 @@ FeathersManager.prototype = {
         } catch (e) {}
         
         if (!isDebugWindow) {
+
+          // Bug 5192
+          // http://bugzilla.songbirdnest.com/show_bug.cgi?id=5192
+          //
+          // VERY lamely try to fix a mac crash bug by hacking away the menus
+          // on any menubar on any window being closed by the feather-switch
+          try {
+            var menuArray = window.document.getElementsByTagName( "menubar" );
+            for ( var j = 0; j < menuArray.length; j++ ) {
+              var menu = menuArray[j];
+              while ( menu.lastChild.previousSibling != null ) {
+                menu.removeChild( menu.lastChild );
+              }
+              if ( menu.lastChild ) {
+                menu.lastChild.setAttribute( "label", "" );
+              }
+            }
+          } catch( e ) {
+          }
+        
           // Ask nicely.  The window should be able to cancel the onunload if
           // it chooses.
           window.close();
