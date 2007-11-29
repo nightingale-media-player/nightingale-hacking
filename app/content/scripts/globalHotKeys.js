@@ -179,60 +179,64 @@ function setDefaultGlobalHotkeys() {
     SBDataSetBoolValue("globalhotkeys.changed", true);
     SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    SBDataSetIntValue("globalhotkeys.count", 12);
+    SBDataSetIntValue("globalhotkeys.count", 9);
 
     // media keyboard keys :
 
-    SBDataSetStringValue("globalhotkey.0.key",             "$175");
-    SBDataSetStringValue("globalhotkey.0.key.readable",    "volumeup");
-    SBDataSetStringValue("globalhotkey.0.action",          "playback.volumeup");
+    //XXXXlone bug2906: disabled volume from default set
     
-    SBDataSetStringValue("globalhotkey.1.key",             "$174");
-    SBDataSetStringValue("globalhotkey.1.key.readable",    "volumedown");
-    SBDataSetStringValue("globalhotkey.1.action",          "playback.volumedown");
+    /*
+    SBDataSetStringValue("globalhotkey.xxx.key",             "$175");
+    SBDataSetStringValue("globalhotkey.xxx.key.readable",    "volumeup");
+    SBDataSetStringValue("globalhotkey.xxx.action",          "playback.volumeup");
     
-    SBDataSetStringValue("globalhotkey.2.key",             "$176");
-    SBDataSetStringValue("globalhotkey.2.key.readable",    "nexttrack");
-    SBDataSetStringValue("globalhotkey.2.action",          "playback.nexttrack");
+    SBDataSetStringValue("globalhotkey.xxx.key",             "$174");
+    SBDataSetStringValue("globalhotkey.xxx.key.readable",    "volumedown");
+    SBDataSetStringValue("globalhotkey.xxx.action",          "playback.volumedown");
+    */
     
-    SBDataSetStringValue("globalhotkey.3.key",             "$177");
-    SBDataSetStringValue("globalhotkey.3.key.readable",    "prevtrack");
-    SBDataSetStringValue("globalhotkey.3.action",          "playback.previoustrack");
+    SBDataSetStringValue("globalhotkey.0.key",             "$176");
+    SBDataSetStringValue("globalhotkey.0.key.readable",    "nexttrack");
+    SBDataSetStringValue("globalhotkey.0.action",          "playback.nexttrack");
+    
+    SBDataSetStringValue("globalhotkey.1.key",             "$177");
+    SBDataSetStringValue("globalhotkey.1.key.readable",    "prevtrack");
+    SBDataSetStringValue("globalhotkey.1.action",          "playback.previoustrack");
 
-    SBDataSetStringValue("globalhotkey.4.key",             "$179");
-    SBDataSetStringValue("globalhotkey.4.key.readable",    "playpause");
-    SBDataSetStringValue("globalhotkey.4.action",          "playback.playpause");
+    SBDataSetStringValue("globalhotkey.2.key",             "$179");
+    SBDataSetStringValue("globalhotkey.2.key.readable",    "playpause");
+    SBDataSetStringValue("globalhotkey.2.action",          "playback.playpause");
     
     // non media keyboard keys :
     
-    SBDataSetStringValue("globalhotkey.5.key",             "meta-$38");
-    SBDataSetStringValue("globalhotkey.5.key.readable",    meta_key_str + "-up");
-    SBDataSetStringValue("globalhotkey.5.action",          "playback.volumeup");
+    SBDataSetStringValue("globalhotkey.3.key",             "meta-$38");
+    SBDataSetStringValue("globalhotkey.3.key.readable",    meta_key_str + "-up");
+    SBDataSetStringValue("globalhotkey.3.action",          "playback.volumeup");
     
-    SBDataSetStringValue("globalhotkey.6.key",             "meta-$40");
-    SBDataSetStringValue("globalhotkey.6.key.readable",    meta_key_str + "-down");
-    SBDataSetStringValue("globalhotkey.6.action",          "playback.volumedown");
+    SBDataSetStringValue("globalhotkey.4.key",             "meta-$40");
+    SBDataSetStringValue("globalhotkey.4.key.readable",    meta_key_str + "-down");
+    SBDataSetStringValue("globalhotkey.4.action",          "playback.volumedown");
     
-    SBDataSetStringValue("globalhotkey.7.key",             "meta-$39");
-    SBDataSetStringValue("globalhotkey.7.key.readable",    meta_key_str + "-right");
-    SBDataSetStringValue("globalhotkey.7.action",          "playback.nexttrack");
+    SBDataSetStringValue("globalhotkey.5.key",             "meta-$39");
+    SBDataSetStringValue("globalhotkey.5.key.readable",    meta_key_str + "-right");
+    SBDataSetStringValue("globalhotkey.5.action",          "playback.nexttrack");
     
-    SBDataSetStringValue("globalhotkey.8.key",             "meta-$37");
-    SBDataSetStringValue("globalhotkey.8.key.readable",    meta_key_str + "-left");
-    SBDataSetStringValue("globalhotkey.8.action",          "playback.previoustrack");
+    SBDataSetStringValue("globalhotkey.6.key",             "meta-$37");
+    SBDataSetStringValue("globalhotkey.6.key.readable",    meta_key_str + "-left");
+    SBDataSetStringValue("globalhotkey.6.action",          "playback.previoustrack");
     
-    SBDataSetStringValue("globalhotkey.9.key",             "meta-$96");
-    SBDataSetStringValue("globalhotkey.9.key.readable",    meta_key_str + "-numpad0");
-    SBDataSetStringValue("globalhotkey.9.action",          "playback.playpause");
+    SBDataSetStringValue("globalhotkey.7.key",             "meta-$96");
+    SBDataSetStringValue("globalhotkey.7.key.readable",    meta_key_str + "-numpad0");
+    SBDataSetStringValue("globalhotkey.7.action",          "playback.playpause");
 
-    SBDataSetStringValue("globalhotkey.10.key",             "$178");
-    SBDataSetStringValue("globalhotkey.10.key.readable",    "stop");
-    SBDataSetStringValue("globalhotkey.10.action",          "playback.stop");
+    SBDataSetStringValue("globalhotkey.8.key",             "$178");
+    SBDataSetStringValue("globalhotkey.8.key.readable",    "stop");
+    SBDataSetStringValue("globalhotkey.8.action",          "playback.stop");
 
 /* XXXsteve bug 5303 disable jumpto
-    SBDataSetStringValue("globalhotkey.11.key",            "meta-$74");
-    SBDataSetStringValue("globalhotkey.11.key.readable",   meta_key_str + "-J");
-    SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
+    SBDataSetStringValue("globalhotkey.xxx.key",            "meta-$74");
+    SBDataSetStringValue("globalhotkey.xxx.key.readable",   meta_key_str + "-J");
+    SBDataSetStringValue("globalhotkey.xxx.action",         "jumpto.open");
 */
   }
 }
