@@ -37,8 +37,25 @@ var bmManager = {
       if (!this.svc.bookmarkExists(theurl)) {
         var thelabel = browser.contentDocument.title;
         if (thelabel == "") thelabel = theurl;
-        /* FIXME: get the favicon from the link rel in the document */
+        
         var theicon = "http://" + browser.currentURI.hostPort + "/favicon.ico";
+        try {
+          var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                        .getService(Components.interfaces.nsIFaviconService);
+          
+          theicon = faviconService.getFaviconForPage(browser.currentURI).spec;
+          
+          // Favicon URI's are prepended with "moz-anno:favicon:".
+          if(theicon.indexOf("moz-anno:favicon:") == 0) {
+            theicon = theicon.substr(17);
+          }
+        }
+        catch(e) {
+          Components.utils.reportError(e);
+        }
+
+        // XXX: The bookmark service should eventually get the favicon from the favicon service instead
+        // of simply saving the URI to the favicon. :(
         this.svc.addBookmark(theurl, thelabel, theicon);
       } else {
         // tell user it already exists

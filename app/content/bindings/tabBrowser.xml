@@ -181,6 +181,9 @@
       <field name="mContextTab">
         null
       </field>
+      <field name="mFaviconService">
+        null
+      </field>
       <field name="arrowKeysShouldWrap" readonly="true">
         /* true for Mac, false for everyone else */
         window.navigator.platform.match(/^Mac/) == 'Mac'
@@ -450,12 +453,34 @@
             var browser = this.getBrowserForTab(aTab);
             browser.mIconURL = aURI;
 
+            if(!this.mFaviconService) {
+              this.mFaviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                                       .getService(Components.interfaces.nsIFaviconService);
+            }
+            
+            if(aURI) {
+              try {
+                var uri = aURI;
+                if(!(aURI instanceof Components.interfaces.nsIURI)) {
+                  uri = newURI(aURI);
+                }
+
+                this.mFaviconService.setAndLoadFaviconForPage(browser.currentURI, 
+                                                              uri, 
+                                                              false);
+              }
+              catch(e) {
+                Components.utils.reportError(e);
+              }
+            }
+
             this.updateIcon(aTab);
 
             for (var i = 0; i < this.mProgressListeners.length; i++) {
               var p = this.mProgressListeners[i];
-              if ('onLinkIconAvailable' in p)
+              if ('onLinkIconAvailable' in p) {
                 p.onLinkIconAvailable(browser);
+              }
             }
           ]]>
         </body>

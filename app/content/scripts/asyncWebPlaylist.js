@@ -71,7 +71,9 @@ try
     const CONTRACTID_ARRAY = "@mozilla.org/array;1";
     const CONTRACTID_METADATAJOBMANAGER =
       "@songbirdnest.com/Songbird/MetadataJobManager;1";
-
+    const CONTRACTID_FAVICONSERVICE = "@mozilla.org/browser/favicon-service;1";
+    
+    const nsIFaviconService = Components.interfaces.nsIFaviconService;
     const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
     const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
@@ -272,7 +274,7 @@ try
                 // Set the originURL/Page values to remember our state.
                 var propArray = [
                     [SBProperties.originPage, self.currentURL],
-                    [SBProperties.originPageImage, "webOrigin"],
+                    [SBProperties.originPageImage, self.currentURL],
                     [SBProperties.originURL, url],
                     [SBProperties.originPageTitle, self.currentTitle],
                     [SBProperties.downloadButton, "1|0|0"]
@@ -430,17 +432,12 @@ try
                                                  sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
                 library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
                                                  sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-                if (listener.foundItem) {
-                  this.manager.items.push(listener.foundItem);
-                }
-                else {
+                if (!listener.foundItem &&
+                    this.manager.seenURLs.indexOf(url) == -1) {
                   this.manager.items.push(url);
                 }
 
                 this.manager.seenURLs.push(url);
-
-                // Only one synchronous database call per ui frame.
-                return true;
               }
             }
           } catch( e ) {
@@ -461,7 +458,7 @@ try
       
       this.pushAsync();
       
-      retval = true;
+      return true;
     };
 
     href_loop.handleEmbedURL = function( url )

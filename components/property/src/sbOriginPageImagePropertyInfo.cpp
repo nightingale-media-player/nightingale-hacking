@@ -31,6 +31,11 @@
 #include <sbIPropertyManager.h>
 #include <nsITreeView.h>
 
+#include <nsIURI.h>
+#include <nsNetUtil.h>
+#include <nsServiceManagerUtils.h>
+#include <nsUnicharUtils.h>
+
 NS_IMPL_ISUPPORTS_INHERITED2(sbOriginPageImagePropertyInfo,
                              sbImmutablePropertyInfo,
                              sbIClickablePropertyInfo,
@@ -57,6 +62,12 @@ sbOriginPageImagePropertyInfo::Init()
 {
   nsresult rv;
 
+  nsCOMPtr<nsIFaviconService> faviconService = 
+    do_GetService("@mozilla.org/browser/favicon-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mFaviconService = faviconService;
+
   rv = sbImmutablePropertyInfo::Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -69,17 +80,41 @@ NS_IMETHODIMP
 sbOriginPageImagePropertyInfo::GetImageSrc(const nsAString& aValue,
                                            nsAString& _retval)
 {
-  if(aValue.EqualsLiteral("unknownOrigin")) {
+  if(aValue.IsEmpty() ||
+     aValue.IsVoid() ||
+     aValue.EqualsLiteral("unknownOrigin") ||
+     aValue.EqualsLiteral("webOrigin")) {
     _retval.Truncate();
     return NS_OK;
   }
 
-  if(aValue.EqualsLiteral("webOrigin")) {
+  nsCOMPtr<nsIURI> uri;
+  nsresult rv = NS_NewURI(getter_AddRefs(uri), aValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> imageUri;
+  rv = mFaviconService->GetFaviconForPage(uri, getter_AddRefs(imageUri));
+  
+  if(rv == NS_ERROR_NOT_AVAILABLE) {
     _retval.Truncate();
     return NS_OK;
   }
 
-  _retval = aValue;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString spec;
+  rv = imageUri->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_NAMED_LITERAL_CSTRING(mozAnnoFavicon, "moz-anno:favicon:");
+  if(!StringBeginsWith(spec, mozAnnoFavicon)) {
+    _retval = NS_ConvertUTF8toUTF16(spec);
+    return NS_OK;
+  }
+
+  spec.Cut(0, mozAnnoFavicon.Length());
+  NS_WARNING(spec.get());
+  _retval = NS_ConvertUTF8toUTF16(spec);
 
   return NS_OK;
 }
@@ -128,7 +163,11 @@ sbOriginPageImagePropertyInfo::GetCellProperties(const nsAString& aValue,
     return NS_OK;
   }
 
-  if(aValue.EqualsLiteral("webOrigin")) {
+  if(aValue.EqualsLiteral("webOrigin") ||
+     StringBeginsWith(aValue, NS_LITERAL_STRING("http://"), CaseInsensitiveCompare) ||
+     StringBeginsWith(aValue, NS_LITERAL_STRING("https://"), CaseInsensitiveCompare) ||
+     StringBeginsWith(aValue, NS_LITERAL_STRING("ftp://"), CaseInsensitiveCompare)) {
+    
     _retval.AssignLiteral("image webOrigin");
     return NS_OK;
   }

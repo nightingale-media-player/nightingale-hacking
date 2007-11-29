@@ -75,6 +75,7 @@ CPP_INCLUDES = $(DEPTH)/components/property/public \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/locale \
+               $(MOZSDK_INCLUDE_DIR)/places \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

@@ -36,6 +36,8 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
+#include <nsIFaviconService.h>
+
 class sbOriginPageImagePropertyInfo : public sbImmutablePropertyInfo,
                                       public sbIClickablePropertyInfo,
                                       public sbITreeViewPropertyInfo
@@ -56,6 +58,10 @@ public:
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 
   nsresult Init();
+
+protected:
+  
+  nsCOMPtr<nsIFaviconService> mFaviconService;
 };
 
 #endif /* __SBIMAGEPROPERTYINFO_H__ */
