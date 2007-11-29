@@ -200,7 +200,7 @@ AddOnPanes.prototype = {
   
   isValidPane: function(pane) {
     for (var i=0;i<this._contentList.length;i++) {
-      if (this._contentList[i] == info) return true;
+      if (this._contentList[i] == pane) return true;
     }
     return false;
   },
