@@ -411,3 +411,10 @@ const SB_PROPERTY_RAPISCOPEURL = SB_PROPERTY_PREFACE + "rapiScopeURL";
  * \internal
  */
 const SB_PROPERTY_RAPISITEID = SB_PROPERTY_PREFACE + "rapiSiteID";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Needed for unit tests to pass.  Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_ENABLE_AUTO_DOWNLOAD = SB_PROPERTY_PREFACE + "enableAutoDownload";

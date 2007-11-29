@@ -277,6 +277,7 @@ try
                     [SBProperties.originPageImage, self.currentURL],
                     [SBProperties.originURL, url],
                     [SBProperties.originPageTitle, self.currentTitle],
+                    [SBProperties.enableAutoDownload, "1"],
                     [SBProperties.downloadButton, "1|0|0"]
                   ];
                 // Add the track name if requested.

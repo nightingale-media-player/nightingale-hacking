@@ -184,7 +184,8 @@ function sbAutoDownloader_observe(subject, topic, data) {
 sbAutoDownloader.prototype.onItemAdded =
 function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
   DEBUG();
-  if (aMediaItem.contentSrc.scheme.match(/^http/)) {
+  if ((aMediaItem.getProperty(SBProperties.enableAutoDownload) == "1") &&
+      aMediaItem.contentSrc.scheme.match(/^http/)) {
     // Don't download items already in the download medialist.
     if (!this._helper.downloadMediaList.contains(aMediaItem)) {
       this._queue.push(aMediaItem);

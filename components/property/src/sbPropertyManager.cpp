@@ -652,6 +652,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Enable auto-download
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ENABLE_AUTO_DOWNLOAD),
+                      EmptyString(),
+                      stringBundle, PR_FALSE, PR_FALSE,
+                      0, PR_TRUE, 1, PR_TRUE, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
