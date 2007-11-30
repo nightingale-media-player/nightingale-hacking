@@ -229,6 +229,7 @@
           var x = event.screenX - this.slider.boxObject.screenX; 
           var v = (x - this.thumb.boxObject.width/2) / (this.slider.boxObject.width - this.thumb.boxObject.width) * m; 
           if (v < 0) v = 0; else if (v > m) v = m;
+          if (this.getAttribute("dir") == "reverse") v = m - v;
           this.slider.setAttribute('curpos', ''+v);
           this.progress_value = v;
         ]]>

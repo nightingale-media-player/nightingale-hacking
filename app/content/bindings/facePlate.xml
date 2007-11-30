@@ -657,7 +657,7 @@
                            onmenushowing="buildMenu();" 
                            oncommand="onMenu(event.target)" 
                            class="sb-player-cyclefaceplate-button-cycle sb-player-button" 
-                           xbl:inherits="position,popupanchor,popupalign"/>    
+                           xbl:inherits="position,popupanchor,popupalign,label"/>    
     </content>
   
     <implementation>

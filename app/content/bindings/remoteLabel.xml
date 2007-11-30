@@ -61,6 +61,7 @@
           label.setAttribute( 'id', nodeName + "-label" );
           // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
           this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
+          this.data = this.getAttribute("data");
         ]]>
       </constructor>
 
@@ -106,6 +107,7 @@
       <constructor>
         <![CDATA[
           this.dataArray = new Array();
+          this.data = this.getAttribute("data");
         ]]>
       </constructor>
 
@@ -144,7 +146,7 @@
             // bind to the new bindings
             var strArray = val.split(";");
             for ( var datum in strArray ) {
-              this.dataArray[datum] = SBDataBindElementProperty ( datum, this.label, "value" );
+              this.dataArray[datum] = SBDataBindElementAttribute  ( strArray[datum], this.label, "value" );
             }
           ]]>
         </setter>
@@ -177,7 +179,7 @@
             observe: function( aSubject, aTopic, aData ) { this._that.updateLabel(); } 
           };
           this.remotecallback._that = this;
-          this.rescanValue();
+          this.value = this.getAttribute("value");
         ]]>
       </constructor>
 

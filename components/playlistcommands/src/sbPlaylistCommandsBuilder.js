@@ -1181,7 +1181,7 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ShortcutIsLocal", 
-                                    "");
+                                    false);
   },
 
   getCommandSubObject: function 

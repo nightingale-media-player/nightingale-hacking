@@ -479,7 +479,9 @@
     <method name="getSpacing">
       <body>
         <![CDATA[
-          return parseInt(this.getAttribute("spacing"));
+          var v = parseInt(this.getAttribute("spacing"));
+          if (v == 0 || isNaN(v)) v = 8;
+          return v;
         ]]>
       </body>
     </method>

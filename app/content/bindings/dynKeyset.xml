@@ -89,7 +89,7 @@
     <parameter name="target"/>
       <body>
         <![CDATA[
-          //alert("addkey - id='" + id + "', modifiers='" + modifiers + "', key='" + key + "', keycode='" + keycode + "'");
+          //alert("addkey - id='" + id + "', modifiers='" + modifiers + "', key='" + key + "', keycode='" + keycode + "', local=" + local);
           var keyelement;
           if (!local) {
             var keyset = document.createElement("keyset");

@@ -735,7 +735,7 @@
         // Create and bind data remotes
         this.remote_position = SB_NewDataRemote( "metadata.position", null );
         this.remote_position.bindObserver(on_remote_position_change, true);
-        this.remote_length = SBDataBindElementProperty( "metadata.length", this, "maxpos" );
+        this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
        
         this.trackingPosition = 0;
       ]]>
@@ -819,11 +819,12 @@
       </destructor>
                      
       <method name="playbackPlay">
+        <parameter name="nopause"/>
         <body>
           <![CDATA[
             if (this.gPPS.playing) {
               // if we're playing already then play / pause
-              if (this.gPPS.paused) {
+              if (this.gPPS.paused || nopause) {
                 this.gPPS.play();
               } else {
                 this.gPPS.pause();
@@ -903,7 +904,7 @@
 
     <method name="onPlay">
       <body>
-        this.playbackPlay();
+        this.playbackPlay(true);
       </body>
     </method>
 
@@ -1294,17 +1295,17 @@
         this.autotip = this.getAttribute("autotip");
         if (this.autotip) {
           // observer for DataRemote 
-          const on_remote_artist_album_change = { 
+          this.on_remote_artist_album_change = { 
             _that: null, 
             observe: function( aSubject, aTopic, aData ) { this._that.rebuildTip(); } 
           };
-          on_remote_artist_album_change._that = this;
+          this.on_remote_artist_album_change._that = this;
 
           // Create and bind data remotes
           this.remote_artist = SB_NewDataRemote( "metadata.artist", null );
           this.remote_album = SB_NewDataRemote( "metadata.album", null );
-          this.remote_artist.bindObserver(on_remote_artist_album_change, true);
-          this.remote_album.bindObserver(on_remote_artist_album_change, true);
+          this.remote_artist.bindObserver(this.on_remote_artist_album_change, true);
+          this.remote_album.bindObserver(this.on_remote_artist_album_change, true);
 
           this.rebuildTip();
       }
@@ -1313,6 +1314,7 @@
 
     <destructor>
       <![CDATA[
+        this.on_remote_artist_album_change = null;
         if (this.remote_album) {
           this.remote_album.unbind();
           this.remote_album = null;
@@ -1477,11 +1479,15 @@
       <method name="doInterval">
         <body>
           <![CDATA[
-            var browser = window.gBrowser;
-            if (!browser)
-              return;
+            var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
+            var displayValue = this.getAttribute('default');
 
-            var displayValue = ''
+            var browser = window.gBrowser;
+            if (!browser) {
+              label.setAttribute('value', displayValue);
+              return;
+            }
+
             if (browser.mCurrentTab.scanProgress >= 0 &&
                 browser.mCurrentTab.scanProgress < 1) {
               // display page scan progress
@@ -1507,7 +1513,6 @@
                 displayValue = displayFormat.replace('%s', length);
               }
             }
-            var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
             label.setAttribute('value', displayValue);
           ]]>
         </body>

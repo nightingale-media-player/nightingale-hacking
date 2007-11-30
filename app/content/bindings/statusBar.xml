@@ -38,7 +38,7 @@
     <implementation>
       <constructor>
         <![CDATA[
-          this._binding = SBDataBindElementProperty ( "faceplate.loading", this, "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" );
+          this._binding = SBDataBindElementAttribute( "faceplate.loading", this, "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" );
         ]]>
       </constructor>
       <destructor>

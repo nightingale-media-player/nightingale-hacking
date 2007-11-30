@@ -47,10 +47,10 @@
                 anonid="toolbar" />
         </xul:vbox>
 	<xul:sb-smart-splitter collapse="after" orient="vertical" state="collapsed"
-			   stateid="addon_pane_servicepane" id="addon_pane_servicepane_splitter">
+			   stateid="addon-pane-servicepane" id="addon-pane-servicepane-splitter">
 	  <xul:grippy flex="1"/>
 	</xul:sb-smart-splitter>
-	<xul:sb-addon-pane id="addon_pane_servicepane" contentgroup="songbird-servicepane"/>
+	<xul:sb-addon-pane id="addon-pane-servicepane" contentgroup="songbird-servicepane"/>
       </xul:vbox>
     </content>
     <implementation>
@@ -220,14 +220,16 @@
         this.mCurrentURL = null;
         
         /* we want to do some initialization after the window has loaded */
-        function windowOnLoad() {
-          sp.browser.addProgressListener(sp,
-              Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+        if (sp.browser) {
+          function windowOnLoad() {
+            sp.browser.addProgressListener(sp,
+                Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
 
-          gServicePane.doneInit = true;
-          window.removeEventListener('load', windowOnLoad, false);
+            gServicePane.doneInit = true;
+            window.removeEventListener('load', windowOnLoad, false);
+          }
+          window.addEventListener('load', windowOnLoad, false);
         }
-        window.addEventListener('load', windowOnLoad, false);
         
         // xbl slight of hand
         this.mTree._changeOpenState = this.mTree.changeOpenState;
@@ -246,7 +248,9 @@
       <destructor><![CDATA[
         this.mService.onSelectionChanged(null, this.mTree, window);
         // remove the progress listener
-        this.browser.removeProgressListener(this);
+        if (this.browser) {
+          this.browser.removeProgressListener(this);
+        }
 
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
@@ -542,7 +546,9 @@
               var key = "app.servicepane.playlists.click." + 
                         node.getAttributeNS(this.LSP, "LibraryCustomType");
                         
-              metrics_inc(key, node.getAttributeNS(this.LSP, "ListCustomType"), null);
+              try {
+                metrics_inc(key, node.getAttributeNS(this.LSP, "ListCustomType"), null);
+              } catch(e) { Components.utils.reportError(e); }
             } 
             else if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
             
@@ -550,7 +556,9 @@
               //that people like or hate while not tracking any bookmarks they create.
               //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
               
-              metrics_inc("app.servicepane.bookmarks.click", node.url, null);
+              try { 
+                metrics_inc("app.servicepane.bookmarks.click", node.url, null);
+              } catch(e) { Components.utils.reportError(e); }
             }
           } else {
             /* FIXME: implement non-go-to-url behaviour */

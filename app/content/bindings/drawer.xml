@@ -546,6 +546,12 @@
         </body>
       </method>
 
+      <method name="createDrawerContent">
+        <body>
+          return this.cloneBindingChildren();
+        </body>
+      </method>
+
     </implementation>
 
   </binding>

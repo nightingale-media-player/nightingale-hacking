@@ -266,7 +266,8 @@
       
       <destructor>
        <![CDATA[
-         this._dataremote.unbind();
+         if (this._dataremote)
+           this._dataremote.unbind();
          this._dataremote = null;
        ]]>
       </destructor>
