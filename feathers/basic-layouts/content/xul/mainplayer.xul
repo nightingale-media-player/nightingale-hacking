@@ -133,8 +133,7 @@
         <spacer id="control_right_spacer" flex="7" />
       </hbox>
       
-
-      <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="miniplayer_box" showoncollapse="miniplayer_box" metricscategory="app" metricsid="collapse.controlpane">
+      <sb-smart-splitter id="control_pane_splitter" collapseonly="true" state="open" collapse="before" resizebefore="closest" hideonopen="miniplayer_box" showoncollapse="miniplayer_box" metricscategory="app" metricsid="collapse.controlpane">
         <grippy/>
       </sb-smart-splitter>
 
@@ -158,7 +157,7 @@
                   Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
             -->
             <toolbox id="navigator-toolbox"/>
-
+            
             <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
             <vbox id="appcontent" flex="1">
               <sb-tabbrowser id="content" flex="1"

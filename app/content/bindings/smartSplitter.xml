@@ -46,6 +46,9 @@
         this.setAttribute("mousethrough", "never");
         if (this.getAttribute("applydefault") == "true") {
           setTimeout(function(obj) { obj.applyDefault(); }, 0, this);
+        } else {
+          // We set the collapseonly lock in the applyDefault call if we need it there
+          this._setCollapseOnly();          
         }
       ]]>
     </constructor>
@@ -229,6 +232,39 @@
             if (this.isVertical()) resizeafter.height = defaultafter;
             else resizeafter.width = defaultafter;
           }
+
+          this._setCollapseOnly();          
+        ]]>
+      </body>
+    </method>
+
+    <method name="_setCollapseOnly">
+      <body>
+        <![CDATA[
+          if ( this.getAttribute( "collapseonly" ) == "true" ) {
+            var direction = this.getAttribute("collapse");
+            var obj;
+            // Lock the collapsing side so its min and max dimensions are equal.
+            switch (direction) {
+              case "before":
+                for ( obj = this.previousSibling; obj; obj = obj.previousSibling ) {
+                  if (this.isVertical())
+                    obj.maxHeight = obj.minHeight = obj.height;
+                  else
+                    obj.maxWidth = obj.minWidth = obj.width;
+                }
+                break;
+              case "after":
+                for ( obj = this.nextSibling; obj; obj = obj.nextSibling ) {
+                  if (this.isVertical())
+                    obj.maxHeight = obj.minHeight = obj.height;
+                  else
+                    obj.maxWidth = obj.minWidth = obj.width;
+                }
+                break;
+            }
+          }
+          
         ]]>
       </body>
     </method>
