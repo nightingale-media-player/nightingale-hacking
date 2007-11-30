@@ -80,8 +80,8 @@ radio[disabled="true"] {
 
 .radio-check, .radio-check-box1 {
   -moz-appearance: radio;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: url(chrome://songbird/skin/radio/radio.png);
 }
 
