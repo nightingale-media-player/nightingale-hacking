@@ -50,7 +50,7 @@
 			       id="addon_pane_servicepane_splitter">
 	  <xul:grippy flex="1"/>
 	</xul:sb-smart-splitter>
-	<xul:sb-addon-pane id="addon-pane-servicepane" contentgroup="songbird-servicepane"/>
+	<xul:sb-addon-pane id="addon_pane_servicepane" contentgroup="songbird-servicepane"/>
       </xul:vbox>
     </content>
     <implementation>
