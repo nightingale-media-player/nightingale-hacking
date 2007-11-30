@@ -50,10 +50,11 @@
               <menuitem label="&menu.addon-pane.hide;"
                         anonid="menuitem_hide"/>
               <menuseparator/>
-              <menuitem label="&menu.addon-pane.recommended;" disabled="true"/>
+              <menuitem label="&menu.addon-pane.recommended;"
+                        disabled="true" anonid="items_recommended"/>
               <dummy anonid="items_recommended_start"/>
               <dummy anonid="items_recommended_end"/>
-              <menu label="&menu.addon-pane.other;" anonid="">
+              <menu label="&menu.addon-pane.other;" anonid="items_all">
                 <menupopup anonid="items_all">
                   <dummy anonid="items_all_start"/>
                   <dummy anonid="items_all_end"/>
@@ -70,9 +71,11 @@
               </menu>
               <menuseparator/>
               -->
-              <menuitem label="&menu.addon-pane.get;"/>
+              <menuitem label="&menu.addon-pane.get;" oncommand="onMenu(this)"
+                        value="songbird.url.addons"/>
             </menupopup>
           </button>
+          <image anonid="icon" class="favicon"/>
           <label anonid="header" default="&menu.addon-pane.title.default;"/>
         </hbox>
         <browser anonid="content" flex="1" type="chrome"/>
@@ -81,31 +84,67 @@
     
     <xbl:implementation implements="sbIAddOnPanesInstantiator">
       <xbl:constructor><![CDATA[
+        this._lastURL = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+                                  .createInstance(Components.interfaces.sbIDataRemote);
+	// if the stateid attribute doesn't exist, fall back to id.
+	// (and if that fails too, use contentGroup)
+	var stateid = this.getAttribute("stateid") ||
+	              this.id ||
+		      this.contentGroup;
+        this._lastURL.init("addonPanes." + stateid + ".lastURL", null);
+
         var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
                                    .getService(Components.interfaces.sbIAddOnPanes);
         addonpanes.registerInstantiator(this);
+
+        // load the last opened URL
+        var paneLoaded = false;
+        if (this._lastURL.stringValue) {
+          var paneinfo = addonpanes.getPaneInfo(this._lastURL.stringValue);
+          if (paneinfo) {
+            setTimeout(function(self){
+              // need to give the <browser> time to initialize
+              self._internalLoadURL(paneinfo);
+            }, 0, this);
+            paneLoaded = true;
+          }
+        }
+
+        if (!paneLoaded) {
+          this.hide();
+        }
       ]]></xbl:constructor>
-      <xbl:property name="contentTitle" readonly="true">
-        <xbl:getter>
-          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
-          return elem.value;
-        </xbl:getter>
+      <xbl:property name="contentGroup" readonly="true">
+        <xbl:getter><![CDATA[
+          return this.getAttribute("contentgroup");
+        ]]></xbl:getter>
       </xbl:property>
       <xbl:property name="contentUrl" readonly="true">
-        <xbl:getter>
+        <xbl:getter><![CDATA[
           var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
           return elem.currentURI.spec;
-        </xbl:getter>
+        ]]></xbl:getter>
       </xbl:property>
-      <xbl:property name="contentIcon" readonly="true">
-        <xbl:getter>
-          return ""; // todo
-        </xbl:getter>
+      <xbl:property name="contentTitle">
+        <xbl:getter><![CDATA[
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
+          return elem.value;
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
+          return elem.value = val;
+        ]]></xbl:setter>
       </xbl:property>
-      <xbl:property name="contentGroup" readonly="true">
-        <xbl:getter>
-          return this.getAttribute("contentgroup");
-        </xbl:getter>
+      <xbl:property name="contentIcon">
+        <xbl:getter><![CDATA[
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "icon");
+          return elem.src;
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "icon");
+          elem.collapsed = (val.length < 1);
+          return elem.src = val;
+        ]]></xbl:setter>
       </xbl:property>
       <xbl:property name="popup" readonly="true">
         <xbl:getter><![CDATA[
@@ -117,29 +156,51 @@
         ]]></xbl:getter>
       </xbl:property>
       <xbl:property name="collapsed">
-        <xbl:getter>
+        <xbl:getter><![CDATA[
           return this.hasAttribute("collapsed");
-        </xbl:getter>
-        <xbl:setter>
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
           if (val) {
             this.setAttribute("collapsed", true);
-            this._getElem("content").loadURI("about:blank", null, null);
           } else {
             this.removeAttribute("collapsed");
+            if (this._hidden)
+              this._hidden = false;
           }
+          return val;
+        ]]></xbl:setter>
+      </xbl:property>
+      <xbl:property name="_hidden">
+        <xbl:getter><![CDATA[
+          var splitter = document.getElementById(this.id + "_splitter");
+          if (!splitter)
+            return false;
+          return splitter.hasAttribute("collapsed");
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
           var splitter = document.getElementById(this.id + "_splitter");
           if (splitter) {
-            if (val)
+            if (val) {
               splitter.setAttribute("collapsed", true);
-            else
+            } else {
               splitter.removeAttribute("collapsed");
+            }
           }
           document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
                   .collapsed = val;
           document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
                   .nextSibling.collapsed = val;
+          if (val != this.collapsed)
+            this.collapsed = val;
+          // remember to clear the pane so we don't load it on next start
+          try {
+            this._getElem("content").loadURI("about:blank", null, null);
+          } catch (e) {
+            /* don't really care */
+          }
+          this._lastURL.stringValue = "";
           return val;
-        </xbl:setter>
+        ]]></xbl:setter>
       </xbl:property>
       <xbl:method name="buildMenu">
         <xbl:parameter name="aEvent"/>
@@ -154,7 +215,7 @@
           
           // set the static commands
           this._getElem("menuitem_hide").setAttribute("oncommand",
-                                                      "document.getElementById('" + this.id + "').collapsed = true");
+                                                      "document.getElementById('" + this.id + "').hide()");
           
           var startRecommend = this._getElem("items_recommended_start");
           var endRecommend = this._getElem("items_recommended_end");
@@ -177,7 +238,6 @@
           var enumerator = addonpanes.contentList;
           var contentGroup = this.getAttribute("contentgroup");
           while (enumerator.hasMoreElements()) {
-            debugger;
             var item = enumerator.getNext();
             item.QueryInterface(Components.interfaces.sbIAddOnPaneInfo);
             var isRecommended = false;
@@ -196,7 +256,7 @@
           }
           
           // actually generate the menu items
-          function buildList(aEndMarker, aArray, aBinding) {
+          function buildList(aEndMarker, aArray, aBinding, aHeader) {
             aArray.sort(addonPaneSorter);
             for each (var item in aArray) {
               var elem = document.createElement("menuitem");
@@ -212,42 +272,60 @@
               var oncommand = function(aEvent, aId) {
                 var binding = document.getElementById(aId);
                 var menuitem = aEvent.target;
-                binding.loadContent({ contentUrl: menuitem.getAttribute("url"),
-                             contentTitle: menuitem.getAttribute("label"), 
-                             contentIcon: null,
-                             defaultHeight: 0,
-                             defaultWidth: 0,
-                             suggestedContentGroup: null });
+                var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+                                           .getService(Components.interfaces.sbIAddOnPanes);
+                var paneinfo = addonpanes.getPaneInfo(menuitem.getAttribute("url"));
+                binding.loadContent(paneinfo);
               }
               elem.setAttribute("oncommand",
                                 "(" + uneval(oncommand) + ")(event, '" + aBinding.id + "')");
               aEndMarker.parentNode.insertBefore(elem, aEndMarker);
             }
+            aBinding._getElem(aHeader).collapsed = (aArray.length < 1);
           }
-          buildList(endRecommend, recommended, this);
-          buildList(endAll, all, this);
+          buildList(endRecommend, recommended, this, "items_recommended");
+          buildList(endAll, all, this, "items_all");
           
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="loadContent">
-        <xbl:parameter name="aInfo"/>
+        <xbl:parameter name="aPaneInfo"/>
         <xbl:body><![CDATA[
-          this.collapsed = (aInfo.contentUrl == "about:blank");
-          this._getElem("content").loadURI(aInfo.contentUrl, null, null);
+          this._internalLoadURL(aPaneInfo);
+          
+          // XXX Mook: getComputedStyle for -moz-box-orient lies, see BMO 216838
+          // and yes, xul attributes override CSS :(
+          var orient = getComputedStyle(this, "").MozBoxOrient;
+          if (this.hasAttribute("orient"))
+            orient = this.getAttribute("orient");
+          if (orient == "vertical") {
+            this.width = aPaneInfo.defaultWidth;
+            this.collapsed = false;
+          } else {
+            this.height = aPaneInfo.defaultHeight;
+            this.collapsed = false;
+          }
+          
+        ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="_internalLoadURL">
+        <!-- this loads a content URL without sizing anything -->
+        <xbl:parameter name="aPaneInfo"/>
+        <xbl:body><![CDATA[
+          this._hidden = (aPaneInfo.contentUrl == "about:blank");
+          this._getElem("content").loadURI(aPaneInfo.contentUrl, null, null);
           var header = this._getElem("header");
-          header.value = aInfo.contentTitle || header.getAttribute("default");
+          this.contentTitle = aPaneInfo.contentTitle || header.getAttribute("default");
+          this.contentIcon = aPaneInfo.contentIcon;
+          
+          // save the last loaded URL
+          this._lastURL.stringValue = aPaneInfo.contentUrl;
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="hide">
-        <xbl:body>
-          // todo: collapse before unloading content
-          this.loadContent({ contentUrl: "about:blank",
-                             contentTitle: null, 
-                             contentIcon: null,
-                             defaultHeight: 0,
-                             defaultWidth: 0,
-                             suggestedContentGroup: null });
-        </xbl:body>
+        <xbl:body><![CDATA[
+          this._hidden = true;
+        ]]></xbl:body>
       </xbl:method>
       <xbl:method name="_getElem">
         <xbl:parameter name="aId"/>

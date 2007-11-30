@@ -46,8 +46,8 @@
                 style="-moz-binding:url(#toolbar)"
                 anonid="toolbar" />
         </xul:vbox>
-	<xul:sb-smart-splitter collapse="after" orient="vertical" state="collapsed"
-			   stateid="addon-pane-servicepane" id="addon-pane-servicepane-splitter">
+	<xul:sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
+			       id="addon_pane_servicepane_splitter">
 	  <xul:grippy flex="1"/>
 	</xul:sb-smart-splitter>
 	<xul:sb-addon-pane id="addon-pane-servicepane" contentgroup="songbird-servicepane"/>

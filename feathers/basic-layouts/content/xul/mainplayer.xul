@@ -167,11 +167,11 @@
                              />
             </vbox>
           </vbox>
-          <sb-smart-splitter collapse="after" orient="horizontal" state="collapsed"
-                             stateid="addon_pane_sidebar" id="addon_pane_sidebar_splitter">
+          <sb-smart-splitter collapse="after" orient="horizontal" resizeafter="closest"
+                             id="addon_pane_sidebar_splitter">
             <grippy flex="1"/>
           </sb-smart-splitter>
-          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar" orient="horizontal"/>
+          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar" orient="vertical"/>
         </hbox>
       </vbox>
       

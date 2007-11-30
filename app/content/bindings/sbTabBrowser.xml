@@ -159,17 +159,18 @@
 	
 	// addon pane
 	XML.prettyPrinting = false;
-	var xml =  <sb-smart-splitter collapse="after" orient="vertical" state="collapsed" 
-                                      stateid="addon_pane_browser" id="addon_pane_browser_splitter"
+	var xml = <sb-addon-pane id="addon_pane_browser" contentgroup="songbird-browser"
+	                     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>;
+	var doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
+	var pane = document.importNode(doc.documentElement, true);
+	this.parentNode.appendChild(pane);
+	xml =  <sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
+                                      id="addon_pane_browser_splitter"
 			              xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
                      <grippy flex="1"/>
                    </sb-smart-splitter>;
-	var doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
-	this.parentNode.appendChild(document.importNode(doc.documentElement, true));
-	xml = <sb-addon-pane id="addon_pane_browser" contentgroup="songbird-browser"
-	                     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>;
 	doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
-	this.parentNode.appendChild(document.importNode(doc.documentElement, true));
+	this.parentNode.insertBefore(document.importNode(doc.documentElement, true), pane);
 	
 
       ]]></constructor>
