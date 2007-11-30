@@ -86,12 +86,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\public\sbIAddOnPanesDataListener.idl">
-			</File>
-			<File
-				RelativePath=".\public\sbIAddOnPanesInstallListener.idl">
-			</File>
 		</Filter>
 		<Filter
 			Name="src"
