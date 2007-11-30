@@ -256,7 +256,7 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
     case "Linux":
       var homeDir = dirService.getFile("Home", {});
       musicDir = homeDir.clone().append("Music");
-      if (!musicDir.isDirectory()) {
+      if (!folderIsValid(musicDir)) {
         musicDir = homeDir.append("music");
       }
       break;
@@ -269,10 +269,10 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
   // Make sure that the directory exists and is writable.
   if (!folderIsValid(musicDir)) {
     // Great, default to the Desktop... This should work on all OS's.
-    musicDir = dirService.get("Desk", {});
+    musicDir = dirService.getFile("Desk", {});
 
     // We should never get something bad here, but just in case...
-    if (!folderIsValid(musicdir)) {
+    if (!folderIsValid(musicDir)) {
       Cu.reportError("Desktop directory is not a directory!");
       throw Cr.NS_ERROR_FILE_NOT_DIRECTORY;
     }
