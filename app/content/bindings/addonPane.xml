@@ -291,6 +291,10 @@
       <xbl:method name="loadContent">
         <xbl:parameter name="aPaneInfo"/>
         <xbl:body><![CDATA[
+          if (this.contentUrl == aPaneInfo.contentUrl) {
+            this.collapsed = false;
+            return;
+          }
           this._internalLoadURL(aPaneInfo);
           
           // XXX Mook: getComputedStyle for -moz-box-orient lies, see BMO 216838

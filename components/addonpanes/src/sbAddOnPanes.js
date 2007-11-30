@@ -79,9 +79,11 @@ AddOnPanes.prototype = {
                               aDefaultWidth,
                               aDefaultHeight) {
     return {
+      _title: aContentTitle,
+      _icon: aContentIcon,
       get contentUrl() { return aContentUrl; },
-      get contentTitle() { return aContentTitle; },
-      get contentIcon() { return aContentIcon; },
+      get contentTitle() { return this._title; },
+      get contentIcon() { return this._icon; },
       get suggestedContentGroup() { return aSuggestedContentGroup; },
       get defaultWidth() { return aDefaultWidth; },
       get defaultHeight() { return aDefaultHeight; },
@@ -90,6 +92,10 @@ AddOnPanes.prototype = {
             iid.equals(Components.interfaces.nsISupports))
           return this;
         throw Components.results.NS_NOINTERFACE;
+      },
+      updateContentInfo: function(aNewTitle, aNewIcon) {
+        this._title = aNewTitle;
+        this._icon = aNewIcon;
       }
     };
   },
@@ -199,7 +205,6 @@ AddOnPanes.prototype = {
     var instantiator = this.getFirstInstantiatorForGroup(info.suggestedContentGroup);
     if (instantiator) {
       instantiator.loadContent(info);
-      instantiator.collapsed = false;
       return true;
     }
     return false;
@@ -236,6 +241,21 @@ AddOnPanes.prototype = {
     }
   },
   
+  updateContentInfo: function(aContentUrl, aNewContentTitle, aNewContentIcon) {
+    var info = this.getPaneInfo(aContentUrl);
+    if (info) {
+      info.updateContentInfo(aNewContentTitle, aNewContentIcon);
+      // change the live title for every instance of this content
+      for (var i=0;i<this._instantiatorsList.length;i++) {
+        if (this._instantiatorsList[i].contentUrl == aContentUrl) {
+          this._instantiatorsList[i].contentTitle = aNewContentTitle;
+          this._instantiatorsList[i].contentIcon = aNewContentIcon;
+        }
+      }
+      for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onPaneInfoChanged(info);
+    }
+  },
+
   /**
    * See nsISupports.idl
    */

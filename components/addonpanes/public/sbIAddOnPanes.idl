@@ -59,13 +59,14 @@ interface sbIAddOnPanesInstantiator : nsISupports
   attribute PRBool collapsed;
 };
 
-[scriptable, uuid(25ba9d3b-804a-4c05-9481-bfe48dfeb266)]
+[scriptable, uuid(002c1198-0a6f-42fa-b24b-12c124277215)]
 interface sbIAddOnPanesListener : nsISupports
 {
   void onRegisterContent(in sbIAddOnPaneInfo aPane);
   void onUnregisterContent(in sbIAddOnPaneInfo aPane);
   void onRegisterInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
   void onUnregisterInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
+  void onPaneInfoChanged(in sbIAddOnPaneInfo aPane);
 };
 
 /**
@@ -74,7 +75,7 @@ interface sbIAddOnPanesListener : nsISupports
  * This is the main addon panes management interface, used to register and list panes and instantiators.
  */
       
-[scriptable, uuid(ab8b67a5-4485-4c95-bffe-9987e8a19e1d)]
+[scriptable, uuid(66d1ab0d-5a5a-43d6-9611-fd09a7422557)]
 interface sbIAddOnPanes : nsISupports
 {
   void registerInstantiator(in sbIAddOnPanesInstantiator aInstantiator);
@@ -89,6 +90,8 @@ interface sbIAddOnPanes : nsISupports
                        in PRBool aAutoShow);
   
   void unregisterContent(in AString aContentUrl);
+
+  void updateContentInfo(in AString aContentUrl, in AString aNewContentTitle, in AString aNewContentIcon);
 
   void showPane(in AString aContentUrl);
 
