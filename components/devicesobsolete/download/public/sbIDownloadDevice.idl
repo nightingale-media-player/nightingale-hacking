@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -35,13 +35,14 @@
 
 interface sbIMediaItem;
 interface sbIMediaList;
+interface nsIFile;
 interface nsISimpleEnumerator;
 
 /**
  * \interface sbIDownloadDevice
  *
  * \brief Songbird DownloadDevice Interface.
- * 
+ *
  * <TODO:Detail>.
  *
  * \sa sbIDeviceBase.idl
@@ -65,10 +66,18 @@ interface sbIDownloadDevice : sbIDeviceBase
   void clearCompletedItems();
 };
 
-[scriptable, uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]
+[scriptable, uuid(09ebfeab-2a03-4ba6-8127-bd36b62f5e5c)]
 interface sbIDownloadDeviceHelper : nsISupports
 {
   readonly attribute sbIMediaList downloadMediaList;
+
+  readonly attribute nsIFile defaultMusicFolder;
+
+  /**
+   * Will throw NS_ERROR_ABORT if the user cancels the download destination
+   * dialog.
+   */
+  readonly attribute nsIFile downloadFolder;
 
   void downloadItem(in sbIMediaItem aMediaItem);
 
@@ -76,4 +85,3 @@ interface sbIDownloadDeviceHelper : nsISupports
 
   void downloadAll(in sbIMediaList aMediaList);
 };
-

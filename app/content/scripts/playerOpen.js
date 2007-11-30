@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -68,7 +68,7 @@ try
 
     // ask the playback core for supported extensions
     var files = "";
-    var eExtensions = PPS.getSupportedFileExtensions(); 
+    var eExtensions = PPS.getSupportedFileExtensions();
     while (eExtensions.hasMore()) {
       files += ( "*." + eExtensions.getNext() + "; ");
     }
@@ -84,7 +84,7 @@ try
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
-      
+
       // See if we're asking for an extension
       if ( isXPI( uri.spec ) )
       {
@@ -100,7 +100,7 @@ try
 
         // Import the item.
         var item = SBImportURLIntoMainLibrary(uri);
-        
+
         var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                   .getService(Components.interfaces.sbILibraryManager);
 
@@ -117,7 +117,7 @@ try
     url_open_data.URL = URL.stringValue;
     url_open_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow ); 
+    SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow );
     if ( url_open_data.retval == "ok" )
     {
       var library = SBGetWebLibrary();
@@ -127,9 +127,9 @@ try
       theTitleText.stringValue = url_open_data.URL;
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
-      
+
       SBDisplayViewForListAndPlayItem(library, item);
-    }  
+    }
   }
 
   function SBPlaylistOpen()
@@ -150,12 +150,12 @@ try
         sel = theSongbirdStrings.getString("faceplate.open.playlist");
       } catch(e) {}
       fp.init(window, sel, nsIFilePicker.modeOpen);
-      
+
       // Tell it what filters to be using
       var filterlist = "";
       var extensionCount = new Object;
       var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
-      
+
       var first = true;
       for(var i = 0; i < extensions.length; i++)
       {
@@ -171,14 +171,14 @@ try
           }
         }
       }
-      
+
       var playlistfiles = "Playlist Files";
       try
       {
         playlistfiles = theSongbirdStrings.getString("open.playlistfiles");
       } catch(e) {}
       fp.appendFilter(playlistfiles, filterlist);
-      
+
       // Show it
       var fp_status = fp.show();
       if ( fp_status == nsIFilePicker.returnOK )
@@ -243,19 +243,19 @@ try
       {
         aDBQuery = aDBQuery.createInstance();
         aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-        
+
         if ( ! aDBQuery )
         {
           return false;
         }
-        
+
         aDBQuery.setAsyncQuery(false);
         aDBQuery.setDatabaseGUID("testdb-0000");
         aDBQuery.addQuery('select * from test where url="' + the_url + '"' );
         var ret = aDBQuery.execute();
-        
+
         resultset = aDBQuery.getResultObject();
-       
+
         // we didn't find anything that matches our url
         if ( resultset.getRowCount() != 0 )
         {
@@ -289,10 +289,10 @@ function SBOpenPreferences(paneID, parentWindow)
   // In mozilla this is the browser.prefereces.instantApply pref,
   // and is set at compile time.
   var instantApply = navigator.userAgent.indexOf("Windows") == -1;
-	
+
   // BUG 5081 - You can't call restart in a modal window, so
   // we're making prefs non-modal on all platforms.
-  // Original line:  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");  
+  // Original line:  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");
   var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : "");
 
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
@@ -306,15 +306,9 @@ function SBOpenPreferences(paneID, parentWindow)
   }
   else
     parentWindow.openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
-    
-  // to open connection settings only:
-  // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null); 
-}
 
-function SBSetDownloadFolder(parentWindow)
-{
-  // Just open the window, we don't care what the user does in it.
-  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", null, parentWindow ); 
+  // to open connection settings only:
+  // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null);
 }
 
 /*function SBOpenDownloadManager()
@@ -336,7 +330,7 @@ function SBSetDownloadFolder(parentWindow)
 
 function SBWatchFolders( parentWindow )
 {
-  SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow );
 }
 
 var theFileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
@@ -371,40 +365,40 @@ function SBScanMedia( parentWindow )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the modal dialog
-    SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );
   }
   theFileScanIsOpen.boolValue = false;
 }
 
-function SBGetBrowser() 
+function SBGetBrowser()
 {
   if ( typeof gBrowser != 'undefined' ) {
     return gBrowser;
   }
-  
+
   var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                     .getInterface(Components.interfaces.nsIWebNavigation)
                     .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
                     .rootTreeItem
                     .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                     .getInterface(Components.interfaces.nsIDOMWindow);
- 
+
   if ( typeof mainWindow.gBrowser != 'undefined' ) {
     return mainWindow.gBrowser;
   }
-  
+
   return null;
 }
 
 /** Legacy function **/
 function SBNewPlaylist()
 {
-  return makeNewPlaylist("simple"); 
+  return makeNewPlaylist("simple");
 }
 
 function SBNewSmartPlaylist()
 {
-  return makeNewPlaylist("smart"); 
+  return makeNewPlaylist("smart");
 }
 
 /**
@@ -422,21 +416,21 @@ function makeNewPlaylist(mediaListType) {
   if (servicePane) {
     selectedNode = servicePane.getSelectedNode();
   }
-  
+
   // Ask the library service pane provider to suggest where
   // a new playlist should be created
   var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
                              .getService(Components.interfaces.sbILibraryServicePaneService);
   var library = librarySPS.suggestLibraryForNewList(mediaListType, selectedNode);
-  
+
   // Looks like no libraries support the given mediaListType
   if (!library) {
-    throw("Could not find a library supporting lists of type " + mediaListType); 
+    throw("Could not find a library supporting lists of type " + mediaListType);
   }
-  
+
   // Create the playlist
   var mediaList = library.createMediaList(mediaListType);
-  
+
   // Give the playlist a default name
   // TODO: Localization should be done internally
   mediaList.name = SBString("playlist", "Playlist");
@@ -445,7 +439,7 @@ function makeNewPlaylist(mediaListType) {
   if (servicePane) {
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(mediaList);
-    
+
     if (node) {
       // Ask the service pane to start editing our new node
       // so that the user can give it a name
@@ -477,14 +471,14 @@ function SBKoshiOpen( parentWindow )
   var koshi_data = new Object();
   koshi_data.retval = "";
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/koshiTest.xul", "", "chrome,centerscreen", koshi_data, parentWindow ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/koshiTest.xul", "", "chrome,centerscreen", koshi_data, parentWindow );
 }
 
 function SBExtensionsManagerOpen( parentWindow )
 {
   if (!parentWindow) parentWindow = window;
   const EM_TYPE = "Extension:Manager";
-  
+
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
   var theEMWindow = wm.getMostRecentWindow(EM_TYPE);
@@ -492,7 +486,7 @@ function SBExtensionsManagerOpen( parentWindow )
     theEMWindow.focus();
     return;
   }
-  
+
   const EM_URL = "chrome://mozapps/content/extensions/extensions.xul?type=extensions";
   const EM_FEATURES = "chrome,menubar,extra-chrome,toolbar,dialog=no,resizable";
   parentWindow.openDialog(EM_URL, "", EM_FEATURES);
@@ -508,7 +502,7 @@ function SBTrackEditorOpen( parentWindow )
   } else {
     const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist, parentWindow); 
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist, parentWindow);
   }
 }
 
@@ -538,7 +532,7 @@ function SBSubscribe(mediaList, defaultUrl, parentWindow)
                     "",
                     "chrome,centerscreen",
                     params,
-                    parentWindow); 
+                    parentWindow);
 }
 
 // TODO: This function should be renamed.  See openAboutDialog in browserUtilities.js
@@ -548,10 +542,10 @@ function About( parentWindow )
   var about_data = new Object();
   about_data.retval = "";
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data, parentWindow ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data, parentWindow );
   if ( about_data.retval == "ok" )
   {
-  }  
+  }
 }
 
 function SBNewFolder() {
@@ -562,15 +556,15 @@ function SBNewFolder() {
   if (servicePane) {
     selectedNode = servicePane.getSelectedNode();
   }
-  
+
   // The bookmarks service knows how to make folders...
   var bookmarks = Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
       .getService(Components.interfaces.sbIBookmarks);
-  
+
   // ask the bookmarks service to make a new folder
   var folder = bookmarks.addFolder(SBString('bookmarks.newfolder.defaultname',
                                             'New Folder'));
- 
+
   // start editing the new folder
   if (gServicePane) {
     // we can find the pane so we can edit it inline
@@ -597,16 +591,16 @@ function SBNewFolder() {
  */
 function checkForUpdates()
 {
-  var um = 
+  var um =
       Components.classes["@mozilla.org/updates/update-manager;1"].
       getService(Components.interfaces.nsIUpdateManager);
-  var prompter = 
+  var prompter =
       Components.classes["@mozilla.org/updates/update-prompt;1"].
       createInstance(Components.interfaces.nsIUpdatePrompt);
 
   // If there's an update ready to be applied, show the "Update Downloaded"
   // UI instead and let the user know they have to restart the browser for
-  // the changes to be applied. 
+  // the changes to be applied.
   if (um.activeUpdate && um.activeUpdate.state == "pending")
     prompter.showUpdateDownloaded(um.activeUpdate);
   else
@@ -615,24 +609,24 @@ function checkForUpdates()
 
 function buildHelpMenu()
 {
-  var updates = 
+  var updates =
       Components.classes["@mozilla.org/updates/update-service;1"].
       getService(Components.interfaces.nsIApplicationUpdateService);
-  var um = 
+  var um =
       Components.classes["@mozilla.org/updates/update-manager;1"].
       getService(Components.interfaces.nsIUpdateManager);
 
-  // Disable the UI if the update enabled pref has been locked by the 
+  // Disable the UI if the update enabled pref has been locked by the
   // administrator or if we cannot update for some other reason
   var checkForUpdates = document.getElementById("updateCmd");
   var canUpdate = updates.canUpdate;
   checkForUpdates.setAttribute("disabled", !canUpdate);
   if (!canUpdate)
-    return; 
+    return;
 
   var strings = document.getElementById("songbird_strings");
   var activeUpdate = um.activeUpdate;
-  
+
   // If there's an active update, substitute its name into the label
   // we show for this item, otherwise display a generic label.
   function getStringWithUpdateName(key) {
@@ -640,7 +634,7 @@ function buildHelpMenu()
       return strings.getFormattedString(key, [activeUpdate.name]);
     return strings.getString(key + "Fallback");
   }
-  
+
   // By default, show "Check for Updates..."
   var key = "default";
   if (activeUpdate) {
@@ -692,12 +686,12 @@ function SBGetWebLibrary() {
 
   var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefService);
-    
+
   var prefBranch = prefsService.getBranch("songbird.library.")
                       .QueryInterface(Components.interfaces.nsIPrefBranch);
-  
+
   var webLibrary = prefBranch.getCharPref("web");
-  
+
   return libraryManager.getLibrary(webLibrary);
 }
 
@@ -708,7 +702,7 @@ function SBIsWebLibrary(aLibraryResource) {
   if(!(aLibraryResource instanceof Components.interfaces.sbILibraryResource)) {
     return Components.results.NS_ERROR_INVALID_ARG;
   }
-  
+
   if(!(aLibraryResource instanceof Components.interfaces.sbILibrary)) {
     return false;
   }
@@ -718,15 +712,15 @@ function SBIsWebLibrary(aLibraryResource) {
 
   var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefService);
-    
+
   var prefBranch = prefsService.getBranch("songbird.library.")
                       .QueryInterface(Components.interfaces.nsIPrefBranch);
-  
+
   var webLibraryGuid = prefBranch.getCharPref("web");
-  
+
   var webLibrary = libraryManager.getLibrary(webLibraryGuid);
   var library = libraryManager.getLibrary(aLibraryResource.guid);
-  
+
   return webLibrary.guid == library.guid;
 }
 
@@ -739,13 +733,13 @@ function SBIsWebLibrary(aLibraryResource) {
 function SBImportURLIntoMainLibrary(url) {
   var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                   .getService(Components.interfaces.sbILibraryManager);
-                                  
+
   var library = libraryManager.mainLibrary;
 
   if (url instanceof Components.interfaces.nsIURI) url = url.spec;
   if (getPlatformString() == "Windows_NT") url = url.toLowerCase();
 
-  
+
   var ioService = Components.classes["@mozilla.org/network/io-service;1"]
     .getService(Components.interfaces.nsIIOService);
 
@@ -762,16 +756,16 @@ function SBImportURLIntoMainLibrary(url) {
     log(e);
     uri = null;
   }
-      
+
   if(!uri) {
     return null;
   }
-  
+
   // skip import of the item if it already exists
   var mediaItem = getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
-  if (mediaItem) 
+  if (mediaItem)
     return mediaItem;
-  
+
   try {
     mediaItem = library.createMediaItem(uri);
   }
@@ -779,20 +773,20 @@ function SBImportURLIntoMainLibrary(url) {
     log(e);
     mediaItem = null;
   }
-  
+
   if(!mediaItem) {
     return null;
   }
-  
+
   var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
     .getService(Components.interfaces.sbIMetadataJobManager);
-  
+
   var items = Components.classes["@mozilla.org/array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
-  
+
   items.appendElement(mediaItem, false);
   metadataJobMgr.newJob(items, 5);
-  
+
   return mediaItem;
 }
 
@@ -814,11 +808,11 @@ function SBImportURLIntoWebLibrary(url) {
     log(e);
     uri = null;
   }
-      
+
   if(!uri) {
     return null;
   }
-  
+
   var mediaItem = null;
   try {
     mediaItem = library.createMediaItem(uri);
@@ -827,20 +821,20 @@ function SBImportURLIntoWebLibrary(url) {
     log(e);
     mediaItem = null;
   }
-  
+
   if(!mediaItem) {
     return null;
   }
-  
+
   var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
     .getService(Components.interfaces.sbIMetadataJobManager);
-  
+
   var items = Components.classes["@mozilla.org/array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
-  
+
   items.appendElement(mediaItem, false);
   metadataJobMgr.newJob(items, 5);
-  
+
   return mediaItem;
 }
 
@@ -850,7 +844,7 @@ function SBJumpToIndex(item, retryCount) {
     retryCount = SBJUMPTOINDEXRETRYCOUNT;
   }
   retryCount--;
-  
+
   // Grab the currentPlayList in view
   if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
     var currentPlayList = gBrowser.currentPlaylist;
@@ -911,7 +905,7 @@ function SBDisplayViewForListAndPlayItem(list, item) {
   // Now play the item.
   gPPS.playView(currentPlayListView, indexOfItem);
 }
-  
+
 function getFirstItemByProperty(aMediaList, aProperty, aValue) {
 
   var listener = {
@@ -942,9 +936,3 @@ catch (e)
 {
   alert(e);
 }
-
-
-
-
-
-

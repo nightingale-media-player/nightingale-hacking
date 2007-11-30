@@ -34,9 +34,16 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/mainOverlay.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/mainOverlay.js"/>
+
+  <!-- XXXben HACK to get our download prefs next to the main download prefs -->
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/mainPaneOverlay.js"/>
 
   <stringbundleset>
     <stringbundle id="bundleSongbirdPreferences"
@@ -55,8 +62,8 @@
             insertafter="paneTabs"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/addOns.xul" />
-  <prefpane id="paneRemoteAPI" 
-            label="&rapi.prefpane.title;" 
+  <prefpane id="paneRemoteAPI"
+            label="&rapi.prefpane.title;"
             insertafter="paneAddons"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />

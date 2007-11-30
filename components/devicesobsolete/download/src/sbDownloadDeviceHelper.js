@@ -31,8 +31,58 @@ Components.utils.import("resource://app/components/ArrayConverter.jsm");
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 const Cr = Components.results;
+const Cu = Components.utils;
+const CE = Components.Exception;
 
-const DOWNLOAD_PREF = "songbird.library.download";
+const PREF_DOWNLOAD_MUSIC_FOLDER       = "songbird.download.music.folder";
+const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = "songbird.download.music.alwaysPrompt";
+
+/**
+ * Our super-smart heuristic for determining if the download folder is valid.
+ */
+function folderIsValid(folder) {
+  try {
+    return folder && folder.isDirectory();
+  }
+  catch (e) {
+  }
+  return false;
+}
+
+/**
+ * Returns an nsILocalFile or null if the path is bad.
+ */
+function makeFile(path) {
+  var file = Cc["@mozilla.org/file/local;1"].
+             createInstance(Ci.nsILocalFile);
+  try {
+    file.initWithPath(path);
+  }
+  catch (e) {
+    return null;
+  }
+  return file;
+}
+
+/**
+ * Returns an nsIURI or null if the path is bad.
+ */
+function makeFileURI(path)
+{
+
+  var ios = Cc["@mozilla.org/network/io-service;1"].
+            getService(Ci.nsIIOService);
+  var file = makeFile(path);
+
+  var uri;
+  try {
+    uri = ios.newFileURI(file);
+  }
+  catch (e) {
+    return null;
+  }
+  return uri;
+}
 
 function sbDownloadDeviceHelper()
 {
@@ -51,9 +101,11 @@ sbDownloadDeviceHelper.prototype =
 sbDownloadDeviceHelper.prototype.downloadItem =
 function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 {
-  if (!this._ensureDestination()) {
+  var downloadFileURI = this._safeDownloadFileURI();
+  if (!downloadFileURI) {
     return;
   }
+
   if (!this.downloadMediaList) {
     throw Cr.NS_ERROR_FAILURE;
   }
@@ -68,7 +120,8 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
     item = aMediaItem;
   }
   else {
-    this._addItemToArrays(aMediaItem, uriArray, propertyArrayArray);
+    this._addItemToArrays(aMediaItem, downloadFileURI, uriArray,
+                          propertyArrayArray);
     let items = this._mainLibrary.batchCreateMediaItems(uriArray,
                                                         propertyArrayArray,
                                                         true);
@@ -81,9 +134,11 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 sbDownloadDeviceHelper.prototype.downloadSome =
 function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 {
-  if (!this._ensureDestination()) {
+  var downloadFileURI = this._safeDownloadFileURI();
+  if (!downloadFileURI) {
     return;
   }
+
   if (!this.downloadMediaList) {
     throw Cr.NS_ERROR_FAILURE;
   }
@@ -100,7 +155,8 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
       items.push(item);
     }
     else {
-      this._addItemToArrays(item, uriArray, propertyArrayArray);
+      this._addItemToArrays(item, downloadFileURI, uriArray,
+                            propertyArrayArray);
     }
   }
 
@@ -119,9 +175,11 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 sbDownloadDeviceHelper.prototype.downloadAll =
 function sbDownloadDeviceHelper_downloadAll(aMediaList)
 {
-  if (!this._ensureDestination()) {
+  var downloadFileURI = this._safeDownloadFileURI();
+  if (!downloadFileURI) {
     return;
   }
+
   if (!this.downloadMediaList) {
     throw Cr.NS_ERROR_FAILURE;
   }
@@ -136,7 +194,8 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
   for (let i = 0; i < aMediaList.length; i++) {
     var item = aMediaList.getItemByIndex(i);
     if (isForeign) {
-      this._addItemToArrays(item, uriArray, propertyArrayArray);
+      this._addItemToArrays(item, downloadFileURI, uriArray,
+                            propertyArrayArray);
     }
     else {
       items.push(item);
@@ -169,11 +228,127 @@ function sbDownloadDeviceHelper_getDownloadMediaList()
       }
     }
   }
-  return this._downloadDevice ? this._downloadDevice.downloadMediaList : null ;
+  return this._downloadDevice ? this._downloadDevice.downloadMediaList : null;
 });
+
+sbDownloadDeviceHelper.prototype.__defineGetter__("defaultMusicFolder",
+function sbDownloadDeviceHelper_getDefaultMusicFolder()
+{
+  // XXXben Cache the result of this method? Maybe we can't due to the case
+  //        ambiguity of the music folder on linux?
+  const dirService = Cc["@mozilla.org/file/directory_service;1"].
+                     getService(Ci.nsIDirectoryServiceProvider);
+  const platform = Cc["@mozilla.org/xre/app-info;1"].
+                   getService(Ci.nsIXULRuntime).
+                   OS;
+
+  var musicDir;
+  switch (platform) {
+    case "WINNT":
+      var docsDir = dirService.getFile("Pers", {});
+      musicDir = docsDir.append("My Music");
+      break;
+
+    case "Darwin":
+      musicDir = dirService.getFile("Music", {});
+      break;
+
+    case "Linux":
+      var homeDir = dirService.getFile("Home", {});
+      musicDir = homeDir.clone().append("Music");
+      if (!musicDir.isDirectory()) {
+        musicDir = homeDir.append("music");
+      }
+      break;
+
+    default:
+      // Fall through and use the Desktop below.
+      break;
+  }
+
+  // Make sure that the directory exists and is writable.
+  if (!folderIsValid(musicDir)) {
+    // Great, default to the Desktop... This should work on all OS's.
+    musicDir = dirService.get("Desk", {});
+
+    // We should never get something bad here, but just in case...
+    if (!folderIsValid(musicdir)) {
+      Cu.reportError("Desktop directory is not a directory!");
+      throw Cr.NS_ERROR_FILE_NOT_DIRECTORY;
+    }
+  }
+
+  return musicDir;
+});
+
+sbDownloadDeviceHelper.prototype.__defineGetter__("downloadFolder",
+function sbDownloadDeviceHelper_getDownloadFolder()
+{
+  const Application = Cc["@mozilla.org/fuel/application;1"].
+                      getService(Ci.fuelIApplication);
+  const prefs = Application.prefs;
+
+  var downloadFolder;
+  if (prefs.has(PREF_DOWNLOAD_MUSIC_FOLDER)) {
+    var downloadPath = prefs.get(PREF_DOWNLOAD_MUSIC_FOLDER).value;
+    downloadFolder = makeFile(downloadPath);
+  }
+
+  if (!folderIsValid(downloadFolder)) {
+    // The pref was either bad or empty. Use (and write) the default.
+    downloadFolder = this.defaultMusicFolder;
+    prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
+  }
+
+  const alwaysPrompt = prefs.getValue(PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT, false);
+  if (!alwaysPrompt) {
+    return downloadFolder;
+  }
+
+  const sbs = Cc["@mozilla.org/intl/stringbundle;1"].
+              getService(Ci.nsIStringBundleService);
+  const strings =
+    sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  const title =
+    strings.GetStringFromName("prefs.main.musicdownloads.chooseTitle");
+
+  const wm = Cc["@mozilla.org/appshell/window-mediator;1"].
+             getService(Ci.nsIWindowMediator);
+  const mainWin = wm.getMostRecentWindow("Songbird:Main");
+
+  // Need to prompt, launch the filepicker.
+  const folderPicker = Cc["@mozilla.org/filepicker;1"].
+                       createInstance(Ci.nsIFilePicker);
+  folderPicker.init(mainWin, title, Ci.nsIFilePicker.modeGetFolder);
+  folderPicker.displayDirectory = downloadFolder;
+
+  if (folderPicker.show() != Ci.nsIFilePicker.returnOK) {
+    // This is our signal that the user cancelled the dialog. Some folks won't
+    // care, but most will.
+    throw new CE("User canceled the download dialog.", Cr.NS_ERROR_ABORT);
+  }
+
+  downloadFolder = folderPicker.file;
+
+  prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
+  return downloadFolder;
+});
+
+sbDownloadDeviceHelper.prototype._safeDownloadFileURI =
+function sbDownloadDeviceHelper__safeDownloadFileURI()
+{
+  // This function returns null if the user cancels the dialog.
+  try {
+    return makeFileURI(this.downloadFolder.path).spec;
+  }
+  catch (e if e.result == Cr.NS_ERROR_ABORT) {
+  }
+  return null;
+}
 
 sbDownloadDeviceHelper.prototype._addItemToArrays =
 function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
+                                                 aDownloadPath,
                                                  aURIArray,
                                                  aPropertyArrayArray)
 {
@@ -191,54 +366,11 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
   var target = aMediaItem.library.guid + "," + aMediaItem.guid;
   dest.appendProperty(SBProperties.downloadStatusTarget, target);
 
+  // Set the destination property so that the download device doesn't re-query
+  // the user if the 'always' pref isn't set.
+  dest.appendProperty(SBProperties.destination, aDownloadPath);
+
   aPropertyArrayArray.appendElement(dest, false);
-}
-
-sbDownloadDeviceHelper.prototype._ensureDestination =
-function sbDownloadDeviceHelper__ensureDestination()
-{
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefBranch2);
-  try {
-    var always = prefs.getCharPref("songbird.download.always") == "1";
-    if (always) {
-      return true;
-    }
-  }
-  catch(e) {
-    // Don't care if it fails
-  }
-
-  var chromeFeatures = "modal,chrome,centerscreen,dialog=yes,resizable=no";
-  var useTitlebar = false;
-  try {
-    useTitlebar = prefs.getCharPref("songbird.accessibility.enabled") == "1";
-  }
-  catch(e) {
-    // Don't care if it fails
-  }
-
-  // bonus stuff to shut the mac up.
-  var chromeFeatures = ",modal=yes,resizable=no";
-  if (useTitlebar) chromeFeatures += ",titlebar=yes";
-  else chromeFeatures += ",titlebar=no";
-
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                      .getService(Components.interfaces.nsIWindowMediator);
-  var mainWin = wm.getMostRecentWindow("Songbird:Main");
-
-  var paramBlock = Cc["@mozilla.org/embedcomp/dialogparam;1"]
-                     .createInstance(Ci.nsIDialogParamBlock);
-
-  var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                  .getService(Ci.nsIWindowWatcher);
-  watcher.openWindow(mainWin,
-                     "chrome://songbird/content/xul/download.xul",
-                     "_blank",
-                     chromeFeatures,
-                     paramBlock);
-
-  return paramBlock.GetInt(0) == 1;
 }
 
 function NSGetModule(compMgr, fileSpec) {

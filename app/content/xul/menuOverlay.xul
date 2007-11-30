@@ -1,28 +1,28 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 
 <!--
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -39,7 +39,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
-  
+
   <menubar id="main-menubar">
     <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="menu_FilePopup">
@@ -59,8 +59,7 @@
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-        <menuitem id="menuitem_file_dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
-        <!-- BUG 3961 "Comment out watch folder UI" 
+        <!-- BUG 3961 "Comment out watch folder UI"
           <menuitem id="menuitem_file_watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
         -->
         <menuseparator/>
@@ -119,28 +118,28 @@
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menu_extensions" 
-                  label="&menu.extensions;" 
+        <menuitem id="menu_extensions"
+                  label="&menu.extensions;"
                   accesskey="&menu.extensions.accesskey;"/>
-        <menuseparator id="devToolsSeparator"/> 
+        <menuseparator id="devToolsSeparator"/>
         <menuitem id="view_page_source"
                   label="&menu.viewpagesource;"
                   key="viewpagesource-key"
                   accesskey="&menu.viewpagesource.accesskey;"
-                  command="Browser:ViewPageSource"/> 
-        <menuseparator id="viewspagesourceSeparator" hidden="true"/> 
+                  command="Browser:ViewPageSource"/>
+        <menuseparator id="viewspagesourceSeparator" hidden="true"/>
         <menuitem id="javascriptConsole"
-                  label="&menu.errorconsole;" 
-                  accesskey="&menu.errorconsole.accesskey;"/> 
-        <menuseparator id="sanitizeSeparator" hidden="true"/> 
+                  label="&menu.errorconsole;"
+                  accesskey="&menu.errorconsole.accesskey;"/>
+        <menuseparator id="sanitizeSeparator" hidden="true"/>
         <menuitem id="menuitem_tools_clearprivatedata"
-                  hidden="true" 
-                  key="sanitize-key" 
-                  label="&menu.clearprivatedata;" 
-                  accesskey="&menu.clearprivatedata.accesskey;"/> 
-        <menuseparator id="menu_PrefsSeparator"/> 
-        <menuitem id="menu_preferences" 
-                  label="&menu.preferences;" 
+                  hidden="true"
+                  key="sanitize-key"
+                  label="&menu.clearprivatedata;"
+                  accesskey="&menu.clearprivatedata.accesskey;"/>
+        <menuseparator id="menu_PrefsSeparator"/>
+        <menuitem id="menu_preferences"
+                  label="&menu.preferences;"
                   accesskey="&menu.preferences.accesskey;"/>
       </menupopup>
     </menu>
@@ -157,7 +156,7 @@
         <menuitem id="menuitem_help_topics"
                   label="&menu.help.topics;"
                   value="songbird.url.support"
-                  key="help-key" 
+                  key="help-key"
                   accesskey="&menu.help.help.accesskey;"/>
         <menuseparator/>
         <menuitem id="updateCmd"
@@ -172,11 +171,9 @@
     </menu>
 
   </menubar>
-  
+
   <keyset>
     <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
   </keyset>
 
 </overlay>
-
-

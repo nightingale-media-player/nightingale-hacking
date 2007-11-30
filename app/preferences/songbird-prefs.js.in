@@ -66,6 +66,8 @@ pref("browser.download.manager.addToRecentDocs", true);
 //pref("browser.download.show_plugins_in_list", true);
 //pref("browser.download.hide_plugins_without_extensions", true);
 
+// Default to always downloading without prompting.
+pref("songbird.download.music.alwaysPrompt", false);
 
 pref("browser.link.open_external", 3);
 pref("browser.link.open_newwindow", 3);
@@ -111,7 +113,7 @@ pref("security.warn_leaving_secure.show_once", true);
 
 
 // Prefer a window size that can handle 1024px-ish websites
-// If this pref turns out to be bigger than the screen 
+// If this pref turns out to be bigger than the screen
 // the window size will fall back to that specified by css
 pref("songbird.window.frame_outer.w", "1157");
 pref("songbird.window.frame_outer.h", "718");
@@ -136,7 +138,7 @@ pref("browser.preferences.animateFadeIn", false);
 
 // Enable the web playlist.
 // Extracts A tags and add browser context menu.
-// Note that this pref is reset to "1" on every app start. 
+// Note that this pref is reset to "1" on every app start.
 pref("songbird.webplaylist.enabled", "1");
 
 // for tabbrowsing
@@ -172,7 +174,7 @@ pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.pr
 // disable logging for the search service by default
 pref("browser.search.log", false);
 
-// Ordering of Search Engines in the Engine list. 
+// Ordering of Search Engines in the Engine list.
 pref("browser.search.order.1",                "chrome://branding/locale/brand.properties");
 pref("browser.search.order.2",                "chrome://branding/locale/brand.properties");
 pref("browser.search.order.3",                "chrome://branding/locale/brand.properties");
@@ -231,7 +233,7 @@ pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/
 
 //
 // Media Core prefs
-// 
+//
 #ifdef MEDIA_CORE_VLC
 #ifdef XP_WIN
 pref("songbird.mediacore.audioOut", "directsound");

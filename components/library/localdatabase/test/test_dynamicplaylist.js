@@ -191,9 +191,8 @@ function setTempDownloadDir() {
   dest.append("dynamicplaylist_test");
 
   var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
-  var dlFolder = new drCtor("download.folder", null);
-  var dlAlways = new drCtor("download.always", null);
+  var dlFolder = new drCtor("download.music.folder", null);
+  var dlAlways = new drCtor("download.music.always", null);
   dlFolder.stringValue = dest.path;
   dlAlways.boolValue = true;
 }
-

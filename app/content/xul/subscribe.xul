@@ -3,25 +3,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -49,7 +49,7 @@
 >
 
   <windowregion/>
-  
+
     <hbox align="center">
       <label  value="&subscribe.url;"/>
       <textbox  id="subscribe_url" />
@@ -73,7 +73,7 @@
     </hbox>
 
   <!-- SCRIPTS -->
-  <script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>  
+  <script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
@@ -201,7 +201,14 @@ function doLoad()
     srcURLTextbox.value = args.defaultUrl ? args.defaultUrl : "http://";
     timeTextbox.value = "1";
     unitMenulist.value = "days";
-    destURLTextbox.value = SBDataGetStringValue( "download.folder" );
+    
+    var path = SBDataGetStringValue("download.music.folder");
+    if (!path) {
+      path = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"].
+             getService(Ci.sbIDownloadDeviceHelper).
+             defaultMusicFolder.path;
+    }
+    destURLTextbox.value = path;
   }
 
   // focus the ok button by default
@@ -297,7 +304,7 @@ function doOK()
   return true;
 }
 
-function doCancel() 
+function doCancel()
 {
   return true;
 }

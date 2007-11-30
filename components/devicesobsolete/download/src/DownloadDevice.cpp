@@ -111,7 +111,7 @@
                                 "chrome://songbird/locale/songbird.properties"
 #define SB_DOWNLOAD_COL_SPEC \
   "http://songbirdnest.com/data/1.0#ordinal 25 http://songbirdnest.com/data/1.0#trackName 143 http://songbirdnest.com/data/1.0#artistName 115 http://songbirdnest.com/data/1.0#albumName 115 http://songbirdnest.com/data/1.0#contentMimeType 41 http://songbirdnest.com/data/1.0#downloadDetails 264 http://songbirdnest.com/data/1.0#downloadButton 73"
-                             
+
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
@@ -693,19 +693,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     /* Create the device transfer queue. */
     if (NS_SUCCEEDED(result))
         result = CreateTransferQueue(mDeviceIdentifier);
-
-    /* Get the default download directory data remote. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpDownloadDirDR = do_CreateInstance
-                                    ("@songbirdnest.com/Songbird/DataRemote;1",
-                                     &result);
-    }
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpDownloadDirDR->Init(NS_LITERAL_STRING(SB_DOWNLOAD_DIR_DR),
-                                       EmptyString());
-    }
 
     /* Create temporary download directory. */
     if (NS_SUCCEEDED(result))
@@ -2136,12 +2123,12 @@ nsresult sbDownloadDevice::SetTransferDestination(
     nsCOMPtr<sbIMediaItem>      pMediaItem)
 {
     nsString                    dstProp;
-    nsString                    dstDir;
-    nsCOMPtr<nsILocalFile>      pDstFile;
+    nsCOMPtr<nsIFile>           pDstFile;
     nsCOMPtr<nsIURI>            pDstURI;
+    nsCOMPtr<sbIDownloadDeviceHelper>
+                                pDownloadHelper;
     nsCString                   dstSpec;
     nsresult                    propertyResult;
-    PRBool                      cancelDownload;
     nsresult                    result = NS_OK;
 
     /* Do nothing if destination is already set. */
@@ -2151,27 +2138,27 @@ nsresult sbDownloadDevice::SetTransferDestination(
     if (NS_SUCCEEDED(propertyResult) && !dstProp.IsEmpty())
         return (result);
 
-    /* Get the default destination directory. */
-    result = mpDownloadDirDR->GetStringValue(dstDir);
-
-    /* If not default destination directory is set, */
-    /* query user.  Treat cancellation as an error. */
-    if (NS_SUCCEEDED(result) && (dstDir.Length() == 0))
+    /* Get the destination folder from the download helper. This will pop the */
+    /* dialog to the user if needed. It will throw an error if the user       */
+    /* cancels the dialog.                                                    */
+    if (NS_SUCCEEDED(result))
     {
-        result = QueryUserForDestination(&cancelDownload, dstDir);
-        if (NS_SUCCEEDED(result) && cancelDownload)
-            result = NS_ERROR_UNEXPECTED;
+        pDownloadHelper = do_GetService
+                           ("@songbirdnest.com/Songbird/DownloadDeviceHelper;1",
+                            &result);
     }
+
+    if (NS_SUCCEEDED(result))
+        result = pDownloadHelper->GetDownloadFolder(getter_AddRefs(pDstFile));
 
     /* Create a unique local destination file object.    */
     /* note that we only record the directory, we do not */
     /* append the filename until when the file finishes  */
     /* to download                                       */
-    if (NS_SUCCEEDED(result))
-        result = NS_NewLocalFile(dstDir, PR_FALSE, getter_AddRefs(pDstFile));
     /* Get the destination URI spec. */
     if (NS_SUCCEEDED(result))
         result = mpIOService->NewFileURI(pDstFile, getter_AddRefs(pDstURI));
+
     if (NS_SUCCEEDED(result))
         result = pDstURI->GetSpec(dstSpec);
 
@@ -2367,66 +2354,6 @@ nsresult sbDownloadDevice::MakeFileUnique(
     return (result);
 }
 
-
-/*
- * QueryUserForDestination
- *
- *   <-- apCancelDownload       True if user cancelled the download.
- *   <-- aDstDir                Download destination directory.
- *
- *   This function queries the user for the default download destination
- * directory.  The selected directory is returned in aDstDir.  If the user
- * cancels the download, apCancelDownload is set to true; otherwise, it's set to
- * false.
- */
-
-nsresult sbDownloadDevice::QueryUserForDestination(
-    PRBool                      *apCancelDownload,
-    nsAString                   &aDstDir)
-{
-    nsCOMPtr<nsIDialogParamBlock>
-                                pDialogPB;
-    nsString                    dstDir;
-    PRInt32                     okPressed;
-    nsresult                    result = NS_OK;
-
-    /* Get a dialog parameter block. */
-      pDialogPB = do_CreateInstance("@mozilla.org/embedcomp/dialogparam;1",
-                                    &result);
-
-    /* Open the dialog. */
-    if (NS_SUCCEEDED(result))
-    {
-        result = OpenDialog("chrome://songbird/content/xul/download.xul",
-                            pDialogPB);
-    }
-
-    /* Check if the OK button was pressed. */
-    if (NS_SUCCEEDED(result))
-        result = pDialogPB->GetInt(0, &okPressed);
-
-    /* Get the destination directory. */
-    if (NS_SUCCEEDED(result) && okPressed)
-        result = pDialogPB->GetString(0, getter_Copies(dstDir));
-
-    /* Return results. */
-    if (NS_SUCCEEDED(result))
-    {
-        if (okPressed)
-        {
-            *apCancelDownload = PR_FALSE;
-            aDstDir = dstDir;
-        }
-        else
-        {
-            *apCancelDownload = PR_TRUE;
-        }
-    }
-
-    return (result);
-}
-
-
 /*
  * OpenDialog
  *
@@ -2548,7 +2475,6 @@ nsresult sbDownloadDevice::OpenDialog(
 
     return NS_OK;
 }
-
 
 /* *****************************************************************************
  *******************************************************************************
