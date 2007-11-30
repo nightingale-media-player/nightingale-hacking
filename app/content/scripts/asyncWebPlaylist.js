@@ -397,6 +397,11 @@ try
       if (this.seenURLs.indexOf(url) != -1) {
         return false;
       }
+      
+      // Since the verification is asynchronous, we have to add this URL to the list
+      // of seen URLs before verification begins. New items may start getting 
+      // processed without the first item finishes.
+      this.seenURLs.push(url);
 
       var observer = {
         url : "",
@@ -433,12 +438,12 @@ try
                                                  sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
                 library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
                                                  sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-                if (!listener.foundItem &&
-                    this.manager.seenURLs.indexOf(url) == -1) {
+                if (listener.foundItem) {
+                  this.manager.items.push(listener.foundItem);
+                }
+                else {
                   this.manager.items.push(url);
                 }
-
-                this.manager.seenURLs.push(url);
               }
             }
           } catch( e ) {
