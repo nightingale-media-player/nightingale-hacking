@@ -1086,7 +1086,7 @@ button:active
 
 button:focus > .button-box > label
 {
-  border: 1px dotted #B3BAAC; /* Light Color 1 */
+  outline: 1px dotted #B3BAAC; /* Light Color 1 */
 }
 
 button > dropmarker.button-menubutton-dropmarker,
@@ -1338,7 +1338,6 @@ TEXTBOX
 *******************************************************************************
 */
 
-.fileFieldContentBox,
 textbox,
 textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 {
@@ -1349,11 +1348,8 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
   background-color: #0f100f; /** Groove */ 
   color: #B3BAAC; /** Light Color 1 */
 }
-    
 
 /* ..... focused state ..... */
-
-.fileFieldContentBox,
 textbox[focused="true"] 
 {
   background-color: #0f100f; /** Groove */
@@ -1363,19 +1359,20 @@ textbox[focused="true"]
 
 
 /* ..... disabled state ..... */
-.fileFieldContentBox,
 textbox[disabled="true"] 
 {
   cursor: default;
+  border: 1px dotted #474948; /** Rubber Highlight */
+  background-color: transparent;
+  color: #474948; /** Light Color 1 */
 } 
 
 /* ..... invalid state ..... */
-
 textbox[invalid="true"] {
   background-color: red;
 } 
 
-/** 
+/**
 *******************************************************************************
 MISC
 *******************************************************************************

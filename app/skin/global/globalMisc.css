@@ -216,15 +216,6 @@ image.throbber {
 	border-top: 1px solid #bebebe;
 }
 
-
-/** Make filefields look like textboxes.
-    (This is stupid.  A file field should be a textbox
-     with an icon inserted as a child) **/
-.fileFieldContentBox
-{
-  cursor: text;
-  margin: 4px 4px;
-  padding: 2px 2px 2px 3px;
-  border: 1px solid;
-  -moz-border-radius: 5px;
+filefield[disabled="true"] > .fileFieldContentBox > .fileFieldIcon {
+	opacity:0.5;
 }
