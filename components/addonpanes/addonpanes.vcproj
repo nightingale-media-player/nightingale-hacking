@@ -97,6 +97,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\sbAddOnPanes.js">
 			</File>
 		</Filter>
+		<Filter
+			Name="test"
+			Filter="">
+			<File
+				RelativePath=".\test\Makefile.in">
+			</File>
+			<File
+				RelativePath=".\test\test_addonpanes.js">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\Makefile.in">
 		</File>

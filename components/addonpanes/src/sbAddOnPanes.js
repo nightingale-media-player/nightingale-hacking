@@ -155,6 +155,12 @@ AddOnPanes.prototype = {
           if (this._instantiatorsList[j].contentUrl == aContentUrl)
             this._instantiatorsList[j].hide();
         }
+        // also remove it from the delayed instantiation list
+        for (j=0;j<this._delayedInstantiations.length;j++) {
+          if (this._delayedInstantiations[j].contentUrl == aContentUrl) {
+            this._delayedInstantiations.splice(j--, 1);
+          }
+        }
         var info = this._contentList[i];
         this._contentList.splice(i, 1);
         for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onUnregisterContent(info);
@@ -170,9 +176,9 @@ AddOnPanes.prototype = {
   },
 
   unregisterInstantiator: function(aInstantiator) {
-    for (var i=0;i<this.instantiatorsList.length;i++) {
-      if (this.instantiatorsList[i] == aInstantiator) {
-        this.instantiatorsList.splice(i, 1);
+    for (var i=0;i<this._instantiatorsList.length;i++) {
+      if (this._instantiatorsList[i] == aInstantiator) {
+        this._instantiatorsList.splice(i, 1);
         for (var k=0;k<this._listenersList.length;k++) this._listenersList[k].onUnregisterInstantiator(aInstantiator);
         return;
       }
@@ -218,6 +224,12 @@ AddOnPanes.prototype = {
   },
 
   showPane: function(aContentUrl) {
+    for (var i=0;i<this._instantiatorsList.length;i++) {
+      if (this._instantiatorsList[i].contentUrl == aContentUrl) {
+        this._instantiatorsList[i].collapsed = false;
+        return;
+      }
+    }
     var info = this.getPaneInfo(aContentUrl);
     if (info) {
       if (!this.tryInstantiation(info)) {
