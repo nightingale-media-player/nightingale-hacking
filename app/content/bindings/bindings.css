@@ -402,9 +402,6 @@ sb-draggable {
 sb-addon-pane {
   -moz-binding: url("chrome://songbird/content/bindings/addonPane.xml#sb-addon-pane");
 }
-sb-addon-pane-menupopup {
-  -moz-binding: url("chrome://songbird/content/bindings/addonPane.xml#sb-addon-pane-menupopup");
-}
 sb-addon-pane-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/addonPane.xml#sb-addon-pane-menuitems");
 }

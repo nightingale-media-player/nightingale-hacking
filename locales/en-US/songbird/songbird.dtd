@@ -63,6 +63,9 @@
 <!ENTITY menu.addon-pane.title.hide    "Hide">
 <!ENTITY menu.addon-pane.title.default "[untitled]">
 <!ENTITY menu.addon-pane.get           "Get More Extensions...">
+<!ENTITY addon-pane.name.servicepane   "Service Pane Bottom">
+<!ENTITY addon-pane.name.browser       "Playlist Bottom">
+<!ENTITY addon-pane.name.sidebar       "Browser Pane Right">
 
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-Ons..." >

@@ -285,7 +285,6 @@
           }
           buildList(endRecommend, recommended, this, "items_recommended");
           buildList(endAll, all, this, "items_all");
-          
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="loadContent">
@@ -309,7 +308,6 @@
             this.height = aPaneInfo.defaultHeight;
             this.collapsed = false;
           }
-          
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="_internalLoadURL">
@@ -343,60 +341,53 @@
     <xbl:handlers>
     </xbl:handlers>
   </xbl:binding>
-  <xbl:binding id="sb-addon-pane-menupopup">
-    <!-- a menu popup for the view menu (to clone the menupopups from the addon pane) -->
-    <xbl:implementation>
-      <xbl:constructor><![CDATA[
-      try{
-        this._menu = null;
-        var self = this;
-        this.parentNode.addEventListener("popupshowing", function(event){ self.show(event); }, false);
-        // since this is run the first time the popup is being shown,
-        // we need to explicitly create the menu
-        this.show(null);
-        } catch(e){Components.utils.reportError(e);throw(e);}
-      ]]></xbl:constructor>
-      <xbl:method name="show">
-        <xbl:parameter name="aEvent"/>
-        <xbl:body><![CDATA[
-      try{
-          if (aEvent && aEvent.originalTarget != this.parentNode)
-            // this was being bubbled up; ignore
-            return;
-          var target = document.getElementById(this.getAttribute("target"));
-          var popup = target.popup;
-          if (this._menu) {
-            this._menu.replaceChild(popup, this._menu.firstChild)
-          } else {
-            this._menu = document.createElement("menu");
-            this._menu.setAttribute("label", this.getAttribute("label"));
-            this.parentNode.insertBefore(this._menu, this);
-            this._menu.appendChild(popup);
-          }
-        } catch(e){Components.utils.reportError(e);throw(e);}
-        ]]></xbl:body>
-      </xbl:method>
-    </xbl:implementation>
-  </xbl:binding>
   <xbl:binding id="sb-addon-pane-menuitems">
     <!-- the placeholder for the menu items in the view menu -->
-    <xbl:implementation>
+    <xbl:implementation implements="nsIDOMEventListener">
       <xbl:constructor><![CDATA[
-      try{
-        var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
-                                   .getService(Components.interfaces.sbIAddOnPanes);
-        var enumerator = addonpanes.instantiatorsList;
-        while (enumerator.hasMoreElements()) {
-          var instantiator = enumerator.getNext();
-          instantiator.QueryInterface(Components.interfaces.sbIAddOnPanesInstantiator);
-          instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
-          var item = document.createElement("sb-addon-pane-menupopup");
-          item.setAttribute("label", instantiator.contentGroup);
-          item.setAttribute("target", instantiator.id);
-          this.parentNode.appendChild(item);
-        }
-        } catch(e) { Components.utils.reportError(e)}
+        this._items = [];
+        this.parentNode.addEventListener("popupshowing", this, false);
+        this.handleEvent(null);
       ]]></xbl:constructor>
+      <xbl:method name="handleEvent">
+        <xbl:parameter name="aEvent"/>
+        <xbl:body><![CDATA[
+          if (aEvent && aEvent.originalTarget != this.parentNode) {
+            // this was being bubbled up; ignore
+            return;
+          }
+          var item;
+          while ((item = this._items.pop())) {
+            this.parentNode.removeChild(item);
+          }
+            
+          var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+                                     .getService(Components.interfaces.sbIAddOnPanes);
+          var enumerator = addonpanes.instantiatorsList;
+          if (enumerator.hasMoreElements()) {
+            var sep = document.createElement("menuseparator");
+            this.parentNode.insertBefore(sep, this);
+            this._items.push(sep);
+          }
+          while (enumerator.hasMoreElements()) {
+            var instantiator = enumerator.getNext();
+            instantiator.QueryInterface(Components.interfaces.sbIAddOnPanesInstantiator);
+            instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
+            item = document.createElement("menu");
+            var label = instantiator.contentGroup;
+            if (instantiator.hasAttribute("label")) {
+              label = instantiator.getAttribute("label");
+            }
+            item.setAttribute("label", label);
+            item.setAttribute("target", instantiator.id);
+
+            var popup = instantiator.popup;
+            item.appendChild(popup);
+            this.parentNode.insertBefore(item, this);
+            this._items.push(item);
+          }
+        ]]></xbl:body>
+      </xbl:method>
     </xbl:implementation>
   </xbl:binding>
 </xbl:bindings>

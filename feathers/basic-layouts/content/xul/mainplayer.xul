@@ -170,7 +170,8 @@
                              id="addon_pane_sidebar_splitter">
             <grippy flex="1"/>
           </sb-smart-splitter>
-          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar" orient="vertical"/>
+          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar"
+                         orient="vertical" label="&addon-pane.name.sidebar;"/>
         </hbox>
       </vbox>
       
