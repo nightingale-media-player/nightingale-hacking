@@ -69,11 +69,12 @@ function runTest(tester) {
     dlList.add(item);
 
     tester.assertEqual(dlList.length, 1);
-    tester.log("Clearing the download list...");
-    dlList.clear();
 
     // Sleep to allow processing of pending download device callbacks.
     tester.sleep(1000);
+
+    tester.log("Clearing the download list...");
+    dlList.clear();
 
     // test download events
     item = siteLib.createMediaItem
