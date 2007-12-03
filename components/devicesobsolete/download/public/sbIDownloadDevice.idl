@@ -66,18 +66,16 @@ interface sbIDownloadDevice : sbIDeviceBase
   void clearCompletedItems();
 };
 
-[scriptable, uuid(09ebfeab-2a03-4ba6-8127-bd36b62f5e5c)]
+[scriptable, uuid(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
 interface sbIDownloadDeviceHelper : nsISupports
 {
-  readonly attribute sbIMediaList downloadMediaList;
-
-  readonly attribute nsIFile defaultMusicFolder;
-
   /**
-   * Will throw NS_ERROR_ABORT if the user cancels the download destination
-   * dialog.
+   * These have to be getter methods rather than attributes due to an XPConnect
+   * bug.
    */
-  readonly attribute nsIFile downloadFolder;
+  sbIMediaList getDownloadMediaList();
+  nsIFile getDownloadFolder();
+  nsIFile getDefaultMusicFolder();
 
   void downloadItem(in sbIMediaItem aMediaItem);
 

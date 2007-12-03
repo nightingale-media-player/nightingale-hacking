@@ -166,7 +166,6 @@ protected:
   PRBool mPrivileged;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
   nsCOMPtr<nsIIOService> mIOService;
-  nsCOMPtr<nsIWeakReference> mWeakDownloadMediaList;
 
   // The documents for the web page and for the tabbrowser
   nsCOMPtr<nsIDOMDocument> mContentDoc;

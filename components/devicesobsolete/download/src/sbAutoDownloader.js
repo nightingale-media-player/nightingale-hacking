@@ -158,7 +158,7 @@ function sbAutoDownloader_observe(subject, topic, data) {
   } else if (topic == 'timer-callback') {
     while (this._queue.length) {
       var item = this._queue.shift();
-      var playlist = this._helper.downloadMediaList;
+      var playlist = this._helper.getDownloadMediaList();
       if (!this._library.contains(item)) {
         // it's been removed from the library
         continue;
@@ -187,7 +187,7 @@ function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
   if ((aMediaItem.getProperty(SBProperties.enableAutoDownload) == "1") &&
       aMediaItem.contentSrc.scheme.match(/^http/)) {
     // Don't download items already in the download medialist.
-    if (!this._helper.downloadMediaList.contains(aMediaItem)) {
+    if (!this._helper.getDownloadMediaList().contains(aMediaItem)) {
       this._queue.push(aMediaItem);
       if (!this._timer) {
         this._setUpTimer();

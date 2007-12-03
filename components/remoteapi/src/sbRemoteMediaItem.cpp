@@ -122,7 +122,7 @@ sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemoteMediaItem::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 {
   NS_ENSURE_STATE(mRemotePlayer);
@@ -219,6 +219,8 @@ sbRemoteMediaItem::SetProperty(const nsAString & aID,
     // well, is it writeable?
     if (!writable) {
       // if not return an error
+      NS_WARNING("Attempting to set a property value that is not allowed to be "
+                 "set from the remote API!");
       return NS_ERROR_FAILURE;
     }
   }
@@ -230,7 +232,7 @@ sbRemoteMediaItem::SetProperty(const nsAString & aID,
     rv = propertyInfo->SetRemoteReadable(PR_TRUE);
     NS_ENSURE_SUCCESS( rv, rv );
   }
-  
+
   // it all looks ok, pass this request on to the real media item
   rv = mMediaItem->SetProperty(aID, aValue);
   if (NS_SUCCEEDED(rv)) {
@@ -263,4 +265,3 @@ sbRemoteMediaItem::SetProperties(sbIPropertyArray * aProperties)
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
-

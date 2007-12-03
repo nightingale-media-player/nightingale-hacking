@@ -517,7 +517,7 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 {
   NS_ENSURE_ARG_POINTER(aRemotePlayer);
@@ -650,7 +650,7 @@ NS_IMETHODIMP
 sbRemotePlayer::GetSiteScope(nsIURI * *aURI)
 {
   NS_ENSURE_ARG_POINTER(aURI);
-  
+
   nsCOMPtr<nsIURI> uri = GetSiteScopeURI();
   uri.swap(*aURI);
 
@@ -811,51 +811,13 @@ sbRemotePlayer::GetDownloadMediaList( sbIRemoteMediaList **aDownloadMediaList )
   NS_ENSURE_ARG_POINTER(aDownloadMediaList);
 
   nsresult rv;
-  nsCOMPtr<sbIMediaList> downloadMediaList(
-                                    do_QueryReferent(mWeakDownloadMediaList) );
-  if (!downloadMediaList) {
-    // get the main library
-    nsCOMPtr<sbILibraryManager> libManager(
-      do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
-    NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIDownloadDeviceHelper> dh(
+    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
+  NS_ENSURE_SUCCESS( rv, rv );
 
-    nsCOMPtr<sbILibrary> mainLibrary;
-    rv = libManager->GetMainLibrary( getter_AddRefs(mainLibrary) );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // go to prefs and get the GUID for the download list
-    nsCOMPtr<nsIPrefBranch> prefService =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-    NS_ENSURE_SUCCESS( rv, nsnull );
-
-    // I question the value of storing magic GUIDs in prefs,
-    //    accessed by magic strings
-    nsCOMPtr<nsISupportsString> prefValue;
-    rv = prefService->GetComplexValue( "songbird.library.download",
-                                       NS_GET_IID(nsISupportsString),
-                                       getter_AddRefs(prefValue) );
-    NS_ENSURE_SUCCESS( rv, nsnull );
-
-    // convert the GUID into a string we can use
-    nsString downloadListGUID;
-    prefValue->ToString( getter_Copies(downloadListGUID) );
-    LOG(( "sbRemotePlayer::GetDownloadMediaList() -- GUID: %s",
-      NS_LossyConvertUTF16toASCII(downloadListGUID).get() ));
-
-    // get the download list from the main library
-    nsCOMPtr<sbIMediaItem> item;
-    rv = mainLibrary->GetMediaItem( downloadListGUID,
-                                    getter_AddRefs(item) );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // put it in the comptr to be wrapped
-    downloadMediaList = do_QueryInterface( item, &rv );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // store it as a weak ref
-    mWeakDownloadMediaList = do_GetWeakReference( downloadMediaList, &rv );
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
+  nsCOMPtr<sbIMediaList> downloadMediaList;
+  rv = dh->GetDownloadMediaList(getter_AddRefs(downloadMediaList));
+  NS_ENSURE_SUCCESS( rv, rv );
 
   rv = SB_WrapMediaList( this, downloadMediaList, aDownloadMediaList );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -873,17 +835,29 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
   nsresult rv;
 
   // Make sure the item is JUST an item, no lists or libraries allowed
-  nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem) );
+  nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem));
   NS_ENSURE_FALSE( listcheck, NS_ERROR_INVALID_ARG );
 
-  nsCOMPtr<sbIDownloadDeviceHelper> dh =
-    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> item;
 
-  rv = dh->DownloadItem(aItem);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // The media item must be unwrapped before handing off to the download helper!
+  nsCOMPtr<sbIWrappedMediaItem> wrappedItem(do_QueryInterface( aItem, &rv ));
+  if (NS_SUCCEEDED(rv)) {
+    item = wrappedItem->GetMediaItem();
+    NS_ASSERTION( item, "GetMediaItem returned null!" );
+  }
+  else {
+    item = aItem;
+  }
 
-  mNotificationMgr->Action(sbRemoteNotificationManager::eDownload, nsnull);
+  nsCOMPtr<sbIDownloadDeviceHelper> dh(
+    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = dh->DownloadItem(item);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  mNotificationMgr->Action( sbRemoteNotificationManager::eDownload, nsnull );
 
   return NS_OK;
 }
@@ -895,16 +869,26 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
 
   NS_ENSURE_ARG_POINTER(aList);
 
+  nsCOMPtr<sbIMediaList> list;
+
+  // The media list must be unwrapped before handing off to the download helper!
   nsresult rv;
-  nsCOMPtr<sbIMediaList> list (do_QueryInterface(aList, &rv));
+  nsCOMPtr<sbIWrappedMediaList> wrappedList(do_QueryInterface( aList, &rv ));
+  if (NS_SUCCEEDED(rv)) {
+    list = wrappedList->GetMediaList();
+    NS_ASSERTION( list, "GetMediaList returned null!" );
+  }
+  else {
+    list = do_QueryInterface( aList, &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  nsCOMPtr<sbIDownloadDeviceHelper> dh(
+    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<sbIDownloadDeviceHelper> dh =
-    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = dh->DownloadAll(list);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   return NS_OK;
 }
@@ -920,16 +904,18 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
   nsresult rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  // The media items must be unwrapped before handing off to the download
+  // helper!
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
                                  new sbUnwrappingSimpleEnumerator(selection) );
   NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
 
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
-    do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   rv = dh->DownloadSome(wrapper);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   return NS_OK;
 }
@@ -1186,13 +1172,13 @@ sbRemotePlayer::RemoveListener( const nsAString &aKey,
   return NS_OK;
 }
 
-static inline 
+static inline
 nsresult StandardPlay(sbIPlaylistPlayback *aPlaylistPlayback ) {
   NS_ENSURE_ARG_POINTER(aPlaylistPlayback);
-  
+
   PRBool success = PR_FALSE;
   nsCOMPtr<sbIPlaylistPlayback> gpps(aPlaylistPlayback);
-  
+
   nsresult rv = gpps->Play( &success );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -1211,7 +1197,7 @@ sbRemotePlayer::Play()
   // Check to see if playback is currently paused.
   // If currently paused, first attempt to resume.
   PRBool isPaused = PR_FALSE;
-  
+
   rv = GetPaused( &isPaused );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -1640,9 +1626,9 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
         value.AssignLiteral("preferences");
       }
 
-      nsCOMPtr<sbIRemoteSecurityEvent> securityEvent = 
+      nsCOMPtr<sbIRemoteSecurityEvent> securityEvent =
         do_QueryInterface(aEvent, &rv);
-      
+
       if ( NS_SUCCEEDED( rv ) ) {
 
         nsAutoString categoryID;
@@ -1660,12 +1646,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
         rv = mixin->GetNotificationDocument(getter_AddRefs(doc));
         NS_ENSURE_SUCCESS( rv, rv );
 
-        rv = DispatchSecurityEvent(doc, 
-                                   this, 
-                                   RAPI_EVENT_CLASS, 
-                                   type, 
-                                   categoryID, 
-                                   hasAccess, 
+        rv = DispatchSecurityEvent(doc,
+                                   this,
+                                   RAPI_EVENT_CLASS,
+                                   type,
+                                   categoryID,
+                                   hasAccess,
                                    PR_FALSE );
 
         rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
@@ -2149,7 +2135,7 @@ sbRemotePlayer::IsPrivileged()
   return mPrivileged;
 }
 
-/*static*/ nsresult 
+/*static*/ nsresult
 sbRemotePlayer::GetJSScopeNameFromScope( const nsACString &aScopeName,
                                          nsAString &aJSScopeName )
 
@@ -2160,7 +2146,7 @@ sbRemotePlayer::GetJSScopeNameFromScope( const nsACString &aScopeName,
       return NS_OK;
     }
   }
-  
+
   return NS_ERROR_INVALID_ARG;
 }
 

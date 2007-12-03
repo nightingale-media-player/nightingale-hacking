@@ -255,7 +255,7 @@ var SongbirdMainPaneOverlay = {
     self._defaultMusicFolder =
       Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"].
       getService(Ci.sbIDownloadDeviceHelper).
-      defaultMusicFolder;
+      getDefaultMusicFolder();
 
     self._strings = document.getElementById("bundleSongbirdPreferences");
 

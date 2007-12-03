@@ -122,17 +122,16 @@ sbRemoteCommands::~sbRemoteCommands()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemoteCommands::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 {
   NS_ENSURE_STATE(mWeakOwner);
   NS_ENSURE_ARG_POINTER(aRemotePlayer);
 
-  nsresult rv;
   *aRemotePlayer = nsnull;
 
   nsCOMPtr<sbIRemotePlayer> remotePlayer( do_QueryReferent(mWeakOwner) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_TRUE( remotePlayer, NS_ERROR_FAILURE );
 
   remotePlayer.swap( *aRemotePlayer );
 

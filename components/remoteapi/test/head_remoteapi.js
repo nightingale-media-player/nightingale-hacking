@@ -247,9 +247,11 @@ function setTempDownloadDir() {
 
   var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
   var dlFolder = new drCtor("download.music.folder", null);
-  var dlAlways = new drCtor("download.music.always", null);
   dlFolder.stringValue = dest.path;
-  dlAlways.boolValue = true;
+
+  var prefs = Cc["@mozilla.org/preferences-service;1"].
+              getService(Ci.nsIPrefBranch);
+  prefs.setBoolPref("download.music.alwaysPrompt", false);
 }
 
 initMockCore();

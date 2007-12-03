@@ -65,23 +65,13 @@ function makeFile(path) {
 }
 
 /**
- * Returns an nsIURI or null if the path is bad.
+ * Returns a file url for the path.
  */
-function makeFileURI(path)
+function makeFileURL(path)
 {
-
-  var ios = Cc["@mozilla.org/network/io-service;1"].
-            getService(Ci.nsIIOService);
-  var file = makeFile(path);
-
-  var uri;
-  try {
-    uri = ios.newFileURI(file);
-  }
-  catch (e) {
-    return null;
-  }
-  return uri;
+  // Can't use the IOService because we have callers off of the main thread...
+  // Super lame hack instead.
+  return "file://" + path;
 }
 
 function sbDownloadDeviceHelper()
@@ -101,13 +91,9 @@ sbDownloadDeviceHelper.prototype =
 sbDownloadDeviceHelper.prototype.downloadItem =
 function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 {
-  var downloadFileURI = this._safeDownloadFileURI();
-  if (!downloadFileURI) {
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
     return;
-  }
-
-  if (!this.downloadMediaList) {
-    throw Cr.NS_ERROR_FAILURE;
   }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
@@ -120,27 +106,23 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
     item = aMediaItem;
   }
   else {
-    this._addItemToArrays(aMediaItem, downloadFileURI, uriArray,
-                          propertyArrayArray);
+    this._addItemToArrays(aMediaItem, uriArray, propertyArrayArray);
     let items = this._mainLibrary.batchCreateMediaItems(uriArray,
                                                         propertyArrayArray,
                                                         true);
     item = items.queryElementAt(0, Ci.sbIMediaItem);
   }
 
-  this.downloadMediaList.add(item);
+  this._setDownloadDestination([item], downloadFileURL);
+  this.getDownloadMediaList().add(item);
 }
 
 sbDownloadDeviceHelper.prototype.downloadSome =
 function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 {
-  var downloadFileURI = this._safeDownloadFileURI();
-  if (!downloadFileURI) {
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
     return;
-  }
-
-  if (!this.downloadMediaList) {
-    throw Cr.NS_ERROR_FAILURE;
   }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
@@ -155,8 +137,7 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
       items.push(item);
     }
     else {
-      this._addItemToArrays(item, downloadFileURI, uriArray,
-                            propertyArrayArray);
+      this._addItemToArrays(item, uriArray, propertyArrayArray);
     }
   }
 
@@ -169,19 +150,16 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
     }
   }
 
-  this.downloadMediaList.addSome(ArrayConverter.enumerator(items));
+  this._setDownloadDestination(items, downloadFileURL);
+  this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
 sbDownloadDeviceHelper.prototype.downloadAll =
 function sbDownloadDeviceHelper_downloadAll(aMediaList)
 {
-  var downloadFileURI = this._safeDownloadFileURI();
-  if (!downloadFileURI) {
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
     return;
-  }
-
-  if (!this.downloadMediaList) {
-    throw Cr.NS_ERROR_FAILURE;
   }
 
   let uriArray           = Cc["@mozilla.org/array;1"]
@@ -194,8 +172,7 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
   for (let i = 0; i < aMediaList.length; i++) {
     var item = aMediaList.getItemByIndex(i);
     if (isForeign) {
-      this._addItemToArrays(item, downloadFileURI, uriArray,
-                            propertyArrayArray);
+      this._addItemToArrays(item, uriArray, propertyArrayArray);
     }
     else {
       items.push(item);
@@ -211,10 +188,11 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
     }
   }
 
-  this.downloadMediaList.addSome(ArrayConverter.enumerator(items));
+  this._setDownloadDestination(items, downloadFileURL);
+  this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
-sbDownloadDeviceHelper.prototype.__defineGetter__("downloadMediaList",
+sbDownloadDeviceHelper.prototype.getDownloadMediaList =
 function sbDownloadDeviceHelper_getDownloadMediaList()
 {
   if (!this._downloadDevice) {
@@ -229,13 +207,11 @@ function sbDownloadDeviceHelper_getDownloadMediaList()
     }
   }
   return this._downloadDevice ? this._downloadDevice.downloadMediaList : null;
-});
+}
 
-sbDownloadDeviceHelper.prototype.__defineGetter__("defaultMusicFolder",
+sbDownloadDeviceHelper.prototype.getDefaultMusicFolder =
 function sbDownloadDeviceHelper_getDefaultMusicFolder()
 {
-  // XXXben Cache the result of this method? Maybe we can't due to the case
-  //        ambiguity of the music folder on linux?
   const dirService = Cc["@mozilla.org/file/directory_service;1"].
                      getService(Ci.nsIDirectoryServiceProvider);
   const platform = Cc["@mozilla.org/xre/app-info;1"].
@@ -279,9 +255,9 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
   }
 
   return musicDir;
-});
+}
 
-sbDownloadDeviceHelper.prototype.__defineGetter__("downloadFolder",
+sbDownloadDeviceHelper.prototype.getDownloadFolder =
 function sbDownloadDeviceHelper_getDownloadFolder()
 {
   const Application = Cc["@mozilla.org/fuel/application;1"].
@@ -296,7 +272,7 @@ function sbDownloadDeviceHelper_getDownloadFolder()
 
   if (!folderIsValid(downloadFolder)) {
     // The pref was either bad or empty. Use (and write) the default.
-    downloadFolder = this.defaultMusicFolder;
+    downloadFolder = this.getDefaultMusicFolder();
     prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
   }
 
@@ -332,23 +308,22 @@ function sbDownloadDeviceHelper_getDownloadFolder()
 
   prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
   return downloadFolder;
-});
+}
 
-sbDownloadDeviceHelper.prototype._safeDownloadFileURI =
-function sbDownloadDeviceHelper__safeDownloadFileURI()
+sbDownloadDeviceHelper.prototype._safeDownloadFileURL =
+function sbDownloadDeviceHelper__safeDownloadFileURL()
 {
   // This function returns null if the user cancels the dialog.
   try {
-    return makeFileURI(this.downloadFolder.path).spec;
+    return makeFileURL(this.getDownloadFolder().path);
   }
   catch (e if e.result == Cr.NS_ERROR_ABORT) {
   }
-  return null;
+  return "";
 }
 
 sbDownloadDeviceHelper.prototype._addItemToArrays =
 function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
-                                                 aDownloadPath,
                                                  aURIArray,
                                                  aPropertyArrayArray)
 {
@@ -366,11 +341,27 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
   var target = aMediaItem.library.guid + "," + aMediaItem.guid;
   dest.appendProperty(SBProperties.downloadStatusTarget, target);
 
-  // Set the destination property so that the download device doesn't re-query
-  // the user if the 'always' pref isn't set.
-  dest.appendProperty(SBProperties.destination, aDownloadPath);
-
   aPropertyArrayArray.appendElement(dest, false);
+}
+
+sbDownloadDeviceHelper.prototype._setDownloadDestination =
+function sbDownloadDeviceHelper__setDownloadDestination(aItems,
+                                                        aDownloadPath)
+{
+  for each (var item in aItems) {
+    try {
+      item.setProperty(SBProperties.destination, aDownloadPath);
+    }
+    catch (e) {
+      // We're not allowed to set the download destination on remote media items
+      // so that call may fail. The remoteAPI should unwrap all items and lists
+      // *before* handing them to us, so throw the error with a slightly more
+      // helpful message.
+      throw new CE("Download destination could not be set on this media item:\n"
+                   + "  " + item + "\nIs it actually a remote media item?",
+                   e.result);
+    }
+  }
 }
 
 function NSGetModule(compMgr, fileSpec) {
