@@ -62,25 +62,23 @@ var SongbirdMainPaneOverlay = {
   _defaultMusicFolder: null,
 
   /**
-   * This is the element that will display the pretty file path, created in the
-   * onLoad handler.
+   * This is the element that will display the pretty file path.
    */
   _pathField: null,
 
   /**
-   * Thiese are the radio items thatcontrol the 'alwaysPrompt' pref. Created in
-   * onLoad.
+   * Thiese are the radio items thatcontrol the 'alwaysPrompt' pref.
    */
   _radioNoPrompt: null,
   _radioPrompt: null,
 
   /**
-   * This is the button for selecting a folder. Created in onLoad.
+   * This is the button for selecting a folder.
    */
   _browseButton: null,
 
   /**
-   * These are the preference elements that we will create in onLoad.
+   * These are the preference elements that we will create.
    */
   _folderPref: null,
   _alwaysPromptPref: null,
@@ -239,17 +237,20 @@ var SongbirdMainPaneOverlay = {
 
     // Finally hook it all up
     document.getElementById("paneMain").appendChild(groupbox);
-
-    // And make sure everything is visible
-    window.sizeToContent();
   },
 
   /**
    * This function sets up our UI in the main preferences dialog.
    */
-  onLoad: function(event) {
+   onPaneLoad: function(event) {
+     // Don't actually load until the main pain has been loaded (see the comments
+     // near the matching addEventListener call at the end of this code).
+     if (event.target.getAttribute("id") != "paneMain") {
+       return;
+     }
+
     const self = SongbirdMainPaneOverlay;
-    window.removeEventListener('load', self.onLoad, false);
+    window.removeEventListener('paneload', self.onPaneLoad, false);
 
     // Save this for later.
     self._defaultMusicFolder =
@@ -327,5 +328,8 @@ var SongbirdMainPaneOverlay = {
   }
 };
 
-// Don't forget to load!
-window.addEventListener('load', SongbirdMainPaneOverlay.onLoad, false);
+// Don't forget to load! Can't use the standard load event because the
+// individual preference panes are loaded asynchronously via
+// document.loadOverlay (see preferences.xml) and the load event may fire before
+// our target pane has been integrated.
+window.addEventListener('paneload', SongbirdMainPaneOverlay.onPaneLoad, false);
