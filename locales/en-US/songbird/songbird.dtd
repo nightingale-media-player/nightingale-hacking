@@ -378,3 +378,4 @@
 <!ENTITY prefs.homepage.label          "Home Page" >
 <!ENTITY prefs.homepage.url.label          "URL:" >
 <!ENTITY prefs.homepage.url.accesskey          "" >
+<!ENTITY prefs.security.addons.label   "Add-On Installation" >
