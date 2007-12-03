@@ -104,7 +104,9 @@ var gRemoteAPIPane = {
       if (!pref_element) {
         continue;
       }
-      pref_element.reset();
+      if (pref_element.hasUserValue) {
+        pref_element.reset();
+      }
     }
   }
 
