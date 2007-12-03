@@ -243,7 +243,7 @@ var SongbirdMainPaneOverlay = {
    * This function sets up our UI in the main preferences dialog.
    */
    onPaneLoad: function(event) {
-     // Don't actually load until the main pain has been loaded (see the comments
+     // Don't actually load until the main pane has been loaded (see the comments
      // near the matching addEventListener call at the end of this code).
      if (event.target.getAttribute("id") != "paneMain") {
        return;

@@ -41,9 +41,11 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/mainOverlay.js"/>
 
-  <!-- XXXben HACK to get our download prefs next to the main download prefs -->
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/mainPaneOverlay.js"/>
+
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/advancedPaneOverlay.js"/>
 
   <stringbundleset>
     <stringbundle id="bundleSongbirdPreferences"
