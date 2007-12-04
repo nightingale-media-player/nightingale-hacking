@@ -87,7 +87,7 @@
 
   <groupbox width="&setup.groupbox.width;">
     <label value="&setup.defaultlanguage;" />
-    <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+    <menulist id="language_list" onmousedown="event.preventBubble();" onmouseup="event.preventBubble();">
       <menupopup/>
     </menulist>
   </groupbox>

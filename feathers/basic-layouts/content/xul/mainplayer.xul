@@ -51,6 +51,7 @@
 
 <window
   id="mainplayer"
+  onload="windowPlacementSanityChecks();"
   onclose="quitApp();" 
   title="&window.dev.title;"
   windowtype="Songbird:Main"
@@ -63,6 +64,8 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
+  persist="screenX screenY width height sizemode"
 >
   
   <windowregion/> <!-- No matter what mig says, don't take this out!! -->

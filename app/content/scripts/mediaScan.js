@@ -64,7 +64,6 @@ function onLoad()
   // It seems to have to do with the window getting opened immediately after
   // the file picker.
   window.focus();
-  onWindowLoadSizeAndPosition();
 
   if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
   {
@@ -227,7 +226,6 @@ function sbBatchCreateListener_onComplete(aItemArray)
 
 function doOK()
 {
-  onWindowSaveSizeAndPosition();
   if (document.getElementById("watch_check").checked) {
     // XXX need to port folder watcher
     // var wfManager = new CWatchFolderManager();
@@ -250,7 +248,6 @@ function doOK()
 }
 function doCancel()
 {
-  onWindowSaveSizeAndPosition();
   // Run away!!
   if (aFileScanQuery)
     aFileScanQuery.cancel();

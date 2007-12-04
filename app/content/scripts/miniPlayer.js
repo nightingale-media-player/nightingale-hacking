@@ -65,8 +65,7 @@ var gMiniplayer = {
     windowElement.setAttribute("platform",platform);
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
 
-    // Restore the previous size and position of the miniplayer
-    onWindowLoadSizeAndPosition();
+    windowPlacementSanityChecks();
   },
 
 

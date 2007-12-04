@@ -85,25 +85,12 @@ function SBInitialize()
 
   try
   {
-    onWindowLoadSizeAndPosition();
+    windowPlacementSanityChecks();
 
     // Set attributes on the Window element so we can use them in CSS.
     var platform = getPlatformString();
     var windowElement = document.getElementsByTagName("window")[0];
     windowElement.setAttribute("platform", platform);
-
-    // because the main window can change its minmax size from session to session (ie, long items in the service tree),
-    // we need to determine whether the loaded size is within the current minmax. If not, tweak the size by the difference
-    /*
-    var w = document.documentElement.boxObject.width;
-    var h = document.documentElement.boxObject.height;
-    var diffw = window.gOuterFrame.boxObject.width - window.innerWidth;
-    var diffh = window.gOuterFrame.boxObject.height - window.innerHeight;
-    // todo: see if that detects the situation
-    dump("diffw = " + diffw + "\n");
-    dump("diffh = " + diffh + "\n");
-    // todo: resize the window accordingly (same method as windowUtils.js: 448 to 455)
-    */
 
     // Delay setting the min max callback to enable the reflow of the mainwin to
     // happen. The reflow is caused by restoring the window size and position (or

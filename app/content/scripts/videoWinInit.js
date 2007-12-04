@@ -84,8 +84,7 @@ function SBVideoInitialize()
     // Trap ALTF4
     window.addEventListener("keydown", videoCheckAltF4, true);
     
-    // Resize our window from saved pref values
-    onWindowLoadSizeAndPosition();
+    windowPlacementSanityChecks();
 
     /*
     */
@@ -218,7 +217,6 @@ function SBVideoDeinitialize()
   songbird_playingVideo.unbind();
   songbird_playingVideo = null;
   // Save position before closing, in case the window has been moved, but its position hasnt been saved yet (the window is still up)
-  onWindowSaveSizeAndPosition();
 }
 
 /**
@@ -240,7 +238,6 @@ function SBPlayingVideoChanged(value)
     restoreWindow();
     // Save position before cloaking, because if we close the app after
     // the window has been cloaked, we can't record its position.
-    onWindowSaveSizeAndPosition();
     windowCloak.cloak(window); 
   }
 }
@@ -268,7 +265,6 @@ function onHideButtonClick()
 function SBHideCoreWindow()
 {
   // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
-  onWindowSaveSizeAndPosition();
   onHide();
 }
 

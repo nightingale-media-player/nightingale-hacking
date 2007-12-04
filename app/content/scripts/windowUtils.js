@@ -106,16 +106,6 @@ function setPref(aFunc, aPreference, aValue) {
 }
 
 /**
- * \brief Prevent bubbling of an event. Shorthand.
- * \param evt The event to eat.
- * \internal
- */
-function eatEvent(evt)
-{
-  evt.preventBubble();
-}
-
-/**
  * \brief onMinimize handler, minimizes the window in the current context.
  * \internal
  */
@@ -200,20 +190,10 @@ function restoreWindow()
 
 /**
  * \brief onExit handler, saves window size and position before closing the window.
- * \param skipSave Skip saving window size and position before closing.
  * \internal
  */
 function onExit( skipSave )
 {
-  try
-  {
-    if ( skipSave != true )
-      onWindowSaveSizeAndPosition();
-  }
-  catch ( err )
-  {
-    // If you don't have data functions, just close.
-  }
   document.defaultView.close();
 }
 
@@ -278,48 +258,20 @@ function onMinimumWindowSize(event)
  * \brief Handles completion of resizing of the window in the current context.
  */
 function onWindowResizeComplete() {
-  onWindowSaveSizeAndPosition();
+  var d = window.document;
+  var dE = window.document.documentElement;
+  if (dE.getAttribute("persist").match("width"))  { d.persist(dE.id, "width");  }
+  if (dE.getAttribute("persist").match("height")) { d.persist(dE.id, "height"); }
 }
 
 /**
  * \brief Handles completion of dragging of the window in the current context.
  */
 function onWindowDragComplete() {
-  onWindowSavePosition();
-}
-
-// No forseen need to save _just_ size without position
-function onWindowSaveSizeAndPosition()
-{
-  var root = "window." + document.documentElement.id;
-  if (!isMaximized() && !isMinimized()) {
-  /*
-    dump("******** onWindowSaveSizeAndPosition: root:" + root +
-                                    " root.w:" + SBDataGetIntValue(root+'.w') +
-                                    " root.h:" + SBDataGetIntValue(root+'.h') +
-                                    "\n");
-  */
-    SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
-    SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
-
-    onWindowSavePosition();
-  }
-  SBDataSetBoolValue( root + ".maximized", isMaximized() );
-}
-
-function onWindowSavePosition()
-{
-  var root = "window." + document.documentElement.id;
-/*
-  dump("******** onWindowSavePosition: root:" + root +
-                                  " root.w:" + SBDataGetIntValue(root+'.x') +
-                                  " root.h:" + SBDataGetIntValue(root+'.y') +
-                                  "\n");
-*/
-  if (!(document.documentElement.boxObject.screenX == -32000 ||document.documentElement.boxObject.screenY == -32000)) { // never record the coordinates of a cloaked window !
-    SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-    SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
-  }
+  var d = window.document;
+  var dE = window.document.documentElement;
+  if (dE.getAttribute("persist").match("screenX")) { d.persist(dE.id, "screenX");  }
+  if (dE.getAttribute("persist").match("screenY")) { d.persist(dE.id, "screenY"); }
 }
 
 /**
@@ -348,94 +300,71 @@ function delayedActivate()
   setTimeout( windowFocus, 50 );
 }
 
-// No forseen need to load _just_ size without position
-
 /**
- * \brief
+ * \brief See if a window needs to be somehow "fixed" after it is opened.
+ *
+ * In addition to loading the size and position (if stored), we also perform some sanity checks. 
+ * The window must be:
+ * - sized appropriately if we have never seen it before
+ * - not too small for its min-size styles or some default minimum.
+ * - actually on screen somewhere.
+ * 
  */
-function onWindowLoadSizeAndPosition()
+function windowPlacementSanityChecks()
 {
   delayedActivate();
+  
+  dump("New window sanity checks. \n");
+  var x = document.documentElement.getAttribute("screenX");
+  var y = document.documentElement.getAttribute("screenY");
+  var width  = document.documentElement.getAttribute("width");
+  var height = document.documentElement.getAttribute("height");
+  dump("Before: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
 
-  var root = "window." + document.documentElement.id;
-/*
-  dump("******** onWindowLoadSizeAndPosition: root:" + root +
-                                  " root.w:" + SBDataGetIntValue(root+'.w') +
-                                  " root.h:" + SBDataGetIntValue(root+'.h') +
-                                  " box.w:" + document.documentElement.boxObject.width +
-                                  " box.h:" + document.documentElement.boxObject.height +
-                                  "\n");
-*/
-  // If they have not been set they will be ""
-  if ( SBDataGetStringValue( root + ".w" ) == "" ||
-       SBDataGetStringValue( root + ".h" ) == "" )
-  {
-    // nothing to do to set the default width/height, we already get a default from xul and css definitions
-    // but still try to load position !
-    onWindowLoadPosition();
-    return;
-  }
-
-  // get the data once.
-  var rootW = SBDataGetIntValue( root + ".w" );
-  var rootH = SBDataGetIntValue( root + ".h" );
-
-  if ( rootW && rootH )
-  {
-    // test if the window is resizable. if it is, and rootW/rootH are below
-    // some limit, skip these steps so that we reload the default w/h from xul and css
-    var resetsize = false;
-    var resizers = document.getElementsByTagName("resizer");
-    var resizable = resizers.length > 0;
-    var minwidth = getStyle(document.documentElement, "min-width");
-    var minheight = getStyle(document.documentElement, "min-height");
-    if (minwidth) minwidth = parseInt(minwidth);
-    if (minheight) minheight = parseInt(minheight);
-
-/*
-    dump("SCREEN LOAD: " + screen.width + " " + screen.height + "\n");
-    dump("window = " + document.documentElement.getAttribute("id") + "\n");
-    dump("minwidth = " + minwidth + "\n");
-    dump("rootW = " + rootW + "\n");
-    dump("minheight = " + minheight + "\n");
-    dump("rootH = " + rootH + "\n");
-    dump("resizable = " + resizable + "\n");
-*/
-
-    // also, if the desired w/h are larger than the screen, we should reset.
-
-    if (resizable &&
-        ( ((minwidth && rootW < minwidth) || (minheight && rootH < minheight))
-        || (rootW > screen.width || rootH > screen.height) ))
-      resetsize = true;
-/*
-    dump("resetsize = " + resetsize + "\n");
-*/
-
-    if (resizable && !resetsize) {
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
-      // YAY YAY YAY the windowregion hack actualy fixes this :D
-      window.resizeTo( rootW, rootH );
-
-      // for some reason, the resulting size isn't what we're asking (window
-      //   currently has a border?) so determine what the difference is and
-      //   add it to the resize
-      var diffW = rootW - document.documentElement.boxObject.width;
-      var diffH = rootH - document.documentElement.boxObject.height;
-      window.resizeTo( rootW + diffW, rootH + diffH);
+  // Set a sane starting width/height for all resolutions on new profiles.
+  // lifted nearly verbatim from seamonkey/source/browser/base/content/browser.js
+  if (!document.documentElement.hasAttribute("width")) {
+    var defaultWidth = 994, defaultHeight;
+    if (screen.availHeight <= 600 || screen.availWidth <= 600) {
+      document.documentElement.setAttribute("sizemode", "maximized");
+      defaultWidth = 590;
+      defaultHeight = 450;
     }
-  }
-  onWindowLoadPosition();
-  // and of course, like focusing, maximizing at this stage won't work :( so introduce a small delay
-  setTimeout(delayedMaximize, 50);
-}
+    else {
+      // Create a narrower window for large or wide-aspect displays, to suggest
+      // side-by-side page view.
+      if (screen.availWidth >= 1600) {
+        defaultWidth = (screen.availWidth / 2) - 20;
+      }
+      defaultHeight = screen.availHeight - 10;
+    }
 
-/**
- * \brief Delayed maximize of the window in the current context.
- */
-function delayedMaximize() {
-  var root = "window." + document.documentElement.id;
-  if (SBDataGetBoolValue(root + ".maximized")) onMaximize();
+    document.documentElement.setAttribute("width", defaultWidth);
+    document.documentElement.setAttribute("height", defaultHeight);
+  }
+
+  // is the window too small? (the 32 is an arbitrary "too small" size to prevent ungrabbably small windows)
+  var minWidth  = getStyle(document.documentElement, "min-width");
+  var minHeight = getStyle(document.documentElement, "min-height");
+  if (minWidth)  { minWidth  = parseInt(minWidth);  } else { minWidth  = 32; }
+  if (minHeight) { minHeight = parseInt(minHeight); } else { minHeight = 32; }
+
+  var width  = document.documentElement.getAttribute("width");
+  var height = document.documentElement.getAttribute("height");
+  
+  if (width  < minWidth)  { document.documentElement.setAttribute("width",  minWidth);  }
+  if (height < minHeight) { document.documentElement.setAttribute("height", minHeight); }
+
+  // bring it back if the window is way offscreen somewhere
+  var x = document.documentElement.getAttribute("screenX");
+  var y = document.documentElement.getAttribute("screenY");
+  if (x > screen.availWidth)  { document.documentElement.setAttribute("screenX", 0); }
+  if (y > screen.availHeight) { document.documentElement.setAttribute("screenY", 0); }
+  if (x + width  < 0)  { document.documentElement.setAttribute("screenX", 0); }
+  if (y + height < 0)  { document.documentElement.setAttribute("screenY", 0); }
+
+  dump("After: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
+
 }
 
 /**
@@ -476,65 +405,6 @@ function getXULWindowFromWindow(win) // taken from venkman source
         rv = null;
     }
     return rv;
-}
-
-/**
- * \brief Loading of position for the window in the current context.
- */
-function onWindowLoadPosition()
-{
-  var root = "window." + document.documentElement.id;
-/*
-  dump("******** onWindowLoadPosition: root:" + root +
-                                  " root.x:" + SBDataGetIntValue(root+'.x') +
-                                  " root.y:" + SBDataGetIntValue(root+'.y') +
-                                  " box.x:" + document.documentElement.boxObject.screenX +
-                                  " box.y:" + document.documentElement.boxObject.screenY +
-                                  "\n");
-*/
-  // If they have not been set they will be ""
-  if ( SBDataGetStringValue( root + ".x" ) == "" ||
-       SBDataGetStringValue( root + ".y" ) == "" )
-  {
-    var win = getXULWindowFromWindow(window);
-    if (win) win.center(null, true, true);
-    return;
-  }
-
-  // get the data once.
-  var rootX = SBDataGetIntValue( root + ".x" );
-  var rootY = SBDataGetIntValue( root + ".y" );
-
-  // Hack Bug 5286 - Detect when the window has been thrown
-  // offscreen by the buggy mac resize system.
-  if (rootX == 0 && rootY >= screen.height) {
-    var win = getXULWindowFromWindow(window);
-    if (win) win.center(null, true, true);
-    return;
-  }
-
-  window.moveTo( rootX, rootY );
-  // do the (more or less) same adjustment for x,y as we did for w,h
-  var diffX = rootX - document.documentElement.boxObject.screenX;
-  var diffY = rootY - document.documentElement.boxObject.screenY;
-
-  var platform;
-  try {
-    var sysInfo =
-      Components.classes["@mozilla.org/system-info;1"]
-                .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");
-  }
-  catch (e) {
-    dump("System-info not available, trying the user agent string.\n");
-    var user_agent = navigator.userAgent;
-    if (user_agent.indexOf("Linux") != -1)
-      platform = "Linux";
-  }
-
-  // This fix not needed for Linux - might need to add a MacOSX check.
-  if (platform != "Linux")
-    window.moveTo( rootX - diffX, rootY - diffY );
 }
 
 /**
@@ -588,14 +458,9 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
 
 /**
  * \brief Quit the application.
- * \param skipSave Skip saving window size and position.
  */
-function quitApp( skipSave )
+function quitApp( )
 {
-  if ( skipSave != true ) {
-    onWindowSaveSizeAndPosition();
-  }
-
   // Why not stop playback, too?
   try {
     gPPS.stop();
@@ -610,9 +475,8 @@ function quitApp( skipSave )
 
 /**
  * \brief Attempt to restart the application.
- * \param skipSave Skip saving window size and position.
  */
-function restartApp( skipSave )
+function restartApp( )
 {
 
   // Notify all windows that an application quit has been requested.
@@ -632,7 +496,7 @@ function restartApp( skipSave )
   as.quit(Components.interfaces.nsIAppStartup.eRestart |
           Components.interfaces.nsIAppStartup.eAttemptQuit);
 
-  onExit( skipSave );
+  onExit( );
 }
 
 

@@ -98,7 +98,8 @@ try
       SBDataSetIntValue("jumpto.visible", 1)
     }
 
-    onWindowLoadSizeAndPosition();
+    windowPlacementSanityChecks();
+    
     setJumptoMinMaxCallback();
 
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
@@ -429,8 +430,6 @@ try
   }
 
   function onUnloadJumpToFile() {
-    onWindowSaveSizeAndPosition();
-
     var playlist = document.getElementById("jumpto.playlist");
     playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
