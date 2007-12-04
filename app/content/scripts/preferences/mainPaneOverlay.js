@@ -173,7 +173,7 @@ var SongbirdMainPaneOverlay = {
     this._folderPref = document.createElement("preference");
     this._folderPref.setAttribute("id", PREF_DOWNLOAD_MUSIC_FOLDER);
     this._folderPref.setAttribute("name", PREF_DOWNLOAD_MUSIC_FOLDER);
-    this._folderPref.setAttribute("type", "string");
+    this._folderPref.setAttribute("type", "unichar");
     this._folderPref.setAttribute("onchange",
                                   "SongbirdMainPaneOverlay.onFolderChanged();");
     preferencesElement.appendChild(this._folderPref);
