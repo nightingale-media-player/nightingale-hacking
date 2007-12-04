@@ -93,14 +93,13 @@
 		      this.contentGroup;
         this._lastURL.init("addonPanes." + stateid + ".lastURL", null);
 
-        var addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
+        this.addonpanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
                                    .getService(Components.interfaces.sbIAddOnPanes);
-        addonpanes.registerInstantiator(this);
 
         // load the last opened URL
         var paneLoaded = false;
         if (this._lastURL.stringValue) {
-          var paneinfo = addonpanes.getPaneInfo(this._lastURL.stringValue);
+          var paneinfo = this.addonpanes.getPaneInfo(this._lastURL.stringValue);
           if (paneinfo) {
             setTimeout(function(self){
               // need to give the <browser> time to initialize
@@ -113,7 +112,12 @@
         if (!paneLoaded) {
           this.hide();
         }
+        this.addonpanes.registerInstantiator(this)
       ]]></xbl:constructor>
+      <xbl:destructor><![CDATA[
+        this.addonpanes.unregisterInstantiator(this);
+        this.addonpanes = null;
+      ]]></xbl:destructor>
       <xbl:property name="contentGroup" readonly="true">
         <xbl:getter><![CDATA[
           return this.getAttribute("contentgroup");
@@ -122,6 +126,7 @@
       <xbl:property name="contentUrl" readonly="true">
         <xbl:getter><![CDATA[
           var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
+          if (!elem || !elem.currentURI) return "";
           return elem.currentURI.spec;
         ]]></xbl:getter>
       </xbl:property>
