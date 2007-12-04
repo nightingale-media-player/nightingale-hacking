@@ -41,11 +41,13 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/mainOverlay.js"/>
 
+  <!-- Songbird per-pane overlays that tie in with event listeners -->
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/mainPaneOverlay.js"/>
-
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/advancedPaneOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/contentPaneOverlay.js"/>
 
   <stringbundleset>
     <stringbundle id="bundleSongbirdPreferences"
