@@ -79,8 +79,12 @@ var gRemoteAPIPane = {
     }
   },
   
-  onLoad: function(event) {
-    window.removeEventListener('load', gRemoteAPIPane.onLoad, false);
+  onPaneLoad: function(event) {
+    if (event.target.getAttribute('id') != 'paneRemoteAPI') {
+      // this isn't us
+      return;
+    }
+    window.removeEventListener('paneload', gRemoteAPIPane.onLoad, false);
     gRemoteAPIPane.updateDisabledState();
   },
   
@@ -112,6 +116,6 @@ var gRemoteAPIPane = {
 
 };
 
-window.addEventListener('load', gRemoteAPIPane.onLoad, false);
+window.addEventListener('paneload', gRemoteAPIPane.onPaneLoad, false);
 window.addEventListener('unload', gRemoteAPIPane.onUnload, false);
 
