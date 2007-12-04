@@ -991,10 +991,6 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
       var itemEnum = ArrayConverter.enumerator(allItems.items);
       onBrowserTransfer(itemEnum);
     }
-
-    // And show the download table in the chrome playlist if possible.
-    var browser = window.gBrowser;
-    if (browser) browser.mCurrentTab.switchToDownloadView();
   }
   catch( err )
   {
