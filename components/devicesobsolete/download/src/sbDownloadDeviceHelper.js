@@ -221,8 +221,8 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
   var musicDir;
   switch (platform) {
     case "WINNT":
-      var docsDir = dirService.getFile("Pers", {});
-      musicDir = docsDir.append("My Music");
+      musicDir = dirService.getFile("Pers", {});
+      musicDir.append("My Music");
       break;
 
     case "Darwin":
@@ -230,10 +230,12 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
       break;
 
     case "Linux":
-      var homeDir = dirService.getFile("Home", {});
-      musicDir = homeDir.clone().append("Music");
+      musicDir = dirService.getFile("Home", {});
+      musicDir.append("Music");
+
       if (!folderIsValid(musicDir)) {
-        musicDir = homeDir.append("music");
+        musicDir = musicDir.parent;
+        musicDir.append("music");
       }
       break;
 
