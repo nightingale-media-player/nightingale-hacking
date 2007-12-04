@@ -59,53 +59,63 @@
       <groupbox id="rapiAccessGroup">
         <caption label="&rapi.prefpane.access.caption;"/>
         <description>&rapi.prefpane.access.text;</description>
-        <vbox flex="1">
-          <hbox flex="1">
-            <checkbox preference="songbird.rapi.playback_control_disable"
-              label="&rapi.playback_control_disable.label;"
-              accesskey="&rapi.playback_control_disable.accesskey;"/>
-            <spacer flex="1"/>
-            <button id="songbird.rapi.playback_control_disable.button"
-              label="&rapi.whitelist.label;"
-              oncommand="gRemoteAPIPane.configureWhitelist('playback_control');"/>
-          </hbox>
-          
-          <hbox flex="1">
-            <checkbox preference="songbird.rapi.playback_read_disable"
-              label="&rapi.playback_read_disable.label;"
-              accesskey="&rapi.playback_read_disable.accesskey;"/>
-            <spacer flex="1"/>
-            <button id="songbird.rapi.playback_read_disable.button"
-              label="&rapi.whitelist.label;"
-              oncommand="gRemoteAPIPane.configureWhitelist('playback_read');"/>
-          </hbox>
-          
-          <hbox flex="1">
-            <checkbox preference="songbird.rapi.library_read_disable"
-              label="&rapi.library_read_disable.label;"
-              accesskey="&rapi.library_read_disable.accesskey;"/>
-            <spacer flex="1"/>
-            <button id="songbird.rapi.library_read_disable.button"
-              label="&rapi.whitelist.label;"
-              oncommand="gRemoteAPIPane.configureWhitelist('library_read');"/>
-          </hbox>
-          
-          <hbox flex="1">
-            <checkbox checked="true" disabled="true"
-              label="&rapi.library_write_disable.label;"
-              accesskey="&rapi.library_write_disable.accesskey;"/>
-            <spacer flex="1"/>
-            <button id="songbird.rapi.library_write_disable.button"
-              label="&rapi.whitelist.label;"
-              oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
-          </hbox>
-          
-          <hbox flex="1">
-            <button label="&rapi.restore_defaults.label;"
-              oncommand="gRemoteAPIPane.restoreDefaults();"/>
-            <spacer flex="1"/>
-          </hbox>
-        </vbox>
+        <grid>
+          <columns>
+            <column flex="1" />
+            <column />
+          </columns>
+          <rows>
+            <row>
+              <checkbox preference="songbird.rapi.playback_control_disable"
+                label="&rapi.playback_control_disable.label;"
+                accesskey="&rapi.playback_control_disable.accesskey;"/>
+              <vbox pack="top">
+                <button id="songbird.rapi.playback_control_disable.button"
+                  label="&rapi.whitelist.label;"
+                  oncommand="gRemoteAPIPane.configureWhitelist('playback_control');"/>
+              </vbox>
+            </row>
+            <row>
+              <checkbox preference="songbird.rapi.playback_read_disable"
+                label="&rapi.playback_read_disable.label;"
+                accesskey="&rapi.playback_read_disable.accesskey;"/>
+              <vbox pack="top">
+                <button id="songbird.rapi.playback_read_disable.button"
+                  label="&rapi.whitelist.label;"
+                  oncommand="gRemoteAPIPane.configureWhitelist('playback_read');"/>
+              </vbox>
+            </row>
+            <row>
+              <checkbox preference="songbird.rapi.library_read_disable"
+                label="&rapi.library_read_disable.label;"
+                accesskey="&rapi.library_read_disable.accesskey;"/>
+              <vbox pack="top">
+                <button id="songbird.rapi.library_read_disable.button"
+                  label="&rapi.whitelist.label;"
+                  oncommand="gRemoteAPIPane.configureWhitelist('library_read');"/>
+              </vbox>
+            </row>
+            <row>
+              <checkbox checked="true" disabled="true"
+                style="max-width: 300px"
+                label="&rapi.library_write_disable.label;"
+                accesskey="&rapi.library_write_disable.accesskey;"/>
+              <vbox pack="top">
+                <button id="songbird.rapi.library_write_disable.button"
+                  label="&rapi.whitelist.label;"
+                  oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
+              </vbox>
+            </row>
+            <row>
+              <hbox>
+                <button label="&rapi.restore_defaults.label;"
+                  oncommand="gRemoteAPIPane.restoreDefaults();"/>
+                <spacer flex="1"/>
+              </hbox>
+              <spacer flex="1"/>
+            </row>
+          </rows>
+        </grid>
       </groupbox>
       <spacer flex="1"/>
     </vbox>
