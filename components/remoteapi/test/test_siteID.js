@@ -30,7 +30,6 @@
 function runTest () {
 
   setAllAccess();
-  setTempDownloadDir();
 
   beginRemoteAPITest("test_siteID_page.html", startTesting);
 }

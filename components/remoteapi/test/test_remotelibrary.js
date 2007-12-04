@@ -30,7 +30,6 @@
 function runTest () {
 
   setAllAccess();
-  setTempDownloadDir();
 
   beginRemoteAPITest("test_remotelibrary_page.html", startTesting);
 }
@@ -40,4 +39,3 @@ function startTesting() {
   testBrowserWindow.runPageTest(this);
 
 }
-

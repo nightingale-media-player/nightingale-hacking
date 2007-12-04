@@ -48,6 +48,9 @@ const SONGBIRD_TAIL_FILE = "tail_songbird.js";
 const NS_PREFSERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
 const NS_SCRIPT_TIMEOUT_PREF = "dom.max_chrome_script_run_time";
 
+const PREF_DOWNLOAD_FOLDER       = "songbird.download.music.folder";
+const PREF_DOWNLOAD_ALWAYSPROMPT = "songbird.download.music.alwaysPrompt";
+
 function sbTestHarness() { }
 
 sbTestHarness.prototype = {
@@ -57,19 +60,19 @@ sbTestHarness.prototype = {
 
   // list of all tests that failed
   mFailedTests: null,
-  
+
   // number of tests that have been successfully completed
   mTestCount: 0,
 
   // toplevel default files to always attempt to load
   mHeadSongbird : null,
   mTailSongbird : null,
-  
+
   mOldScriptTimeout: -1,
 
   _disableScriptTimeout : function() {
     var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
-    
+
     mOldScriptTimeout = prefs.getIntPref(NS_SCRIPT_TIMEOUT_PREF);
     prefs.setIntPref(NS_SCRIPT_TIMEOUT_PREF, 0);
   },
@@ -79,6 +82,62 @@ sbTestHarness.prototype = {
       var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
       prefs.setIntPref(NS_SCRIPT_TIMEOUT_PREF, mOldScriptTimeout);
     }
+  },
+
+  mTempDownloadFolder: null,
+  mOldDownloadPath: "",
+  mOldDownloadPromptSetting: false,
+
+  _setTempDownloadFolder: function() {
+    this.mTempDownloadFolder = Cc["@mozilla.org/file/directory_service;1"].
+                               getService(Ci.nsIProperties).
+                               get("TmpD", Ci.nsIFile);
+    this.mTempDownloadFolder.append("songbird_test_downloads");
+
+    if (!(this.mTempDownloadFolder.exists() &&
+          this.mTempDownloadFolder.isDirectory())) {
+      this.mTempDownloadFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0755);
+    }
+
+    var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
+    // Save old prefs
+    if (prefs.prefHasUserValue(PREF_DOWNLOAD_FOLDER)) {
+      this.mOldDownloadPath =
+        prefs.getComplexValue(PREF_DOWNLOAD_FOLDER, Ci.nsISupportsString).data;
+    }
+
+    this.mOldDownloadPromptSetting = prefs.getBoolPref(PREF_DOWNLOAD_ALWAYSPROMPT);
+
+    // Set new prefs
+    prefs.setBoolPref(PREF_DOWNLOAD_ALWAYSPROMPT, false);
+
+    var str = Cc["@mozilla.org/supports-string;1"].
+              createInstance(Ci.nsISupportsString);
+    str.data = this.mTempDownloadFolder.path;
+    prefs.setComplexValue(PREF_DOWNLOAD_FOLDER, Ci.nsISupportsString, str);
+  },
+
+  _unsetTempDownloadFolder: function() {
+    var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
+
+    if (this.mOldDownloadPath) {
+      var str = Cc["@mozilla.org/supports-string;1"].
+                createInstance(Ci.nsISupportsString);
+      str.data = this.mOldDownloadPath;
+      prefs.setComplexValue(PREF_DOWNLOAD_FOLDER, Ci.nsISupportsString, str);
+    }
+    else {
+      prefs.clearUserPref(PREF_DOWNLOAD_FOLDER);
+    }
+
+    if (this.mOldDownloadPromptSetting) {
+      prefs.setBoolPref(PREF_DOWNLOAD_ALWAYSPROMPT, this.mOldDownloadPromptSetting);
+    }
+
+    if (this.mTempDownloadFolder && this.mTempDownloadFolder.exists()) {
+      this.mTempDownloadFolder.remove(true);
+    }
+    this.mTempDownloadFolder = null;
   },
 
   init : function ( aTests ) {
@@ -103,8 +162,9 @@ sbTestHarness.prototype = {
     this.mTailSongbird = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
     this.mTailSongbird.append(SONGBIRD_DEFAULT_DIR);
     this.mTailSongbird.append(SONGBIRD_TAIL_FILE);
-    
+
     this._disableScriptTimeout();
+    this._setTempDownloadFolder();
   },
 
   run : function () {
@@ -262,7 +322,7 @@ sbTestHarness.prototype = {
     }
     else if (this.mTestCount > 0) {
       log("\n\n");
-      log("[Test Harness] *** ALL TESTS PASSED\n\n");    
+      log("[Test Harness] *** ALL TESTS PASSED\n\n");
     }
     else {
       log("\n\n");
@@ -270,6 +330,7 @@ sbTestHarness.prototype = {
     }
 
     consoleService.unregisterListener(consoleListener);
+    this._unsetTempDownloadFolder();
     this._enableScriptTimeout();
 
     if (this.mFailedTests) {
@@ -280,7 +341,7 @@ sbTestHarness.prototype = {
   // called only if there are NO components passed in, builds a list
   //   of ALL subdirectories.
   buildTestComponents : function() {
-    // iterate over all directories in testharness and add ALL directories 
+    // iterate over all directories in testharness and add ALL directories
     // found to the list of dirs to recurse through.
     let dirEnum = this.mTestDir.directoryEntries;
 
@@ -352,11 +413,10 @@ const sbTestHarnessModule = {
       throw Cr.NS_ERROR_NO_INTERFACE;
 
     return this;
-  },
+  }
 
 }; // sbTestHarnessModule
 
 function NSGetModule(compMgr, fileSpec) {
   return sbTestHarnessModule;
 } // NSGetModule
-

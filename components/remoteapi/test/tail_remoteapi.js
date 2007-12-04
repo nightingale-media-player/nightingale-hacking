@@ -21,19 +21,9 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 // END SONGBIRD GPL
-//  
+//
 */
 
 /**
  * \brief Tail file
  */
-
-// reset the permissions to the defaults
-//setDefaultAccess();
-
-// dest is a nsIFile object declared in the head_remoteapi.js file
-try {
-  if (dest)
-    dest.remove(true);
-} catch (e) { }
-

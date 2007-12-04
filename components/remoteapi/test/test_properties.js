@@ -40,13 +40,12 @@ function runTest () {
     if ( typeof(SBProperties[stuff]) == "string" &&
          stuff != "base" &&
          stuff != "_base" )
-    { 
+    {
       this.props[stuff] = SBProperties[stuff];
     }
   }
 
   setAllAccess();
-  setTempDownloadDir();
 
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Ci.sbILibraryManager);
@@ -60,4 +59,3 @@ function startTesting() {
   testBrowserWindow.runPageTest(this);
 
 }
-

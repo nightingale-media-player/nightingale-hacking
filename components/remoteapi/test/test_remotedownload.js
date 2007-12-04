@@ -21,7 +21,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 // END SONGBIRD GPL
-//  
+//
 */
 
 /**
@@ -32,8 +32,6 @@ function runTest () {
 
   setAllAccess();
 
-  setTempDownloadDir();
-
   beginRemoteAPITest("test_remotedownload_page.html", startTesting);
 
 }
@@ -42,4 +40,3 @@ function startTesting() {
 
   testBrowserWindow.runPageTest(this);
 }
-

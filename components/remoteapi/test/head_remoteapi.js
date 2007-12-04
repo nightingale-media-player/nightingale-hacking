@@ -237,22 +237,5 @@ function setRapiPref(name, value) {
   prefs.setBoolPref(name, value);
 }
 
-var dest;
-function setTempDownloadDir() {
-  dest = Cc["@mozilla.org/file/directory_service;1"]
-             .getService(Ci.nsIProperties)
-             .get("TmpD", Ci.nsIFile);
-
-  dest.append("remoteapi_test");
-
-  var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
-  var dlFolder = new drCtor("download.music.folder", null);
-  dlFolder.stringValue = dest.path;
-
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
-  prefs.setBoolPref("download.music.alwaysPrompt", false);
-}
-
 initMockCore();
 setDefaultAccess();

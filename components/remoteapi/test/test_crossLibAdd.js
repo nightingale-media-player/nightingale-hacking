@@ -30,7 +30,6 @@
 function runTest () {
 
   setAllAccess();
-  setTempDownloadDir();
 
   beginRemoteAPITest("test_crossLibAdd_page.html", startTesting);
 }

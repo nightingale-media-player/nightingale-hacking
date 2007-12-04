@@ -30,8 +30,6 @@
 function runTest () {
   setNoAccess();
 
-  setTempDownloadDir();
-
   beginRemoteAPITest("test_privileged_page.html", startTesting);
 }
 
@@ -48,4 +46,3 @@ function startTesting() {
   testBrowserWindow.songbird = songbird;
   testBrowserWindow.runPageTest(this);
 }
-
