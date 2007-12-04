@@ -627,6 +627,14 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   return null;
 }
 
+sbLibraryServicePane.prototype.createNodeForLibrary =
+function sbLibraryServicePane_createNodeForLibrary(aLibrary) {
+  if(aLibrary instanceof Ci.sbILibrary) {
+    return this._libraryAdded(aLibrary);
+  }
+
+  return null;
+}
 
 /* \brief Attempt to get a service pane node for the given library resource
  *
@@ -813,7 +821,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
 sbLibraryServicePane.prototype._libraryAdded =
 function sbLibraryServicePane__libraryAdded(aLibrary) {
   //logcall(arguments);
-  this._ensureLibraryNodeExists(aLibrary);
+  var node = this._ensureLibraryNodeExists(aLibrary);
 
   // Listen to changes in the library so that we can display new playlists
   var filter = SBProperties.createArray([[SBProperties.mediaListName, null]]);
@@ -824,6 +832,8 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
                        filter);
 
   this._processListsInLibrary(aLibrary);
+
+  return node;
 }
 
 
