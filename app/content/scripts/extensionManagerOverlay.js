@@ -39,6 +39,7 @@ function fixResizers() {
 }
 
 function fixExtensionsLink() {
+  window.removeEventListener("load", fixExtensionsLink, false);
   var getMore = document.getElementById("getMore");
   if (getMore) {
     getMore.setAttribute("onclick",
@@ -61,4 +62,17 @@ function openURLSB(url) {
 
 window.addEventListener("load", fixResizers, false);
 window.addEventListener("load", fixExtensionsLink, false);
+
+var oldStartup = Startup;
+Startup = function() {
+  var windowCloak =
+    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+              .getService(Components.interfaces.sbIWindowCloak);
+  windowCloak.cloak(window); 
+  oldStartup();
+  // these globals are filled by oldStartup();
+  if (!gUpdatesOnly || gExtensionsView.children.length != 0) {
+    windowCloak.uncloak(window); 
+  }
+}
 
