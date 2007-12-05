@@ -55,6 +55,11 @@
   </stringbundleset>
 
  <prefWindow id="BrowserPreferences">
+
+  <!-- Hide the Applications panel for the moment -->
+  <prefpane id="paneApplications"
+            removeelement="true"/>
+
 #ifdef XP_WIN
   <prefpane id="paneHotkeys"
             label="&hotkeys.prefpane;"
