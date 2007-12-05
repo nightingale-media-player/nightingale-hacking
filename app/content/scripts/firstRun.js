@@ -95,15 +95,7 @@ function localesBundleDataReady() {
   }
 }
 
-function initFirstRun() 
-{
-  computeBottomMargin(continueInit);
-  // do nothing below here in this function, unless you can guarantee that it 
-  // will not change the window's height (ie, don't change an element's
-  // hidden attribute here, do that in continueInit()).
-}
-
-function continueInit() {
+function initFirstRun() {
   showMetricsInfo();
   // Determine if we should show the error box for people who have previously run Songbird
   try {
@@ -526,65 +518,39 @@ function isLanguageInstalled(locale) {
 function showErrorMessage() 
 {
   document.getElementById("error_message").removeAttribute("hidden");
-  fixWindowHeight();
+  window.sizeToContent();
 }
 
 function hideErrorMessage()
 {
   document.getElementById("error_message").setAttribute("hidden", "true");
+  window.sizeToContent();
 }
 
 function showPleaseWait()
 {
   document.getElementById("please_wait").removeAttribute("hidden");
+  window.sizeToContent();
 }
 
 function hidePleaseWait()
 {
   document.getElementById("please_wait").setAttribute("hidden", "true");
+  window.sizeToContent();
 }
 
 function showUpdateMessage() {
   document.getElementById("error_noupdate_vbox").removeAttribute("hidden");
-  fixWindowHeight();
+  window.sizeToContent();
 }
 
 function hideExtensionList() {
   document.getElementById("extensions_vbox").setAttribute("hidden", "true");
-  fixWindowHeight();
-}
-
-function fixWindowHeight() {
-  setTimeout(deferredFixWindowHeight, 100);
+  window.sizeToContent();
 }
 
 function showMetricsInfo() {
   document.getElementById("metrics_info").removeAttribute("hidden");
-  fixWindowHeight();
-}
-
-function computeBottomMargin(nextJob) {
-  setTimeout(deferredComputeBottomMargin, 100, nextJob);
-}
-
-function getMargin() {
-  var btn = document.documentElement.defaultButton;
-  btn = document.documentElement.getButton(btn);
-  var y = btn.boxObject.screenY + btn.boxObject.height - document.documentElement.boxObject.screenY;
-  var wh = document.documentElement.boxObject.height;
-  return wh-y;
-}
-
-function deferredComputeBottomMargin(nextJob) {
-  margin = getMargin();
-  if (margin < 0) {
-    margin = getMargin();
-  }
-  nextJob();
-}
-
-function deferredFixWindowHeight() {
-  var thismargin = getMargin();
-  window.resizeBy(0, margin-thismargin);
+  window.sizeToContent();
 }
 

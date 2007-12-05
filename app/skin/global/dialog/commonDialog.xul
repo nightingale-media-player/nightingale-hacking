@@ -27,8 +27,6 @@
               .parentNode
               .parentNode
               .className += " dialog-content-inner";
-      document.getElementById("sb-sys-outer-frame-children")
-              .style.setProperty("overflow", "visible", "important");
     }, false);
     
     /* support the close button */

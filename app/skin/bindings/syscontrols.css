@@ -291,11 +291,6 @@ RESIZERS
   background-color: transparent;
 }
 
-/** Prevent the resizers from being pushed out of the viewable window area **/
-.sb-sys-outer-frame-chrome-background {
-  overflow: hidden !important;
-}
-
 /** Set resizer mouse cursors (why doesn't XULRunner provide this?) **/
 .sb-sys-outer-frame-resizer[dir="topleft"] {
   cursor: nw-resize;
