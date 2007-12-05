@@ -108,6 +108,20 @@ var gRemoteAPIPane = {
       if (!pref_element) {
         continue;
       }
+      
+      // because we may be in non instantApply mode, it's not enough to reset
+      // the pref to default, because some controls may have been toggled
+      // yet their associated pref has not changed (that will happen when OK is 
+      // pressed in non instantApply mode). Since the pref has not been changed 
+      // yet, calling reset on the pref will not do anything.
+      //
+      // So to handle both cases, we first reload the value from the preferences
+      // into the element (which cascades down to any object linked to its pref)
+      // and then we reset anything that's been changed in the prefs to the
+      // factory defaults.
+      if (!pref_element.instantApply) {
+        pref_element.value = pref_element.valueFromPreferences;
+      }
       if (pref_element.hasUserValue) {
         pref_element.reset();
       }
