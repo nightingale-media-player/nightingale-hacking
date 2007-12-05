@@ -96,8 +96,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
     };
 
     aMediaList.enumerateItemsByProperties(propertyArray,
-                                          listener,
-                                          Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                          listener );
 
     // Remove all the items from aItems that have matching originUrl
     // property values
@@ -122,8 +121,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
       };
 
       aMediaList.enumerateItemsByProperties(propertyArray,
-                                            listener,
-                                            Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                            listener );
 
     }
   }

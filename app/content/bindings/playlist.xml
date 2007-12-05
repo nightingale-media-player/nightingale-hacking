@@ -2543,10 +2543,10 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
               return true;
             }
           };
+
           aMediaList.enumerateItemsByProperty(aProperty,
                                               aValue,
-                                              listener,
-                                              this._Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                              listener );
           return listener.item;
         ]]>
       </body>

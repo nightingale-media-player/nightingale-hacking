@@ -442,8 +442,7 @@ addToPlaylistHelper.prototype = {
 
       // Enumerate all lists in this library
       aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
-                                      listener,
-                                      Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                        listener );
     } catch (e) {
       // this may happen if a playlist was leaked, and is still there
       // in the aether refreshing its commands, ignore failure, this list

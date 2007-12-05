@@ -701,8 +701,7 @@
               };
 
               library.enumerateItemsByProperties(propertyArray,
-                                                 getFirstListener,
-                                                 Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                                 getFirstListener );
 
               // If we found a matching list, clear it, otherwise create it
               var mediaList;
@@ -1886,8 +1885,7 @@
             propArray.appendProperty(SBProperties.isList, "1");
 
             var webLibrary = this._webLibrary;
-            webLibrary.enumerateItemsByProperties(propArray, listener,
-                                                  Components.interfaces.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+            webLibrary.enumerateItemsByProperties(propArray, listener );
 
             if (listener.foundList) {
               return listener.foundList;

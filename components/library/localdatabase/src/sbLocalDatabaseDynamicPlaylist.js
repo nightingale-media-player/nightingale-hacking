@@ -221,8 +221,7 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
   pa.appendProperty(SB_PROP_ISSUBSCRIPTION, "1");
 
   aLibrary.enumerateItemsByProperties(pa,
-                                      listener,
-                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                      listener );
 
 }
 

@@ -296,8 +296,7 @@ try
                 mainLibrary.enumerateItemsByProperty(
                                     SBProperties.originURL,
                                     originURL,
-                                    listener,
-                                    Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+                                    listener);
                 if (listener.items.length > 0) {
                   mainLibraryHasItem = true;
                 }
@@ -465,10 +464,8 @@ try
                 };
 
                 var library = aMediaListView.mediaList.library;
-                library.enumerateItemsByProperty(SBProperties.originURL, url, listener,
-                                                 sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-                library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
-                                                 sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+                library.enumerateItemsByProperty(SBProperties.originURL, url, listener );
+                library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
                 if (listener.foundItem) {
                   this.manager.items.push(listener.foundItem);
                 }

@@ -152,7 +152,7 @@
             this.defaultcommands = commands ? commands.duplicate() : null; 
             this.rescanCommands();
           } catch (e) {
-              alert( "sbCommands.xml - bind - " + e );
+              Components.utils.reportError( "sbCommands.xml - bind - " + e );
           }
         ]]>
         </body>
@@ -175,7 +175,7 @@
         <body>
           <![CDATA[
             if (this.medialist) {
-              //alert("rescanCommands for " + this.hoststring + " - " + this.medialist.name);
+              //Components.utils.reportError("rescanCommands for " + this.hoststring + " - " + this.medialist.name);
               this.emptyCommandsArray();
               var source = Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
                                     .getService(Components.interfaces.sbIPlaylistCommandsManager);
@@ -228,7 +228,7 @@
             }
             catch( err )
             {
-              alert( "sbCommands.xml - setDeferRefresh - " + err );
+              Components.utils.reportError( "sbCommands.xml - setDeferRefresh - " + err );
             }
           ]]>
         </body>
@@ -245,7 +245,7 @@
             }
             catch( err )
             {
-              alert( "sbCommands.xml - clearDeferRefresh - " + err );
+              Components.utils.reportError( "sbCommands.xml - clearDeferRefresh - " + err );
             }
           ]]>
         </body>
@@ -345,7 +345,7 @@
           }
           catch( err )
           {
-            alert( "sbCommands.xml - refreshCommands - " + this.hoststring + " - " + err );
+            Components.utils.reportError( "sbCommands.xml - refreshCommands - " + this.hoststring + " - " + err );
           }
           ]]>
         </body>
@@ -357,7 +357,7 @@
           try {
             this.doRemoveCommands();
           } catch (e) {
-            alert( "sbCommands.xml - doRemoveCommands not implemented ? - " + e );
+            Components.utils.reportError( "sbCommands.xml - doRemoveCommands not implemented ? - " + e );
           }
         ]]>
         </body>
@@ -471,7 +471,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - toolbar - doRefreshCommands - " + err );
+          Components.utils.reportError( "sbCommands.xml - toolbar - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -498,7 +498,7 @@
             {
               // skip ?
               if (!stateonly && !cmdobject.getCommandVisible( menu, i, this.hoststring )) {
-                //alert("toolbar - item " + i + " not visible: " + cmdobject.getCommandId( menu, i, this.hoststring ));
+                //Components.utils.reportError("toolbar - item " + i + " not visible: " + cmdobject.getCommandId( menu, i, this.hoststring ));
                 continue;
               }
               
@@ -707,7 +707,7 @@
             if (toolbarbutton) {
               id = "- " + cmdobject.getCommandId(menu, toolbarbutton.commandindex, this.hoststring) + " ";
             }
-            alert("sbCommands.xml - toolbar - refreshCommandItems " + id + e);
+            Components.utils.reportError("sbCommands.xml - toolbar - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
@@ -727,7 +727,7 @@
             }
             this.toolbarbuttons.length = 0; // clear the array??
           } catch (e) {
-            alert("sbCommands.xml - toolbar - " + e);
+            Components.utils.reportError("sbCommands.xml - toolbar - " + e);
           }
         ]]>
       </body>
@@ -760,7 +760,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - toolbar - onToolbarCommand - " + err );
+          Components.utils.reportError( "sbCommands.xml - toolbar - onToolbarCommand - " + err );
         }
       ]]>
       </body>
@@ -795,7 +795,7 @@
         }
         catch( err )
         {
-          alert( err )
+          Components.utils.reportError( err )
         }
         ]]>
       </handler>
@@ -904,7 +904,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - popup - doRefreshCommands - " + err );
+          Components.utils.reportError( "sbCommands.xml - popup - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -1038,7 +1038,7 @@
                   if (!before) parentnode.appendChild(menuitem);
                   else parentnode.insertBefore( menuitem, before);
                   if (cmdobject.getCommandId(menu, i, this.hoststring) == null) {
-                    alert("null submenu: menu = " + menu + ", index = " + i);
+                    Components.utils.reportError("null submenu: menu = " + menu + ", index = " + i);
                   }
                   this.refreshCommandItems(cmdobject, stateonly, cmdobject.getCommandId(menu, i, this.hoststring), menupopup, null, depth+1, (obj_type == "choice"));
                 } else {
@@ -1052,7 +1052,7 @@
             if (menuitem) {
               id = "- " + cmdobject.getCommandId(menu, menuitem.commandindex, this.hoststring) + " ";
             }
-            alert("sbCommands.xml - popup - refreshCommandItems " + id + e);
+            Components.utils.reportError("sbCommands.xml - popup - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
@@ -1074,7 +1074,7 @@
               this.menuitems.length = 0; // clear the array??
             }
           } catch (e) {
-            alert("sbCommands.xml - popup - " + e);
+            Components.utils.reportError("sbCommands.xml - popup - " + e);
           }
         ]]>
       </body>
@@ -1104,7 +1104,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - menu - onMenuCommand - " + err );
+          Components.utils.reportError( "sbCommands.xml - menu - onMenuCommand - " + err );
         }
       ]]>
       </body>
@@ -1173,7 +1173,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - shortcuts - doRefreshCommands - " + err );
+          Components.utils.reportError( "sbCommands.xml - shortcuts - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -1296,7 +1296,7 @@
                 }
                 if (obj_type == "submenu" || obj_type == "choice") {
                   if (cmdobject.getCommandId(menu, i, this.hoststring) == null) {
-                    alert("null submenu: menu = " + menu + ", index = " + i);
+                    Components.utils.reportError("null submenu: menu = " + menu + ", index = " + i);
                   }
                   this.refreshCommandItems(cmdobject, stateonly, cmdobject.getCommandId(menu, i, this.hoststring), parentnode, null, depth+1, (obj_type == "choice"));
                 }
@@ -1307,7 +1307,7 @@
             if (key) {
               id = "- " + cmdobject.getCommandId(menu, key.commandindex, this.hoststring) + " ";
             }
-            alert("sbCommands.xml - shortcuts - refreshCommandItems " + id + e);
+            Components.utils.reportError("sbCommands.xml - shortcuts - refreshCommandItems " + id + e);
           }
         ]]>
       </body>
@@ -1344,7 +1344,7 @@
         }
         catch( err )
         {
-          alert( "sbCommands.xml - shortcuts - onMenuCommand - " + err );
+          Components.utils.reportError( "sbCommands.xml - shortcuts - onMenuCommand - " + err );
         }
       ]]>
       </body>

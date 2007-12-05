@@ -985,8 +985,7 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
         }
       };
 
-      playlist.mediaList.enumerateAllItems(allItems,
-        Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+      playlist.mediaList.enumerateAllItems(allItems);
 
       var itemEnum = ArrayConverter.enumerator(allItems.items);
       onBrowserTransfer(itemEnum);

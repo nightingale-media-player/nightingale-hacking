@@ -114,8 +114,7 @@ sbMediaContentListener.prototype = {
     };
 
     var url = aURI.spec;
-    library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
-                                     Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+    library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
     if (!listener.foundItem) {
       var mediaItem = library.createMediaItem(aURI);
 

@@ -805,8 +805,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
 
   // Enumerate all lists in this library
   aLibrary.enumerateItemsByProperty(PROP_ISLIST, "1",
-                                   listener,
-                                   Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                    listener );
 
   // Make sure we have a node for each list
   for (var i = 0; i < listener.items.length; i++) {

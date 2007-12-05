@@ -920,8 +920,7 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
 
   aMediaList.enumerateItemsByProperty(aProperty,
                                       aValue,
-                                      listener,
-                                      Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                      listener );
 
   return listener.item;
 }

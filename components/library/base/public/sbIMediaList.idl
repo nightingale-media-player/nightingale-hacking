@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(ba1128a6-03e3-46b2-b0d4-e93db3de91e5)]
+[scriptable, uuid(013dd574-cae2-4f2c-8507-63dcc3ca4035)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -376,8 +376,11 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Enumerate all items in the list.
    *
-   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
+   * Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in the
+   * ENUMERATIONTYPE_LOCKING constant documentation.
+   *
    * \param aEnumerationListener - The enumeration listener.
+   * \param aEnumerationType - One of the ENUMERATIONTYPE values above. Default is ENUMERATIONTYPE_SNAPSHOT.
    */
 
   /*
@@ -390,8 +393,12 @@ interface sbIMediaList : sbIMediaItem
 
   Parameters:
     enumListener - An EnumerationListener object. See example below.
-    enumType - The type of enumeration desired. Valid values for enumType
-               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
+    [optional] enumType - The type of enumeration desired. Valid values for enumType
+               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>. Default is <ENUMERATIONTYPE_SNAPSHOT>.
+
+  Note:
+   Do not use <ENUMERATIONTYPE_LOCKING> unless you fit a usage scenario described in the
+   <ENUMERATIONTYPE_LOCKING> constant documentation.
 
   Example:
     (start code)
@@ -411,8 +418,8 @@ interface sbIMediaList : sbIMediaItem
    *
    * \param aPropertyID - Property ID to search.
    * \param aPropertyValue - Property value to search.
-   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
+   * \param [optional] aEnumerationType - One of the ENUMERATIONTYPE values above. Default is <ENUMERATIONTYPE_SNAPSHOT>.
    */
 
   /*
@@ -431,8 +438,9 @@ interface sbIMediaList : sbIMediaItem
     id - The ID of the property to match.
     value - The value of the property to match.
     enumListener - The enumeration listener.
-    enumType - The type of enumeration desired. Valid values for enumType
-               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
+    [optional] enumType - The type of enumeration desired. Valid values for enumType
+               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>. 
+               Defaults to ENUMERATIONTYPE_SNAPSHOT.
 
   Example:
     (start code)
