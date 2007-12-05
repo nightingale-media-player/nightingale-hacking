@@ -116,7 +116,7 @@ function doMenu( command ) {
       SBOpenDownloadManager();
     break;*/
     case "menuitem_tools_clearprivatedata":
-      clearPrivateData();
+      Sanitizer.showUI();
     break;
     // Renamed to match FireFox
     case "javascriptConsole":

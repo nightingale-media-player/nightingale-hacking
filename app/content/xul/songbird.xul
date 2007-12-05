@@ -125,5 +125,11 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalHotKeys.js" />
 
+  <!-- Sanitizer Support -->
+  <script type="application/x-javascript" 
+  src="chrome://browser/content/sanitize.js" />
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/sanitize.js" />
+
    
 </window>

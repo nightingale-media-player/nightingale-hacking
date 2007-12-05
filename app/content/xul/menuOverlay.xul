@@ -133,7 +133,6 @@
                   accesskey="&menu.errorconsole.accesskey;"/>
         <menuseparator id="sanitizeSeparator" hidden="true"/>
         <menuitem id="menuitem_tools_clearprivatedata"
-                  hidden="true"
                   key="sanitize-key"
                   label="&menu.clearprivatedata;"
                   accesskey="&menu.clearprivatedata.accesskey;"/>

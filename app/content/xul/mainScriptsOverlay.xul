@@ -127,6 +127,12 @@
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/balloonTip.js" />
 
+    <!-- Sanitizer Support -->
+    <script type="application/x-javascript" 
+    src="chrome://browser/content/sanitize.js" />
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/sanitize.js" />
+
     <!-- Extension Overlay Support -->
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/overlayLoader.js" />
