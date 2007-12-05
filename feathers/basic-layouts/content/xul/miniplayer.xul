@@ -61,7 +61,7 @@
  ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
  ondblclick="gMiniplayer.onDblClick(event);"
 
- persist="screenX screenY width height sizemode"
+ persist="screenX screenY width height"
 >
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
