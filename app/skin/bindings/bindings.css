@@ -52,7 +52,8 @@ For more information, see:
 /** The global toolbar styles are not included by default **/
 @import url(chrome://global/skin/toolbar.css); 
 
-@import url(browsertoolbar.css); 
+@import url(browsertoolbar.css);
+@import url(displayPane.css);
 @import url(drawer.css); 
 @import url(faceplate.css); 
 @import url(filterlist.css); 

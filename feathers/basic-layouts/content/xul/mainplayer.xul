@@ -169,12 +169,14 @@
                              />
             </vbox>
           </vbox>
+          <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu and sbIDisplayPaneManager service. -->
           <sb-smart-splitter collapse="after" orient="horizontal" resizeafter="closest"
-                             id="addon_pane_sidebar_splitter">
+                             id="displaypane_right_sidebar_splitter">
             <grippy flex="1"/>
           </sb-smart-splitter>
-          <sb-addon-pane id="addon_pane_sidebar" contentgroup="songbird-sidebar"
-                         orient="vertical" label="&addon-pane.name.sidebar;"/>
+          <sb-displaypane id="displaypane_right_sidebar" contentgroup="sidebar"
+                          orient="vertical" label="&displaypane.name.sidebar;"
+                          splitter="displaypane_right_sidebar_splitter"/>
         </hbox>
       </vbox>
       

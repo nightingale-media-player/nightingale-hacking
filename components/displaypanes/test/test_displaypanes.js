@@ -34,17 +34,17 @@ var group = null;
 
 function runTest () {
 
-  log("Testing AddOnPanes Service:");
+  log("Testing DisplayPanes Service:");
 
-  addOnPanes = Components.classes["@songbirdnest.com/Songbird/AddOnPanes;1"]
-                   .getService(Components.interfaces.sbIAddOnPanes);
+  paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                      .getService(Components.interfaces.sbIDisplayPaneManager);
 
-  testAddOnPanesService();
+  testDisplayPanesService();
 
   log("OK");
 }
 
-function testAddOnPanesService() {
+function testDisplayPanesService() {
 
   var cbparam;
   var listener = {
@@ -55,68 +55,68 @@ function testAddOnPanesService() {
     onUnregisterInstantiator: function(aInstantiator) { cbparam = aInstantiator; },
 
     QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbIAddOnPanesListener) ||
+      if (iid.equals(Components.interfaces.sbIDisplayPaneListener) ||
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_NOINTERFACE;
     }
   }
   
-  addOnPanes.addListener(listener);
+  paneMgr.addListener(listener);
 
   log("Testing pane registration");
 
   cbparam = null;
-  addOnPanes.registerContent("url1", "title1", "icon1", 10, 20, "group1", false);
+  paneMgr.registerContent("url1", "title1", "icon1", 10, 20, "group1", false);
   testInfo(cbparam, "url1", "title1", "icon1", 10, 20, "group1");
   testContent("url1", "url1", "title1", "icon1", 10, 20, "group1");
 
   cbparam = null;
-  addOnPanes.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
+  paneMgr.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
   testInfo(cbparam, "url2", "title2", "icon2", 30, 40, "group2");
   testContent("url2", "url2", "title2", "icon2", 30, 40, "group2");
 
   cbparam = null;
-  addOnPanes.registerContent("url3", "title3", "icon3", 50, 60, "group3", false);
+  paneMgr.registerContent("url3", "title3", "icon3", 50, 60, "group3", false);
   testInfo(cbparam, "url3", "title3", "icon3", 50, 60, "group3");
   testContent("url3", "url3", "title3", "icon3", 50, 60, "group3");
   testContent("url1", "url1", "title1", "icon1", 10, 20, "group1");
   testContent("url2", "url2", "title2", "icon2", 30, 40, "group2");
 
   cbparam = null;
-  addOnPanes.updateContentInfo("url3", "title4", "icon4");
+  paneMgr.updateContentInfo("url3", "title4", "icon4");
   testInfo(cbparam, "url3", "title4", "icon4", 50, 60, "group3");
   
   log("Testing pane unregistration");
 
   cbparam = null;
-  addOnPanes.unregisterContent("url2");
+  paneMgr.unregisterContent("url2");
   testInfo(cbparam, "url2", "title2", "icon2", 30, 40, "group2");
   testContent("url1", "url1", "title1", "icon1", 10, 20, "group1");
   testContent("url3", "url3", "title4", "icon4", 50, 60, "group3");
 
   cbparam = null;
-  addOnPanes.unregisterContent("url1");
+  paneMgr.unregisterContent("url1");
   testInfo(cbparam, "url1", "title1", "icon1", 10, 20, "group1");
   testContent("url3", "url3", "title4", "icon4", 50, 60, "group3");
 
   cbparam = null;
-  addOnPanes.unregisterContent("url3");
+  paneMgr.unregisterContent("url3");
   testInfo(cbparam, "url3", "title4", "icon4", 50, 60, "group3");
-  var contentlist = addOnPanes.contentList;
+  var contentlist = paneMgr.contentList;
   assertBool(!contentlist.hasMoreElements(), "contentList should be empty");
   contentlist = null;
 
-  addOnPanes.registerContent("url1", "title1", "icon1", 10, 20, "group1", false);
+  paneMgr.registerContent("url1", "title1", "icon1", 10, 20, "group1", false);
   testContent("url1", "url1", "title1", "icon1", 10, 20, "group1");
-  addOnPanes.registerContent("url3", "title3", "icon3", 50, 60, "group3", false);
+  paneMgr.registerContent("url3", "title3", "icon3", 50, 60, "group3", false);
   testContent("url3", "url3", "title3", "icon3", 50, 60, "group3");
-  addOnPanes.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
+  paneMgr.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
   testContent("url2", "url2", "title2", "icon2", 30, 40, "group2");
-  addOnPanes.unregisterContent("url3");
-  addOnPanes.unregisterContent("url1");
-  addOnPanes.unregisterContent("url2");
-  contentlist = addOnPanes.contentList;
+  paneMgr.unregisterContent("url3");
+  paneMgr.unregisterContent("url1");
+  paneMgr.unregisterContent("url2");
+  contentlist = paneMgr.contentList;
   assertBool(!contentlist.hasMoreElements(), "contentList should be empty");
   contentlist = null;
 
@@ -124,20 +124,20 @@ function testAddOnPanesService() {
 
   cbparam = null;
   var h1 = makeInstantiator("group1");
-  addOnPanes.registerInstantiator(h1);
+  paneMgr.registerInstantiator(h1);
   assertEquals(cbparam.contentGroup, "group1", "contentGroup");
 
   cbparam = null;
   var h2 = makeInstantiator("group2");
-  addOnPanes.registerInstantiator(h2);
+  paneMgr.registerInstantiator(h2);
   assertEquals(cbparam.contentGroup, "group2", "contentGroup");
 
   cbparam = null;
   var h3 = makeInstantiator("group3");
-  addOnPanes.registerInstantiator(h3);
+  paneMgr.registerInstantiator(h3);
   assertEquals(cbparam.contentGroup, "group3", "contentGroup");
 
-  var hosts = addOnPanes.instantiatorsList;
+  var hosts = paneMgr.instantiatorsList;
   assertBool(hosts.hasMoreElements(), "instantiatorsList should not be empty");
   assertEquals(hosts.getNext().contentGroup, "group1", "contentGroup");
   assertEquals(hosts.getNext().contentGroup, "group2", "contentGroup");
@@ -147,48 +147,48 @@ function testAddOnPanesService() {
   log("Testing host unregistration");
 
   cbparam = null;
-  addOnPanes.unregisterInstantiator(h1);
+  paneMgr.unregisterInstantiator(h1);
   assertEquals(cbparam.contentGroup, "group1", "contentGroup");
 
-  hosts = addOnPanes.instantiatorsList;
+  hosts = paneMgr.instantiatorsList;
   assertBool(hosts.hasMoreElements(), "instantiatorsList should not be empty");
   assertEquals(hosts.getNext().contentGroup, "group2", "contentGroup");
   assertEquals(hosts.getNext().contentGroup, "group3", "contentGroup");
 
   hosts = null;
   cbparam = null;
-  addOnPanes.unregisterInstantiator(h3);
+  paneMgr.unregisterInstantiator(h3);
   assertEquals(cbparam.contentGroup, "group3", "contentGroup");
 
-  hosts = addOnPanes.instantiatorsList;
+  hosts = paneMgr.instantiatorsList;
   assertBool(hosts.hasMoreElements(), "instantiatorsList should not be empty");
   assertEquals(hosts.getNext().contentGroup, "group2", "contentGroup");
   hosts = null;
   cbparam = null;
-  addOnPanes.unregisterInstantiator(h2);
+  paneMgr.unregisterInstantiator(h2);
   assertEquals(cbparam.contentGroup, "group2", "contentGroup");
 
-  hosts = addOnPanes.instantiatorsList;
+  hosts = paneMgr.instantiatorsList;
   assertBool(!hosts.hasMoreElements(), "instantiatorsList should be empty");
   hosts = null;
   
 
   log("Testing spawning");
-  addOnPanes.registerInstantiator(h1);
-  addOnPanes.registerInstantiator(h2);
-  addOnPanes.registerInstantiator(h3);
-  addOnPanes.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
+  paneMgr.registerInstantiator(h1);
+  paneMgr.registerInstantiator(h2);
+  paneMgr.registerInstantiator(h3);
+  paneMgr.registerContent("url2", "title2", "icon2", 30, 40, "group2", false);
   loaded = null;
   group = null;
-  addOnPanes.showPane("url2");
+  paneMgr.showPane("url2");
   testInfo(loaded, "url2", "title2", "icon2", 30, 40, "group2");
   assertEquals(group, "group2", "group");
 
-  addOnPanes.removeListener(listener);
+  paneMgr.removeListener(listener);
 }
 
 function testContent(url, matchurl, matchtitle, matchicon, matchwidth, matchheight, matchgroup) {
-  var info = addOnPanes.getPaneInfo(url);
+  var info = paneMgr.getPaneInfo(url);
   testInfo(info, matchurl, matchtitle, matchicon, matchwidth, matchheight, matchgroup);
 }
 
@@ -198,7 +198,7 @@ function testInfo(info, matchurl, matchtitle, matchicon, matchwidth, matchheight
   assertEquals(info.contentIcon, matchicon, "contentIcon");
   assertEquals(info.defaultWidth, matchwidth, "defaultWidth");
   assertEquals(info.defaultHeight, matchheight, "defaultHeight");
-  assertEquals(info.suggestedContentGroup, matchgroup, "suggestedContentGroup");
+  assertEquals(info.suggestedContentGroups, matchgroup, "suggestedContentGroups");
 }
 
 function assertEquals(s1, s2, msgprefix) {
@@ -230,7 +230,7 @@ function makeInstantiator(groupid) {
     loadContent: function(aPane) { loaded = aPane; group = groupid; },
     hide: function() { },
     QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbIAddOnPanesInstantiator) ||
+      if (iid.equals(Components.interfaces.sbIDisplayPaneInstantiator) ||
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_NOINTERFACE;

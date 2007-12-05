@@ -29,6 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbAddOnPanes.js
+SONGBIRD_COMPONENTS = $(srcdir)/sbDisplayPanes.js
 
 include $(topsrcdir)/build/rules.mk

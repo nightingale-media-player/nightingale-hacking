@@ -1,0 +1,79 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+ 
+
+/** 
+*******************************************************************************
+DISPLAY PANES
+
+See app/bindings/addonPanes.xml
+
+Style rules pertaining to display panes (below the service pane, below the
+main content area, and to the right of the main content area).
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+menu[target="displaypane_contentpane_bottom"] > .menu-iconic-left {
+  list-style-image: url(chrome://songbird/skin/icons/displaypane-contentpane-bottom.png);
+  -moz-image-region: rect(13px, 13px, 26px, 0px);
+}
+
+menu[target="displaypane_servicepane_bottom"] > .menu-iconic-left {
+  list-style-image: url(chrome://songbird/skin/icons/displaypane-servicepane-bottom.png);
+  -moz-image-region: rect(13px, 13px, 26px, 0px);
+}
+
+menu[target="displaypane_right_sidebar"] > .menu-iconic-left {
+  list-style-image: url(chrome://songbird/skin/icons/displaypane-right-sidebar.png);
+  -moz-image-region: rect(13px, 13px, 26px, 0px);
+}
+
+/* on hover, use the bottom half of the image (does not apply on Mac) */
+menu.displaypane-topmenu[_moz-menuactive="true"] > .menu-iconic-left,
+menu.displaypane-topmenu[open="true"] > .menu-iconic-left {
+  -moz-image-region: rect(0px, 13px, 13px, 0px);
+}
+
+sb-displaypane .favicon {
+  max-width: 16px;
+  max-height: 16px;
+  margin-left: 4px;
+}
+
+.displaypane-menubutton {
+  height: 14px;
+  padding: 0 2px;
+  min-width: 0;
+  list-style-image: url(chrome://songbird/skin/icons/displaypane-content-picker.png);
+}
+
+.displaypane-menubutton > .button-box > .button-menu-dropmarker {
+  display: none;
+}

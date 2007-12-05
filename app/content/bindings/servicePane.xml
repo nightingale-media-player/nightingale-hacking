@@ -47,12 +47,13 @@
                 anonid="toolbar" />
         </xul:vbox>
 	<xul:sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
-			       id="addon_pane_servicepane_splitter">
+                               id="displaypane_servicepane_bottom_splitter">
 	  <xul:grippy flex="1"/>
 	</xul:sb-smart-splitter>
-	<xul:sb-addon-pane id="addon_pane_servicepane"
-                           label="&addon-pane.name.servicepane;"
-                           contentgroup="songbird-servicepane"/>
+	<xul:sb-displaypane id="displaypane_servicepane_bottom"
+                            label="&displaypane.name.servicepane;"
+                            splitter="displaypane_servicepane_bottom_splitter"
+                            contentgroup="servicepane"/>
       </xul:vbox>
     </content>
     <implementation>
@@ -61,9 +62,6 @@
         window.gServicePane = this;
         this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
         this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
-        /*
-        this.mExtensions = document.getAnonymousElementByAttribute(this, 'anonid', 'extensions');
-        */
       ]]></constructor>
       <property name="onPlaylistDefaultCommand"
             onget="return this.mTreePane.onPlaylistDefaultCommand;"
@@ -779,88 +777,6 @@
         this._clickHold.firstChild.doCommand();
       ]]></handler>
     </handlers>
-  </binding>
-  
-  
-  
-  <binding id="extensions">
-    <content>
-      <xul:vbox class="servicepane-extensions-box" flex="1">
-        <xul:button label="extension picker" type="menu"
-              datasources="rdf:null" ref="SB:Extensions"
-              anonid="button">
-          <xul:template>
-            <!-- FIXME: no recursion, please -->
-            <xul:rule>
-              <xul:conditions>
-                <xul:content uri="?start" />
-                <xul:member container="?start" child="?node" />
-                <xul:triple subject="?node"
-                      predicate="http://home.netscape.com/NC-rdf#Name"
-                      object="?name" />
-              </xul:conditions>
-              <xul:action>
-                <xul:menupopup anonid="menupopup">
-                  <xul:menuitem uri="?node"
-                          label="?name"
-                          oncommand="extmenu(event)"
-                          />
-                </xul:menupopup>
-              </xul:action>
-            </xul:rule>
-          </xul:template>
-        </xul:button>
-        <xul:iframe anonid="iframe" flex="1" src="about:blank" />
-      </xul:vbox>
-    </content>
-    <implementation>
-      <constructor>
-      <![CDATA[
-      // get the button node
-      this.mButton = document.getAnonymousElementByAttribute(this, 'anonid', 'button');
-      // get the popup node
-      this.mMenuPopup = document.getAnonymousElementByAttribute(this, 'anonid', 'menupopup');
-      // get the iframe node
-      this.mIframe = document.getAnonymousElementByAttribute(this, 'anonid', 'iframe');
-      
-      // get the service pane service
-      this.mService =
-        Components.classes['@songbirdnest.com/servicepane/service;1']
-        .getService(Components.interfaces.sbIServicePaneService);
-        
-      
-      // clear out the old datasources from the button
-      while (this.mButton.database.GetDataSources().hasMoreElements()) {
-        this.mButton.database.RemoveDataSource(
-            this.mButton.database.GetDataSources().getNext());
-      }
-      // add the datasource from the service to the button
-      this.mButton.database.AddDataSource(this.mService.dataSource);
-      
-      // rebuild
-      this.mButton.builder.rebuild();
-      
-      // FIXME: we should persist the last open extension pane with pick(id)
-      
-      ]]>
-      </constructor>
-      <method name="extmenu">
-        <parameter name="event" />
-        <body><![CDATA[
-          dump('extension menu clicked: '+event+'\n');
-          this.pick(event.target.getAttribute('id'));
-        ]]></body>
-      </method>
-      
-      <method name="pick">
-        <parameter name="id" />
-        <body><![CDATA[
-          var node = this.mService.getNode(id);
-          this.mButton.setAttribute('label', node.name);
-          this.mIframe.setAttribute('src', node.url);
-        ]]></body>
-      </method>
-    </implementation>
   </binding>
 
 </bindings>

@@ -1,0 +1,208 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface nsISimpleEnumerator;
+
+/**       
+ * \file sbIDisplayPanes.idl
+ * \brief Songbird Display Panes Interface file
+ * This file contains interfaces pertaining to display panes.
+ *
+ * Display panes are blocks within the main user interface which can be
+ * used to load arbitary sub-documents for display to the user with full
+ * chrome privileges.
+ *
+ * \see http://publicsvn.songbirdnest.com/browser/extensions/wikipedia
+ * \see app/content/bindings/displayPane.xml
+ * 
+ * \see sbDisplayPanes.js
+ */
+
+/**
+ * \interface sbIDisplayPaneContentInfo
+ * \brief Information needed for a display pane to be instantiated
+ */
+[scriptable, uuid(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]
+interface sbIDisplayPaneContentInfo : nsISupports
+{
+  /**
+   * the URL to be displayed when the display pane is instantiated
+   */
+  readonly attribute AString contentUrl;
+  /**
+   * the title of the pane when this pane is shown
+   */
+  readonly attribute AString contentTitle;
+  /**
+   * the icon of the pane when this pane is shown
+   */
+  readonly attribute AString contentIcon;
+  /**
+   * the width of the pane when it is displayed in a vertical orientation
+   */
+  readonly attribute PRInt32 defaultWidth;
+  /**
+   * the height of the pane when it is displayed in a horizontal orientation
+   */
+  readonly attribute PRInt32 defaultHeight;
+  /**
+   * a semicolon-delmited list of content groups in which this pane is more
+   * suited for display.  This is case-insensitive.
+   */
+  readonly attribute AString suggestedContentGroups; 
+};
+
+/**
+ * \interface sbIDisplayPaneInstantiator
+ * A display pane instantiator is a component that can render a display pane to
+ * the user.  It is associated with a particular content group.
+ */
+[scriptable, uuid(8ffc6211-967a-48ac-9d9f-2952d6bbc4de)]
+interface sbIDisplayPaneInstantiator : nsISupports
+{
+  /**
+   * the content group this display pane instantiator supports
+   */
+  readonly attribute AString contentGroup;
+  /**
+   * the url of the currently displayed content
+   */
+  readonly attribute AString contentUrl;
+  /**
+   * the title of the currently displayed content
+   */
+  readonly attribute AString contentTitle;
+  /**
+   * the icon of the currently displayed content
+   */
+  readonly attribute AString contentIcon; 
+
+  /**
+   * load the given content in the instantiator
+   */
+  void loadContent(in sbIDisplayPaneContentInfo aPane);
+  /**
+   * hide the pane (the user must load new content to show the pane again)
+   */
+  void hide();
+  /**
+   * collapse the pane (the user can uncollapse without loading new content)
+   */
+  attribute PRBool collapsed;
+};
+
+/**
+ * \interface sbIDisplayPaneListener
+ * A display pane listener is notified when information regarding display panes
+ * is changed
+ */
+[scriptable, uuid(1028919e-de26-45ed-ac12-5343972498a6)]
+interface sbIDisplayPaneListener : nsISupports
+{
+  void onRegisterContent(in sbIDisplayPaneContentInfo aPane);
+  void onUnregisterContent(in sbIDisplayPaneContentInfo aPane);
+  void onRegisterInstantiator(in sbIDisplayPaneInstantiator aInstantiator);
+  void onUnregisterInstantiator(in sbIDisplayPaneInstantiator aInstantiator);
+  void onPaneInfoChanged(in sbIDisplayPaneContentInfo aPane);
+};
+
+/**
+ * \interface sbIDisplayPaneManager sbIDisplayPaneManager.h
+ * \brief Songbird Display Panes Interface
+ * This is the main display panes management interface, used to register and
+ * list panes and instantiators.  Display panes are blocks within the main user
+ * interface which can be used to load arbitary sub-documents for display to
+ * the user with full chrome privileges.
+ *
+ * \see http://publicsvn.songbirdnest.com/browser/extensions/wikipedia
+ * \see app/content/bindings/displayPane.xml
+ */
+      
+[scriptable, uuid(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]
+interface sbIDisplayPaneManager : nsISupports
+{
+  /**
+   * Register a display pane instantiator; the instantiator may be called to
+   * actually show the display pane to the user.
+   */
+  void registerInstantiator(in sbIDisplayPaneInstantiator aInstantiator);
+  void unregisterInstantiator(in sbIDisplayPaneInstantiator aInstantiator);
+
+  /**
+   * Register display pane content, so that it may be shown to the user.
+   * \see sbIDisplayPaneContentInfo
+   */
+  void registerContent(in AString aContentUrl,
+                       in AString aContentTitle,
+                       in AString aContentIcon,
+                       in PRInt32 aDefaultWidth,
+                       in PRInt32 aDefaultHeight,
+                       in AString aSuggestedContentGroups,
+                       in PRBool aAutoShow);
+  
+  /**
+   * unregister content, so it is not presented to the user anymore.
+   * any panes currently displaying the url will be hidden.
+   */
+  void unregisterContent(in AString aContentUrl);
+
+  /**
+   * update the title and icon for a given url
+   */
+  void updateContentInfo(in AString aContentUrl,
+                         in AString aNewContentTitle,
+                         in AString aNewContentIcon);
+
+  /**
+   * show previously registered content with the given url using the first
+   * instantiator of a content group that is listed as suggested by the
+   * registered info.  If no matching instantiator is found, the content may
+   * be shown at some future point when it becomes registered.
+   */
+  void showPane(in AString aContentUrl);
+
+  /**
+   * enumerate through the registered content;
+   * each element is a sbIDisplayPaneContentInfo
+   */
+  readonly attribute nsISimpleEnumerator contentList;
+  /**
+   * enumerate through the registered instantiatorsl
+   * each element is a sbIDisplayPaneInstantiator
+   */
+  readonly attribute nsISimpleEnumerator instantiatorsList;
+  
+  /**
+   * get the previously registed content information given its url
+   */
+  sbIDisplayPaneContentInfo getPaneInfo(in AString aContentUrl);
+  
+  void addListener(in sbIDisplayPaneListener aListener);
+  void removeListener(in sbIDisplayPaneListener aListener);
+};
+
+

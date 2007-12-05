@@ -157,40 +157,41 @@
         // force tabbed mode
         this.enterTabbedMode();
 	
-	// addon pane
+	// display pane
 	XML.prettyPrinting = false;
 	var xml =  <sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
-                                      id="addon_pane_browser_splitter"
+                                      id="displaypane_contentpane_bottom_splitter"
 			              xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
                      <grippy flex="1"/>
                    </sb-smart-splitter>;
 	var doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
 	var splitter = document.importNode(doc.documentElement, true);
 	this.parentNode.appendChild(splitter);
-	
-/*var splitter = document.createElement("sb-smart-splitter");
+
+        /*var splitter = document.createElement("sb-smart-splitter");
 	splitter.setAttribute("collapse", "after");
 	splitter.setAttribute("orient", "vertical");
 	splitter.setAttribute("resizeafter", "closest");
-	splitter.setAttribute("id", "addon_pane_browser_splitter");
+	splitter.setAttribute("id", "displaypane_contentpane_bottom_splitter");
 	var grippy = document.createElement("grippy");
 	grippy.setAttribute("flex", "1");
 	splitter.appendChild(grippy);
 	this.parentNode.appendChild(splitter);*/
-	
-	
-	xml = <sb-addon-pane id="addon_pane_browser" contentgroup="songbird-browser"
-	                     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>;
+
+        xml = <sb-displaypane id="displaypane_contentpane_bottom" contentgroup="contentpane"
+                              splitter="displaypane_contentpane_bottom_splitter"
+	                      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>;
 	doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
 	var pane = document.importNode(doc.documentElement, true);
         
         // evil hack to get the localizable name from the dtd
-        pane.setAttribute("label", ]]>"&addon-pane.name.browser;"<![CDATA[);
+        pane.setAttribute("label", ]]>"&displaypane.name.browser;"<![CDATA[);
 	this.parentNode.appendChild(pane);
-	
-	/*var pane = document.createElement("sb-addon-pane");
-	pane.setAttribute("id", "addon_pane_browser");
-	pane.setAttribute("contentgroup", "songbird-browser");
+
+	/*var pane = document.createElement("sb-displaypane");
+	pane.setAttribute("id", "displaypane_contentpane_bottom");
+	pane.setAttribute("contentgroup", "contentpane");
+	pane.setAttribute("splitter", "displaypane_contentpane_bottom_splitter");
 	this.parentNode.appendChild(pane);*/
 	
 	// manually restore the height if set (because the two elements are inserted dynamically

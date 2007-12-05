@@ -398,12 +398,12 @@ sb-draggable {
   -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;
 }
 
-/* addon panes (integration points) */
-sb-addon-pane {
-  -moz-binding: url("chrome://songbird/content/bindings/addonPane.xml#sb-addon-pane");
+/* display panes (integration points) */
+sb-displaypane {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane");
 }
-sb-addon-pane-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/addonPane.xml#sb-addon-pane-menuitems");
+sb-displaypane-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-menuitems");
 }
 
 /* Replacement text-link label */

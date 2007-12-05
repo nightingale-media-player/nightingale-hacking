@@ -29,10 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = addonpanes
+XPIDL_SRCS = sbIDisplayPanes.idl \
+             $(NULL)
 
-SONGBIRD_TESTS = $(srcdir)/test_addonpanes.js \
-                 $(NULL)
+XPIDL_MODULE = sbDisplayPanes.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
+
+GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk
-
