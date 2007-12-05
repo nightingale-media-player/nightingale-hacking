@@ -32,6 +32,7 @@
               <Description>
                 <songbird:internalName>rubberducky/0.2</songbird:internalName>
                 <songbird:showChrome>false</songbird:showChrome>
+                <songbird:onTop>false</songbird:onTop>
               </Description>
             </songbird:compatibleSkin>
           </Description>
@@ -44,6 +45,7 @@
               <Description>
                 <songbird:internalName>rubberducky/0.2</songbird:internalName>
                 <songbird:showChrome>false</songbird:showChrome>
+                <songbird:onTop>true</songbird:onTop>
               </Description>
             </songbird:compatibleSkin>
           </Description>

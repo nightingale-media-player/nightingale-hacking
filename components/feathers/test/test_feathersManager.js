@@ -213,6 +213,9 @@ function testAddonMetadataReader()
   
   // Verify showChrome
   assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false);
+  // Verify onTop
+  assertEqual( feathersManager.isOnTop(layoutURLs[0], skinNames[0]), false);
+  assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), true);
 }
 
 
@@ -281,10 +284,10 @@ function submitFeathers()
   feathersManager.registerLayout(layout);
   
   // Create some mappings
-  // Blue -> big, Red -> big, Orange -> mini with chrome
-  feathersManager.assertCompatibility(layouts[1].url, skins[0].internalName, false);
-  feathersManager.assertCompatibility(layouts[1].url, skins[1].internalName, false);
-  feathersManager.assertCompatibility(layouts[0].url, skins[2].internalName, true);
+  // Blue -> big/ontop, Red -> big, Orange -> mini with chrome
+  feathersManager.assertCompatibility(layouts[1].url, skins[0].internalName, false, true);
+  feathersManager.assertCompatibility(layouts[1].url, skins[1].internalName, false, false);
+  feathersManager.assertCompatibility(layouts[0].url, skins[2].internalName, true, false);
 }
 
 
@@ -392,9 +395,15 @@ function runTest () {
   
   // ------------------------
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true);
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].internalName), false);
+  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[0].internalName), false);
   assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].internalName), false);
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true);
+
+  // ------------------------
+  // Verify onTop
+  assertEqual( feathersManager.isOnTop(layouts[1].url, skins[0].internalName), true);
+  assertEqual( feathersManager.isOnTop(layouts[1].url, skins[1].internalName), false);
+  assertEqual( feathersManager.isOnTop(layouts[0].url, skins[2].internalName), false);
 
 
   // ------------------------

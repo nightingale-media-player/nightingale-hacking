@@ -221,7 +221,8 @@ function AddonMetadataReader() {
        "feathers",
        "skin",
        "layout",
-       "layoutURL" ] );
+       "layoutURL",
+       "onTop" ] );
 }
 AddonMetadataReader.prototype = {
 
@@ -313,8 +314,8 @@ AddonMetadataReader.prototype = {
     //        + " from addon " + addon.Value + " \n");
     
     // Get compatibility information
-    var identifiers, showChromeInstructions;
-    [identifiers, showChromeInstructions] =
+    var identifiers, showChromeInstructions, onTopInstructions;
+    [identifiers, showChromeInstructions, onTopInstructions] =
         this._getCompatibility(addon, skin, "compatibleLayout", "layoutURL", errorList);
 
     // Report errors
@@ -330,7 +331,8 @@ AddonMetadataReader.prototype = {
       this._feathersManager.assertCompatibility(
                identifiers[i],
                description.internalName, 
-               showChromeInstructions[i]);
+               showChromeInstructions[i],
+               onTopInstructions[i]);
     }
   },
 
@@ -368,8 +370,8 @@ AddonMetadataReader.prototype = {
     //     " from addon " + addon.Value + "\n");    
     
     // Get compatibility information
-    var identifiers, showChromeInstructions;
-    [identifiers, showChromeInstructions] =
+    var identifiers, showChromeInstructions, onTopInstructions;
+    [identifiers, showChromeInstructions, onTopInstructions] =
         this._getCompatibility(addon, layout, "compatibleSkin", "internalName", errorList);
 
     // Report errors
@@ -385,7 +387,8 @@ AddonMetadataReader.prototype = {
       this._feathersManager.assertCompatibility(
                description.url,
                identifiers[i], 
-               showChromeInstructions[i]);
+               showChromeInstructions[i],
+               onTopInstructions[i]);
     }
   
   },
@@ -481,6 +484,8 @@ AddonMetadataReader.prototype = {
     var identifiers = [];
     // Matching list of showChrome hints
     var showChromeInstructions = [];
+    // Matching list of onTop hints
+    var onTopInstructions = [];
     
     // Look at all compatibility rules of type resourceName
     var targets = this._datasource.GetTargets(source, this._resources[resourceName], true);
@@ -514,17 +519,21 @@ AddonMetadataReader.prototype = {
       
       // Should chrome be shown with this id?
       var showChrome = this._getProperty(target, "showChrome") == "true";
+
+      // Should popup=yes be used with this id?
+      var onTop = this._getProperty(target, "onTop") == "true";
       
       // Store compatibility rule
       identifiers.push(id);
       showChromeInstructions.push(showChrome);
+      onTopInstructions.push(onTop);
     }
     
     //debug("AddonMetadataReader: found " + identifiers.length + " " 
     //      + resourceName + " rule(s) for addon " 
     //      + addon.Value + "\n");
 
-    return [identifiers, showChromeInstructions];
+    return [identifiers, showChromeInstructions, onTopInstructions];
   },
   
   
@@ -598,19 +607,18 @@ FeathersManager.prototype = {
   
   
   // Hash of layout URL to hash of compatible skin internalNames, pointing to 
-  // showChrome value.  
+  // {showChrome,onTop} objects.  
   //
   // eg
   // {  
   //     mainwin.xul: {
-  //       blueskin: true,
-  //       redskin: false,
+  //       blueskin: {showChrome:true, onTop:false},
+  //       redskin: {showChrome:false, onTop:true},
   //     }
   // }
   //
   // Compatibility is determined by whether or not a internalName
   // key is *defined* in the hash, not the actual value it points to.
-  // In the above example false means "don't show chrome"
   _mappings: null,
   
   
@@ -859,14 +867,14 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   assertCompatibility: 
-  function assertCompatibility(layoutURL, internalName, showChrome) {
+  function assertCompatibility(layoutURL, internalName, aShowChrome, aOnTop) {
     if (! (typeof(layoutURL) == "string" && typeof(internalName) == 'string')) {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
     if (this._mappings[layoutURL] == null) {
       this._mappings[layoutURL] = {};
     }
-    this._mappings[layoutURL][internalName] = showChrome;
+    this._mappings[layoutURL][internalName] = {showChrome: aShowChrome, onTop: aOnTop};
     
     // Notify observers
     this._onUpdate();
@@ -898,7 +906,21 @@ FeathersManager.prototype = {
     var platform = sysInfo.getProperty("name");
     
     if (this._mappings[layoutURL]) {
-      return this._mappings[layoutURL][internalName] == true;
+      if (this._mappings[layoutURL][internalName]) {
+        return this._mappings[layoutURL][internalName].showChrome == true;
+      }
+    }
+   
+    return false; 
+  },
+
+  isOnTop: function isChromeEnabled(layoutURL, internalName) {
+    this._init();
+    
+    if (this._mappings[layoutURL]) {
+      if (this._mappings[layoutURL][internalName]) {
+        return this._mappings[layoutURL][internalName].onTop == true;
+      }
     }
    
     return false; 
@@ -1024,9 +1046,21 @@ FeathersManager.prototype = {
       return;
     }
 
+    var onTop;
+    // On MacOS, popup=yes breaks too many things, so always set it to false
+    var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                            .getService(Components.interfaces.nsIPropertyBag2);
+    var platform = sysInfo.getProperty("name");
+    if (platform == "Darwin") {
+      onTop = false;
+    } else {
+      onTop = this.isOnTop(this.currentLayoutURL, this.currentSkinName);
+    }
+
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
+    var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=";
+    chromeFeatures += onTop ? "yes" : "no";
     var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",resizable=yes";
@@ -1305,5 +1339,6 @@ var gModule = {
 function NSGetModule(comMgr, fileSpec) {
   return gModule;
 } // NSGetModule
+
 
 

@@ -48,7 +48,7 @@ interface sbIFeathersManagerListener;
 *
 * \sa sbISkinDescription, sbILayoutDescription, sbIFeathersChangeListener
 */
-[scriptable, uuid(99f24350-a67f-11db-befa-0800200c9a66)]
+[scriptable, uuid(c828093c-ad61-4866-971d-2f63fd733f99)]
 interface sbIFeathersManager : nsISupports
 {
   /**
@@ -166,7 +166,8 @@ interface sbIFeathersManager : nsISupports
    */
   void assertCompatibility(in AString aLayoutURL,
                            in AString aInternalName,
-                           in boolean aShowChrome);
+                           in boolean aShowChrome,
+                           in boolean onTop);
  
 
   
@@ -195,6 +196,17 @@ interface sbIFeathersManager : nsISupports
   boolean isChromeEnabled(in AString aLayoutURL,
                           in AString aInternalName);
 
+
+
+  /**
+   * \brief Should the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \return True if the given pair should be kept on top
+   */
+  boolean isOnTop(in AString aLayoutURL,
+                  in AString aInternalName);
 
 
 
