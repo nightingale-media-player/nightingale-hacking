@@ -97,7 +97,6 @@
             </row>
             <row>
               <checkbox checked="true" disabled="true"
-                style="max-width: 300px"
                 label="&rapi.library_write_disable.label;"
                 accesskey="&rapi.library_write_disable.accesskey;"/>
               <vbox pack="top">
