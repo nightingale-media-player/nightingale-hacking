@@ -1131,14 +1131,6 @@
         ]]></body>
       </method>
 
-      <method name="viewPageSourceOfCurrentTab">
-        <body>
-<![CDATA[
-  var document = this.mCurrentBrowser.contentDocument;
-  BrowserViewSourceOfDocument(document);
-]]>
-        </body>
-      </method>
     </implementation>
 
     <handlers>

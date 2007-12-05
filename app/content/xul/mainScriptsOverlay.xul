@@ -90,6 +90,12 @@
     <!-- Firefox compatibility functions -->
     <script type="application/x-javascript"   
     src="chrome://songbird/content/scripts/browserUtilities.js" />
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/browserViewMenu.js" />
+    <script type="application/x-javascript"
+    src="chrome://browser/content/browser-textZoom.js"/>
+    <script type="application/x-javascript"
+    src="chrome://global/content/viewZoomOverlay.js"/>
 
     <script type="application/x-javascript"   
     src="chrome://songbird/content/scripts/searchHandler.js" />

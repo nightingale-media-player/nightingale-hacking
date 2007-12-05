@@ -28,15 +28,22 @@
  */
 -->
 
-<!DOCTYPE window [
+<!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
 %brandDTD;
 %songbirdDTD;
+%charsetDTD;
+%browserDTD;
 ]>
 
-<overlay id="ovMenu"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay
+  id="ovMenu"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
 
   <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
 
@@ -110,9 +117,158 @@
     </menu>
 
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
-      <menupopup id="menu_View">
+      <menupopup id="menu_viewPopup">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
-	<sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
+        <sb-addon-pane-menuitems id="menuitem_view_addon_panes"/>
+        <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
+<!--+
+    | The rest of this menu is copied from the Firefox View menu, see:
+    | http://mxr.mozilla.org/seamonkey/source/browser/base/content/browser-menubar.inc#144
+    +-->
+        <menuseparator/>
+        <menuitem label="&stopCmd.label;"
+                  accesskey="&stopCmd.accesskey;"
+                  command="Browser:Stop"
+                  key="key_stop"/>
+        <menuitem label="&reloadCmd.label;" accesskey="&reloadCmd.accesskey;" command="Browser:Reload" key="key_reload"/>
+        <menuseparator/>
+        <menu id="viewFullZoomMenu" label="&fullZoom.label;" accesskey="&fullZoom.accesskey;" observes="isImage">
+          <menupopup>
+            <menuitem key="key_fullZoomEnlarge" label="&fullZoomEnlargeCmd.label;" accesskey="&fullZoomEnlargeCmd.accesskey;"
+                      command="cmd_fullZoomEnlarge"/>
+            <menuitem key="key_fullZoomReduce"  label="&fullZoomReduceCmd.label;"  accesskey="&fullZoomReduceCmd.accesskey;"
+                      command="cmd_fullZoomReduce"/>
+            <menuseparator/>
+            <menuitem key="key_fullZoomReset" label="&fullZoomResetCmd.label;" accesskey="&fullZoomResetCmd.accesskey;"
+                      command="cmd_fullZoomReset"/>
+          </menupopup>
+        </menu>
+        <menu id="pageStyleMenu" label="&pageStyleMenu.label;" accesskey="&pageStyleMenu.accesskey;" observes="isImage">
+          <menupopup onpopupshowing="stylesheetFillPopup(this);"
+                     oncommand="stylesheetSwitchAll(window.content, event.target.getAttribute('data')); setStyleDisabled(false);">
+            <menuitem label="&pageStyleNoStyle.label;" accesskey="&pageStyleNoStyle.accesskey;"
+                      oncommand="setStyleDisabled(true); event.stopPropagation();" type="radio"/>
+            <menuitem label="&pageStylePersistentOnly.label;" accesskey="&pageStylePersistentOnly.accesskey;" type="radio" checked="true"/>
+            <menuseparator/>
+          </menupopup>
+        </menu>
+
+        <menu id="charsetMenu"
+              label="&charsetMenu.label;"
+              accesskey="&charsetMenu.accesskey;"
+              datasources="rdf:charset-menu"
+              ref="NC:BrowserCharsetMenuRoot"
+              oncommand="MultiplexHandler(event)"
+              onpopupshowing="CreateMenu('browser');UpdateMenus(event)"
+              onpopupshown="CreateMenu('more-menu');"
+              observes="isImage">
+            <template>
+                <rule rdf:type="http://home.netscape.com/NC-rdf#BookmarkSeparator">
+                    <menupopup>
+                    <menuseparator uri="..." />
+                    </menupopup>
+                </rule>
+                <rule>
+                    <menupopup>
+                    <menuitem type="radio" name="charsetGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                    </menupopup>
+                </rule>
+            </template>
+            <menupopup>
+            <menu label="&charsetMenuAutodet.label;" accesskey="&charsetMenuAutodet.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserAutodetMenuRoot">
+                <template>
+                    <rule rdf:type="http://home.netscape.com/NC-rdf#CharsetDetector">
+                        <menupopup>
+                        <menuitem type="radio" name="detectorGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                        </menupopup>
+                    </rule>
+                </template>
+                <menupopup>
+                </menupopup>
+            </menu>
+            <menu label="&charsetMenuMore.label;" accesskey="&charsetMenuMore.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMoreCharsetMenuRoot">
+                <template>
+                    <rule>
+                        <menupopup>
+                        <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                        </menupopup>
+                    </rule>
+                </template>
+                <menupopup>
+                    <menu label="&charsetMenuMore1.label;" accesskey="&charsetMenuMore1.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore1CharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menu label="&charsetMenuMore2.label;" accesskey="&charsetMenuMore2.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore2CharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menu label="&charsetMenuMore3.label;" accesskey="&charsetMenuMore3.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore3CharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menu label="&charsetMenuMore4.label;" accesskey="&charsetMenuMore4.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore4CharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menu label="&charsetMenuMore5.label;" accesskey="&charsetMenuMore5.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore5CharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menu label="&charsetMenuUnicode.label;" accesskey="&charsetMenuUnicode.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserUnicodeCharsetMenuRoot">
+                        <template>
+                            <rule>
+                                <menupopup>
+                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                </menupopup>
+                            </rule>
+                        </template>
+                        <menupopup>
+                        </menupopup>
+                    </menu>
+                    <menuseparator />
+                </menupopup>
+            </menu>
+            <menuitem name="charsetCustomize" accesskey="&charsetCustomize.accesskey;" label="&charsetCustomize.label;" oncommand="window.openDialog('chrome://global/content/customizeCharset.xul','PrefWindow', 'chrome,modal=yes,resizable=yes', 'browser')"/>
+            </menupopup>
+          </menu>
+        <menuseparator/>
+        <menuitem accesskey="&pageSourceCmd.accesskey;" label="&pageSourceCmd.label;" key="key_viewSource" command="View:PageSource"/>        
       </menupopup>
     </menu>
 
@@ -122,12 +278,6 @@
                   label="&menu.extensions;"
                   accesskey="&menu.extensions.accesskey;"/>
         <menuseparator id="devToolsSeparator"/>
-        <menuitem id="view_page_source"
-                  label="&menu.viewpagesource;"
-                  key="viewpagesource-key"
-                  accesskey="&menu.viewpagesource.accesskey;"
-                  command="Browser:ViewPageSource"/>
-        <menuseparator id="viewspagesourceSeparator" hidden="true"/>
         <menuitem id="javascriptConsole"
                   label="&menu.errorconsole;"
                   accesskey="&menu.errorconsole.accesskey;"/>

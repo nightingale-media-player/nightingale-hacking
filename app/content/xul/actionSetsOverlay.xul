@@ -31,8 +31,10 @@
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %brandDTD;
 %songbirdDTD;
+%browserDTD;
 ]>
 
 <overlay id="ovActions"
@@ -69,7 +71,10 @@
     <command id="Browser:Reload"  oncommand="gBrowser.reload();" />
     <!-- TODO: Make ReloadSkipCache work correctly-->
     <command id="Browser:ReloadSkipCache"  oncommand="gBrowser.reload();" disabled="true"/>
-    
+    <command id="cmd_fullZoomReduce"  oncommand="FullZoom.reduce()"/>
+    <command id="cmd_fullZoomEnlarge" oncommand="FullZoom.enlarge()"/>
+    <command id="cmd_fullZoomReset"   oncommand="FullZoom.reset()"/>
+
     <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();">
       <observes type="dataremote"
                 key="browser.canbookmark"
@@ -86,7 +91,7 @@
                 inverted="true" />  
     </command>
 
-    <command id="Browser:ViewPageSource" oncommand="gBrowser.viewPageSourceOfCurrentTab();"/>
+    <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
   </commandset>
   
   <broadcasterset id="mainBroadcasterSet">
@@ -144,9 +149,18 @@
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
-    <key id="viewpagesource-key" modifiers="accel,shift" key="&menu.viewpagesource.key;" command="Browser:ViewPageSource"/>
+
+    <key id="key_fullZoomReduce"  key="&fullZoomReduceCmd.commandkey;"   command="cmd_fullZoomReduce"  modifiers="accel"/>
+    <key id="key_fullZoomEnlarge" key="&fullZoomEnlargeCmd.commandkey;"  command="cmd_fullZoomEnlarge" modifiers="accel"/>
+    <key                          key="&fullZoomEnlargeCmd.commandkey2;" command="cmd_fullZoomEnlarge" modifiers="accel"/>
+    <key id="key_fullZoomReset"   key="&fullZoomResetCmd.commandkey;"    command="cmd_fullZoomReset"   modifiers="accel"/>
+
+    <key id="key_viewSource" key="&menu.viewpagesource.key;" command="View:PageSource" modifiers="accel,shift"/>
+
+    <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
+    <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
+    <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
   </keyset>
 
 </overlay>
-
 
