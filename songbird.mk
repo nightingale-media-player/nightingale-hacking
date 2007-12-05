@@ -109,6 +109,20 @@ ifdef SB_ENABLE_BREAKPAD
 CONFIGURE_ARGS += --enable-breakpad
 endif
 
+# force installation of wmp core, so it's bundled with the application.
+ifdef SB_FORCE_MEDIA_CORE_WMP
+CONFIGURE_ARGS += --with-media-core=windowsmedia \
+                  --with-force-media-core=windowsmedia \
+                  $(NULL)
+endif #SB_FORCE_MEDIA_CORE_WMP
+
+# force installation of qt core, so it's bundled with the application.
+ifdef SB_FORCE_MEDIA_CORE_QT
+CONFIGURE_ARGS += --with-media-core=qt \
+                  --with-force-media-core=qt \
+                  $(NULL)
+endif #SB_FORCE_MEDIA_CORE_QT
+
 #
 # Set some needed commands
 #

@@ -1180,13 +1180,13 @@ endif
 
 .PHONY: make_xpi
 make_xpi: $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
-	@echo packaging $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
-	$(RM) -f $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	@echo packaging $(EXTENSION_DIR)/$(XPI_NAME).xpi
+	$(RM) -f $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(CP) -f $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
-	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(EXTENSION_NAME).xpi.tmp *
+	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(XPI_NAME).xpi.tmp *
 	$(MKDIR) -p $(EXTENSION_DIR)
-	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(EXTENSION_NAME).xpi.tmp \
-        $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(XPI_NAME).xpi.tmp \
+        $(EXTENSION_DIR)/$(XPI_NAME).xpi
   ifdef INSTALL_EXTENSION
 	$(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 	$(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
@@ -1194,7 +1194,7 @@ make_xpi: $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
 
 .PHONY: clean_xpi
 clean_xpi:
-	$(RM) -f $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	$(RM) -f $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(RM) -f ./install.rdf
 	$(RM) -rf $(EXTENSION_STAGE_DIR)
 

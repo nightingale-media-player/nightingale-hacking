@@ -610,7 +610,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
             MEDIA_CORE_GST=1
         elif test "$SB_PLATFORM" = "windows"; then
             MEDIA_CORE_VLC=1
-            MEDIA_CORE_WMP=1 
+            MEDIA_CORE_WMP=1
             MEDIA_CORE_QT=1
         elif test "$SB_PLATFORM" = "macosx"; then
             MEDIA_CORE_VLC=1
@@ -620,7 +620,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
         # Nothing needs to be set here
         true
     elif test "$option" = "vlc"; then
-        MEDIA_CORE_VLC=1                                   
+        MEDIA_CORE_VLC=1
     elif test "$option" = "windowsmedia"; then
         MEDIA_CORE_WMP=1
     elif test "$option" = "gstreamer"; then
@@ -628,13 +628,46 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     elif test "$option" = "qt"; then
         MEDIA_CORE_QT=1
     else
-        AC_MSG_ERROR([Unknown --with-core-wrappers option $option])
+        AC_MSG_ERROR([Unknown --with-media-core option $option])
     fi
 done
 AC_SUBST(MEDIA_CORE_VLC)
 AC_SUBST(MEDIA_CORE_WMP)
 AC_SUBST(MEDIA_CORE_GST)
 AC_SUBST(MEDIA_CORE_QT)
+
+FORCE_MEDIA_CORE_VLC=
+FORCE_MEDIA_CORE_WMP=
+FORCE_MEDIA_CORE_GST=
+FORCE_MEDIA_CORE_QT=
+
+AC_ARG_WITH(force-media-core,
+            [  --with-force-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to force install and enable],
+            [ SB_FORCED_MEDIA_CORES=$withval ],
+            [ SB_FORCED_MEDIA_CORES=default ])
+for option in `echo $SB_FORCED_MEDIA_CORES | sed 's/,/ /g'`; do
+    if test "$option" = "default"; then
+        # Nothing needs to be set here
+        true
+    elif test "$option" = "none"; then
+        # Nothing needs to be set here
+        true
+    elif test "$option" = "vlc"; then
+        FORCE_MEDIA_CORE_VLC=1
+    elif test "$option" = "windowsmedia"; then
+        FORCE_MEDIA_CORE_WMP=1
+    elif test "$option" = "gstreamer"; then
+        FORCE_MEDIA_CORE_GST=1
+    elif test "$option" = "qt"; then
+        FORCE_MEDIA_CORE_QT=1
+    else
+        AC_MSG_ERROR([Unknown --with-force-media-core option $option])
+    fi
+done
+AC_SUBST(FORCE_MEDIA_CORE_VLC)
+AC_SUBST(FORCE_MEDIA_CORE_WMP)
+AC_SUBST(FORCE_MEDIA_CORE_GST)
+AC_SUBST(FORCE_MEDIA_CORE_QT)
 
 #
 # Check for extras.
