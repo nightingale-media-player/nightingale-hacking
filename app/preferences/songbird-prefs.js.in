@@ -63,8 +63,8 @@ pref("browser.download.manager.flashCount", 2);
 pref("browser.download.manager.displayedHistoryDays", 7);
 pref("browser.download.manager.addToRecentDocs", true);
 //pref("privacy.item.downloads",  true);
-//pref("browser.download.show_plugins_in_list", true);
-//pref("browser.download.hide_plugins_without_extensions", true);
+pref("browser.download.show_plugins_in_list", true);
+pref("browser.download.hide_plugins_without_extensions", true);
 
 // Default to always downloading without prompting.
 pref("songbird.download.music.alwaysPrompt", false);
@@ -130,11 +130,11 @@ pref("browser.preferences.instantApply", false);
 pref("browser.preferences.instantApply", true);
 #endif
 
-#ifdef XP_MACOSX
-pref("browser.preferences.animateFadeIn", true);
-#else
+##ifdef XP_MACOSX
+#pref("browser.preferences.animateFadeIn", true);
+##else
 pref("browser.preferences.animateFadeIn", false);
-#endif
+##endif
 
 // Enable the web playlist.
 // Extracts A tags and add browser context menu.

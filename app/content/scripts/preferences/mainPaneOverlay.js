@@ -188,9 +188,14 @@ var SongbirdMainPaneOverlay = {
       downloadsCaptions.item(0).setAttribute("label", tempString);
     }
 
+    // Remove the addons button
+    const addonsGroup = document.getElementById("addonsMgrGroup");
+    addonsGroup.setAttribute("hidden", "true");
+
     // Build the rest of the content.
     const groupbox = document.createElement("groupbox");
     groupbox.setAttribute("id","mediaDownloadsGroup");
+    groupbox.setAttribute("flex","1");
 
     const caption = document.createElement("caption");
     caption.setAttribute("id","mediaDownloadsCaption");
@@ -236,7 +241,14 @@ var SongbirdMainPaneOverlay = {
     promptGroup.appendChild(this._radioPrompt);
 
     // Finally hook it all up
-    document.getElementById("paneMain").appendChild(groupbox);
+    const mainPrefPane = document.getElementById("paneMain");
+    const bottomBoxElements = mainPrefPane.getElementsByAttribute("class",
+                                                                  "bottomBox");
+
+    const parent = bottomBoxElements.length ?
+                   bottomBoxElements.item(0) :
+                   mainPrefPane;
+    parent.appendChild(groupbox);
   },
 
   /**

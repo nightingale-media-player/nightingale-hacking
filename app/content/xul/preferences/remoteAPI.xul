@@ -52,7 +52,7 @@
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
     </preferences>
-    
+
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
 
     <vbox align="start" class="bottomBox">
@@ -106,16 +106,13 @@
                   oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
               </vbox>
             </row>
-            <row>
-              <hbox>
-                <button label="&rapi.restore_defaults.label;"
-                  oncommand="gRemoteAPIPane.restoreDefaults();"/>
-                <spacer flex="1"/>
-              </hbox>
-              <spacer flex="1"/>
-            </row>
           </rows>
         </grid>
+        <hbox class="bottomBox">
+          <button label="&rapi.restore_defaults.label;"
+            oncommand="gRemoteAPIPane.restoreDefaults();"/>
+          <spacer flex="1"/>
+        </hbox>
       </groupbox>
       <spacer flex="1"/>
     </vbox>
