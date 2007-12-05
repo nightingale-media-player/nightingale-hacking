@@ -410,7 +410,7 @@ interface sbIMediaList : sbIMediaItem
     <enumerateItemsByProperty()>
   */
   void enumerateAllItems(in sbIMediaListEnumerationListener aEnumerationListener,
-                         in unsigned short aEnumerationType);
+                         [optional] in unsigned short aEnumerationType);
 
   /**
    * \brief Enumerate the media items in the list that match a given property
@@ -454,19 +454,19 @@ interface sbIMediaList : sbIMediaItem
   void enumerateItemsByProperty(in AString aPropertyID,
                                 in AString aPropertyValue,
                                 in sbIMediaListEnumerationListener aEnumerationListener,
-                                in unsigned short aEnumerationType);
+                                [optional] in unsigned short aEnumerationType);
 
   /**
    * \brief Enumerate the media items that match a list of property IDs and
    *        values.
    *
    * \param aProperties - A list of property ID/value pairs.
-   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
+   * \param [optional] aEnumerationType - One of the ENUMERATIONTYPE values above.
    */
   void enumerateItemsByProperties(in sbIPropertyArray aProperties,
                                   in sbIMediaListEnumerationListener aEnumerationListener,
-                                  in unsigned short aEnumerationType);
+                                  [optional] in unsigned short aEnumerationType);
 
   /**
    * \brief Get the first index of a media item int he list
