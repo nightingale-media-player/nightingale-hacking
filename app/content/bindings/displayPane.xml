@@ -44,21 +44,24 @@
     <xbl:content>
       <vbox flex="1">
         <hbox>
-          <vbox pack="center">
-            <!-- the extra vbox is to make sure the height of the image does not
-                 affect the height of the other elements (in particular, the
-                 menu button) -->
-            <image anonid="icon" class="favicon"/>
-          </vbox>
-          <label anonid="header" default="&menu.displaypane.title.default;" flex="1"/>
-          <button type="menu" mousethrough="never" class="displaypane-menubutton">
+          <hbox class="sb-displaypane-header" flex="1">
+            <vbox pack="center">
+              <!-- the extra vbox is to make sure the height of the image does not
+                   affect the height of the other elements (in particular, the
+                   menu button) -->
+              <image anonid="icon" class="favicon"/>
+            </vbox>
+            <label anonid="header" default="&menu.displaypane.title.default;"
+                   class="sb-displaypane-label" flex="1"/>
+          </hbox>
+          <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">
             <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
                        anonid="menu">
               <menuitem label="&menu.displaypane.hide;"
                         anonid="menuitem_hide"/>
               <menuseparator/>
-	      <menuitem label="&menu.displaypane.not-available;"
-			disabled="true" anonid="items_none"/>
+              <menuitem label="&menu.displaypane.not-available;"
+                        disabled="true" anonid="items_none"/>
               <menuitem label="&menu.displaypane.recommended;"
                         disabled="true" anonid="items_recommended"/>
               <dummy anonid="items_recommended_start"/>

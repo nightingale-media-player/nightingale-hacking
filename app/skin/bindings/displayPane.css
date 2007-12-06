@@ -64,16 +64,33 @@ menu.displaypane-topmenu[open="true"] > .menu-iconic-left {
 sb-displaypane .favicon {
   max-width: 16px;
   max-height: 16px;
-  margin-left: 4px;
+  margin: 1px 0 1px 4px;
 }
 
-.displaypane-menubutton {
+.sb-displaypane-menubutton {
   height: 14px;
-  padding: 0 2px;
+  padding: 0 2px 0 1px;
   min-width: 0;
   list-style-image: url(chrome://songbird/skin/icons/displaypane-content-picker.png);
+  margin: 0;
+  -moz-border-radius: 0;
+  border-left: none;
+  border-bottom: none;
 }
 
-.displaypane-menubutton > .button-box > .button-menu-dropmarker {
+.sb-displaypane-label {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 1px;
+}
+
+.sb-displaypane-menubutton > .button-box > hbox > .button-text,
+.sb-displaypane-menubutton > .button-box > .button-menu-dropmarker {
   display: none;
+}
+
+
+#displaypane_right_sidebar_splitter[state="collapsed"]
+{
+  margin-left: 7px;
 }

@@ -681,7 +681,8 @@ treechildren::-moz-tree-progressmeter( selected, focus )
 }
 
 listheader,
-tree treecol
+tree treecol,
+.sb-displaypane-header
 {
   background-color: #313131 !important;
   border-right: 1px solid #202220 !important; /** Button Shadow */
@@ -709,7 +710,8 @@ treecol > label
   color: #8A8F84; /** Light Color 2 */
 }
 
-treecolpicker
+treecolpicker,
+.sb-displaypane-menubutton
 {
   border-top: 1px solid #474948; /** Rubber Highlight */
   background-color: #313131 !important; /* same as the main window */
@@ -717,6 +719,25 @@ treecolpicker
 }
 
 
+/** 
+*******************************************************************************
+DISPLAY PANE
+*******************************************************************************
+*/
+
+.sb-displaypane-header,
+.sb-displaypane-menubutton
+{
+  border-bottom: 1px solid #202220; /** Button Shadow */
+}
+
+#displaypane_right_sidebar
+{
+  border-top: 1px solid #0f100f; /** Groove */
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-right: 1px solid #202220; /** Button Shadow */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
+}
 
 /** 
 *******************************************************************************
@@ -1253,18 +1274,20 @@ These let the user resize the frames in your box model.
   background-color: transparent;
 }
 
-#servicepane_splitter[state="collapsed"]
+#servicepane_splitter[state="collapsed"],
+#displaypane_right_sidebar_splitter[state="collapsed"],
+#displaypane_contentpane_bottom_splitter[state="collapsed"],
+#displaypane_servicepane_bottom_splitter[state="collapsed"]
 {
   background-color: transparent;
-}
-
-#servicepane_splitter[state="collapsed"]
-{
   border: 1px solid #202220; /** Button Shadow */
   -moz-border-radius: 5px;
 }
 
-#servicepane_splitter[state="collapsed"]:hover
+#servicepane_splitter[state="collapsed"]:hover,
+#displaypane_right_sidebar_splitter[state="collapsed"]:hover,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:hover,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:hover
 {
   border: 1px solid;
   border-top-color: #474948; /** Rubber Highlight */
@@ -1275,7 +1298,10 @@ These let the user resize the frames in your box model.
   -moz-border-radius: 5px;
 }
 
-#servicepane_splitter[state="collapsed"]:active
+#servicepane_splitter[state="collapsed"]:active,
+#displaypane_right_sidebar_splitter[state="collapsed"]:active,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:active,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:active
 {
   border: 1px solid;
   border-top-color: #202220; /** Button Shadow */
@@ -1284,6 +1310,18 @@ These let the user resize the frames in your box model.
   border-right-color: #474948; /** Rubber Highlight */
   color: #FFF;  
   -moz-border-radius: 5px;
+}
+
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter
+{
+  border-top: 1px solid #474948; /** Rubber Highlight */
+}
+
+#displaypane_servicepane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]
+{
+  background-color: #313131; /** color of the Main Window */
 }
 
 .playlist-splitter,
