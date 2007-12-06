@@ -48,7 +48,7 @@
         </xul:vbox>
 	<xul:sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
                                id="displaypane_servicepane_bottom_splitter">
-	  <xul:grippy flex="1"/>
+	  <xul:grippy/>
 	</xul:sb-smart-splitter>
 	<xul:sb-displaypane id="displaypane_servicepane_bottom"
                             label="&displaypane.name.servicepane;"

@@ -42,7 +42,8 @@ sb-smart-splitter
 {
   background-repeat: no-repeat;
   background-position: center center;
-  border: 0px solid transparent; 
+  border: 0px solid transparent;
+  -moz-box-pack: center;
 }
    
    
@@ -91,4 +92,3 @@ sb-smart-splitter[state="collapsed"][orient="vertical"]
   margin: 0;
   padding: 0;
 }
-

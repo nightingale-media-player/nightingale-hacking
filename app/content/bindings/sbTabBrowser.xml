@@ -162,7 +162,7 @@
 	var xml =  <sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
                                       id="displaypane_contentpane_bottom_splitter"
 			              xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-                     <grippy flex="1"/>
+                     <grippy/>
                    </sb-smart-splitter>;
 	var doc = (new DOMParser()).parseFromString(xml.toXMLString(), "application/xml");
 	var splitter = document.importNode(doc.documentElement, true);

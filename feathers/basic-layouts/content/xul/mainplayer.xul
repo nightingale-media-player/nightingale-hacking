@@ -172,7 +172,7 @@
           <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu and sbIDisplayPaneManager service. -->
           <sb-smart-splitter collapse="after" orient="horizontal" resizeafter="closest"
                              id="displaypane_right_sidebar_splitter">
-            <grippy flex="1"/>
+            <grippy/>
           </sb-smart-splitter>
           <sb-displaypane id="displaypane_right_sidebar" contentgroup="sidebar"
                           orient="vertical" label="&displaypane.name.sidebar;"
