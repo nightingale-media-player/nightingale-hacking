@@ -1,16 +1,13 @@
-? bug307204-updated-translucent-window.patch
-? bug386826-xreonly-vistanorestartupdate.patch
-? sanity.diff
 Index: widget/public/nsIWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
-retrieving revision 3.164
-diff -p -u -4 -r3.164 nsIWidget.h
---- widget/public/nsIWidget.h	9 Nov 2007 17:38:33 -0000	3.164
-+++ widget/public/nsIWidget.h	27 Nov 2007 00:50:11 -0000
-@@ -99,9 +99,9 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
- { 0x3B4E560A, 0x11E6, 0x4EBD, \
-   { 0xB9, 0x87, 0x35, 0x38, 0x56, 0x24, 0x97, 0x0D } }
+retrieving revision 3.165
+diff -u -4 -p -r3.165 nsIWidget.h
+--- widget/public/nsIWidget.h	3 Dec 2007 16:33:43 -0000	3.165
++++ widget/public/nsIWidget.h	6 Dec 2007 19:14:28 -0000
+@@ -100,9 +100,9 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
+ { 0x092c37e8, 0x2806, 0x4ebc, \
+   { 0xb0, 0x4b, 0xe0, 0xbb, 0x62, 0x4c, 0xe0, 0xd4 } }
  
  // Hide the native window systems real window type so as to avoid
 -// including native window system types and api's. This is necessary
@@ -19,7 +16,7 @@ diff -p -u -4 -r3.164 nsIWidget.h
  typedef void* nsNativeWidget;
  
  /**
-@@ -680,19 +680,8 @@ class nsIWidget : public nsISupports {
+@@ -681,19 +681,8 @@ class nsIWidget : public nsISupports {
       *   transparent pixels
       */
      NS_IMETHOD GetWindowTranslucency(PRBool& aTranslucent) = 0;
@@ -43,9 +40,9 @@ Index: widget/src/cocoa/nsChildView.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
 retrieving revision 1.77
-diff -p -u -4 -r1.77 nsChildView.h
+diff -u -4 -p -r1.77 nsChildView.h
 --- widget/src/cocoa/nsChildView.h	26 Nov 2007 18:09:38 -0000	1.77
-+++ widget/src/cocoa/nsChildView.h	27 Nov 2007 00:50:11 -0000
++++ widget/src/cocoa/nsChildView.h	6 Dec 2007 19:14:28 -0000
 @@ -110,8 +110,12 @@ union nsPluginPort;
    // rects that were invalidated during a draw, so have pending drawing
    NSMutableArray* mPendingDirtyRects;
@@ -93,10 +90,10 @@ diff -p -u -4 -r1.77 nsChildView.h
 Index: widget/src/cocoa/nsChildView.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
-retrieving revision 1.279
-diff -p -u -4 -r1.279 nsChildView.mm
---- widget/src/cocoa/nsChildView.mm	26 Nov 2007 23:19:04 -0000	1.279
-+++ widget/src/cocoa/nsChildView.mm	27 Nov 2007 00:50:11 -0000
+retrieving revision 1.285
+diff -u -4 -p -r1.285 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	5 Dec 2007 23:17:08 -0000	1.285
++++ widget/src/cocoa/nsChildView.mm	6 Dec 2007 19:14:28 -0000
 @@ -45,9 +45,8 @@
  #include "nsCocoaWindow.h"
  
@@ -118,7 +115,7 @@ diff -p -u -4 -r1.279 nsChildView.mm
  
  - (BOOL)ensureCorrectMouseEventTarget:(NSEvent *)anEvent;
  
-@@ -656,10 +653,36 @@ void* nsChildView::GetNativeData(PRUint3
+@@ -654,10 +651,36 @@ void* nsChildView::GetNativeData(PRUint3
  }
  
  #pragma mark -
@@ -156,7 +153,7 @@ diff -p -u -4 -r1.279 nsChildView.mm
  {
    if (!mVisible) {
      outState = mVisible;
-@@ -2042,12 +2065,19 @@ NSEvent* gLastDragEvent = nil;
+@@ -2041,12 +2064,19 @@ NSEvent* gLastDragEvent = nil;
    return YES;
  }
  
@@ -178,7 +175,7 @@ diff -p -u -4 -r1.279 nsChildView.mm
  
  
  -(void)setIsPluginView:(BOOL)aIsPlugin
-@@ -2171,13 +2201,8 @@ NSEvent* gLastDragEvent = nil;
+@@ -2170,13 +2200,8 @@ NSEvent* gLastDragEvent = nil;
  {
    PRBool isVisible;
    if (!mGeckoChild || NS_FAILED(mGeckoChild->IsVisible(isVisible)) || !isVisible)
@@ -192,7 +189,7 @@ diff -p -u -4 -r1.279 nsChildView.mm
    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
  
    nsRect geckoBounds;
-@@ -2262,24 +2287,8 @@ NSEvent* gLastDragEvent = nil;
+@@ -2261,24 +2286,8 @@ NSEvent* gLastDragEvent = nil;
  #endif
  }
  
@@ -217,24 +214,13 @@ diff -p -u -4 -r1.279 nsChildView.mm
  // before each drawRect. We already clip within gecko.
  - (BOOL)wantsDefaultClipping
  {
-@@ -2643,9 +2652,9 @@ static nsEventStatus SendGeckoMouseEnter
- }
- 
- 
- - (void)mouseMoved:(NSEvent*)theEvent
--{
-+{ 
-   NSPoint windowEventLocation = [theEvent locationInWindow];
-   NSPoint screenEventLocation = [mWindow convertBaseToScreen:windowEventLocation];
-   NSPoint viewEventLocation = [self convertPoint:windowEventLocation fromView:nil];
- 
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.44
-diff -p -u -4 -r1.44 nsCocoaWindow.h
+diff -u -4 -p -r1.44 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	27 Nov 2007 00:24:13 -0000	1.44
-+++ widget/src/cocoa/nsCocoaWindow.h	27 Nov 2007 00:50:11 -0000
++++ widget/src/cocoa/nsCocoaWindow.h	6 Dec 2007 19:14:28 -0000
 @@ -236,8 +236,10 @@ public:
      NS_IMETHOD SetPreferredSize(PRInt32 aWidth, PRInt32 aHeight) { return NS_OK; }
      NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
@@ -260,10 +246,10 @@ diff -p -u -4 -r1.44 nsCocoaWindow.h
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.118
-diff -p -u -4 -r1.118 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	27 Nov 2007 00:24:13 -0000	1.118
-+++ widget/src/cocoa/nsCocoaWindow.mm	27 Nov 2007 00:50:11 -0000
+retrieving revision 1.125
+diff -u -4 -p -r1.125 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	5 Dec 2007 23:17:08 -0000	1.125
++++ widget/src/cocoa/nsCocoaWindow.mm	6 Dec 2007 19:14:28 -0000
 @@ -1,5 +1,5 @@
 -/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* -*- Mode: Objective-C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -271,7 +257,7 @@ diff -p -u -4 -r1.118 nsCocoaWindow.mm
   * Version: MPL 1.1/GPL 2.0/LGPL 2.1
   *
   * The contents of this file are subject to the Mozilla Public License Version
-@@ -65,8 +65,10 @@ extern nsIWidget         * gRollupWidget
+@@ -66,8 +66,10 @@ extern nsIWidget         * gRollupWidget
  extern BOOL                gSomeMenuBarPainted;
  
  #define NS_APPSHELLSERVICE_CONTRACTID "@mozilla.org/appshell/appShellService;1"
@@ -282,7 +268,7 @@ diff -p -u -4 -r1.118 nsCocoaWindow.mm
  
  
  // A note on testing to see if your object is a sheet...
-@@ -312,8 +314,9 @@ nsresult nsCocoaWindow::StandardCreate(n
+@@ -347,8 +349,9 @@ nsresult nsCocoaWindow::StandardCreate(n
      NSRect newWindowFrame = [NSWindow frameRectForContentRect:rect styleMask:features];
  
      rect.origin.y -= (newWindowFrame.size.height - rect.size.height);
@@ -292,7 +278,7 @@ diff -p -u -4 -r1.118 nsCocoaWindow.mm
        rect.origin.y -= ::GetMBarHeight();
  
      // NSLog(@"Top-level window being created at Cocoa rect: %f, %f, %f, %f\n",
-@@ -339,9 +342,9 @@ nsresult nsCocoaWindow::StandardCreate(n
+@@ -374,9 +377,9 @@ nsresult nsCocoaWindow::StandardCreate(n
      mWindow = [[windowClass alloc] initWithContentRect:rect styleMask:features 
                                     backing:NSBackingStoreBuffered defer:NO];
      
@@ -303,7 +289,7 @@ diff -p -u -4 -r1.118 nsCocoaWindow.mm
        [mWindow setHasShadow:YES];
  
        // we need to make our content view a ChildView
-@@ -646,8 +649,46 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
+@@ -696,8 +699,46 @@ NS_IMETHODIMP nsCocoaWindow::Show(PRBool
  
    return NS_OK;
  }
@@ -353,11 +339,11 @@ diff -p -u -4 -r1.118 nsCocoaWindow.mm
 Index: widget/src/gtk2/nsWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.cpp,v
-retrieving revision 1.237
-diff -p -u -4 -r1.237 nsWindow.cpp
---- widget/src/gtk2/nsWindow.cpp	23 Nov 2007 01:38:40 -0000	1.237
-+++ widget/src/gtk2/nsWindow.cpp	27 Nov 2007 00:50:12 -0000
-@@ -3607,14 +3607,8 @@ nsWindow::UpdateTranslucentWindowAlphaIn
+retrieving revision 1.239
+diff -u -4 -p -r1.239 nsWindow.cpp
+--- widget/src/gtk2/nsWindow.cpp	3 Dec 2007 16:33:44 -0000	1.239
++++ widget/src/gtk2/nsWindow.cpp	6 Dec 2007 19:14:28 -0000
+@@ -3593,14 +3593,8 @@ nsWindow::UpdateTranslucentWindowAlphaIn
      }
      return NS_OK;
  }
@@ -376,9 +362,9 @@ Index: widget/src/gtk2/nsWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/gtk2/nsWindow.h,v
 retrieving revision 1.79
-diff -p -u -4 -r1.79 nsWindow.h
+diff -u -4 -p -r1.79 nsWindow.h
 --- widget/src/gtk2/nsWindow.h	13 Nov 2007 16:12:12 -0000	1.79
-+++ widget/src/gtk2/nsWindow.h	27 Nov 2007 00:50:12 -0000
++++ widget/src/gtk2/nsWindow.h	6 Dec 2007 19:14:28 -0000
 @@ -344,9 +344,8 @@ public:
     NS_IMETHOD          SetWindowTranslucency(PRBool aTransparent);
     NS_IMETHOD          GetWindowTranslucency(PRBool& aTransparent);
@@ -392,11 +378,11 @@ diff -p -u -4 -r1.79 nsWindow.h
 Index: widget/src/xpwidgets/nsBaseWidget.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
-retrieving revision 1.164
-diff -p -u -4 -r1.164 nsBaseWidget.cpp
---- widget/src/xpwidgets/nsBaseWidget.cpp	9 Nov 2007 17:38:33 -0000	1.164
-+++ widget/src/xpwidgets/nsBaseWidget.cpp	27 Nov 2007 00:50:12 -0000
-@@ -524,13 +524,8 @@ NS_IMETHODIMP nsBaseWidget::GetWindowTra
+retrieving revision 1.165
+diff -u -4 -p -r1.165 nsBaseWidget.cpp
+--- widget/src/xpwidgets/nsBaseWidget.cpp	3 Dec 2007 16:33:45 -0000	1.165
++++ widget/src/xpwidgets/nsBaseWidget.cpp	6 Dec 2007 19:14:29 -0000
+@@ -542,13 +542,8 @@ NS_IMETHODIMP nsBaseWidget::GetWindowTra
    aTranslucent = PR_FALSE;
    return NS_OK;
  }
@@ -413,11 +399,11 @@ diff -p -u -4 -r1.164 nsBaseWidget.cpp
 Index: widget/src/xpwidgets/nsBaseWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
-retrieving revision 1.89
-diff -p -u -4 -r1.89 nsBaseWidget.h
---- widget/src/xpwidgets/nsBaseWidget.h	9 Nov 2007 17:38:33 -0000	1.89
-+++ widget/src/xpwidgets/nsBaseWidget.h	27 Nov 2007 00:50:12 -0000
-@@ -100,9 +100,8 @@ public:
+retrieving revision 1.90
+diff -u -4 -p -r1.90 nsBaseWidget.h
+--- widget/src/xpwidgets/nsBaseWidget.h	3 Dec 2007 16:33:45 -0000	1.90
++++ widget/src/xpwidgets/nsBaseWidget.h	6 Dec 2007 19:14:29 -0000
+@@ -104,9 +104,8 @@ public:
    NS_IMETHOD              GetWindowType(nsWindowType& aWindowType);
    NS_IMETHOD              SetWindowType(nsWindowType aWindowType);
    NS_IMETHOD              SetWindowTranslucency(PRBool aTranslucent);
