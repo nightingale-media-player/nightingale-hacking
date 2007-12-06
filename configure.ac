@@ -453,12 +453,12 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-g -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
+      GCC_COMPILER_FLAGS="-ggdb3 $GCC_COMPILER_FLAGS -fno-inline -O1"
     else
       # Use -O2 on OS X, better than -Os according to moz perf tests
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
+      GCC_COMPILER_FLAGS="-gstabs+ $GCC_COMPILER_FLAGS -O2"
     fi
 
     # We always want to include "mozilla-config.h"
@@ -504,12 +504,12 @@ case "$SB_PLATFORM" in
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
-    GCC_COMPILER_FLAGS="-c -gstabs+ -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
+      GCC_COMPILER_FLAGS="-ggdb3 $GCC_COMPILER_FLAGS -fno-inline -O1"
     else
       # Use -Os on linux, better than -O2 according to moz perf tests
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -Os"
+      GCC_COMPILER_FLAGS="-gstabs+ $GCC_COMPILER_FLAGS -Os"
     fi
 
     # We always want to include "mozilla-config.h"
