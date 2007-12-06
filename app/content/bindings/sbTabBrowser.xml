@@ -877,21 +877,12 @@
           var browser = event.currentTarget
                              .gBrowser.getBrowserForDocument(event.target);
           var notificationBox = browser.parentNode;
-          var notification = notificationBox
-                                   .getNotificationWithValue(notificationName);
-          if (!notification) {
-            // if there isn't a notification object, make one and append it
-            const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
-            notification = notificationBox.appendNotification( message,
-                                                notificationName,
-                                                iconURL,
-                                                priority,
-                                                buttons);
-          } else {
-            // if there is a notification object set it's text.
-            // this has the side effect of showing it if it was dismissed
-            notification.message = message;
-          }
+          const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
+          var notification = event.currentTarget
+                                  .gBrowser
+                                  .showNotification(browser, notificationName, 
+                                                    message, iconURL, priority,
+                                                    buttons);
           
           var defaultEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
                              .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
@@ -903,6 +894,62 @@
                                         false);
 
           notification.closeEvent = defaultEvt;
+        ]]></body>
+      </method>
+      
+      <!--
+        Show a notification message.  If the given notification already exists
+        (but not necessarily shown), show it with an updated message.  Note that
+        only the message (and not the icon, priority, or buttons) get updated.
+        -->
+      <method name="showNotification">
+        <parameter name="aBrowser"/>
+        <parameter name="aNotificationName"/>
+        <parameter name="aMessage"/>
+        <parameter name="aIconURL"/>
+        <parameter name="aPriority"/>
+        <parameter name="aButtons"/>
+        <body><![CDATA[
+          debugger;
+          var browser = aBrowser;
+          if (aBrowser instanceof Document) {
+            // given a document; find the containing <browser> instead
+            browser = this.getBrowserForDocument(aBrowser);
+          } else if (aBrowser instanceof Components.interfaces.nsIDocShell) {
+            // given a random docshell, try to find a <browser> that holds
+            // an ancestor
+            for (var i = 0; i < this.browsers.length; ++i) {
+              // walk up the docshell tree to see if the <browser> we have is a parent
+              var targetDocShell = aBrowser.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+              browser = this.getBrowserAtIndex(i);
+              while (targetDocShell && browser.docShell != targetDocShell) {
+                targetDocShell = targetDocShell.parent;
+              }
+              if (browser.docShell == targetDocShell)
+                break;
+              browser = null;
+            }
+          }
+          if (!browser) {
+            throw Components.interfaces.NS_ERROR_INVALID_ARG;
+          }
+          
+          var notificationBox = this.getNotificationBox(browser);
+          var notification = notificationBox
+                                   .getNotificationWithValue(aNotificationName);
+          if (!notification) {
+            // if there isn't a notification object, make one and append it
+            notification = notificationBox.appendNotification(aMessage,
+                                                              aNotificationName,
+                                                              aIconURL,
+                                                              aPriority,
+                                                              aButtons);
+          } else {
+            // if there is a notification object set it's text.
+            // this has the side effect of showing it if it was dismissed
+            notification.message = aMessage;
+          }
+          return notification;
         ]]></body>
       </method>
 
