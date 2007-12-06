@@ -40,25 +40,29 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
-menu[target="displaypane_contentpane_bottom"] > .menu-iconic-left {
+menu[target="displaypane_contentpane_bottom"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-contentpane-bottom.png);
-  -moz-image-region: rect(13px, 13px, 26px, 0px);
+  -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
-menu[target="displaypane_servicepane_bottom"] > .menu-iconic-left {
+menu[target="displaypane_servicepane_bottom"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-servicepane-bottom.png);
-  -moz-image-region: rect(13px, 13px, 26px, 0px);
+  -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
-menu[target="displaypane_right_sidebar"] > .menu-iconic-left {
+menu[target="displaypane_right_sidebar"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-right-sidebar.png);
-  -moz-image-region: rect(13px, 13px, 26px, 0px);
+  -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
 /* on hover, use the bottom half of the image (does not apply on Mac) */
-menu.displaypane-topmenu[_moz-menuactive="true"] > .menu-iconic-left,
-menu.displaypane-topmenu[open="true"] > .menu-iconic-left {
-  -moz-image-region: rect(0px, 13px, 13px, 0px);
+menu.displaypane-topmenu[_moz-menuactive="true"],
+menu.displaypane-topmenu[open="true"] {
+  -moz-image-region: rect(13px, 13px, 26px, 0px);
+}
+
+menu.displaypane-topmenu > menupopup {
+  list-style-image: none;
 }
 
 sb-displaypane .favicon {
