@@ -78,6 +78,10 @@ sb-displaypane .favicon {
   border-bottom: none;
 }
 
+.sb-displaypane-menubutton > menupopup {
+  list-style-image: none;
+}
+
 .sb-displaypane-label {
   margin-top: 0;
   margin-bottom: 0;
