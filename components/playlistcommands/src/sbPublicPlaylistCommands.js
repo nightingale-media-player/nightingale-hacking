@@ -1025,10 +1025,10 @@ function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandI
   var urlCol = "url";
   var window = unwrap(aContext.window);
   var playlist = unwrap(aContext.playlist);
-  var columnElem = window.
-                     document.getAnonymousElementByAttribute(playlist,
-                                                             "bind",
-                                                             SBProperties.contentURL);
+  var columnElem = playlist.ownerDocument
+                           .getAnonymousElementByAttribute(playlist,
+                                                           "bind",
+                                                           SBProperties.contentURL);
   var columnObj = playlist.tree.columns.getColumnFor(columnElem);
   var rangeCount = playlist.mediaListView.treeView.selection.getRangeCount();
   for (var i=0; i < rangeCount; i++)
