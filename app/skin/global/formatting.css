@@ -140,11 +140,6 @@
   background-color: transparent;
 }
 
-  label[disabled="true"] 
-    {
-      color                 : GrayText;
-    }    
-
   description, label
     {
       cursor              : default;

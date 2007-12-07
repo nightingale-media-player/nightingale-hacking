@@ -66,6 +66,7 @@ Imported by bindings.css or directly into feathers.
 .sb-player-button:focus > .button-box > .button-text
 {
   border: 0px !important;
+  outline: none !important;
 }
 
 

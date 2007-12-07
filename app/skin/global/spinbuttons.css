@@ -44,33 +44,38 @@ spinbuttons {
   cursor: default;
 }
 
-.spinbuttons-up {
-  -moz-appearance: none;
-  -moz-box-flex: 1;
-  min-width: 12px;
-  margin: 0;
-  padding: 0;
-}
-
-.spinbuttons-down {
-  -moz-appearance: none;
-  -moz-box-flex: 1;
-  min-width: 12px;
-  margin: 0;
-  padding: 0;
-}
-
 .spinbuttons-button
 {
   padding: 0px 0px 0px 2px;
 }
-.spinbuttons-up
-{   
-  list-style-image: url("chrome://songbird/skin/arrow/arrow-up.png"); /* up arrow */
+
+.spinbuttons-up,
+.spinbuttons-down {
+  -moz-appearance: none;
+  -moz-box-flex: 1;
+  min-height: 10px;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  padding: 0;
 }
 
-.spinbuttons-down
-{   
+.spinbuttons-up {
+  margin: 2px 2px 0 0 !important;
+  list-style-image: url("chrome://songbird/skin/arrow/arrow-up.png"); /* up arrow */
+}
+.spinbuttons-down {
+  margin: 0 2px 2px 0 !important;
   list-style-image:  url("chrome://songbird/skin/arrow/arrow-down.png");; /* down arrow */
 }
 
+.spinbuttons-up > .button-box > .button-icon,
+.spinbuttons-down > .button-box > .button-icon
+{
+  margin:0 5px;
+}
+
+.spinbuttons-up[disabled="true"] > .button-box,
+.spinbuttons-down[disabled="true"] > .button-box
+{
+  opacity:0.5;
+}

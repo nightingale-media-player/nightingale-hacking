@@ -13,11 +13,15 @@ dropmarker:hover:active {
 }
 
 dropmarker[disabled="true"] {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow-down-disabled.png") !important;
   padding: 1px;
 }
 
 .dropmarker-icon
 {
   list-style-image: url("chrome://songbird/skin/arrow/arrow-down.png");
+}
+
+dropmarker[disabled="true"] > .dropmarker-icon
+{
+  opacity:0.5;
 }

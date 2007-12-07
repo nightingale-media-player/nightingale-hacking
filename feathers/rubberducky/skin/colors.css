@@ -1384,11 +1384,15 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
   border-top-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */
   background-color: #0f100f; /** Groove */ 
+}
+textbox,
+textbox.padded, /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
+html|*.numberbox-input {
   color: #B3BAAC; /** Light Color 1 */
 }
 
 /* ..... focused state ..... */
-textbox[focused="true"] 
+textbox[focused="true"]
 {
   background-color: #0f100f; /** Groove */
 }
@@ -1397,13 +1401,18 @@ textbox[focused="true"]
 
 
 /* ..... disabled state ..... */
-textbox[disabled="true"] 
+textbox[disabled="true"]
 {
   cursor: default;
   border: 1px dotted #474948; /** Rubber Highlight */
   background-color: transparent;
+}
+
+textbox[disabled="true"],
+html|*.numberbox-input[disabled="true"]
+{
   color: #474948; /** Light Color 1 */
-} 
+}
 
 /* ..... invalid state ..... */
 textbox[invalid="true"] {
@@ -1546,7 +1555,14 @@ menulist
 
 menulist[disabled="true"]
 {
-  color: #666 !important;
+  cursor: default;
+  border: 1px dotted #474948; /** Rubber Highlight */
+  background-color: transparent;
+}
+
+menulist[disabled="true"] > .menulist-label-box > .menulist-label
+{
+  color: #474948; /** Light Color 1 */
 }
 
 menulist:focus,
@@ -1607,31 +1623,6 @@ listbox:focus > listitem[selected="true"] {
   border-top-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */
   background-color: #313131; /** color of the Main Window */  
-}
-
-
-/** 
-*******************************************************************************
-NUMBERBOX
-*******************************************************************************
-*/
-
-textbox[type="number"] {
-  border: 1px solid;
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */
-}
-
-textbox[type="number"][focused="true"] 
-{
-  background-color: #0f100f; /** Groove */
-}
-
-html|*.numberbox-input {
-  color: #feffff; /** Light Color Brightest */
 }
 
 
