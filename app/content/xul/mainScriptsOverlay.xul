@@ -35,7 +35,7 @@
 %songbirdDTD;
 ]>
 
-<overlay id="ovScriptsMini"
+<overlay id="ovScriptsMain"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <!-- scripts for main window -->
@@ -139,6 +139,10 @@
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/sanitize.js" />
 
+    <!-- Popup Blocker UI -->
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/popupBlocker.js" />
+
     <!-- Extension Overlay Support -->
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/overlayLoader.js" />
@@ -150,5 +154,3 @@
   </window>
   
 </overlay>
-
-

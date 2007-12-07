@@ -1224,6 +1224,14 @@
             var b = document.createElementNS(
               "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
                                              "browser");
+            var localName = this.localName;
+            b.getTabBrowser = function() { 
+              var tabBrowser = this.parentNode;
+              while (tabBrowser && tabBrowser.localName != "tabbrowser" && 
+                     tabBrowser.localName != localName)
+                tabBrowser = tabBrowser.parentNode;
+              return tabBrowser;
+            };
             b.setAttribute("type", "content-targetable");
             b.setAttribute("message", "true");
             b.setAttribute("contextmenu", this.getAttribute("contentcontextmenu"));
@@ -2458,6 +2466,16 @@
       <constructor>
         <![CDATA[
           this.mCurrentBrowser = this.mPanelContainer.childNodes[0].firstChild;
+
+          var localName = this.localName;
+          this.mCurrentBrowser.getTabBrowser = function() { 
+            var tabBrowser = this.parentNode;
+            while (tabBrowser && tabBrowser.localName != "tabbrowser" && 
+                   tabBrowser.localName != localName)
+              tabBrowser = tabBrowser.parentNode;
+            return tabBrowser;
+          };
+
           this.mCurrentTab = this.mTabContainer.firstChild;
           document.addEventListener("keypress", this._keyEventHandler, false);
 

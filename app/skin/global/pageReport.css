@@ -1,0 +1,20 @@
+/* ::::: page report button (blocked popup windows button in statusbar) ::::: */
+
+#page-report-button > image {
+  list-style-image: none;
+}
+
+#page-report-button {
+  width: 20px;
+  display: none;
+}
+
+#page-report-button[blocked] > image {
+  list-style-image: url("chrome://global/skin/icons/pagereport.png");
+  display: -moz-box;
+}
+
+#page-report-button[blocked] {
+  display: -moz-box;
+}
+

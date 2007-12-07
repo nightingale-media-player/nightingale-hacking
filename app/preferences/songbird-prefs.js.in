@@ -255,3 +255,9 @@ pref("privacy.item.downloads", true);
 pref("privacy.item.cookies", true);
 pref("privacy.item.cache", true);
 pref("privacy.item.sessions", true);
+
+// popups.policy 1=allow,2=reject
+pref("privacy.popups.policy",               1);
+pref("privacy.popups.usecustom",            true);
+pref("privacy.popups.firstTime",            true);
+pref("privacy.popups.showBrowserMessage",   true);

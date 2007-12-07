@@ -28,11 +28,15 @@
  */
 -->
 
+<?xml-stylesheet href="chrome://global/skin/pageReport.css" type="text/css"?>
+
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %brandDTD;
 %songbirdDTD;
+%browserDTD;
 ]>
 
 <overlay id="ovStatusBar"
@@ -54,8 +58,44 @@
       <sb-status-progressmeter id="sb-status-bar-status-progressmeter" 
           class="sb-status-bar-status-progressmeter" mode="undetermined"/>
     </statusbarpanel>
+    <statusbarpanel id="page-report-button" type="menu" mousethrough="never"
+                     class="statusbarpanel-menu-iconic" 
+                     tooltiptext="&pageReportIcon.tooltip;">
+       <menupopup id="blockedPopupOptionsPanel" 
+                  onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+         <menuitem sbid="blockedPopupAllowSite" 
+                   accesskey="&allowPopups.accesskey;"
+                   oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
+         <menuitem sbid="blockedPopupEditSettings" 
+                   label="&editPopupSettings.label;" 
+                   accesskey="&editPopupSettings.accesskey;" 
+                   oncommand="gPopupBlockerObserver.editPopupSettings();"/>
+         <menuitem sbid="blockedPopupDontShowMessage" 
+                   type="checkbox"
+                   accesskey="&dontShowMessage.accesskey;"
+                   oncommand="gPopupBlockerObserver.dontShowMessage();"/>
+         <menuseparator sbid="blockedPopupSeparator"/>
+       </menupopup>
+     </statusbarpanel>
   </statusbar>
 
+<popupset>
+  <menupopup id="blockedPopupOptions" 
+             onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+    <menuitem sbid="blockedPopupAllowSite" 
+              accesskey="&allowPopups.accesskey;"
+              oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
+    <menuitem sbid="blockedPopupEditSettings" 
+              label="&editPopupSettings.label;" 
+              accesskey="&editPopupSettings.accesskey;" 
+              oncommand="gPopupBlockerObserver.editPopupSettings();"/>
+    <menuitem sbid="blockedPopupDontShowMessage" 
+              type="checkbox"
+              accesskey="&dontShowMessage.accesskey;"
+              oncommand="gPopupBlockerObserver.dontShowMessage();"/>
+    <menuseparator sbid="blockedPopupSeparator"/>
+  </menupopup>
+</popupset>
 
 </overlay>
 
