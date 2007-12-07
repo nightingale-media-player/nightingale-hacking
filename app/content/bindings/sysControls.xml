@@ -195,10 +195,7 @@
           else if ( this.getAttribute("hidden") != "true" ) {
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
-			
-			// TEMP HACK:  Maximize is broken on Mac right now, so just disable the button
-			document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "disabled", "true" );
-		  }
+          }
           var type = this.getAttribute( "type" );
           switch ( type )
           {
@@ -383,8 +380,8 @@
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           if ( sysInfo.getProperty("name") == "Darwin" ) {
-		    // Set an attribute on the feathers button so we can style it appropriately
-			feathersButton.setAttribute("mac", true);
+            // Set an attribute on the feathers button so we can style it appropriately
+            feathersButton.setAttribute("mac", true);
 		  
             // Hidden on Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
@@ -444,7 +441,7 @@
           </xul:hbox>
         </xul:vbox>
 		
-		<xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" >
+        <xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" >
               <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
         </xul:vbox>
         
@@ -562,30 +559,13 @@
             var resizers = this.getAttribute( "resizers" );
             if ( resizers != "none" )
             {
-              // Enable it
-              this.enableResizer( 12 );
-              
-              // Set it to a mac attribute for skinning
-              var r12 = document.getAnonymousElementByAttribute( this, 'sbid', 'r12' ); 
-              r12.setAttribute( "mac", "true" );
-              
-              // And constrain its direction if required to do so
-              if ( resizers == "vert" ) {
-                r12.setAttribute( "dir", "bottom" );
-                r12.setAttribute( "style", "cursor: s-resize;" );
+              // If we don't have a titlebar the OS won't draw our 
+              // resizer graphic for us...  so show our own image.
+              var plucked = SBDataGetBoolValue( "accessibility.enabled" );
+              if (!plucked) {
+                var macResizeImageBox = document.getAnonymousElementByAttribute( this, 'sbid', 'mac_resize_image_box' ); 
+                macResizeImageBox.setAttribute("hidden", "false");
               }
-              if ( resizers == "horiz" ) {
-                r12.setAttribute( "dir", "right" );
-                r12.setAttribute( "style", "cursor: e-resize;" );
-              }
-			  
-			  // If we don't have a titlebar the OS won't draw our 
-			  // resizer graphic for us...  so show our own image.
-			  var plucked = SBDataGetBoolValue( "accessibility.enabled" );
-			  if (!plucked) {
-			    var macResizeImageBox = document.getAnonymousElementByAttribute( this, 'sbid', 'mac_resize_image_box' ); 
-				macResizeImageBox.setAttribute("hidden", "false");
-			  }
             }
           ]]>
         </body>

@@ -299,32 +299,6 @@ var gMiniplayer = {
       // No component
       dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
     }
-
-    window.addEventListener("resize", onMinimumWindowSize, false);
-
-    // Read minimum width and height from CSS.
-    var minWidth = getStyle(document.documentElement, "min-width");
-    var minHeight = getStyle(document.documentElement, "min-height");
-
-    if (minWidth) {
-      minWidth = parseInt(minWidth);
-    }
-
-    if (!minWidth) {
-      minWidth = 480;
-    }
-
-    if (minHeight) {
-      minHeight = parseInt(minHeight);
-    }
-
-    if (!minHeight) {
-      minHeight = 22;
-    }
-
-    gMinWidth = minWidth;
-    gMinHeight = minHeight;
-
     return;
   },
 
@@ -346,9 +320,6 @@ var gMiniplayer = {
     catch(err) {
       dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
     }
-
-    dump("\n\n REMOVED LISTENER FOR MINWIDTH/MINHEIGHT\n\n");
-    window.removeEventListener("resize", onMinimumWindowSize, false);
 
     return;
   },

@@ -128,8 +128,9 @@ function onMaximize()
   {
     document.defaultView.maximize();
   }
-  syncMaxButton();
-  syncResizers();
+  // TODO
+  //syncMaxButton();
+  //syncResizers();
 }
 
 /**
@@ -150,10 +151,7 @@ function isMinimized() {
   return (window.windowState == STATE_MINIMIZED);
 }
 
-/**
- * \brief Synchronize the maximize button with the current window state.
- * \internal
- */
+/* TODO: These broke circa 0.2.  The logic needs to be moved into sys-outer-frame
 function syncMaxButton()
 {
   var maxButton = document.getElementById("sysbtn_maximize");
@@ -163,16 +161,13 @@ function syncMaxButton()
     else maxButton.removeAttribute("checked");
   }
 }
-
-/**
- * \brief Synchronize the resizers with the current window state.
- * \internal
- */
 function syncResizers()
 {
+  // TODO?
   if (isMaximized()) disableResizers();
   else enableResizers();
 }
+*/
 
 /**
  * \brief Restore the window in the current context to unmaximized state.
@@ -184,8 +179,10 @@ function restoreWindow()
   {
     document.defaultView.restore();
   }
-  syncMaxButton();
-  syncResizers();
+  
+  // TODO
+  //syncMaxButton();
+  //syncResizers();
 }
 
 /**
@@ -231,28 +228,6 @@ function onHide()
 
 }
 
-var gMinWidth = null;
-var gMinHeight = null;
-
-function onMinimumWindowSize(event)
-{
-  //
-  // SOMEDAY, we might be able to figure out how to properly constrain our
-  // windows back to the proper min-width / min-height values for the document
-  //
-
-  var desiredWidth = gMinWidth;
-  if (this.outerWidth >= desiredWidth) {
-    desiredWidth = this.outerWidth;
-  }
-
-  var desiredHeight = gMinHeight;
-  if (this.outerHeight >= desiredHeight) {
-    desiredHeight = this.outerHeight;
-  }
-
-  window.resizeTo(desiredWidth, desiredHeight);
-}
 
 /**
  * \brief Handles completion of resizing of the window in the current context.
@@ -499,64 +474,6 @@ function restartApp( )
   onExit( );
 }
 
-
-/**
- * \brief Hide the real resizers
- */
-function hideRealResizers() {
-  var resizers = document.getElementsByTagName("resizer");
-  for (var i=0;i<resizers.length;i++) {
-    resizers[i].setAttribute("hidden", "true");
-  }
-}
-
-/**
- * \brief Show the real resizers.
- */
-function showRealResizers() {
-  var resizers = document.getElementsByTagName("resizer");
-  for (var i=0;i<resizers.length;i++) {
-    resizers[i].removeAttribute("hidden");
-  }
-}
-
-/**
- * \brief Hide fake resizers.
- */
-function hideFakeResizers() {
-  var xresizers = document.getElementsByTagName("x_resizer");
-  for (var i=0;i<xresizers.length;i++) {
-    xresizers[i].setAttribute("hidden", "true");
-  }
-}
-
-/**
- * \brief Show fake resizers.
- */
-function showFakeResizers() {
-  var xresizers = document.getElementsByTagName("x_resizer");
-  for (var i=0;i<xresizers.length;i++) {
-    xresizers[i].removeAttribute("hidden");
-  }
-}
-
-/**
- * \brief Disable the real resizers.
- */
-function disableResizers() {
-  if (SBDataGetBoolValue("accessibility.enabled")) return;
-  hideRealResizers();
-  showFakeResizers();
-}
-
-/**
- * \brief Enable the real resizers.
- */
-function enableResizers() {
-  if (SBDataGetBoolValue("accessibility.enabled")) return;
-  hideFakeResizers();
-  showRealResizers();
-}
 
 /**
  * \brief Hide an element in the window in the current context.

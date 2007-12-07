@@ -67,8 +67,6 @@
     <script type="application/x-javascript" 
     src="chrome://global/content/nsTransferable.js"/>
     <script type="application/x-javascript"  
-    src="chrome://songbird/content/scripts/dragAndDrop.js" />
-    <script type="application/x-javascript"  
     src="chrome://songbird/content/scripts/dndSourceTracker.js" />
     <script type="application/x-javascript"   
     src="chrome://songbird/content/scripts/dndDefaultHandler.js" />

@@ -210,31 +210,6 @@ function setMinMaxCallback(evt)
     dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
   }
 
-  window.addEventListener("resize", onMinimumWindowSize, false);
-
-  // Read minimum width and height from CSS.
-  var minWidth = getStyle(document.documentElement, "min-width");
-  var minHeight = getStyle(document.documentElement, "min-height");
-
-  if (minWidth) {
-    minWidth = parseInt(minWidth);
-  }
-
-  if (!minWidth) {
-    minWidth = 750;
-  }
-
-  if (minHeight) {
-    minHeight = parseInt(minHeight);
-  }
-
-  if (!minHeight) {
-    minHeight = 400;
-  }
-
-  gMinWidth = minWidth;
-  gMinHeight = minHeight;
-
   return;
 }
 
@@ -256,8 +231,6 @@ function resetMinMaxCallback()
   catch(err) {
     dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
   }
-
-  window.removeEventListener("resize", onMinimumWindowSize, false);
 
   return;
 }
