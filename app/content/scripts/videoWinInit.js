@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -80,10 +80,10 @@ function SBVideoInitialize()
 
     // Set our window constraints
     setVideoMinMaxCallback();
-    
+
     // Trap ALTF4
     window.addEventListener("keydown", videoCheckAltF4, true);
-    
+
     windowPlacementSanityChecks();
 
     /*
@@ -103,7 +103,7 @@ function SBVideoInitialize()
       var sysInfo =
         Components.classes["@mozilla.org/system-info;1"]
                   .getService(Components.interfaces.nsIPropertyBag2);
-      platform = sysInfo.getProperty("name");                                          
+      platform = sysInfo.getProperty("name");
     }
     catch (e) {
       dump("System-info not available, trying the user agent string.\n");
@@ -120,14 +120,14 @@ function SBVideoInitialize()
     // Depending upon the platform, initialize one core
     // and hide all of the rest of them.
     //
-    
+
     if (platform == "Windows_NT") {
       // Windows, prefer VLC.
 
       // Hide GStreamer
       if (theGSTBox)
         theGSTBox.hidden = true;
-        
+
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -144,7 +144,7 @@ function SBVideoInitialize()
       // Hide GStreamer
       if (theGSTBox)
         theGSTBox.hidden = true;
-        
+
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -160,7 +160,7 @@ function SBVideoInitialize()
       //InitPlaybackCoreFlash( "core_flash_frame" );
       //CoreTotemDocumentInit( "core_totem_frame" );
       CoreGStreamerSimpleDocumentInit( "box_gstreamer_simple" );
-        
+
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -182,23 +182,6 @@ function SBVideoInitialize()
   catch( err )
   {
     alert( "SBVideoInitialize\n" + err );
-  }
-
-  /////////////////////////////////////////////////////
-  // HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK //
-  /////////////////////////////////////////////////////
-  // We want always set extensions.update.notifyUser //
-  // to true. This makes the extension manager check //
-  // at startup if it should ask the user if they    //
-  // want to install available extension updates.    //
-  // Really, we shouldn't need this but right now we //
-  // do.                                             //
-  // This is for bug #5401                           //
-  /////////////////////////////////////////////////////
-  try {
-    gPrefs.setBoolPref("extensions.update.notifyUser", true);
-  } catch (e) { 
-    dump('exception setting extensions.update.notifyUser: '+e+'\n');
   }
 }
 
@@ -231,14 +214,14 @@ function SBPlayingVideoChanged(value)
 
   if (value == 1) {
     windowCloak.uncloak(window);
-    window.focus(); 
+    window.focus();
   }
   else {
     // restore window if it was maximized before cloaking it</pre>
     restoreWindow();
     // Save position before cloaking, because if we close the app after
     // the window has been cloaked, we can't record its position.
-    windowCloak.cloak(window); 
+    windowCloak.cloak(window);
   }
 }
 
@@ -268,7 +251,7 @@ function SBHideCoreWindow()
   onHide();
 }
 
-var SBVideoMinMaxCB = 
+var SBVideoMinMaxCB =
 {
   // Shrink until the box doesn't match the window, then stop.
   GetMinWidth: function()
@@ -278,7 +261,7 @@ var SBVideoMinMaxCB =
     var retval = 720;
     // However, if in resizing the window size is different from the document's box object
     if (window.innerWidth != outerframe.boxObject.width)
-    { 
+    {
       // That means we found the document's min width.  Because you can't query it directly.
       retval = outerframe.boxObject.width - 1;
     }
@@ -292,7 +275,7 @@ var SBVideoMinMaxCB =
     var retval = 450;
     // However, if in resizing the window size is different from the document's box object
     if (window.innerHeight != outerframe.boxObject.height)
-    { 
+    {
       // That means we found the document's min height.  Because you can't query it directly.
       retval = outerframe.boxObject.height - 1;
     }
@@ -308,7 +291,7 @@ var SBVideoMinMaxCB =
   {
     return -1;
   },
-  
+
   OnWindowClose: function()
   {
     setTimeout(onHideButtonClick, 0);
@@ -317,11 +300,11 @@ var SBVideoMinMaxCB =
   QueryInterface : function(aIID)
   {
     if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
+        !aIID.equals(Components.interfaces.nsISupports))
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
-    
+
     return this;
   }
 }
@@ -370,7 +353,7 @@ function resetVideoMinMaxCallback() {
  */
 function videoCheckAltF4(evt)
 {
-  if (evt.keyCode == VK_F4 && evt.altKey) 
+  if (evt.keyCode == VK_F4 && evt.altKey)
   {
     onHideButtonClick();
   }
@@ -378,10 +361,10 @@ function videoCheckAltF4(evt)
 
 /**
  * \brief Check state of media core initialization.
- * This function attempts to detect media core initialization failures 
+ * This function attempts to detect media core initialization failures
  * by asking the sbIPlaylistPlayback service if an empty URL is a media url.
- * 
- * Upon failure, this function pops open a message box indicating failure 
+ *
+ * Upon failure, this function pops open a message box indicating failure
  * of media core initialization. It also provides a link to documentation
  * that may help the user remedy this problem.
  */
@@ -398,7 +381,7 @@ function SBMediaCoreCheck() {
   catch(e) {
     // pref does not exist
   }
-  
+
   // Try and call a PPS function and make sure we have a core.
   var working = true;
   try {
@@ -440,10 +423,10 @@ function SBMediaCoreCheck() {
                         .getService(Components.interfaces.nsIExternalProtocolService);
     var ios = Components.classes["@mozilla.org/network/io-service;1"]
                         .getService(Components.interfaces.nsIIOService);
-                        
+
     var coreFailureURL = Application.prefs.get("songbird.url.support.corefailure");
     var uri = ios.newURI(coreFailureURL, null, null);
-    
+
     eps.loadURI(uri, null);
   }
 
@@ -453,4 +436,3 @@ function SBMediaCoreCheck() {
 
   return;
 }
-

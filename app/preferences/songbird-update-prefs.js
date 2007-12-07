@@ -30,7 +30,7 @@ pref("app.update.url", "https://updates.songbirdnest.com/update/1/Songbird/%VERS
 pref("app.update.url.manual", "http://www.songbirdnest.com");
 
 // A default value for the "More information about this update" link
-// supplied in the "An update is available" page of the update wizard. 
+// supplied in the "An update is available" page of the update wizard.
 pref("app.update.url.details", "http://www.songbirdnest.com");
 
 // User-settable override to app.update.url for testing purposes.
@@ -40,7 +40,7 @@ pref("app.update.url.details", "http://www.songbirdnest.com");
 //           default=1 day
 pref("app.update.interval", 86400);
 
-// Interval: Time before prompting the user to download a new version that 
+// Interval: Time before prompting the user to download a new version that
 //           is available (in seconds) default=1 day
 pref("app.update.nagTimer.download", 86400);
 
@@ -53,7 +53,7 @@ pref("app.update.nagTimer.restart", 1800);
 pref("app.update.timer", 600000);
 
 // Whether or not we show a dialog box informing the user that the update was
-// successfully applied. This is off in Firefox by default since we show a 
+// successfully applied. This is off in Firefox by default since we show a
 // upgrade start page instead! Other apps may wish to show this UI, and supply
 // a whatsNewURL field in their brand.properties that contains a link to a page
 // which tells users what's new in this new update.
@@ -75,8 +75,8 @@ pref("app.update.incompatible.mode", 0);
 //
 pref("extensions.update.enabled", true);
 pref("extensions.update.url", "chrome://branding/locale/brand.properties");
-pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
-                                            // Feathers every week
+pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
+                                            // Feathers every day
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
 pref("extensions.getMoreExtensionsURL", "chrome://branding/locale/brand.properties");
 pref("extensions.getMoreThemesURL", "chrome://branding/locale/brand.properties");
