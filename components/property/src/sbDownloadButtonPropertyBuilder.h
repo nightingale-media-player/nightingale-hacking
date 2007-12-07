@@ -48,7 +48,9 @@ public:
 private:
 
   nsString mLabel;
+  nsString mRetryLabel;
   nsString mLabelKey;
+  nsString mRetryLabelKey;
 };
 
 #endif /* __SBDOWNLOADBUTTONPROPERTYBUILDER_H__ */

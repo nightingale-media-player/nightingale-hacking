@@ -561,6 +561,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = dbBuilder->SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = dbBuilder->SetRemoteReadable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);

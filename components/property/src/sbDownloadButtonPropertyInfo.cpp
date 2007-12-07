@@ -24,6 +24,8 @@
 //
 */
 
+#define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
+
 #include "sbDownloadButtonPropertyInfo.h"
 #include "sbStandardOperators.h"
 
@@ -31,6 +33,7 @@
 #include <sbIPropertyManager.h>
 #include <nsIStringBundle.h>
 #include <nsITreeView.h>
+#include <nsServiceManagerUtils.h>
 
 NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
                              sbImmutablePropertyInfo,
@@ -50,6 +53,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
 sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyID,
                                                            const nsAString& aDisplayName,
                                                            const nsAString& aLabel,
+                                                           const nsAString& aRetryLabel,
                                                            const PRBool aRemoteReadable,
                                                            const PRBool aRemoteWritable,
                                                            const PRBool aUserViewable,
@@ -58,6 +62,7 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
   mID = aPropertyID;
   mDisplayName = aDisplayName;
   mLabel = aLabel;
+  mRetryLabel = aRetryLabel;
   mUserViewable = aUserViewable;
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
@@ -171,7 +176,7 @@ sbDownloadButtonPropertyInfo::GetCellProperties(const nsAString& aValue,
       _retval.AssignLiteral("progressPaused");
       break;
     case sbDownloadButtonPropertyValue::eFailed:
-      _retval.AssignLiteral("progressFailed");
+      _retval.AssignLiteral("button progressFailed");
       break;
     default:
       _retval.Truncate();
@@ -244,6 +249,9 @@ sbDownloadButtonPropertyInfo::Format(const nsAString& aValue,
   switch(value.GetMode()) {
     case sbDownloadButtonPropertyValue::eNew:
       _retval = mLabel;
+      break;
+    case sbDownloadButtonPropertyValue::eFailed:
+      _retval = mRetryLabel;
       break;
     default:
       _retval.Truncate();

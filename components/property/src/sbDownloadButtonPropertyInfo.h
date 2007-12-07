@@ -51,6 +51,7 @@ public:
   sbDownloadButtonPropertyInfo(const nsAString& aPropertyID,
                                const nsAString& aDisplayName,
                                const nsAString& aLabel,
+                               const nsAString& aRetryLabel,
                                const PRBool aRemoteReadable,
                                const PRBool aRemoteWritable,
                                const PRBool aUserViewable,
@@ -63,6 +64,7 @@ public:
 private:
 
   nsString mLabel;
+  nsString mRetryLabel;
 
 };
 

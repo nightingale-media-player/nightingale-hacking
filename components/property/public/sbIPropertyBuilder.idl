@@ -80,8 +80,12 @@ interface sbISimpleButtonPropertyBuilder : sbIPropertyBuilder
 interface sbIDownloadButtonPropertyBuilder : sbIPropertyBuilder
 {
   attribute AString label;
+  
+  attribute AString retryLabel;
 
   attribute AString labelKey;
+  
+  attribute AString retryLabelKey;
 };
 
 /**

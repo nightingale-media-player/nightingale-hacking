@@ -55,11 +55,21 @@ sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   else {
     label = mLabel;
   }
+  
+  nsString retryLabel;
+  if (!mRetryLabelKey.IsEmpty()) {
+    rv = GetStringFromName(mBundle, mRetryLabelKey, retryLabel);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    retryLabel = mRetryLabel;
+  }
 
   nsRefPtr<sbDownloadButtonPropertyInfo> pi =
     new sbDownloadButtonPropertyInfo(mPropertyID,
                                      displayName,
                                      label,
+                                     retryLabel,
                                      mRemoteReadable,
                                      mRemoteWritable,
                                      mUserViewable,
@@ -87,6 +97,19 @@ sbDownloadButtonPropertyBuilder::SetLabel(const nsAString& aLabel)
 }
 
 NS_IMETHODIMP
+sbDownloadButtonPropertyBuilder::GetRetryLabel(nsAString& aRetryLabel)
+{
+  aRetryLabel = mRetryLabel;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbDownloadButtonPropertyBuilder::SetRetryLabel(const nsAString& aRetryLabel)
+{
+  mRetryLabel = aRetryLabel;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDownloadButtonPropertyBuilder::GetLabelKey(nsAString& aLabelKey)
 {
   aLabelKey = mLabelKey;
@@ -99,3 +122,15 @@ sbDownloadButtonPropertyBuilder::SetLabelKey(const nsAString& aLabelKey)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbDownloadButtonPropertyBuilder::GetRetryLabelKey(nsAString& aRetryLabelKey)
+{
+  aRetryLabelKey = mRetryLabelKey;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbDownloadButtonPropertyBuilder::SetRetryLabelKey(const nsAString& aRetryLabelKey)
+{
+  mRetryLabelKey = aRetryLabelKey;
+  return NS_OK;
+}
