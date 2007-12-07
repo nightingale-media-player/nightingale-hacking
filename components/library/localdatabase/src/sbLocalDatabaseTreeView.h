@@ -34,6 +34,7 @@
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseTreeView.h>
 #include <sbIMediaListViewTreeView.h>
+#include <sbIPlaylistPlayback.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -72,7 +73,8 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public sbILocalDatabaseAsyncGUIDArrayListener,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
-                                public sbILocalDatabaseTreeView
+                                public sbILocalDatabaseTreeView,
+                                public sbIPlaylistPlaybackListener
 {
   friend class sbLocalDatabaseTreeSelection;
   typedef nsresult (*PR_CALLBACK sbSelectionEnumeratorCallbackFunc)
@@ -86,6 +88,7 @@ public:
   NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW
   NS_DECL_SBILOCALDATABASETREEVIEW
+  NS_DECL_SBIPLAYLISTPLAYBACKLISTENER
 
   sbLocalDatabaseTreeView();
 
@@ -199,6 +202,9 @@ private:
                                          nsAString& aValue,
                                          sbIPropertyInfo** aPropertyInfo);
 
+  nsresult GetPlayingProperty(PRUint32 aIndex,
+                              nsISupportsArray* properties);
+
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
@@ -258,6 +264,10 @@ private:
   PRUint32 mMouseState;
   PRInt32 mMouseStateRow;
   nsCOMPtr<nsITreeColumn> mMouseStateColumn;
+
+  // Currently playing track UID and index
+  nsString mPlayingItemUID;
+  nsCOMPtr<sbIPlaylistPlayback> mPlaylistPlayback;
 
   // True when the everything is selected
   PRPackedBool mSelectionIsAll;

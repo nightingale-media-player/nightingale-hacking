@@ -323,6 +323,32 @@ In-cell Origin Page Image (Source Column)
 
 /** 
 *******************************************************************************
+Playing track indicator
+*******************************************************************************
+*/
+.sb-playlist-tree > treecols > treecol[bind = 'http://songbirdnest.com/data/1.0#trackName']
+{
+  padding-left: 18px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName )
+{
+  padding-left: 18px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing )
+{
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/tree/playing.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing, selected )
+{
+  background-position: 0% -18px;
+}
+
+/** 
+*******************************************************************************
 Playlist Commands
 *******************************************************************************
 */

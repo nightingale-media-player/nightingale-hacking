@@ -215,22 +215,24 @@ private:
   PRBool mSelectEventsSuppressed;
 };
 
-NS_IMPL_ISUPPORTS7(sbLocalDatabaseTreeView,
+NS_IMPL_ISUPPORTS8(sbLocalDatabaseTreeView,
                    nsIClassInfo,
                    nsISupportsWeakReference,
                    nsITreeView,
                    sbILocalDatabaseAsyncGUIDArrayListener,
                    sbILocalDatabaseGUIDArrayListener,
                    sbILocalDatabaseTreeView,
-                   sbIMediaListViewTreeView)
+                   sbIMediaListViewTreeView,
+                   sbIPlaylistPlaybackListener)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseTreeView,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseTreeView,
                              nsIClassInfo,
                              nsITreeView,
                              sbILocalDatabaseAsyncGUIDArrayListener,
                              sbILocalDatabaseGUIDArrayListener,
                              sbILocalDatabaseTreeView,
-                             sbIMediaListViewTreeView)
+                             sbIMediaListViewTreeView,
+                             sbIPlaylistPlaybackListener)
 
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mListType(eLibrary),
@@ -266,6 +268,11 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
     if (NS_SUCCEEDED(rv))
       mArray->RemoveAsyncListener(asyncListener);
   }
+
+  if (mPlaylistPlayback) {
+    mPlaylistPlayback->RemoveListener(this);
+  }
+
 }
 
 nsresult
@@ -411,6 +418,43 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
                                        getter_Copies(mLocalizedAll));
   if (NS_FAILED(rv)) {
     mLocalizedAll.AssignLiteral("library.all");
+  }
+
+  // If this is not a distinct list, set up a listener to track playback
+  // changes
+  if (mListType != eDistinct) {
+    mPlaylistPlayback =
+      do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPlaylistPlaybackListener> playbackListener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIPlaylistPlaybackListener*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mPlaylistPlayback->AddListener(playbackListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isPlaying;
+    rv = mPlaylistPlayback->GetPlaying(&isPlaying);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If we are already playing, initialized the playing indicator
+    if (isPlaying) {
+      nsCOMPtr<sbIMediaListView> playingView;
+      rv = mPlaylistPlayback->GetPlayingView(getter_AddRefs(playingView));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRInt32 playingIndex;
+      rv = mPlaylistPlayback->GetCurrentIndex(&playingIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIMediaItem> playingItem;
+      rv = playingView->GetItemByIndex(playingIndex,
+                                       getter_AddRefs(playingItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = OnTrackChange(playingItem, playingView, playingIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -1566,6 +1610,28 @@ sbLocalDatabaseTreeView::GetPropertyInfoAndCachedValue(PRInt32 aRow,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
+                                            nsISupportsArray* properties)
+{
+  NS_ASSERTION(properties, "properties is null");
+
+  nsresult rv;
+
+  if (!mPlayingItemUID.IsEmpty()) {
+    nsString uid;
+    rv = GetUniqueIdForIndex(aIndex, uid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mPlayingItemUID.Equals(uid)) {
+      rv = TokenizeProperties(NS_LITERAL_STRING("playing"), properties);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetRowCount(PRInt32 *aRowCount)
 {
@@ -1728,6 +1794,9 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
 
   PRUint32 index = TreeToArray(row);
 
+  rv = GetPlayingProperty(index, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   if (!mRowCache.Get(index, getter_AddRefs(bag)) &&
       !mDirtyRowCache.Get(index, getter_AddRefs(bag))) {
@@ -1806,6 +1875,9 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
         break;
     }
   }
+
+  rv = GetPlayingProperty(TreeToArray(row), properties);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> pi;
   nsString value;
@@ -2629,6 +2701,73 @@ sbLocalDatabaseTreeView::GetCurrentMediaItem(sbIMediaItem** aCurrentMediaItem)
 
   rv = list->GetItemByGuid(guid, aCurrentMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// sbIPlaylistPlaybackListener
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnStop()
+{
+  nsresult rv;
+
+  mPlayingItemUID = EmptyString();
+
+  if (mTreeBoxObject) {
+    rv = mTreeBoxObject->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
+                                       sbIMediaListView* aView,
+                                       PRUint32 aIndex)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+
+  nsresult rv;
+
+  if (mMediaListView) {
+    nsCOMPtr<sbIMediaList> viewList;
+    rv = mMediaListView->GetMediaList(getter_AddRefs(viewList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> playingList;
+    rv = aView->GetMediaList(getter_AddRefs(playingList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool equals;
+    rv = viewList->Equals(playingList, &equals);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (equals) {
+      nsString uid;
+      rv = aView->GetViewItemUIDForIndex(aIndex, uid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 index;
+      rv = mMediaListView->GetIndexForViewItemUID(uid, &index);
+      if (NS_SUCCEEDED(rv)) {
+        rv = GetUniqueIdForIndex(index, mPlayingItemUID);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        mPlayingItemUID = EmptyString();
+      }
+    }
+    else {
+      mPlayingItemUID = EmptyString();
+    }
+  }
+
+  if (mTreeBoxObject) {
+    rv = mTreeBoxObject->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

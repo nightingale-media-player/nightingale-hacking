@@ -340,6 +340,7 @@ PlaylistPlayback.prototype = {
   _stopNextLoop:      false,
   _playlistReaderManager: null,
 
+  _listeners: [],
   
   /**
    * ---------------------------------------------
@@ -891,7 +892,17 @@ PlaylistPlayback.prototype = {
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
- 
+
+    // Notify listeners of a track change
+    this._listeners.forEach(function(aListener) {
+      try {
+        aListener.onTrackChange(aView.getItemByIndex(aIndex), aView, aIndex);
+      }
+      catch(e) {
+        Components.utils.reportError(e);
+      }
+    });
+
     return retval;
   },
 
@@ -1005,6 +1016,17 @@ PlaylistPlayback.prototype = {
 */    
     this._playingVideo.boolValue = false;
     this._controlTriggered.stringValue = Date.now();
+
+    // Notify listeners of stop
+    this._listeners.forEach(function(aListener) {
+      try {
+        aListener.onStop();
+      }
+      catch(e) {
+        Components.utils.reportError(e);
+      }
+    });
+
     return true;
   },
 
@@ -1280,7 +1302,24 @@ PlaylistPlayback.prototype = {
     }
     return urlDisplay;
   },
- 
+
+  addListener: function (aListener)
+  {
+    if(!this._listeners.some(function(o) { return (o == aListener); })) {
+      this._listeners.push(aListener);
+    }
+  },
+
+  removeListener: function (aListener)
+  {
+    this._listeners.forEach(function(e, i) {
+      if (e == aListener) {
+        this._listeners.splice(i, 1);
+        return;
+      }
+    }, this);
+  },
+
   // watch for XRE startup and shutdown messages 
   observe: function(subject, topic, data) {
     switch (topic) {

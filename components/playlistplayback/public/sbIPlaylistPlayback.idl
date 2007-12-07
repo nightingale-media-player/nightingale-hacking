@@ -42,6 +42,32 @@ interface sbIMediaListView;
 interface sbIMediaItem;
 
 /**
+ * \interface sbIPlaylistPlaybackListener
+ * \brief Interface that handles the tracking of playback changes
+ */
+[scriptable, uuid(6a687f00-b6df-4efc-83e4-35670a714222)]
+interface sbIPlaylistPlaybackListener : nsISupports
+{
+  /**
+   * \brief Called when playback stops
+   */
+  void onStop();
+
+  /**
+   * \brief Called when a new track starts playing.  Note that this gets called
+   *        even when the new track is the same as the last track played.
+   *
+   * \param aItem Media item of the new track
+   * \param aView The view that is currently being played
+   * \param aIndex The index of the playback position in the view
+   */
+  void onTrackChange(in sbIMediaItem aItem,
+                     in sbIMediaListView aView,
+                     in unsigned long aIndex);
+
+};
+
+/**
  * \interface sbIPlaylistPlayback
  * \brief Defines standard media player playback functionality.
  * This interface defines the interface for managing playback cores (adding
@@ -53,7 +79,7 @@ interface sbIMediaItem;
  * \sa sbICoreWrapper
  * An interface that describes the PlaylistPlayback Service
  */
-[scriptable, uuid(9b4b18eb-8b76-4e16-a0a3-a1f41bf1df76)]
+[scriptable, uuid(9a7c48a8-b02f-41bb-a4e7-02f472d7954c)]
 interface sbIPlaylistPlayback : nsIObserver
 {
   // --------------------------------------------------------------------------
@@ -458,6 +484,18 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   AString convertURLToFolder(in AString aURL);
 
-};
+  /**
+   * \brief Add a listener for playback notifications
+   * 
+   * \param aListener The listener to add
+   */
+   void addListener(in sbIPlaylistPlaybackListener aListener);
 
+  /**
+   * \brief Remove a listener from playback notifications
+   * 
+   * \param aListener The listener to add
+   */
+   void removeListener(in sbIPlaylistPlaybackListener aListener);
+};
 

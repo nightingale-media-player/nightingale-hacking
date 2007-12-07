@@ -328,8 +328,12 @@ sbRemotePlayer::sbRemotePlayer() :
 sbRemotePlayer::~sbRemotePlayer()
 {
   LOG(("sbRemotePlayer::~sbRemotePlayer()"));
-  mRemObsHash.Enumerate(UnbindAndRelease, nsnull);
-  mRemObsHash.Clear();
+
+  if (mRemObsHash.IsInitialized()) {
+    mRemObsHash.Enumerate(UnbindAndRelease, nsnull);
+    mRemObsHash.Clear();
+  }
+
   if (mDownloadCallback)
     mDownloadCallback->Finalize();
   if (mNotificationMgr)
