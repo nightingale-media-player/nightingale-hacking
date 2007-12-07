@@ -32,14 +32,11 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteWebMediaList:5
+ *   NSPR_LOG_MODULES=sbRemoteMediaList:5
+ *   LOG_LIST defined in sbRemoteMediaListBase.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteWebMediaListLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteWebMediaListLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIST(args)
 
 const static char* sPublicWProperties[] = { "" };
 
@@ -114,16 +111,11 @@ sbRemoteWebMediaList::sbRemoteWebMediaList( sbRemotePlayer* aRemotePlayer,
                                             sbIMediaListView* aMediaListView ) :
   sbRemoteMediaList( aRemotePlayer, aMediaList, aMediaListView )
 {
-#ifdef PR_LOGGING
-  if (!gRemoteWebMediaListLog) {
-    gRemoteWebMediaListLog = PR_NewLogModule("sbRemoteWebMediaList");
-  }
-  LOG(("sbRemoteWebMediaList::sbRemoteWebMediaList()"));
-#endif
+  LOG_LIST(("sbRemoteWebMediaList::sbRemoteWebMediaList()"));
 }
 
 sbRemoteWebMediaList::~sbRemoteWebMediaList()
 {
-  LOG(("sbRemoteWebMediaList::~sbRemoteWebMediaList()"));
+  LOG_LIST(("sbRemoteWebMediaList::~sbRemoteWebMediaList()"));
 }
 

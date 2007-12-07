@@ -29,6 +29,7 @@
 
 #include "sbRemoteAPI.h"
 #include "sbRemoteForwardingMacros.h"
+#include <sbILibraryResource.h>
 
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -43,6 +44,12 @@
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
+
+#ifdef PR_LOGGING
+extern PRLogModuleInfo *gRemoteMediaListLog;
+#endif
+
+#define LOG_LIST(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
 
 class sbILibrary;
 class sbIMediaListView;
@@ -61,14 +68,10 @@ public:
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTEMEDIALIST
 
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY_SETPROPERTIES(mMediaItem)
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemLibraryResource)
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
-
-  // sbILibraryResource
-  NS_IMETHOD SetProperty(const nsAString& aID, const nsAString& aValue);
-  NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
 
   // sbIMediaList
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
@@ -114,6 +117,7 @@ protected:
   nsCOMPtr<sbIMediaListView> mMediaListView;
   nsCOMPtr<sbIMediaItem> mMediaItem;
   nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILibraryResource> mRemLibraryResource;
 };
 
 class sbMediaListEnumerationListenerWrapper : public sbIMediaListEnumerationListener

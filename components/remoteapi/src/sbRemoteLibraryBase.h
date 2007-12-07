@@ -45,7 +45,6 @@
 #include <sbIMetadataJob.h>
 #include <sbIRemoteLibrary.h>
 #include <sbIRemoteMediaList.h>
-#include <sbIRemotePlayer.h>
 #include <sbIScriptableFilterResult.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
@@ -57,6 +56,13 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+
+#ifdef PR_LOGGING
+extern PRLogModuleInfo *gRemoteLibraryLog;
+#endif
+
+#define LOG_LIB(args) PR_LOG(gRemoteLibraryLog, PR_LOG_WARN, args)
+#define TRACE_LIB(args) PR_LOG(gRemoteLibraryLog, PR_LOG_DEBUG, args)
 
 class nsIStringEnumerator;
 class sbIMediaItem;

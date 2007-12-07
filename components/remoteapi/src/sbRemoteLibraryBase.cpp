@@ -81,15 +81,15 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteLibraryBase:5
+ *   NSPR_LOG_MODULES=sbRemoteLibrary:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gLibraryLog = nsnull;
+PRLogModuleInfo* gRemoteLibraryLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
-#define TRACE(args) PR_LOG(gLibraryLog, PR_LOG_DEBUG, args)
+#define LOG(args) LOG_LIB(args)
+#define TRACE(args) TRACE_LIBS(args)
 
 // Observer for the PlaylistReader that notifies the callback and optionally
 // launches a metadata job when the playlist is loaded.
@@ -279,16 +279,16 @@ sbRemoteLibraryBase::sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer) :
 {
   NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
 #ifdef PR_LOGGING
-  if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbRemoteLibraryBase");
+  if (!gRemoteLibraryLog) {
+    gRemoteLibraryLog = PR_NewLogModule("sbRemoteLibrary");
   }
-  LOG(("sbRemoteLibraryBase::sbRemoteLibraryBase()"));
+  LOG_LIB(("sbRemoteLibraryBase::sbRemoteLibraryBase()"));
 #endif
 }
 
 sbRemoteLibraryBase::~sbRemoteLibraryBase()
 {
-  LOG(("sbRemoteLibraryBase::~sbRemoteLibraryBase()"));
+  LOG_LIB(("sbRemoteLibraryBase::~sbRemoteLibraryBase()"));
 }
 
 // ---------------------------------------------------------------------------
@@ -340,14 +340,14 @@ sbRemoteLibraryBase::SetScanMediaOnCreation( PRBool aShouldScan )
 NS_IMETHODIMP
 sbRemoteLibraryBase::ConnectToDefaultLibrary( const nsAString &aLibName )
 {
-  LOG(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(guid:%s)",
-        NS_LossyConvertUTF16toASCII(aLibName).get() ));
+  LOG_LIB(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(guid:%s)",
+            NS_LossyConvertUTF16toASCII(aLibName).get() ));
 
   nsAutoString guid;
   nsresult rv = GetLibraryGUID(aLibName, guid);
   if ( NS_SUCCEEDED(rv) ) {
-    LOG(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(%s) -- IS a default library",
-          NS_LossyConvertUTF16toASCII(guid).get() ));
+    LOG_LIB(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(%s) -- IS a default library",
+              NS_LossyConvertUTF16toASCII(guid).get() ));
 
     // See if the library manager has it lying around.
     nsCOMPtr<sbILibraryManager> libManager(
@@ -370,7 +370,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
-  LOG(("sbRemoteLibraryBase::CreateMediaItem()"));
+  LOG_LIB(("sbRemoteLibraryBase::CreateMediaItem()"));
 
   nsCOMPtr<nsIURI> uri;
   nsresult rv = NS_NewURI(getter_AddRefs(uri), aURL);
@@ -521,7 +521,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
   NS_ENSURE_ARG(!aURL.IsEmpty());
   NS_ENSURE_STATE(mLibrary);
 
-  LOG(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
+  LOG_LIB(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
 
   nsString siteID;
   if (aSiteID.IsEmpty()) {
@@ -618,7 +618,7 @@ sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
 {
-  LOG(("sbRemoteLibraryBase::GetPlaylists()"));
+  LOG_LIB(("sbRemoteLibraryBase::GetPlaylists()"));
   
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
@@ -670,7 +670,7 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
 {
-  LOG(("sbRemoteLibraryBase::GetArtists()"));
+  LOG_LIB(("sbRemoteLibraryBase::GetArtists()"));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
   
@@ -695,7 +695,7 @@ sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
 {
-  LOG(("sbRemoteLibraryBase::GetAlbums()"));
+  LOG_LIB(("sbRemoteLibraryBase::GetAlbums()"));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
   
@@ -720,7 +720,7 @@ sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
 {
-  LOG(("sbRemoteLibraryBase::GetGenres()"));
+  LOG_LIB(("sbRemoteLibraryBase::GetGenres()"));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
   
@@ -745,7 +745,7 @@ sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
 {
-  LOG(("sbRemoteLibraryBase::GetYears()"));
+  LOG_LIB(("sbRemoteLibraryBase::GetYears()"));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
   
@@ -770,7 +770,7 @@ sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetItems( nsISupports** _retval )
 {
-  LOG(("sbRemoteLibraryBase::Items()"));
+  LOG_LIB(("sbRemoteLibraryBase::Items()"));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
   
@@ -900,7 +900,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
                                   jsval * vp,
                                   PRBool *_retval )
 {
-  TRACE(("sbRemoteLibraryBase::GetProperty()"));
+  TRACE_LIB(("sbRemoteLibraryBase::GetProperty()"));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(vp);
   
@@ -916,7 +916,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
   nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(JSVAL_TO_STRING(id)),
                           ::JS_GetStringLength(JSVAL_TO_STRING(id)));
 
-  TRACE(( "   Getting property %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
+  TRACE_LIB(( "   Getting property %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
   
   nsCOMPtr<nsISupports> supports;
   
@@ -1054,11 +1054,11 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
 {
 #ifdef PR_LOGGING
   // This method is static, so the log might not be initialized
-  if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbRemoteLibraryBase");
+  if (!gRemoteLibraryLog) {
+    gRemoteLibraryLog = PR_NewLogModule("sbRemoteLibrary");
   }
-  LOG(( "sbRemoteLibraryBase::GetLibraryGUID(%s)",
-        NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+  LOG_LIB(( "sbRemoteLibraryBase::GetLibraryGUID(%s)",
+            NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
 #endif
 
   nsCAutoString prefKey;
@@ -1072,7 +1072,7 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
 
   // right now just bail if it isn't a default
   if ( prefKey.IsEmpty() ) {
-    LOG(("sbRemoteLibraryBase::GetLibraryGUID() -- not a default library"));
+    LOG_LIB(("sbRemoteLibraryBase::GetLibraryGUID() -- not a default library"));
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
     // We might want to do the string hashing here and add keys for

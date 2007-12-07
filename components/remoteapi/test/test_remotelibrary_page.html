@@ -97,11 +97,11 @@ function runTest(tester) {
               "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
 
     // property access/modification in the mainLibrary
-    var dummyGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
-    mainLib.setProperty("http://songbirdnest.com/data/1.0#storageGUID", dummyGuid);
-    var propVal = mainLib.getProperty("http://songbirdnest.com/data/1.0#storageGUID");
+    var testName = "Test Name";
+    mainLib.setProperty("http://songbirdnest.com/data/1.0#mediaListName", testName);
+    var propVal = mainLib.getProperty("http://songbirdnest.com/data/1.0#mediaListName");
 
-    tester.assertTrue(propVal == dummyGuid, "PropVal not equal to dummyGuid");
+    tester.assertTrue(propVal == testName, "PropVal not equal to testName");
 
     // access within the webLibrary
     webLib.name;

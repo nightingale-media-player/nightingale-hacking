@@ -48,14 +48,14 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteMediaListBase:5
+ *   NSPR_LOG_MODULES=sbRemoteMediaList:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
+PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIST(args)
 
 // derived classes must impl nsIClassInfo
 NS_IMPL_ISUPPORTS8(sbRemoteMediaListBase,
@@ -86,15 +86,15 @@ sbRemoteMediaListBase::sbRemoteMediaListBase(sbRemotePlayer* aRemotePlayer,
 
 #ifdef PR_LOGGING
   if (!gRemoteMediaListLog) {
-    gRemoteMediaListLog = PR_NewLogModule("sbRemoteMediaListBase");
+    gRemoteMediaListLog = PR_NewLogModule("sbRemoteMediaList");
   }
-  LOG(("sbRemoteMediaListBase::sbRemoteMediaListBase()"));
+  LOG_LIST(("sbRemoteMediaListBase::sbRemoteMediaListBase()"));
 #endif
 }
 
 sbRemoteMediaListBase::~sbRemoteMediaListBase()
 {
-  LOG(("sbRemoteMediaListBase::~sbRemoteMediaListBase()"));
+  LOG_LIST(("sbRemoteMediaListBase::~sbRemoteMediaListBase()"));
 }
 
 // ---------------------------------------------------------------------------
@@ -145,42 +145,6 @@ sbRemoteMediaListBase::GetMediaList()
   sbIMediaList* list = mMediaList;
   NS_ADDREF(list);
   return list;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                        sbILibraryResource
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaListBase::SetProperty(const nsAString& aID,
-                                   const nsAString& aValue)
-{
-  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NULL_POINTER);
-
-  nsresult rv = mMediaList->SetProperty(aID, aValue);
-  if (NS_SUCCEEDED(rv)) {
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eEditedItems, mLibrary);
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaListBase::SetProperties(sbIPropertyArray* aProperties)
-{
-  NS_ENSURE_ARG_POINTER(aProperties);
-  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NULL_POINTER);
-
-  nsresult rv = mMediaList->SetProperties(aProperties);
-  if (NS_SUCCEEDED(rv)) {
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eEditedItems, mLibrary);
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
@@ -316,7 +280,7 @@ sbRemoteMediaListBase::Contains(sbIMediaItem* aMediaItem, PRBool* _retval)
 NS_IMETHODIMP
 sbRemoteMediaListBase::Add(sbIMediaItem *aMediaItem)
 {
-  LOG(("sbRemoteMediaListBase::Add()"));
+  LOG_LIST(("sbRemoteMediaListBase::Add()"));
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   nsresult rv;
@@ -383,7 +347,7 @@ NS_IMETHODIMP
 sbRemoteMediaListBase::Remove(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  LOG(("sbRemoteMediaListBase::Remove()"));
+  LOG_LIST(("sbRemoteMediaListBase::Remove()"));
 
   nsresult rv;
   nsCOMPtr<sbIWrappedMediaItem> wrappedMediaItem =
@@ -408,7 +372,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyID
                                                     nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  LOG(("sbRemoteMediaListBase::GetDistinctValuesForProperty()"));
+  LOG_LIST(("sbRemoteMediaListBase::GetDistinctValuesForProperty()"));
 
   // get enumeration of stuff
   nsCOMPtr<nsIStringEnumerator> enumeration;
@@ -418,7 +382,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyID
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbRemoteWrappingStringEnumerator> wrapped(
-                           new sbRemoteWrappingStringEnumerator(enumeration, mRemotePlayer) );
+    new sbRemoteWrappingStringEnumerator( enumeration, mRemotePlayer ) );
   NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
 
   rv = wrapped->Init();
@@ -429,7 +393,6 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyID
   return NS_OK;
 }
 
-
 // ---------------------------------------------------------------------------
 //
 //                        sbIRemoteMediaList
@@ -439,7 +402,7 @@ sbRemoteMediaListBase::GetDistinctValuesForProperty(const nsAString &aPropertyID
 NS_IMETHODIMP
 sbRemoteMediaListBase::GetView( sbIMediaListView **aView )
 {
-  LOG(("sbRemoteMediaListBase::GetView()"));
+  LOG_LIST(("sbRemoteMediaListBase::GetView()"));
   NS_ENSURE_ARG_POINTER(aView);
   NS_ASSERTION(mMediaListView, "No View");
   NS_ADDREF( *aView = mMediaListView );

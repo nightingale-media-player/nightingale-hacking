@@ -65,9 +65,6 @@ public:
   sbRemoteSiteMediaItem( sbRemotePlayer *aRemotePlayer,
                          sbIMediaItem *aMediaItem );
 
-  NS_IMETHOD GetProperty( const nsAString& aID,
-                          nsAString& _retval );
-
 protected:
   virtual ~sbRemoteSiteMediaItem();
 };

@@ -26,6 +26,7 @@
 
 #include "sbRemoteMediaList.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteLibraryResource.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -33,13 +34,10 @@
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbRemoteMediaList:5
+ *   LOG_LIST defined in sbRemoteMediaListBase.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIST(args)
 
 const static char* sPublicWProperties[] =
 {
@@ -91,7 +89,6 @@ const static char* sPublicMethods[] =
   // none applicable
 
   // sbIMediaList
-  // omitting createView, listeners, and batching
   "library_read:getItemByGuid",
   "library_read:getItemByIndex",
   "library_read:enumerateAllItems",
@@ -125,23 +122,20 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteMediaList,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaList)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteMediaList,
+                                        sbRemoteLibraryResource,
+                                        (mRemotePlayer, mMediaList) )
 
 sbRemoteMediaList::sbRemoteMediaList( sbRemotePlayer* aRemotePlayer,
                                       sbIMediaList* aMediaList,
                                       sbIMediaListView* aMediaListView ) :
   sbRemoteMediaListBase( aRemotePlayer, aMediaList, aMediaListView )
 {
-#ifdef PR_LOGGING
-  if (!gRemoteMediaListLog) {
-    gRemoteMediaListLog = PR_NewLogModule("sbRemoteMediaList");
-  }
-  LOG(("sbRemoteMediaList::sbRemoteMediaList()"));
-#endif
+  LOG_LIST(("sbRemoteMediaList::sbRemoteMediaList()"));
 }
 
 sbRemoteMediaList::~sbRemoteMediaList()
 {
-  LOG(("sbRemoteMediaList::~sbRemoteMediaList()"));
+  LOG_LIST(("sbRemoteMediaList::~sbRemoteMediaList()"));
 }
 

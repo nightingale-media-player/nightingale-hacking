@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteSiteMediaItem.h"
+#include "sbRemoteSiteLibraryResource.h"
 #include "sbRemotePlayer.h"
 
 #include <prlog.h>
@@ -34,13 +35,10 @@
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbRemoteSiteMediaItem:5
+ *   LOG_ITEM defined in sbRemoteMediaItem.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteSiteMediaItemLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteSiteMediaItemLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_ITEM(args)
 
 const static char* sPublicWProperties[] = {""};
 
@@ -88,6 +86,7 @@ sbRemoteSiteMediaItemSecurityMixin::CanGetProperty( const nsIID* aIID,
                                                     const PRUnichar* aPropertyID,
                                                     char** _retval )
 {
+  LOG_ITEM(("sbRemoteSiteMediaItemSecurityMixin::CanGetProperty()"));
   nsresult rv = sbSecurityMixin::CanGetProperty( aIID, aPropertyID, _retval );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -127,48 +126,23 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteSiteMediaItem,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM(sbRemoteSiteMediaItem,
-                                        sbRemoteSiteMediaItemSecurityMixin,
-                                        (mMediaItem))
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_LIBRES(sbRemoteSiteMediaItem,
+                                              sbRemoteSiteMediaItemSecurityMixin,
+                                              (mMediaItem),
+                                              sbRemoteSiteLibraryResource,
+                                              (mRemotePlayer, mMediaItem) )
+
 
 sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbRemotePlayer* aRemotePlayer,
                                              sbIMediaItem* aMediaItem) :
   sbRemoteMediaItem(aRemotePlayer, aMediaItem)
 {
-#ifdef PR_LOGGING
-  if (!gRemoteSiteMediaItemLog) {
-    gRemoteSiteMediaItemLog = PR_NewLogModule("sbRemoteSiteMediaItem");
-  }
-  LOG(("sbRemoteSiteMediaItem::sbRemoteSiteMediaItem()"));
-#endif
+  LOG_ITEM(("sbRemoteSiteMediaItem::sbRemoteSiteMediaItem()"));
   NS_ASSERTION( aMediaItem, "Null media item!" );
 }
 
 sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
 {
-  LOG(("sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()"));
+  LOG_ITEM(("sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()"));
 }
 
-NS_IMETHODIMP
-sbRemoteSiteMediaItem::GetProperty(const nsAString & aID,
-                                   nsAString & _retval)
-{
-  LOG(("sbRemoteSiteMediaItem::GetProperty()"));
-
-  nsresult rv = sbRemoteMediaItem::GetProperty( aID, _retval );
-  if ( NS_SUCCEEDED(rv) || !aID.EqualsLiteral(SB_PROPERTY_CONTENTURL) ) {
-    return rv;
-  }
-
-  nsString contentURL;
-  rv = mMediaItem->GetProperty( aID, contentURL );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  if (StringBeginsWith( contentURL, NS_LITERAL_STRING("file:") )) {
-    NS_WARNING("Disallowing access to 'file:' URI from contentURL property");
-    return NS_ERROR_FAILURE;
-  }
-
-  _retval.Assign(contentURL);
-  return NS_OK;
-}

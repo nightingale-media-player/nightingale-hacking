@@ -26,6 +26,7 @@
 
 #include "sbRemoteMediaItem.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteLibraryResource.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -38,11 +39,11 @@
  *   NSPR_LOG_MODULES=sbRemoteMediaItem:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaItemLog = nsnull;
+PRLogModuleInfo* gRemoteMediaItemLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteMediaItemLog, PR_LOG_WARN, args)
+#define LOG(args)  LOG_ITEM(args)
 
 const static char* sPublicWProperties[] = { "" };
 
@@ -98,7 +99,9 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteMediaItem,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaItem)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteMediaItem,
+                                        sbRemoteLibraryResource,
+                                        (mRemotePlayer, mMediaItem) )
 
 sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
                                      sbIMediaItem* aMediaItem) :
@@ -112,8 +115,13 @@ sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
   if (!gRemoteMediaItemLog) {
     gRemoteMediaItemLog = PR_NewLogModule("sbRemoteMediaItem");
   }
-  LOG(("sbRemoteMediaItem::sbRemoteMediaItem()"));
+  LOG_ITEM(("sbRemoteMediaItem::sbRemoteMediaItem()"));
 #endif
+}
+
+sbRemoteMediaItem::~sbRemoteMediaItem()
+{
+  LOG_ITEM(("sbRemoteMediaItem::~sbRemoteMediaItem()"));
 }
 
 // ---------------------------------------------------------------------------
@@ -125,6 +133,7 @@ sbRemoteMediaItem::sbRemoteMediaItem(sbRemotePlayer* aRemotePlayer,
 NS_IMETHODIMP
 sbRemoteMediaItem::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 {
+  LOG_ITEM(( "sbRemoteMediaItem::GetRemotePlayer()"));
   NS_ENSURE_STATE(mRemotePlayer);
   NS_ENSURE_ARG_POINTER(aRemotePlayer);
 
@@ -141,127 +150,18 @@ sbRemoteMediaItem::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
   return NS_OK;
 }
 
+// ---------------------------------------------------------------------------
+//
+//                          sbIWrappedMediaItem
+//
+// ---------------------------------------------------------------------------
+
 already_AddRefed<sbIMediaItem>
 sbRemoteMediaItem::GetMediaItem()
 {
+  LOG_ITEM(( "sbRemoteMediaItem::GetMediaItem()"));
   sbIMediaItem* item = mMediaItem;
   NS_ADDREF(item);
   return item;
 }
 
-/* from sbILibraryResource */
-NS_IMETHODIMP
-sbRemoteMediaItem::GetProperty(const nsAString & aID,
-                               nsAString & _retval)
-{
-  NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
-
-  nsresult rv = NS_OK;
-
-  // get the property manager service
-  nsCOMPtr<sbIPropertyManager> propertyManager =
-      do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
-                     &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // get the property info for the property being requested
-  nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  rv = propertyManager->GetPropertyInfo(aID, getter_AddRefs(propertyInfo));
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // ask if this property is remotely readable
-  PRBool readable = PR_FALSE;
-  rv = propertyInfo->GetRemoteReadable(&readable);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // well, is it readable?
-  if (!readable) {
-    // if not return an error
-    return NS_ERROR_FAILURE;
-  }
-
-  // it all looks ok, pass this request on to the real media item
-  return mMediaItem->GetProperty(aID, _retval);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaItem::SetProperty(const nsAString & aID,
-                               const nsAString & aValue)
-{
-  NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
-
-  nsresult rv = NS_OK;
-
-  // get the property manager service
-  nsCOMPtr<sbIPropertyManager> propertyManager =
-      do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
-                     &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Check to see if we have the property first, if not we must create it with
-  // the right settings so websites can modify it.
-  PRBool hasProp;
-  rv = propertyManager->HasProperty( aID, &hasProp );
-
-  // get the property info for the property being requested - this will create
-  // it if it didn't already exist.
-  nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  rv = propertyManager->GetPropertyInfo( aID, getter_AddRefs(propertyInfo) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // check to see if the prop already existed or if we created it
-  if (hasProp) {
-    // ask if this property is remotely writable
-    PRBool writable = PR_FALSE;
-    rv = propertyInfo->GetRemoteWritable(&writable);
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    // well, is it writeable?
-    if (!writable) {
-      // if not return an error
-      NS_WARNING("Attempting to set a property value that is not allowed to be "
-                 "set from the remote API!");
-      return NS_ERROR_FAILURE;
-    }
-  }
-  else {
-    // we created a new property in the system so enable remote write/read
-    rv = propertyInfo->SetRemoteWritable(PR_TRUE);
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    rv = propertyInfo->SetRemoteReadable(PR_TRUE);
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-
-  // it all looks ok, pass this request on to the real media item
-  rv = mMediaItem->SetProperty(aID, aValue);
-  if (NS_SUCCEEDED(rv)) {
-    nsCOMPtr<sbILibrary> library;
-    rv = mMediaItem->GetLibrary(getter_AddRefs(library));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eEditedItems, library);
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaItem::SetProperties(sbIPropertyArray * aProperties)
-{
-  NS_ENSURE_ARG_POINTER( aProperties );
-  NS_ENSURE_TRUE( mMediaItem, NS_ERROR_NULL_POINTER );
-
-  nsresult rv = mMediaItem->SetProperties(aProperties);
-  if (NS_SUCCEEDED(rv)) {
-    nsCOMPtr<sbILibrary> library;
-    rv = mMediaItem->GetLibrary(getter_AddRefs(library));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mRemotePlayer->GetNotificationManager()
-      ->Action(sbRemoteNotificationManager::eEditedItems, library);
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-  return NS_OK;
-}

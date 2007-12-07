@@ -24,23 +24,21 @@
 //
  */
 
-#include "sbRemoteSiteMediaList.h"
+#include <sbILibraryResource.h>
+
 #include "sbRemotePlayer.h"
-
+#include "sbRemoteSiteMediaList.h"
+#include "sbRemoteSiteLibraryResource.h"
 #include <sbClassInfoUtils.h>
-
 #include <prlog.h>
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteSiteMediaList:5
+ *   NSPR_LOG_MODULES=sbRemoteMediaList:5
+ *   LOG_LIST defined in sbRemoteMediaListBase.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIST(args)
 
 const static char* sPublicWProperties[] =
 {
@@ -126,23 +124,20 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteSiteMediaList,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaList)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaList)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteSiteMediaList,
+                                        sbRemoteSiteLibraryResource,
+                                        (mRemotePlayer, mMediaList) )
 
 sbRemoteSiteMediaList::sbRemoteSiteMediaList( sbRemotePlayer* aRemotePlayer,
                                               sbIMediaList* aMediaList,
                                               sbIMediaListView* aMediaListView ) :
   sbRemoteMediaList( aRemotePlayer, aMediaList, aMediaListView )
 {
-#ifdef PR_LOGGING
-  if (!gRemoteMediaListLog) {
-    gRemoteMediaListLog = PR_NewLogModule("sbRemoteSiteMediaList");
-  }
-  LOG(("sbRemoteSiteMediaList::sbRemoteSiteMediaList()"));
-#endif
+  LOG_LIST(("sbRemoteSiteMediaList::sbRemoteSiteMediaList()"));
 }
 
 sbRemoteSiteMediaList::~sbRemoteSiteMediaList()
 {
-  LOG(("sbRemoteSiteMediaList::~sbRemoteSiteMediaList()"));
+  LOG_LIST(("sbRemoteSiteMediaList::~sbRemoteSiteMediaList()"));
 }
 

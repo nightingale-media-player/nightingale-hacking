@@ -41,6 +41,12 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
+#ifdef PR_LOGGING
+extern PRLogModuleInfo *gRemoteMediaItemLog;
+#endif
+
+#define LOG_ITEM(args) PR_LOG(gRemoteMediaItemLog, PR_LOG_WARN, args)
+
 class sbRemotePlayer;
 
 class sbRemoteMediaItem : public nsIClassInfo,
@@ -57,11 +63,7 @@ public:
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem);
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETGETPROPERTY_SETPROPERTIES(mMediaItem);
-
-  NS_IMETHOD GetProperty(const nsAString& aID, nsAString& _retval);
-  NS_IMETHOD SetProperty(const nsAString& aID, const nsAString& aValue);
-  NS_IMETHOD SetProperties(sbIPropertyArray* aProperties);
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemLibraryResource)
 
   // sbIWrappedMediaItem interface
   virtual already_AddRefed<sbIMediaItem> GetMediaItem();
@@ -71,10 +73,13 @@ public:
 
 protected:
 
+  virtual ~sbRemoteMediaItem();
+
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIMediaItem> mMediaItem;
+  nsCOMPtr<sbILibraryResource> mRemLibraryResource;
 };
 
 #endif // __SB_REMOTE_MEDIAITEM_H__

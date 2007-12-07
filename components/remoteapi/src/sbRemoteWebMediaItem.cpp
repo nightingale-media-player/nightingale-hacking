@@ -33,13 +33,10 @@
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbRemoteWebMediaItem:5
+ *   LOG_ITEM defined in sbRemoteMediaItem.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteWebMediaItemLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteWebMediaItemLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_ITEM(args)
 
 const static char* sPublicWProperties[] = {""};
 
@@ -96,16 +93,11 @@ sbRemoteWebMediaItem::sbRemoteWebMediaItem( sbRemotePlayer* aRemotePlayer,
                                             sbIMediaItem* aMediaItem ) :
   sbRemoteMediaItem(aRemotePlayer, aMediaItem)
 {
-#ifdef PR_LOGGING
-  if (!gRemoteWebMediaItemLog) {
-    gRemoteWebMediaItemLog = PR_NewLogModule("sbRemoteWebMediaItem");
-  }
-  LOG(("sbRemoteWebMediaItem::sbRemoteWebMediaItem()"));
-#endif
+  LOG_ITEM(("sbRemoteWebMediaItem::sbRemoteWebMediaItem()"));
 }
 
 sbRemoteWebMediaItem::~sbRemoteWebMediaItem()
 {
-  LOG(("sbRemoteWebMediaItem::~sbRemoteWebMediaItem()"));
+  LOG_ITEM(("sbRemoteWebMediaItem::~sbRemoteWebMediaItem()"));
 }
 

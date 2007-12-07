@@ -41,7 +41,11 @@
 
 #define SB_DECL_SECURITYCHECKEDCOMP_INIT virtual nsresult Init();
 
-#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM( _class, _mixin, _mixinArgs ) \
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_TAIL()                               \
+  return NS_OK;                                                               \
+}
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_MID( _class, _mixin, _mixinArgs ) \
 nsresult                                                                      \
 _class::Init()                                                                \
 {                                                                             \
@@ -73,14 +77,27 @@ _class::Init()                                                                \
     NS_ENSURE_STATE(domDoc);                                                  \
     rv = mixin->SetNotificationDocument( domDoc );                            \
     NS_ENSURE_SUCCESS( rv, rv );                                              \
-  }                                                                           \
-  return NS_OK;                                                               \
-}
+  }
 
 #define SB_IMPL_SECURITYCHECKEDCOMP_INIT(_class)                              \
-  SB_IMPL_SECURITYCHECKEDCOMP_INIT_CUSTOM( _class, sbSecurityMixin, () )
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_MID( _class, sbSecurityMixin, () )   \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_TAIL()
 
-#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_CUSTOM( _class, _mixin, _mixinArgs ) \
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_LIBRES( _class,                \
+                                                       _mixin, _mixinArgs,    \
+                                                       _libres, _libresArgs ) \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_MID( _class, _mixin, _mixinArgs )    \
+  mRemLibraryResource = new _libres _libresArgs;                              \
+  NS_ENSURE_TRUE( mRemLibraryResource, NS_ERROR_OUT_OF_MEMORY );              \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_TAIL()
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(_class, _libres, _libresArgs) \
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_MIXIN_LIBRES( _class,                      \
+                                                  sbSecurityMixin, (),        \
+                                                 _libres, _libresArgs )       \
+
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_MIXIN( _class, _mixin, _mixinArgs ) \
 nsresult                                                                      \
 _class::Init()                                                                \
 {                                                                             \
@@ -108,6 +125,6 @@ _class::Init()                                                                \
 }
 
 #define SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER(_class)                     \
-  SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_CUSTOM( _class, sbSecurityMixin, () )
+  SB_IMPL_SECURITYCHECKEDCOMP_INIT_NOPLAYER_MIXIN( _class, sbSecurityMixin, () )
 
 #endif // __SB_REMOTE_API_H__

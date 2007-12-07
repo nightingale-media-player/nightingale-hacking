@@ -54,14 +54,11 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteSiteLibrary:5
+ *   NSPR_LOG_MODULES=sbRemoteLibrary:5
+ *   LOG_LIB defined in sbRemoteLibraryBase.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gSiteLibraryLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gSiteLibraryLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIB(args)
 
 const static char* sPublicWProperties[] =
   { // sbIMediaList
@@ -160,17 +157,12 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteLibrary)
 sbRemoteSiteLibrary::sbRemoteSiteLibrary(sbRemotePlayer* aRemotePlayer) :
   sbRemoteLibraryBase(aRemotePlayer)
 {
-#ifdef PR_LOGGING
-  if (!gSiteLibraryLog) {
-    gSiteLibraryLog = PR_NewLogModule("sbRemoteSiteLibrary");
-  }
-  LOG(("sbRemoteSiteLibrary::sbRemoteSiteLibrary()"));
-#endif
+  LOG_LIB(("sbRemoteSiteLibrary::sbRemoteSiteLibrary()"));
 }
 
 sbRemoteSiteLibrary::~sbRemoteSiteLibrary()
 {
-  LOG(("sbRemoteSiteLibrary::~sbRemoteSiteLibrary()"));
+  LOG_LIB(("sbRemoteSiteLibrary::~sbRemoteSiteLibrary()"));
 }
 
 
@@ -183,7 +175,7 @@ sbRemoteSiteLibrary::~sbRemoteSiteLibrary()
 NS_IMETHODIMP
 sbRemoteSiteLibrary::GetFilename( nsAString &aFilename )
 {
-  LOG(("sbRemoteSiteLibrary::GetFilename()"));
+  LOG_LIB(("sbRemoteSiteLibrary::GetFilename()"));
 #ifdef DEBUG
   aFilename.Assign(mFilename);
 #endif
@@ -195,12 +187,12 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
                                            const nsACString &aPath )
 {
   // aDomain and aPath may be empty
-  LOG(( "sbRemoteSiteLibrary::ConnectToSiteLibrary(domain:%s path:%s)",
-        aDomain.BeginReading(), aPath.BeginReading() ));
+  LOG_LIB(( "sbRemoteSiteLibrary::ConnectToSiteLibrary(domain:%s path:%s)",
+            aDomain.BeginReading(), aPath.BeginReading() ));
 
   nsCOMPtr<nsIFile> siteDBFile = GetSiteLibraryFile( aDomain, aPath );
   if (!siteDBFile) {
-    LOG(("sbRemoteSiteLibrary::ConnectToSiteLibrary() - no site db file "));
+    LOG_LIB(("sbRemoteSiteLibrary::ConnectToSiteLibrary() - no site db file "));
     return NS_ERROR_FAILURE;
   }
 
@@ -262,7 +254,7 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
 nsresult
 sbRemoteSiteLibrary::InitInternalMediaList()
 {
-  LOG(("sbRemoteSiteLibrary::InitInternalMediaList()"));
+  LOG_LIB(("sbRemoteSiteLibrary::InitInternalMediaList()"));
   NS_ENSURE_STATE(mLibrary);
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mLibrary);
@@ -291,13 +283,13 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
                                          const nsACString &aPath )
 {
   // aPath and aDomain may be empty
-  LOG(( "sbRemoteSiteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
-         aDomain.BeginReading(),
+  LOG_LIB(( "sbRemoteSiteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
+            aDomain.BeginReading(),
          aPath.BeginReading() ));
 
   nsCOMPtr<nsIURI> siteURI = GetURI();
   if (!siteURI) {
-    LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED to get URI"));
+    LOG_LIB(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED to get URI"));
     return nsnull;
   }
 
@@ -307,7 +299,7 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
   if ( NS_FAILED(rv) ) {
     // this should not be possible, sbRemotePlayer::SetSiteScope() should
     // have done the exact same check already
-    LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED URI Check"));
+    LOG_LIB(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED URI Check"));
     return nsnull;
   }
 
@@ -339,7 +331,7 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
 already_AddRefed<nsIURI>
 sbRemoteSiteLibrary::GetURI()
 {
-  LOG(("sbRemoteSiteLibrary::GetURI()"));
+  LOG_LIB(("sbRemoteSiteLibrary::GetURI()"));
 
   nsresult rv;
   nsCOMPtr<sbISecurityMixin> mixin( do_QueryInterface( mSecurityMixin, &rv ) );

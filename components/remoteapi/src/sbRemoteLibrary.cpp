@@ -34,13 +34,10 @@
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbRemoteLibrary:5
+ *   LOG_LIB defined sbRemoteLibraryBase.h/.cpp
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gLibraryLog = nsnull;
-#endif
-
 #undef LOG
-#define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
+#define LOG(args) LOG_LIB(args)
 
 const static char* sPublicWProperties[] =
   {
@@ -127,17 +124,12 @@ SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteLibrary)
 sbRemoteLibrary::sbRemoteLibrary(sbRemotePlayer* aRemotePlayer) :
   sbRemoteLibraryBase(aRemotePlayer)
 {
-#ifdef PR_LOGGING
-  if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbRemoteLibrary");
-  }
-  LOG(("sbRemoteLibrary::sbRemoteLibrary()"));
-#endif
+  LOG_LIB(("sbRemoteLibrary::sbRemoteLibrary()"));
 }
 
 sbRemoteLibrary::~sbRemoteLibrary()
 {
-  LOG(("sbRemoteLibrary::~sbRemoteLibrary()"));
+  LOG_LIB(("sbRemoteLibrary::~sbRemoteLibrary()"));
 }
 
 
@@ -152,7 +144,7 @@ sbRemoteLibrary::~sbRemoteLibrary()
 nsresult
 sbRemoteLibrary::InitInternalMediaList()
 {
-  LOG(("sbRemoteLibrary::InitInternalMediaList()"));
+  LOG_LIB(("sbRemoteLibrary::InitInternalMediaList()"));
   NS_ENSURE_STATE(mLibrary);
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mLibrary);
