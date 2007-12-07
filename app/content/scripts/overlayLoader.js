@@ -37,6 +37,9 @@ var OverlayLoader = {
   // Flag to indicate that loadOverlayList has been called
   // and has not yet observed the last overlay finish loading 
   loadInProgress: false,
+  
+  // Flag to indicate that the whole overlay loading is already done
+  loadCompleted: false,
 
   /**
    * Initiates dynamic loading of all overlays appropriate to
@@ -74,6 +77,7 @@ var OverlayLoader = {
     var e = document.createEvent("Events");
     e.initEvent("sb-overlay-load", false, true);
     document.dispatchEvent(e);
+    this.loadCompleted = true;
   },
 
   /**

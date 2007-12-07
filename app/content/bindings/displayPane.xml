@@ -32,6 +32,10 @@
   an addon pane is a place where extensions (and potentially web content) can
   add content for display in a frame, similar to Firefox's sidebar / web panels.
 -->
+<!--
+  WARNING: if you want to remove (or even move) this element dynamically via DOM,
+  call destroy() before you do so.
+-->
 
 <xbl:bindings
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -88,7 +92,8 @@
             </menupopup>
           </button>
         </hbox>
-        <browser anonid="content" flex="1" type="chrome"/>
+        <browser anonid="content" flex="1" type="chrome" disablehistory="true"
+                 xbl:inherits="orient"/>
       </vbox>
     </xbl:content>
     
@@ -125,17 +130,39 @@
         }
 
         if (!paneLoaded) {
-          this.hide();
+          if ("undefined" != typeof(OverlayLoader)) {
+            // if the extension is being registered via windowtype overlays, it
+            // can show up later.  Wait for that to happen and try again.
+            if (OverlayLoader.loadCompleted) {
+              // over loads are done; nothing we can do.
+              this.hide();
+            } else {
+              // there are more overlays to load; wait for them to be done
+              var self = this;
+              document.addEventListener("sb-overlay-load", function() {
+                document.removeEventListener("sb-overlay-load", arguments.callee, false);
+                var paneinfo = paneMgr.getPaneInfo(self._lastURL.stringValue);
+                if (paneinfo) {
+                  self._internalLoadURL(paneinfo);
+                } else {
+                  // still nothing
+                  self.hide();
+                }
+              }, false);
+            }
+          } else {
+            // there's no overlay loader, so there's no more chance for us to do anything
+            this.hide();
+          }
         }
       } catch(e) {
         Components.utils.reportError(e);
       }
       ]]></xbl:constructor>
       <xbl:destructor><![CDATA[
-        var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                .getService(Components.interfaces.sbIDisplayPaneManager);
-        paneMgr.unregisterInstantiator(this);
-      ]]></xbl:destructor>      <xbl:property name="contentGroup" readonly="true">
+        this.destroy();
+      ]]></xbl:destructor>
+      <xbl:property name="contentGroup" readonly="true">
         <xbl:getter><![CDATA[
           return this.getAttribute("contentgroup");
         ]]></xbl:getter>
@@ -379,7 +406,13 @@
           return document.getAnonymousElementByAttribute(this, "anonid", aId);
         ]]></xbl:body>
       </xbl:method>
-
+      <xbl:method name="destroy">
+        <xbl:body><![CDATA[
+          var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                  .getService(Components.interfaces.sbIDisplayPaneManager);
+          paneMgr.unregisterInstantiator(this);
+        ]]></xbl:body>
+      </xbl:method>
     </xbl:implementation>
     
     <xbl:handlers>

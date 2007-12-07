@@ -107,6 +107,14 @@ DisplayPaneManager.prototype = {
    * \see sbIDisplayPaneManager
    */
   get instantiatorsList() {
+    for (var i = this._instantiatorsList.length - 1; i >= 0; --i) {
+      if (!(this._instantiatorsList[i] instanceof
+            Components.interfaces.sbIDisplayPaneInstantiator)) {
+        Components.utils.reportError("Warning: found bad instantiator; "+
+                                     "possibly via removal from DOM");
+        this._instantiatorsList.splice(i, 1);
+      }
+    }
     return ArrayConverter.enumerator(this._instantiatorsList);
   },
   
@@ -182,6 +190,11 @@ DisplayPaneManager.prototype = {
    * \see sbIDisplayPaneManager
    */
   registerInstantiator: function(aInstantiator) {
+    if (this._instantiatorsList.indexOf(aInstantiator) > -1) {
+      Components.utils.reportError("Attempt to re-register instantiator ignored\n" +
+                                   (new Error()).stack);
+      return;
+    }
     this._instantiatorsList.push(aInstantiator);
     for each (var listener in this._listenersList) {
       listener.onRegisterInstantiator(aInstantiator);
