@@ -65,8 +65,8 @@
 <!ENTITY menu.displaypane.title.default "[untitled]">
 <!ENTITY menu.displaypane.get           "Get More Extensions...">
 <!ENTITY displaypane.name.servicepane   "Service Pane Bottom">
-<!ENTITY displaypane.name.browser       "Playlist Bottom">
-<!ENTITY displaypane.name.sidebar       "Browser Pane Right">
+<!ENTITY displaypane.name.browser       "Content Pane Bottom">
+<!ENTITY displaypane.name.sidebar       "Right Sidebar">
 
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-Ons..." >
