@@ -115,3 +115,23 @@ Contains the Main Playback Controls and the Dashboard.
 {
   min-width: 420px;
 }
+
+/*
+ * Configuring the toolbar this way prevents its contents from affecting the
+ * parent element's flex
+ */
+#control_pane_toolbar
+{
+  display: block;
+  width: 0px;
+  border: none;
+  background-color: transparent;
+  white-space: nowrap;
+  text-align: right;
+}
+
+#control_right_spacer > toolbox
+{
+  -moz-box-pack: center;
+}
+

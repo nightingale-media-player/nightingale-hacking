@@ -19,6 +19,7 @@
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/browserToolbarOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/statusBarOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/controlToolbarOverlay.xul"?>
 
 <!--
 /*
@@ -132,10 +133,14 @@
         
         <!-- FACEPLATE DISPLAY / DASHBOARD -->
         <sb-player-faceplate id="faceplate" flex="1" />            
-        
-        <spacer id="control_right_spacer" flex="7" />
+
+        <stack id="control_right_toolbar_stack" flex="7">
+          <!-- CONTROL PANE TOOLBOX.  Filled via overlay by controlToolbarOverlay.xul -->
+          <toolbox id="control_pane_toolbox"/>
+        </stack>
+
       </hbox>
-      
+
       <sb-smart-splitter id="control_pane_splitter" collapseonly="true" state="open" collapse="before" resizebefore="closest" hideonopen="miniplayer_box" showoncollapse="miniplayer_box" metricscategory="app" metricsid="collapse.controlpane">
         <grippy/>
       </sb-smart-splitter>
