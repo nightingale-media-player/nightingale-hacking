@@ -65,7 +65,7 @@ var gMiniplayer = {
     windowElement.setAttribute("platform",platform);
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
 
-    windowElement.sizeToContent();
+    windowElement.resizeTo(windowElement.width, windowElement.style.height);
   },
 
 
