@@ -28,9 +28,9 @@
  * \brief AddOn Panes Unit Test File
  */
  
-var addOnPanes = null;
 var loaded = null;
 var group = null;
+var paneMgr = null;
 
 function runTest () {
 
