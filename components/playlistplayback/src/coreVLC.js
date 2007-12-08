@@ -201,7 +201,7 @@ CoreVLC.prototype._applyPreferences = function ()
   //Be more generous about file caching.
   try {
     //XXXAus: Read this value from prefs (bug #699)
-    config.setConfigInt("access_file", "file-caching", 1000);
+    config.setConfigInt("access_file", "file-caching", 600);
   }
   catch(e) {
     this.LOG("access_file module is missing, can't set config item.");
@@ -228,7 +228,7 @@ CoreVLC.prototype._applyPreferences = function ()
   //Be more generous about smb caching.
   try {
     //XXXAus: Read this value from prefs (bug #699)
-    config.setConfigInt("access_smb", "smb-caching", 2000);
+    config.setConfigInt("access_smb", "smb-caching", 1200);
   }
   catch(e) {
     this.LOG("access_smb module is missing, can't set config item.");

@@ -305,6 +305,10 @@ Section "-Application" Section1
   ${EndUnless}
   ClearErrors
 
+  ; Pre-generate songbirdvlcrc file with correct plugin-path
+  CreateDirectory $APPDATA\SongbirdVLC
+  WriteINIStr $APPDATA\SongbirdVLC\songbirdvlcrc main plugin-path $INSTDIR\plugins\vlcmodules
+
   ; These need special handling on uninstall since they may be overwritten by
   ; an install into a different location.
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
