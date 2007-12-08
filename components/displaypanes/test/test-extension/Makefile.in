@@ -7,10 +7,10 @@
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the GPL).
+# GNU General Public License Version 2 (the "GPL").
 # 
 # Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -22,24 +22,20 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = displaypanes
+EXTENSION_NAME = displaypane-test-stub
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_DIR  = .
+EXTENSION_STAGE_DIR = ./.xpistage
 
-SONGBIRD_TESTS = $(srcdir)/test_displaypanes.js \
-                 $(NULL)
+XPI_NAME = $(EXTENSION_NAME)
 
-# If tests are enabled, build a stub extension in order
-# to verify the install.rdf reader.
-ifneq (,$(SB_ENABLE_TESTS))
-SUBDIRS = test-extension \
-          $(NULL)
-endif
+INSTALL_EXTENSION = 1
 
 include $(topsrcdir)/build/rules.mk
-

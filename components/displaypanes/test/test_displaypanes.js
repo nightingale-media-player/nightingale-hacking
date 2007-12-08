@@ -64,6 +64,15 @@ function testDisplayPanesService() {
   
   paneMgr.addListener(listener);
 
+  log("Testing registration via install.rdf");
+
+  // This content should have been supplied by the test-extension/install.rdf
+  testContent("chrome://some/test/url/pane.xul", 
+              "chrome://some/test/url/pane.xul", 
+              "Display Pane Test", 
+              "http://some/icon.png", 1, 2, "test-content-group");
+  paneMgr.unregisterContent("chrome://some/test/url/pane.xul");
+
   log("Testing pane registration");
 
   cbparam = null;

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>1.0</em:version>
+
+    <!-- Songbird -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>0.5</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:name>Display Pane Test</em:name>
+    <em:description>Sample install.rdf used to test the addon metadata reader</em:description>
+    <em:locked>true</em:locked>
+    <em:creator>Pioneers of the Inevitable</em:creator>
+
+    <songbird:displayPanes>
+      <Description>
+        <songbird:displayPane>
+          <Description>
+            <songbird:contentTitle>Display Pane Test</songbird:contentTitle>
+            <songbird:contentUrl>chrome://some/test/url/pane.xul</songbird:contentUrl>
+            <songbird:contentIcon>http://some/icon.png</songbird:contentIcon>
+            <songbird:defaultWidth>1</songbird:defaultWidth>
+            <songbird:defaultHeight>2</songbird:defaultHeight>
+            <songbird:suggestedContentGroups>test-content-group</songbird:suggestedContentGroups>
+            <songbird:showOnInstall>false</songbird:showOnInstall>
+          </Description>
+        </songbird:displayPane>
+      </Description>
+    </songbird:displayPanes>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+
+</RDF>

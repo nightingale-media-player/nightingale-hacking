@@ -1179,7 +1179,7 @@ $(install_rdf_file): $(srcdir)/$(INSTALL_RDF)
 endif
 
 .PHONY: make_xpi
-make_xpi: $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
+make_xpi: make_ext_stage $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
 	@echo packaging $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(RM) -f $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(CP) -f $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
