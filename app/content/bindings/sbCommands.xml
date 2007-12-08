@@ -72,6 +72,7 @@
 
       <destructor>
         <![CDATA[
+        if (this._destroyed) return;
         this.destroy();
         ]]>
       </destructor>
