@@ -329,9 +329,7 @@ function windowPlacementSanityChecks()
   // note: This code should work correctly, but will always be told that the window is positioned 
   //       relative to the main screen.
   //
-  //       This is caused by a mozbug, and should auto-correct when the bug goes away.
-  //       See:  nsThebesDeviceContext::FindScreen (called eventually from requesting screen.left)
-  //             and nsBaseWidget::BaseCreate to see why the DeviceContextImpl has mWidget == 0x0
+  //       This is caused by mozbug 407405, and should auto-correct when the bug goes away.
   //       
   //       when the mozbug goes away the behaviour should automatically correct itself. -pvh dec07
   var width  = document.documentElement.getAttribute("width");
