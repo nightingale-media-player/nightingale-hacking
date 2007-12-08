@@ -38,16 +38,7 @@ function fixResizers() {
   }
 }
 
-function fixExtensionsLink() {
-  window.removeEventListener("load", fixExtensionsLink, false);
-  var getMore = document.getElementById("getMore");
-  if (getMore) {
-    getMore.setAttribute("onclick",
-                         "openURLSB(this.getAttribute('getMoreURL'));");
-  }
-}
-
-function openURLSB(url) {
+function openURL(url) {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                       .getService(Components.interfaces.nsIWindowMediator);
   var mainWin = wm.getMostRecentWindow("Songbird:Main");
@@ -57,8 +48,18 @@ function openURLSB(url) {
     return;
   }
 
-  openURL(url);
+  openURLExternal(url);
+}
+
+function openURLExternal(url) {
+  var externalLoader = (Components
+            .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+          .getService(Components.interfaces.nsIExternalProtocolService));
+  var nsURI = (Components
+          .classes["@mozilla.org/network/io-service;1"]
+          .getService(Components.interfaces.nsIIOService)
+          .newURI(url, null, null));
+  externalLoader.loadURI(nsURI, null);
 }
 
 window.addEventListener("load", fixResizers, false);
-window.addEventListener("load", fixExtensionsLink, false);
