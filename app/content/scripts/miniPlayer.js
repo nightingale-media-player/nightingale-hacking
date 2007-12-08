@@ -68,11 +68,11 @@ var gMiniplayer = {
     // so, right now the height is correct but something somewhere after this is going to go
     // and screw it right up. we don't know why, or how, but on windows it ends up being 100px
     // instead of 23px and this setTimeout makes it okay again.
-    setTimeout(function(){
-	if(parseInt(windowElement.height)) {
-	  window.resizeTo(windowElement.width, windowElement.height);
-	}
-    }, 0);
+    setTimeout( function() {
+      if (parseInt(windowElement.height)) {
+        window.resizeTo(windowElement.width, windowElement.height);
+      }
+    }, 0); // bump to back of current queue
   },
 
 
