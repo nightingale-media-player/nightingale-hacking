@@ -306,23 +306,19 @@ function windowPlacementSanityChecks()
       defaultHeight = 450;
     }
     else {
-      // Create a narrower window for large or wide-aspect displays, to suggest
-      // side-by-side page view.
-      if (screen.availWidth >= 1600) {
-        defaultWidth = (screen.availWidth / 2) - 20;
-      }
-      defaultHeight = screen.availHeight - 10;
+      defaultWidth = 988;
+      defaultHeight = 720;
     }
-
+      
     document.documentElement.setAttribute("width", defaultWidth);
     document.documentElement.setAttribute("height", defaultHeight);
   }
 
-  // is the window too small? (the 32 is an arbitrary "too small" size to prevent ungrabbably small windows)
+  // is the window too small? (the 16 is an arbitrary "too small" size to prevent ungrabbably small windows)
   var minWidth  = getStyle(document.documentElement, "min-width");
   var minHeight = getStyle(document.documentElement, "min-height");
-  if (minWidth)  { minWidth  = parseInt(minWidth);  } else { minWidth  = 32; }
-  if (minHeight) { minHeight = parseInt(minHeight); } else { minHeight = 32; }
+  if (minWidth)  { minWidth  = parseInt(minWidth);  } else { minWidth  = 16; }
+  if (minHeight) { minHeight = parseInt(minHeight); } else { minHeight = 16; }
 
   var width  = document.documentElement.getAttribute("width");
   var height = document.documentElement.getAttribute("height");
@@ -330,14 +326,29 @@ function windowPlacementSanityChecks()
   if (width  < minWidth)  { document.documentElement.setAttribute("width",  minWidth);  }
   if (height < minHeight) { document.documentElement.setAttribute("height", minHeight); }
 
-  // bring it back if the window is way offscreen somewhere
+
+  setTimeout(windowRescueOffscreen, 0);
+}
+
+/// bring back a window which has lost its way due to something like a disconnected monitor
+// TODO: is there some way to detect a screen disconnect event and run this code?
+function windowRescueOffscreen() {
+  dump("Screen: left/top:\t" + screen.left + "\t" + screen.top + 
+       "\tavail w/h\t" + screen.availWidth + "\t" + screen.availHeight + "\n");
+  var width  = document.documentElement.getAttribute("width");
+  var height = document.documentElement.getAttribute("height");
   var x = document.documentElement.getAttribute("screenX");
   var y = document.documentElement.getAttribute("screenY");
-  if (x > screen.availWidth)  { document.documentElement.setAttribute("screenX", 0); }
-  if (y > screen.availHeight) { document.documentElement.setAttribute("screenY", 0); }
-  if (x + width  < 0)  { document.documentElement.setAttribute("screenX", 0); }
-  if (y + height < 0)  { document.documentElement.setAttribute("screenY", 0); }
-
+  if (x - screen.left > screen.availWidth)  { document.documentElement.setAttribute("screenX", 0); }
+  if (y - screen.top  > screen.availHeight) { document.documentElement.setAttribute("screenY", 0); }
+  if (x - screen.left + width  < 0)         { document.documentElement.setAttribute("screenX", 0); }
+  if (y - screen.top  + height < 0)         { document.documentElement.setAttribute("screenY", 0); }
+  
+  
+  var x = document.documentElement.getAttribute("screenX");
+  var y = document.documentElement.getAttribute("screenY");
+  var width  = document.documentElement.getAttribute("width");
+  var height = document.documentElement.getAttribute("height");
   dump("After: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
 
 }
