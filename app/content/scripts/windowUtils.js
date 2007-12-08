@@ -326,15 +326,14 @@ function windowPlacementSanityChecks()
   if (width  < minWidth)  { document.documentElement.setAttribute("width",  minWidth);  }
   if (height < minHeight) { document.documentElement.setAttribute("height", minHeight); }
 
-
-  setTimeout(windowRescueOffscreen, 0);
-}
-
-/// bring back a window which has lost its way due to something like a disconnected monitor
-// TODO: is there some way to detect a screen disconnect event and run this code?
-function windowRescueOffscreen() {
-  dump("Screen: left/top:\t" + screen.left + "\t" + screen.top + 
-       "\tavail w/h\t" + screen.availWidth + "\t" + screen.availHeight + "\n");
+  // note: This code should work correctly, but will always be told that the window is positioned 
+  //       relative to the main screen.
+  //
+  //       This is caused by a mozbug, and should auto-correct when the bug goes away.
+  //       See:  nsThebesDeviceContext::FindScreen (called eventually from requesting screen.left)
+  //             and nsBaseWidget::BaseCreate to see why the DeviceContextImpl has mWidget == 0x0
+  //       
+  //       when the mozbug goes away the behaviour should automatically correct itself. -pvh dec07
   var width  = document.documentElement.getAttribute("width");
   var height = document.documentElement.getAttribute("height");
   var x = document.documentElement.getAttribute("screenX");
@@ -344,11 +343,6 @@ function windowRescueOffscreen() {
   if (x - screen.left + width  < 0)         { document.documentElement.setAttribute("screenX", 0); }
   if (y - screen.top  + height < 0)         { document.documentElement.setAttribute("screenY", 0); }
   
-  
-  var x = document.documentElement.getAttribute("screenX");
-  var y = document.documentElement.getAttribute("screenY");
-  var width  = document.documentElement.getAttribute("width");
-  var height = document.documentElement.getAttribute("height");
   dump("After: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
 
 }
