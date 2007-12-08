@@ -836,8 +836,6 @@
     }
   }
 
-
-
   // Get the list of columns from the property manager and add them to the
   // tree
   var numColumns = columnMap.length;
@@ -846,7 +844,7 @@
   // were added
   var alreadyAdded = {};
   var addedColumns = 0;
-  var ordinal = 0;
+  var ordinal = 1;
   var sortProperty;
   var sortDirection;
   columnMap.forEach(
@@ -857,10 +855,11 @@
           sortProperty = columnInfo.property;
           sortDirection = columnInfo.sort;
         }
+
         this._appendColumn(propertyInfo,
-                          false,
-                          columnInfo.width,
-                          ordinal);
+                           false,
+                           columnInfo.width,
+                           ordinal);
         alreadyAdded[columnInfo.property] = true;
         addedColumns++;
         ordinal += 2;
@@ -877,10 +876,11 @@
     if (!alreadyAdded[propertyID]) {
       var propertyInfo = this._pm.getPropertyInfo(propertyID);
       if(propertyInfo.userViewable) {
+
         this._appendColumn(propertyInfo,
-                          columnMap.length,
-                          null,
-                          ordinal);
+                           true,
+                           null,
+                           ordinal);
         addedColumns++;
         ordinal += 2;
       }
@@ -1289,6 +1289,14 @@
         <parameter name="ordinal"/>
         <body>
 <![CDATA[
+  // If the last child of the columns element is a treecol, add a splitter
+  if (this._treecols.lastChild && this._treecols.lastChild.tagName == "treecol") {
+    var splitter = document.createElementNS(this._XUL_NS, "splitter");
+    splitter.setAttribute("class", "tree-splitter");
+    splitter.setAttribute("ordinal", ordinal - 1);
+    this._treecols.appendChild(splitter);
+  }
+
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", propertyInfo.id);
   treecol.setAttribute("label", propertyInfo.displayName);
@@ -1320,11 +1328,7 @@
   }
 
   this._treecols.appendChild(treecol);
-  var splitter = document.createElementNS(this._XUL_NS, "splitter");
-  splitter.setAttribute("class", "tree-splitter");
-  splitter.setAttribute("ordinal", ordinal + 1);
 
-  this._treecols.appendChild(splitter);
   if (this.tree.columns) {
     this.tree.columns.invalidateColumns();
   }

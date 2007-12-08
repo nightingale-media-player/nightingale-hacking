@@ -1,0 +1,25 @@
+Index: toolkit/content/widgets/tree.xml
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/content/widgets/tree.xml,v
+retrieving revision 1.53
+diff -u -p -r1.53 tree.xml
+--- toolkit/content/widgets/tree.xml	22 Oct 2007 13:19:37 -0000	1.53
++++ toolkit/content/widgets/tree.xml	8 Dec 2007 00:25:26 -0000
+@@ -170,7 +170,7 @@
+           var i;
+           var cols = [];
+           var col = this.columns.getColumnFor(aColBefore);
+-          if (aColBefore.ordinal < aColMove.ordinal) {
++          if (parseInt(aColBefore.ordinal) < parseInt(aColMove.ordinal)) {
+             if (aBefore)
+               cols.push(aColBefore);
+             for (col = col.getNext(); col.element != aColMove;
+@@ -180,7 +180,7 @@
+             aColMove.ordinal = cols[0].ordinal;
+             for (i = 0; i < cols.length; ++i)
+               cols[i].ordinal += 2;
+-          } else if (aColBefore.ordinal != aColMove.ordinal) {
++          } else if (parseInt(aColBefore.ordinal) != parseInt(aColMove.ordinal)) {
+             if (!aBefore)
+               cols.push(aColBefore);
+             for (col = col.getPrevious(); col.element != aColMove;
