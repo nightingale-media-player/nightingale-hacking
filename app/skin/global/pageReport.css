@@ -10,7 +10,8 @@
 }
 
 #page-report-button[blocked] > image {
-  list-style-image: url("chrome://global/skin/icons/pagereport.png");
+  list-style-image: url("chrome://global/skin/icons/icon-blocked-popup.png");
+  background-color: White;
   display: -moz-box;
 }
 
