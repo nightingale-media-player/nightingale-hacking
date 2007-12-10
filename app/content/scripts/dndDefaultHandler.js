@@ -36,6 +36,7 @@ var Cr = Components.results;
 
 var firstDrop;
 var importingDrop = false;
+var dropInPlaylist = false;
 
 // Module specific global for auto-init/deinit support
 var dndDefaultHandler_module = {};
@@ -166,6 +167,8 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
   
   if ( evt.target.localName == "sb-playlist" ) {
     var playlist = evt.target;
+    
+    dropInPlaylist = true;
   
     if(playlist.wrappedJSObject) {
       playlist = playlist.wrappedJSObject;
@@ -187,6 +190,8 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
     if(row.value != -1) {
       _insert_index = row.value;
     }
+  } else {
+    dropInPlaylist = false;
   }
   
   _library_resource = libraryResource;
@@ -305,6 +310,7 @@ function SBDroppedEntry()
       _insert_index = -1;
     } 
     else if (gPPS.isMediaURL( theDropPath )) {
+      if (dropInPlaylist) return;
       if(firstDrop) {
         firstDrop = false;
 
