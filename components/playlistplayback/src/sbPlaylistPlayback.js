@@ -1829,9 +1829,15 @@ PlaylistPlayback.prototype = {
   _updateCurrentInfoFromView: function(aView, aIndex)
   {
     this._playingRef.stringValue = aView.mediaList.guid;
-    this._playlistIndex.intValue = aIndex;
+    
+    //Ensure it's an integer.
+    if(!isNaN(parseInt(aIndex))) {
+      this._playlistIndex.intValue = aIndex;
+    } else {
+      this._playlistIndex.intValue = 0;
+    }
 
-    var item   = aView.getItemByIndex(aIndex);
+    var item   = aView.getItemByIndex(this._playlistIndex.intValue);
     var url    = item.contentSrc.spec;
     var title  = item.getProperty(SBProperties.trackName);
     var artist = item.getProperty(SBProperties.artistName);
