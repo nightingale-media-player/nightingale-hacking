@@ -113,11 +113,23 @@ prefwindow {
 
 prefwindow .paneSelector {
   font: message-box;
+  background-image:none;
+  border:none !important;
 }
 prefwindow[type="child"] {
   padding: 18px 20px 15px 18px !important;
 }
-
+#viewGroup
+{
+  background-image:none;
+}
+prefwindow > .paneSelector > radio,
+#viewGroup > radio
+{
+  background-color:transparent;
+  border:none !important;
+  margin:0;
+}
 
 /* deprecated */
 window.dialog { 
