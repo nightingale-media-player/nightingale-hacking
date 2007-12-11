@@ -613,7 +613,11 @@ function listProperties(obj, objName)
     var result = "";
     for (var i in obj)
     {
-        result += objName + "." + i + " = " + obj[i] + "\t\t\t";
+        try {
+          result += objName + "." + i + " = " + obj[i] + "\t\t\t";
+        } catch (e) {
+          result += objName + "." + i + " = [exception thrown]\t\t\t";
+        }
         count = ++count % columns;
         if ( count == columns - 1 )
         {
