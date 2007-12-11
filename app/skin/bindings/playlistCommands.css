@@ -192,39 +192,6 @@ Imported by bindings.css or directly into feathers.
   -moz-image-region: rect(16px 121px 24px 110px);
 }
 
-
-/* Toolbar: pause Button */
-#library_cmd_pause
-{
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
-  -moz-image-region: rect(0px 99px 8px 88px);
-}
-#library_cmd_pause:hover
-{
-  -moz-image-region: rect(8px 99px 16px 88px);
-}
-#library_cmd_pause[disabled="true"]
-{
-  -moz-image-region: rect(16px 99px 24px 88px);
-}
-
-
-/* Toolbar: resume Button */
-#library_cmd_resume
-{
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
-  -moz-image-region: rect(0px 11px 8px 0px);
-}
-#library_cmd_resume:hover
-{
-  -moz-image-region: rect(8px 11px 16px 0px);
-}
-#library_cmd_resume[disabled="true"]
-{
-  -moz-image-region: rect(16px 11px 24px 0px);
-}
-
-
 /* Toolbar: switch to downloads Button */
 #library_cmd_showdlplaylist
 {
