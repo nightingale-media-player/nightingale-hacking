@@ -117,7 +117,7 @@
         if (IOSERVICE.newURI(url, null, null) == null) {
           valid = false;
         }
-        if (IOSERVICE.newURI(image, null, null) == null) {
+        if (image != "" && IOSERVICE.newURI(image, null, null) == null) {
           valid = false;
         }
       } catch (e) {
@@ -140,6 +140,8 @@
       var image = document.getElementById("bookmark.icon").value;
       if (image.length > 0)
         node.image = image;
+      else 
+        node.image = null;
         
       return true;
     }

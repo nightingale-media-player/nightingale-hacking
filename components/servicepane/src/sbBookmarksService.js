@@ -361,8 +361,19 @@ function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
 ImageUriCheckerObserver.prototype.onStopRequest =
 function ImageUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
 {
-  // If the requested image exists, set it as the icon.
   if (aStatusCode == 0) {
+    if (aRequest && aRequest.baseChannel) {
+      var channel = aRequest.baseChannel.QueryInterface(Components.interfaces.nsIHttpChannel);
+      if (channel) {
+        var contenttype = channel.getResponseHeader("content-type");
+        if (contenttype != "image/x-icon") return;
+      }
+    } else {
+        var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                                .getService(Components.interfaces.nsIConsoleService);
+        consoleService.logStringMessage("aRequest.baseChannel is null... can't check the content type\nWe'll have to trust we got an image...");
+    }
+    // If the requested image exists, set it as the icon.
     this._bnode.image = this._icon;
   }
   // Otherwise, we don't set the image property and we get the default from the skin.

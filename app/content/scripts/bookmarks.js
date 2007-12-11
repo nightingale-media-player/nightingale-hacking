@@ -39,10 +39,10 @@ var bmManager = {
         if (thelabel == "") thelabel = theurl;
         
         var theicon = "http://" + browser.currentURI.hostPort + "/favicon.ico";
-        try {
-          var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                        .getService(Components.interfaces.nsIFaviconService);
+        var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                             .getService(Components.interfaces.nsIFaviconService);
           
+        try {
           theicon = faviconService.getFaviconForPage(browser.currentURI).spec;
           
           // Favicon URI's are prepended with "moz-anno:favicon:".
@@ -51,7 +51,8 @@ var bmManager = {
           }
         }
         catch(e) {
-          Components.utils.reportError(e);
+          if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE)
+            Components.utils.reportError(e);
         }
 
         // XXX: The bookmark service should eventually get the favicon from the favicon service instead
