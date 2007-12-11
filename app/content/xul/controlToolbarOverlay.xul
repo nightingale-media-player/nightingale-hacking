@@ -46,7 +46,7 @@
     iconsize="small"
   >
     <toolbarpalette id="control_pane_toolbar_palette">
-     </toolbarpalette>
+    </toolbarpalette>
     <toolbar
       id="control_pane_toolbar"
       toolbarname="ControlPaneToolbar"
