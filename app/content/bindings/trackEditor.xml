@@ -172,7 +172,7 @@
 
     <constructor>
       <![CDATA[
-        this.controls = Array();
+        this.controls = [];
       ]]>
     </constructor>
     <destructor>
@@ -182,6 +182,13 @@
     <field name="controls">null</field>
     <field name="playlist">null</field>
     <field name="guids">null</field>
+    
+    <method name="onContentRemoved">
+      <body>
+        // reset list of controls when they are removed from the drawer
+        this.controls = [];
+      </body>
+    </method>
 
     <method name="setPlaylist">
       <parameter name="list"/>
@@ -251,6 +258,10 @@
       <parameter name="parent"/>
       <body>
         <![CDATA[
+          // reset list of controls in case onContentRemoved was not called
+          // (it should not happen, but lets just make sure we do not keep
+          // any reference to old elements anyway)
+          this.controls = [];
           // Load up the string bundle
           var src = "chrome://songbird/locale/songbird.properties";
           var stringBundleService =
