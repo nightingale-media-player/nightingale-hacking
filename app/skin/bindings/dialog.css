@@ -47,12 +47,6 @@ dialog:root
   padding: 0;
 }
 
-#dialog-outer-frame
-{
-  background-image: url(chrome://songbird/skin/backgrounds/background.png);
-  background-repeat: repeat-x;
-}
-
 #sb-sys-title-title
 {
   margin: 0 !important;
