@@ -40,6 +40,9 @@
 #elif defined(XP_MACOSX)
 #include <Carbon/Carbon.h>
 #define NATIVEWINDOW WindowPtr
+#elif defined(XP_UNIX)
+#include <gdk/gdk.h>
+#define NATIVEWINDOW GdkWindow*
 #else
 #define NATIVEWINDOW void*
 #define NATIVEDEVICENOTIFY void* 

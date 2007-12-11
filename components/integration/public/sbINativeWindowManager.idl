@@ -1,0 +1,78 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+#include "nsISupports.idl"
+#include "nsIDOMMouseEvent.idl"
+
+/**       
+ * \file sbINativeWindowManager.idl
+ * \brief interface to the operating system's window manager
+ * This file contains the interfaces to allow JavaScript to talk to the native
+ * operating system window manager in a somewhat cross-platform way.
+ */
+
+/**
+ * \interface sbINativeWindowManager
+ * \brief interface to the operating system's window manager
+ * This Interfaces to allows JavaScript to talk to the native
+ * operating system window manager in a somewhat cross-platform way.
+ * This interface is inspired by some of the GtkWindow interface.
+ */
+[scriptable, uuid(77746f92-dfe5-4915-a3ae-ff2619c4b167)]
+interface sbINativeWindowManager : nsISupports
+{
+  /* constants representing resize directions */
+  const PRInt32 DIRECTION_NORTH_WEST = 7;
+  const PRInt32 DIRECTION_NORTH      = 8;
+  const PRInt32 DIRECTION_NORTH_EAST = 9;
+  const PRInt32 DIRECTION_WEST       = 4;
+  const PRInt32 DIRECTION_EAST       = 6;
+  const PRInt32 DIRECTION_SOUTH_WEST = 1;
+  const PRInt32 DIRECTION_SOUTH      = 2;
+  const PRInt32 DIRECTION_SOUTH_EAST = 3;
+
+  /* \brief ask the window manager to begin a resize of @aWindow, 
+   *        based on the mouse event in @aEvent in the direction 
+   *        indicated by @aDirection 
+   */
+  void beginResizeDrag(in nsISupports aWindow, in nsIDOMMouseEvent aEvent, in PRInt32 aDirection);
+
+  /* \brief is beginResizeDrag() supported by this implementation? */
+  readonly attribute boolean supportsResizeDrag;
+
+  /* \brief set's the minimum size of @aWindow in the window manager to 
+   *        @aMinimumWidth x @aMinimumHeight 
+   */
+  void setMinimumWindowSize(in nsISupports aWindow, in PRInt32 aMinimumWidth, in PRInt32 aMinimumHeight);
+
+  /* \brief is setMinimumWindowSize() supported by this implementation? */
+  readonly attribute boolean supportsMinimumWindowSize;
+
+  /* \brief asks the window manager to keep @aWindow above all other windows */
+  void setOnTop(in nsISupports aWindow, in boolean aOnTop);
+
+  /* \brief is setOnTop() supported by this implementation? */
+  readonly attribute boolean supportsOnTop;
+};

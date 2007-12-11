@@ -1057,10 +1057,24 @@ FeathersManager.prototype = {
       onTop = this.isOnTop(this.currentLayoutURL, this.currentSkinName);
     }
 
+    // if the native window manager service is available
+    var nwm = Components.classes['@songbirdnest.com/integration/native-window-manager;1'];
+    if (nwm) {
+      nwm = nwm.getService(Components.interfaces.sbINativeWindowManager);
+    }
+
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,resizable=yes,toolbar=yes,popup=";
-    chromeFeatures += onTop ? "yes" : "no";
+    var chromeFeatures = "chrome,modal=no,resizable=yes,toolbar=yes";
+    if ( (nwm && nwm.supportsOnTop) || !onTop ) {
+      // if we have a native window manager component that supports onTop, 
+      // or we don't want this window on top then set popup=no
+      chromeFeatures += ",popup=no";
+    } else {
+      // if we don't have a native window manger component that supports onTop
+      // and we want the window on top, set popup=yes
+      chromeFeatures += ",popup=yes";
+    }
     var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",titlebar=yes";
@@ -1074,6 +1088,11 @@ FeathersManager.prototype = {
     // Open the new player window
     var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
     newMainWin.focus();
+
+    // if we can, tell the window manager to keep this window on top
+    if (nwm && nwm.supportsOnTop) {
+      nwm.setOnTop(newMainWin, onTop);
+    }
   },
   
   

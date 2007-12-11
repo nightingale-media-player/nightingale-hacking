@@ -34,6 +34,10 @@
 #include "WindowDragger.h"
 #include "WindowCloak.h"
 
+#if defined(XP_UNIX) && !defined(XP_MACOSX)
+#include "linux/sbNativeWindowManager.h"
+#endif
+
 #ifdef XP_WIN
 #include "WindowMinMax.h"
 #include "WindowResizeHook.h"
@@ -46,6 +50,10 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
+
+#if defined(XP_UNIX) && !defined(XP_MACOSX)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbNativeWindowManager)
+#endif
 
 #ifdef XP_WIN
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
@@ -70,6 +78,15 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_WINDOWCLOAK_CONTRACTID,
     sbWindowCloakConstructor
   },
+
+#if defined(XP_UNIX) && !defined(XP_MACOSX)
+  {
+    SONGBIRD_NATIVEWINDOWMANAGER_CLASSNAME,
+    SONGBIRD_NATIVEWINDOWMANAGER_CID,
+    SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID,
+    sbNativeWindowManagerConstructor
+  },
+#endif
 
 #ifdef XP_WIN
   {

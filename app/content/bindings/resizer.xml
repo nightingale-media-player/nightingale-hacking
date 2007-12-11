@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+          
+  <binding id="sb-native-resizer" extends="xul:box">
+    <content mousethrough="never">
+      <xul:spacer flex="1" />
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+        this._service = Components.classes['@songbirdnest.com/integration/native-window-manager;1']
+            .getService(Components.interfaces.sbINativeWindowManager);
+        ]]>
+      </constructor>
+    </implementation>
+    <handlers>
+      <handler event="mousedown">
+        <![CDATA[
+        event.preventDefault();
+
+        // trying to tell the window manager how small it's allowed to 
+        // resize this window
+        var cstyle = window.getComputedStyle(document.documentElement, '');
+        if (cstyle && this._service.supportsMinimumWindowSize) {
+          this._service.setMinimumWindowSize(window, parseInt(cstyle.minWidth), parseInt(cstyle.minHeight));
+        }
+
+        var sbINWM = Components.interfaces.sbINativeWindowManager;
+        var direction = this.getAttribute('dir');
+
+        // map our direction attribute into the sbINativeWindowManager world
+        var direction_map = {
+          'topleft': sbINWM.DIRECTION_NORTH_WEST,
+          'top': sbINWM.DIRECTION_NORTH,
+          'topright': sbINWM.DIRECTION_NORTH_EAST,
+          'left': sbINWM.DIRECTION_WEST,
+          'right': sbINWM.DIRECTION_EAST,
+          'bottomleft': sbINWM.DIRECTION_SOUTH_WEST,
+          'bottom': sbINWM.DIRECTION_SOUTH,
+          'bottomright': sbINWM.DIRECTION_SOUTH_EAST
+        }
+        direction = direction_map[direction];
+
+        if (this._service.supportsResizeDrag) {
+          this._service.beginResizeDrag(window, event, direction);
+        }
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+</bindings>
+ 

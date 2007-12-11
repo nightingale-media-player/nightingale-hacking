@@ -64,6 +64,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 CPP_SRCS = ../WindowCloak.cpp \
            ../WindowDragger.cpp \
            ../IntegrationComponent.cpp \
+					 ../NativeWindowFromNode.cpp \
+					 sbNativeWindowManager.cpp \
            $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
@@ -71,7 +73,7 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 SONGBIRD_COMPONENTS = $(target_name)
 
-CFLAGS      += $(shell pkg-config --cflags gdk-2.0 gdk-x11-2.0)
-CXXFLAGS    += $(shell pkg-config --cflags gdk-2.0 gdk-x11-2.0)
+CFLAGS      += $(shell pkg-config --cflags gtk+-2.0 gdk-x11-2.0)
+CXXFLAGS    += $(shell pkg-config --cflags gtk+-2.0 gdk-x11-2.0)
 
 include $(topsrcdir)/build/rules.mk

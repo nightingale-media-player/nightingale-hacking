@@ -421,3 +421,12 @@ notification {
 dialog[type="songbird"] {
   -moz-binding: url("chrome://songbird/content/bindings/dialog.xml#platform-dialog");
 }
+
+%ifdef XP_UNIX
+%ifndef XP_MACOSX
+/* only use our native resizer on linux */
+resizer {
+  -moz-binding: url("chrome://songbird/content/bindings/resizer.xml#sb-native-resizer");
+}
+%endif
+%endif

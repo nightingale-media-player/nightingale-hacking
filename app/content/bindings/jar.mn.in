@@ -1,4 +1,4 @@
 songbird.jar:
 % content  songbird  %content/songbird/
 @include_all_to content/songbird/bindings/
-
+* content/songbird/bindings/bindings.css (bindings.css)

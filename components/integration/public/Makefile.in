@@ -37,6 +37,7 @@ XPIDL_SRCS = IWindowCloak.idl \
              IWindowResizeHook.idl \
              IGlobalHotkeys.idl \
              sbIHotkeyActions.idl \
+             sbINativeWindowManager.idl \
              $(NULL)
              
 XPIDL_MODULE = sbIntegration.xpt
