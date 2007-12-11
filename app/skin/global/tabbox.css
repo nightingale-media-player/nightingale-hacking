@@ -31,9 +31,9 @@ tab,
 .tab-text {
   font-weight: normal !important;
   padding-top: 1px;
+  padding-bottom: 0px;
   padding-left: 5px;
   padding-right: 5px;  
-  margin-top: 2px !important;
 }
 
 tab[selected="true"] > hbox > label.tab-text
