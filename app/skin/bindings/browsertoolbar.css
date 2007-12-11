@@ -223,6 +223,11 @@ LOCATION TEXTBOX
   overflow:hidden;
 }
 
+/** NOTE: If the URL is from the servicepane it may have a hardcoded 
+    image URL or may get an icon from CSS.  In order to apply icons 
+    from CSS we reflect a list of properties onto the image element.  
+    See /app/skin/bindings/servicepane.css for details. **/
+    
 
 /** 
 ************************************************************************************************************************************************

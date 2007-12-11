@@ -93,6 +93,11 @@
         <parameter name="aURL"/>
         <body><![CDATA[return this.mTreePane.getURLImage(aURL);]]></body>
       </method>
+
+      <method name="getURLProperties">
+        <parameter name="aURL"/>
+        <body><![CDATA[return this.mTreePane.getURLProperties(aURL);]]></body>
+      </method>
       
       <field name="doneInit">false</field>
     </implementation>
@@ -278,7 +283,15 @@
         <parameter name="aURL"/>
         <body><![CDATA[
           var node = this.mService.getNodeForURL(aURL);
-          return node ? node.image : null;
+          return (node) ? node.image : null;
+        ]]></body>
+      </method>
+      
+      <method name="getURLProperties">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.properties : "";
         ]]></body>
       </method>
       

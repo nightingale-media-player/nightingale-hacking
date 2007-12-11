@@ -49,7 +49,8 @@ Imported by bindings.css or directly into feathers.
 }
 
 /* Service Pane Icons **/
-.servicepane-tree > treechildren::-moz-tree-image( library )
+.servicepane-tree > treechildren::-moz-tree-image( library ),
+.locationbar-image[properties~="library"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
 }
@@ -59,27 +60,32 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-birdhouse.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( web library )
+.servicepane-tree > treechildren::-moz-tree-image( web library ),
+.locationbar-image[properties~="library"][properties~="web"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( medialist )
+.servicepane-tree > treechildren::-moz-tree-image( medialist ),
+.locationbar-image[properties~="medialist"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart )
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
+.locationbar-image[properties~="medialisttype-smart"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png);
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic )
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
+.locationbar-image[properties~="medialisttype-dynamic"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( download )
+.servicepane-tree > treechildren::-moz-tree-image( download ),
+.locationbar-image[properties~="download"]
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }

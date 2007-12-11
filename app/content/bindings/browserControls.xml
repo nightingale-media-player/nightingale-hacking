@@ -115,15 +115,30 @@
         <setter><![CDATA[
           // set the dataremote uri to the right value
           SBDataSetStringValue("browser.uri", val);
+          
           // populate the ui with a little help from our servicepane
           var text = null;
+          var props = "";
+
           if ( val.indexOf("chrome://") != -1 ) {
             // Only cook the url for chrome urls
             text = gServicePane.getURLName(val); 
+          
+            // Note that getURLImage only retrieves
+            // hardcoded image URLs.  If the image
+            // is supplied via CSS we need to use 
+            // the properties list instead.  
+            props = gServicePane.getURLProperties(val);
           }
+          
           SBDataSetStringValue("browser.url.text", text?text:val);
-          var image = gServicePane.getURLImage(val)
+          
+          var image = gServicePane.getURLImage(val); 
           SBDataSetStringValue("browser.url.image", image?image:'');
+          
+          // Reflect servicepane properties such as "library" onto
+          // the image.  This allows the image source to be set from CSS.
+          this._image.setAttribute("properties", props);
         ]]></setter>
       </property>
       
