@@ -136,30 +136,12 @@ var SBWindowMinMaxCB =
   // Shrink until the box doesn't match the window, then stop.
   GetMinWidth: function()
   {
-    // What we'd like it to be
-    var retval = 750;
-    var outerframe = window.gOuterFrame;
-    // However, if in resizing the window size is different from the document's box object
-    if (window.innerWidth != outerframe.boxObject.width)
-    {
-      // That means we found the document's min width.  Because you can't query it directly.
-      retval = outerframe.boxObject.width - 1;
-    }
-    return retval;
+    return 700;
   },
 
   GetMinHeight: function()
   {
-    // What we'd like it to be
-    var outerframe = window.gOuterFrame;
-    var retval = 400;
-    // However, if in resizing the window size is different from the document's box object
-    if (window.innerHeight != outerframe.boxObject.height)
-    {
-      // That means we found the document's min width.  Because you can't query it directly.
-      outerframe = parent.boxObject.height - 1;
-    }
-    return retval;
+    return 400;
   },
 
   GetMaxWidth: function()
