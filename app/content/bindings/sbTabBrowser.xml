@@ -624,24 +624,50 @@
            I'm not convinced they belong here, but till we refactor a couple
            more things there's nowhere better for them to go. -->
       <method name="playExternalUrl">
-        <parameter name="the_url" />
-        <parameter name="tryweb" />
-        <body><![CDATA[
-          //SB_LOG("songbird_hack.js", "playExternalUrl: " + the_url);
-          var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        <parameter name="aURL" />
+        <parameter name="aTryWeb" />
+        <body>
+            <![CDATA[
           // figure out if the url is in the webplaylist
-          if (tryweb && theWebPlaylist && !theWebPlaylist.hidden)
+          var currentPlaylist = gBrowser.currentPlaylist;
+          
+          if (aTryWeb && currentPlaylist)
           {
-            var row = theWebPlaylist.findRowIdByUrl(the_url);
-            if (row != -1)
-            {
-              // if so, play the ref, from that entry's index
-              PPS.playRef("NC:webplaylist_webplaylist", row);
+            var currentView = currentPlaylist.getListView();
+            
+            // Try to see if we've already found and scanned this url
+            var listener = {
+              foundItem: null,
+              onEnumerationBegin: function onEnumerationBegin() {
+                return this.foundItem == null;
+              },
+              onEnumeratedItem: function onEnumeratedItem(list, item) {
+                this.foundItem = item;
+                return false; // Just take the first item found
+              },
+              onEnumerationEnd: function onEnumerationEnd() {
+                return;
+              }
+            };
+
+            var currentMediaList = currentView.mediaList;
+            
+            currentMediaList.enumerateItemsByProperty(SBProperties.originURL, aURL, listener );
+            currentMediaList.enumerateItemsByProperty(SBProperties.contentURL, aURL, listener );
+
+            if (listener.foundItem) {
+              gPPS.playView(currentView, 
+                            currentView.getIndexForItem(listener.foundItem));
+              return;
             }
-          } else {
-            // otherwise, play the url as external (added to the db, plays the library from that point on)
-            PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
-          }
+          } 
+          
+          // otherwise, play the url as external (added to the db, 
+          // plays the library from that point on)
+          // if the url is already in the lib, it is not added twice
+          
+          gPPS.playAndImportURL(aURL);
+
         ]]></body>
       </method>
 
@@ -1275,18 +1301,16 @@
             where = 'tab';
           }
 
-          var pps =
-            Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
-          if (pps.isMediaURL(href)) {
+          if (gPPS.isMediaURL(href)) {
             where = 'current';
           }
 
-          // we need to handle playlists specially
-          if (pps.isPlaylistURL(href)) {
+          // we need to handle playlists and media items specially
+          if (gPPS.isPlaylistURL(href)) {
             this.handleMediaURL(href);
             event.stopPropagation();
             event.preventDefault();
+
             return true;
           }
 
@@ -2144,9 +2168,8 @@
               index = 0;
             }
 
-            var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
             if (index < playlist.mediaListView.length) {
-              PPS.playView(playlist.mediaListView, index);
+              gPPS.playView(playlist.mediaListView, index);
             }
           }
           catch ( err )
