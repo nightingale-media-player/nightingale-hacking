@@ -57,12 +57,11 @@ There is one image for the light effect on every window, including nested ones.
 ***************************************************************************************************
 */
 
-window,
-prefwindow,
+#mainplayer,
 dialog
 {
   background-image: url(chrome://songbird/skin/backgrounds/background.png); 
-  background-repeat: repeat-x;  
+  background-repeat: repeat-x;
 }
 
 .tabbrowser-strip

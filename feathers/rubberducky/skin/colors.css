@@ -105,8 +105,6 @@ sb-sys-hide-button
   background-color: transparent !important;
 }
 
-/* END WINDOW CHROME **/
-
 
 
 /** 
@@ -123,6 +121,7 @@ THE MAIN PANE
   border-bottom: 1px solid #474948; /** Rubber Highlight */
   border-right: 1px solid #202220; /** Button Shadow */
 }
+
 
 
 /** 
@@ -230,6 +229,7 @@ progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder
 }
 
 
+
 /** 
 *******************************************************************************
 SEARCH WIDGET
@@ -238,7 +238,6 @@ See dependencies/vendor/mozilla/browser/components/search/content/search.xml
 and app/content/bindings/search.xml
 *******************************************************************************
 */
-
 
 /* Make the search bar match the general textbox style */
 searchbar
@@ -397,9 +396,6 @@ we should nix the painting of the selection.*/
 
 
 
-
-
-
 /** 
 *******************************************************************************
 THE FILTERLISTS
@@ -469,6 +465,7 @@ sb-filterlist:last-child > .filterlist > .sb-filterlist-tree
 {
   color: #feffff; /** Light Color Brightest */
 }
+
 
 
 /** 
@@ -590,7 +587,6 @@ treechildren::-moz-tree-column(insertbefore)
 {
   color: #B3BAAC !important; /** Light Color 1 */
 }
-
 
 
 
@@ -719,6 +715,7 @@ treecolpicker,
 }
 
 
+
 /** 
 *******************************************************************************
 DISPLAY PANE
@@ -738,6 +735,8 @@ DISPLAY PANE
   border-right: 1px solid #202220; /** Button Shadow */
   border-bottom: 1px solid #474948; /** Rubber Highlight */
 }
+
+
 
 /** 
 *******************************************************************************
@@ -767,6 +766,7 @@ AUTOCOMPLETE POPUPS
 .autocomplete-treebody::-moz-tree-row(selected) {
   background-color: #8A8F84; /** Light Color 2 */
 }
+
 
 
 /** 
@@ -855,11 +855,11 @@ label.tab-text
 tab[selected="true"] > hbox > label.tab-text,
 .tabbrowser-tab[selected="true"] > hbox > label.tab-text
 {
-  color: #feffff !important;
+  color: #feffff !important; /** Light Color Brightest */
 }
 
 tabpanels {
-  background-color		: transparent;
+  background-color : transparent;
 }
 
 .tabs-bottom-spacer
@@ -921,12 +921,11 @@ tabpanels {
 .scrollbutton-rel-box > .scrollbutton-down {
   background-color: #313131;
 }
- 
- 
+
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
   background-color: #313131;
 }
- 
+
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
   background-color: #313131;
 }
@@ -986,6 +985,7 @@ notification > button:active
 }
 
 
+
 /** 
 *******************************************************************************
 SCROLLBARS
@@ -993,14 +993,14 @@ SCROLLBARS
 */ 
 
 scrollbar
-{   
-  background-color: #202220 !important;
+{
+  background-color: #202220 !important; /** Button Shadow */ 
   background-image: none !important; 
   border-top: 1px solid #202220; /** Button Shadow */
   border-left: none !important;
 } 
 scrollbarbutton
-{    
+{
   -moz-border-radius: 3px;
   border-top-color: #797f76; /** Button Highlight */
   border-left-color: #202220; /** Button Shadow */ 
@@ -1011,7 +1011,7 @@ scrollbarbutton
 scrollbarbutton:hover:active, 
 scrollbarbutton[active="true"],
 scrollbar > slider > thumb:active
-{   	
+{
   -moz-border-radius: 3px;
   border-bottom-color: #797f76; /** Button Highlight */
   border-left-color: #202220; /** Button Shadow */
@@ -1020,23 +1020,23 @@ scrollbar > slider > thumb:active
   background-color: #313131;
 } 
 scrollbar > slider > thumb > gripper
-{   
+{
   background-color: transparent !important; 
-} 
+}
 scrollbar > slider > thumb
-{   
+{
   -moz-border-radius: 3px;
   border-top-color: #797f76; /** Button Highlight */
   border-left-color: #202220; /** Button Shadow */ 
   border-bottom-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */
   background-color: #313131;
-} 
+}
 scrollbar > slider
-{   
-  background-color: #202220 !important;
+{
+  background-color: #202220 !important; /** Button Shadow */ 
   background-image: none !important; 
-} 
+}
 
 scrollcorner {
   background-color: #313131;
@@ -1122,7 +1122,7 @@ toolbarbutton:hover > .toolbarbutton-text,
 button:hover,
 toolbarbutton:hover
 {
-  color: #FFF;  
+  color: #feffff; /** Light Color Brightest */
 }
 
 button[disabled="true"],
@@ -1353,8 +1353,6 @@ These let the user resize the frames in your box model.
   background-color: transparent;
 }
 
-/* END SPLITTERS **/
-
 
 
 /** 
@@ -1368,6 +1366,7 @@ tooltip
   background-color: #EEE !important;
   color: #0f100f !important; /** Groove  */
 }
+
 
 
 /** 
@@ -1418,6 +1417,8 @@ html|*.numberbox-input[disabled="true"]
 textbox[invalid="true"] {
   background-color: red;
 } 
+
+
 
 /**
 *******************************************************************************
@@ -1481,7 +1482,7 @@ separator.groove[orient="horizontal"]
   
 separator.groove[orient="vertical"] 
 {
-  border-left: 1px solid #474948;
+  border-left: 1px solid #474948; /** Rubber Highlight */
 }
   
 /* groove separators (0 padding, for dividing effects) */  
@@ -1531,6 +1532,8 @@ checkbox[checked="true"]:focus > hbox > label{
   color: #fffff1; /** Light Color Brightest */  
 }
 
+
+
 /** 
 *******************************************************************************
 MENULIST
@@ -1570,6 +1573,7 @@ menulist[focused="true"]
 {
   background-color: #0f100f; /** Groove */
 }
+
 
 
 /** 
@@ -1626,6 +1630,7 @@ listbox:focus > listitem[selected="true"] {
 }
 
 
+
 /** 
 *******************************************************************************
 PROGRESSMETER
@@ -1636,6 +1641,7 @@ progressmeter {
   border: 1px solid #797f76; /** Button Highlight */
   background-color: #474948; /** Rubber Highlight */
 }
+
 
 
 /** 
@@ -1692,6 +1698,7 @@ richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="t
 }
 
 
+
 /** 
 *******************************************************************************
 SMART PLAYLIST BUILDER
@@ -1704,6 +1711,7 @@ SMART PLAYLIST BUILDER
 }
 
 
+
 /** 
 *******************************************************************************
 WIZARDS
@@ -1712,19 +1720,20 @@ WIZARDS
 .wizard-header {
   background-color: #0f100f; /** Groove */
   border-bottom: 2px solid;
-  -moz-border-bottom-colors:  #474948 black;
+  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
+                             black;
 }
 
 /** Software Installer Dialog */
 installitem
 {
   border: 0px solid !important;
-  background-color: #313131 !important; /** Window color */
+  background-color: #313131 !important;
   color: #99A195; /** Tab Text */
 }
 #itemList
 {
-  background-color: #313131 !important; /** Window color */
+  background-color: #313131 !important;
   border: none !important;
 }
 
@@ -1735,36 +1744,36 @@ DIALOGS
 *******************************************************************************
 */
 
-#dialog-outer-frame
+#mainplayer,
+dialog
 {
-  border: 2px solid !important;
-  -moz-border-top-colors: #474948 /** Rubber Highlight */
-                          #000000 /** black */
-                          !important;
-  -moz-border-right-colors: #474948 /** Rubber Highlight */
-                            #000000 /** black */
-                            !important;
-  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
-                             #000000 /** black */
-                             !important;
-  -moz-border-left-colors: #474948 /** Rubber Highlight */
-                           #000000 /** black */
-                           !important;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+	border-left:1px solid black;
 }
+
+/*prefwindow*/
+.windowDialog
+{
+  border-top:1px solid #474948 /** Rubber Highlight */;
+}
+
 /** Add a darker content box and appropriate padding **/
 .dialog-content-box
 {
   background-color: #313131; /** Window */
   border: 1px solid #202220; /** Button Shadow */
-  border-bottom: 2px solid red;
+  border-bottom: 2px solid;
   -moz-border-bottom-colors: #474948  /** Rubber Highlight */
                              #202220; /** Button Shadow */
-  border-top: 2px solid red;
+  border-top: 2px solid;
   -moz-border-top-colors: #202220 /** Button Shadow */
                              #474948;  /** Rubber Highlight */                         
   margin: 5px 0px;
   padding: 10px;
 }
+
+
 
 /** 
 *******************************************************************************
@@ -1795,21 +1804,7 @@ PREFERENCES
 }
 
 #viewGroup radio:hover {
-  background-color: #B3BAAC !important; /** Light Color 1 */
-}
-
-#viewGroup radio:hover > label {
-  color: #feffff !important;
-}
-
-#viewGroup radio[selected="true"] {
-  background-color: #8A8F84 !important; /** Light Color 2 */
-  color: #B3BAAC !important; 
-}
-
-#viewGroup radio[selected="true"] > label /** In Preferences this inverts the selected label color under Add-ons */
-{
-  color: #0f100f !important; /** Groove */
+  background:transparent !important;
 }
 
 /* Extensions */
@@ -1848,6 +1843,40 @@ label.descriptionWrap,
   color: #feffff !important; 
 }
 
+/* Pane Selector */
+
+prefwindow > .paneSelector,
+#viewGroup
+{
+  background-color: #1b1d1b; /** Rubber Shadow*/
+  border-bottom: 2px solid !important;
+  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
+                             #1b1d1b /** Rubber Shadow */
+                             !important;
+}
+prefwindow > .paneSelector > radio,
+#viewGroup > radio
+{
+  border-top:1px solid #1b1d1b !important; /** Rubber Shadow */
+}
+prefwindow > .paneSelector > radio[selected="true"],
+#viewGroup > radio[selected="true"]
+{
+  background-color:#313131 !important; /** color of the Main Window*/
+  border-top:1px solid #474948 !important;  /** Rubber Highlight */
+}
+prefwindow > .paneSelector > radio > .paneButtonLabel,
+#viewGroup > radio > .viewButtonLabel
+{
+  color: #B3BAAC !important; /** Light Color 1 */
+}
+prefwindow > .paneSelector > radio[selected="true"] > .paneButtonLabel,
+#viewGroup > radio[selected="true"] > .viewButtonLabel
+{
+  color: #feffff !important; /** Light Color Brightest */
+}
+
+
 
 /** 
 *******************************************************************************
@@ -1858,7 +1887,7 @@ ERRORS
 html|*.error-box,
 groupbox.error-box > .groupbox-body
 {
-  border: 1px solid #F00;
+  border: 1px solid red;
 }
 
 html|*.error-text,
@@ -1867,6 +1896,7 @@ html|*.error-text,
   color: #F00;
   font-weight: bold;
 }
+
 
 
 /** 
@@ -1887,6 +1917,7 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 {
   color: #0f100f; /** Groove */
 }
+
 
 
 /** 
@@ -1910,6 +1941,6 @@ MOZILLA DOWNLOAD WINDOW
 
 #downloadManager > #search {
   border-top-width: 1px;
-  border-top-color: #202220; 
+  border-top-color: #202220; /** Button Shadow */
   border-top-style: solid;
 }
