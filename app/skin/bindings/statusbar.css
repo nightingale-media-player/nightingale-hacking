@@ -38,26 +38,37 @@ Imported by bindings.css or directly into feathers.
 
 statusbar#status-bar
 {
-  margin: 3px 0px 0px 0px;
+  padding-top:3px;
+  padding-right:16px;
 }
 
 sb-status-progressmeter
 {
-   margin: 2px 0px 0px 8px;
    border: none;
    width: 100px; 
    min-width: 100px; 
    max-width: 100px; 
 } 
-
-sb-player-numplaylistitems-label {
-  margin: 0px 0px 0px 8px !important;
-}
-
 sb-player-scanning-label {
-  margin: 0px 0px 0px 8px !important;
+  padding-left:5px;
 }
-
 .sb-status-bar-text {
   margin: 0;
 }
+
+statusbarpanel {
+  height:16px;
+  padding:0 5px;
+}
+statusbarpanel:first-child {
+  padding:0;
+}
+#statusbar-display,
+#statusbar-progresspanel {
+	border:none;
+}
+sb-status-progressmeter {
+  height:12px;
+}
+
+
