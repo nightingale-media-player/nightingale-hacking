@@ -418,3 +418,10 @@ const SB_PROPERTY_RAPISITEID = SB_PROPERTY_PREFACE + "rapiSiteID";
  * \internal
  */
 const SB_PROPERTY_ENABLE_AUTO_DOWNLOAD = SB_PROPERTY_PREFACE + "enableAutoDownload";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Needed for unit tests to pass.  Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_TRANSFER_POLICY = SB_PROPERTY_PREFACE + "transferPolicy";

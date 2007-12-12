@@ -719,6 +719,16 @@ sbLibraryServicePane.prototype._doesLibrarySupportListType =
 function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
   //logcall(arguments);
 
+  // If the transfer policy indicates read only media lists, the library does
+  // not support adding media lists of any type
+  // XXXerik less than SUPER HACK to keep new playlists from being added to
+  // device libraries.  This uses a hacked up policy system that will be
+  // replaced by a real one.
+  var transferPolicy = aLibrary.getProperty(SBProperties.transferPolicy);
+  if (transferPolicy && transferPolicy.match(/readOnlyMediaLists/)) {
+    return false;
+  }
+
   // XXXben SUPER HACK to keep new playlists from being added to the web
   //        library. We should really fix this with our policy system.
   if (aLibrary.equals(LibraryUtils.webLibrary)) {
