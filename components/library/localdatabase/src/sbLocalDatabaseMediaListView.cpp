@@ -1184,6 +1184,22 @@ sbLocalDatabaseMediaListView::SetSearchConstraint(sbILibraryConstraint* aSearchC
         if (!equals) {
           return NS_ERROR_INVALID_ARG;
         }
+
+        // Make sure all of the values are not empty
+        rv = group->GetValues(property, getter_AddRefs(values));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool hasMoreValues;
+        while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
+          nsString value;
+          rv = values->GetNext(value);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (value.IsEmpty()) {
+            return NS_ERROR_INVALID_ARG;
+          }
+        }
+
       }
     }
   }
