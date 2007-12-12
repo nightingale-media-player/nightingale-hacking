@@ -1130,6 +1130,12 @@ void sbMetadataHandlerTaglib::GuessCharset(
 {
     nsresult rv;
 
+    if (!pTag) {
+        // no tag to read
+        _retval.Truncate();
+        return;
+    }
+
     // first, build a string consisting of some tags
     TagLib::String tagString;
     tagString += pTag->album();
