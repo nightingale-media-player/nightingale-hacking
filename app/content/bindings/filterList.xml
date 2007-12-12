@@ -116,6 +116,7 @@
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", this._property);
   treecol.setAttribute("flex", "1");
+  treecol.setAttribute("sortDirection", "ascending");
   treeColumns.appendChild(treecol);
   this.treecol = treecol;
 
