@@ -90,7 +90,9 @@ try
     },
     
     shutdown: function() {
-      gBrowser.removeEventListener("DOMUpdatePageReport", gPopupBlockerObserver.onUpdatePageReport, false);
+      if (gBrowser) {
+        gBrowser.removeEventListener("DOMUpdatePageReport", gPopupBlockerObserver.onUpdatePageReport, false);
+      }
     },
     
     onUpdatePageReport: function() {
