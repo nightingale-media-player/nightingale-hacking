@@ -1,5 +1,5 @@
-#! /bin/sh
-#
+#!/usr/bin/env perl
+
 # ***** BEGIN LICENSE BLOCK *****
 # Version: MPL 1.1/GPL 2.0/LGPL 2.1
 #
@@ -13,15 +13,15 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# The Original Code is mozilla.org code.
+# The Original Code is this file as it was released upon December 26, 2000.
 #
 # The Initial Developer of the Original Code is
 # Netscape Communications Corporation.
-# Portions created by the Initial Developer are Copyright (C) 1999
+# Portions created by the Initial Developer are Copyright (C) 2000
 # the Initial Developer. All Rights Reserved.
 #
 # Contributor(s):
-#   Stephen Lamm <slamm@netscape.com>
+#   Christopher Seawood <cls@seawood.org>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -37,27 +37,27 @@
 #
 # ***** END LICENSE BLOCK *****
 
-# mozconfigfind - Loads options from .mozconfig onto configure's
-#    command-line. The .mozconfig file is searched for in the 
-#    order:
-#       if $MOZCONFIG is set, use that.
-#       Otherwise, use $TOPSRCDIR/.mozconfig
-#       Otherwise, use $HOME/.mozconfig
-#
-topsrcdir=$1
+use Getopt::Std;
 
-for _config in "$MOZCONFIG" \
-               "$MOZ_MYCONFIG" \
-               "$topsrcdir/.mozconfig" \
-               "$topsrcdir/mozconfig" \
-               "$topsrcdir/mozconfig.sh" \
-               "$topsrcdir/myconfig.sh" \
-               "$HOME/.mozconfig" \
-               "$HOME/.mozconfig.sh" \
-               "$HOME/.mozmyconfig.sh"
-do
-  if test -f "$_config"; then
-    echo "$_config";
-    exit 0
-  fi
-done
+getopts('rs');
+$regexp = 1 if (defined($opt_r));
+$sort = 1 if (defined($opt_s));
+
+undef @out;
+if ($sort) {
+    @in = sort @ARGV;
+} else {
+    @in = @ARGV;
+}
+foreach $d (@in) { 
+    if ($regexp) {
+        $found = 0; 
+        foreach $dir (@out) {
+            $found++, last if ($d =~ m/^$dir\// || $d eq $dir);
+        }
+        push @out, $d if (!$found);
+    } else {
+        push @out, $d if (!grep(/^$d$/, @out));
+    }
+}
+print "@out\n"
