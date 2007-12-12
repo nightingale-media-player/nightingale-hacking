@@ -564,12 +564,12 @@ treechildren::-moz-tree-column(insertbefore)
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertafter)
 {
-  border-right: 5px solid #202220 !important; /** Button Shadow */
+  border-right: 2px solid #202220 !important; /** Button Shadow */
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertbefore)
 {
-  border-left: 5px solid transparent !important; 
+  border-left: none !important;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row( selected )
