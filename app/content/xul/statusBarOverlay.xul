@@ -46,17 +46,19 @@
     <statusbarpanel id="statusbar-display" flex="1">
       <sb-status-label id="sb-status-bar-status-label" 
           class="sb-status-bar-status-label sb-status-bar-text" 
-          value=" " flex="1" crop="end"/>
+          value=" " flex="1" crop="end" pack="center"/>
     </statusbarpanel>
     <sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label"
           class="sb-status-bar-numplaylistitems-label sb-status-bar-text" 
-          crop="end"/>
+          crop="end" pack="center"/>
     <sb-player-scanning-label id="sb-status-bar-scanning-label" 
-          class="sb-status-bar-scanning-label sb-status-bar-text" crop="end"/>
+          class="sb-status-bar-scanning-label sb-status-bar-text" crop="end" pack="center"/>
     <statusbarpanel class="statusbarpanel-progress" 
           id="statusbar-progresspanel">
-      <sb-status-progressmeter id="sb-status-bar-status-progressmeter" 
-          class="sb-status-bar-status-progressmeter" mode="undetermined"/>
+      <vbox pack="center">
+        <sb-status-progressmeter id="sb-status-bar-status-progressmeter" 
+            class="sb-status-bar-status-progressmeter" mode="undetermined"/>
+      </vbox>
     </statusbarpanel>
     <statusbarpanel id="page-report-button" type="menu" mousethrough="never"
                      class="statusbarpanel-menu-iconic" 

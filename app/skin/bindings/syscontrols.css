@@ -273,8 +273,8 @@ RESIZERS
 
 .sb-sys-outer-frame-resizer
 {
-  height: 5px;
-  width: 5px;
+  height: 3px;
+  width: 3px;
 }
 .sb-sys-outer-frame-resizer-top,
 .sb-sys-outer-frame-resizer-topleft,

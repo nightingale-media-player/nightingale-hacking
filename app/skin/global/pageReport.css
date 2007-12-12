@@ -5,14 +5,17 @@
 }
 
 #page-report-button {
-  width: 20px;
+  width: 18px;
   display: none;
 }
 
 #page-report-button[blocked] > image {
-  list-style-image: url("chrome://global/skin/icons/icon-blocked-popup.png");
-  background-color: White;
+  list-style-image: url("chrome://global/skin/icons/icon-blocked-popup-statusbar.png");
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
   display: -moz-box;
+}
+#page-report-button[blocked]:hover > image {
+  -moz-image-region: rect(14px, 14px, 28px, 0px);
 }
 
 #page-report-button[blocked] {

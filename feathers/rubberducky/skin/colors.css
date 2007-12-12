@@ -130,6 +130,14 @@ THE STATUS PANE
 *******************************************************************************
 */ 
 
+statusbarpanel {
+  border-left:1px solid #202220; /** Button Shadow */
+}
+statusbar>*:last-child {
+  padding-right:5px;
+  border-right:1px solid #202220; /** Button Shadow */
+}
+
 sb-status-progressmeter { 
   background-color: transparent;
   color: #feffff !important; /** Light Color Brightest */
@@ -137,24 +145,46 @@ sb-status-progressmeter {
   border-left: 1px solid #202220; /** Button Shadow */
   border-bottom: 1px solid #474948; /** Rubber Highlight */
   border-right: 1px solid #202220; /** Button Shadow */ 
-} 
-
+}
 sb-status-progressmeter .progress-bar { 
   background-color: #474948; /** Rubber Highlight */
   color: #feffff !important; /** Light Color Brightest */
-} 
-  
+}
 sb-status-progressmeter[mode="undetermined"] { 
   background-color: #0f100f; /** Groove  */
   color: #feffff !important; /** Light Color Brightest */
-} 
-  
+}
+
+#statusbar-display,
+#statusbar-progresspanel
+{
+  border:none;
+}
+
 /** TODO: Why not define a color for the whole status bar and then inherit? **/
 sb-status-label, 
 sb-player-scanning-label, 
 sb-player-numplaylistitems-label > label
 {
   color: #B3BAAC; /** Light Color 1 */
+}
+
+/* popup blocker icon in the status bar */
+#page-report-button[blocked] > image {
+  border:1px solid transparent;
+  -moz-border-radius:2px;
+}
+#page-report-button[blocked]:hover > image {
+  border-top:1px solid #797f76; /** Button Highlight */
+  border-right:1px solid #202220; /** Button Shadow */
+  border-bottom:1px solid #202220; /** Button Shadow */
+  border-left:1px solid #202220; /** Button Shadow */
+}
+#page-report-button[blocked]:active > image {
+  border-top:1px solid #202220; /** Button Shadow */
+  border-right:1px solid #797f76; /** Button Highlight */
+  border-bottom:1px solid #797f76; /** Button Highlight */
+  border-left:1px solid #797f76; /** Button Highlight */
 }
 
 
