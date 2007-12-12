@@ -215,10 +215,20 @@ Mute and Slider
 .sb-player-mute-button-muteoff > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/volume/mute-off.png);
+  -moz-image-region: rect(0px 11px 11px 0px);
+}
+.sb-player-mute-button-muteoff:hover > .clickhold-button
+{
+  -moz-image-region: rect(11px 11px 22px 0px);
 }
 .sb-player-mute-button-muteon > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/volume/mute-on.png);
+  -moz-image-region: rect(0px 11px 11px 0px);
+}
+.sb-player-mute-button-muteon:hover > .clickhold-button
+{
+  -moz-image-region: rect(11px 11px 22px 0px);
 }
 
 sb-player-mute-button {

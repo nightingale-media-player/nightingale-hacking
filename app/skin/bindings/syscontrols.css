@@ -62,6 +62,10 @@ sb-sys-icon
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   -moz-image-region: rect(0px 9px 9px 0px);
 }
+.sb-feathers-toggle-button:hover > .clickhold-button
+{
+  -moz-image-region: rect(9px 9px 18px 0px);
+}
 
 .feathers-menu-selected-skin > .menu-iconic-left {
   margin-left: 16px !important;
@@ -91,6 +95,10 @@ sb-sys-minimize-button
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   -moz-image-region: rect(0px 18px 9px 9px);
 }
+sb-sys-minimize-button:hover
+{
+  -moz-image-region: rect(9px 18px 18px 9px);
+}
 
 /*  Maximize - Evict the checkbox guts, just use it for click handling */
 sb-sys-maximize-button > .checkbox-label-box
@@ -109,6 +117,10 @@ sb-sys-maximize-button
   height: 9px;  
   width: 9px;
 }
+sb-sys-maximize-button:hover
+{
+  background-position: -18px -9px; 
+}
 /* Restore */
 sb-sys-maximize-button[checked="true"] 
 {
@@ -118,12 +130,20 @@ sb-sys-maximize-button[checked="true"]
   height: 9px;  
   width: 9px;
 }
+sb-sys-maximize-button[checked="true"]:hover
+{
+  background-position: -54px -9px; 
+}
 
 /*  Close Window */
 sb-sys-close-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   -moz-image-region: rect(0px 36px 9px 27px);
+}
+sb-sys-close-button:hover
+{
+  -moz-image-region: rect(9px 36px 18px 27px);
 }
 
 /*  Hide (Video Window) */
@@ -132,12 +152,20 @@ sb-sys-hide-button
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   -moz-image-region: rect(0px 54px 9px 45px);
 }
+sb-sys-hide-button:hover
+{
+  -moz-image-region: rect(9px 54px 18px 45px);
+}
 
 /* Fullscreen (Video Window) */
 sb-player-fullscreen-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   -moz-image-region: rect(0px 45px 9px 36px);
+}
+sb-player-fullscreen-button:hover
+{
+  -moz-image-region: rect(9px 45px 18px 36px);
 }
 
 /* Jump-to in the Mini */
