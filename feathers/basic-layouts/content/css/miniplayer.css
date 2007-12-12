@@ -89,19 +89,30 @@ window#miniplayer #main-menubar {
 sb-feathers-toggle-button.miniplayer
 {
   margin: 0px 0px 0px 6px !important;
+  -moz-border-radius: 0 !important;
+  padding:0;
 }
 .miniplayer > hbox > .sb-feathers-toggle-button > .clickhold-button
 {
-  list-style-image: url(chrome://songbird/skin/icons/feather-switcher-icon.png);
-  -moz-image-region: auto;
+  list-style-image: url(chrome://songbird/skin/miniplayer/feather-switcher-icon.png);
+  -moz-image-region: rect(0px 16px 16px 0px);
+  -moz-border-radius: 0 !important;
+}
+.miniplayer > hbox > .sb-feathers-toggle-button:hover > .clickhold-button
+{
+  -moz-image-region: rect(16px 16px 32px 0px);
 }
 
 /* Close Window */
 sb-sys-close-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/close.png) !important;
-  -moz-image-region: auto;
+  -moz-image-region: rect(0px 9px 9px 0px);
    margin: 0px 10px 0px 7px !important;
+}
+sb-sys-close-button.miniplayer:hover
+{
+  -moz-image-region: rect(9px 9px 18px 0px);
 }
 
 /* JumpTo Button */
