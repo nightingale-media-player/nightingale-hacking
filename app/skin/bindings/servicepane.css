@@ -164,7 +164,10 @@ Currently a single clickhold button below the service tree
   list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
-                        
-                        
-
-
+/* Mac-specific icons for the file menu */
+window[platform="Darwin"] #menu_FilePopup #menuitem_file_new,
+window[platform="Darwin"] #menu_FilePopup #menuitem_file_smart,
+window[platform="Darwin"] #menu_FilePopup #menuitem_file_remote
+{
+  list-style-image: none;
+}
