@@ -3222,7 +3222,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
           if (NS_SUCCEEDED(result) &&
               contentDisposition.Length()) {
             escFileName = GetContentDispositionFilename(contentDisposition);
-            if(escFileName.Length())
+            if(!escFileName.IsEmpty())
               noContentDispositionHeaders = PR_FALSE;
           }
         }
@@ -3251,19 +3251,30 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         nsCOMPtr<nsINetUtil> netUtil;
         netUtil = do_GetService("@mozilla.org/network/util;1", &result);
         NS_ENSURE_SUCCESS(result, result);
-        nsCString leafName;
+        nsCString leafCName;
         result = netUtil->UnescapeString(escFileName,
           nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
-          leafName);
+          leafCName);
         NS_ENSURE_SUCCESS(result, result);
+        
+        /* convert the leaf name to UTF 16 (since it can be invalid UTF8) */
+        nsString leafName = NS_ConvertUTF8toUTF16(leafCName);
+        if (leafName.IsEmpty()) {
+          // not valid UTF8; use the escaped version instead :(
+          leafName.Assign(NS_ConvertUTF8toUTF16(escFileName));
+          if (leafName.IsEmpty()) {
+            // still invalid; hard code something crappy
+            leafName.AssignLiteral("unnamed");
+          }
+        }
 
         /* strip out characters not valid in file names */
-        nsCString illegalChars(FILE_ILLEGAL_CHARACTERS);
+        nsString illegalChars(NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS));
         illegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
-        ReplaceChars(leafName, illegalChars, '_');
+        ReplaceChars(leafName, illegalChars, PRUnichar('_'));
 
         /* append to the path */
-        result = mpDstFile->Append(NS_ConvertUTF8toUTF16(leafName));
+        result = mpDstFile->Append(leafName);
         NS_ENSURE_SUCCESS(result, result);
         /* ensure the filename is unique */
         result = sbDownloadDevice::MakeFileUnique(mpDstFile);
