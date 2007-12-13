@@ -576,6 +576,23 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
                   // Get the file:// uri from the file object.
                   nsCOMPtr<nsIURI> pURI;
                   rv = pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+                  #if XP_UNIX
+                    // Note that NewFileURI is broken on Linux/Mac when dealing with
+                    // file names not in the filesystem charset; see bug 6227
+                    nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
+                    if (localFile) {
+                      nsCString spec;
+                      nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+                      nsCOMPtr<nsIURI> pNewURI;
+                      if (NS_SUCCEEDED(rv2)) {
+                        spec.Insert("file://", 0);
+                        rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+                        if (NS_SUCCEEDED(rv2)) {
+                          pURI = pNewURI;
+                        }
+                      }
+                    }
+                  #endif
                   if (NS_SUCCEEDED(rv))
                   {
                     nsCAutoString u8spec;
@@ -762,6 +779,25 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                   // Get the file:// uri from the file object.
                   nsCOMPtr<nsIURI> pURI;
                   pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+
+                  #if XP_UNIX
+                    // Note that NewFileURI is broken on Linux/Mac when dealing with
+                    // file names not in the filesystem charset; see bug 6227
+                    nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
+                    if (localFile) {
+                      nsCString spec;
+                      nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+                      nsCOMPtr<nsIURI> pNewURI;
+                      if (NS_SUCCEEDED(rv2)) {
+                        spec.Insert("file://", 0);
+                        rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+                        if (NS_SUCCEEDED(rv2)) {
+                          pURI = pNewURI;
+                        }
+                      }
+                    }
+                  #endif
+
                   nsCString u8spec;
                   pURI->GetSpec(u8spec);
                   strPath = NS_ConvertUTF8toUTF16(u8spec);
