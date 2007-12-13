@@ -24,7 +24,7 @@
 #
 
 #
-# Original code is mozconfig-find from the Mozilla
+# Original code is mozconfig-find from the Mozilla Foundation.
 #
 
 # songbirdconfig-find - Loads options from songbird.config onto configure's

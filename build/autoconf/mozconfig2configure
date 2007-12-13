@@ -1,51 +1,41 @@
 #! /bin/sh
 #
-# ***** BEGIN LICENSE BLOCK *****
-# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+# BEGIN SONGBIRD GPL
 #
-# The contents of this file are subject to the Mozilla Public License Version
-# 1.1 (the "License"); you may not use this file except in compliance with
-# the License. You may obtain a copy of the License at
-# http://www.mozilla.org/MPL/
+# This file is part of the Songbird web player.
 #
-# Software distributed under the License is distributed on an "AS IS" basis,
-# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-# for the specific language governing rights and limitations under the
-# License.
+# Copyright(c) 2005-2007 POTI, Inc.
+# http://www.songbirdnest.com
 #
-# The Original Code is mozilla.org code.
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
 #
-# The Initial Developer of the Original Code is
-# Netscape Communications Corporation.
-# Portions created by the Initial Developer are Copyright (C) 1999
-# the Initial Developer. All Rights Reserved.
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
 #
-# Contributor(s):
-#   Stephen Lamm <slamm@netscape.com>
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# Alternatively, the contents of this file may be used under the terms of
-# either of the GNU General Public License Version 2 or later (the "GPL"),
-# or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-# in which case the provisions of the GPL or the LGPL are applicable instead
-# of those above. If you wish to allow use of your version of this file only
-# under the terms of either the GPL or the LGPL, and not to allow others to
-# use your version of this file under the terms of the MPL, indicate your
-# decision by deleting the provisions above and replace them with the notice
-# and other provisions required by the GPL or the LGPL. If you do not delete
-# the provisions above, a recipient may use your version of this file under
-# the terms of any one of the MPL, the GPL or the LGPL.
+# END SONGBIRD GPL
 #
-# ***** END LICENSE BLOCK *****
 
-# mozconfig2configure - Loads options from .mozconfig onto configure's
-#    command-line. See mozconfig-find for how the config file is
-#    found
 #
-#    The options from .mozconfig are inserted into the command-line
+# Original code is mozconfig2configure from the Mozilla Foundation.
+#
+
+# songbirdconfig2configure - Loads options from songbird.config onto configure's
+#    command-line. See songbirdconfig-find for how the config file is
+#    found.
+#
+#    The options from songbird.config are inserted into the command-line
 #    before the real command-line options. This way the real options
-#    will override any .mozconfig options.
+#    will override any songbird.config options.
 #
-# .mozconfig is a shell script. To add an option to configure's
+# songbird.config is a shell script. To add an option to configure's
 #    command-line use the pre-defined function, ac_add_options,
 #
 #       ac_add_options  <configure-option> [<configure-option> ... ]
@@ -71,11 +61,14 @@ ac_add_options() {
       # Note that all options in $ac_options are enclosed in quotes,
       # so there will always be a last character to match [^-A-Za-z0-9_]
       *"\"$_opt[^-A-Za-z0-9_]"* ) ;;
-      * ) mozconfig_ac_options="$mozconfig_ac_options $_opt" ;;
+      * ) $songbirdconfig_ac_options="$songbirdconfig_ac_options $_opt" ;;
     esac
   done
 }
 
+#
+# XXXAus: We do not use this currently.
+#
 ac_add_app_options() {
   APP=$1
   shift;
@@ -91,8 +84,8 @@ mk_add_options() {
 }
 
 ac_echo_options() {
-  echo "Adding configure options from $MOZCONFIG:"
-  eval "set -- $mozconfig_ac_options"
+  echo "Adding configure options from $SONGBIRDCONFIG:"
+  eval "set -- $songbirdconfig_ac_options"
   for _opt
   do
     echo "  $_opt"
@@ -103,7 +96,7 @@ ac_echo_options() {
 #--------------------------------------------------
 topsrcdir=`dirname $0`
 ac_options=
-mozconfig_ac_options=
+songbirdconfig_ac_options=
 
 # Save the real command-line options
 for _opt
@@ -113,14 +106,14 @@ do
   ac_options="$ac_options \"$_opt\""
 done
 
-MOZCONFIG=`$_AUTOCONF_TOOLS_DIR/mozconfig-find $topsrcdir`
-if [ "$MOZCONFIG" ]; then
-  . "$MOZCONFIG"
+SONGBIRDCONFIG=`$_AUTOCONF_TOOLS_DIR/songbirdconfig-find $topsrcdir`
+if [ "$SONGBIRDCONFIG" ]; then
+  . "$SONGBIRDCONFIG"
 fi
 
-if [ "$mozconfig_ac_options" ]; then
+if [ "$songbirdconfig_ac_options" ]; then
   ac_echo_options 1>&2
 fi
 
-eval "set -- $mozconfig_ac_options $ac_options"
+eval "set -- $songbirdconfig_ac_options $ac_options"
 
