@@ -1,0 +1,114 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+    <script>
+
+function log(stuff) {
+  var outputDiv = document.getElementById("output");
+  outputDiv.appendChild(document.createTextNode(stuff));
+  outputDiv.appendChild(document.createElement("br"));
+}
+
+function runtest() {
+
+  var contentUrlProperty = "http://songbirdnest.com/data/1.0#contentURL";
+
+  var library = songbird.mainLibrary;
+  var list = library.createSimpleMediaList("TestList");
+  var item = library.createMediaItem("http://example.com/foo");
+
+  var sitelibrary = songbird.siteLibrary;
+  var sitelist = sitelibrary.createSimpleMediaList("TestSiteList");
+  var siteitem = sitelibrary.createMediaItem("http://example.com/foo");
+
+  var testObjs = { sitelibrary: sitelibrary,
+                   sitelist: sitelist,
+                   siteitem: siteitem,
+                   library: library,
+                   list: list,
+                   item: item };
+
+  for ( var obj in testObjs ) {
+    var foo = testObjs[obj];
+
+    log("-------------------------------------------------------------------");
+    log(obj);
+
+    // Writing
+    // all attempts to write to contentURL should fail
+
+    try {
+      foo.setProperty( contentUrlProperty, "FAIL" );
+      log("Error: wrote to contentURL.");
+    } catch (e) {
+      log("Success: Blocked from writing to contentURL");
+    }
+
+    // Reading 
+    // certain attempts to read should succeed
+
+    try {
+      // non-file siteitems and sitelists should be readable
+      var val = foo.getProperty(contentUrlProperty);
+      if ( obj == "sitelist" || obj == "siteitem" ) {
+        log("Success: Able to read sitelist/siteitem contentURL:");
+        log(val);
+      } else {
+        log("Error: Able to read library contentURL:");
+        log(val);
+      }
+    } catch (e) {
+      // can't read sitelibrary contentURL (file:) or any of the
+      // main library stuff
+      if ( obj == "sitelibrary" ||
+           obj == "library" ||
+           obj == "list" ||
+           obj == "item" ) {
+        log("Success: Blocked from reading library contentURL.");
+      } else {
+        log("Error: Not able to read sitelist/siteitem contentURL.");
+      }
+    }
+  }
+}
+
+    </script>
+  </head>
+  <body onload="runtest();">
+    <h1> Test page for 
+      <a href="http://bugzilla.songbirdnest.com/show_bug.cgi?id=6149">bug 6149 </a>
+    </h1>
+    <p> This test the ability to read/write to contentURL. All tests should post
+        Success: with some description of what succeeded. 2 reads should be possible
+        and neither should dump a file: based location.
+    <div id="output">
+    </div>
+  </body>
+</html>
+

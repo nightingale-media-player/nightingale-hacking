@@ -284,54 +284,6 @@ function runTest(tester) {
   tester.endRemoteAPITest();
 }
 
-/*
-function assertStringArray( tester, a, e ) {
-  while ( e.hasMore() ) {
-    var s = e.getNext();
-    var i = a.indexOf(s);
-    if ( i < 0 ) {
-      tester.fail( "String '" + s + "' not in array" );
-    }
-    a.splice( i, 1 );
-  }
-  if ( a.length > 0 ) {
-    tester.fail("Array contains stuff the enumerator did not: " + a);
-  }
-}
-
-function enumeratorToArray(e) {
-  var a = [];
-  while (e.hasMoreElements()) {
-    a.push(e.getNext());
-  }
-  return a;
-}
-
-function assertItemArray(tester, a, e) {
-  while (e.hasMoreElements()) {
-    var item = e.getNext();
-    var i = -1;
-    for (var j = 0; j < a.length; j++) {
-      if (a[j].equals(item)) {
-        i = j;
-      }
-    }
-    if (i < 0) {
-      tester.fail("Item '" + item.guid + "' not in array");
-    }
-    a.splice(i, 1);
-  }
-  if (a.length > 0) {
-    var guids = [];
-    for (var i = 0; i < a.length; i++) {
-      guids.push(a[i].guid);
-    }
-    tester.fail("Array contains stuff the enumerator did not: " + guids);
-  }
-}
-*/
-
-
 function runPageTest(tester) {
   setTimeout( function runPageTest_setTimeout() { runTest(tester) }, 0 );
 }
