@@ -70,6 +70,7 @@
 
 #define USE_SQLITE_FULL_DISK_CACHING
 #define USE_SQLITE_LARGE_CACHE_SIZE
+#define USE_SQLITE_LARGE_PAGE_SIZE
 #define USE_SQLITE_READ_UNCOMMITTED
 #define USE_SQLITE_MEMORY_TEMP_STORE
 #define USE_SQLITE_BUSY_TIMEOUT
@@ -765,11 +766,23 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf8!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
+#if defined(USE_SQLITE_LARGE_PAGE_SIZE)
+  {
+    char *strErr = nsnull;
+    sqlite3_exec(pHandle, "PRAGMA page_size = 4096", nsnull, nsnull, &strErr);
+    if(strErr) {
+      NS_WARNING(strErr);
+      sqlite3_free(strErr);
+    }
+  }
+#endif
+
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
   {
     char *strErr = nsnull;
     sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
     if(strErr) {
+      NS_WARNING(strErr);
       sqlite3_free(strErr);
     }
   }
@@ -780,6 +793,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
     char *strErr = nsnull;
     sqlite3_exec(pHandle, "PRAGMA cache_size = 6000", nsnull, nsnull, &strErr);
     if(strErr) {
+      NS_WARNING(strErr);
       sqlite3_free(strErr);
     }
   }
@@ -790,6 +804,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
     char *strErr = nsnull;
     sqlite3_exec(pHandle, "PRAGMA read_uncommitted = 1", nsnull, nsnull, &strErr);
     if(strErr) {
+      NS_WARNING(strErr);
       sqlite3_free(strErr);
     }
   }
@@ -800,6 +815,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
     char *strErr = nsnull;
     sqlite3_exec(pHandle, "PRAGMA temp_store = 2", nsnull, nsnull, &strErr);
     if(strErr) {
+      NS_WARNING(strErr);
       sqlite3_free(strErr);
     }
   }
