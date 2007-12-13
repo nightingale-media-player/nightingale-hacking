@@ -50,7 +50,8 @@ Imported by bindings.css or directly into feathers.
 
 /* Service Pane Icons **/
 .servicepane-tree > treechildren::-moz-tree-image( library ),
-.locationbar-image[properties~="library"]
+.locationbar-image[properties~="library"],
+.tabbrowser-tab[properties~="library"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
 }
@@ -61,31 +62,36 @@ Imported by bindings.css or directly into feathers.
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( web library ),
-.locationbar-image[properties~="library"][properties~="web"]
+.locationbar-image[properties~="library"][properties~="web"],
+.tabbrowser-tab[properties~="library"][properties~="web"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialist ),
-.locationbar-image[properties~="medialist"]
+.locationbar-image[properties~="medialist"],
+.tabbrowser-tab[properties~="medialist"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
-.locationbar-image[properties~="medialisttype-smart"]
+.locationbar-image[properties~="medialisttype-smart"],
+.tabbrowser-tab[properties~="medialisttype-smart"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png);
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
-.locationbar-image[properties~="medialisttype-dynamic"]
+.locationbar-image[properties~="medialisttype-dynamic"],
+.tabbrowser-tab[properties~="medialisttype-dynamic"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( download ),
-.locationbar-image[properties~="download"]
+.locationbar-image[properties~="download"],
+.tabbrowser-tab[properties~="download"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }

@@ -119,22 +119,40 @@
           // populate the ui with a little help from our servicepane
           var text = null;
           var props = "";
+      
+          var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+                                      .getService(Components.interfaces.sbIServicePaneService);
+          servicePane.init();
 
-          if ( val.indexOf("chrome://") != -1 ) {
+          var servicePaneNode = servicePane.getNodeForURL(val);
+
+          // The look of the tab may be controlled by
+          // the service pane info
+          if (servicePaneNode) {
+            if (servicePaneNode.image) {
+              this.setIcon(this.mCurrentTab, servicePaneNode.image);
+            } 
+            if (servicePaneNode.properties) {
+              properties = servicePaneNode.properties;
+            }  
+          }
+
+          if ( val.indexOf("chrome://") != -1 && servicePaneNode) {
             // Only cook the url for chrome urls
-            text = gServicePane.getURLName(val); 
+            text = servicePaneNode.name;
           
-            // Note that getURLImage only retrieves
+            // Note that node.image only retrieves
             // hardcoded image URLs.  If the image
             // is supplied via CSS we need to use 
             // the properties list instead.  
-            props = gServicePane.getURLProperties(val);
+            props = servicePaneNode.properties;
           }
           
           SBDataSetStringValue("browser.url.text", text?text:val);
           
-          var image = gServicePane.getURLImage(val); 
-          SBDataSetStringValue("browser.url.image", image?image:'');
+          if (servicePaneNode) {
+           SBDataSetStringValue("browser.url.image", servicePaneNode.image ? servicePaneNode.image : '');
+          }
           
           // Reflect servicepane properties such as "library" onto
           // the image.  This allows the image source to be set from CSS.

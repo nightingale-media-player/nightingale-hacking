@@ -539,6 +539,11 @@
             if (!aLocation) {
               aLocation = "about:blank";
             }
+            
+            // Extra tags to be applied to the tab.
+            // Used for CSS styling.
+            var properties = "";
+             
             // set the context-menu based on the chromeyness of the location
             if (aLocation.scheme == 'chrome') {
 
@@ -547,6 +552,25 @@
               SBDataSetBoolValue('browser.canbookmark', false);
 
               this.mCurrentBrowser.contextMenu = null;
+              
+              // Since this is a chrome URL the service pane
+              // may have extra information about the location
+              var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+                                          .getService(Components.interfaces.sbIServicePaneService);
+              servicePane.init();
+
+              var servicePaneNode = servicePane.getNodeForURL(aLocation.spec);
+
+              // The look of the tab may be controlled by
+              // the service pane info
+              if (servicePaneNode) {
+                if (servicePaneNode.image) {
+                  this.setIcon(this.mCurrentTab, servicePaneNode.image);
+                } 
+                if (servicePaneNode.properties) {
+                  properties = servicePaneNode.properties;
+                }  
+              }
 
             } else {
 
@@ -557,6 +581,11 @@
               this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
 
             }
+
+
+            // Reflect the service pane properties for this URL (if any) onto the 
+            // tab so that it can by styled with CSS.
+            this.mCurrentTab.setAttribute("properties", properties);
 
             SBDataSetBoolValue('browser.cansubscription',
                                this.mCurrentTab.outerPlaylistShowing);
