@@ -165,7 +165,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
           NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
           rv = treeView->Init(mMediaListView,
-                            fs->array,
+                              mProtoArray,
                               nsnull,
                               spec.treeViewState);
           NS_ENSURE_SUCCESS(rv, rv);

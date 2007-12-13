@@ -105,11 +105,11 @@ var gSongbirdSanitizeOverlay = {
   },
   
   // mediaListListener
-  onItemAdded: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
-  onBeforeItemRemoved: function(aMediaList, aMediaItem) { },
-  onAfterItemRemoved: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
-  onItemUpdated: function(aMediaList, aMediaItem, aProperties) {},
-  onListCleared: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
+  onItemAdded: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
+  onAfterItemRemoved: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true; },
+  onListCleared: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onBatchBegin: function(aMediaList) {},
   onBatchEnd: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
   

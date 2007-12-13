@@ -437,7 +437,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     rv = mPlaylistPlayback->GetPlaying(&isPlaying);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // If we are already playing, initialized the playing indicator
+    // If we are already playing, initialize the playing indicator
     if (isPlaying) {
       nsCOMPtr<sbIMediaListView> playingView;
       rv = mPlaylistPlayback->GetPlayingView(getter_AddRefs(playingView));

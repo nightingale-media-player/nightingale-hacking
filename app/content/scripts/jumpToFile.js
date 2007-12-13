@@ -37,6 +37,10 @@
 
 try
 {
+  if (typeof(LibraryUtils) == "undefined") {
+    Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+  }
+
   function closeJumpTo() {
     if (document.__JUMPTO__) {
       document.__JUMPTO__.defaultView.close();
@@ -79,9 +83,8 @@ try
   var string_filteredby = "Filtered by";
   var string_library = "Library";
   var string_unknown = "Unknown Playlist";
-
-  //var playingRef_remote;
-  var showWebPlaylist_remote;
+  
+  var playingUrl_remote;
   
   function syncJumpTo(focus) {
     // because the change to the playing view may happen after this function has been triggered by an event or a remote observer, introduce a timeout
@@ -97,7 +100,7 @@ try
     if (!SBDataGetBoolValue("jumpto.nosavestate")) {
       SBDataSetIntValue("jumpto.visible", 1)
     }
-
+    
     windowPlacementSanityChecks();
     
     setJumptoMinMaxCallback();
@@ -112,19 +115,12 @@ try
     } catch (err) { /* ignore error, we have default strings */ }
 
     playingUrl_remote = SB_NewDataRemote( "faceplate.play.url", null );
-    //XXXlone > this needs to be replaced by a listener on gBrowser, to detect
-    // the opening and closing of web playlists, and active tab changes !
-    showWebPlaylist_remote = SB_NewDataRemote( "browser.playlist.show", null );
 
     const on_playingUrl_change = { 
       observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
     };
-    const on_showWebPlaylist_change = { 
-      observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
-    };
 
     playingUrl_remote.bindObserver(on_playingUrl_change, true);
-    showWebPlaylist_remote.bindObserver(on_showWebPlaylist_change, true);
 
     var servicepane =
       Components.classes['@songbirdnest.com/servicepane/service;1']
@@ -133,12 +129,9 @@ try
     var menulist = document.getElementById("playable_list");
     var menupopup = menulist.menupopup;
 
-    while (menupopup.database.GetDataSources().hasMoreElements()) {
-      menupopup.database.RemoveDataSource(
-          menupopup.database.GetDataSources().getNext());
-    }
-    menupopup.database.AddDataSource(servicepane.dataSource);
-    menupopup.ref = servicepane.root.id;
+    menulist.addEventListener("playlist-menuitems-changed", _onMenuItemsChanged, true);
+    
+    document.addEventListener("keypress", onJumpToKeypress, true);
 
     syncJumpTo(true);
   }
@@ -152,7 +145,6 @@ try
     var filters;
     var plsource;
     var libraryguid;
-    displayed_guid = displayed_libraryguid = null;
     source_playlist = window.arguments[0][1]?window.arguments[0][1].currentPlaylist:null;
     if (source_playlist) displayed_view = source_playlist.mediaListView;
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
@@ -189,10 +181,6 @@ try
       search = "";
       filters = [];
     }
-    if (displayed_view) { 
-      displayed_guid = displayed_view.mediaList.guid;
-      displayed_factoryguid = displayed_view.mediaList.library.guid;
-    }
     _setPlaylist( guid, libraryguid, search, filters, view, nofocus );
     _selectPlaylist( guid, libraryguid );
     _updateSubSearchItem(search, filters);
@@ -222,63 +210,61 @@ try
         view = source_playlist.mediaListView;
       search = _getSearchString( view );
       filters = _getFilters( view );
+      guid = view.mediaList.guid;
+      libraryguid = view.mediaList.library.guid;
     }
     _setPlaylist( guid, libraryguid, search, filters, view );
   }
 
-  var JumpToPlaylistListListener =
-  {
-    junk: "stuff",
-  
-    didRebuild: function ( builder ) {
-      var menulist = document.getElementById("playable_list");
-      var menupopup = menulist.menupopup;
-      if (source_search != "" || _hasFilters(source_filters)) {
-        menulist.selectedItem = menupopup.firstChild;
-      } else {
-        for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
-          var value = item.getAttribute("value");
-          var label = item.getAttribute("label");
-          if ( value.length > 0 )
-          {
-            var item_guid = item.getAttribute("guid");
-            var item_libraryguid = item.getAttribute("library");
-            if ( source_guid == item_guid && source_libraryguid == item_libraryguid ) {
-              menulist.selectedItem = item;
-              menulist.setAttribute( "value", value );
-              menulist.setAttribute( "label", label );
-              break;
-            }
-          }
-        }
-      }
-    },
-    
-    willRebuild: function ( builder ) {
-    },
-    
-	  QueryInterface: function(iid) {
-      if (!iid.equals(Components.interfaces.nsIXULBuilderListener) &&
-          !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
-          !iid.equals(Components.interfaces.nsISupports)) {
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-      }
-		  return this;
-	  }    
-  }
-
   function _selectPlaylist( guid, libraryguid ) {
     var menulist = document.getElementById("playable_list");
-    var item = document.getElementById("current_play_queue");
     // set default to null, if we don't find the list, we'll use the extra item to display
     // the unknown playlist
     menulist.selectedItem = null;
     // look for the playlist and select it
-    menulist.menupopup.builder.addListener( JumpToPlaylistListListener );
-    JumpToPlaylistListListener.didRebuild();
+    _onMenuItemsChanged();
+  }
+  
+  function _onMenuItemsChanged() {
+    var menulist = document.getElementById("playable_list");
+    var menupopup = menulist.menupopup;
+    if (source_search != "" || _hasFilters(source_filters)) {
+      menulist.selectedItem = menupopup.firstChild;
+    } else {
+      for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
+        var sbtype = item.getAttribute("sbtype");
+        var label = item.getAttribute("label");
+        if ( sbtype == "playlist-menuitem" )
+        {
+          var item_guid = item.getAttribute("guid");
+          var item_libraryguid = item.getAttribute("library");
+          if ( source_guid == item_guid && source_libraryguid == item_libraryguid ) {
+            menulist.selectedItem = item;
+            //menulist.setAttribute( "value", value );
+            menulist.setAttribute( "label", label );
+            break;
+          }
+        }
+      }
+    }
   }
   
   function _setPlaylist( guid, libraryguid, search, filters, sourceview, nofocus ) {
+    if (source_guid == guid &&
+        source_libraryguid == libraryguid &&
+        /*source_view && source_view == sourceview &&*/
+        source_search == search &&
+        filtersEqual(filters, source_filters)) return;
+    
+    //dump("source_guid = " + source_guid + "\n");
+    //dump("guid = " + guid + "\n");
+    //dump("source_view = " + source_view + "\n");
+    //dump("sourceview = " + sourceview + "\n");
+    //dump("source_search = " + source_search + "\n");
+    //dump("search = " + search + "\n");
+    //dump("source_filters.length = " + (source_filters ? source_filters.length : 0) + "\n");
+    //dump("filters.length = " + (filters ? filters.length : 0) + "\n");
+    
     if (libraryguid == null) {
       libraryguid = defaultlibraryguid;
     }
@@ -326,6 +312,17 @@ try
     source_view = sourceview;
   }
   
+  function filtersEqual(a, b) {
+    if (a.length != b.length) return false;
+    for (var j=0;j<a.length;j++) {
+      if (a[j].length != b[j].length) return false;
+      for (var i=0;i<a[j].length;i++) {
+        if (a[j][i] != b[j][i]) return false;
+      }
+    }
+    return true;
+  }
+  
   // for the playlist 
   function onListKeypress(evt) {
     try
@@ -335,6 +332,12 @@ try
         case 27: // Esc
           // close the window          
           onExit();
+          break;
+        case 13: // Esc
+          // close the window          
+          onJumpToPlay();
+          evt.preventDefault();
+          evt.stopPropagation();
           break;
       }
     }
@@ -372,6 +375,24 @@ try
       alert( err )
     }
   }
+
+  // for the dialog 
+  function onJumpToKeypress(evt) {
+    try
+    {
+      switch ( evt.keyCode )
+      {
+        case 13: // Enter
+          // ignore
+          evt.preventDefault();
+          break;
+      }
+    }
+    catch( err )
+    {
+      alert( err )
+    }
+  }
   
   function onSearchEditIdle(evt) {
     if ( editIdleInterval )
@@ -385,10 +406,13 @@ try
     _applySearch();
     var playlist = document.getElementById("jumpto.playlist");
     // change focus to playlist
-    playlist.tree.focus();
-    if (playlist.mediaListView.treeView.rowCount > 0) {
+    if (playlist.mediaListView.length > 0) {
+      playlist.tree.focus();
       playlist.mediaListView.treeView.selection.clearSelection();
-      playlist.mediaListView.treeView.selection.rangedSelect(0, 0, true);
+      setTimeout(
+        function() { 
+          playlist.mediaListView.treeView.selection.toggleSelect(0); 
+        }, 100);
     }
   }
   
@@ -430,13 +454,17 @@ try
   }
 
   function onUnloadJumpToFile() {
+    document.removeEventListener("keypress", onJumpToKeypress, true);
+
+    var menulist = document.getElementById("playable_list");
+    menulist.removeEventListener("playlist-menuitems-changed", _onMenuItemsChanged, true);
+
     var playlist = document.getElementById("jumpto.playlist");
     playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
     window.arguments[0][0].__JUMPTO__ = null;
     
     playingUrl_remote.unbind();
-    showWebPlaylist_remote.unbind();
 
     if (!SBDataGetBoolValue("jumpto.nosavestate")) {
       SBDataSetIntValue("jumpto.visible", 0)
@@ -451,18 +479,18 @@ try
     var no_filter = !_hasFilters(filters);
     if (no_search && no_filter && menulist.selectedItem != null) {
       // We do not need the extra item, what we're showing was found in the
-      // datasource, and has no extra filter or search. Hide the extra item.
+      // xul, and has no extra filter or search. Hide the extra item.
       item.setAttribute("hidden", "true");
     } else {
       // We need the extra item, show it.
       var label = ""
       item.setAttribute("hidden", "false");
-      // Did we find the playlist we were looking for in the datasource ?
+      // Did we find the playlist we were looking for in the xul ?
       if (menulist.selectedItem == null) {
         // No, we didn't ! To summarize,
         // The selected playlist is the current play queue, however it was not
         // found in the list of playlists. This means one of several possible scenarios:
-        // 1) This is a normal playlist that is just not part of the datasource on
+        // 1) This is a normal playlist that is just not part of the xul on
         // purpose, maybe an extension manages it ? It's not in the servicetree 
         // but it may still have a name, so try to grab it.
         label = this.getPlaylistLabel(source_guid, source_libraryguid);
@@ -569,6 +597,7 @@ try
       while (properties.hasMore()) {
         var prop = properties.getNext();
 
+//xxxlone          alert(prop + " - " + group.getValues(prop).getNext());
         if (this._isInCascadeFilterSet(view, prop)) {
           var info = pm.getPropertyInfo(prop);
 	      
@@ -591,7 +620,8 @@ try
   }
 
   function _resetFilters( view ) {
-    view.filterConstraint = null;
+    // don't assign null here, use standard constraint.
+    view.filterConstraint = LibraryUtils.standardFilterConstraint;
   }
   
   function _mixedCase(str) {
@@ -675,9 +705,7 @@ try
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
-/* XXXsteve bug 5303 disable jumpto
       if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(jumptoHotkeyActions);
-*/
     }
     SBDataSetBoolValue("jumpto.nosavestate", false);
     if (SBDataGetIntValue("jumpto.visible")) {
@@ -691,9 +719,7 @@ try
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
-/* XXXsteve bug 5303 disable jumpto
       if (hotkeyactionsService) hotkeyactionsService.unregisterHotkeyActionBundle(jumptoHotkeyActions);
-*/
     }
   }
   

@@ -50,59 +50,12 @@
         label="poo" 
         x_editable="false" 
         oncommand="onPlaylistlistSelect(event)" 
-        onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
+        onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"
         flex="1"
       >
-        <menupopup 
-          datasources="" 
-          ref=""
-        >
+        <menupopup>
           <menuitem id="current_play_queue" label="-"/>
-          <template>
-            <rule>
-              <conditions>
-                <content uri="?start" />
-                <member container="?start" child="?node" />
-                <triple subject="?node"
-                      predicate="http://home.netscape.com/NC-rdf#Name"
-                      object="?name" />
-                <triple subject="?node"
-                      predicate="http://songbirdnest.com/rdf/servicepane#Hidden"
-                      object="false" />                    
-                <triple subject="?node"
-                      predicate="http://songbirdnest.com/rdf/servicepane#contractid"
-                      object="@songbirdnest.com/servicepane/library;1"/>
-              </conditions>
-              <bindings>
-                <binding subject="?node"
-                      predicate="http://home.netscape.com/NC-rdf#Icon"
-                      object="?icon" />
-                <binding subject="?node"
-                      predicate="http://home.netscape.com/NC-rdf#Label"
-                      object="?id" />
-                <binding subject="?node"
-                      predicate="http://home.netscape.com/NC-rdf#URL"
-                      object="?url" />
-                <binding subject="?node"
-                      predicate="http://songbirdnest.com/rdf/library-servicepane#ListGUID"
-                      object="?listguid" />
-                <binding subject="?node"
-                      predicate="http://songbirdnest.com/rdf/library-servicepane#LibraryGUID"
-                      object="?libraryguid" />
-              </bindings>
-              <action>
-                <menuitem uri="?node" 
-                  id="?id"
-                  label="?name"
-                  image="?icon"
-                  class="menuitem-iconic"
-                  value="?url"
-                  guid="?listguid"
-                  library="?libraryguid"
-                />
-              </action>
-            </rule>
-          </template>
+          <sb-playlist-menuitems/>
         </menupopup>
       </menulist>
     </hbox>

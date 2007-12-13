@@ -107,6 +107,8 @@ var LibraryUtils = {
   },
 
   createStandardSearchConstraint: function(aSearchString) {
+    if (aSearchString == "" || !aSearchString) 
+      return null;
     var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
                     .createInstance(Ci.sbILibraryConstraintBuilder);
     var a = aSearchString.split(" ");

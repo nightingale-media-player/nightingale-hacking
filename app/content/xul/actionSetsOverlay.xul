@@ -120,14 +120,12 @@
                 attribute="checked" 
                 onchange="return value == '0'" /> 
     </broadcaster>
-<!-- XXXsteve bug 5303 disable jumpto
     <broadcaster id="controlJumpTo" >
       <observes type="dataremote"
                 key="jumpto.visible" 
                 attribute="checked" 
                 boolean="true" />
     </broadcaster>
--->
   </broadcasterset>
   
   <keyset id="mainKeyset">
@@ -143,9 +141,7 @@
     <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
     <key id="selectall-key" modifiers="accel" key="A" />
     <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
-<!-- XXXsteve bug 5303 disable jumpto
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
--->
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>

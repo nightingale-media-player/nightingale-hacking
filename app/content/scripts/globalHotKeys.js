@@ -179,7 +179,7 @@ function setDefaultGlobalHotkeys() {
     SBDataSetBoolValue("globalhotkeys.changed", true);
     SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    SBDataSetIntValue("globalhotkeys.count", 9);
+    SBDataSetIntValue("globalhotkeys.count", 10);
 
     // media keyboard keys :
 
@@ -233,11 +233,9 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.8.key.readable",    "stop");
     SBDataSetStringValue("globalhotkey.8.action",          "playback.stop");
 
-/* XXXsteve bug 5303 disable jumpto
-    SBDataSetStringValue("globalhotkey.xxx.key",            "meta-$74");
-    SBDataSetStringValue("globalhotkey.xxx.key.readable",   meta_key_str + "-J");
-    SBDataSetStringValue("globalhotkey.xxx.action",         "jumpto.open");
-*/
+    SBDataSetStringValue("globalhotkey.9.key",            "meta-$74");
+    SBDataSetStringValue("globalhotkey.9.key.readable",   meta_key_str + "-J");
+    SBDataSetStringValue("globalhotkey.9.action",         "jumpto.open");
   }
 }
 

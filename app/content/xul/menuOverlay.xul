@@ -109,10 +109,8 @@
         <menuitem id="menuitem_control_repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
         <menuitem id="menuitem_control_repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
         <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
-<!-- XXXsteve bug 5303 disable jumpto
         <menuseparator/>
         <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
--->
       </menupopup>
     </menu>
 

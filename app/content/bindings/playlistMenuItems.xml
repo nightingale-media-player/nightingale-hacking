@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+          
+  <binding id="sb-playlist-menuitems">
+    
+    <implementation>
+      <constructor>
+        <![CDATA[
+          if (typeof(SBProperties) == "undefined") {
+            Components.utils.import("resource://app/components/sbProperties.jsm");
+            if (!SBProperties)
+              throw new Error("Import of sbProperties module failed");
+          }
+        
+          this.libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          this.libraryListener = {
+            cb: this,
+            timeout: null,
+            _deferredUpdate: function() {
+              this._clearTimeout();
+              this.timeout = setTimeout(function(obj) { obj._onDeferredUpdate(); }, 10, this);
+            },
+            _clearTimeout: function() {
+              if (this.timeout) {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+              }
+            },
+            _onDeferredUpdate: function() {
+              this.cb.rebuildItems();
+            },
+            onItemAdded: function(aMediaList, aMediaItem) { this._deferredUpdate(); return true; },
+            onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
+            onAfterItemRemoved: function(aMediaList, aMediaItem) { this._deferredUpdate(); return true; },
+            onItemUpdated: function(aMediaList, aMediaItem, aProperties) { this._deferredUpdate(); return true; },
+            onListCleared: function(aMediaList) { this._deferredUpdate(); return true; },
+            onBatchBegin: function(aMediaList) {},
+            onBatchEnd: function(aMediaList) { this._deferredUpdate(); },
+            QueryInterface: function(iid) {
+              if (iid.equals(Components.interfaces.sbIMediaListListener) || 
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+
+          this.managerListener = {
+            cb: this,
+            onLibraryRegistered: function(aLibrary) {
+              cb.addLibraryListener(aLibrary);
+              this.cb.rebuildItems();
+            },
+            onLibraryUnregistered: function(aLibrary) {
+              cb.removeLibraryListener(aLibrary);
+              this.cb.rebuildItems();
+            },
+            QueryInterface: function(iid) {
+              if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+        
+          var libs = this.libraryManager.getLibraries();
+          while (libs.hasMoreElements()) {
+            this.addLibraryListener(libs.getNext());
+          }
+          
+          this.libraryManager.addListener(this.managerListener);
+          this.rebuildItems();
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          var libs = this.libraryManager.getLibraries();
+          while (libs.hasMoreElements()) {
+            this.removeLibraryListener(libs.getNext());
+          }
+          
+          this.libraryManager.removeListener(this.managerListener);
+        ]]>
+      </destructor>
+      
+      <method name="addLibraryListener">
+        <parameter name="aLibrary"/>
+        <body>
+          <![CDATA[
+              aLibrary.addListener(this.libraryListener, 
+                                   false, 
+                                   Components.interfaces.sbIMediaList.LISTENER_FLAGS_ALL,
+                                   null);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="removeLibraryListener">
+        <parameter name="aLibrary"/>
+        <body>
+          <![CDATA[
+              aLibrary.removeListener(this.libraryListener);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="rebuildItems">
+        <body>
+          <![CDATA[
+            var items = this.parentNode.getElementsByAttribute("sbtype", "playlist-menuitem");
+            while (items.length > 0) {
+              this.parentNode.removeChild(items[items.length-1]);
+            }
+            
+            var stringBundleService =
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
+            var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch2);
+
+            var downloadListGUID =
+              prefBranch.getComplexValue("songbird.library.download",
+                                    Components.interfaces.nsISupportsString);
+            var webListGUID =
+              prefBranch.getComplexValue("songbird.library.web",
+                                    Components.interfaces.nsISupportsString);
+
+            var mainLibraryGuid = this.libraryManager.mainLibrary.guid;
+            
+            var enumListener = {
+              sbs: stringBundleService,
+              downloadguid: downloadListGUID,
+              items: [],
+              onEnumerationBegin: function(aMediaList) { return true; },
+              onEnumerationEnd: function(aMediaList) { return true; },
+              onEnumeratedItem: function(aMediaList, aMediaItem) {
+                var listguid = aMediaItem.guid;
+                // skip the download playlist
+                if (listguid == this.downloadguid) return true;
+                var libraryguid = aMediaList.guid;
+                var item = document.createElement("menuitem");
+                var name = this._getLocalizedProperty(aMediaItem, SBProperties.mediaListName);
+                item.setAttribute("label", name);
+                item.setAttribute("sbtype", "playlist-menuitem");
+                item.setAttribute("guid", listguid);
+                item.setAttribute("library", libraryguid);
+                this.items.push(item);
+                return true;
+              },
+              _getLocalizedProperty: function(list, prop) {
+                var value = list.getProperty(prop);
+                if ( value[0] == "&" ) {
+                  var props = "chrome://songbird/locale/songbird.properties";
+                  var p = value.indexOf("#");
+                  if (p != -1) {
+                    var props = value.substr(1, p-1);
+                    value = value.substr(p+1);
+                  }
+                  var stringBundle = this.sbs.createBundle(props);
+                  try {
+                    value = stringBundle.GetStringFromName(value);
+                  } catch(e) {
+                    Components.utils.reportError(e);
+                  }
+                }
+                return value;
+              },
+              QueryInterface: function(iid) {
+                if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) || 
+                    iid.equals(Components.interfaces.nsISupports))
+                  return this;
+                throw Components.results.NS_ERROR_NO_INTERFACE;
+              }
+            };
+
+            var libs = this.libraryManager.getLibraries();
+            var pa = Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                     .createInstance(Components.interfaces.sbIMutablePropertyArray);
+            pa.appendProperty(SBProperties.isList, "1");
+            pa.appendProperty(SBProperties.hidden, "0");
+            while (libs.hasMoreElements()) {
+              var library = libs.getNext();
+              enumListener.onEnumeratedItem(library, library);
+              library.
+                enumerateItemsByProperties(
+                  pa, 
+                  enumListener, 
+                  Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+            }
+            var sortItems = function(a, b) {
+              // Give the highest priority to the main library items
+              var liba = a.getAttribute("library");
+              var libb = b.getAttribute("library");
+              if (liba == mainLibraryGuid && libb != mainLibraryGuid) return -1;
+              if (libb == mainLibraryGuid && liba != mainLibraryGuid) return 1;
+              
+              // Make the main library view the top item
+              var guida = a.getAttribute("guid");
+              var guidb = b.getAttribute("guid");
+              if (guida == mainLibraryGuid && guidb != mainLibraryGuid) return -1;
+              if (guidb == mainLibraryGuid && guida != mainLibraryGuid) return 1;
+
+              // Give the lowest priority to the web history library
+              if (liba == webListGUID && libb != webListGUID) return 1;
+              if (libb == webListGUID && liba != webListGUID) return -1;
+
+              // Finally, default sort is a string sort              
+              var la = a.getAttribute("label");
+              var lb = b.getAttribute("label");
+              if (la < lb) return -1;
+              if (lb < la) return 1;
+              return 0;
+            }
+            enumListener.items.sort(sortItems);
+            for (var i in enumListener.items) {
+              var item = enumListener.items[i];
+              this.parentNode.appendChild(item);
+            }
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-menuitems-changed", false, true);
+            this.dispatchEvent(e);
+          ]]>
+        </body>
+      </method>
+      
+      
+    </implementation>
+  
+  </binding>
+  
+</bindings>

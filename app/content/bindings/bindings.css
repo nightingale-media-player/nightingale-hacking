@@ -430,3 +430,8 @@ resizer {
 }
 %endif
 %endif
+
+/* playlist menuitems */
+sb-playlist-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/playlistMenuItems.xml#sb-playlist-menuitems") !important;
+}
