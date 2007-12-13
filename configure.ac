@@ -502,6 +502,14 @@ case "$SB_PLATFORM" in
     AC_SUBST(GSTREAMER_LIBS)
     AC_SUBST(GTK_CFLAGS)
 
+    # The iPod support needs dbus and hal.
+    PKG_CHECK_MODULES(DBUS, dbus-glib-1)
+    PKG_CHECK_MODULES(HAL, hal)
+    AC_SUBST(DBUS_CFLAGS)
+    AC_SUBST(DBUS_LIBS)
+    AC_SUBST(HAL_CFLAGS)
+    AC_SUBST(HAL_LIBS)
+
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"

@@ -203,6 +203,11 @@ GSTREAMER_CFLAGS      = @GSTREAMER_CFLAGS@
 GSTREAMER_LIBS        = @GSTREAMER_LIBS@
 GTK_CFLAGS            = @GTK_CFLAGS@
 
+DBUS_CFLAGS           = @DBUS_CFLAGS@
+DBUS_LIBS             = @DBUS_LIBS@
+HAL_CFLAGS            = @HAL_CFLAGS@
+HAL_LIBS              = @HAL_LIBS@
+
 #------------------------------------------------------------------------------
 endif #AUTODEFS_MK_INCLUDED
 #------------------------------------------------------------------------------
