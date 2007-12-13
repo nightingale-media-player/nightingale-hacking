@@ -110,6 +110,8 @@
                                 flex="1" align="center" />  
       </toolbaritem>
       
+      <splitter id="search-splitter">
+      </splitter>
 
       <!-- SEARCH WIDGET -->
       <toolbaritem id="searchbar-container" align="center" flex="6"
@@ -129,7 +131,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,splitter,searchbar-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container"
              flex="1">            
     </toolbar>
     
