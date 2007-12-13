@@ -131,13 +131,10 @@
           if (servicePaneNode) {
             if (servicePaneNode.image) {
               this.setIcon(this.mCurrentTab, servicePaneNode.image);
-            } 
-            if (servicePaneNode.properties) {
-              properties = servicePaneNode.properties;
-            }  
+            }   
           }
 
-          if ( val.indexOf("chrome://") != -1 && servicePaneNode) {
+          if ( val.indexOf("chrome://") == 0 && servicePaneNode) {
             // Only cook the url for chrome urls
             text = servicePaneNode.name;
           
@@ -145,7 +142,9 @@
             // hardcoded image URLs.  If the image
             // is supplied via CSS we need to use 
             // the properties list instead.  
-            props = servicePaneNode.properties;
+            if (servicePaneNode.properties) {
+              props = servicePaneNode.properties;
+            }
           }
           
           SBDataSetStringValue("browser.url.text", text?text:val);
