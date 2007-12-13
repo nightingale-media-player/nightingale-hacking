@@ -1823,7 +1823,8 @@ PREFERENCES
   color: #feffff !important;
 }
 
-#viewGroup
+#viewGroup,
+#progressBox
 {
   background-color: #0f100f !important; /** Groove */
   border: 1px solid !important;
