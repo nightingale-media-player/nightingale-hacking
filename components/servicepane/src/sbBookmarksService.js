@@ -46,6 +46,7 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
@@ -58,8 +59,6 @@ function SB_NewDataRemote(a,b) {
   return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
                     "sbIDataRemote", "init"))(a,b);
 }
-
-
 
 function sbBookmarks() {
   this._servicePane = null;
@@ -76,7 +75,7 @@ function sbBookmarks_QueryInterface(iid) {
   if (!iid.equals(Ci.nsISupports) &&
     !iid.equals(Ci.sbIBookmarks) &&
     !iid.equals(Ci.sbIServicePaneModule)) {
-    throw Components.results.NS_ERROR_NO_INTERFACE;
+    throw Cr.NS_ERROR_NO_INTERFACE;
   }
   return this;
 }
@@ -127,8 +126,8 @@ function sbBookmarks_observe(subject, topic, data) {
 sbBookmarks.prototype.importBookmarks =
 function sbBookmarks_importBookmarks() {
   var prefsService =
-      Components.classes["@mozilla.org/preferences-service;1"].
-      getService(Components.interfaces.nsIPrefBranch);
+      Cc["@mozilla.org/preferences-service;1"].
+      getService(Ci.nsIPrefBranch);
   var bookmarksURL = prefsService.getCharPref("songbird.url.bookmarks");
   
   // fetch the default set of bookmarks through a series of tubes
@@ -267,8 +266,8 @@ sbBookmarks.prototype.migrateLegacyBookmarks =
 function sbBookmarks_migrateLegacyBookmarks() {
   try {
     var prefsService =
-        Components.classes["@mozilla.org/preferences-service;1"].
-        getService(Components.interfaces.nsIPrefBranch);
+        Cc["@mozilla.org/preferences-service;1"].
+        getService(Ci.nsIPrefBranch);
     var LEGACY_BOOKMARKS_PREF = 'songbird.bookmarks.serializedTree';
     if (prefsService.prefHasUserValue(LEGACY_BOOKMARKS_PREF)) {
       var json = '(' + prefsService.getCharPref(LEGACY_BOOKMARKS_PREF) + ')';
@@ -338,10 +337,10 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
   
   if (aIconURL && aIconURL.match(/^https?:/)) {
     // check that the supplied image url works, otherwise use the default
-    var checker = Components.classes["@mozilla.org/network/urichecker;1"]
-      .createInstance(Components.interfaces.nsIURIChecker);
-    var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-      .createInstance(Components.interfaces.nsIURI);
+    var checker = Cc["@mozilla.org/network/urichecker;1"]
+      .createInstance(Ci.nsIURIChecker);
+    var uri = Cc["@mozilla.org/network/standard-url;1"]
+      .createInstance(Ci.nsIURI);
     uri.spec = aIconURL;
     checker.init(uri);
     checker.asyncCheck(new ImageUriCheckerObserver(bnode, aIconURL), null);
@@ -354,6 +353,7 @@ function ImageUriCheckerObserver(bnode, icon) {
   this._bnode = bnode;
   this._icon = icon;
 }
+
 ImageUriCheckerObserver.prototype.onStartRequest =
 function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
 {
@@ -362,21 +362,40 @@ ImageUriCheckerObserver.prototype.onStopRequest =
 function ImageUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
 {
   if (aStatusCode == 0) {
-    if (aRequest && aRequest.baseChannel) {
-      var channel = aRequest.baseChannel.QueryInterface(Components.interfaces.nsIHttpChannel);
+
+    if(aRequest &&
+       aRequest.baseChannel &&
+       aRequest.baseChannel instanceof Ci.nsIHttpChannel) {
+
+      var channel = aRequest.baseChannel.QueryInterface(Ci.nsIHttpChannel);
+
       if (channel) {
-        var contenttype = channel.getResponseHeader("content-type");
-        if (contenttype != "image/x-icon") return;
+        try {
+          var contentType = channel.getResponseHeader("content-type");
+            
+          if (contentType.substr(0,6) != "image/") {
+            Cu.reportError("Favicon URL is not an image - content-type = " + 
+                           contentType + 
+                           "faviconURL = " +
+                           this._icon);
+            return;
+          }
+        }
+        catch(e) {
+          if (Components.lastResult != Cr.NS_ERROR_NOT_AVAILABLE) {
+            Cu.reportError(e);
+          }
+        }
       }
-    } else {
-        var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                                .getService(Components.interfaces.nsIConsoleService);
-        consoleService.logStringMessage("aRequest.baseChannel is null... can't check the content type\nWe'll have to trust we got an image...");
     }
+
     // If the requested image exists, set it as the icon.
     this._bnode.image = this._icon;
+
   }
+  
   // Otherwise, we don't set the image property and we get the default from the skin.
+  return;
 }
 
 sbBookmarks.prototype.addFolder =
@@ -505,8 +524,8 @@ function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
 sbBookmarks.prototype._getDragData =
 function sbBookmarks__getDragData(aDragSession, aDataType) {
   // create an nsITransferable
-  var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
-      createInstance(Components.interfaces.nsITransferable);
+  var transferable = Cc["@mozilla.org/widget/transferable;1"].
+      createInstance(Ci.nsITransferable);
   // specify what kind of data we want it to contain
   transferable.addDataFlavor(aDataType);
   // ask the drag session to fill the transferable with that data
@@ -516,7 +535,7 @@ function sbBookmarks__getDragData(aDragSession, aDataType) {
   var dataLength = {};
   transferable.getTransferData(aDataType, data, dataLength);
   // it's always a string. always.
-  data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+  data = data.value.QueryInterface(Ci.nsISupportsString);
   return data.toString();
 }
 sbBookmarks.prototype.onDrop =
@@ -542,8 +561,8 @@ function sbBookmarks_onDrop(aNode, aDragSession, aOrientation) {
 sbBookmarks.prototype._addDragData =
 function sbBookmarks__addDragData (aTransferable, aData, aDataType) {
   aTransferable.addDataFlavor(aDataType);
-  var text = Components.classes["@mozilla.org/supports-string;1"].
-     createInstance(Components.interfaces.nsISupportsString);
+  var text = Cc["@mozilla.org/supports-string;1"].
+     createInstance(Ci.nsISupportsString);
   text.data = aData;
   // double the length - it's unicode - this is stupid
   aTransferable.setTransferData(aDataType, text, text.data.length*2);
