@@ -447,13 +447,15 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
       rv = mPlaylistPlayback->GetCurrentIndex(&playingIndex);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIMediaItem> playingItem;
-      rv = playingView->GetItemByIndex(playingIndex,
-                                       getter_AddRefs(playingItem));
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (playingIndex >= 0) {
+        nsCOMPtr<sbIMediaItem> playingItem;
+        rv = playingView->GetItemByIndex(playingIndex,
+                                         getter_AddRefs(playingItem));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = OnTrackChange(playingItem, playingView, playingIndex);
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = OnTrackChange(playingItem, playingView, playingIndex);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 

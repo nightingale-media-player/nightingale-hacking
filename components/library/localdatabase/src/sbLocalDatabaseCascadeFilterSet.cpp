@@ -159,25 +159,31 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
       added = fs->values.AppendElements(spec.values);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
-        if (spec.treeViewState) {
-          nsRefPtr<sbLocalDatabaseTreeView> treeView =
-            new sbLocalDatabaseTreeView();
-          NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
-
-          rv = treeView->Init(mMediaListView,
-                              mProtoArray,
-                              nsnull,
-                              spec.treeViewState);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-        fs->treeView = treeView;
+      if (spec.isSearch) {
+        rv = ConfigureFilterArray(fs, NS_LITERAL_STRING(SB_PROPERTY_CREATED));
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-
-      rv = ConfigureFilterArray(fs, NS_LITERAL_STRING(SB_PROPERTY_CREATED));
-      NS_ENSURE_SUCCESS(rv, rv);
+      else {
+        rv = ConfigureFilterArray(fs, spec.property);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       rv = ConfigureArray(i);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      if (spec.treeViewState) {
+        nsRefPtr<sbLocalDatabaseTreeView> treeView =
+          new sbLocalDatabaseTreeView();
+        NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
+
+        rv = treeView->Init(mMediaListView,
+                            fs->array,
+                            nsnull,
+                            spec.treeViewState);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        fs->treeView = treeView;
+      }
     }
   }
 
@@ -354,11 +360,34 @@ sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
   rv = fs.array->AddSort(aProperty, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  fs.values.Clear();
   rv = ConfigureArray(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (fs.treeView) {
+    nsCOMPtr<nsITreeSelection> selection;
+    rv = fs.treeView->GetSelection(getter_AddRefs(selection));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = selection->ClearSelection();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fs.treeView->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Tell the view to update its configuration.  It will first apply its
+  // filters and then ask us for ours
+  if (mMediaListView) {
+    rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And notify the view's listeners
+    mMediaListView->NotifyListenersFilterChanged();
+  }
 
   return NS_OK;
 }
@@ -714,7 +743,7 @@ sbLocalDatabaseCascadeFilterSet::AddFilters(sbILibraryConstraintBuilder* aBuilde
       NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
       rv = aBuilder->IncludeList(filter.property, values, nsnull);
-        NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
@@ -873,7 +902,6 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   // Clear this filter since our upstream filters have changed
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
-  fs.values.Clear();
 
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);

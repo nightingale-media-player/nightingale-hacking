@@ -640,14 +640,6 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
   rv = ClonePropertyArray(mViewSort, getter_AddRefs(sort));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibraryConstraint> filter;
-  rv = GetFilterConstraint(getter_AddRefs(filter));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibraryConstraint> search;
-  rv = GetSearchConstraint(getter_AddRefs(search));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsRefPtr<sbLocalDatabaseCascadeFilterSetState> filterSetState;
   if (mCascadeFilterSet) {
     rv = mCascadeFilterSet->GetState(getter_AddRefs(filterSetState));
@@ -662,8 +654,8 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
 
   nsRefPtr<sbLocalDatabaseMediaListViewState> state =
     new sbLocalDatabaseMediaListViewState(sort,
-                                          search,
-                                          filter,
+                                          mViewSearch,
+                                          mViewFilter,
                                           filterSetState,
                                           treeViewState);
   NS_ENSURE_TRUE(state, NS_ERROR_OUT_OF_MEMORY);
