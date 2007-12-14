@@ -576,9 +576,10 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
                   // Get the file:// uri from the file object.
                   nsCOMPtr<nsIURI> pURI;
                   rv = pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
-                  #if XP_UNIX
-                    // Note that NewFileURI is broken on Linux/Mac when dealing with
+                  #if XP_UNIX && !XP_MACOSX
+                    // Note that NewFileURI is broken on Linux when dealing with
                     // file names not in the filesystem charset; see bug 6227
+                    // Mac uses a different persistentDescriptor; see bug 6341
                     nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
                     if (localFile) {
                       nsCString spec;
@@ -780,9 +781,10 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                   nsCOMPtr<nsIURI> pURI;
                   pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
 
-                  #if XP_UNIX
-                    // Note that NewFileURI is broken on Linux/Mac when dealing with
+                  #if XP_UNIX && !XP_MACOSX
+                    // Note that NewFileURI is broken on Linux when dealing with
                     // file names not in the filesystem charset; see bug 6227
+                    // Mac uses a different persistentDescriptor; see bug 6341
                     nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
                     if (localFile) {
                       nsCString spec;

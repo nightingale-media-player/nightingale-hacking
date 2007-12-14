@@ -85,13 +85,13 @@ try
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
       
-      // Linux/Mac specific hack to be able to read badly named files (bug 6227)
+      // Linux specific hack to be able to read badly named files (bug 6227)
       // nsIIOService::newFileURI actually forces to be valid UTF8 - which isn't
       // correct if the file on disk manages to have an incorrect name
+      // note that Mac OSX has a different persistentDescriptor
       if (fp.file instanceof Components.interfaces.nsILocalFile) {
         switch(getPlatformString()) {
           case "Linux":
-          case "Darwin":
             var spec = "file://" + escape(fp.file.persistentDescriptor);
             uri = ios.newURI(spec, null, null);
         }
