@@ -168,11 +168,6 @@ sb-player-fullscreen-button:hover
   -moz-image-region: rect(9px 45px 18px 36px);
 }
 
-/* Jump-to in the Mini */
-sb-player-jumpto-button 
-{
-  list-style-image: url(chrome://songbird/skin/icons/icon-lib.png); /* Design Note, use the library icon to let the user know how to access it while in mini-mode */
-}
 
 
 /** 

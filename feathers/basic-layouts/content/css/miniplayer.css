@@ -118,9 +118,15 @@ sb-sys-close-button.miniplayer:hover
 /* JumpTo Button */
 sb-player-jumpto-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-jumpto.png) !important;
-  -moz-image-region: auto;
-  margin: 0px 0px 0px 5px;  
+  -moz-border-radius: 0 !important;
+  padding:0;
+  list-style-image: url(chrome://songbird/skin/miniplayer/icon-jumpto.png) !important;
+  -moz-image-region: rect(0px 16px 16px 0px);
+  margin: 0px 0px 0px 6px !important;
+}
+sb-player-jumpto-button.miniplayer:hover
+{
+  -moz-image-region: rect(16px 16px 32px 0px);
 }
 
 
