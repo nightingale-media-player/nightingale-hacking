@@ -184,7 +184,9 @@
               },
               _getLocalizedProperty: function(list, prop) {
                 var value = list.getProperty(prop);
-                if ( value[0] == "&" ) {
+                if ( value != null && 
+                     value != "" && 
+                     value[0] == "&" ) {
                   var props = "chrome://songbird/locale/songbird.properties";
                   var p = value.indexOf("#");
                   if (p != -1) {

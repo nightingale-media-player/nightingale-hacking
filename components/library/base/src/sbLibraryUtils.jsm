@@ -112,12 +112,16 @@ var LibraryUtils = {
     var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
                     .createInstance(Ci.sbILibraryConstraintBuilder);
     var a = aSearchString.split(" ");
+    var first = true;
     for (var i = 0; i < a.length; i++) {
-      builder.include(SBProperties.artistName, a[i]);
-      builder.include(SBProperties.albumName, a[i]);
-      builder.include(SBProperties.trackName, a[i]);
-      if (i + 1 < a.length) {
-        builder.intersect();
+      if (a[i] && a[i] != "") {
+        if (!first) {
+          builder.intersect();
+        }
+        builder.include(SBProperties.artistName, a[i]);
+        builder.include(SBProperties.albumName, a[i]);
+        builder.include(SBProperties.trackName, a[i]);
+        first = false;
       }
     }
     return builder.get();
