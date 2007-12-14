@@ -82,7 +82,6 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     }
   }
 
-
   nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -119,6 +118,24 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
   rv = playlistPlayback->IsMediaURL(NS_ConvertUTF8toUTF16(spec), &isMediaURL);
 
   if (NS_SUCCEEDED(rv) && isMediaURL) {
+    
+    // We seem to think this is media, make sure the content type that
+    // the server handed us at least makes sense. If it doesn't we will
+    // leave the contentType alone and let other sniffers have a go at
+    // it.
+    
+    nsCAutoString contentType;
+    rv = channel->GetContentType(contentType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if( contentType.EqualsLiteral("text/html") ||
+        contentType.EqualsLiteral("application/atom+xml") ||
+        contentType.EqualsLiteral("application/rdf+xml") ||
+        contentType.EqualsLiteral("application/rss+xml") ||
+        contentType.EqualsLiteral("application/xml")) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+
     aSniffedType.AssignLiteral(TYPE_MAYBE_MEDIA);
   }
   else {

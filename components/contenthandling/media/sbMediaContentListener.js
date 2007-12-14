@@ -155,6 +155,10 @@ sbMediaContentListener.prototype = {
     //        service.
     var channel = aRequest.QueryInterface(Ci.nsIChannel);
     var uri = channel.URI;
+    
+    var contentType = channel.contentType;
+    
+    dump("\n---------------------------\nsbMediaContentListener -- contentType: " + contentType + "\n---------------------------\n");
 
     var pps = Cc[CONTRACTID_PLAYLISTPLAYBACK].
               getService(Ci.sbIPlaylistPlayback);
@@ -163,6 +167,19 @@ sbMediaContentListener.prototype = {
       // Hmm, badness. We can't actually play this file type. Throw an error
       // here to get the URILoader to keep trying with other content listeners.
       throw Cr.NS_ERROR_UNEXPECTED;
+    }
+    
+    // We seem to think this is a media file, let's make sure it doesn't have a
+    // content type that we know for sure isn't media.
+    if(contentType == "text/html" ||
+       contentType == "application/atom+xml" ||
+       contentType == "application/rdf+xml" ||
+       contentType == "application/rss+xml" ||
+       contentType == "application/xml") {
+        
+      // Bah, looks like the content type doesn't match up at all,
+      // just find someone else to load it.
+      return false;
     }
 
     // Let exceptions propogate from here!
