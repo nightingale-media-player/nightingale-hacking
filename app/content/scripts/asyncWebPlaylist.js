@@ -447,7 +447,18 @@ try
                 aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
               if ( uriChecker ) {
                 var url = uriChecker.baseChannel.URI.spec;
-                
+                var contentType = uriChecker.baseChannel.contentType;
+
+                // XXXAus: We know for sure these follow contentTypes are not media we can playback.
+                // See bug #4844 for more information.
+                if(contentType == "text/html" ||
+                   contentType == "application/atom+xml" ||
+                   contentType == "application/rdf+xml" ||
+                   contentType == "application/rss+xml" ||
+                   contentType == "application/xml") {
+                   return;
+                 }
+
                 // Try to see if we've already found and scanned this url
                 var listener = {
                   foundItem: null,
@@ -466,6 +477,7 @@ try
                 var library = aMediaListView.mediaList.library;
                 library.enumerateItemsByProperty(SBProperties.originURL, url, listener );
                 library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
+                
                 if (listener.foundItem) {
                   this.manager.items.push(listener.foundItem);
                 }
