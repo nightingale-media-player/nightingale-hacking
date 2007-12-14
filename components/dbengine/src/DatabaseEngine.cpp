@@ -1186,7 +1186,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       sqlite3_stmt *pStmt = nsnull;
 
       nsAutoString strQuery;
-      bindParameterArray_t* pParameters;
+      nsAutoPtr<bindParameterArray_t> pParameters;
       const void *pzTail = nsnull;
 
       pQuery->GetQuery(currentQuery, strQuery);
@@ -1549,7 +1549,6 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         NS_WARNING(log.get());
       }
 #endif
-      delete pParameters;
     }
 
     PR_Lock(pQuery->m_StateLock);

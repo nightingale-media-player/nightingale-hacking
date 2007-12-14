@@ -362,6 +362,10 @@ PlaylistPlayback.prototype = {
   },
   
   _deinit: function() {
+    for (var i = 0; i < this._listeners.length; i++) {
+      this._listeners[i] = null;
+    }
+
     this._releaseDataRemotes();
     
     var coreCount = this._cores.length;
