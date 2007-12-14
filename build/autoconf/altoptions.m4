@@ -41,7 +41,6 @@ dnl    the 'myconfig.m4' file.
 
 dnl Send comments, improvements, bugs to Steve Lamm (slamm@netscape.com).
 
-
 dnl MOZ_ARG_ENABLE_BOOL(           NAME, HELP, IF-YES [, IF-NO [, ELSE]])
 dnl MOZ_ARG_DISABLE_BOOL(          NAME, HELP, IF-NO [, IF-YES [, ELSE]])
 dnl MOZ_ARG_ENABLE_STRING(         NAME, HELP, IF-SET [, ELSE])
@@ -68,7 +67,7 @@ AC_DEFUN([MOZ_TWO_STRING_TEST],
 
 dnl MOZ_ARG_ENABLE_BOOL(NAME, HELP, IF-YES [, IF-NO [, ELSE]])
 AC_DEFUN([MOZ_ARG_ENABLE_BOOL],
-[AC_ARG_ENABLE([$1], [$2], 
+[AC_ARG_ENABLE([$1], [$2],
  [MOZ_TWO_STRING_TEST([$1], [$enableval], yes, [$3], no, [$4])],
  [$5])])
 
@@ -84,7 +83,7 @@ AC_DEFUN([MOZ_ARG_ENABLE_STRING],
 
 dnl MOZ_ARG_ENABLE_BOOL_OR_STRING(NAME, HELP, IF-YES, IF-NO, IF-SET[, ELSE]]])
 AC_DEFUN([MOZ_ARG_ENABLE_BOOL_OR_STRING],
-[ifelse([$5], , 
+[ifelse([$5], ,
  [errprint([Option, $1, needs an "IF-SET" argument.
 ])
   m4exit(1)],
@@ -122,9 +121,9 @@ AC_DEFUN([MOZ_CHECK_PTHREADS],
 [
 AC_MSG_CHECKING([for pthread_create in -l$1])
 echo "
-    #include <pthread.h> 
-    void *foo(void *v) { int a = 1;  } 
-    int main() { 
+    #include <pthread.h>
+    void *foo(void *v) { int a = 1;  }
+    int main() {
         pthread_t t;
         if (!pthread_create(&t, 0, &foo, 0)) {
             pthread_join(t, 0);
@@ -147,10 +146,11 @@ echo "
 dnl MOZ_READ_MYCONFIG() - Read in 'myconfig.sh' file
 AC_DEFUN([MOZ_READ_MOZCONFIG],
 [AC_REQUIRE([AC_INIT_BINSH])dnl
-# Read in '.mozconfig' script to set the initial options.
-# See the mozconfig2configure script for more details.
+# Read in 'songbird.config' script to set the initial options.
+# See the songbirdconfig2configure script for more details.
 _AUTOCONF_TOOLS_DIR=`dirname [$]0`/[$1]/build/autoconf
-. $_AUTOCONF_TOOLS_DIR/mozconfig2configure])
+. $_AUTOCONF_TOOLS_DIR/songbirdconfig2configure])
 
 dnl This gets inserted at the top of the configure script
-MOZ_READ_MOZCONFIG(MOZ_TOPSRCDIR)
+AC_DEFINE([MOZ_TOPSRCDIR],["."])dnl
+MOZ_READ_MOZCONFIG(MOZ_TOPSRCDIR)dnl
