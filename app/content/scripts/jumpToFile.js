@@ -202,8 +202,10 @@ try
       else mediaList = library.getMediaItem(guid);
       if ( mediaList ) 
         mediaList = mediaList.QueryInterface(Components.interfaces.sbIMediaList);
-      if ( mediaList )
+      if ( mediaList ) {
         view = mediaList.createView();
+        view.filterConstraint = LibraryUtils.standardFilterConstraint;
+      }
     } else {
       view = gPPS.playingView;
       if (!view) 
@@ -282,6 +284,7 @@ try
         else mediaItem = library.getMediaItem(guid);
         if (mediaItem) {
           sourceview = mediaItem.createView();
+          sourceview.filterConstraint = LibraryUtils.standardFilterConstraint;
         }
       }
     }
