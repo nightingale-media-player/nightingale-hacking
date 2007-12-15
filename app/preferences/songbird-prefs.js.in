@@ -261,3 +261,13 @@ pref("privacy.popups.policy",               1);
 pref("privacy.popups.usecustom",            true);
 pref("privacy.popups.firstTime",            true);
 pref("privacy.popups.showBrowserMessage",   true);
+
+// Disable drag image for linux, see
+// http://bugzilla.songbirdnest.com/show_bug.cgi?id=5537
+// https://bugzilla.mozilla.org/show_bug.cgi?id=376238
+#ifdef XP_UNIX
+#ifndef XP_MACOSX
+pref("nglayout.enable_drag_images", false);
+#endif
+#endif
+
