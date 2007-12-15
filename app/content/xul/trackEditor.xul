@@ -49,6 +49,7 @@
  ondialogcancel="if ( doCancel() ) onExit( );"
  buttonlabelextra1="&window.undo;"
  resizers="horiz"
+ persist="screenX screenY width"
 >
   
   <windowregion/>
@@ -135,7 +136,6 @@
       playlist.addEventListener("playlist-destroy", onDestroyPlaylist, false);
     }
 
-    onWindowLoadPosition();
     setTimeout('document.getElementById("trackeditor.trackeditor").openDrawer();', 0);
     setTrackeditorMinMaxCallback();
   }
@@ -150,7 +150,6 @@
       playlist.removeEventListener("playlist-destroy", onDestroyPlaylist, false);
     }
     
-    onWindowSavePosition();
   }
   
   function enableUndo() {

@@ -1065,7 +1065,7 @@ FeathersManager.prototype = {
 
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,resizable=yes,toolbar=yes";
+    var chromeFeatures = "chrome,modal=no,resizable=yes,centerscreen,toolbar=yes";
     if ( (nwm && nwm.supportsOnTop) || !onTop ) {
       // if we have a native window manager component that supports onTop, 
       // or we don't want this window on top then set popup=no

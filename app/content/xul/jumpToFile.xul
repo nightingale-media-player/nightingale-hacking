@@ -43,11 +43,11 @@
  onunload="onUnloadJumpToFile();"
  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
  type="songbird"
+ persist="screenX screenY"
 >
     <hbox align="center">
       <menulist id="playable_list" 
         value="1" 
-        label="poo" 
         x_editable="false" 
         oncommand="onPlaylistlistSelect(event)" 
         onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"

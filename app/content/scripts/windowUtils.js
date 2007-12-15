@@ -47,20 +47,18 @@ var STATE_MAXIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MAX
  */
 var STATE_MINIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MINIMIZED;
 
-// Lots of things assume the playlist playback service is a global
-var gPPS    = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+// Convenient globals.
+var gPPS     = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
-// Overused services get put in headers?
-var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+var gPrompt  = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                       .getService(Components.interfaces.nsIPromptService);
+var gPrefs   = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
+var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
+                      .getService(Components.interfaces.nsIConsoleService);
 
 // Strings are cool.
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
-
-// XXXredfive - this goes in the sbWindowUtils.js file when I get around to making it.
-var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
-               .getService(Components.interfaces.nsIConsoleService);
 
 // log to JS console AND to the command line (in case of crashes)
 function SB_LOG (scopeStr, msg) {
@@ -287,64 +285,83 @@ function delayedActivate()
  */
 function windowPlacementSanityChecks()
 {
+  // we had to put this into a setTimeout because at onload some of the needed variables are not yet initialized
+  setTimeout(deferredWindowPlacementSanityChecks, 500);
+}
+function deferredWindowPlacementSanityChecks() {
   delayedActivate();
   
-  dump("New window sanity checks. \n");
-  var x = document.documentElement.getAttribute("screenX");
-  var y = document.documentElement.getAttribute("screenY");
-  var width  = document.documentElement.getAttribute("width");
-  var height = document.documentElement.getAttribute("height");
-  dump("Before: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
-
-  // Set a sane starting width/height for all resolutions on new profiles.
-  // lifted nearly verbatim from seamonkey/source/browser/base/content/browser.js
-  if (!document.documentElement.hasAttribute("width")) {
-    var defaultWidth = 994, defaultHeight;
-    if (screen.availHeight <= 600 || screen.availWidth <= 600) {
-      document.documentElement.setAttribute("sizemode", "maximized");
-      defaultWidth = 590;
-      defaultHeight = 450;
-    }
-    else {
-      defaultWidth = 988;
-      defaultHeight = 720;
-    }
-      
-    document.documentElement.setAttribute("width", defaultWidth);
-    document.documentElement.setAttribute("height", defaultHeight);
-  }
-
-  // is the window too small? (the 16 is an arbitrary "too small" size to prevent ungrabbably small windows)
-  var minWidth  = getStyle(document.documentElement, "min-width");
-  var minHeight = getStyle(document.documentElement, "min-height");
-  if (minWidth)  { minWidth  = parseInt(minWidth);  } else { minWidth  = 16; }
-  if (minHeight) { minHeight = parseInt(minHeight); } else { minHeight = 16; }
-
-  var width  = document.documentElement.getAttribute("width");
-  var height = document.documentElement.getAttribute("height");
+  // Grab all the values we'll need.
+  var x; var oldx;
+  var y; var oldy;
+  oldx = x = parseInt(document.documentElement.boxObject.screenX);
+  oldy = y = parseInt(document.documentElement.boxObject.screenY);
   
-  if (width  < minWidth)  { document.documentElement.setAttribute("width",  minWidth);  }
-  if (height < minHeight) { document.documentElement.setAttribute("height", minHeight); }
-
+  var width = {
+    actual: document.documentElement.boxObject.width,
+    xul: document.documentElement.getAttribute("width"), // the property as set on XUL or by persist
+    css: getStyle(document.documentElement, "width"),
+    min: getStyle(document.documentElement, "min-width") || 16, // ensure windows aren't crushed unsizably w/fallback value
+    max: getStyle(document.documentElement, "max-width"),
+  };
+  var height = {
+    actual: document.documentElement.boxObject.height,
+    xul: document.documentElement.getAttribute("height"), // the property as set on XUL or by persist
+    css: getStyle(document.documentElement, "height"),
+    min: getStyle(document.documentElement, "min-height") || 16, // ensure windows aren't crushed unsizably w/fallback value
+    max: getStyle(document.documentElement, "max-height")
+  };
+  for (var i in width ) { width[i]  = parseInt(width[i])  }
+  for (var i in height) { height[i] = parseInt(height[i]) }
+  
   // note: This code should work correctly, but will always be told that the window is positioned 
   //       relative to the main screen.
   //
   //       This is caused by mozbug 407405, and should auto-correct when the bug goes away.
   //       
-  //       when the mozbug goes away the behaviour should automatically correct itself. -pvh dec07
-  var width  = document.documentElement.getAttribute("width");
-  var height = document.documentElement.getAttribute("height");
-  var x = document.documentElement.getAttribute("screenX");
-  var y = document.documentElement.getAttribute("screenY");
-  if (x - screen.left > screen.availWidth)  { document.documentElement.setAttribute("screenX", 0); }
-  if (y - screen.top  > screen.availHeight) { document.documentElement.setAttribute("screenY", 0); }
-  if (x - screen.left + width  < 0)         { document.documentElement.setAttribute("screenX", 0); }
-  if (y - screen.top  + height < 0)         { document.documentElement.setAttribute("screenY", 0); }
+  //       -pvh dec07
   
-  dump("After: x/y:\t" + x + "\t" + y + "\tw/h: " + width + "\t" + height + "\n"); 
+  // move offscreen windows back onto the center of the screen
+  if ((x - screen.left > screen.availWidth ) || // offscreen right
+      (x - screen.left + width.actual  < 0)  || // offscreen left
+      (y - screen.top > screen.availHeight ) || // offscreen bottom
+      (y - screen.top + height.actual  < 0)     // offscreen top
+  ) { 
+    x = screen.availWidth/2 - window.outerWidth/2; 
+    x = (x < 0) ? 0 : x; // don't move window left of zero. 
+    y = screen.availHeight/2 - window.outerHeight/2; 
+    y = (y < 0) ? 0 : y; // don't move window above zero. 
+  }
+  
+  /// correct width
+  var newWidth = width.actual;
+  if (!width.xul) { // if we have a xul/persist do not override CSS
+    // first try the css
+    if (width.css) { newWidth = width.css; }
+    
+    // then make sure we aren't poking off the screen (we allow the user to save a partially offscreen position)
+    var pokeyOutie = x + newWidth - screen.availWidth;
+    if (pokeyOutie > 0) { newWidth -= pokeyOutie; }
+  }
+  if (width.min && newWidth < width.min) { newWidth = width.min; }   // now correct for minsize
+
+  /// correct height
+  var newHeight = height.actual;
+  if (!height.xul) { // if we have a xul/persist do not override CSS
+    // first try the css
+    if (height.css) { newHeight = height.css; }
+
+    // then make sure we aren't poking off the screen (we allow the user to save a partially offscreen position)
+    var pokeyOutie = y + newHeight - screen.availHeight;
+    if (pokeyOutie > 0) { newHeight -= pokeyOutie; }
+  }
+  if (height.min && newHeight < height.min) { newHeight = height.min; }  // now correct for minsize
+
+  // Now update the values on the actual window itself.
+  if (x != oldx || y != oldy) { window.moveTo(x, y); }
+  if (newHeight != height.actual || newWidth != width.actual) { window.resizeTo(newWidth, newHeight); }
 
 }
-
 /**
  * \brief Get a style property from an element in the window in the current context.
  * \param el The element.
