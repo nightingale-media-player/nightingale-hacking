@@ -48,6 +48,8 @@
           src="chrome://songbird/content/scripts/preferences/advancedPaneOverlay.js"/>
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/preferences/contentPaneOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/tabPaneOverlay.js"/>
 
   <stringbundleset>
     <stringbundle id="bundleSongbirdPreferences"
