@@ -53,7 +53,7 @@ function doMenu( command ) {
       SBPlaylistOpen();
     break;
     case "menuitem_file_newtab":
-      gBrowser.loadURI(gBrowser.homePage, null, null, null, 'tab');
+      gBrowser.loadURI(gBrowser.homePage, null, null, null, '_blank');
     break;
     case "menuitem_file_closetab":
       gBrowser.removeTab(gBrowser.selectedTab);

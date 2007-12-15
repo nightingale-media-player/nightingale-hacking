@@ -232,7 +232,7 @@
       </property>
       <method name="onNewTab">
         <body><![CDATA[
-          this.loadURI(this.homePage, null, null, null, 'tab');
+          this.loadURI(this.homePage, null, null, null, '_blank');
         ]]></body>
       </method>
       <method name="saveTabState">
@@ -256,8 +256,8 @@
             // If we have never run the app before, load this keen stuff!@
             var homePageURL = this.homePage;
             var firstrunURL = SBDataGetStringValue( "url.firstrun" );
-            this.loadURI(homePageURL, null, null, null, 'current');
-            this.loadURI(firstrunURL, null, null, null, 'tab');
+            this.loadURI(homePageURL, null, null, null, '_top');
+            this.loadURI(firstrunURL, null, null, null, '_blank');
             SBDataSetBoolValue( "firstrun.tabs.restore", true );
           } else {
             //
@@ -266,7 +266,7 @@
             if (tabs) {
               for (var i=0; i<tabs.length; i++) {
                 /* load the first url into the current tab and subsequent urls into new tabs */
-                this.loadURI(tabs[i], null, null, null, i?'tab':'current');
+                this.loadURI(tabs[i], null, null, null, i?'_blank':'_top');
               }
             }
           }
@@ -274,6 +274,41 @@
         ]]></body>
       </method>
 
+      <method name="_checkTarget">
+        <parameter name="aTarget"/>
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            var returnValue = aTarget;
+            
+            if (aTarget == undefined ||
+                aTarget == null) {
+              returnValue = '_top';
+            }
+
+            if (aEvent) {
+              // if an event as supplied infer where we want to load this URI
+              //
+              var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
+              var middleButton = aEvent?(aEvent.button == 1):false;
+              var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
+
+              if (middleButton || modifierKey) {
+                returnValue = "_blank";
+              }
+            }
+
+            // check to see if tabs are allowed
+            if (returnValue == '_blank' &&
+                !this._prefsService.getBoolPref('browser.tabs.enabled')) {
+              returnValue = '_top';
+            }
+
+            return returnValue;
+          ]]>
+        </body>
+      </method>
+      
       <!-- the public interface for loading URLs.
            this overrides the implementation in tabBrowser.xml#tabbrowser
            it takes the existing aURI, aReferrerURI and aCharset arguments
@@ -292,18 +327,7 @@
         <body>
           <![CDATA[
             var retval = null;
-            var where = aDefaultLocation?aDefaultLocation:'current';
-            if (aEvent) {
-              // if an event as supplied infer where we want to load this URI
-              //
-              var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
-              var middleButton = aEvent?(aEvent.button == 1):false;
-              var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
-
-              if (middleButton || modifierKey) {
-                where = "tab";
-              }
-            }
+            var where = this._checkTarget(aDefaultLocation, aEvent);
 
             // make sure the referrer is an nsIURI
             if (aReferrerURI == '') {
@@ -317,30 +341,14 @@
               }
             }
 
-
             // Policy goes here
 
-            // check to see if tabs are allowed
-            if (where == 'tab' &&
-                !this._prefsService.getBoolPref('browser.tabs.enabled')) {
-              where = 'current';
-            }
-
             // Now, actually open the URI
-            if (where == "tab") {
+            if (where == "_blank") {
               var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
               tab.viewForNextPlaylist = aMediaListView;
               retval = tab;
-            } else if (where == "external") {
-              var externalLoader = (Components
-                    .classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                    .getService(Components.interfaces.nsIExternalProtocolService));
-              var nsURI = (Components
-                    .classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService)
-                    .newURI(aURI, aCharset, null));
-              externalLoader.loadURI(nsURI, null);
-            } else if (where == "current") {
+            } else if (where == "_top") {
               this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
               this.mCurrentTab.viewForNextPlaylist = aMediaListView;
               retval = this.mCurrentTab;
@@ -1324,34 +1332,20 @@
 
           // get the referrer if we can
           var referrer = doc ? doc.documentURIObject : null;
-
-          var where = 'current';
-          if (target == '_blank' || target == '_new') {
-            where = 'tab';
-          }
-
-          if (gPPS.isMediaURL(href)) {
-            where = 'current';
-          }
-
+          
           // we need to handle playlists and media items specially
-          if (gPPS.isPlaylistURL(href)) {
+          if ( gPPS.isPlaylistURL(href) ||
+               gPPS.isMediaURL(href) ) {
             this.handleMediaURL(href);
             event.stopPropagation();
             event.preventDefault();
-
-            return true;
+          } else {
+            if (this.loadURI(href, referrer, null, event, target)) {
+              event.stopPropagation();
+              event.preventDefault();
+            }
           }
 
-          this.loadURI(href, referrer, null, event, where);
-          event.stopPropagation();
-
-          // We're supposed to return false if this was a normal vanilla link
-          // click.
-          if (event.button == 0 && !event.ctrlKey && !event.shiftKey &&
-              !event.altKey && !event.metaKey) {
-            return false;
-          }
         }
         return true;
       ]]></handler>
