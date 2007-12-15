@@ -192,9 +192,6 @@ function testDisplayPanesService() {
   paneMgr.showPane("url2");
   testInfo(loaded, "url2", "title2", "icon2", 30, 40, "group2");
   assertEquals(group, "group2", "group");
-  paneMgr.unregisterInstantiator(h1);
-  paneMgr.unregisterInstantiator(h2);
-  paneMgr.unregisterInstantiator(h3);
 
   paneMgr.removeListener(listener);
 }

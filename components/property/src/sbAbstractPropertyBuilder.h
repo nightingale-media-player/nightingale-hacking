@@ -57,7 +57,6 @@ public:
   NS_DECL_SBIPROPERTYBUILDER
 
   sbAbstractPropertyBuilder();
-  virtual ~sbAbstractPropertyBuilder() {}
 
   nsresult Init();
 

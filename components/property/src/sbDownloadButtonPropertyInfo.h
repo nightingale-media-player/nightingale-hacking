@@ -56,7 +56,6 @@ public:
                                const PRBool aRemoteWritable,
                                const PRBool aUserViewable,
                                const PRBool aUserEditable);
-  virtual ~sbDownloadButtonPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 

@@ -39,8 +39,6 @@ class sbRatingPropertyBuilder : public sbAbstractPropertyBuilder,
 {
 public:
 
-  virtual ~sbRatingPropertyBuilder() {}
-
   NS_DECL_ISUPPORTS_INHERITED
   NS_FORWARD_SBIPROPERTYBUILDER_NO_GET(sbAbstractPropertyBuilder::)
   NS_DECL_SBIRATINGPROPERTYBUILDER
