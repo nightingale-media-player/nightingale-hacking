@@ -293,19 +293,6 @@ In-cell Download Buttons
        padding:0 0 0 16px ! important;
 }
 
-/* Prevent the download button from appearing in the download playlist */
-sb-playlist[list-customtype="download"] .sb-playlist-tree 
-   > treechildren::-moz-tree-cell( downloadbutton button )
-{
-      background-image: none;
-}
-
-sb-playlist[list-customtype="download"] .sb-playlist-tree 
-   > treechildren::-moz-tree-cell-text( downloadbutton button )
-{
-      background-image: none;
-}
-
 /** 
 *******************************************************************************
 In-cell Origin Page Image (Source Column)

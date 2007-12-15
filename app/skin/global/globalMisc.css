@@ -236,3 +236,11 @@ image.throbber {
 filefield[disabled="true"] > .fileFieldContentBox > .fileFieldIcon {
 	opacity:0.5;
 }
+.fileFieldLabel
+{
+  padding:2px 5px !important;
+}
+filefield[disabled="true"] > .fileFieldContentBox
+{
+  opacity:1.0 !important;
+}

@@ -1408,12 +1408,14 @@ TEXTBOX
 textbox,
 textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 {
-  border-bottom-color: #797f76; /** Button Highlight */
-  border-left-color: #202220; /** Button Shadow */ 
-  border-top-color: #202220; /** Button Shadow */ 
-  border-right-color: #202220; /** Button Shadow */
-  background-color: #0f100f; /** Groove */ 
+  border:1px solid !important;
+  border-bottom-color: #797f76 !important; /** Button Highlight */
+  border-left-color: #202220 !important; /** Button Shadow */ 
+  border-top-color: #202220 !important; /** Button Shadow */ 
+  border-right-color: #202220 !important; /** Button Shadow */
+  background-color: #0f100f !important; /** Groove */ 
 }
+
 textbox,
 textbox.padded, /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 html|*.numberbox-input {
@@ -1423,24 +1425,23 @@ html|*.numberbox-input {
 /* ..... focused state ..... */
 textbox[focused="true"]
 {
-  background-color: #0f100f; /** Groove */
+  background-color: #0f100f !important; /** Groove */
 }
 
 /* ..... readonly state ..... textbox[readonly="true"]  */
-
 
 /* ..... disabled state ..... */
 textbox[disabled="true"]
 {
   cursor: default;
-  border: 1px dotted #474948; /** Rubber Highlight */
-  background-color: transparent;
+  border: 1px dotted #474948 !important; /** Rubber Highlight */
+  background-color: transparent !important;
 }
 
 textbox[disabled="true"],
 html|*.numberbox-input[disabled="true"]
 {
-  color: #474948; /** Light Color 1 */
+  color: #474948 !important; /** Light Color 1 */
 }
 
 /* ..... invalid state ..... */
