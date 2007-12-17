@@ -61,20 +61,9 @@ ac_add_options() {
       # Note that all options in $ac_options are enclosed in quotes,
       # so there will always be a last character to match [^-A-Za-z0-9_]
       *"\"$_opt[^-A-Za-z0-9_]"* ) ;;
-      * ) $songbirdconfig_ac_options="$songbirdconfig_ac_options $_opt" ;;
+      * ) songbirdconfig_ac_options="$songbirdconfig_ac_options $_opt" ;;
     esac
   done
-}
-
-#
-# XXXAus: We do not use this currently.
-#
-ac_add_app_options() {
-  APP=$1
-  shift;
-  if [ "$APP" = "$MOZ_BUILD_APP" ]; then
-      ac_add_options "$*";
-  fi
 }
 
 mk_add_options() {
@@ -106,7 +95,7 @@ do
   ac_options="$ac_options \"$_opt\""
 done
 
-SONGBIRDCONFIG=`$_AUTOCONF_TOOLS_DIR/songbirdconfig-find $topsrcdir`
+SONGBIRDCONFIG=`$topsrcdir/build/autoconf/songbirdconfig-find $topsrcdir`
 if [ "$SONGBIRDCONFIG" ]; then
   . "$SONGBIRDCONFIG"
 fi
@@ -115,5 +104,5 @@ if [ "$songbirdconfig_ac_options" ]; then
   ac_echo_options 1>&2
 fi
 
+echo "SONGBIRDCONFIG_CONFIGURE_OPTIONS=$songbirdconfig_ac_options" > $topsrcdir/.songbirdconfig.ac
 eval "set -- $songbirdconfig_ac_options $ac_options"
-

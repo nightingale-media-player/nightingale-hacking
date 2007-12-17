@@ -43,11 +43,29 @@ EOF
 }
 
 ac_add_options() {
-  echo "# $* is used by configure (not songbird.mk)" >> $tmp_file
+  for _opt
+  do
+    # Escape shell characters, space, tab, dollar, quote, backslash.
+    _opt=`echo $_opt | sed -e 's/\([\ \	\$\"\\]\)/\\\\\1/g;s/@\([^@]*\)@/\$\1/g;'`
+    _opt=`echo $_opt | sed -e 's/@\([^@]*\)@/\$(\1)/g'`
+
+    # Avoid adding duplicates
+    case "$ac_options" in
+      # Note that all options in $ac_options are enclosed in quotes,
+      # so there will always be a last character to match [^-A-Za-z0-9_]
+      *"\"$_opt[^-A-Za-z0-9_]"* ) ;;
+      * ) songbirdconfig_ac_options="$songbirdconfig_ac_options $_opt" ;;
+    esac
+  done
 }
 
-ac_add_app_options() {
-  echo "# $* is used by configure (not songbird.mk)" >> $tmp_file
+ac_echo_options() {
+  echo "Adding configure options from $SONGBIRDCONFIG:"
+  eval "set -- $songbirdconfig_ac_options"
+  for _opt
+  do
+    echo "  $_opt"
+  done
 }
 
 mk_add_options() {
@@ -78,6 +96,9 @@ out_file=$2
 tmp_file="$out_file-tmp$$"
 opts=""
 
+ac_options=
+songbirdconfig_ac_options=
+
 trap "rm -f $tmp_file; exit 1" 1 2 15
 
 SONGBIRDCONFIG=`$scriptdir/songbirdconfig-find $topsrcdir`
@@ -87,13 +108,17 @@ print_header > $tmp_file
 # If the path changes, configure should be rerun
 echo "# PATH=$PATH" >> $tmp_file
 
-if [ "$SONGBIRDCONFIG" ]
-then
+if [ "$SONGBIRDCONFIG" ]; then
   . "$SONGBIRDCONFIG"
 fi
 
 if [ "$opts" ]; then
   mk_echo_options
+fi
+
+if [ "$songbirdconfig_ac_options" ]; then
+  ac_echo_options 1>&2
+  echo "SONGBIRDCONFIG_CONFIGURE_OPTIONS=$songbirdconfig_ac_options" >> $tmp_file
 fi
 
 if test -f $out_file && cmp -s $tmp_file $out_file; then
