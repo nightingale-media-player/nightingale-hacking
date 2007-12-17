@@ -202,6 +202,10 @@ targets += shell_execute
 endif
 
 ifdef XPI_NAME
+# set a specific location for the output if it doesn't already exist
+ifndef EXTENSION_DIR
+EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
+endif
 targets += make_xpi
 clean_targets += clean_xpi
 endif
@@ -1109,7 +1113,6 @@ endif
 # XPI_NAME - The base name (no extension) of the XPI to create. To do this you
 #            must also set the following variables:
 #
-#              EXTENSION_DIR - dir where the final XPI should be moved
 #              EXTENSION_STAGE_DIR - dir where the XPIs contents reside
 #              EXTENSION_NAME - name of the extension (coolthing)
 #
@@ -1136,6 +1139,14 @@ endif
 #              INSTALL_EXTENSION - whether or not to install the XPI
 #
 #            Note that INSTALL_EXTENSION requires that EXTENSION_UUID be set
+#
+#            You may override this variable if you want the output of the
+#            extension build process to output your xpi to a different location
+#            than standard. Defaults to OBJDIR/xpi-stage/EXTENSION_NAME. You
+#            wouldn't normally want to do this.
+#
+#              EXTENSION_DIR - dir where the final XPI should be moved
+#
 
 make_ext_stage:
 ifdef EXTENSION_STAGE_DIR
