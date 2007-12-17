@@ -130,7 +130,8 @@
           // the service pane info
           if (servicePaneNode) {
             if (servicePaneNode.image) {
-              this.setIcon(this.mCurrentTab, servicePaneNode.image);
+              this.browser.setIcon(this.browser.selectedTab,
+	                           servicePaneNode.image);
             }   
           }
 
