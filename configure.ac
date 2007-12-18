@@ -499,7 +499,7 @@ case "$SB_PLATFORM" in
     GST_REQS=0.10.1
     GSTPLUG_REQS=0.10.7
 
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS gconf-2.0)
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
     GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
