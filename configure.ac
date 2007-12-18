@@ -29,7 +29,7 @@
 AC_PREREQ(2.56)
 AC_INIT(build/rules.mk)
 AC_CONFIG_AUX_DIR(${srcdir}/build/autoconf)
-
+AC_CANONICAL_SYSTEM
 
 #
 # We're going to hardcode our obj and dist directory names for the moment.
@@ -125,7 +125,6 @@ AC_SUBST(SB_UPDATE_CHANNEL)
 # Check platform
 #
 
-AC_CANONICAL_SYSTEM
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
     SB_PLATFORM="windows"

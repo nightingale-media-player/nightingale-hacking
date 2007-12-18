@@ -38,6 +38,7 @@ endif
 
 ROOTDIR   := $(shell dirname $(CWD))
 TOPSRCDIR := $(CWD)
+_AUTOCONF_TOOLS_DIR = $(TOPSRCDIR)/build/autoconf
 
 CONFIGURE    = $(TOPSRCDIR)/configure
 ALLMAKEFILES = $(TOPSRCDIR)/allmakefiles.sh
@@ -48,17 +49,29 @@ CONFIGSTATUS = $(OBJDIR)/config.status
 
 CONFIGURE_ARGS = $(NULL)
 
+####################################
+# Load songbirdconfig Options
+#
+
+SONGBIRDCONFIG_MAKEFILE_LOADER := $(TOPSRCDIR)/build/autoconf/songbirdconfig2client-mk
+SONGBIRDCONFIG_CONFIGURE_LOADER := $(TOPSRCDIR)/build/autoconf/songbirdconfig2configure
+SONGBIRDCONFIG_FINDER := $(TOPSRCDIR)/build/autoconf/songbirdconfig-find
+run_for_make_options := \
+  $(shell cd $(ROOTDIR); \
+     $(SONGBIRDCONFIG_MAKEFILE_LOADER) $(TOPSRCDIR) $(TOPSRCDIR)/.songbirdconfig.mk > \
+     $(TOPSRCDIR)/.songbirdconfig.out)
+
+include $(TOPSRCDIR)/.songbirdconfig.mk
+
+CONFIGURE_ARGS = $(SONGBIRDCONFIG_CONFIGURE_OPTIONS) \
+                 $(NULL)
+
 # MAKECMDGOALS contains the targets passed on the command line:
 #    example:  make -f songbird.mk debug
 #    - $(MAKECMDGOALS) would contain debug
 ifeq (debug,$(MAKECMDGOALS))
 DEBUG = 1
 endif
-
-
-#
-# Check environment variables
-#
 
 # Global, debug/release build options
 # building installer is off by default
