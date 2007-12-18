@@ -415,30 +415,31 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 
   ; List of files to uninstall
-  Delete ${ApplicationIni}
-  Delete ${FileMainEXE}
-  Delete ${CRuntime}
-  Delete ${CPPRuntime}
-  Delete ${PreferredIcon}
-  Delete ${VistaIcon}
+  Delete $INSTDIR\${ApplicationIni}
+  Delete $INSTDIR\${FileMainEXE}
+  Delete $INSTDIR\${CRuntime}
+  Delete $INSTDIR\${CPPRuntime}
+  Delete $INSTDIR\${PreferredIcon}
+  Delete $INSTDIR\${VistaIcon}
   
   ; Text files to uninstall
-  Delete LICENSE.txt
-  Delete GPL.txt
-  Delete TRADEMARK.txt
+  Delete $INSTDIR\LICENSE.txt
+  Delete $INSTDIR\GPL.txt
+  Delete $INSTDIR\TRADEMARK.txt
+  Delete $INSTDIR\README.txt
   
   ; These files are created by the application
-  Delete *.chk
+  Delete $INSTDIR\*.chk
   
   ; List of directories to install
-  RMDir /r chrome
-  RMDir /r components
-  RMDir /r defaults
-  RMDir /r extensions
-  RMDir /r plugins
-  RMDir /r searchplugins
-  RMDir /r scripts
-  RMDir /r ${XULRunnerDir}
+  RMDir /r $INSTDIR\chrome
+  RMDir /r $INSTDIR\components
+  RMDir /r $INSTDIR\defaults
+  RMDir /r $INSTDIR\extensions
+  RMDir /r $INSTDIR\plugins
+  RMDir /r $INSTDIR\searchplugins
+  RMDir /r $INSTDIR\scripts
+  RMDir /r $INSTDIR\${XULRunnerDir}
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; I commented this out, because I don't think we *truly* want to do this. 
@@ -449,7 +450,8 @@ Section "Uninstall"
   ;RMDir /r "$LOCALAPPDATA\Songbird"
   ;SetShellVarContext all
   
-  RMDir /r "$INSTDIR"
+  ; Do not attempt to remove this directory recursively.
+  RMDir $INSTDIR
   
   ; Refresh desktop.
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
