@@ -31,8 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 APPINI = application.ini.in
 
-SONGBIRD_DIST = $(srcdir)/gpl.txt
-
 SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
 
 ifeq (macosx,$(SB_PLATFORM))
