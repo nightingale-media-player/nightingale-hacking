@@ -296,6 +296,7 @@ case "$SB_PLATFORM" in
     if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
   ;;
 esac
+
 #
 # Set platform-specific defines
 #
@@ -363,7 +364,7 @@ case "$SB_PLATFORM" in
         AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
     fi
     if test "$_CC_MAJOR_VERSION" = "12"; then
-        _CC_SUITE=6
+        _CC_SUITE=6s/songbird/trunk/
     elif test "$_CC_MAJOR_VERSION" = "13"; then
         _CC_SUITE=7
     elif test "$_CC_MAJOR_VERSION" = "14"; then
@@ -584,6 +585,32 @@ AC_SUBST(MACOSX_FRAMEWORKS)
 AC_SUBST(MACOSX_RESOURCES)
 AC_SUBST(XULRUNNERDIR)
 
+#
+# Check for --with-license-file
+#
+
+AC_ARG_WITH(license-file,
+            [  --with-license-file=PATH             the location of the license file to use],
+            SB_LICENSE_FILE=$withval)
+if test -z "$SB_LICENSE_FILE"; then
+  SB_LICENSE_FILE=${srcdir}/installer/common/LICENSE.txt
+fi
+AC_SUBST(SB_LICENSE_FILE)
+
+#
+# Check for --with-user-eula-file
+#
+
+AC_ARG_WITH(user-eula-file,
+            [  --with-user-eula-file=PATH           the location of the user eula file to use. This file
+                                                    is displayed when the application is first launched.
+                                                    The user *must* accept this EULA for the application
+                                                    to continue.],
+            SB_USER_EULA_FILE=$withval)
+if test -z "$SB_USER_EULA_FILE"; then
+  SB_USER_EULA_FILE=
+fi
+AC_SUBST(SB_USER_EULA_FILE)
 
 #
 # Check for an alternate dependencies location
