@@ -27,9 +27,9 @@
         <songbird:displayPane>
           <Description>
             <songbird:contentTitle>Display Pane Test</songbird:contentTitle>
-            <songbird:contentUrl>chrome://some/test/url/pane.xul</songbird:contentUrl>
-            <songbird:contentIcon>http://some/icon.png</songbird:contentIcon>
-            <songbird:defaultWidth>1</songbird:defaultWidth>
+            <songbird:contentUrl>chrome://songbird-test-display-pane/content/testDisplayPane.html</songbird:contentUrl>
+            <songbird:contentIcon>http://www.songbirdnest.com/favicon.ico</songbird:contentIcon>
+            <songbird:defaultWidth>180</songbird:defaultWidth>
             <songbird:defaultHeight>2</songbird:defaultHeight>
             <songbird:suggestedContentGroups>test-content-group</songbird:suggestedContentGroups>
             <songbird:showOnInstall>false</songbird:showOnInstall>

@@ -22,22 +22,16 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH     = ../../../../..
 topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
-
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+  
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = chrome
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/components/displaypanes/test/test-extension/.xpistage
 
-EXTENSION_NAME = displaypane-test-stub
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
-EXTENSION_DIR  = .
-EXTENSION_STAGE_DIR = ./.xpistage
-
-XPI_NAME = $(EXTENSION_NAME)
-
-INSTALL_EXTENSION = 1
+JAR_MANIFEST = jar.mn
+JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
 include $(topsrcdir)/build/rules.mk
