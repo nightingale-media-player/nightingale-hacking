@@ -221,7 +221,6 @@ Section "-Application" Section1
   
   ; List of text files to install
   File LICENSE.txt
-  File GPL.txt
   File TRADEMARK.txt
   File README.txt
   
@@ -424,7 +423,6 @@ Section "Uninstall"
   
   ; Text files to uninstall
   Delete $INSTDIR\LICENSE.txt
-  Delete $INSTDIR\GPL.txt
   Delete $INSTDIR\TRADEMARK.txt
   Delete $INSTDIR\README.txt
   
