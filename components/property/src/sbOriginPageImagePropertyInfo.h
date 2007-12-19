@@ -58,9 +58,10 @@ public:
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 
   nsresult Init();
+  virtual ~sbOriginPageImagePropertyInfo() {}
 
 protected:
-  
+
   nsCOMPtr<nsIFaviconService> mFaviconService;
 };
 

@@ -43,6 +43,8 @@ public:
   NS_FORWARD_SBIPROPERTYBUILDER_NO_GET(sbAbstractPropertyBuilder::)
   NS_DECL_SBIDOWNLOADBUTTONPROPERTYBUILDER
 
+  virtual ~sbDownloadButtonPropertyBuilder() {}
+
   NS_IMETHOD Get(sbIPropertyInfo **_retval);
 
 private:

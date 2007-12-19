@@ -247,7 +247,8 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mGetByIndexAsyncPending(PR_FALSE),
  mClearSelectionPending(PR_FALSE),
  mFakeAllRow(PR_FALSE),
- mSelectionChanging(PR_FALSE)
+ mSelectionChanging(PR_FALSE),
+ mIsListeningToPlayback(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbLocalDatabaseTreeView);
 #ifdef PR_LOGGING
@@ -269,10 +270,7 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
       mArray->RemoveAsyncListener(asyncListener);
   }
 
-  if (mPlaylistPlayback) {
-    mPlaylistPlayback->RemoveListener(this);
-  }
-
+  NS_ASSERTION(!mIsListeningToPlayback, "Still listening when dtor called");
 }
 
 nsresult
@@ -425,12 +423,6 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   if (mListType != eDistinct) {
     mPlaylistPlayback =
       do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIPlaylistPlaybackListener> playbackListener =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIPlaylistPlaybackListener*, this), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mPlaylistPlayback->AddListener(playbackListener);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool isPlaying;
@@ -2197,6 +2189,7 @@ NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetTree(0x%.8x)", this, tree));
+  nsresult rv;
 
   // XXX: nsTreeBoxObject calls this method with a null to break a cycle so
   // we can't NS_ENSURE_ARG_POINTER(tree)
@@ -2211,6 +2204,38 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
     // Rebuild view with the new tree
     rv = Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Manage our listener to the playback service.  Attach the listener when
+  // we are bound to a tree and remove it when we are unbound.  We do this
+  // because we need to remove our listener when we go away, but we can't do
+  // it in the destructor because we wind up creating a wrapper that eventually
+  // points to a deleted this.
+  if (mPlaylistPlayback) {
+    nsCOMPtr<sbIPlaylistPlaybackListener> playbackListener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIPlaylistPlaybackListener*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (tree) {
+      if (!mIsListeningToPlayback) {
+        rv = mPlaylistPlayback->AddListener(playbackListener);
+        NS_ENSURE_SUCCESS(rv, rv);
+        mIsListeningToPlayback = PR_TRUE;
+      }
+      else {
+        NS_WARNING("Tree set but we're already listening to playback!");
+      }
+    }
+    else {
+      if (mIsListeningToPlayback) {
+        rv = mPlaylistPlayback->RemoveListener(playbackListener);
+        NS_ENSURE_SUCCESS(rv, rv);
+        mIsListeningToPlayback = PR_FALSE;
+      }
+      else {
+        NS_WARNING("Tree nulled but we're not listening to playback!");
+      }
+    }
   }
 
   return NS_OK;

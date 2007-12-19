@@ -298,6 +298,9 @@ private:
   // Flag to indicate that the tree is changing its selection
   PRPackedBool mSelectionChanging;
 
+  // True when we have a listener added to the playback service
+  PRPackedBool mIsListeningToPlayback;
+
   nsString mLocalizedAll;
 };
 

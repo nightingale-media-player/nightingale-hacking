@@ -42,6 +42,7 @@ public:
   NS_DECL_SBIPROPERTYINFO
 
   sbImmutablePropertyInfo();
+  virtual ~sbImmutablePropertyInfo() {}
 
 protected:
   nsresult Init();
