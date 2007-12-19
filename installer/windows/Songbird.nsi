@@ -431,7 +431,7 @@ Section "Uninstall"
   ; These files are created by the application
   Delete $INSTDIR\*.chk
   
-  ; List of directories to install
+  ; List of directories to remove recursively.
   RMDir /r $INSTDIR\chrome
   RMDir /r $INSTDIR\components
   RMDir /r $INSTDIR\defaults
