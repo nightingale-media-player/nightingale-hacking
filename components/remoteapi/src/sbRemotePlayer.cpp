@@ -1455,6 +1455,8 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     LOG(("sbRemotePlayer::HandleEvent() - unload event"));
     nsresult rv;
 
+    nsRefPtr<sbRemotePlayer> kungFuDeathGrip(this);
+
     // check if this is the right document being unloaded (yay tabs)
     nsCOMPtr<nsIDOMNSEvent> nsEvent( do_QueryInterface( aEvent, &rv ) );
     if ( NS_FAILED(rv) )
