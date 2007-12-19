@@ -286,6 +286,14 @@ AddonMetadata.prototype = {
         return target.Value == "true";
       }
     }                      
+    var appDisabled = this._RDF.GetResource(EM_NS("appDisabled"));
+    if (extManager.datasource.hasArcOut(item, appDisabled)) {
+      var target = extManager.datasource.GetTarget(item, appDisabled, true);
+      if (target instanceof Components.interfaces.nsIRDFLiteral){
+        target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
+        return target.Value == "true";
+      }
+    }
     return false;
   },
  
