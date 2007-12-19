@@ -13,6 +13,7 @@ ac_add_options --disable-javaxpcom
 ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
+ac_add_options --disable-dbus
 
 # The Crash Reporter is not implemented on x86_64 at the moment.
 ac_add_options --disable-crashreporter

@@ -16,3 +16,4 @@ ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
 ac_add_options --with-macos-sdk=/Developer/SDKs/MacOSX10.4u.sdk
+ac_add_options --disable-dbus
