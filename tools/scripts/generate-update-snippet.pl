@@ -43,7 +43,7 @@
 # Specifically, it has been modified to only create third-gen update snippets
 #   and it allows alternate tools to be used for computing hash values.
 #
-# Modifications are Copyright(c) 2005-2007 POTI, Inc.
+# Modifications are Copyright(c) 2005-2008 POTI, Inc.
 #
 
 use strict;

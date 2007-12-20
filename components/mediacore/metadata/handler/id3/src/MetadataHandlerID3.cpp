@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2007 POTI, Inc.
+// Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -738,7 +738,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       //Content type.
       case ID3FID_CONTENTTYPE: strKey.AppendLiteral("genre"); break;
 
-      //Copyright(c) 2005-2007 POTI, Inc.
+      //Copyright(c) 2005-2008 POTI, Inc.
       case ID3FID_COPYRIGHT: strKey.AppendLiteral("copyright_message"); break;
 
       //Date.
@@ -855,7 +855,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       //Commercial information.
       case ID3FID_WWWCOMMERCIALINFO: strKey.AppendLiteral("commercialinfo_url"); break;
 
-      //Copyright(c) 2005-2007 POTI, Inc.
+      //Copyright(c) 2005-2008 POTI, Inc.
       case ID3FID_WWWCOPYRIGHT: strKey.AppendLiteral("copyright_url"); break;
 
       //Official audio file webpage.
