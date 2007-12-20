@@ -1302,6 +1302,9 @@ sbLocalDatabaseQuery::AddResortColumns()
 {
   nsresult rv;
 
+  rv = mBuilder->SetDistinct(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
   NS_ENSURE_SUCCESS(rv, rv);
 
