@@ -702,9 +702,8 @@
           // otherwise, play the url as external (added to the db, 
           // plays the library from that point on)
           // if the url is already in the lib, it is not added twice
-          
-          gPPS.playAndImportURL(aURL);
-
+          var item = SBImportURLIntoWebLibrary(aURL);
+          SBDisplayViewForListAndPlayItem(SBGetWebLibrary(), item);
         ]]></body>
       </method>
 
