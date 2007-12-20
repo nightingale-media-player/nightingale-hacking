@@ -70,7 +70,7 @@ function testDisplayPanesService() {
   testContent("chrome://songbird-test-display-pane/content/testDisplayPane.html", 
               "chrome://songbird-test-display-pane/content/testDisplayPane.html", 
               "Display Pane Test", 
-              "http://www.songbirdnest.com/favicon.ico", 1, 2, "test-content-group");
+              "http://www.songbirdnest.com/favicon.ico", 180, 2, "test-content-group");
   paneMgr.unregisterContent("chrome://songbird-test-display-pane/content/testDisplayPane.html");
 
   log("Testing pane registration");
