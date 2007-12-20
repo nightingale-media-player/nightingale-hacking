@@ -191,4 +191,4 @@
     { 0x9b, 0x14, 0x6a, 0x19, 0xb4, 0xc, 0x42, 0x53 }            \
   }
 #define SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CONTRACTID             \
-  "@songbirdnest.com/Songbird/Properties/Builder/Image;1"
+  "@songbirdnest.com/Songbird/Properties/Builder/OriginPageImage;1"
