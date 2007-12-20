@@ -911,7 +911,7 @@ clean_copy_sb_user_eula_file:
 	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/eula.html
 
 .PHONY : copy_sb_user_eula_file clean_copy_sb_user_eula_file
-endif SONGBIRD_USER_EULA_FILE
+endif #SONGBIRD_USER_EULA_FILE
 
 #------------------------------------------------------------------------------
 # Rules for preprocessing
