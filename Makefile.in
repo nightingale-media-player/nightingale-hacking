@@ -62,11 +62,6 @@ SUBDIRS = build \
 
 SUBDIRDEPS = components : bindings
 
-ifdef MAKE_INSTALLER
-SUBDIRS += installer
-SUBDIRDEPS = installer : components app feathers locales
-endif
-
 ifdef HAS_EXTRAS
 SUBDIRS += extras
 SUBDIRDEPS2 = extras : components
@@ -75,6 +70,11 @@ endif
 ifdef SONGBIRD_OFFICIAL
 SUBDIRS += update
 SUBDIRDEPS3 = update : installer
+endif
+
+ifdef MAKE_INSTALLER
+SUBDIRS += installer
+SUBDIRDEPS = installer : components app feathers locales
 endif
 
 ifdef SB_ENABLE_BREAKPAD
