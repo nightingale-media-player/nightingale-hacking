@@ -113,15 +113,6 @@
         </body>
       </method>
 
-      <method name="getContentSize">
-      <body>
-        <![CDATA[
-          var n_ext = this.bundleInterface.bundleExtensionCount; 
-          return Math.min(4, n_ext) * 26 + ((n_ext <= 4) ? 12 : 0);
-        ]]>
-      </body>
-      </method>
-      
     </implementation>
  
   </binding>

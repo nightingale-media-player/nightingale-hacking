@@ -75,3 +75,8 @@ sb-extensions-drawer > .drawer-box
   margin: 0px;
   padding: 0px;
 }
+
+sb-extensions-drawer > .drawer-box > .drawer-content
+{
+  height: 132px;
+}
