@@ -12,10 +12,11 @@ http://www.songbirdnest.com/migration-from-0.2.5-to-0.3
 
 ---------------------------------------------------------------------------------
 NOTICE TO iPOD USERS
-* iPOD Device Support version 2.1.2 or Later is needed for Songbird 0.4RC1.  Previous 
+* iPOD Device Support version 2.1.2 or Later is needed for Songbird 0.4RC2.  Previous 
 versions of this add-on are not compatible with this new release.
 * Linux Fedora users will need to upgrade to libdbus version 3 to get iPOD 
 to sync OR wait for version 2.1.5.
+* iPod Touch/iPhone not yet supported
 
 ---------------------------------------------------------------------------------
 
@@ -29,13 +30,13 @@ http://www.songbirdnest.com/add-on-api/articles/display-panes/
 Starter Guides and Sample Code - http://developer.songbirdnest.com/webpage-api/
 Full Webpage API Documentation - http://developer.songbirdnest.com/webpage-api/docs/0.3/
 
-* Add-on API Documentation</l
+* Add-on API Documentation
 Starter Guides and Sample Code - http://developer.songbirdnest.com/add-on-api/
 Full Add-on API Documentation - http://developer.songbirdnest.com/add-on-api/docs/0.3/
 
 ---------------------------------------------------------------------------------
 NEW FEATURES AND IMPROVEMENTS
-The following are new features and improvements for the 0.4RC1 release:
+The following are new features and improvements for the 0.4RC2 release:
 
 * Display panes that make it friendly for multiple add-ons to be installed in Songbird 
 at once by allowing the user to define which add-on gets displayed by context. Read the 
@@ -62,14 +63,14 @@ All Platforms
 * Need to change the HTTP accept-language tag to match locale (5437)
 * [iTunes Importer] Scanning for media duplicates track entries (5465)
    Fixed with version 3.0.10 of the importer.
-* [iPod] Need to support the iPod Touch/iPhone (6389)
+* [iPod] iPod Touch/iPhone not yet supported (6389)
 
 Linux Specific
 
 * No way to have system-wide install (can only install to a single user) (3679)
 * Service pane context menu requires right click + hold (4584)
 * [Linux Fedora 32 and 64 bit] Cannot mount iPOD (6200)
-   Fixed with version 2.1.5 of the iPod Device Support add-on.
+   Will be fixed with version 2.1.5 of the iPod Device Support add-on.
 
 MacOSX Specific
 
