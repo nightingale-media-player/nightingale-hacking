@@ -61,6 +61,7 @@ cd %DIST_DIR%
 sed 's/\(VALUE "FileDescription", "\)[^"]*\("\)/\1Songbird\2/ ; w songbird.out.rc' songbird.rc
 rc /v songbird.out.rc
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, songbird.out.res, VersionInfo,1,1033
+del songbird.rc songbird.out.rc songbird.res songbird.out.res
 cd %DIST_DEPTH%\installer\windows
 
 if "%4"=="prepare" goto end
