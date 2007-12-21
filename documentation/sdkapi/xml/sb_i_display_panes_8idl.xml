@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_display_panes_8idl" kind="file">
+    <compoundname>sbIDisplayPanes.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="127">
+        <label>components/displaypanes/public/sbIDisplayPanes.idl</label>
+        <link refid="sbIDisplayPanes.idl"/>
+        <childnode refid="128" relation="include">
+        </childnode>
+      </node>
+      <node id="128">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_display_pane_content_info" prot="public">sbIDisplayPaneContentInfo</innerclass>
+    <innerclass refid="interfacesb_i_display_pane_instantiator" prot="public">sbIDisplayPaneInstantiator</innerclass>
+    <innerclass refid="interfacesb_i_display_pane_listener" prot="public">sbIDisplayPaneListener</innerclass>
+    <innerclass refid="interfacesb_i_display_pane_manager" prot="public">sbIDisplayPaneManager</innerclass>
+    <briefdescription>
+<para>Songbird Display Panes Interface file This file contains interfaces pertaining to display panes. </para>    </briefdescription>
+    <detaileddescription>
+<para>Display panes are blocks within the main user interface which can be used to load arbitary sub-documents for display to the user with full chrome privileges.</para><para><simplesect kind="see"><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/wikipedia">http://publicsvn.songbirdnest.com/browser/extensions/wikipedia</ulink> </para><para>app/content/bindings/displayPane.xml</para><para>sbDisplayPanes.js </para></simplesect>
+</para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_display_pane_content_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55" refid="interfacesb_i_display_pane_content_info_102b9a18bc67263a7060ae83070405d95" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentUrl;</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_display_pane_content_info_1136cd514433e497dc3b501718f88201e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentTitle;</highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_display_pane_content_info_118a4abf37e69bb5f11bb0d8ce20e9143" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentIcon;</highlight></codeline>
+<codeline lineno="67" refid="interfacesb_i_display_pane_content_info_17de1b35215f4d83f1273fdf1bfd24992" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRInt32<sp/>defaultWidth;</highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_display_pane_content_info_1e1a1fa6d04495f67ecccfb89025bc92b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRInt32<sp/>defaultHeight;</highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_display_pane_content_info_1431cbeac0d92f744e08a448e144d71d5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>suggestedContentGroups;<sp/></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal">[scriptable,<sp/>uuid(8ffc6211-967a-48ac-9d9f-2952d6bbc4de)]</highlight></codeline>
+<codeline lineno="85" refid="interfacesb_i_display_pane_instantiator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_display_pane_instantiator_18b392a5a78ed6882580e271cd27f4519" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentGroup;</highlight></codeline>
+<codeline lineno="94" refid="interfacesb_i_display_pane_instantiator_1740116423b156990727d7f16a6449089" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentUrl;</highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_display_pane_instantiator_1f626deaa807cd4e844f7301606a9eeac" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentTitle;</highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_display_pane_instantiator_1cee3b9b55640e8139f8f883442092081" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentIcon;<sp/></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>loadContent(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hide();</highlight></codeline>
+<codeline lineno="115" refid="interfacesb_i_display_pane_instantiator_183507dfdfbdd7719fb886a3031031002" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/>collapsed;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">[scriptable,<sp/>uuid(1028919e-de26-45ed-ac12-5343972498a6)]</highlight></codeline>
+<codeline lineno="124" refid="interfacesb_i_display_pane_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterContent(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onUnregisterContent(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterInstantiator(in<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>aInstantiator);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onUnregisterInstantiator(in<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>aInstantiator);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onPaneInfoChanged(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal">[scriptable,<sp/>uuid(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]</highlight></codeline>
+<codeline lineno="146" refid="interfacesb_i_display_pane_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_manager" kindref="compound" tooltip="Songbird Display Panes Interface This is the main display panes management interface...">sbIDisplayPaneManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerInstantiator(in<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>aInstantiator);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterInstantiator(in<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>aInstantiator);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerContent(in<sp/>AString<sp/>aContentUrl,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentTitle,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentIcon,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aDefaultWidth,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aDefaultHeight,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aSuggestedContentGroups,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRBool<sp/>aAutoShow);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterContent(in<sp/>AString<sp/>aContentUrl);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateContentInfo(in<sp/>AString<sp/>aContentUrl,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewContentTitle,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aNewContentIcon);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showPane(in<sp/>AString<sp/>aContentUrl);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="interfacesb_i_display_pane_manager_1e296e5a8eb75a06b0b7451c49255b88b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>contentList;</highlight></codeline>
+<codeline lineno="197" refid="interfacesb_i_display_pane_manager_18f11d1e5a2f06bf5bc8c37fbb4756e8d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>instantiatorsList;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>getPaneInfo(in<sp/>AString<sp/>aContentUrl);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl"/>
+  </compounddef>
+</doxygen>

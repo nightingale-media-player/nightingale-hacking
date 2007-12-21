@@ -100,21 +100,21 @@
 <a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>;
 <a name="l00040"></a>00040 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00041"></a>00041 
-<a name="l00050"></a>00050 [scriptable, uuid(280006ad-3069-4d1b-9684-a647672ff856)]
+<a name="l00050"></a>00050 [scriptable, uuid(fe64ee8a-7df6-4046-85da-97ee1742ac21)]
 <a name="l00051"></a><a class="code" href="interfacesb_i_property_manager.html">00051</a> interface <a class="code" href="interfacesb_i_property_manager.html" title="Manager for system wide metadata properties.">sbIPropertyManager</a> : nsISupports
 <a name="l00052"></a>00052 {
-<a name="l00057"></a><a class="code" href="interfacesb_i_property_manager.html#07a2c7265ae2b02266029dae09c0f32c">00057</a>   readonly attribute nsIStringEnumerator propertyNames;
+<a name="l00057"></a><a class="code" href="interfacesb_i_property_manager.html#fb62e82a29db1da94a9acd2c2bd8599b">00057</a>   readonly attribute nsIStringEnumerator propertyIDs;
 <a name="l00058"></a>00058 
-<a name="l00064"></a>00064   <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> getPropertyInfo(in AString aName);
+<a name="l00064"></a>00064   <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> getPropertyInfo(in AString aID);
 <a name="l00065"></a>00065 
 <a name="l00071"></a>00071   <span class="keywordtype">void</span> addPropertyInfo(in <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> aPropertyInfo);
 <a name="l00072"></a>00072 
-<a name="l00079"></a>00079   <span class="keywordtype">boolean</span> hasProperty(in AString aName);
-<a name="l00080"></a>00080   
+<a name="l00079"></a>00079   <span class="keywordtype">boolean</span> hasProperty(in AString aID);
+<a name="l00080"></a>00080 
 <a name="l00084"></a>00084   nsIStringBundle createBundle(in <span class="keywordtype">string</span> aURLSpec);
-<a name="l00085"></a>00085    
+<a name="l00085"></a>00085 
 <a name="l00089"></a>00089   AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
-<a name="l00090"></a>00090    
+<a name="l00090"></a>00090 
 <a name="l00091"></a>00091 };
 <a name="l00092"></a>00092 
 <a name="l00097"></a>00097 [scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
@@ -127,7 +127,7 @@
 <a name="l00115"></a>00115   <span class="keywordtype">void</span> Init(in AString aOperator, in aString aOperatorReadable);
 <a name="l00116"></a>00116 };
 <a name="l00117"></a>00117 
-<a name="l00123"></a>00123 [scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
+<a name="l00123"></a>00123 [scriptable, uuid(769538d8-4e2b-457d-b76f-0db0150830a8)]
 <a name="l00124"></a><a class="code" href="interfacesb_i_property_info.html">00124</a> interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> : nsISupports
 <a name="l00125"></a>00125 {
 <a name="l00126"></a><a class="code" href="interfacesb_i_property_info.html#afe9f89f31df1de16ca3b9ab5b7682de">00126</a>   readonly attribute AString OPERATOR_EQUALS;
@@ -157,7 +157,7 @@
 <a name="l00165"></a>00165 
 <a name="l00173"></a><a class="code" href="interfacesb_i_property_info.html#5928b8ba0b6b86690f8805159f42321b">00173</a>   attribute <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> sortProfile;
 <a name="l00174"></a>00174 
-<a name="l00178"></a><a class="code" href="interfacesb_i_property_info.html#f99708e616311487152a7a36fd60a80c">00178</a>   attribute AString name;
+<a name="l00178"></a><a class="code" href="interfacesb_i_property_info.html#61817d7ea202ecab4269758576035d40">00178</a>   attribute AString id;
 <a name="l00179"></a>00179 
 <a name="l00183"></a><a class="code" href="interfacesb_i_property_info.html#37e83ba1df687703b9006504d58239fe">00183</a>   attribute AString type;
 <a name="l00184"></a>00184 
@@ -265,7 +265,7 @@
 <a name="l00463"></a>00463 {
 <a name="l00464"></a>00464 };
 <a name="l00465"></a>00465 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

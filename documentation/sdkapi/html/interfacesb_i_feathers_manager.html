@@ -106,15 +106,18 @@ nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_layout_description.html">sbILayoutDescription</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#cc68c664bea00a1e1ac5289af3d7068f">getLayoutDescription</a> (in AString aLayoutURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the full layout description associated with a layout URL.  <a href="#cc68c664bea00a1e1ac5289af3d7068f"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#2f3fdf3b9c5ff0f9ab655c8c099e378a">assertCompatibility</a> (in AString aLayoutURL, in AString aInternalName, in boolean aShowChrome)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#063febb08ff6edd1d687c926d860b95f">assertCompatibility</a> (in AString aLayoutURL, in AString aInternalName, in boolean aShowChrome, in boolean onTop)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assert compatibility of a skin-layout pair.  <a href="#2f3fdf3b9c5ff0f9ab655c8c099e378a"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assert compatibility of a skin-layout pair.  <a href="#063febb08ff6edd1d687c926d860b95f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#1cf705163c6a5ddf649c3eb71e092b81">unassertCompatibility</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unassert compatibility of a skin-layout pair.  <a href="#1cf705163c6a5ddf649c3eb71e092b81"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#ad3b2e31c3dc72083f8d7408326658a0">isChromeEnabled</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should window chrome be used with the given window-skin pair.  <a href="#ad3b2e31c3dc72083f8d7408326658a0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#a51940037eaf3f3d39a16e9fffdfaacc">isOnTop</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should the window be kept on top.  <a href="#a51940037eaf3f3d39a16e9fffdfaacc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#7f80bd36542c40d6a3b733c54b1934b2">getSkinsForLayout</a> (in AString aLayoutURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get an enumerator for all registered skins compatible with the given layoutID.  <a href="#7f80bd36542c40d6a3b733c54b1934b2"></a><br></td></tr>
@@ -337,7 +340,7 @@ Gets the full layout description associated with a layout URL.
 
 </div>
 </div><p>
-<a class="anchor" name="2f3fdf3b9c5ff0f9ab655c8c099e378a"></a><!-- doxytag: member="sbIFeathersManager::assertCompatibility" ref="2f3fdf3b9c5ff0f9ab655c8c099e378a" args="(in AString aLayoutURL, in AString aInternalName, in boolean aShowChrome)" -->
+<a class="anchor" name="063febb08ff6edd1d687c926d860b95f"></a><!-- doxytag: member="sbIFeathersManager::assertCompatibility" ref="063febb08ff6edd1d687c926d860b95f" args="(in AString aLayoutURL, in AString aInternalName, in boolean aShowChrome, in boolean onTop)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -357,7 +360,13 @@ Gets the full layout description associated with a layout URL.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">in boolean&nbsp;</td>
-          <td class="paramname"> <em>aShowChrome</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aShowChrome</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>onTop</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -457,6 +466,44 @@ Should window chrome be used with the given window-skin pair.
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the given pair should be displayed with native chrome (titlebar, etc.) </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="a51940037eaf3f3d39a16e9fffdfaacc"></a><!-- doxytag: member="sbIFeathersManager::isOnTop" ref="a51940037eaf3f3d39a16e9fffdfaacc" args="(in AString aLayoutURL, in AString aInternalName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIFeathersManager::isOnTop           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aLayoutURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aInternalName</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Should the window be kept on top. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aLayoutURL</em>&nbsp;</td><td>URL for a xul window </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>Identifier for a skin </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the given pair should be kept on top </dd></dl>
 
 </div>
 </div><p>
@@ -638,7 +685,7 @@ Unregister modification callbacks.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/feathers/public/<a class="el" href="sb_i_feathers_manager_8idl-source.html">sbIFeathersManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:03 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

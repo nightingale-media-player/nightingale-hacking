@@ -4,13 +4,13 @@
     <compoundname>sbITestHarness.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="464">
+      <node id="477">
         <label>components/testharness/public/sbITestHarness.idl</label>
         <link refid="sbITestHarness.idl"/>
-        <childnode refid="465" relation="include">
+        <childnode refid="478" relation="include">
         </childnode>
       </node>
-      <node id="465">
+      <node id="478">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -61,6 +61,6 @@
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/testharness/public/sbITestHarness.idl"/>
+    <location file="z:/projects/songbird/components/testharness/public/sbITestHarness.idl"/>
   </compounddef>
 </doxygen>

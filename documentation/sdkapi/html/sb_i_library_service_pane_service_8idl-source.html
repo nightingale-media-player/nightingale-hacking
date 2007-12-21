@@ -97,39 +97,50 @@
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a>;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(2b7aeef4-fa67-11db-8314-0800200c9a66)]
+<a name="l00042"></a>00042 [scriptable, uuid(961b6911-c48a-4a48-a3a3-596f5fa68b7c)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_library_service_pane_service.html">00043</a> interface <a class="code" href="interfacesb_i_library_service_pane_service.html" title="Provides information about libraries and medialists needed by the service pane.">sbILibraryServicePaneService</a> : nsISupports {
 <a name="l00044"></a>00044 
 <a name="l00045"></a>00045   <span class="comment">/* \brief Suggest a library for creating a new media list</span>
 <a name="l00046"></a>00046 <span class="comment">   *</span>
 <a name="l00047"></a>00047 <span class="comment">   * \param aMediaListType string identifying a media list type, eg "simple"</span>
 <a name="l00048"></a>00048 <span class="comment">   * \param aNode A service pane node to provide context for new list creation</span>
-<a name="l00049"></a>00049 <span class="comment">   * \return a library, or null if this service can't suggest anything based on </span>
+<a name="l00049"></a>00049 <span class="comment">   * \return a library, or null if this service can't suggest anything based on</span>
 <a name="l00050"></a>00050 <span class="comment">   *         the given context and type.</span>
 <a name="l00051"></a>00051 <span class="comment">   */</span>
-<a name="l00052"></a>00052   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> suggestLibraryForNewList (in AString aMediaListType, 
+<a name="l00052"></a>00052   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> suggestLibraryForNewList (in AString aMediaListType,
 <a name="l00053"></a>00053                                        in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
 <a name="l00054"></a>00054 
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056   <span class="comment">/* \brief Attempt to get a service pane node for the given library resource</span>
-<a name="l00057"></a>00057 <span class="comment">   *         </span>
-<a name="l00058"></a>00058 <span class="comment">   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary</span>
-<a name="l00059"></a>00059 <span class="comment">   * \return a service pane node that represents the given resource, if one exists</span>
-<a name="l00060"></a>00060 <span class="comment">   */</span>
-<a name="l00061"></a>00061   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeForLibraryResource (in <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> aResource);
-<a name="l00062"></a>00062   
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064   <span class="comment">/* \brief Attempt to get a library resource for the given service pane node.</span>
-<a name="l00065"></a>00065 <span class="comment">   *</span>
-<a name="l00066"></a>00066 <span class="comment">   * Note that there is no guarantee that hidden service pane nodes</span>
-<a name="l00067"></a>00067 <span class="comment">   * will have corresponding library resources</span>
+<a name="l00055"></a>00055   <span class="comment">/* \brief Attempts to create a service pane node for a given library.</span>
+<a name="l00056"></a>00056 <span class="comment">   *</span>
+<a name="l00057"></a>00057 <span class="comment">   * The node is created hidden. After you have parented or positioned your</span>
+<a name="l00058"></a>00058 <span class="comment">   * node appropriately, show it by changing the hidden attribute to false</span>
+<a name="l00059"></a>00059 <span class="comment">   * (node.hidden = false).</span>
+<a name="l00060"></a>00060 <span class="comment">   *</span>
+<a name="l00061"></a>00061 <span class="comment">   * \param aLibrary an sbILibrary.</span>
+<a name="l00062"></a>00062 <span class="comment">   * \return a service pane node that represents the given library, null</span>
+<a name="l00063"></a>00063 <span class="comment">   *         if aLibrary is not an sbILibrary.</span>
+<a name="l00064"></a>00064 <span class="comment">   */</span>
+<a name="l00065"></a>00065   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForLibrary (in <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> aLibrary);
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067   <span class="comment">/* \brief Attempt to get a service pane node for the given library resource</span>
 <a name="l00068"></a>00068 <span class="comment">   *</span>
-<a name="l00069"></a>00069 <span class="comment">   * \param aNode </span>
-<a name="l00070"></a>00070 <span class="comment">   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null</span>
-<a name="l00071"></a>00071 <span class="comment">   */</span>    
-<a name="l00072"></a>00072   <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> getLibraryResourceForNode (in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
-<a name="l00073"></a>00073 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+<a name="l00069"></a>00069 <span class="comment">   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary</span>
+<a name="l00070"></a>00070 <span class="comment">   * \return a service pane node that represents the given resource, if one exists</span>
+<a name="l00071"></a>00071 <span class="comment">   */</span>
+<a name="l00072"></a>00072   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeForLibraryResource (in <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> aResource);
+<a name="l00073"></a>00073 
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075   <span class="comment">/* \brief Attempt to get a library resource for the given service pane node.</span>
+<a name="l00076"></a>00076 <span class="comment">   *</span>
+<a name="l00077"></a>00077 <span class="comment">   * Note that there is no guarantee that hidden service pane nodes</span>
+<a name="l00078"></a>00078 <span class="comment">   * will have corresponding library resources</span>
+<a name="l00079"></a>00079 <span class="comment">   *</span>
+<a name="l00080"></a>00080 <span class="comment">   * \param aNode</span>
+<a name="l00081"></a>00081 <span class="comment">   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null</span>
+<a name="l00082"></a>00082 <span class="comment">   */</span>
+<a name="l00083"></a>00083   <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> getLibraryResourceForNode (in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
+<a name="l00084"></a>00084 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

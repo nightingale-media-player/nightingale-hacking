@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" bodystart="53" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="53" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" prot="public" static="no" mutable="no">
         <type>readonly attribute ACString</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" line="59" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" bodystart="59" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="59" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -58,7 +58,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" line="74"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="74"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -66,7 +66,7 @@
     <detaileddescription>
 <para>This interface is used to create new instances of a library.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl" bodystart="47" bodyend="75"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="48" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="47" bodyend="75"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" prot="public" virt="non-virtual"><scope>sbILibraryFactory</scope><name>contractID</name></member>
       <member refid="interfacesb_i_library_factory_1f013d89e9b09b5c6a1f708a58ec9b267" prot="public" virt="non-virtual"><scope>sbILibraryFactory</scope><name>createLibrary</name></member>

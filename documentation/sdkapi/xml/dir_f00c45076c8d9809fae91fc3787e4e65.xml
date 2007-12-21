@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_f00c45076c8d9809fae91fc3787e4e65" kind="dir">
+    <compoundname>components/playlistplayback/</compoundname>
+    <innerdir refid="dir_808a7f391acad84aa8b43a8205269a1e">components/playlistplayback/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/playlistplayback/"/>
+  </compounddef>
+</doxygen>

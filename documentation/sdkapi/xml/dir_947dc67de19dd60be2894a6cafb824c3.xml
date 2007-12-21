@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_947dc67de19dd60be2894a6cafb824c3" kind="dir">
+    <compoundname>components/metrics/public/</compoundname>
+    <innerfile refid="sb_i_metrics_8idl">sbIMetrics.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/metrics/public/"/>
+  </compounddef>
+</doxygen>

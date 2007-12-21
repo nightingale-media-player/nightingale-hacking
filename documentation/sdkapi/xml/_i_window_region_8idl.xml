@@ -4,13 +4,13 @@
     <compoundname>IWindowRegion.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="169">
+      <node id="172">
         <label>components/integration/public/IWindowRegion.idl</label>
         <link refid="IWindowRegion.idl"/>
-        <childnode refid="170" relation="include">
+        <childnode refid="173" relation="include">
         </childnode>
       </node>
-      <node id="170">
+      <node id="173">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,6 +53,6 @@
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setWindowRegion(<sp/>in<sp/>nsISupports<sp/>window,<sp/>in<sp/>nsISupports<sp/>region<sp/>);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowRegion.idl"/>
+    <location file="z:/projects/songbird/components/integration/public/IWindowRegion.idl"/>
   </compounddef>
 </doxygen>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_remote_security_event" kind="interface" prot="public">
+    <compoundname>sbIRemoteSecurityEvent</compoundname>
+    <includes refid="sb_i_remote_security_event_8idl" local="no">sbIRemoteSecurityEvent.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_security_event_17fa879e835968d9b31a8ee5bcecaa3b1" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIURI</type>
+        <definition>readonly attribute nsIURI sbIRemoteSecurityEvent::siteScope</definition>
+        <argsstring></argsstring>
+        <name>siteScope</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="169" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_security_event_1f156ea5b411c6818b7e4deb0f5f7df05" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemoteSecurityEvent::category</definition>
+        <argsstring></argsstring>
+        <name>category</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="179" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_security_event_1e5d7767368df48e8915ce7fe9e4b75f5" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemoteSecurityEvent::categoryID</definition>
+        <argsstring></argsstring>
+        <name>categoryID</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="189" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_security_event_1b0fb56a6b901e69ecd47ef94d6d14439" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIRemoteSecurityEvent::hasAccess</definition>
+        <argsstring></argsstring>
+        <name>hasAccess</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="199" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to maintain information about the last security event that occurred. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="160" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="159" bodyend="200"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_security_event_1f156ea5b411c6818b7e4deb0f5f7df05" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>category</name></member>
+      <member refid="interfacesb_i_remote_security_event_1e5d7767368df48e8915ce7fe9e4b75f5" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>categoryID</name></member>
+      <member refid="interfacesb_i_remote_security_event_1b0fb56a6b901e69ecd47ef94d6d14439" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>hasAccess</name></member>
+      <member refid="interfacesb_i_remote_security_event_17fa879e835968d9b31a8ee5bcecaa3b1" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>siteScope</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

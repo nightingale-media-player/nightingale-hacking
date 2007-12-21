@@ -162,6 +162,6 @@
 <codeline lineno="231" refid="interfacesb_i_playlist_widget_1c023582f73fbed84eb3b1b63609487a8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>lastClickEvent;</highlight></codeline>
 <codeline lineno="232"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl"/>
+    <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl"/>
   </compounddef>
 </doxygen>

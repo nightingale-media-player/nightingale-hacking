@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="83" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="83" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="83" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_remote_web_playlist_1434871417cc139f6eb5c5bf8670a282a" prot="public" static="no" mutable="no">
         <type>readonly attribute nsISimpleEnumerator</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="118" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="118" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="118" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="151"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="151"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -59,19 +59,19 @@
     <detaileddescription>
 <para>TODO: Write this documentation </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="592">
+      <node id="604">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="591">
+      <node id="603">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="592" relation="usage">
+        <childnode refid="604" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="74" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="73" bodyend="153"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="74" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="73" bodyend="153"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_web_playlist_177085c7d935bd95749cea08ce51e125f" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>mediaList</name></member>
       <member refid="interfacesb_i_remote_web_playlist_1434871417cc139f6eb5c5bf8670a282a" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>selection</name></member>

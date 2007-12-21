@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_015629687685bab4244aeec07e78c000" kind="dir">
+    <compoundname>components/filescan/</compoundname>
+    <innerdir refid="dir_7c6ffebd58cb589f555625da90d962e7">components/filescan/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/filescan/"/>
+  </compounddef>
+</doxygen>

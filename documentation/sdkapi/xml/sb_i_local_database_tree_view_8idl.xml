@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseTreeView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="296">
+      <node id="301">
         <label>components/library/localdatabase/public/sbILocalDatabaseTreeView.idl</label>
         <link refid="sbILocalDatabaseTreeView.idl"/>
-        <childnode refid="297" relation="include">
+        <childnode refid="302" relation="include">
         </childnode>
       </node>
-      <node id="297">
+      <node id="302">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -69,6 +69,6 @@
 <codeline lineno="56"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl"/>
   </compounddef>
 </doxygen>

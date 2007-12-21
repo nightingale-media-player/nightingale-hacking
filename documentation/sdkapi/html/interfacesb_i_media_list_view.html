@@ -101,6 +101,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#b5977daa0e5a454727f4ddf42e5525da">getState</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a snapshot of the current state of this view. Can later be used to restore the state by passing the returned object as an argument to sbIMediaList::CreateView().  <a href="#b5977daa0e5a454727f4ddf42e5525da"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#97dba92eca2e3eeed5b202d02063ea08">addListener</a> (in <a class="el" href="interfacesb_i_media_list_view_listener.html">sbIMediaListViewListener</a> aListener,[optional] in boolean aOwnsWeak)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a listener to this view to be notified of changes to filter configuration, search, and sort configuration.  <a href="#97dba92eca2e3eeed5b202d02063ea08"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#5e1b82d0a1890358c5cbd75d625cdd08">removeListener</a> (in <a class="el" href="interfacesb_i_media_list_view_listener.html">sbIMediaListViewListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a listener from the view.  <a href="#5e1b82d0a1890358c5cbd75d625cdd08"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0c728825b5bc85265d000a68d22d56a9"></a><!-- doxytag: member="sbIMediaListView::mediaList" ref="0c728825b5bc85265d000a68d22d56a9" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">mediaList</a></td></tr>
@@ -128,7 +134,7 @@ A distinct view on a given media list.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00061">61</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="845aa28b17e2eab43b1ea8b08811d247"></a><!-- doxytag: member="sbIMediaListView::getItemByIndex" ref="845aa28b17e2eab43b1ea8b08811d247" args="(in unsigned long aIndex)" -->
 <div class="memitem">
 <div class="memproto">
@@ -318,9 +324,78 @@ Returns a snapshot of the current state of this view. Can later be used to resto
 
 </div>
 </div><p>
+<a class="anchor" name="97dba92eca2e3eeed5b202d02063ea08"></a><!-- doxytag: member="sbIMediaListView::addListener" ref="97dba92eca2e3eeed5b202d02063ea08" args="(in sbIMediaListViewListener aListener,[optional] in boolean aOwnsWeak)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIMediaListView::addListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list_view_listener.html">sbIMediaListViewListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aOwnsWeak</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a listener to this view to be notified of changes to filter configuration, search, and sort configuration. 
+<p>
+Calling addListener twice with the same listener and weak setting will be ignored. Calling twice with the same listener but different weak settings will cause two references to be stored, one weak and one strong.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>The listener instance. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aOwnsWeak</em>&nbsp;</td><td>[optional] Whether or not to hold a weak reference to the listener. If aOwnsWeak is true then aListener must be able to QI to nsISupportsWeakReference. </td></tr>
+  </table>
+</dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> <p>
+nsISupportsWeakReference </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="5e1b82d0a1890358c5cbd75d625cdd08"></a><!-- doxytag: member="sbIMediaListView::removeListener" ref="5e1b82d0a1890358c5cbd75d625cdd08" args="(in sbIMediaListViewListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIMediaListView::removeListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list_view_listener.html">sbIMediaListViewListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a listener from the view. 
+<p>
+Calling removeListener with a listener that has not been previously added with addListener is a no-op.<p>
+Calling removeListener with a listener that had both a weak and a strong reference stored (via two calls to addListener with different values for aOwnsWeak) will cause the weak listener to be removed first. A second call to removeListener is necessary to remove the strong reference.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>The listener instance to remove. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:04 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

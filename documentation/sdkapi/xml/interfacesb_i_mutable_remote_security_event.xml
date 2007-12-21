@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mutable_remote_security_event" kind="interface" prot="public">
+    <compoundname>sbIMutableRemoteSecurityEvent</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_mutable_remote_security_event_1afed5fd57dea18b302dba1a9720bf4f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMutableRemoteSecurityEvent::initSecurityEvent</definition>
+        <argsstring>(in nsIDOMDocument aDoc, in nsIURI aSiteScope, in AString aCategory, in AString aCategoryID, in boolean aHasAccess)</argsstring>
+        <name>initSecurityEvent</name>
+        <param>
+          <type>in nsIDOMDocument</type>
+          <declname>aDoc</declname>
+        </param>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aSiteScope</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCategory</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aCategoryID</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aHasAccess</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="205"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="204" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="203" bodyend="206"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mutable_remote_security_event_1afed5fd57dea18b302dba1a9720bf4f4" prot="public" virt="non-virtual"><scope>sbIMutableRemoteSecurityEvent</scope><name>initSecurityEvent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

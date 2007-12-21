@@ -37,7 +37,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="53"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="53"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tag_lib_channel_file_i_o_manager_1a800b1e105df870b408efa0a23aa64cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -62,7 +62,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="60"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tag_lib_channel_file_i_o_manager_1240222b9a3113a14340b13ef1ab0c023" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref></type>
@@ -88,7 +88,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="68"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tag_lib_channel_file_i_o_manager_111378195a2460873ae1c28105222cccf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long long</type>
@@ -114,7 +114,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="76"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tag_lib_channel_file_i_o_manager_1dc7e5f26fc96e9fe104295892ba07ad0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -140,7 +140,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="84"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tag_lib_channel_file_i_o_manager_15dbcfa59c87ae92ff50095e2ada713bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -176,7 +176,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="92"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="92"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -184,7 +184,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_tag_lib_channel_file_i_o_manager" kindref="compound">sbITagLibChannelFileIOManager</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" bodystart="45" bodyend="93"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" line="46" bodyfile="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl" bodystart="45" bodyend="93"/>
     <listofallmembers>
       <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_12c1554d196d3da1f19636a15abdce78d" prot="public" virt="non-virtual"><scope>sbITagLibChannelFileIOManager</scope><name>addChannel</name></member>
       <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1240222b9a3113a14340b13ef1ab0c023" prot="public" virt="non-virtual"><scope>sbITagLibChannelFileIOManager</scope><name>getChannel</name></member>

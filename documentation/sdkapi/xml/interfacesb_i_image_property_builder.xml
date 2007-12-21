@@ -33,12 +33,12 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="93" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="92" bodyend="94"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="97" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="96" bodyend="98"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayNameKey</name></member>
       <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>get</name></member>
-      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>propertyName</name></member>
+      <member refid="interfacesb_i_property_builder_1bdc8752e28f39e553eca2d130126b112" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>propertyID</name></member>
       <member refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteReadable</name></member>
       <member refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>remoteWritable</name></member>
       <member refid="interfacesb_i_property_builder_187c7d838c9a0f42969961d23235ea9bc" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>userEditable</name></member>

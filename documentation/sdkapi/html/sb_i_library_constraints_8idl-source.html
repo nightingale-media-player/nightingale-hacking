@@ -93,62 +93,59 @@
 <a name="l00026"></a>00026 
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00033"></a>00033 
-<a name="l00034"></a>00034 %{C++
-<a name="l00035"></a>00035 <span class="preprocessor">#include "nsTArray.h"</span>
-<a name="l00036"></a>00036 <span class="preprocessor">#include "nsStringGlue.h"</span>
-<a name="l00037"></a>00037 %}
+<a name="l00034"></a>00034 interface nsISimpleEnumerator;
+<a name="l00035"></a>00035 interface nsIStringEnumerator;
+<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a>;
+<a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_library_constraint_group.html">sbILibraryConstraintGroup</a>;
 <a name="l00038"></a>00038 
-<a name="l00039"></a>00039 [ptr] native StringArray(nsTArray&lt;nsString&gt;);
-<a name="l00040"></a>00040 
-<a name="l00045"></a>00045 [scriptable, uuid(31e0f6c8-c59e-4a58-b608-1b445719d5a5)]
-<a name="l00046"></a><a class="code" href="interfacesb_i_library_filter.html">00046</a> interface <a class="code" href="interfacesb_i_library_filter.html" title="A filter that can be applied to a media list view.">sbILibraryFilter</a> : nsISupports
-<a name="l00047"></a>00047 {
-<a name="l00048"></a>00048   <span class="keywordtype">void</span> init(in AString aProperty,
-<a name="l00049"></a>00049             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aCount,
-<a name="l00050"></a>00050             [array, size_is(aCount)] in wstring aValues);
-<a name="l00051"></a>00051   [noscript] <span class="keywordtype">void</span> initNative(in AString aProperty, in StringArray aValues);
-<a name="l00052"></a>00052 
-<a name="l00053"></a><a class="code" href="interfacesb_i_library_filter.html#5dc0d0b6dc8d2e97054cea0d98615f08">00053</a>   readonly attribute AString property;
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055   <span class="keywordtype">void</span> getValues(out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> count,
-<a name="l00056"></a>00056                  [retval, array, size_is(count)] out wstring values);
-<a name="l00057"></a>00057 
-<a name="l00058"></a>00058   [noscript] StringArray getValuesNative();
-<a name="l00059"></a>00059 
-<a name="l00060"></a>00060   AString toString();
-<a name="l00061"></a>00061 };
-<a name="l00062"></a>00062 
-<a name="l00067"></a>00067 [scriptable, uuid(ccc03dd2-5b8a-4148-a581-a4e3790b25ff)]
-<a name="l00068"></a><a class="code" href="interfacesb_i_library_search.html">00068</a> interface <a class="code" href="interfacesb_i_library_search.html" title="A search that can be applied to a media list view.">sbILibrarySearch</a> : nsISupports
-<a name="l00069"></a>00069 {
-<a name="l00070"></a>00070   <span class="keywordtype">void</span> init(in AString aProperty,
-<a name="l00071"></a>00071             in <span class="keywordtype">boolean</span> aIsAll,
-<a name="l00072"></a>00072             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> count,
-<a name="l00073"></a>00073             [array, size_is(count)] in wstring values);
-<a name="l00074"></a>00074   [noscript] <span class="keywordtype">void</span> initNative(in AString aProperty,
-<a name="l00075"></a>00075                              in <span class="keywordtype">boolean</span> aIsAll,
-<a name="l00076"></a>00076                              in StringArray aValues);
-<a name="l00077"></a>00077 
-<a name="l00078"></a><a class="code" href="interfacesb_i_library_search.html#3c239ffc5087011ff9457007cf0fc72e">00078</a>   readonly attribute AString property;
-<a name="l00079"></a><a class="code" href="interfacesb_i_library_search.html#470cc669678033c6e56c6ac560ae4879">00079</a>   readonly attribute <span class="keywordtype">boolean</span> isAll;
-<a name="l00080"></a>00080   <span class="keywordtype">void</span> getValues(out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> count,
-<a name="l00081"></a>00081                  [retval, array, size_is(count)] out wstring values);
-<a name="l00082"></a>00082   [noscript] StringArray getValuesNative();
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084   AString toString();
-<a name="l00085"></a>00085 };
-<a name="l00086"></a>00086 
-<a name="l00091"></a>00091 [scriptable, uuid(d9655856-f518-43f1-b096-25f52b0b629e)]
-<a name="l00092"></a><a class="code" href="interfacesb_i_library_sort.html">00092</a> interface <a class="code" href="interfacesb_i_library_sort.html" title="A sort that can be applied to a media list view.">sbILibrarySort</a> : nsISupports
+<a name="l00052"></a>00052 [scriptable, uuid(2890d9a4-68b5-4b7a-8f88-3cd05d05416c)]
+<a name="l00053"></a><a class="code" href="interfacesb_i_library_constraint_builder.html">00053</a> interface <a class="code" href="interfacesb_i_library_constraint_builder.html">sbILibraryConstraintBuilder</a> : nsISupports
+<a name="l00054"></a>00054 {
+<a name="l00059"></a>00059   <a class="code" href="interfacesb_i_library_constraint_builder.html">sbILibraryConstraintBuilder</a> includeConstraint(in <a class="code" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> aConstraint);
+<a name="l00060"></a>00060 
+<a name="l00066"></a>00066   <a class="code" href="interfacesb_i_library_constraint_builder.html">sbILibraryConstraintBuilder</a> include(in AString aProperty,
+<a name="l00067"></a>00067                                       in AString aValue);
+<a name="l00068"></a>00068 
+<a name="l00076"></a>00076   <a class="code" href="interfacesb_i_library_constraint_builder.html">sbILibraryConstraintBuilder</a> includeList(in AString aProperty,
+<a name="l00077"></a>00077                                           in nsIStringEnumerator aValues);
+<a name="l00078"></a>00078 
+<a name="l00083"></a>00083   <a class="code" href="interfacesb_i_library_constraint_builder.html">sbILibraryConstraintBuilder</a> intersect();
+<a name="l00084"></a>00084 
+<a name="l00088"></a>00088   <a class="code" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> <span class="keyword">get</span>();
+<a name="l00089"></a>00089 };
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091 [scriptable, uuid(c271cafb-fc06-4e56-bd01-368458117618)]
+<a name="l00092"></a><a class="code" href="interfacesb_i_library_constraint.html">00092</a> interface <a class="code" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> : nsISupports
 <a name="l00093"></a>00093 {
-<a name="l00094"></a>00094   <span class="keywordtype">void</span> init(in AString aProperty, in <span class="keywordtype">boolean</span> aIsAscending);
-<a name="l00095"></a>00095 
-<a name="l00096"></a><a class="code" href="interfacesb_i_library_sort.html#1606b948ab5b0f26bd0c8800367043bd">00096</a>   readonly attribute AString property;
-<a name="l00097"></a><a class="code" href="interfacesb_i_library_sort.html#bca8933474440ea38abdc2a5f1f72f9b">00097</a>   readonly attribute <span class="keywordtype">boolean</span> isAscending;
-<a name="l00098"></a>00098   AString toString();
-<a name="l00099"></a>00099 };
-<a name="l00100"></a>00100 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:20:59 2007 for Songbird by&nbsp;
+<a name="l00094"></a><a class="code" href="interfacesb_i_library_constraint.html#39457f190e16361d0bf2fed385d7c85c">00094</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> groupCount;
+<a name="l00095"></a><a class="code" href="interfacesb_i_library_constraint.html#c4d0aedfce0c04a68df8cf0267353c11">00095</a>   readonly attribute nsISimpleEnumerator groups;
+<a name="l00096"></a>00096   <a class="code" href="interfacesb_i_library_constraint_group.html">sbILibraryConstraintGroup</a> getGroup(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098   <span class="keywordtype">boolean</span> equals(in <a class="code" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> aOtherConstraint);
+<a name="l00099"></a>00099   AString toString();
+<a name="l00100"></a>00100 };
+<a name="l00101"></a>00101 
+<a name="l00102"></a>00102 [scriptable, uuid(37793a91-e229-4642-9c16-290b84e24b87)]
+<a name="l00103"></a><a class="code" href="interfacesb_i_library_constraint_group.html">00103</a> interface <a class="code" href="interfacesb_i_library_constraint_group.html">sbILibraryConstraintGroup</a> : nsISupports
+<a name="l00104"></a>00104 {
+<a name="l00105"></a><a class="code" href="interfacesb_i_library_constraint_group.html#ba5f537b2daba23601c5b8abbdc093b0">00105</a>   readonly attribute nsIStringEnumerator properties;
+<a name="l00106"></a>00106   nsIStringEnumerator getValues(in AString aProperty);
+<a name="l00107"></a>00107   <span class="keywordtype">boolean</span> hasProperty(in AString aProperty);
+<a name="l00108"></a>00108   <span class="keywordtype">boolean</span> equals(in <a class="code" href="interfacesb_i_library_constraint_group.html">sbILibraryConstraintGroup</a> aOtherGroup);
+<a name="l00109"></a>00109   AString toString();
+<a name="l00110"></a>00110 };
+<a name="l00111"></a>00111 
+<a name="l00116"></a>00116 [scriptable, uuid(d9655856-f518-43f1-b096-25f52b0b629e)]
+<a name="l00117"></a><a class="code" href="interfacesb_i_library_sort.html">00117</a> interface <a class="code" href="interfacesb_i_library_sort.html" title="A sort that can be applied to a media list view.">sbILibrarySort</a> : nsISupports
+<a name="l00118"></a>00118 {
+<a name="l00119"></a>00119   <span class="keywordtype">void</span> init(in AString aProperty, in <span class="keywordtype">boolean</span> aIsAscending);
+<a name="l00120"></a>00120 
+<a name="l00121"></a><a class="code" href="interfacesb_i_library_sort.html#1606b948ab5b0f26bd0c8800367043bd">00121</a>   readonly attribute AString property;
+<a name="l00122"></a><a class="code" href="interfacesb_i_library_sort.html#bca8933474440ea38abdc2a5f1f72f9b">00122</a>   readonly attribute <span class="keywordtype">boolean</span> isAscending;
+<a name="l00123"></a>00123   AString toString();
+<a name="l00124"></a>00124 };
+<a name="l00125"></a>00125 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

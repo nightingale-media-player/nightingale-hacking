@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="54"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -90,7 +90,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="63"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_install_listener_14437c17b70e1cbfaa7b81671ec3f6070" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -127,7 +127,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="72"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="72"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1b88d730d8b15d37a30e3464b8a201dc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -164,7 +164,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="81"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1dabce2985bfc0b00c63e6d837abd3d10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -201,7 +201,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="90"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="90"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_bundle_install_listener_132744296c9ccd4b30ac3a7889f26a1b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -227,7 +227,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="99"/>
+        <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -235,7 +235,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl" bodystart="44" bodyend="100"/>
+    <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="45" bodyfile="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" bodystart="44" bodyend="100"/>
     <listofallmembers>
       <member refid="interfacesb_i_bundle_install_listener_132744296c9ccd4b30ac3a7889f26a1b5" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onBundleInstallComplete</name></member>
       <member refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onDownloadComplete</name></member>

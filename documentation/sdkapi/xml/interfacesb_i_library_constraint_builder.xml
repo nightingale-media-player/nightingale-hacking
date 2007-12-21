@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_constraint_builder" kind="interface" prot="public">
+    <compoundname>sbILibraryConstraintBuilder</compoundname>
+    <includes refid="sb_i_library_constraints_8idl" local="no">sbILibraryConstraints.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_constraint_builder_19cf883b2096eeacaa9707eb3b9a3dfdd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref></type>
+        <definition>sbILibraryConstraintBuilder sbILibraryConstraintBuilder::includeConstraint</definition>
+        <argsstring>(in sbILibraryConstraint aConstraint)</argsstring>
+        <name>includeConstraint</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+          <declname>aConstraint</declname>
+        </param>
+        <briefdescription>
+<para>Add an existing constraint to the builder. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aConstraint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The constraint to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_builder_19824b5f7a6bc7bc9060b89e39db94c54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref></type>
+        <definition>sbILibraryConstraintBuilder sbILibraryConstraintBuilder::include</definition>
+        <argsstring>(in AString aProperty, in AString aValue)</argsstring>
+        <name>include</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Add a property / value pair to the current group. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The property to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="67"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_builder_183cfaa878379e393ace815217d25355d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref></type>
+        <definition>sbILibraryConstraintBuilder sbILibraryConstraintBuilder::includeList</definition>
+        <argsstring>(in AString aProperty, in nsIStringEnumerator aValues)</argsstring>
+        <name>includeList</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in nsIStringEnumerator</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+<para>Adds a property / value pair to the current group for each of the values supplied in the value list. This is a shortcut to calling include for every value with the same property. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The property to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The values to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="77"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_builder_11d52a1decb0add5dccd35fc110460495" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref></type>
+        <definition>sbILibraryConstraintBuilder sbILibraryConstraintBuilder::intersect</definition>
+        <argsstring>()</argsstring>
+        <name>intersect</name>
+        <briefdescription>
+<para>Completes the current group and starts a new one. Each group will be intersected in the result. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="83"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_builder_11fa868223fbff97abe6d92e5519784ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+        <definition>sbILibraryConstraint sbILibraryConstraintBuilder::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <briefdescription>
+<para>Returns the constructed constraint. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="88"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A library constraint is used to apply a filter or a search to a view. A constraint consits of:</para><para><itemizedlist>
+<listitem><para>A property/ value pair that selects a set of items from the view&apos;s media list</para></listitem><listitem><para>The result of each of the pairs are combined into a group of distinct items</para></listitem><listitem><para>Multiple groups may be intersected with each other </para></listitem></itemizedlist>
+</para>    </detaileddescription>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="54" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="53" bodyend="89"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_constraint_builder_11fa868223fbff97abe6d92e5519784ac" prot="public" virt="non-virtual"><scope>sbILibraryConstraintBuilder</scope><name>get</name></member>
+      <member refid="interfacesb_i_library_constraint_builder_19824b5f7a6bc7bc9060b89e39db94c54" prot="public" virt="non-virtual"><scope>sbILibraryConstraintBuilder</scope><name>include</name></member>
+      <member refid="interfacesb_i_library_constraint_builder_19cf883b2096eeacaa9707eb3b9a3dfdd" prot="public" virt="non-virtual"><scope>sbILibraryConstraintBuilder</scope><name>includeConstraint</name></member>
+      <member refid="interfacesb_i_library_constraint_builder_183cfaa878379e393ace815217d25355d" prot="public" virt="non-virtual"><scope>sbILibraryConstraintBuilder</scope><name>includeList</name></member>
+      <member refid="interfacesb_i_library_constraint_builder_11d52a1decb0add5dccd35fc110460495" prot="public" virt="non-virtual"><scope>sbILibraryConstraintBuilder</scope><name>intersect</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

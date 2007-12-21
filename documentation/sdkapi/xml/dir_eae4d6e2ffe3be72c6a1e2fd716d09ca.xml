@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_eae4d6e2ffe3be72c6a1e2fd716d09ca" kind="dir">
+    <compoundname>components/remoteapi/</compoundname>
+    <innerdir refid="dir_d5b503d062ffaaa005ff66ad64dd054c">components/remoteapi/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/remoteapi/"/>
+  </compounddef>
+</doxygen>

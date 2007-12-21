@@ -94,45 +94,68 @@
 <a name="l00033"></a>00033 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface nsIMutableArray;
-<a name="l00036"></a>00036 interface nsITreeView;
-<a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a>;
-<a name="l00038"></a>00038 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
-<a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
-<a name="l00040"></a>00040 interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a>;
-<a name="l00041"></a>00041 
-<a name="l00048"></a>00048 [scriptable, uuid(3635a8d5-3e36-49ea-9ca3-e8ddad962b34)]
-<a name="l00049"></a><a class="code" href="interfacesb_i_media_list_view_state.html">00049</a> interface <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> : nsISupports
-<a name="l00050"></a>00050 {
-<a name="l00051"></a>00051   AString toString();
-<a name="l00052"></a>00052 };
-<a name="l00053"></a>00053 
-<a name="l00060"></a>00060 [scriptable, uuid(8e28e517-9518-49aa-98d5-7f994872f87b)]
-<a name="l00061"></a><a class="code" href="interfacesb_i_media_list_view.html">00061</a> interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> : nsISupports
-<a name="l00062"></a>00062 {
-<a name="l00066"></a><a class="code" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">00066</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> mediaList;
-<a name="l00067"></a>00067 
-<a name="l00071"></a><a class="code" href="interfacesb_i_media_list_view.html#667647b9de49e09c0ff49680a1167811">00071</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> length;
-<a name="l00072"></a>00072 
-<a name="l00076"></a><a class="code" href="interfacesb_i_media_list_view.html#ff6a1e3d67d58ff5a00dfe486efb5305">00076</a>   readonly attribute nsITreeView treeView;
-<a name="l00077"></a>00077 
-<a name="l00081"></a><a class="code" href="interfacesb_i_media_list_view.html#c8b1eafe724ee791059510c9fdeb8b24">00081</a>   readonly attribute <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a> cascadeFilterSet;
-<a name="l00082"></a>00082 
-<a name="l00088"></a>00088   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getItemByIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
-<a name="l00089"></a>00089 
-<a name="l00097"></a>00097   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getIndexForItem(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00098"></a>00098 
-<a name="l00105"></a>00105   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getUnfilteredIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
-<a name="l00106"></a>00106 
-<a name="l00115"></a>00115   AString getViewItemUIDForIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00036"></a>00036 interface nsIStringEnumerator;
+<a name="l00037"></a>00037 interface nsITreeView;
+<a name="l00038"></a>00038 interface <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a>;
+<a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
+<a name="l00040"></a>00040 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
+<a name="l00041"></a>00041 interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a>;
+<a name="l00042"></a>00042 interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a>;
+<a name="l00043"></a>00043 
+<a name="l00050"></a>00050 [scriptable, uuid(3635a8d5-3e36-49ea-9ca3-e8ddad962b34)]
+<a name="l00051"></a><a class="code" href="interfacesb_i_media_list_view_state.html">00051</a> interface <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> : nsISupports
+<a name="l00052"></a>00052 {
+<a name="l00053"></a>00053   AString toString();
+<a name="l00054"></a>00054 };
+<a name="l00055"></a>00055 
+<a name="l00062"></a>00062 [scriptable, uuid(378fc540-9592-43df-908c-ed84ac0e1221)]
+<a name="l00063"></a><a class="code" href="interfacesb_i_media_list_view_listener.html">00063</a> interface <a class="code" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> : nsISupports
+<a name="l00064"></a>00064 {
+<a name="l00068"></a>00068   <span class="keywordtype">void</span> onFilterChanged(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aChangedView);
+<a name="l00069"></a>00069 
+<a name="l00073"></a>00073   <span class="keywordtype">void</span> onSearchChanged(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aChangedView);
+<a name="l00074"></a>00074 
+<a name="l00078"></a>00078   <span class="keywordtype">void</span> onSortChanged(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aChangedView);
+<a name="l00079"></a>00079 };
+<a name="l00080"></a>00080 
+<a name="l00087"></a>00087 [scriptable, uuid(53cefc7c-0967-4cab-84bd-11b52b1bf081)]
+<a name="l00088"></a><a class="code" href="interfacesb_i_media_list_view.html">00088</a> interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> : nsISupports
+<a name="l00089"></a>00089 {
+<a name="l00093"></a><a class="code" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">00093</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> mediaList;
+<a name="l00094"></a>00094 
+<a name="l00098"></a><a class="code" href="interfacesb_i_media_list_view.html#667647b9de49e09c0ff49680a1167811">00098</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> length;
+<a name="l00099"></a>00099 
+<a name="l00103"></a><a class="code" href="interfacesb_i_media_list_view.html#ff6a1e3d67d58ff5a00dfe486efb5305">00103</a>   readonly attribute nsITreeView treeView;
+<a name="l00104"></a>00104 
+<a name="l00108"></a><a class="code" href="interfacesb_i_media_list_view.html#c8b1eafe724ee791059510c9fdeb8b24">00108</a>   readonly attribute <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a> cascadeFilterSet;
+<a name="l00109"></a>00109 
+<a name="l00115"></a>00115   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getItemByIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
 <a name="l00116"></a>00116 
-<a name="l00124"></a>00124   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getIndexForViewItemUID(in AString aViewItemUID);
+<a name="l00124"></a>00124   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getIndexForItem(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
 <a name="l00125"></a>00125 
-<a name="l00131"></a>00131   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> clone();
-<a name="l00132"></a>00132 
-<a name="l00139"></a>00139   <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> getState();
-<a name="l00140"></a>00140 };
-<a name="l00141"></a>00141 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+<a name="l00132"></a>00132   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getUnfilteredIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00133"></a>00133 
+<a name="l00142"></a>00142   AString getViewItemUIDForIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00143"></a>00143 
+<a name="l00151"></a>00151   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getIndexForViewItemUID(in AString aViewItemUID);
+<a name="l00152"></a>00152 
+<a name="l00153"></a>00153   <span class="comment">/*</span>
+<a name="l00154"></a>00154 <span class="comment">   * \brief Return the distinct values in the view for a given property</span>
+<a name="l00155"></a>00155 <span class="comment">   * \param aPropertyID Propery ID to get distinct values for</span>
+<a name="l00156"></a>00156 <span class="comment">   * \return String enumerator of distinct values for the given property</span>
+<a name="l00157"></a>00157 <span class="comment">   */</span>
+<a name="l00158"></a>00158   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
+<a name="l00159"></a>00159 
+<a name="l00165"></a>00165   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> clone();
+<a name="l00166"></a>00166 
+<a name="l00173"></a>00173   <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> getState();
+<a name="l00174"></a>00174 
+<a name="l00190"></a>00190   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> aListener,
+<a name="l00191"></a>00191                    [optional] in <span class="keywordtype">boolean</span> aOwnsWeak);
+<a name="l00192"></a>00192 
+<a name="l00206"></a>00206   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> aListener);
+<a name="l00207"></a>00207 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

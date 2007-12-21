@@ -15,14 +15,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="82" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" bodystart="82" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="83" bodyfile="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_security_mixin_166940f85f9e5ef28484139b34e07eadd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_security_mixin_1ed6db59cde7fd985297a37a9eb2dd02c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbISecurityMixin::init</definition>
-        <argsstring>(in sbISecurityAggregator aOuter,[const, array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,[const, array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,[const, array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,[const, array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength)</argsstring>
+        <argsstring>(in sbISecurityAggregator aOuter,[const, array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,[const, array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,[const, array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,[const, array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength, in boolean aPrivileged)</argsstring>
         <name>init</name>
         <param>
           <type>in <ref refid="interfacesb_i_security_aggregator" kindref="compound">sbISecurityAggregator</ref></type>
@@ -64,13 +64,17 @@
           <type>in unsigned long</type>
           <declname>aWPropsLength</declname>
         </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aPrivileged</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="62"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_security_mixin_144156905c04d374770e558d2076d8bc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIURI</type>
@@ -92,7 +96,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="77"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="78"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_security_mixin_1738f1870d0dd3354bc94ec7210522cae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -125,7 +129,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="97"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="98"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -133,11 +137,11 @@
     <detaileddescription>
 <para>Implemented by objects that provide the nsISecurityCheckedComponent functionality to allow other classes to aggregate (or compose) that functionality in without implementing it directly.</para><para><simplesect kind="see"><para>nsISecurityCheckedComponent </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl" bodystart="53" bodyend="98"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="54" bodyfile="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" bodystart="53" bodyend="99"/>
     <listofallmembers>
       <member refid="interfacesb_i_security_mixin_144156905c04d374770e558d2076d8bc9" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>getCodebase</name></member>
       <member refid="interfacesb_i_security_mixin_1738f1870d0dd3354bc94ec7210522cae" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>getPermissionForScopedNameWrapper</name></member>
-      <member refid="interfacesb_i_security_mixin_166940f85f9e5ef28484139b34e07eadd" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>init</name></member>
+      <member refid="interfacesb_i_security_mixin_1ed6db59cde7fd985297a37a9eb2dd02c" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>init</name></member>
       <member refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>notificationDocument</name></member>
     </listofallmembers>
   </compounddef>

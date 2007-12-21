@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_security_aggregator_8idl" local="yes">sbISecurityAggregator.idl</includes>
     <incdepgraph>
-      <node id="432">
+      <node id="445">
         <label>components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sbISecurityMixin.idl"/>
-        <childnode refid="433" relation="include">
+        <childnode refid="446" relation="include">
         </childnode>
-        <childnode refid="434" relation="include">
+        <childnode refid="447" relation="include">
         </childnode>
       </node>
-      <node id="434">
+      <node id="447">
         <label>sbISecurityAggregator.idl</label>
         <link refid="sb_i_security_aggregator_8idl"/>
-        <childnode refid="433" relation="include">
+        <childnode refid="446" relation="include">
         </childnode>
       </node>
-      <node id="433">
+      <node id="446">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -70,16 +70,17 @@
 <codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aInterfacesLength)]<sp/>in<sp/>nsIIDPtr<sp/>aInterfacesArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aInterfacesLength,</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aMethodsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aMethodsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMethodsLength,</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aRPropsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aRPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRPropsLength,</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aWPropsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aWPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWPropsLength);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/>[noscript]<sp/>nsIURI<sp/>getCodebase();</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="82" refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>attribute<sp/>nsIDOMDocument<sp/>notificationDocument;</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getPermissionForScopedNameWrapper(in<sp/>AString<sp/>aRemotePermCategory);</highlight></codeline>
-<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/>array,<sp/>size_is(aWPropsLength)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aWPropsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aWPropsLength,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aPrivileged);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>[noscript]<sp/>nsIURI<sp/>getCodebase();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="83" refid="interfacesb_i_security_mixin_1e5a48747b0529083201ba091169250a0" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>attribute<sp/>nsIDOMDocument<sp/>notificationDocument;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getPermissionForScopedNameWrapper(in<sp/>AString<sp/>aRemotePermCategory);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbISecurityMixin.idl"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl"/>
   </compounddef>
 </doxygen>

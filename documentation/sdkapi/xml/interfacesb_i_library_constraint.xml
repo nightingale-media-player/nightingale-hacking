@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_constraint" kind="interface" prot="public">
+    <compoundname>sbILibraryConstraint</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_constraint_139457f190e16361d0bf2fed385d7c85c" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbILibraryConstraint::groupCount</definition>
+        <argsstring></argsstring>
+        <name>groupCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="94" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_constraint_1c4d0aedfce0c04a68df8cf0267353c11" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbILibraryConstraint::groups</definition>
+        <argsstring></argsstring>
+        <name>groups</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="95" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_constraint_1636a9f0ac0e8794043fbd89ff8821d33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref></type>
+        <definition>sbILibraryConstraintGroup sbILibraryConstraint::getGroup</definition>
+        <argsstring>(in unsigned long aIndex)</argsstring>
+        <name>getGroup</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="96"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_1d2b86cd9cdf3b373fa75b7186ec7474e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbILibraryConstraint::equals</definition>
+        <argsstring>(in sbILibraryConstraint aOtherConstraint)</argsstring>
+        <name>equals</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+          <declname>aOtherConstraint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="98"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_1a6d023983e65e39f38890b8140523e3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibraryConstraint::toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="99"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="93" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="92" bodyend="100"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_constraint_1d2b86cd9cdf3b373fa75b7186ec7474e" prot="public" virt="non-virtual"><scope>sbILibraryConstraint</scope><name>equals</name></member>
+      <member refid="interfacesb_i_library_constraint_1636a9f0ac0e8794043fbd89ff8821d33" prot="public" virt="non-virtual"><scope>sbILibraryConstraint</scope><name>getGroup</name></member>
+      <member refid="interfacesb_i_library_constraint_139457f190e16361d0bf2fed385d7c85c" prot="public" virt="non-virtual"><scope>sbILibraryConstraint</scope><name>groupCount</name></member>
+      <member refid="interfacesb_i_library_constraint_1c4d0aedfce0c04a68df8cf0267353c11" prot="public" virt="non-virtual"><scope>sbILibraryConstraint</scope><name>groups</name></member>
+      <member refid="interfacesb_i_library_constraint_1a6d023983e65e39f38890b8140523e3e" prot="public" virt="non-virtual"><scope>sbILibraryConstraint</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

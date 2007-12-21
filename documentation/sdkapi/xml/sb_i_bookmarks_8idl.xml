@@ -4,14 +4,14 @@
     <compoundname>sbIBookmarks.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="436">
+      <node id="450">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="449">
         <label>components/servicepane/public/sbIBookmarks.idl</label>
         <link refid="sbIBookmarks.idl"/>
-        <childnode refid="437" relation="include">
+        <childnode refid="450" relation="include">
         </childnode>
-      </node>
-      <node id="437">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_bookmarks" prot="public">sbIBookmarks</innerclass>
@@ -101,6 +101,6 @@
 <codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>bookmarkExists<sp/>(in<sp/>AString<sp/>aURL);</highlight></codeline>
 <codeline lineno="92"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIBookmarks.idl"/>
+    <location file="z:/projects/songbird/components/servicepane/public/sbIBookmarks.idl"/>
   </compounddef>
 </doxygen>

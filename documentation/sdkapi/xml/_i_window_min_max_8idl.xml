@@ -4,13 +4,13 @@
     <compoundname>IWindowMinMax.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="166">
+      <node id="169">
         <label>components/integration/public/IWindowMinMax.idl</label>
         <link refid="IWindowMinMax.idl"/>
-        <childnode refid="167" relation="include">
+        <childnode refid="170" relation="include">
         </childnode>
       </node>
-      <node id="167">
+      <node id="170">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -71,6 +71,6 @@
 <codeline lineno="120"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowMinMax.idl"/>
+    <location file="z:/projects/songbird/components/integration/public/IWindowMinMax.idl"/>
   </compounddef>
 </doxygen>

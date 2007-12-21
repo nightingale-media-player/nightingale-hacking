@@ -67,6 +67,6 @@
 <codeline lineno="99"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onBundleInstallComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/><sp/></highlight></codeline>
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/bundle/public/sbIBundleInstallListener.idl"/>
+    <location file="z:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl"/>
   </compounddef>
 </doxygen>

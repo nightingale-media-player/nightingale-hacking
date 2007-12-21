@@ -96,10 +96,10 @@
 <a name="l00035"></a>00035 
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a>;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
+<a name="l00042"></a>00042 [scriptable, uuid(de8a4e47-1e46-435d-9316-04ddfd18be2d)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html">00043</a> interface <a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</a> : nsISupports
 <a name="l00044"></a>00044 {
-<a name="l00048"></a><a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html#352f3b74293cff65edbc28ce46589c32">00048</a>   readonly attribute AString propertyName;
+<a name="l00048"></a><a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html#83e0f6a31085373aa20c37dd99e6b0bd">00048</a>   readonly attribute AString propertyID;
 <a name="l00049"></a>00049 
 <a name="l00054"></a><a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html#1469d0ef5822557ad66ccae1123d6a85">00054</a>   readonly attribute <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> <span class="keyword">operator</span>;
 <a name="l00055"></a>00055 
@@ -130,7 +130,7 @@
 <a name="l00113"></a>00113 
 <a name="l00117"></a><a class="code" href="interfacesb_i_local_database_smart_media_list.html#7fd3a362c93b122e43ab9dc5c50f5ec0">00117</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> limit;
 <a name="l00118"></a>00118 
-<a name="l00122"></a><a class="code" href="interfacesb_i_local_database_smart_media_list.html#226dc93118447309b9720f57cce1e2a7">00122</a>   attribute AString selectPropertyName;
+<a name="l00122"></a><a class="code" href="interfacesb_i_local_database_smart_media_list.html#8e8866dc60505cc649e8dc1b4fe037f2">00122</a>   attribute AString selectPropertyID;
 <a name="l00123"></a>00123 
 <a name="l00128"></a><a class="code" href="interfacesb_i_local_database_smart_media_list.html#7cda6d768041f7abd8899ba75d9c1f0c">00128</a>   attribute <span class="keywordtype">boolean</span> selectDirection;
 <a name="l00129"></a>00129 
@@ -139,7 +139,7 @@
 <a name="l00139"></a><a class="code" href="interfacesb_i_local_database_smart_media_list.html#b66c68e1a43f61ef6f50936409d45002">00139</a>   attribute <span class="keywordtype">boolean</span> liveUpdate;
 <a name="l00140"></a>00140 
 <a name="l00144"></a>00144   <a class="code" href="interfacesb_i_local_database_smart_media_list_condition.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</a>
-<a name="l00145"></a>00145     appendCondition(in AString aPropertyName,
+<a name="l00145"></a>00145     appendCondition(in AString aPropertyID,
 <a name="l00146"></a>00146                     in <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> aOperator,
 <a name="l00147"></a>00147                     in AString aLeftValue,
 <a name="l00148"></a>00148                     in AString aRightValue,
@@ -154,7 +154,7 @@
 <a name="l00167"></a>00167 
 <a name="l00172"></a>00172   <span class="keywordtype">void</span> rebuild();
 <a name="l00173"></a>00173 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

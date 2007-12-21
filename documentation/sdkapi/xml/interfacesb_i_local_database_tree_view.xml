@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="44" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="44" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_tree_view_112b258c4dccb1ff031125e61e01cd3ce" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="45" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="45" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_tree_view_1dd4ff1b42e3a1e7359f8066991b15bfd" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="46" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="46" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_tree_view_161d370c0ac87d1397550fe5dfc70e6d0" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="48" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="48" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="49"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="49"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_tree_view_11905891930f0a85984437d2e117a443e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="51"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="51"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_tree_view_1401db04b3c311a8d39c3bd06713b488e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -122,14 +122,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="55"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="55"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="42" bodyend="56"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="43" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="42" bodyend="56"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_tree_view_11905891930f0a85984437d2e117a443e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseTreeView</scope><name>invalidateRowsByGuid</name></member>
       <member refid="interfacesb_i_local_database_tree_view_1dd4ff1b42e3a1e7359f8066991b15bfd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseTreeView</scope><name>MOUSE_STATE_DOWN</name></member>

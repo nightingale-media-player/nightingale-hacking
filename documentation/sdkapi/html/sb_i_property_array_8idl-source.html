@@ -94,10 +94,10 @@
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsIArray.idl"</span>
 <a name="l00033"></a>00033 <span class="preprocessor">#include "nsIMutableArray.idl"</span>
 <a name="l00034"></a>00034 
-<a name="l00035"></a>00035 [scriptable, uuid(89915b4b-f252-4f45-8351-fd8560363b89)]
+<a name="l00035"></a>00035 [scriptable, uuid(478c1474-92c4-4fc4-8743-3f9f372b814d)]
 <a name="l00036"></a><a class="code" href="interfacesb_i_property.html">00036</a> interface <a class="code" href="interfacesb_i_property.html">sbIProperty</a> : nsISupports
 <a name="l00037"></a>00037 {
-<a name="l00041"></a><a class="code" href="interfacesb_i_property.html#ce45aa72959786c6f68718a71a777d56">00041</a>   readonly attribute AString name;
+<a name="l00041"></a><a class="code" href="interfacesb_i_property.html#dcfebe0a8bc2c4c35a63f2bcea1f0b6d">00041</a>   readonly attribute AString id;
 <a name="l00042"></a>00042 
 <a name="l00046"></a><a class="code" href="interfacesb_i_property.html#6244ef0be78fbca9d912d8beaaf4dd6f">00046</a>   readonly attribute AString value;
 <a name="l00047"></a>00047 };
@@ -107,22 +107,22 @@
 <a name="l00057"></a>00057 {
 <a name="l00063"></a>00063   <a class="code" href="interfacesb_i_property.html">sbIProperty</a> getPropertyAt(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
 <a name="l00064"></a>00064 
-<a name="l00072"></a>00072   AString getPropertyValue(in AString aName);
+<a name="l00072"></a>00072   AString getPropertyValue(in AString aID);
 <a name="l00073"></a>00073 
 <a name="l00077"></a>00077   AString toString();
 <a name="l00078"></a>00078 
 <a name="l00083"></a><a class="code" href="interfacesb_i_property_array.html#27fc9af3c2ff93791bab98e11ec1c3fe">00083</a>   readonly attribute <span class="keywordtype">boolean</span> validated;
 <a name="l00084"></a>00084 };
 <a name="l00085"></a>00085 
-<a name="l00090"></a>00090 [scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
+<a name="l00090"></a>00090 [scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
 <a name="l00091"></a><a class="code" href="interfacesb_i_mutable_property_array.html">00091</a> interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a> : <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>
 <a name="l00092"></a>00092 {
-<a name="l00103"></a>00103   <span class="keywordtype">void</span> appendProperty(in AString aName,
+<a name="l00103"></a>00103   <span class="keywordtype">void</span> appendProperty(in AString aID,
 <a name="l00104"></a>00104                       in AString aValue);
 <a name="l00105"></a>00105 
 <a name="l00118"></a><a class="code" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">00118</a>   attribute <span class="keywordtype">boolean</span> strict;
 <a name="l00119"></a>00119 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

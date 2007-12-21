@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="60" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="60" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="60" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_backscanner_1efaa9a87b084f62d4e87aa514de7db6b" prot="public" static="no" mutable="no">
         <type>attribute PRUint32</type>
@@ -27,7 +27,7 @@
 <para><xrefsect id="todo_1_todo000001"><xreftitle>Todo</xreftitle><xrefdescription><para>This is not implemented. </para></xrefdescription></xrefsect></para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="66" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="66" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="66" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="66" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_backscanner_12f625a6e2dea277d01ddda80ed41b9ab" prot="public" static="no" mutable="no">
         <type>attribute PRUint32</type>
@@ -40,7 +40,7 @@
 <para><xrefsect id="todo_1_todo000002"><xreftitle>Todo</xreftitle><xrefdescription><para>This is not implemented. </para></xrefdescription></xrefsect></para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="71" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="71" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="71" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_backscanner_1d225e7d1ebce0a187840948955360aee" prot="public" static="no" mutable="no">
         <type>attribute PRUint32</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="76" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="76" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="76" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_backscanner_188d9b8b94a9b875be7559d040f1c1db5" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -66,7 +66,7 @@
 <para><xrefsect id="todo_1_todo000003"><xreftitle>Todo</xreftitle><xrefdescription><para>This is not implemented. </para></xrefdescription></xrefsect></para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="81" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="81" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="81" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="81" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="86"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="86"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_backscanner_128302f19ee042dcc84a42b9d38fd6261" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -94,7 +94,7 @@
 <para>Note that this method gets called automatically at destruction time. However, it is suggested that you shut it down before shutdown of the application. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="95"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="95"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -103,7 +103,7 @@
 <para>The backscanner can be started via the <ref refid="interfacesb_i_metadata_backscanner_118eb8aa007ea37a4ab237799cdf1b3fa" kindref="member">start()</ref> method and stopped via <ref refid="interfacesb_i_metadata_backscanner_128302f19ee042dcc84a42b9d38fd6261" kindref="member">stop()</ref>. Local media and local area network shares benefit from a threaded backscanning process for extra speed.</para><para>To qualify as local media the URI for the piece of media must begin with the following scheme:</para><para><itemizedlist>
 <listitem><para><ulink url="file://.">file://.</ulink></para></listitem></itemizedlist>
 </para><para>Remote media is scanned from the main thread using timer based workers.</para><para>The metadata backscanner is a service and should be called via do_GetService. </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="53" bodyend="97"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" line="54" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl" bodystart="53" bodyend="97"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_backscanner_188d9b8b94a9b875be7559d040f1c1db5" prot="public" virt="non-virtual"><scope>sbIMetadataBackscanner</scope><name>currentFile</name></member>
       <member refid="interfacesb_i_metadata_backscanner_1ad3fa9d93ab649e0853b9874ef0f9c3a" prot="public" virt="non-virtual"><scope>sbIMetadataBackscanner</scope><name>scanInterval</name></member>

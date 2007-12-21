@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="52" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="52" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_application_controller_1fe8e352ee959d7199c6565059852e300" prot="public" static="no" mutable="no">
         <type>attribute nsIDOMNode</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="58" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="58" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_application_controller_125d96aa08e98a35b6e863855e85723cb" prot="public" static="no" mutable="no">
         <type>attribute nsIDOMWindow</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="64" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="64" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="64" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="64" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_application_controller_1f4d6c5203e16e0fbba68c3d956b0069b" prot="public" static="no" mutable="no">
         <type>attribute nsIDOMWindow</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="70" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="70" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="70" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_application_controller_130214feb0024ffbc90a84a98ea2269b7" prot="public" static="no" mutable="no">
         <type>attribute nsIDOMWindow</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="76" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="76" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="76" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -94,7 +94,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="83"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="83"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_application_controller_1dcb1715123d2dd63195699d26c2e8475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
@@ -128,7 +128,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="91"/>
+        <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="91"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -201,7 +201,7 @@
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/controller/public/sbIApplicationController.idl" bodystart="45" bodyend="92"/>
+    <location file="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="46" bodyfile="z:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="45" bodyend="92"/>
     <listofallmembers>
       <member refid="interfacesb_i_application_controller_1fe8e352ee959d7199c6565059852e300" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeBrowser</name></member>
       <member refid="interfacesb_i_application_controller_125d96aa08e98a35b6e863855e85723cb" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeMainWindow</name></member>

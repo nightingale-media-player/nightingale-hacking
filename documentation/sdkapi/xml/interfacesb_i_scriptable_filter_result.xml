@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_scriptable_filter_result" kind="interface" prot="public">
+    <compoundname>sbIScriptableFilterResult</compoundname>
+    <includes refid="sb_i_scriptable_filter_result_8idl" local="no">sbIScriptableFilterResult.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_105a8cb52e1a0c595ecaec0c1bed16252" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIScriptableFilterResult::artists</definition>
+        <argsstring></argsstring>
+        <name>artists</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="91" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_142e29154889b1b00e6439290bdc9ea17" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIScriptableFilterResult::albums</definition>
+        <argsstring></argsstring>
+        <name>albums</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="125" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_1b4818ccc8df68a49cdaaf8defa740558" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIScriptableFilterResult::genres</definition>
+        <argsstring></argsstring>
+        <name>genres</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="160" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_140320b9c53d6c09386c1930ffddd37d2" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIScriptableFilterResult::years</definition>
+        <argsstring></argsstring>
+        <name>years</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="194" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_17f30d105b9bdb5a494341d332d2c2948" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISupports</type>
+        <definition>readonly attribute nsISupports sbIScriptableFilterResult::items</definition>
+        <argsstring></argsstring>
+        <name>items</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="225" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_scriptable_filter_result_14bfefd5e935e0fdf28a9e5665b081dab" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+        <definition>readonly attribute sbILibraryConstraint sbIScriptableFilterResult::constraint</definition>
+        <argsstring></argsstring>
+        <name>constraint</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the underlying constraints (may be null) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="230" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The result of a filtering expression in a library. </para>    </briefdescription>
+    <detaileddescription>
+<para>A scriptable filter result is the intermediate object that is returned from filtering on a library via predefined properties. This is the object returned from an expression such as songbird.mainLibrary.artists.Bob </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="606">
+        <label>sbIScriptableFilterResult</label>
+        <link refid="interfacesb_i_scriptable_filter_result"/>
+        <childnode refid="607" relation="usage">
+          <edgelabel>constraint</edgelabel>
+        </childnode>
+      </node>
+      <node id="607">
+        <label>sbILibraryConstraint</label>
+        <link refid="interfacesb_i_library_constraint"/>
+      </node>
+    </collaborationgraph>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" line="55" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl" bodystart="54" bodyend="231"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_scriptable_filter_result_142e29154889b1b00e6439290bdc9ea17" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>albums</name></member>
+      <member refid="interfacesb_i_scriptable_filter_result_105a8cb52e1a0c595ecaec0c1bed16252" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>artists</name></member>
+      <member refid="interfacesb_i_scriptable_filter_result_14bfefd5e935e0fdf28a9e5665b081dab" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>constraint</name></member>
+      <member refid="interfacesb_i_scriptable_filter_result_1b4818ccc8df68a49cdaaf8defa740558" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>genres</name></member>
+      <member refid="interfacesb_i_scriptable_filter_result_17f30d105b9bdb5a494341d332d2c2948" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>items</name></member>
+      <member refid="interfacesb_i_scriptable_filter_result_140320b9c53d6c09386c1930ffddd37d2" prot="public" virt="non-virtual"><scope>sbIScriptableFilterResult</scope><name>years</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

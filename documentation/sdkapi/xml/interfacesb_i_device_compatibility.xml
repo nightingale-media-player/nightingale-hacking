@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="39" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="39" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="39" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="39" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_17c74d001e0f17dbba4497da0b7993f5a" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="40" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="40" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="40" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="40" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_15c08797e77b7506132c86a43d980dff6" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="41" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="41" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_1c819e5a876ca496c8df1e3053a1becb7" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="46" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="46" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_187ffadfe1cc95c305c5a2b9c902ba56a" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="51" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="51" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_1422e5c235bcd842dcb91019fda5d2c6b" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="52" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="52" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_1ae0b71de7e7eeee03920e79e2437eb66" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -99,7 +99,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="53" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="53" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_1ba70000c3fded02d4becca3be93da616" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -113,7 +113,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="54" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="54" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_compatibility_1cb7c8a31e751e62262ea348c4563f0c0" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -126,14 +126,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="59" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="59" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="59" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" line="35" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="34" bodyend="60"/>
+    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" line="35" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl" bodystart="34" bodyend="60"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_compatibility_1c819e5a876ca496c8df1e3053a1becb7" prot="public" virt="non-virtual"><scope>sbIDeviceCompatibility</scope><name>compatibility</name></member>
       <member refid="interfacesb_i_device_compatibility_17c74d001e0f17dbba4497da0b7993f5a" prot="public" virt="non-virtual"><scope>sbIDeviceCompatibility</scope><name>COMPATIBLE_BASIC_SUPPORT</name></member>

@@ -3,31 +3,20 @@
   <compounddef id="sb_i_library_constraints_8idl" kind="file">
     <compoundname>sbILibraryConstraints.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includes local="yes">nsTArray.h</includes>
-    <includes local="yes">nsStringGlue.h</includes>
     <incdepgraph>
-      <node id="193">
-        <label>nsStringGlue.h</label>
-      </node>
-      <node id="190">
+      <node id="197">
         <label>components/library/base/public/sbILibraryConstraints.idl</label>
         <link refid="sbILibraryConstraints.idl"/>
-        <childnode refid="191" relation="include">
-        </childnode>
-        <childnode refid="192" relation="include">
-        </childnode>
-        <childnode refid="193" relation="include">
+        <childnode refid="198" relation="include">
         </childnode>
       </node>
-      <node id="192">
-        <label>nsTArray.h</label>
-      </node>
-      <node id="191">
+      <node id="198">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
-    <innerclass refid="interfacesb_i_library_filter" prot="public">sbILibraryFilter</innerclass>
-    <innerclass refid="interfacesb_i_library_search" prot="public">sbILibrarySearch</innerclass>
+    <innerclass refid="interfacesb_i_library_constraint_builder" prot="public">sbILibraryConstraintBuilder</innerclass>
+    <innerclass refid="interfacesb_i_library_constraint" prot="public">sbILibraryConstraint</innerclass>
+    <innerclass refid="interfacesb_i_library_constraint_group" prot="public">sbILibraryConstraintGroup</innerclass>
     <innerclass refid="interfacesb_i_library_sort" prot="public">sbILibrarySort</innerclass>
     <briefdescription>
     </briefdescription>
@@ -63,62 +52,59 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsTArray.h&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsStringGlue.h&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[ptr]<sp/>native<sp/>StringArray(nsTArray&lt;nsString&gt;);</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal">[scriptable,<sp/>uuid(31e0f6c8-c59e-4a58-b608-1b445719d5a5)]</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_library_filter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_filter" kindref="compound" tooltip="A filter that can be applied to a media list view.">sbILibraryFilter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aProperty,</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aCount,</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aCount)]<sp/>in<sp/>wstring<sp/>aValues);</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initNative(in<sp/>AString<sp/>aProperty,<sp/>in<sp/>StringArray<sp/>aValues);</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53" refid="interfacesb_i_library_filter_15dc0d0b6dc8d2e97054cea0d98615f08" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getValues(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(count)]<sp/>out<sp/>wstring<sp/>values);</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/>[noscript]<sp/>StringArray<sp/>getValuesNative();</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
-<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal">[scriptable,<sp/>uuid(ccc03dd2-5b8a-4148-a581-a4e3790b25ff)]</highlight></codeline>
-<codeline lineno="68" refid="interfacesb_i_library_search" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_search" kindref="compound" tooltip="A search that can be applied to a media list view.">sbILibrarySearch</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="69"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aProperty,</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsAll,</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(count)]<sp/>in<sp/>wstring<sp/>values);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initNative(in<sp/>AString<sp/>aProperty,</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsAll,</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>StringArray<sp/>aValues);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78" refid="interfacesb_i_library_search_13c239ffc5087011ff9457007cf0fc72e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
-<codeline lineno="79" refid="interfacesb_i_library_search_1470cc669678033c6e56c6ac560ae4879" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isAll;</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getValues(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count,</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(count)]<sp/>out<sp/>wstring<sp/>values);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/>[noscript]<sp/>StringArray<sp/>getValuesNative();</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
-<codeline lineno="85"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal">[scriptable,<sp/>uuid(d9655856-f518-43f1-b096-25f52b0b629e)]</highlight></codeline>
-<codeline lineno="92" refid="interfacesb_i_library_sort" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_sort" kindref="compound" tooltip="A sort that can be applied to a media list view.">sbILibrarySort</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">[scriptable,<sp/>uuid(2890d9a4-68b5-4b7a-8f88-3cd05d05416c)]</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_library_constraint_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref><sp/>includeConstraint(in<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>aConstraint);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref><sp/>include(in<sp/>AString<sp/>aProperty,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref><sp/>includeList(in<sp/>AString<sp/>aProperty,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIStringEnumerator<sp/>aValues);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint_builder" kindref="compound">sbILibraryConstraintBuilder</ref><sp/>intersect();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/></highlight><highlight class="keyword">get</highlight><highlight class="normal">();</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal">[scriptable,<sp/>uuid(c271cafb-fc06-4e56-bd01-368458117618)]</highlight></codeline>
+<codeline lineno="92" refid="interfacesb_i_library_constraint" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="93"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aProperty,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsAscending);</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96" refid="interfacesb_i_library_sort_11606b948ab5b0f26bd0c8800367043bd" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
-<codeline lineno="97" refid="interfacesb_i_library_sort_1bca8933474440ea38abdc2a5f1f72f9b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isAscending;</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
-<codeline lineno="99"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="interfacesb_i_library_constraint_139457f190e16361d0bf2fed385d7c85c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>groupCount;</highlight></codeline>
+<codeline lineno="95" refid="interfacesb_i_library_constraint_1c4d0aedfce0c04a68df8cf0267353c11" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>groups;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref><sp/>getGroup(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>equals(in<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>aOtherConstraint);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal">[scriptable,<sp/>uuid(37793a91-e229-4642-9c16-290b84e24b87)]</highlight></codeline>
+<codeline lineno="103" refid="interfacesb_i_library_constraint_group" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="105" refid="interfacesb_i_library_constraint_group_1ba5f537b2daba23601c5b8abbdc093b0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>properties;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getValues(in<sp/>AString<sp/>aProperty);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasProperty(in<sp/>AString<sp/>aProperty);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>equals(in<sp/><ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref><sp/>aOtherGroup);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal">[scriptable,<sp/>uuid(d9655856-f518-43f1-b096-25f52b0b629e)]</highlight></codeline>
+<codeline lineno="117" refid="interfacesb_i_library_sort" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_sort" kindref="compound" tooltip="A sort that can be applied to a media list view.">sbILibrarySort</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aProperty,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aIsAscending);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_library_sort_11606b948ab5b0f26bd0c8800367043bd" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>property;</highlight></codeline>
+<codeline lineno="122" refid="interfacesb_i_library_sort_1bca8933474440ea38abdc2a5f1f72f9b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isAscending;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl"/>
   </compounddef>
 </doxygen>

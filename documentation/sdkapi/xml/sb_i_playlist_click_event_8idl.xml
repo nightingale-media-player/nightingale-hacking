@@ -138,6 +138,6 @@
 <codeline lineno="121" refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>item;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl"/>
+    <location file="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl"/>
   </compounddef>
 </doxygen>

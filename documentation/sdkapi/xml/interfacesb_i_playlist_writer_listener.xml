@@ -7,7 +7,7 @@
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" line="39" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
+    <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" line="39" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

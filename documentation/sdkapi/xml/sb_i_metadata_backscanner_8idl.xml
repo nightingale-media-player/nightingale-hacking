@@ -4,13 +4,13 @@
     <compoundname>sbIMetadataBackscanner.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="305">
+      <node id="310">
         <label>components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl</label>
         <link refid="sbIMetadataBackscanner.idl"/>
-        <childnode refid="306" relation="include">
+        <childnode refid="311" relation="include">
         </childnode>
       </node>
-      <node id="306">
+      <node id="311">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -63,6 +63,6 @@
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataBackscanner.idl"/>
   </compounddef>
 </doxygen>

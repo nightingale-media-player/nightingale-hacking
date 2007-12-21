@@ -14,7 +14,7 @@
 <para>This is used only during the propogation of the PlaylistClickEvent event and will only be non-null for a very brief time during that flow. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="231" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="231" bodyend="-1"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="231" bodyfile="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" bodystart="231" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -29,7 +29,7 @@
 <para>This will cause the playlist to fetch the list of commands again so that any newly added commands will appear in the UI for the playlist</para><para>NOTE - Not callable from web pages. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="59"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="59"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_139986e570cddb5d1932acc6f0a647e0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
@@ -43,7 +43,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="68"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -101,7 +101,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="85"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_16d734ebceaaaf931882ea882b034495b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -115,7 +115,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="101"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="101"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1beec3e34b905d617f4ca536b3806b11c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="111"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="111"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_16da4706da9e7352222edfba6d5de3414" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -165,7 +165,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="133"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="133"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1c91f64c42ecdd35cd493f1fb6c737828" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -214,7 +214,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="162"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="162"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_1954f750374aa2eb5ee5f1dbd90515207" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -239,7 +239,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="179"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="179"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_12a2e67cb62d2e986b28a2652931032bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -265,7 +265,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="201"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="201"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_widget_16750c08bbd51228859ed153b8ba0bdac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -301,7 +301,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="223"/>
+        <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="223"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -309,78 +309,78 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="516">
+      <node id="526">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="513" relation="public-inheritance">
+        <childnode refid="523" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="520">
+      <node id="530">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="517">
+      <node id="527">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="518" relation="usage">
+        <childnode refid="528" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="520" relation="usage">
+        <childnode refid="530" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="515">
+      <node id="525">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="516" relation="public-inheritance">
+        <childnode refid="526" relation="public-inheritance">
         </childnode>
-        <childnode refid="517" relation="usage">
+        <childnode refid="527" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="519" relation="usage">
+        <childnode refid="529" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="514">
+      <node id="524">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="513">
+      <node id="523">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="514" relation="public-inheritance">
+        <childnode refid="524" relation="public-inheritance">
         </childnode>
-        <childnode refid="515" relation="usage">
+        <childnode refid="525" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="518">
+      <node id="528">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="519" relation="usage">
+        <childnode refid="529" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="519">
+      <node id="529">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="512">
+      <node id="522">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="513" relation="usage">
+        <childnode refid="523" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="511">
+      <node id="521">
         <label>sbIPlaylistWidget</label>
         <link refid="interfacesb_i_playlist_widget"/>
-        <childnode refid="512" relation="usage">
+        <childnode refid="522" relation="usage">
           <edgelabel>lastClickEvent</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" line="49" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbIPlaylistWidget.idl" bodystart="48" bodyend="232"/>
+    <location file="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" line="49" bodyfile="z:/projects/songbird/bindings/public/sbIPlaylistWidget.idl" bodystart="48" bodyend="232"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_widget_16da4706da9e7352222edfba6d5de3414" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>appendColumn</name></member>
       <member refid="interfacesb_i_playlist_widget_1176ef603697f7ce4d52f2bb8bc455cef" prot="public" virt="non-virtual"><scope>sbIPlaylistWidget</scope><name>bind</name></member>

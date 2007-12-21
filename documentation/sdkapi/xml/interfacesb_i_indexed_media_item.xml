@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" line="205" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" bodystart="205" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="205" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="205" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" line="206" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" bodystart="206" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="206" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="206" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -100,7 +100,7 @@
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" line="204" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl" bodystart="203" bodyend="207"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="204" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="203" bodyend="207"/>
     <listofallmembers>
       <member refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>index</name></member>
       <member refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>mediaItem</name></member>

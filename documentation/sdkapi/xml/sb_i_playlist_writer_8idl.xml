@@ -7,28 +7,28 @@
     <includes local="yes">nsIPrompt.idl</includes>
     <includes local="yes">nsIAuthPrompt.idl</includes>
     <incdepgraph>
-      <node id="380">
+      <node id="385">
         <label>components/playlistreader/public/sbIPlaylistWriter.idl</label>
         <link refid="sbIPlaylistWriter.idl"/>
-        <childnode refid="381" relation="include">
+        <childnode refid="386" relation="include">
         </childnode>
-        <childnode refid="382" relation="include">
+        <childnode refid="387" relation="include">
         </childnode>
-        <childnode refid="383" relation="include">
+        <childnode refid="388" relation="include">
         </childnode>
-        <childnode refid="384" relation="include">
+        <childnode refid="389" relation="include">
         </childnode>
       </node>
-      <node id="382">
+      <node id="387">
         <label>nsIProgressEventSink.idl</label>
       </node>
-      <node id="384">
+      <node id="389">
         <label>nsIAuthPrompt.idl</label>
       </node>
-      <node id="381">
+      <node id="386">
         <label>nsISupports.idl</label>
       </node>
-      <node id="383">
+      <node id="388">
         <label>nsIPrompt.idl</label>
       </node>
     </incdepgraph>
@@ -117,6 +117,6 @@
 <codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistWriter.idl"/>
+    <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistWriter.idl"/>
   </compounddef>
 </doxygen>

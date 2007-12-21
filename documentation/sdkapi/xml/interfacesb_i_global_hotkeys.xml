@@ -93,7 +93,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="84"/>
+        <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_global_hotkeys_16ac24c884fd8596d954f12a9ab9f9d70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -119,7 +119,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="92"/>
+        <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="92"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_global_hotkeys_11035102519c33b5dcfcbd60be299feef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -133,7 +133,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="99"/>
+        <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -141,7 +141,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_global_hotkey_callback" kindref="compound">sbIGlobalHotkeyCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="67" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" bodystart="66" bodyend="100"/>
+    <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="67" bodyfile="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" bodystart="66" bodyend="100"/>
     <listofallmembers>
       <member refid="interfacesb_i_global_hotkeys_1ed3adc05315431171236d4034843be90" prot="public" virt="non-virtual"><scope>sbIGlobalHotkeys</scope><name>addHotkey</name></member>
       <member refid="interfacesb_i_global_hotkeys_11035102519c33b5dcfcbd60be299feef" prot="public" virt="non-virtual"><scope>sbIGlobalHotkeys</scope><name>removeAllHotkeys</name></member>

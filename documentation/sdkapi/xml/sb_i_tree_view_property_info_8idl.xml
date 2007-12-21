@@ -4,13 +4,13 @@
     <compoundname>sbITreeViewPropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="402">
+      <node id="407">
         <label>components/property/public/sbITreeViewPropertyInfo.idl</label>
         <link refid="sbITreeViewPropertyInfo.idl"/>
-        <childnode refid="403" relation="include">
+        <childnode refid="408" relation="include">
         </childnode>
       </node>
-      <node id="403">
+      <node id="408">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -68,6 +68,6 @@
 <codeline lineno="55"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbITreeViewPropertyInfo.idl"/>
+    <location file="z:/projects/songbird/components/property/public/sbITreeViewPropertyInfo.idl"/>
   </compounddef>
 </doxygen>

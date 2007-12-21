@@ -5,38 +5,38 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_metadata_handler_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
     <incdepgraph>
-      <node id="337">
+      <node id="342">
         <label>components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
         <link refid="sbIMetadataValues.idl"/>
-        <childnode refid="338" relation="include">
+        <childnode refid="343" relation="include">
         </childnode>
       </node>
-      <node id="338">
+      <node id="343">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="341">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sb_i_metadata_channel_8idl"/>
-      </node>
-      <node id="339">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
-        <link refid="sbIMetadataValues.idl"/>
-        <childnode refid="340" relation="include">
-        </childnode>
-      </node>
-      <node id="340">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
-        <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="341" relation="include">
-        </childnode>
-        <childnode refid="342" relation="include">
-        </childnode>
-      </node>
-      <node id="342">
+      <node id="347">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sb_i_metadata_manager_8idl"/>
+      </node>
+      <node id="344">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataValues.idl</label>
+        <link refid="sbIMetadataValues.idl"/>
+        <childnode refid="345" relation="include">
+        </childnode>
+      </node>
+      <node id="345">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="346" relation="include">
+        </childnode>
+        <childnode refid="347" relation="include">
+        </childnode>
+      </node>
+      <node id="346">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sb_i_metadata_channel_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_metadata_values" prot="public">sbIMetadataValues</innerclass>
@@ -89,6 +89,6 @@
 <codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clear();</highlight></codeline>
 <codeline lineno="86"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataValues.idl"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl"/>
   </compounddef>
 </doxygen>

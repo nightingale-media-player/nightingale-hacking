@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_scriptable_filter_result_8idl" kind="file">
+    <compoundname>sbIScriptableFilterResult.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
+    <incdepgraph>
+      <node id="439">
+        <label>sbIRemoteMediaList.idl</label>
+        <link refid="sb_i_remote_media_list_8idl"/>
+        <childnode refid="438" relation="include">
+        </childnode>
+      </node>
+      <node id="437">
+        <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
+        <link refid="sbIScriptableFilterResult.idl"/>
+        <childnode refid="438" relation="include">
+        </childnode>
+        <childnode refid="439" relation="include">
+        </childnode>
+      </node>
+      <node id="438">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_scriptable_filter_result" prot="public">sbIScriptableFilterResult</innerclass>
+    <briefdescription>
+<para>A collection of media items as a result of a filter. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_remote_media_list_8idl" kindref="compound" tooltip="Definition of the Remote API Media List Interface.">sbIRemoteMediaList.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="40"><highlight class="comment">Class:<sp/>FilterResult</highlight></codeline>
+<codeline lineno="41"><highlight class="comment"></highlight></codeline>
+<codeline lineno="42"><highlight class="comment">A<sp/>&lt;FilterResult&gt;<sp/>is<sp/>the<sp/>object<sp/>that<sp/>results<sp/>from<sp/>a<sp/>library<sp/>filtering<sp/>operation.</highlight></codeline>
+<codeline lineno="43"><highlight class="comment">*/</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(4a1ebcf3-a68a-4fb9-bda0-8cbeb62d6cf2)]</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_scriptable_filter_result" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_scriptable_filter_result" kindref="compound" tooltip="The result of a filtering expression in a library.">sbIScriptableFilterResult</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="57"><highlight class="comment"><sp/><sp/>Group:<sp/>FilterResult<sp/>Properties</highlight></codeline>
+<codeline lineno="58"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="60"><highlight class="comment"><sp/><sp/>Property:<sp/>artists</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"></highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/>Get<sp/>an<sp/>hash<sp/>of<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>artist<sp/>names<sp/>in<sp/>the<sp/>&lt;Library&gt;.</highlight></codeline>
+<codeline lineno="63"><highlight class="comment"></highlight></codeline>
+<codeline lineno="64"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="65"><highlight class="comment"><sp/><sp/><sp/><sp/>Object<sp/>artists</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"></highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/><sp/>An<sp/>object<sp/>containing<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>artist<sp/>names<sp/>that<sp/>exist<sp/>in</highlight></codeline>
+<codeline lineno="69"><highlight class="comment"><sp/><sp/><sp/><sp/>the<sp/>&lt;Library&gt;<sp/>as<sp/>property<sp/>names</highlight></codeline>
+<codeline lineno="70"><highlight class="comment"></highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="73"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="74"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="75"><highlight class="comment"></highlight></codeline>
+<codeline lineno="76"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>unique<sp/>artists.</highlight></codeline>
+<codeline lineno="77"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>artists<sp/>=<sp/>library.artists;</highlight></codeline>
+<codeline lineno="78"><highlight class="comment"></highlight></codeline>
+<codeline lineno="79"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(var<sp/>artist<sp/>in<sp/>artists)<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//The<sp/>artist<sp/>name<sp/>(ie.<sp/>&quot;Justice&quot;)</highlight></codeline>
+<codeline lineno="81"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(artist);</highlight></codeline>
+<codeline lineno="82"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"></highlight></codeline>
+<codeline lineno="85"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="86"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;albums&gt;</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;genres&gt;</highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;years&gt;</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;items&gt;</highlight></codeline>
+<codeline lineno="90"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="interfacesb_i_scriptable_filter_result_105a8cb52e1a0c595ecaec0c1bed16252" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>artists;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="94"><highlight class="comment"><sp/><sp/>Property:<sp/>albums</highlight></codeline>
+<codeline lineno="95"><highlight class="comment"></highlight></codeline>
+<codeline lineno="96"><highlight class="comment"><sp/><sp/>Get<sp/>an<sp/>hash<sp/>of<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>album<sp/>names<sp/>in<sp/>the<sp/>&lt;Library&gt;.</highlight></codeline>
+<codeline lineno="97"><highlight class="comment"></highlight></codeline>
+<codeline lineno="98"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="99"><highlight class="comment"><sp/><sp/><sp/><sp/>Object<sp/>albums</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"></highlight></codeline>
+<codeline lineno="101"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="102"><highlight class="comment"><sp/><sp/><sp/><sp/>An<sp/>object<sp/>containing<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>album<sp/>names<sp/>that<sp/>exist<sp/>in</highlight></codeline>
+<codeline lineno="103"><highlight class="comment"><sp/><sp/><sp/><sp/>the<sp/>&lt;Library&gt;<sp/>as<sp/>property<sp/>names</highlight></codeline>
+<codeline lineno="104"><highlight class="comment"></highlight></codeline>
+<codeline lineno="105"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="109"><highlight class="comment"></highlight></codeline>
+<codeline lineno="110"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>unique<sp/>albums.</highlight></codeline>
+<codeline lineno="111"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>albums<sp/>=<sp/>library.albums;</highlight></codeline>
+<codeline lineno="112"><highlight class="comment"></highlight></codeline>
+<codeline lineno="113"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(var<sp/>album<sp/>in<sp/>albums)<sp/>{</highlight></codeline>
+<codeline lineno="114"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//The<sp/>album<sp/>name<sp/>(ie.<sp/>&quot;Cross&quot;)</highlight></codeline>
+<codeline lineno="115"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(album);</highlight></codeline>
+<codeline lineno="116"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="118"><highlight class="comment"></highlight></codeline>
+<codeline lineno="119"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="120"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;artists&gt;</highlight></codeline>
+<codeline lineno="121"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;albums&gt;</highlight></codeline>
+<codeline lineno="122"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;years&gt;</highlight></codeline>
+<codeline lineno="123"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;items&gt;</highlight></codeline>
+<codeline lineno="124"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="interfacesb_i_scriptable_filter_result_142e29154889b1b00e6439290bdc9ea17" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>albums;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/>Property:<sp/>genres</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"></highlight></codeline>
+<codeline lineno="130"><highlight class="comment"><sp/><sp/>Get<sp/>an<sp/>hash<sp/>of<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>genres<sp/>in<sp/>the<sp/>&lt;Library&gt;.</highlight></codeline>
+<codeline lineno="131"><highlight class="comment"></highlight></codeline>
+<codeline lineno="132"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/>Object<sp/>genres</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"></highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/>An<sp/>object<sp/>containing<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>genres<sp/>that<sp/>exist<sp/>in</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/><sp/><sp/>the<sp/>&lt;Library&gt;<sp/>as<sp/>property<sp/>names</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"></highlight></codeline>
+<codeline lineno="139"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="140"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="141"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="142"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="143"><highlight class="comment"></highlight></codeline>
+<codeline lineno="144"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>unique<sp/>genres.</highlight></codeline>
+<codeline lineno="145"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>genres<sp/>=<sp/>library.genres;</highlight></codeline>
+<codeline lineno="146"><highlight class="comment"></highlight></codeline>
+<codeline lineno="147"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(var<sp/>genre<sp/>in<sp/>genres)<sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//The<sp/>genre<sp/>(ie.<sp/>&quot;Electronic&quot;)</highlight></codeline>
+<codeline lineno="149"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(genre);</highlight></codeline>
+<codeline lineno="150"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="comment"></highlight></codeline>
+<codeline lineno="152"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="153"><highlight class="comment"></highlight></codeline>
+<codeline lineno="154"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;artists&gt;</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;albums&gt;</highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;years&gt;</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;items&gt;</highlight></codeline>
+<codeline lineno="159"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="interfacesb_i_scriptable_filter_result_1b4818ccc8df68a49cdaaf8defa740558" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>genres;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="163"><highlight class="comment"><sp/><sp/>Property:<sp/>years</highlight></codeline>
+<codeline lineno="164"><highlight class="comment"></highlight></codeline>
+<codeline lineno="165"><highlight class="comment"><sp/><sp/>Get<sp/>an<sp/>hash<sp/>of<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>years<sp/>in<sp/>the<sp/>&lt;Library&gt;.</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"></highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/><sp/><sp/><sp/>Object<sp/>years</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"></highlight></codeline>
+<codeline lineno="170"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/><sp/>An<sp/>object<sp/>containing<sp/>all<sp/>of<sp/>the<sp/>unique<sp/>years<sp/>that<sp/>exist<sp/>in</highlight></codeline>
+<codeline lineno="172"><highlight class="comment"><sp/><sp/><sp/><sp/>the<sp/>&lt;Library&gt;<sp/>as<sp/>property<sp/>names</highlight></codeline>
+<codeline lineno="173"><highlight class="comment"></highlight></codeline>
+<codeline lineno="174"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"></highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>unique<sp/>years.</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>years<sp/>=<sp/>library.years;</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"></highlight></codeline>
+<codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(var<sp/>year<sp/>in<sp/>years)<sp/>{</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//The<sp/>year<sp/>(ie.<sp/>&quot;2007&quot;)</highlight></codeline>
+<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(year);</highlight></codeline>
+<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"></highlight></codeline>
+<codeline lineno="188"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="189"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;artists&gt;</highlight></codeline>
+<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;albums&gt;</highlight></codeline>
+<codeline lineno="191"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;genres&gt;</highlight></codeline>
+<codeline lineno="192"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;items&gt;</highlight></codeline>
+<codeline lineno="193"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="interfacesb_i_scriptable_filter_result_140320b9c53d6c09386c1930ffddd37d2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>years;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="197"><highlight class="comment"><sp/><sp/>Property:<sp/>items</highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="199"><highlight class="comment"><sp/><sp/>Get<sp/>a<sp/>collection<sp/>of<sp/>&lt;MediaItems&gt;<sp/>that<sp/>match<sp/>the<sp/>current<sp/>filter</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="202"><highlight class="comment"><sp/><sp/><sp/><sp/>Object<sp/>items</highlight></codeline>
+<codeline lineno="203"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="204"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>or<sp/>get<sp/>a<sp/>library.</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
+<codeline lineno="208"><highlight class="comment"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/><sp/><sp/><sp/>//Get<sp/>all<sp/>items<sp/>in<sp/>the<sp/>album<sp/>&quot;Hello&quot;<sp/>by<sp/>the<sp/>artist<sp/>&quot;Pancake&quot;</highlight></codeline>
+<codeline lineno="210"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>items<sp/>=<sp/>library.albums[&quot;Hello&quot;].artists[&quot;Pancake&quot;].items;</highlight></codeline>
+<codeline lineno="211"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>each<sp/>(var<sp/>item<sp/>in<sp/>items)<sp/>{</highlight></codeline>
+<codeline lineno="212"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>do<sp/>something<sp/>with<sp/>this<sp/>item</highlight></codeline>
+<codeline lineno="213"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>alert(item.contentSrc);</highlight></codeline>
+<codeline lineno="214"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/></highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;artists&gt;</highlight></codeline>
+<codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;albums&gt;</highlight></codeline>
+<codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;genres&gt;</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;years&gt;</highlight></codeline>
+<codeline lineno="222"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;MediaItem&gt;</highlight></codeline>
+<codeline lineno="223"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="225" refid="interfacesb_i_scriptable_filter_result_17f30d105b9bdb5a494341d332d2c2948" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISupports<sp/>items;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="230" refid="interfacesb_i_scriptable_filter_result_14bfefd5e935e0fdf28a9e5665b081dab" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>constraint;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIScriptableFilterResult.idl"/>
+  </compounddef>
+</doxygen>

@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="347" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="347" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="347" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="347" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,44 +25,44 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="722">
+      <node id="737">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="721">
+      <node id="736">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="722" relation="public-inheritance">
+        <childnode refid="737" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="724">
+      <node id="739">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="725" relation="usage">
+        <childnode refid="740" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="725">
+      <node id="740">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="723">
+      <node id="738">
         <label>sbIURIPropertyInfo</label>
         <link refid="interfacesb_i_u_r_i_property_info"/>
-        <childnode refid="724" relation="public-inheritance">
+        <childnode refid="739" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="342" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="341" bodyend="348"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="342" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="341" bodyend="348"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>constrainScheme</name></member>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>format</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>getOperator</name></member>
+      <member refid="interfacesb_i_property_info_161817d7ea202ecab4269758576035d40" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>id</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>makeSortable</name></member>
-      <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>name</name></member>
       <member refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>nullSort</name></member>
       <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>OPERATOR_BEGINSWITH</name></member>
       <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" virt="non-virtual"><scope>sbIURIPropertyInfo</scope><name>OPERATOR_BETWEEN</name></member>

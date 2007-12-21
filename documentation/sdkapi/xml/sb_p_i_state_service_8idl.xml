@@ -4,13 +4,13 @@
     <compoundname>sbPIStateService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="454">
+      <node id="467">
         <label>components/state/public/sbPIStateService.idl</label>
         <link refid="sbPIStateService.idl"/>
-        <childnode refid="455" relation="include">
+        <childnode refid="468" relation="include">
         </childnode>
       </node>
-      <node id="455">
+      <node id="468">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -62,6 +62,6 @@
 <codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeStateObject(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref><sp/>aStateObject);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/state/public/sbPIStateService.idl"/>
+    <location file="z:/projects/songbird/components/state/public/sbPIStateService.idl"/>
   </compounddef>
 </doxygen>

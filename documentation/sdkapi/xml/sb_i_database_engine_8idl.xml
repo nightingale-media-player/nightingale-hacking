@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="35"/>
+        <location file="z:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="35"/>
       </memberdef>
       <memberdef kind="function" id="sb_i_database_engine_8idl_15f70f38416be16bf454016cc431af791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>native</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="36"/>
+        <location file="z:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl" line="36"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -96,6 +96,6 @@
 <codeline lineno="71"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
 <codeline lineno="72"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl"/>
+    <location file="z:/projects/songbird/components/dbengine/public/sbIDatabaseEngine.idl"/>
   </compounddef>
 </doxygen>

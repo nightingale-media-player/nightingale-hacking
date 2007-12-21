@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_display_pane_listener" kind="interface" prot="public">
+    <compoundname>sbIDisplayPaneListener</compoundname>
+    <includes refid="sb_i_display_panes_8idl" local="no">sbIDisplayPanes.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_display_pane_listener_118a7af8d676517e5968d38176d6fd233" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneListener::onRegisterContent</definition>
+        <argsstring>(in sbIDisplayPaneContentInfo aPane)</argsstring>
+        <name>onRegisterContent</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref></type>
+          <declname>aPane</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="126"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_listener_1d2cbf1d3d2f653d8af5d26abb853b2b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneListener::onUnregisterContent</definition>
+        <argsstring>(in sbIDisplayPaneContentInfo aPane)</argsstring>
+        <name>onUnregisterContent</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref></type>
+          <declname>aPane</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="127"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_listener_1810b3805ca4e1447c8a9c2cc17255def" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneListener::onRegisterInstantiator</definition>
+        <argsstring>(in sbIDisplayPaneInstantiator aInstantiator)</argsstring>
+        <name>onRegisterInstantiator</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref></type>
+          <declname>aInstantiator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_listener_10bb8246a6dd71cb831e4262396a21fb4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneListener::onUnregisterInstantiator</definition>
+        <argsstring>(in sbIDisplayPaneInstantiator aInstantiator)</argsstring>
+        <name>onUnregisterInstantiator</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref></type>
+          <declname>aInstantiator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="129"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_listener_108a39dfb228033b21ce6373adf7991b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneListener::onPaneInfoChanged</definition>
+        <argsstring>(in sbIDisplayPaneContentInfo aPane)</argsstring>
+        <name>onPaneInfoChanged</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref></type>
+          <declname>aPane</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="130"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A display pane listener is notified when information regarding display panes is changed </para>    </detaileddescription>
+    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="125" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="124" bodyend="131"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_display_pane_listener_108a39dfb228033b21ce6373adf7991b6" prot="public" virt="non-virtual"><scope>sbIDisplayPaneListener</scope><name>onPaneInfoChanged</name></member>
+      <member refid="interfacesb_i_display_pane_listener_118a7af8d676517e5968d38176d6fd233" prot="public" virt="non-virtual"><scope>sbIDisplayPaneListener</scope><name>onRegisterContent</name></member>
+      <member refid="interfacesb_i_display_pane_listener_1810b3805ca4e1447c8a9c2cc17255def" prot="public" virt="non-virtual"><scope>sbIDisplayPaneListener</scope><name>onRegisterInstantiator</name></member>
+      <member refid="interfacesb_i_display_pane_listener_1d2cbf1d3d2f653d8af5d26abb853b2b7" prot="public" virt="non-virtual"><scope>sbIDisplayPaneListener</scope><name>onUnregisterContent</name></member>
+      <member refid="interfacesb_i_display_pane_listener_10bb8246a6dd71cb831e4262396a21fb4" prot="public" virt="non-virtual"><scope>sbIDisplayPaneListener</scope><name>onUnregisterInstantiator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

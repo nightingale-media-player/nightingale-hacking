@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" line="46"/>
+        <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" line="46"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_dnd_source_tracker_1a0620f90dd1b524a19fa7901c7ec6a24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -33,7 +33,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" line="52"/>
+        <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_dnd_source_tracker_11440023dc6733527190cf2ab1171a8b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISupports</type>
@@ -59,7 +59,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" line="59"/>
+        <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" line="59"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_dnd_source_tracker_134fe454c0a8378d49c874a2a027b2531" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISupports</type>
@@ -85,14 +85,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" line="67"/>
+        <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" line="67"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Helper service for transferring internal objects using drag and drop. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl" bodystart="41" bodyend="69"/>
+    <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" line="42" bodyfile="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl" bodystart="41" bodyend="69"/>
     <listofallmembers>
       <member refid="interfacesb_i_dnd_source_tracker_11440023dc6733527190cf2ab1171a8b1" prot="public" virt="non-virtual"><scope>sbIDndSourceTracker</scope><name>getSource</name></member>
       <member refid="interfacesb_i_dnd_source_tracker_134fe454c0a8378d49c874a2a027b2531" prot="public" virt="non-virtual"><scope>sbIDndSourceTracker</scope><name>getSourceSupports</name></member>

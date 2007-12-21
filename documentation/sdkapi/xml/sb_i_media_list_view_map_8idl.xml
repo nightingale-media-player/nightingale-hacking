@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListViewMap.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="248">
+      <node id="253">
         <label>components/library/base/public/sbIMediaListViewMap.idl</label>
         <link refid="sbIMediaListViewMap.idl"/>
-        <childnode refid="249" relation="include">
+        <childnode refid="254" relation="include">
         </childnode>
       </node>
-      <node id="249">
+      <node id="254">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -62,6 +62,6 @@
 <codeline lineno="71"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListViewMap.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListViewMap.idl"/>
   </compounddef>
 </doxygen>

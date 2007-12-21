@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_native_window_manager_8idl" kind="file">
+    <compoundname>sbINativeWindowManager.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <includes local="yes">nsIDOMMouseEvent.idl</includes>
+    <incdepgraph>
+      <node id="181">
+        <label>components/integration/public/sbINativeWindowManager.idl</label>
+        <link refid="sbINativeWindowManager.idl"/>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+      </node>
+      <node id="183">
+        <label>nsIDOMMouseEvent.idl</label>
+      </node>
+      <node id="182">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_native_window_manager" prot="public">sbINativeWindowManager</innerclass>
+    <briefdescription>
+<para>interface to the operating system&apos;s window manager This file contains the interfaces to allow JavaScript to talk to the native operating system window manager in a somewhat cross-platform way. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIDOMMouseEvent.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(77746f92-dfe5-4915-a3ae-ff2619c4b167)]</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_native_window_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_native_window_manager" kindref="compound" tooltip="interface to the operating system's window manager This Interfaces to allows JavaScript...">sbINativeWindowManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>constants<sp/>representing<sp/>resize<sp/>directions<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_native_window_manager_1636299c8aedeed68323fb94a826aca56" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_NORTH_WEST<sp/>=<sp/>7;</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_native_window_manager_11ee32132eea4f1b6460d05a17dfb28e5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_NORTH<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>8;</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_native_window_manager_169a08fa55e3e2f7edf01627e671fc154" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_NORTH_EAST<sp/>=<sp/>9;</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_native_window_manager_16143b3927ce4664996fa26e163891191" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_WEST<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_EAST<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>6;</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_native_window_manager_1090fd34f801ecd15bc49c801758325cc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_SOUTH_WEST<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_native_window_manager_13c187802a8ca5d790696e18f7af65309" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_SOUTH<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_native_window_manager_17437924d4122b057b4886d21e8bf2166" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRInt32<sp/>DIRECTION_SOUTH_EAST<sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>ask<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>begin<sp/>a<sp/>resize<sp/>of<sp/>@aWindow,<sp/></highlight></codeline>
+<codeline lineno="57"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>based<sp/>on<sp/>the<sp/>mouse<sp/>event<sp/>in<sp/>@aEvent<sp/>in<sp/>the<sp/>direction<sp/></highlight></codeline>
+<codeline lineno="58"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>indicated<sp/>by<sp/>@aDirection<sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginResizeDrag(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>nsIDOMMouseEvent<sp/>aEvent,<sp/>in<sp/>PRInt32<sp/>aDirection);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>beginResizeDrag()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_native_window_manager_1b9c604d877ffaadd5e138334b12e6524" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsResizeDrag;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>set&apos;s<sp/>the<sp/>minimum<sp/>size<sp/>of<sp/>@aWindow<sp/>in<sp/>the<sp/>window<sp/>manager<sp/>to<sp/></highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>@aMinimumWidth<sp/>x<sp/>@aMinimumHeight<sp/></highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setMinimumWindowSize(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>PRInt32<sp/>aMinimumWidth,<sp/>in<sp/>PRInt32<sp/>aMinimumHeight);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setMinimumWindowSize()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsMinimumWindowSize;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>asks<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>keep<sp/>@aWindow<sp/>above<sp/>all<sp/>other<sp/>windows<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOnTop(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOnTop);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setOnTop()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl"/>
+  </compounddef>
+</doxygen>

@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="47"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="47"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_1e4bc7766f57c5721b9898def679fcbc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIDOMElement</type>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="48"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="48"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -44,7 +44,7 @@
 </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" line="46" bodyfile="e:/Projects/songbird/trunk/bindings/public/sbITabBrowser.idl" bodystart="45" bodyend="49"/>
+    <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="46" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="45" bodyend="49"/>
     <listofallmembers>
       <member refid="interfacesb_i_tab_browser_1e4bc7766f57c5721b9898def679fcbc8" prot="public" virt="non-virtual"><scope>sbITabBrowser</scope><name>getBrowserForDocument</name></member>
       <member refid="interfacesb_i_tab_browser_1529953145ae3991eb77d5f8a7c025b38" prot="public" virt="non-virtual"><scope>sbITabBrowser</scope><name>getTabForDocument</name></member>

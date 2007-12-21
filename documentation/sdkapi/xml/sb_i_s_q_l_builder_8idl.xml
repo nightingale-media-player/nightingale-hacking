@@ -4,13 +4,13 @@
     <compoundname>sbISQLBuilder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="445">
+      <node id="458">
         <label>components/sqlbuilder/public/sbISQLBuilder.idl</label>
         <link refid="sbISQLBuilder.idl"/>
-        <childnode refid="446" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
       </node>
-      <node id="446">
+      <node id="459">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -238,6 +238,6 @@
 <codeline lineno="449"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="450"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl"/>
+    <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl"/>
   </compounddef>
 </doxygen>

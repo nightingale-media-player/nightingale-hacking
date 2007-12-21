@@ -4,13 +4,13 @@
     <compoundname>sbILibraryTransferContext.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="222">
+      <node id="227">
         <label>components/library/base/public/sbILibraryTransferContext.idl</label>
         <link refid="sbILibraryTransferContext.idl"/>
-        <childnode refid="223" relation="include">
+        <childnode refid="228" relation="include">
         </childnode>
       </node>
-      <node id="223">
+      <node id="228">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -84,6 +84,6 @@
 <codeline lineno="123"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryTransferContext.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl"/>
   </compounddef>
 </doxygen>

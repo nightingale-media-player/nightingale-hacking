@@ -97,7 +97,7 @@
 <a name="l00035"></a>00035 interface nsIStringEnumerator;
 <a name="l00036"></a>00036 interface nsIURI;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
+<a name="l00042"></a>00042 [scriptable, uuid(c6ce50ff-38a5-49b8-987e-9597ce679ca1)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_local_database_property_cache.html">00043</a> interface <a class="code" href="interfacesb_i_local_database_property_cache.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabasePropertyCache</a> : nsISupports
 <a name="l00044"></a>00044 {
 <a name="l00045"></a><a class="code" href="interfacesb_i_local_database_property_cache.html#5a6b9b8aa317b65ff06098b795fbcd81">00045</a>   readonly attribute <span class="keywordtype">boolean</span> writePending;
@@ -120,28 +120,28 @@
 <a name="l00062"></a>00062 
 <a name="l00063"></a>00063   <span class="keywordtype">void</span> write();
 <a name="l00064"></a>00064 
-<a name="l00065"></a>00065   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getPropertyID(in AString aProperty);
+<a name="l00065"></a>00065   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getPropertyDBID(in AString aPropertyID);
 <a name="l00066"></a>00066 };
 <a name="l00067"></a>00067 
-<a name="l00072"></a>00072 [scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
+<a name="l00072"></a>00072 [scriptable, uuid(c09564c7-8623-47e2-8fd7-e551e2f028bf)]
 <a name="l00073"></a><a class="code" href="interfacesb_i_local_database_resource_property_bag.html">00073</a> interface <a class="code" href="interfacesb_i_local_database_resource_property_bag.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourcePropertyBag</a> : nsISupports
 <a name="l00074"></a>00074 {
 <a name="l00075"></a><a class="code" href="interfacesb_i_local_database_resource_property_bag.html#33793561e76ad9d5c9b03b514e454f14">00075</a>   readonly attribute AString guid;
 <a name="l00076"></a><a class="code" href="interfacesb_i_local_database_resource_property_bag.html#69c4fa6781b7499968bf22cd70e097f8">00076</a>   readonly attribute <span class="keywordtype">boolean</span> writePending;
-<a name="l00077"></a><a class="code" href="interfacesb_i_local_database_resource_property_bag.html#8272561f9018120e0f250195e48d2acd">00077</a>   readonly attribute nsIStringEnumerator names;
+<a name="l00077"></a><a class="code" href="interfacesb_i_local_database_resource_property_bag.html#2df5fedc711da4891e1b905704029c17">00077</a>   readonly attribute nsIStringEnumerator ids;
 <a name="l00078"></a>00078 
-<a name="l00086"></a>00086   AString getProperty(in AString aName);
+<a name="l00086"></a>00086   AString getProperty(in AString aPropertyID);
 <a name="l00087"></a>00087 
-<a name="l00095"></a>00095   AString getPropertyByID(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyID);
+<a name="l00095"></a>00095   AString getPropertyByID(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyDBID);
 <a name="l00096"></a>00096 
-<a name="l00097"></a>00097   <span class="keywordtype">void</span> setProperty(in AString aName, in AString aValue);
-<a name="l00098"></a>00098   <span class="keywordtype">void</span> setPropertyByID(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyID, in AString aValue);
+<a name="l00097"></a>00097   <span class="keywordtype">void</span> setProperty(in AString aPropertyID, in AString aValue);
+<a name="l00098"></a>00098   <span class="keywordtype">void</span> setPropertyByDBID(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyDBID, in AString aValue);
 <a name="l00099"></a>00099 
 <a name="l00100"></a>00100   <span class="keywordtype">void</span> write();
 <a name="l00101"></a>00101 };
 <a name="l00102"></a>00102 
 <a name="l00103"></a>00103 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:00 2007 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -100,6 +100,6 @@
 <codeline lineno="121" refid="interfacesb_i_device_event_1d3ba0c0de389b9d6a0a47f59cab1320b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_event_target" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventTarget</ref><sp/>source;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEvent.idl"/>
+    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl"/>
   </compounddef>
 </doxygen>

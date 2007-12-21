@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_b9914f1c4b9e2d58cf13531dae887b60" kind="dir">
+    <compoundname>components/devicesobsolete/wm/</compoundname>
+    <innerdir refid="dir_fdfd164b5a19f4b54900409277f5776a">components/devicesobsolete/wm/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/devicesobsolete/wm/"/>
+  </compounddef>
+</doxygen>

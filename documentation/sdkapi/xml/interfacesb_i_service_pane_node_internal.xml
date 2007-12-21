@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="137"/>
+        <location file="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl" line="137"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_node_internal_135443060591d1ef8062dc6911c7f5a0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="142"/>
+        <location file="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl" line="142"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_node_internal_1a0556a31286bcbd572322098b9d9dd10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="149"/>
+        <location file="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl" line="149"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -62,28 +62,28 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="614">
+      <node id="629">
         <label>sbIServicePaneNodeInternal</label>
         <link refid="interfacesb_i_service_pane_node_internal"/>
-        <childnode refid="615" relation="public-inheritance">
+        <childnode refid="630" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="615">
+      <node id="630">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="616">
+      <node id="631">
         <label>sbIServicePaneNodeInternal</label>
         <link refid="interfacesb_i_service_pane_node_internal"/>
-        <childnode refid="617" relation="public-inheritance">
+        <childnode refid="632" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="617">
+      <node id="632">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
-        <childnode refid="617" relation="usage">
+        <childnode refid="632" relation="usage">
           <edgelabel>previousSibling
 parentNode
 firstChild
@@ -92,7 +92,7 @@ nextSibling</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="131" bodyfile="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="131" bodyend="150"/>
+    <location file="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl" line="131" bodyfile="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl" bodystart="131" bodyend="150"/>
     <listofallmembers>
       <member refid="interfacesb_i_service_pane_node_1c859564c00b05a3d27abc473aef3892c" prot="public" virt="non-virtual"><scope>sbIServicePaneNodeInternal</scope><name>appendChild</name></member>
       <member refid="interfacesb_i_service_pane_node_1f046ac101f6286f8979a2c69d9fb9159" prot="public" virt="non-virtual"><scope>sbIServicePaneNodeInternal</scope><name>childNodes</name></member>

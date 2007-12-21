@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="45" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="45" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="51"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="51"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_property_cache_1a26c3a117c914d8c4e7c3da7f4cf19ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="58"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="58"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_property_cache_14309d1598dc73fc1e712081fc51414eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="61"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_property_cache_183886b5e17362d0b73056824a7fd7140" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -118,16 +118,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="63"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="63"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_119916207e8051ab4f55480d982c07817" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_1aebf5dcbbb6ec91b9d846dcdc80b776b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
-        <definition>unsigned long sbILocalDatabasePropertyCache::getPropertyID</definition>
-        <argsstring>(in AString aProperty)</argsstring>
-        <name>getPropertyID</name>
+        <definition>unsigned long sbILocalDatabasePropertyCache::getPropertyDBID</definition>
+        <argsstring>(in AString aPropertyID)</argsstring>
+        <name>getPropertyDBID</name>
         <param>
           <type>in AString</type>
-          <declname>aProperty</declname>
+          <declname>aPropertyID</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -135,18 +135,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="65"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="65"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="43" bodyend="66"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="44" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="43" bodyend="66"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_property_cache_14309d1598dc73fc1e712081fc51414eb" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>cacheProperties</name></member>
       <member refid="interfacesb_i_local_database_property_cache_16b2724ccff9e65b2209a979145a623b2" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>getProperties</name></member>
-      <member refid="interfacesb_i_local_database_property_cache_119916207e8051ab4f55480d982c07817" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>getPropertyID</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_1aebf5dcbbb6ec91b9d846dcdc80b776b" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>getPropertyDBID</name></member>
       <member refid="interfacesb_i_local_database_property_cache_1a26c3a117c914d8c4e7c3da7f4cf19ce" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>setProperties</name></member>
       <member refid="interfacesb_i_local_database_property_cache_183886b5e17362d0b73056824a7fd7140" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>write</name></member>
       <member refid="interfacesb_i_local_database_property_cache_15a6b9b8aa317b65ff06098b795fbcd81" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>writePending</name></member>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="48" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="48" bodyfile="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_type_14bd7e1dde1cd1ed7661ece4e95c7bd65" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="53" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="53" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="53" bodyfile="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_type_1b547da6ed4a82a97ca9f2feb38af9a9b" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="58" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="58" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="58" bodyfile="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_type_194c0bf43d6d88fe099c338693bcbdf2c" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="63" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="63" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="63" bodyfile="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -92,7 +92,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="73"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="73"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_type_1645966d291b5d3a2c287f39b380cc9dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -129,7 +129,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="83"/>
+        <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="83"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -137,7 +137,7 @@
     <detaileddescription>
 <para><xrefsect id="todo_1_todo000011"><xreftitle>Todo</xreftitle><xrefdescription><para>Stub interface. Currently unimplemented. </para></xrefdescription></xrefsect><simplesect kind="see"><para><ref refid="interfacesb_i_media_transcoder_manager" kindref="compound">sbIMediaTranscoderManager</ref>, <ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref>, <ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="43" bodyend="84"/>
+    <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="44" bodyfile="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="43" bodyend="84"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_type_194c0bf43d6d88fe099c338693bcbdf2c" prot="public" virt="non-virtual"><scope>sbIMediaType</scope><name>contentType</name></member>
       <member refid="interfacesb_i_media_type_14bd7e1dde1cd1ed7661ece4e95c7bd65" prot="public" virt="non-virtual"><scope>sbIMediaType</scope><name>description</name></member>

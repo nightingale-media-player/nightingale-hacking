@@ -4,13 +4,13 @@
     <compoundname>sbIMetadataJobManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="325">
+      <node id="330">
         <label>components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</label>
         <link refid="sbIMetadataJobManager.idl"/>
-        <childnode refid="326" relation="include">
+        <childnode refid="331" relation="include">
         </childnode>
       </node>
-      <node id="326">
+      <node id="331">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -59,6 +59,6 @@
 <codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
 <codeline lineno="88"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
   </compounddef>
 </doxygen>

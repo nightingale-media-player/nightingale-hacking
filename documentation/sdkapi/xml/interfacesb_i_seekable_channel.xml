@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="75" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="75" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="75" bodyfile="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="75" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_seekable_channel_15982378f8763c6d10d831f7e5a98acb1" prot="public" static="no" mutable="no">
         <type>readonly attribute PRUInt64</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="79" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="79" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="79" bodyfile="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_seekable_channel_1cbf96345ee8179991a8327693f723900" prot="public" static="no" mutable="no">
         <type>readonly attribute PRBool</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="83" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="83" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="83" bodyfile="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -78,7 +78,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="90"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="90"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_193723bc93ee77f1df397285fbbdc6c62" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -91,7 +91,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="94"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="94"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_19fe8570826ed7862ad7a5194b80bc5bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -116,7 +116,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="99"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="99"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_129fb8bb3b99c3144693ab0fc0d1dacbb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRUint32</type>
@@ -153,7 +153,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="106"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="106"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_1d7c9988d208980102eb39c109ee17e4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char</type>
@@ -167,7 +167,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="111"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="111"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_143fb0ad4d324228a967be2f4bcb5bcb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -181,7 +181,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="116"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="116"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_seekable_channel_1d574e325d412ee177561f6431afb9326" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt64</type>
@@ -195,7 +195,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="121"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="121"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -203,7 +203,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="71" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="70" bodyend="122"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" line="71" bodyfile="z:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl" bodystart="70" bodyend="122"/>
     <listofallmembers>
       <member refid="interfacesb_i_seekable_channel_193723bc93ee77f1df397285fbbdc6c62" prot="public" virt="non-virtual"><scope>sbISeekableChannel</scope><name>close</name></member>
       <member refid="interfacesb_i_seekable_channel_1cbf96345ee8179991a8327693f723900" prot="public" virt="non-virtual"><scope>sbISeekableChannel</scope><name>completed</name></member>

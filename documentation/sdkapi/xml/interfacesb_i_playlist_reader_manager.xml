@@ -22,7 +22,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="180" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="180" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="180" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="180" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="191"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="191"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_16acca395c9315e16bc807460579eddfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="201"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="201"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_1021cb1b89f0fda35a5afd3fadfe4fca6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="209"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="209"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_reader_manager_1ac0de28c6fa58a44f8cb7949789d85e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -158,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="217"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="217"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -166,7 +166,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_reader" kindref="compound">sbIPlaylistReader</ref>, <ref refid="interfacesb_i_playlist_reader_listener" kindref="compound">sbIPlaylistReaderListener</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="174" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="173" bodyend="218"/>
+    <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="174" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="173" bodyend="218"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_reader_manager_15c9ead20cd1b64a9598263954a58ca17" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderManager</scope><name>loadPlaylist</name></member>
       <member refid="interfacesb_i_playlist_reader_manager_1eb430ecd664df3f04fab6b6e9033230f" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderManager</scope><name>originalURI</name></member>

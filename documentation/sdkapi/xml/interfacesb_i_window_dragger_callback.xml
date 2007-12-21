@@ -14,14 +14,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="48"/>
+        <location file="z:/projects/songbird/components/integration/public/IWindowDragger.idl" line="48"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Window dragging callback interface This is an interface to a callback method used to detect the end of a window drag operation. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IWindowDragger.idl" bodystart="42" bodyend="49"/>
+    <location file="z:/projects/songbird/components/integration/public/IWindowDragger.idl" line="43" bodyfile="z:/projects/songbird/components/integration/public/IWindowDragger.idl" bodystart="42" bodyend="49"/>
     <listofallmembers>
       <member refid="interfacesb_i_window_dragger_callback_1ddd9ed08f686c08a1cb081e318beecb6" prot="public" virt="non-virtual"><scope>sbIWindowDraggerCallback</scope><name>onWindowDragComplete</name></member>
     </listofallmembers>

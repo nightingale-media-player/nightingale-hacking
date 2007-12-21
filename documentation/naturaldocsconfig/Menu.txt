@@ -35,32 +35,32 @@ Footer: <div id="sb_header"><a href="http://www.songbirdnest.com" class="sb_logo
 
 Group: Global Object  {
 
-   File: Songbird  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemotePlayer.idl)
+   File: Songbird  (/z/projects/songbird/compiled/documentation/tmp/sbIRemotePlayer.idl)
    }  # Group: Global Object
 
 Group: Library Objects  {
 
-   File: Library  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemoteLibrary.idl)
-   File: MediaItem  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIWrappedMediaItem.h)
-   File: MediaList  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemoteMediaList.idl)
+   File: Library  (/z/projects/songbird/compiled/documentation/tmp/sbIRemoteLibrary.idl)
+   File: MediaItem  (/z/projects/songbird/compiled/documentation/tmp/sbIWrappedMediaItem.h)
+   File: MediaList  (/z/projects/songbird/compiled/documentation/tmp/sbIRemoteMediaList.idl)
    }  # Group: Library Objects
 
 Group: UI Objects  {
 
-   File: Commands  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemoteCommands.idl)
-   File: WebPlaylist  (/cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemoteWebPlaylist.idl)
+   File: Commands  (/z/projects/songbird/compiled/documentation/tmp/sbIRemoteCommands.idl)
+   File: WebPlaylist  (/z/projects/songbird/compiled/documentation/tmp/sbIRemoteWebPlaylist.idl)
    }  # Group: UI Objects
 
 Group: Events  {
 
-   File: MediaItemStatusEvent  (no auto-title, /cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIMediaItemStatusEvent.idl)
-   File: PlaylistClickEvent  (no auto-title, /cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIPlaylistClickEvent.idl)
-   File: SecurityEvent  (no auto-title, /cygdrive/e/Projects/songbird/trunk/compiled/documentation/tmp/sbIRemoteSecurityEvent.idl)
+   File: MediaItemStatusEvent  (no auto-title, /z/projects/songbird/compiled/documentation/tmp/sbIMediaItemStatusEvent.idl)
+   File: PlaylistClickEvent  (no auto-title, /z/projects/songbird/compiled/documentation/tmp/sbIPlaylistClickEvent.idl)
+   File: SecurityEvent  (no auto-title, /z/projects/songbird/compiled/documentation/tmp/sbIRemoteSecurityEvent.idl)
    }  # Group: Events
 
-File: Listener Topics  (/cygdrive/e/Projects/songbird/trunk/documentation/lists/ListenerTopics.txt)
-File: Metadata Updates  (/cygdrive/e/Projects/songbird/trunk/documentation/lists/MetadataOverwrite.txt)
-File: Security  (no auto-title, /cygdrive/e/Projects/songbird/trunk/documentation/lists/SecurityTopics.txt)
+File: Listener Topics  (/z/projects/songbird/documentation/lists/ListenerTopics.txt)
+File: Metadata Updates  (/z/projects/songbird/documentation/lists/MetadataOverwrite.txt)
+File: Security  (no auto-title, /z/projects/songbird/documentation/lists/SecurityTopics.txt)
 
 Group: Index  {
 
@@ -76,5 +76,5 @@ Group: Index  {
 
 
 ##### Do not change or remove these lines. #####
-Data: 1(D33339Q`fH8/G3G3gHulG9t636u\`Y8Hf3tHN\A39uEI8oGf3fu9NEG\tpt8u\3tEI)
-Data: 1(h33339Q`fH8/G3G3gHulG9t636u\`Y8Hf3tHN\A3fu9NEG\tpt8u\3o86t6)
+Data: 1(D3333j3IHulG9t636u\`Y8Hf39uEI8oGf3fu9NEG\tpt8u\3tEI)
+Data: 1(h3333j3IHulG9t636u\`Y8Hf3fu9NEG\tpt8u\3o86t6)

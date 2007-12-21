@@ -6,50 +6,50 @@
     <includedby refid="sb_i_media_item_8idl" local="yes">components/library/base/public/sbIMediaItem.idl</includedby>
     <includedby refid="sb_i_local_database_resource_property_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</includedby>
     <incdepgraph>
-      <node id="214">
+      <node id="219">
         <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
-        <childnode refid="215" relation="include">
-        </childnode>
-      </node>
-      <node id="215">
-        <label>nsISupports.idl</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="217">
-        <label>components/library/base/public/sbIMediaItem.idl</label>
-        <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="218" relation="include">
-        </childnode>
-      </node>
-      <node id="216">
-        <label>components/library/base/public/sbILibraryResource.idl</label>
-        <link refid="sbILibraryResource.idl"/>
-        <childnode refid="217" relation="include">
-        </childnode>
-        <childnode refid="221" relation="include">
-        </childnode>
-      </node>
-      <node id="218">
-        <label>components/library/base/public/sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="219" relation="include">
-        </childnode>
         <childnode refid="220" relation="include">
         </childnode>
       </node>
       <node id="220">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="225">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="219">
+      <node id="221">
+        <label>components/library/base/public/sbILibraryResource.idl</label>
+        <link refid="sbILibraryResource.idl"/>
+        <childnode refid="222" relation="include">
+        </childnode>
+        <childnode refid="226" relation="include">
+        </childnode>
+      </node>
+      <node id="223">
+        <label>components/library/base/public/sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="224" relation="include">
+        </childnode>
+        <childnode refid="225" relation="include">
+        </childnode>
+      </node>
+      <node id="226">
+        <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
+        <link refid="sb_i_local_database_resource_property_8idl"/>
+      </node>
+      <node id="224">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
       </node>
-      <node id="221">
-        <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
-        <link refid="sb_i_local_database_resource_property_8idl"/>
+      <node id="222">
+        <label>components/library/base/public/sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="223" relation="include">
+        </childnode>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_library_resource" prot="public">sbILibraryResource</innerclass>
@@ -90,7 +90,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(9f36cf73-a3c4-408b-9161-3ef59b8c3f2c)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(2bcef7e9-e400-4367-a9bb-0b40c6a37ce9)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_library_resource" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -137,7 +137,7 @@
 <codeline lineno="103"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="104" refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>updated;</highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110" refid="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>propertyNames;</highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_library_resource_160d843bb58c9afaf665dd40ff16246d3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>propertyIDs;</highlight></codeline>
 <codeline lineno="111"><highlight class="normal"></highlight></codeline>
 <codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="124"><highlight class="comment"><sp/><sp/>Group:<sp/>Resource<sp/>Methods</highlight></codeline>
@@ -149,10 +149,10 @@
 <codeline lineno="130"><highlight class="comment"><sp/><sp/>Get<sp/>the<sp/>value<sp/>of<sp/>a<sp/>property<sp/>for<sp/>this<sp/>library<sp/>object.</highlight></codeline>
 <codeline lineno="131"><highlight class="comment"></highlight></codeline>
 <codeline lineno="132"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/>String<sp/>getProperty(String<sp/>name)</highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/>String<sp/>getProperty(String<sp/>id)</highlight></codeline>
 <codeline lineno="134"><highlight class="comment"></highlight></codeline>
 <codeline lineno="135"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/>name<sp/>-<sp/>The<sp/>name<sp/>property<sp/>value<sp/>requested.</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>ID<sp/>property<sp/>value<sp/>requested.</highlight></codeline>
 <codeline lineno="137"><highlight class="comment"></highlight></codeline>
 <codeline lineno="138"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
 <codeline lineno="139"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
@@ -172,7 +172,7 @@
 <codeline lineno="153"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#defaultColumnSpec<sp/>-<sp/>Default<sp/>column<sp/>display<sp/>data</highlight></codeline>
 <codeline lineno="154"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#discNumber<sp/>-<sp/>The<sp/>number<sp/>of<sp/>disc<sp/>this<sp/>media<sp/>appears<sp/>on<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
 <codeline lineno="155"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#downloadDetails<sp/>-<sp/>Download<sp/>state<sp/>and<sp/>progress</highlight></codeline>
-<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>milliseconds</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>microseconds</highlight></codeline>
 <codeline lineno="157"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#genre<sp/>-<sp/>The<sp/>genre<sp/>of<sp/>this<sp/>media</highlight></codeline>
 <codeline lineno="158"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#hidden<sp/>-<sp/>Whether<sp/>this<sp/>item<sp/>should<sp/>be<sp/>hidden<sp/>from<sp/>the<sp/>user</highlight></codeline>
 <codeline lineno="159"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#isPartOfCompilation<sp/>-<sp/>Whether<sp/>this<sp/>media<sp/>is<sp/>part<sp/>of<sp/>a<sp/>compilation</highlight></codeline>
@@ -200,7 +200,7 @@
 <codeline lineno="181"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
 <codeline lineno="182"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;setProperty()&gt;</highlight></codeline>
 <codeline lineno="183"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/>AString<sp/>getProperty(in<sp/>AString<sp/>aName);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>AString<sp/>getProperty(in<sp/>AString<sp/>aID);</highlight></codeline>
 <codeline lineno="185"><highlight class="normal"></highlight></codeline>
 <codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="193"><highlight class="comment"><sp/><sp/>Method:<sp/>setProperty()</highlight></codeline>
@@ -208,7 +208,7 @@
 <codeline lineno="195"><highlight class="comment"><sp/><sp/>Set<sp/>the<sp/>value<sp/>of<sp/>a<sp/>property<sp/>for<sp/>this<sp/>library<sp/>object.</highlight></codeline>
 <codeline lineno="196"><highlight class="comment"></highlight></codeline>
 <codeline lineno="197"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/><sp/>setProperty(String<sp/>name,<sp/>String<sp/>value)</highlight></codeline>
+<codeline lineno="198"><highlight class="comment"><sp/><sp/><sp/><sp/>setProperty(String<sp/>id,<sp/>String<sp/>value)</highlight></codeline>
 <codeline lineno="199"><highlight class="comment"></highlight></codeline>
 <codeline lineno="200"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
 <codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
@@ -228,7 +228,7 @@
 <codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#defaultColumnSpec<sp/>-<sp/>Default<sp/>column<sp/>display<sp/>data</highlight></codeline>
 <codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#discNumber<sp/>-<sp/>The<sp/>number<sp/>of<sp/>disc<sp/>this<sp/>media<sp/>appears<sp/>on<sp/>in<sp/>a<sp/>compilation</highlight></codeline>
 <codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#downloadDetails<sp/>-<sp/>Download<sp/>state<sp/>and<sp/>progress</highlight></codeline>
-<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>milliseconds</highlight></codeline>
+<codeline lineno="218"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#duration<sp/>-<sp/>The<sp/>duration<sp/>of<sp/>this<sp/>media,<sp/>in<sp/>microseconds</highlight></codeline>
 <codeline lineno="219"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#genre<sp/>-<sp/>The<sp/>genre<sp/>of<sp/>this<sp/>media</highlight></codeline>
 <codeline lineno="220"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#hidden<sp/>-<sp/>Whether<sp/>this<sp/>item<sp/>should<sp/>be<sp/>hidden<sp/>from<sp/>the<sp/>user</highlight></codeline>
 <codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/><sp/>http://songbirdnest.com/data/1.0#isPartOfCompilation<sp/>-<sp/>Whether<sp/>this<sp/>media<sp/>is<sp/>part<sp/>of<sp/>a<sp/>compilation</highlight></codeline>
@@ -250,9 +250,9 @@
 <codeline lineno="237"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
 <codeline lineno="238"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getProperty()&gt;</highlight></codeline>
 <codeline lineno="239"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
 <codeline lineno="241"><highlight class="normal"></highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>getProperties([optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyNames);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>getProperties([optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyIDs);</highlight></codeline>
 <codeline lineno="251"><highlight class="normal"></highlight></codeline>
 <codeline lineno="264"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperties(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aProperties);</highlight></codeline>
 <codeline lineno="265"><highlight class="normal"></highlight></codeline>
@@ -261,6 +261,6 @@
 <codeline lineno="271"><highlight class="normal"></highlight></codeline>
 <codeline lineno="272"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryResource.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryResource.idl"/>
   </compounddef>
 </doxygen>

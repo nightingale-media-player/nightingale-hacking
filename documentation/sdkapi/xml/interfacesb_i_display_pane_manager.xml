@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_display_pane_manager" kind="interface" prot="public">
+    <compoundname>sbIDisplayPaneManager</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_display_pane_manager_1e296e5a8eb75a06b0b7451c49255b88b" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDisplayPaneManager::contentList</definition>
+        <argsstring></argsstring>
+        <name>contentList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>enumerate through the registered content; each element is a <ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="192" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_display_pane_manager_18f11d1e5a2f06bf5bc8c37fbb4756e8d" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDisplayPaneManager::instantiatorsList</definition>
+        <argsstring></argsstring>
+        <name>instantiatorsList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>enumerate through the registered instantiatorsl each element is a <ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="197" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_17acb4de11281b8293f48687fd8c1c6ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::registerInstantiator</definition>
+        <argsstring>(in sbIDisplayPaneInstantiator aInstantiator)</argsstring>
+        <name>registerInstantiator</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref></type>
+          <declname>aInstantiator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register a display pane instantiator; the instantiator may be called to actually show the display pane to the user. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="152"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_1b6ab3a69bb9ff2f3f786bfa7b7d1d84e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::unregisterInstantiator</definition>
+        <argsstring>(in sbIDisplayPaneInstantiator aInstantiator)</argsstring>
+        <name>unregisterInstantiator</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref></type>
+          <declname>aInstantiator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="153"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_173246fe576908bc8de6736f1229f41be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::registerContent</definition>
+        <argsstring>(in AString aContentUrl, in AString aContentTitle, in AString aContentIcon, in PRInt32 aDefaultWidth, in PRInt32 aDefaultHeight, in AString aSuggestedContentGroups, in PRBool aAutoShow)</argsstring>
+        <name>registerContent</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContentUrl</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aContentTitle</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aContentIcon</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aDefaultWidth</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aDefaultHeight</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSuggestedContentGroups</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>aAutoShow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register display pane content, so that it may be shown to the user. <simplesect kind="see"><para><ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="165"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_160f24d0cb653ae3cd97d814d7cc00b40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::unregisterContent</definition>
+        <argsstring>(in AString aContentUrl)</argsstring>
+        <name>unregisterContent</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContentUrl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>unregister content, so it is not presented to the user anymore. any panes currently displaying the url will be hidden. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="171"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_1a3fde1232d76f2bd1c6c2a16d69dcf31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::updateContentInfo</definition>
+        <argsstring>(in AString aContentUrl, in AString aNewContentTitle, in AString aNewContentIcon)</argsstring>
+        <name>updateContentInfo</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContentUrl</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aNewContentTitle</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aNewContentIcon</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>update the title and icon for a given url </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="178"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_10ae71afcbd1d0c62c00b61c2470e9bd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::showPane</definition>
+        <argsstring>(in AString aContentUrl)</argsstring>
+        <name>showPane</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContentUrl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>show previously registered content with the given url using the first instantiator of a content group that is listed as suggested by the registered info. If no matching instantiator is found, the content may be shown at some future point when it becomes registered. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="186"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_196c51337b067b102d7bbdb7e098d8aee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref></type>
+        <definition>sbIDisplayPaneContentInfo sbIDisplayPaneManager::getPaneInfo</definition>
+        <argsstring>(in AString aContentUrl)</argsstring>
+        <name>getPaneInfo</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContentUrl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>get the previously registed content information given its url </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="202"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_1039a5107a20504b31c9ba776d18efe8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::addListener</definition>
+        <argsstring>(in sbIDisplayPaneListener aListener)</argsstring>
+        <name>addListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="204"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_manager_141f355ac25f585f7d0e00ebe48f431bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneManager::removeListener</definition>
+        <argsstring>(in sbIDisplayPaneListener aListener)</argsstring>
+        <name>removeListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="205"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Display Panes Interface This is the main display panes management interface, used to register and list panes and instantiators. Display panes are blocks within the main user interface which can be used to load arbitary sub-documents for display to the user with full chrome privileges. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/wikipedia">http://publicsvn.songbirdnest.com/browser/extensions/wikipedia</ulink> </para><para>app/content/bindings/displayPane.xml </para></simplesect>
+</para>    </detaileddescription>
+    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="147" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="146" bodyend="206"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_display_pane_manager_1039a5107a20504b31c9ba776d18efe8f" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_display_pane_manager_1e296e5a8eb75a06b0b7451c49255b88b" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>contentList</name></member>
+      <member refid="interfacesb_i_display_pane_manager_196c51337b067b102d7bbdb7e098d8aee" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>getPaneInfo</name></member>
+      <member refid="interfacesb_i_display_pane_manager_18f11d1e5a2f06bf5bc8c37fbb4756e8d" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>instantiatorsList</name></member>
+      <member refid="interfacesb_i_display_pane_manager_173246fe576908bc8de6736f1229f41be" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>registerContent</name></member>
+      <member refid="interfacesb_i_display_pane_manager_17acb4de11281b8293f48687fd8c1c6ab" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>registerInstantiator</name></member>
+      <member refid="interfacesb_i_display_pane_manager_141f355ac25f585f7d0e00ebe48f431bc" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_display_pane_manager_10ae71afcbd1d0c62c00b61c2470e9bd9" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>showPane</name></member>
+      <member refid="interfacesb_i_display_pane_manager_160f24d0cb653ae3cd97d814d7cc00b40" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>unregisterContent</name></member>
+      <member refid="interfacesb_i_display_pane_manager_1b6ab3a69bb9ff2f3f786bfa7b7d1d84e" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>unregisterInstantiator</name></member>
+      <member refid="interfacesb_i_display_pane_manager_1a3fde1232d76f2bd1c6c2a16d69dcf31" prot="public" virt="non-virtual"><scope>sbIDisplayPaneManager</scope><name>updateContentInfo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

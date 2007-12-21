@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_f451569fae7040995a2a59a39b609c36" kind="dir">
+    <compoundname>components/mediacore/metadata/manager/</compoundname>
+    <innerdir refid="dir_9efe8992240200d53ae94d4f3aec45f8">components/mediacore/metadata/manager/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/"/>
+  </compounddef>
+</doxygen>

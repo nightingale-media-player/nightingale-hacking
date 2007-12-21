@@ -4,13 +4,13 @@
     <compoundname>sbILibraryFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="195">
+      <node id="200">
         <label>components/library/base/public/sbILibraryFactory.idl</label>
         <link refid="sbILibraryFactory.idl"/>
-        <childnode refid="196" relation="include">
+        <childnode refid="201" relation="include">
         </childnode>
       </node>
-      <node id="196">
+      <node id="201">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -62,6 +62,6 @@
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>createLibrary(in<sp/>nsIPropertyBag2<sp/>aCreationParameters);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryFactory.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryFactory.idl"/>
   </compounddef>
 </doxygen>

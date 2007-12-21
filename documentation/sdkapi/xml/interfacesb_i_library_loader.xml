@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="52"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -71,7 +71,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="64"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -79,7 +79,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref>, <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" bodystart="44" bodyend="65"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="45" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" bodystart="44" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onLibraryStartupModified</name></member>
       <member refid="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onRegisterStartupLibraries</name></member>

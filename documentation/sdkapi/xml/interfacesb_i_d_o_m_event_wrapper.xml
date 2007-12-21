@@ -14,7 +14,7 @@
 <para>The data passed in the second parameter of <ref refid="interfacesb_i_d_o_m_event_wrapper_157fdbf53ef18474265eb6ef053823bbf" kindref="member">init()</ref> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="50" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="50" bodyfile="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -37,14 +37,14 @@
 <para>Initialize the event wrapper by giving it a base event to wrap</para><para>@param aBaseEvent the event to be wrapped @param aData the payload to be passed as part of the event </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="45"/>
+        <location file="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="45"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="37" bodyfile="e:/Projects/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="37" bodyend="51"/>
+    <location file="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl" line="37" bodyfile="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl" bodystart="37" bodyend="51"/>
     <listofallmembers>
       <member refid="interfacesb_i_d_o_m_event_wrapper_1cdb7a49537df0d5b6e1e252cf68c29c1" prot="public" virt="non-virtual"><scope>sbIDOMEventWrapper</scope><name>data</name></member>
       <member refid="interfacesb_i_d_o_m_event_wrapper_157fdbf53ef18474265eb6ef053823bbf" prot="public" virt="non-virtual"><scope>sbIDOMEventWrapper</scope><name>init</name></member>

@@ -155,6 +155,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#ce21c670be1140e364069a88c1cc835e">convertURLToFolder</a> (in AString aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unescape a URL and find the "basename".  <a href="#ce21c670be1140e364069a88c1cc835e"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#95ad9010570e6ba35d15d3b9e146bf12">addListener</a> (in <a class="el" href="interfacesb_i_playlist_playback_listener.html">sbIPlaylistPlaybackListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a listener for playback notifications.  <a href="#95ad9010570e6ba35d15d3b9e146bf12"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#648e3d435e4f2724e9200e25e4867e54">removeListener</a> (in <a class="el" href="interfacesb_i_playlist_playback_listener.html">sbIPlaylistPlaybackListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a listener from playback notifications.  <a href="#648e3d435e4f2724e9200e25e4867e54"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8aa8650c33a135d9e88737139593df16"></a><!-- doxytag: member="sbIPlaylistPlayback::REPEAT_MODE_OFF" ref="8aa8650c33a135d9e88737139593df16" args="" -->
 const short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#8aa8650c33a135d9e88737139593df16">REPEAT_MODE_OFF</a> = 0</td></tr>
@@ -227,7 +233,7 @@ Defines standard media player playback functionality. This interface defines the
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00083">83</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="57b2697c1029d00279d841c57fa6dd77"></a><!-- doxytag: member="sbIPlaylistPlayback::addCore" ref="57b2697c1029d00279d841c57fa6dd77" args="(in sbICoreWrapper aCore, in boolean aSelect)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1041,6 +1047,60 @@ The text before the last '\' or '//' in the URL </dd></dl>
 
 </div>
 </div><p>
+<a class="anchor" name="95ad9010570e6ba35d15d3b9e146bf12"></a><!-- doxytag: member="sbIPlaylistPlayback::addListener" ref="95ad9010570e6ba35d15d3b9e146bf12" args="(in sbIPlaylistPlaybackListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::addListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_playback_listener.html">sbIPlaylistPlaybackListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a listener for playback notifications. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>The listener to add </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="648e3d435e4f2724e9200e25e4867e54"></a><!-- doxytag: member="sbIPlaylistPlayback::removeListener" ref="648e3d435e4f2724e9200e25e4867e54" args="(in sbIPlaylistPlaybackListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::removeListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_playback_listener.html">sbIPlaylistPlaybackListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a listener from playback notifications. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>The listener to add </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="4d5f003c140083313523b461a11e3372"></a><!-- doxytag: member="sbIPlaylistPlayback::length" ref="4d5f003c140083313523b461a11e3372" args="" -->
 <div class="memitem">
@@ -1056,7 +1116,7 @@ The text before the last '\' or '//' in the URL </dd></dl>
 <p>
 /brief The length of the current track. Reported by the core. 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00112">112</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00138">138</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="9c1b43840438ca39cf5dc7126d3b89f7"></a><!-- doxytag: member="sbIPlaylistPlayback::paused" ref="9c1b43840438ca39cf5dc7126d3b89f7" args="" -->
@@ -1074,7 +1134,7 @@ Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l
 /brief The pause state of the core. If paused, playback will continue from the current position. <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_playback.html#a9d8868c0c6ba509a9dd0b9974f7da0a" title="The playing state of the core. Seperate from pause state. A paused track is playing...">playing</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00119">119</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00145">145</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a9d8868c0c6ba509a9dd0b9974f7da0a"></a><!-- doxytag: member="sbIPlaylistPlayback::playing" ref="a9d8868c0c6ba509a9dd0b9974f7da0a" args="" -->
@@ -1094,7 +1154,7 @@ The playing state of the core. Seperate from pause state. A paused track is play
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">paused</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00127">127</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00153">153</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="e00d5a1f97614cb4c473767f38878d9a"></a><!-- doxytag: member="sbIPlaylistPlayback::repeat" ref="e00d5a1f97614cb4c473767f38878d9a" args="" -->
@@ -1116,7 +1176,7 @@ Repeat state. This has 3 possible states the are reflected in the constants.
 <a class="el" href="interfacesb_i_playlist_playback.html#23faa5a2cbbb59e2a049be8bdf546875" title="Repeat the current track (again and again and... ).">REPEAT_MODE_ONE</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00141">141</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00167">167</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="73a46bee358df63419e7f3ddf8840afe"></a><!-- doxytag: member="sbIPlaylistPlayback::currentIndex" ref="73a46bee358df63419e7f3ddf8840afe" args="" -->
@@ -1136,7 +1196,7 @@ The Index for the current track in the playback core.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The index, or -1 if not playing </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00158">158</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00184">184</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="99fc99e76b4b271e219ce90131775750"></a><!-- doxytag: member="sbIPlaylistPlayback::currentGUID" ref="99fc99e76b4b271e219ce90131775750" args="" -->
@@ -1156,7 +1216,7 @@ The GUID for the current track in the playback core.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The GUID, or blank if not playing </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00164">164</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00190">190</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="244bf5af2fe05920bb2b05aec2729749"></a><!-- doxytag: member="sbIPlaylistPlayback::currentURL" ref="244bf5af2fe05920bb2b05aec2729749" args="" -->
@@ -1176,7 +1236,7 @@ The URL for the current track in the playback core.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The URL, or blank if not playing </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00170">170</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00196">196</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="b474c491f7e8e4633843372338f65b98"></a><!-- doxytag: member="sbIPlaylistPlayback::started" ref="b474c491f7e8e4633843372338f65b98" args="" -->
@@ -1195,12 +1255,12 @@ Has playback started. This is mainly used internally. This does not check the st
 <p>
 Does this really need to be exposed through an interface? 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00178">178</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00204">204</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/playlistplayback/public/<a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:06 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:07 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseDynamicPlaylistService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="267">
+      <node id="272">
         <label>components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl</label>
         <link refid="sbILocalDatabaseDynamicPlaylistService.idl"/>
-        <childnode refid="268" relation="include">
+        <childnode refid="273" relation="include">
         </childnode>
       </node>
-      <node id="268">
+      <node id="273">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -76,6 +76,6 @@
 <codeline lineno="91"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl"/>
   </compounddef>
 </doxygen>

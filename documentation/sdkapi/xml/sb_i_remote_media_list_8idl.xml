@@ -4,27 +4,34 @@
     <compoundname>sbIRemoteMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
+    <includedby refid="sb_i_scriptable_filter_result_8idl" local="yes">components/remoteapi/public/sbIScriptableFilterResult.idl</includedby>
     <incdepgraph>
-      <node id="415">
+      <node id="420">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="416" relation="include">
+        <childnode refid="421" relation="include">
         </childnode>
       </node>
-      <node id="416">
+      <node id="421">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="417">
+      <node id="422">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="418" relation="include">
+        <childnode refid="423" relation="include">
+        </childnode>
+        <childnode refid="424" relation="include">
         </childnode>
       </node>
-      <node id="418">
+      <node id="423">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
+      </node>
+      <node id="424">
+        <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
+        <link refid="sb_i_scriptable_filter_result_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_remote_media_list" prot="public">sbIRemoteMediaList</innerclass>
@@ -44,16 +51,14 @@
   NS_IMETHOD AddListener(<ref refid="interfacesb_i_media_list_listener" kindref="compound">sbIMediaListListener</ref> *aListener, PRBool aOwnsWeak, PRUint32 aFlags, <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref> *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
   NS_IMETHOD RemoveListener(<ref refid="interfacesb_i_media_list_listener" kindref="compound">sbIMediaListListener</ref> *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;RemoveListener(aListener); } \
   NS_IMETHOD CreateView(<ref refid="interfacesb_i_media_list_view_state" kindref="compound">sbIMediaListViewState</ref> *aState, <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;CreateView(aState, _retval); } \
-  NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;BeginUpdateBatch(); } \
-  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;EndUpdateBatch(); } \
-%}</initializer>
+  NS_IMETHOD RunInBatchMode(<ref refid="interfacesb_i_media_list_batch_callback" kindref="compound">sbIMediaListBatchCallback</ref> *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to-&gt;RunInBatchMode(aCallback, aUserData); }</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="76"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="74"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -122,10 +127,9 @@
 <codeline lineno="71"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>AddListener(sbIMediaListListener<sp/>*aListener,<sp/>PRBool<sp/>aOwnsWeak,<sp/>PRUint32<sp/>aFlags,<sp/>sbIPropertyArray<sp/>*aPropertyFilter)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;AddListener(aListener,<sp/>aOwnsWeak,<sp/>aFlags,<sp/>aPropertyFilter);<sp/>}<sp/>\</highlight></codeline>
 <codeline lineno="72"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveListener(sbIMediaListListener<sp/>*aListener)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveListener(aListener);<sp/>}<sp/>\</highlight></codeline>
 <codeline lineno="73"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>CreateView(sbIMediaListViewState<sp/>*aState,<sp/>sbIMediaListView<sp/>**_retval)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;CreateView(aState,<sp/>_retval);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>BeginUpdateBatch(void)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;BeginUpdateBatch();<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>EndUpdateBatch(void)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;EndUpdateBatch();<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="76"><highlight class="preprocessor">%}</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RunInBatchMode(sbIMediaListBatchCallback<sp/>*aCallback,<sp/>nsISupports<sp/>*aUserData)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RunInBatchMode(aCallback,<sp/>aUserData);<sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl"/>
   </compounddef>
 </doxygen>

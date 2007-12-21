@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="42" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="42" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aac9d2048adde299b654a1c82736aa63" prot="public" static="no" mutable="no">
         <type>attribute double</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="43" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="43" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="43" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_15992411ea484bafa74146d6b411374ee" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="44" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="44" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="44" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1c7f90ad86e23877864d272a97a40b4ba" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long long</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="45" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="45" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="45" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1006b8d88e00ad40b77f81d1fc629caa4" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="46" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="46" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="46" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1e25e3e06cb73cd9c9b6dce667ea7e654" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="47" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="47" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="47" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_13479d1e3aa53288cbef551e1836f3a51" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="48" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="48" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1366d568a414e93286dfe03139e4bf02e" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned short</type>
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="49" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="49" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aff9e06580f103d9e18e6b392da4ed68" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long long</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="50" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="50" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1d152dc3b27854521bf9aa1b19a33f9f0" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -132,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="51" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="51" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="51" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1189b1ff340233f0bf4d16497c43e4638" prot="public" static="no" mutable="no">
         <type>readonly attribute long</type>
@@ -145,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="52" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="52" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="52" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1cc17a436412b33fd60094301af9c03c6" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -158,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="54" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="54" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="54" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1fd20eebec78801f82bbff12f91041b1b" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -171,7 +171,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="55" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="55" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aef992a4e89620a459b23c399f9a91f1" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="56" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="56" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="56" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_10dcbf76e2789d70573601812880d85d4" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -197,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="57" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="57" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="57" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="57" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -216,7 +216,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="59"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="59"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1e3cb4c980575b3647b1fcf2413502b88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="60"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1155cbf91dcc53844b305f83b1c00bab4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -242,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="61"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="61"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_simple_181338c11b8b7b72e4676d967aa5b8a44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -255,7 +255,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="62"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="62"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1ad7586306e1330ffc06246ecf499d3f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -272,7 +272,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="63"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1a999bb4deaeb7b0fd5dd344e87dae045" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -285,14 +285,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="64"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="41" bodyfile="e:/Projects/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="40" bodyend="65"/>
+    <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="41" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="40" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_g_streamer_simple_1fd20eebec78801f82bbff12f91041b1b" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>album</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1cc17a436412b33fd60094301af9c03c6" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>artist</name></member>

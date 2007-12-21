@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_playlist_playback_listener" kind="interface" prot="public">
+    <compoundname>sbIPlaylistPlaybackListener</compoundname>
+    <includes refid="sb_i_playlist_playback_8idl" local="no">sbIPlaylistPlayback.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_1e80492fbe57ece2ca318ecc7a7494d3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlaybackListener::onStop</definition>
+        <argsstring>()</argsstring>
+        <name>onStop</name>
+        <briefdescription>
+<para>Called when playback stops. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_10cb6feb91748886c00fd7cdd0ebedd9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlaybackListener::onTrackChange</definition>
+        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in unsigned long aIndex)</argsstring>
+        <name>onTrackChange</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aView</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Called when a new track starts playing. Note that this gets called even when the new track is the same as the last track played. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item of the new track </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aView</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The view that is currently being played </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the playback position in the view </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Interface that handles the tracking of playback changes. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="68"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_playback_listener_1e80492fbe57ece2ca318ecc7a7494d3e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onStop</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_10cb6feb91748886c00fd7cdd0ebedd9e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackChange</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

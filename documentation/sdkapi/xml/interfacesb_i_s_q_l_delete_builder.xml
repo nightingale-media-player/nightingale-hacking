@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="406" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="406" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="406" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="406" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,42 +24,42 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="669">
+      <node id="684">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="670" relation="public-inheritance">
+        <childnode refid="685" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="668">
+      <node id="683">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="669" relation="public-inheritance">
+        <childnode refid="684" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="670">
+      <node id="685">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="672">
+      <node id="687">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="673" relation="public-inheritance">
+        <childnode refid="688" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="671">
+      <node id="686">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="672" relation="public-inheritance">
+        <childnode refid="687" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="673">
+      <node id="688">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="402" bodyfile="e:/Projects/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="401" bodyend="407"/>
+    <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="402" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="401" bodyend="407"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_where_builder_1b04abab3d5a117e55e242a0cffce12ec" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>addCriterion</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>addJoin</name></member>

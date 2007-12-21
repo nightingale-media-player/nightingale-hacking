@@ -15,18 +15,18 @@
 <para>Determines whether or not the appendProperty method will throw on invalid input (i.e. setting a value on a property whose <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> &apos;validate&apos; method fails on that input). Defaults to true.</para><para>An example of improper usage is setting non-numeric text in a property whose parent <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> is actually <ref refid="interfacesb_i_number_property_info" kindref="compound">sbINumberPropertyInfo</ref>.</para><para>Note that this property can only be set if the implementing array is empty. Any attempt to set this property after &apos;appendProperty&apos; has been called will throw NS_ERROR_FAILURE. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="118" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="118" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="118" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_mutable_property_array_135d6d69803dc03bc2516fa4a218d6d2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIMutablePropertyArray::appendProperty</definition>
-        <argsstring>(in AString aName, in AString aValue)</argsstring>
+        <argsstring>(in AString aID, in AString aValue)</argsstring>
         <name>appendProperty</name>
         <param>
           <type>in AString</type>
-          <declname>aName</declname>
+          <declname>aID</declname>
         </param>
         <param>
           <type>in AString</type>
@@ -37,10 +37,10 @@
         <detaileddescription>
 <para>Adds a new property to the array</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aName</parametername>
+<parametername>aID</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The name of the property </para></parameterdescription>
+<para>The id of the property </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -61,7 +61,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="104"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="104"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -69,34 +69,34 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="413">
+      <node id="419">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="412">
+      <node id="418">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="413" relation="public-inheritance">
+        <childnode refid="419" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="415">
+      <node id="421">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="414">
+      <node id="420">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="415" relation="public-inheritance">
+        <childnode refid="421" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="92" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="91" bodyend="119"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="92" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="91" bodyend="119"/>
     <listofallmembers>
-      <member refid="interfacesb_i_mutable_property_array_1df84beb4b234886860067cf37e1e1423" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
+      <member refid="interfacesb_i_mutable_property_array_135d6d69803dc03bc2516fa4a218d6d2f" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyAt</name></member>
-      <member refid="interfacesb_i_property_array_1c1808e07ffeb4d37dce1b756b95f34cb" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyValue</name></member>
+      <member refid="interfacesb_i_property_array_13108dfdc08c8eb6bd8fae27d27ae910a" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyValue</name></member>
       <member refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>strict</name></member>
       <member refid="interfacesb_i_property_array_1790681817c839247a242f2cb363e050f" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>toString</name></member>
       <member refid="interfacesb_i_property_array_127fc9af3c2ff93791bab98e11ec1c3fe" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>validated</name></member>

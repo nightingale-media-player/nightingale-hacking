@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_native_window_manager" kind="interface" prot="public">
+    <compoundname>sbINativeWindowManager</compoundname>
+    <includes refid="sb_i_native_window_manager_8idl" local="no">sbINativeWindowManager.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_1636299c8aedeed68323fb94a826aca56" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_NORTH_WEST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_NORTH_WEST</name>
+        <initializer> 7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="47" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_11ee32132eea4f1b6460d05a17dfb28e5" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_NORTH</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_NORTH</name>
+        <initializer> 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="48" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_169a08fa55e3e2f7edf01627e671fc154" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_NORTH_EAST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_NORTH_EAST</name>
+        <initializer> 9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="49" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_16143b3927ce4664996fa26e163891191" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_WEST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_WEST</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="50" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_EAST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_EAST</name>
+        <initializer> 6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="51" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_1090fd34f801ecd15bc49c801758325cc" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_SOUTH_WEST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_SOUTH_WEST</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="52" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_13c187802a8ca5d790696e18f7af65309" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_SOUTH</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_SOUTH</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="53" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_17437924d4122b057b4886d21e8bf2166" prot="public" static="no" mutable="no">
+        <type>const PRInt32</type>
+        <definition>const PRInt32 sbINativeWindowManager::DIRECTION_SOUTH_EAST</definition>
+        <argsstring></argsstring>
+        <name>DIRECTION_SOUTH_EAST</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="54" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_1b9c604d877ffaadd5e138334b12e6524" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbINativeWindowManager::supportsResizeDrag</definition>
+        <argsstring></argsstring>
+        <name>supportsResizeDrag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="63" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbINativeWindowManager::supportsMinimumWindowSize</definition>
+        <argsstring></argsstring>
+        <name>supportsMinimumWindowSize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="71" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbINativeWindowManager::supportsOnTop</definition>
+        <argsstring></argsstring>
+        <name>supportsOnTop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="77" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_native_window_manager_10ac3b54f1f6e0346809237263e1c8676" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbINativeWindowManager::beginResizeDrag</definition>
+        <argsstring>(in nsISupports aWindow, in nsIDOMMouseEvent aEvent, in PRInt32 aDirection)</argsstring>
+        <name>beginResizeDrag</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in nsIDOMMouseEvent</type>
+          <declname>aEvent</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aDirection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_native_window_manager_12e3190de8684c58fd18d3e4b56065eb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbINativeWindowManager::setMinimumWindowSize</definition>
+        <argsstring>(in nsISupports aWindow, in PRInt32 aMinimumWidth, in PRInt32 aMinimumHeight)</argsstring>
+        <name>setMinimumWindowSize</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aMinimumWidth</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aMinimumHeight</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="68"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_native_window_manager_19481282cd8939eae22e623627d1512a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbINativeWindowManager::setOnTop</definition>
+        <argsstring>(in nsISupports aWindow, in boolean aOnTop)</argsstring>
+        <name>setOnTop</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aOnTop</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="74"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>interface to the operating system&apos;s window manager This Interfaces to allows JavaScript to talk to the native operating system window manager in a somewhat cross-platform way. This interface is inspired by some of the GtkWindow interface. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="45" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="44" bodyend="78"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_native_window_manager_10ac3b54f1f6e0346809237263e1c8676" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>beginResizeDrag</name></member>
+      <member refid="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_EAST</name></member>
+      <member refid="interfacesb_i_native_window_manager_11ee32132eea4f1b6460d05a17dfb28e5" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_NORTH</name></member>
+      <member refid="interfacesb_i_native_window_manager_169a08fa55e3e2f7edf01627e671fc154" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_NORTH_EAST</name></member>
+      <member refid="interfacesb_i_native_window_manager_1636299c8aedeed68323fb94a826aca56" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_NORTH_WEST</name></member>
+      <member refid="interfacesb_i_native_window_manager_13c187802a8ca5d790696e18f7af65309" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_SOUTH</name></member>
+      <member refid="interfacesb_i_native_window_manager_17437924d4122b057b4886d21e8bf2166" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_SOUTH_EAST</name></member>
+      <member refid="interfacesb_i_native_window_manager_1090fd34f801ecd15bc49c801758325cc" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_SOUTH_WEST</name></member>
+      <member refid="interfacesb_i_native_window_manager_16143b3927ce4664996fa26e163891191" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_WEST</name></member>
+      <member refid="interfacesb_i_native_window_manager_12e3190de8684c58fd18d3e4b56065eb9" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setMinimumWindowSize</name></member>
+      <member refid="interfacesb_i_native_window_manager_19481282cd8939eae22e623627d1512a5" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setOnTop</name></member>
+      <member refid="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsMinimumWindowSize</name></member>
+      <member refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsOnTop</name></member>
+      <member refid="interfacesb_i_native_window_manager_1b9c604d877ffaadd5e138334b12e6524" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsResizeDrag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

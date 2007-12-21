@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_display_pane_instantiator" kind="interface" prot="public">
+    <compoundname>sbIDisplayPaneInstantiator</compoundname>
+    <includes refid="sb_i_display_panes_8idl" local="no">sbIDisplayPanes.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_display_pane_instantiator_18b392a5a78ed6882580e271cd27f4519" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDisplayPaneInstantiator::contentGroup</definition>
+        <argsstring></argsstring>
+        <name>contentGroup</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the content group this display pane instantiator supports </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="90" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_display_pane_instantiator_1740116423b156990727d7f16a6449089" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDisplayPaneInstantiator::contentUrl</definition>
+        <argsstring></argsstring>
+        <name>contentUrl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the url of the currently displayed content </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="94" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_display_pane_instantiator_1f626deaa807cd4e844f7301606a9eeac" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDisplayPaneInstantiator::contentTitle</definition>
+        <argsstring></argsstring>
+        <name>contentTitle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the title of the currently displayed content </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="98" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_display_pane_instantiator_1cee3b9b55640e8139f8f883442092081" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDisplayPaneInstantiator::contentIcon</definition>
+        <argsstring></argsstring>
+        <name>contentIcon</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the icon of the currently displayed content </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="102" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_display_pane_instantiator_183507dfdfbdd7719fb886a3031031002" prot="public" static="no" mutable="no">
+        <type>attribute PRBool</type>
+        <definition>attribute PRBool sbIDisplayPaneInstantiator::collapsed</definition>
+        <argsstring></argsstring>
+        <name>collapsed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>collapse the pane (the user can uncollapse without loading new content) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="115" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_display_pane_instantiator_1578edd03f4fa56a6abece73d0a9b958c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneInstantiator::loadContent</definition>
+        <argsstring>(in sbIDisplayPaneContentInfo aPane)</argsstring>
+        <name>loadContent</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_display_pane_content_info" kindref="compound">sbIDisplayPaneContentInfo</ref></type>
+          <declname>aPane</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>load the given content in the instantiator </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="107"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_display_pane_instantiator_11de03230b9996779d2a7a49378f6cc25" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDisplayPaneInstantiator::hide</definition>
+        <argsstring>()</argsstring>
+        <name>hide</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>hide the pane (the user must load new content to show the pane again) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="111"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A display pane instantiator is a component that can render a display pane to the user. It is associated with a particular content group. </para>    </detaileddescription>
+    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="86" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="85" bodyend="116"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_display_pane_instantiator_183507dfdfbdd7719fb886a3031031002" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>collapsed</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_18b392a5a78ed6882580e271cd27f4519" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>contentGroup</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_1cee3b9b55640e8139f8f883442092081" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>contentIcon</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_1f626deaa807cd4e844f7301606a9eeac" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>contentTitle</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_1740116423b156990727d7f16a6449089" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>contentUrl</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_11de03230b9996779d2a7a49378f6cc25" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>hide</name></member>
+      <member refid="interfacesb_i_display_pane_instantiator_1578edd03f4fa56a6abece73d0a9b958c" prot="public" virt="non-virtual"><scope>sbIDisplayPaneInstantiator</scope><name>loadContent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

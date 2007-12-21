@@ -56,6 +56,6 @@
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateDevices();</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/devices/manager/public/sbIDeviceManager.idl"/>
+    <location file="z:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl"/>
   </compounddef>
 </doxygen>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_9734beb7a269be8f760b8c622c035529" kind="dir">
+    <compoundname>components/integration/public/</compoundname>
+    <innerfile refid="_i_global_hotkeys_8idl">IGlobalHotkeys.idl</innerfile>
+    <innerfile refid="_i_window_cloak_8idl">IWindowCloak.idl</innerfile>
+    <innerfile refid="_i_window_dragger_8idl">IWindowDragger.idl</innerfile>
+    <innerfile refid="_i_window_layer_8idl">IWindowLayer.idl</innerfile>
+    <innerfile refid="_i_window_min_max_8idl">IWindowMinMax.idl</innerfile>
+    <innerfile refid="_i_window_region_8idl">IWindowRegion.idl</innerfile>
+    <innerfile refid="_i_window_resize_hook_8idl">IWindowResizeHook.idl</innerfile>
+    <innerfile refid="sb_i_hotkey_actions_8idl">sbIHotkeyActions.idl</innerfile>
+    <innerfile refid="sb_i_native_window_manager_8idl">sbINativeWindowManager.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/integration/public/"/>
+  </compounddef>
+</doxygen>

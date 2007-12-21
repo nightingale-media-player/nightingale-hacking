@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_8396492468d503e1945e71373a8a160e" kind="dir">
+    <compoundname>components/devices/marshall/</compoundname>
+    <innerdir refid="dir_3acda5baf7cd47305a08390e772fb3b5">components/devices/marshall/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/devices/marshall/"/>
+  </compounddef>
+</doxygen>

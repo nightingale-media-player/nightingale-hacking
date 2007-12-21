@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="44"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteAPIService.idl" line="44"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_a_p_i_service_1b30cfb1304be793313740d524f92ed74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIURI</type>
@@ -53,14 +53,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="51"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteAPIService.idl" line="51"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" line="38" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl" bodystart="38" bodyend="52"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteAPIService.idl" line="38" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteAPIService.idl" bodystart="38" bodyend="52"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_a_p_i_service_11344a5a945e0416a926cc5bdb249db72" prot="public" virt="non-virtual"><scope>sbIRemoteAPIService</scope><name>hasPlaybackControl</name></member>
       <member refid="interfacesb_i_remote_a_p_i_service_1b30cfb1304be793313740d524f92ed74" prot="public" virt="non-virtual"><scope>sbIRemoteAPIService</scope><name>takePlaybackControl</name></member>

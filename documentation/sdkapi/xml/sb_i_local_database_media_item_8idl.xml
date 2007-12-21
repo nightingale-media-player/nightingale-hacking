@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseMediaItem.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="277">
+      <node id="282">
         <label>components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl</label>
         <link refid="sbILocalDatabaseMediaItem.idl"/>
-        <childnode refid="278" relation="include">
+        <childnode refid="283" relation="include">
         </childnode>
       </node>
-      <node id="278">
+      <node id="283">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -58,6 +58,6 @@
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl"/>
   </compounddef>
 </doxygen>

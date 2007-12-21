@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_d5b503d062ffaaa005ff66ad64dd054c" kind="dir">
+    <compoundname>components/remoteapi/public/</compoundname>
+    <innerfile refid="sb_i_remote_a_p_i_service_8idl">sbIRemoteAPIService.idl</innerfile>
+    <innerfile refid="sb_i_remote_commands_8idl">sbIRemoteCommands.idl</innerfile>
+    <innerfile refid="sb_i_remote_library_8idl">sbIRemoteLibrary.idl</innerfile>
+    <innerfile refid="sb_i_remote_media_list_8idl">sbIRemoteMediaList.idl</innerfile>
+    <innerfile refid="sb_i_remote_player_8idl">sbIRemotePlayer.idl</innerfile>
+    <innerfile refid="sb_i_remote_player_factory_8idl">sbIRemotePlayerFactory.idl</innerfile>
+    <innerfile refid="sb_i_remote_security_event_8idl">sbIRemoteSecurityEvent.idl</innerfile>
+    <innerfile refid="sb_i_remote_web_playlist_8idl">sbIRemoteWebPlaylist.idl</innerfile>
+    <innerfile refid="sb_i_scriptable_filter_result_8idl">sbIScriptableFilterResult.idl</innerfile>
+    <innerfile refid="sb_i_security_aggregator_8idl">sbISecurityAggregator.idl</innerfile>
+    <innerfile refid="sb_i_security_mixin_8idl">sbISecurityMixin.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/remoteapi/public/"/>
+  </compounddef>
+</doxygen>

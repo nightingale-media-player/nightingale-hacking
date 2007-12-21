@@ -4,13 +4,13 @@
     <compoundname>sbIServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="442">
+      <node id="455">
         <label>components/servicepane/public/sbIServicePaneService.idl</label>
         <link refid="sbIServicePaneService.idl"/>
-        <childnode refid="443" relation="include">
+        <childnode refid="456" relation="include">
         </childnode>
       </node>
-      <node id="443">
+      <node id="456">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -101,7 +101,7 @@
 <codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>uri<sp/>of<sp/>a<sp/>stringbundle<sp/>to<sp/>use<sp/>to<sp/>translate<sp/>the<sp/>properties<sp/>of<sp/>this<sp/>node<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="86" refid="interfacesb_i_service_pane_node_15d40c54817e8f6d6e7f7b0eadb6d05c2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>stringbundle;</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>space<sp/>separated<sp/>list<sp/>of<sp/>property<sp/>names,<sp/>used<sp/>to<sp/>style<sp/>the<sp/>tree<sp/>cell<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>space<sp/>separated<sp/>list<sp/>of<sp/>property<sp/>IDs,<sp/>used<sp/>to<sp/>style<sp/>the<sp/>tree<sp/>cell<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="89" refid="interfacesb_i_service_pane_node_12021da1b35b2a732e556f8bde6613c8f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>properties;</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
 <codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight></codeline>
@@ -309,6 +309,6 @@
 <codeline lineno="332"><highlight class="normal"></highlight></codeline>
 <codeline lineno="333"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl"/>
+    <location file="z:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl"/>
   </compounddef>
 </doxygen>

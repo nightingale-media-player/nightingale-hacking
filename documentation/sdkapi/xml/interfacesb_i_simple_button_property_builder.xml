@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="70" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="70" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="70" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="72" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="72" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="72" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="72" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -38,37 +38,37 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="622">
+      <node id="637">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="621">
+      <node id="636">
         <label>sbISimpleButtonPropertyBuilder</label>
         <link refid="interfacesb_i_simple_button_property_builder"/>
-        <childnode refid="622" relation="public-inheritance">
+        <childnode refid="637" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="624">
+      <node id="639">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="623">
+      <node id="638">
         <label>sbISimpleButtonPropertyBuilder</label>
         <link refid="interfacesb_i_simple_button_property_builder"/>
-        <childnode refid="624" relation="public-inheritance">
+        <childnode refid="639" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="69" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="68" bodyend="73"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="69" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="68" bodyend="73"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>displayNameKey</name></member>
       <member refid="interfacesb_i_property_builder_1453d24d114bb5d2a8950fdb9246cd228" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>get</name></member>
       <member refid="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>label</name></member>
       <member refid="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>labelKey</name></member>
-      <member refid="interfacesb_i_property_builder_13dd9f8aece6be4d22dd08990d5856189" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>propertyName</name></member>
+      <member refid="interfacesb_i_property_builder_1bdc8752e28f39e553eca2d130126b112" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>propertyID</name></member>
       <member refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>remoteReadable</name></member>
       <member refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>remoteWritable</name></member>
       <member refid="interfacesb_i_property_builder_187c7d838c9a0f42969961d23235ea9bc" prot="public" virt="non-virtual"><scope>sbISimpleButtonPropertyBuilder</scope><name>userEditable</name></member>

@@ -4,13 +4,13 @@
     <compoundname>sbIMediaTranscoder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="349">
+      <node id="354">
         <label>components/mediacore/transcoding/public/sbIMediaTranscoder.idl</label>
         <link refid="sbIMediaTranscoder.idl"/>
-        <childnode refid="350" relation="include">
+        <childnode refid="355" relation="include">
         </childnode>
       </node>
-      <node id="350">
+      <node id="355">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -126,6 +126,6 @@
 <codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(nOutputCount),<sp/>retval]<sp/>out<sp/><ref refid="interfacesb_i_media_type" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3] An object to represent a requested or supported set...">sbIMediaType</ref><sp/>aOutputTypes);</highlight></codeline>
 <codeline lineno="299"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/transcoding/public/sbIMediaTranscoder.idl"/>
+    <location file="z:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl"/>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIStateDatastore.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="448">
+      <node id="461">
         <label>components/state/public/sbIStateDatastore.idl</label>
         <link refid="sbIStateDatastore.idl"/>
-        <childnode refid="449" relation="include">
+        <childnode refid="462" relation="include">
         </childnode>
       </node>
-      <node id="449">
+      <node id="462">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -69,6 +69,6 @@
 <codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>save(in<sp/><ref refid="interfacesb_i_state_object" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIStateObject</ref><sp/>aStateObject,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aCreateStorage);</highlight></codeline>
 <codeline lineno="97"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/state/public/sbIStateDatastore.idl"/>
+    <location file="z:/projects/songbird/components/state/public/sbIStateDatastore.idl"/>
   </compounddef>
 </doxygen>

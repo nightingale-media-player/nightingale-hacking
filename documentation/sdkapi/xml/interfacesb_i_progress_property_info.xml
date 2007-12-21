@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="439" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="439" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="439" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="439" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,59 +25,59 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="530">
+      <node id="540">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="528">
+      <node id="538">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="529" relation="public-inheritance">
+        <childnode refid="539" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="529">
+      <node id="539">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="530" relation="public-inheritance">
+        <childnode refid="540" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="533">
+      <node id="543">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="534" relation="usage">
+        <childnode refid="544" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="534">
+      <node id="544">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="531">
+      <node id="541">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="532" relation="public-inheritance">
+        <childnode refid="542" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="532">
+      <node id="542">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="533" relation="public-inheritance">
+        <childnode refid="543" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="435" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="434" bodyend="440"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="435" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="434" bodyend="440"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>enforceLowercase</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>format</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>getOperator</name></member>
+      <member refid="interfacesb_i_property_info_161817d7ea202ecab4269758576035d40" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>id</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_text_property_info_1a8d381037c32b9ea8dcd0e298c821d3b" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>maxLength</name></member>
       <member refid="interfacesb_i_text_property_info_12486d1062478616860e797aa705863e9" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>minLength</name></member>
       <member refid="interfacesb_i_progress_property_info_197dae25ee82d9f86bb210e4459612c50" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>modePropertyName</name></member>
-      <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>name</name></member>
       <member refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>nullSort</name></member>
       <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>OPERATOR_BEGINSWITH</name></member>
       <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>OPERATOR_BETWEEN</name></member>

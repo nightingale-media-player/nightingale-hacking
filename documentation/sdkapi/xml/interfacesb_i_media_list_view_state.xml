@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="51"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="53"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -23,7 +23,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="50" bodyfile="e:/Projects/songbird/trunk/components/library/base/public/sbIMediaListView.idl" bodystart="49" bodyend="52"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="52" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" bodystart="51" bodyend="54"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_state_16373a76055896e01599585ca03d483b2" prot="public" virt="non-virtual"><scope>sbIMediaListViewState</scope><name>toString</name></member>
     </listofallmembers>

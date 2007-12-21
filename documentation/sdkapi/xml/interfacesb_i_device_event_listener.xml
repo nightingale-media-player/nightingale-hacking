@@ -19,14 +19,14 @@
 <para>aEvent - information about the event </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" line="43"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="43"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
 <para>Used to listen to events on a particular device, controller, etc. </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" line="39" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" bodystart="38" bodyend="44"/>
+    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="39" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" bodystart="38" bodyend="44"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_event_listener_1ea708f23bf95c1db68ffe08c686d4a66" prot="public" virt="non-virtual"><scope>sbIDeviceEventListener</scope><name>onDeviceEvent</name></member>
     </listofallmembers>

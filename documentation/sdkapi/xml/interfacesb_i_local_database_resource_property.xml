@@ -24,7 +24,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -32,18 +32,6 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="278">
-        <label>sbILocalDatabaseResourceProperty</label>
-        <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="279" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="279">
-        <label>sbILibraryResource</label>
-        <link refid="interfacesb_i_library_resource"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="280">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
@@ -54,18 +42,30 @@
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="282">
+        <label>sbILocalDatabaseResourceProperty</label>
+        <link refid="interfacesb_i_local_database_resource_property"/>
+        <childnode refid="283" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="283">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="e:/Projects/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>created</name></member>
       <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>equals</name></member>
-      <member refid="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>getProperties</name></member>
-      <member refid="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_library_resource_191201a282a4020651d75455f2bbc963e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>getProperties</name></member>
+      <member refid="interfacesb_i_library_resource_188a79d69e6ad049697c4b54d69aa98e5" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>getProperty</name></member>
       <member refid="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>guid</name></member>
       <member refid="interfacesb_i_local_database_resource_property_16b3d4a5d5c96ea2e2a1b69f966261aca" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>initResourceProperty</name></member>
-      <member refid="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>propertyNames</name></member>
+      <member refid="interfacesb_i_library_resource_160d843bb58c9afaf665dd40ff16246d3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>propertyIDs</name></member>
       <member refid="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperties</name></member>
-      <member refid="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_library_resource_17d26996d427fa332307d53a124f0fc46" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperty</name></member>
       <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>updated</name></member>
     </listofallmembers>
   </compounddef>

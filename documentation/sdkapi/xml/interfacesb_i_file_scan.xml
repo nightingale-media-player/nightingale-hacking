@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="273"/>
+        <location file="z:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="273"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -76,7 +76,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="285"/>
+        <location file="z:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="285"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -84,7 +84,7 @@
     <detaileddescription>
 <para>Create a <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> object, fill out its methods, create one of these and pass the query to the scanner to begin executing.</para><para>Optionally, you may skip the use of a <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> object and just handle the scan directly by calling <ref refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" kindref="member">scanDirectory()</ref> with your own <ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref> object.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" line="266" bodyfile="e:/Projects/songbird/trunk/components/filescan/public/sbIFileScan.idl" bodystart="265" bodyend="286"/>
+    <location file="z:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="266" bodyfile="z:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="265" bodyend="286"/>
     <listofallmembers>
       <member refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" prot="public" virt="non-virtual"><scope>sbIFileScan</scope><name>scanDirectory</name></member>
       <member refid="interfacesb_i_file_scan_1d749e2c0ee0fff195512b52ab6f48b1a" prot="public" virt="non-virtual"><scope>sbIFileScan</scope><name>submitQuery</name></member>

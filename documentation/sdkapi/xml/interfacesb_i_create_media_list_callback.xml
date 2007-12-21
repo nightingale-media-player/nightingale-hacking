@@ -18,14 +18,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="43"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="43"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="41" bodyend="44"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="42" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="41" bodyend="44"/>
     <listofallmembers>
       <member refid="interfacesb_i_create_media_list_callback_17189d87fd56f5b5faa279c686385619b" prot="public" virt="non-virtual"><scope>sbICreateMediaListCallback</scope><name>onCreated</name></member>
     </listofallmembers>

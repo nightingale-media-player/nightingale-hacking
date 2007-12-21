@@ -80,12 +80,12 @@
 <a href="interfacesb_i_local_database_resource_property_bag-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#3f95e76eefcccc100437e94487d108f9">getProperty</a> (in AString aName)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#87e6231d64745bc6c6181a2291aa11e0">getProperty</a> (in AString aPropertyID)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a property value by key.  <a href="#3f95e76eefcccc100437e94487d108f9"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#15c5ea352747ee99d64e28cbccaf595b">getPropertyByID</a> (in unsigned long aPropertyID)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a property value by key.  <a href="#87e6231d64745bc6c6181a2291aa11e0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#1c73e40dfe593bac4921653772991bcc">getPropertyByID</a> (in unsigned long aPropertyDBID)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a property value by property id.  <a href="#15c5ea352747ee99d64e28cbccaf595b"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a property value by property database id.  <a href="#1c73e40dfe593bac4921653772991bcc"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="33793561e76ad9d5c9b03b514e454f14"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::guid" ref="33793561e76ad9d5c9b03b514e454f14" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#33793561e76ad9d5c9b03b514e454f14">guid</a></td></tr>
@@ -93,8 +93,8 @@ readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="69c4fa6781b7499968bf22cd70e097f8"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::writePending" ref="69c4fa6781b7499968bf22cd70e097f8" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#69c4fa6781b7499968bf22cd70e097f8">writePending</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8272561f9018120e0f250195e48d2acd"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::names" ref="8272561f9018120e0f250195e48d2acd" args="" -->
-readonly attribute nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#8272561f9018120e0f250195e48d2acd">names</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2df5fedc711da4891e1b905704029c17"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::ids" ref="2df5fedc711da4891e1b905704029c17" args="" -->
+readonly attribute nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_resource_property_bag.html#2df5fedc711da4891e1b905704029c17">ids</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -103,7 +103,7 @@ readonly attribute nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign
 
 <p>
 Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-source.html#l00073">73</a> of file <a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="3f95e76eefcccc100437e94487d108f9"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::getProperty" ref="3f95e76eefcccc100437e94487d108f9" args="(in AString aName)" -->
+<a class="anchor" name="87e6231d64745bc6c6181a2291aa11e0"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::getProperty" ref="87e6231d64745bc6c6181a2291aa11e0" args="(in AString aPropertyID)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -111,7 +111,7 @@ Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-s
           <td class="memname">AString sbILocalDatabaseResourcePropertyBag::getProperty           </td>
           <td>(</td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aName</em>          </td>
+          <td class="paramname"> <em>aPropertyID</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
         </tr>
@@ -125,7 +125,7 @@ Returns a property value by key.
 This method will *never* throw. If a value doesn't exist it will return a special "void" string that behaves just like an empty string except that the IsVoid() method will return PR_TRUE for those who care. 
 </div>
 </div><p>
-<a class="anchor" name="15c5ea352747ee99d64e28cbccaf595b"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::getPropertyByID" ref="15c5ea352747ee99d64e28cbccaf595b" args="(in unsigned long aPropertyID)" -->
+<a class="anchor" name="1c73e40dfe593bac4921653772991bcc"></a><!-- doxytag: member="sbILocalDatabaseResourcePropertyBag::getPropertyByID" ref="1c73e40dfe593bac4921653772991bcc" args="(in unsigned long aPropertyDBID)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -133,7 +133,7 @@ This method will *never* throw. If a value doesn't exist it will return a specia
           <td class="memname">AString sbILocalDatabaseResourcePropertyBag::getPropertyByID           </td>
           <td>(</td>
           <td class="paramtype">in unsigned long&nbsp;</td>
-          <td class="paramname"> <em>aPropertyID</em>          </td>
+          <td class="paramname"> <em>aPropertyDBID</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
         </tr>
@@ -142,14 +142,14 @@ This method will *never* throw. If a value doesn't exist it will return a specia
 <div class="memdoc">
 
 <p>
-Returns a property value by property id. 
+Returns a property value by property database id. 
 <p>
 This method will *never* throw. If a value doesn't exist it will return a special "void" string that behaves just like an empty string except that the IsVoid() method will return PR_TRUE for those who care. 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/localdatabase/public/<a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:04 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

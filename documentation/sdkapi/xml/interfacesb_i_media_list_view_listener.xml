@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_media_list_view_listener" kind="interface" prot="public">
+    <compoundname>sbIMediaListViewListener</compoundname>
+    <includes refid="sb_i_media_list_view_8idl" local="no">sbIMediaListView.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_list_view_listener_19a2f7f9b748fbf98ee855a7763e6a2cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListViewListener::onFilterChanged</definition>
+        <argsstring>(in sbIMediaListView aChangedView)</argsstring>
+        <name>onFilterChanged</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aChangedView</declname>
+        </param>
+        <briefdescription>
+<para>Called when the view&apos;s filter configuration changes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="68"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_view_listener_1023a82eff0c7437e46e0a007fada0867" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListViewListener::onSearchChanged</definition>
+        <argsstring>(in sbIMediaListView aChangedView)</argsstring>
+        <name>onSearchChanged</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aChangedView</declname>
+        </param>
+        <briefdescription>
+<para>Called when the view&apos;s search changes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="73"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_view_listener_162850bd17c6f7b8a548f3eae828d2292" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListViewListener::onSortChanged</definition>
+        <argsstring>(in sbIMediaListView aChangedView)</argsstring>
+        <name>onSortChanged</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aChangedView</declname>
+        </param>
+        <briefdescription>
+<para>Called when the view&apos;s sort configuration changes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="78"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Saved state of a media list view. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="64" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" bodystart="63" bodyend="79"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_list_view_listener_19a2f7f9b748fbf98ee855a7763e6a2cc" prot="public" virt="non-virtual"><scope>sbIMediaListViewListener</scope><name>onFilterChanged</name></member>
+      <member refid="interfacesb_i_media_list_view_listener_1023a82eff0c7437e46e0a007fada0867" prot="public" virt="non-virtual"><scope>sbIMediaListViewListener</scope><name>onSearchChanged</name></member>
+      <member refid="interfacesb_i_media_list_view_listener_162850bd17c6f7b8a548f3eae828d2292" prot="public" virt="non-virtual"><scope>sbIMediaListViewListener</scope><name>onSortChanged</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

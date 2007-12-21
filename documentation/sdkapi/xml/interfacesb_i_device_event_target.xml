@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventTarget.idl" line="42"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventTarget.idl" line="42"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_event_target_10b98a373909bd311cacb6ec831011062" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventTarget.idl" line="47"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventTarget.idl" line="47"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_event_target_194b22f4f570ec97a251dd31a1f44759d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,14 +53,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventTarget.idl" line="52"/>
+        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventTarget.idl" line="52"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventTarget.idl" line="38" bodyfile="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceEventTarget.idl" bodystart="37" bodyend="53"/>
+    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventTarget.idl" line="38" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceEventTarget.idl" bodystart="37" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_event_target_10b98a373909bd311cacb6ec831011062" prot="public" virt="non-virtual"><scope>sbIDeviceEventTarget</scope><name>addEventListener</name></member>
       <member refid="interfacesb_i_device_event_target_161906f01748750ae12cdd417f0a45939" prot="public" virt="non-virtual"><scope>sbIDeviceEventTarget</scope><name>dispatchEvent</name></member>

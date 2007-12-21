@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteAPIService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="405">
+      <node id="410">
         <label>components/remoteapi/public/sbIRemoteAPIService.idl</label>
         <link refid="sbIRemoteAPIService.idl"/>
-        <childnode refid="406" relation="include">
+        <childnode refid="411" relation="include">
         </childnode>
       </node>
-      <node id="406">
+      <node id="411">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -58,6 +58,6 @@
 <codeline lineno="52"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteAPIService.idl"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteAPIService.idl"/>
   </compounddef>
 </doxygen>

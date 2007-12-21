@@ -4,13 +4,13 @@
     <compoundname>sbIDndSourceTracker.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="127">
+      <node id="130">
         <label>components/draganddrop/public/sbIDndSourceTracker.idl</label>
         <link refid="sbIDndSourceTracker.idl"/>
-        <childnode refid="128" relation="include">
+        <childnode refid="131" relation="include">
         </childnode>
       </node>
-      <node id="128">
+      <node id="131">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -64,6 +64,6 @@
 <codeline lineno="69"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/draganddrop/public/sbIDndSourceTracker.idl"/>
+    <location file="z:/projects/songbird/components/draganddrop/public/sbIDndSourceTracker.idl"/>
   </compounddef>
 </doxygen>

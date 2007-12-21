@@ -4,13 +4,13 @@
     <compoundname>sbIFilterableMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="181">
+      <node id="188">
         <label>components/library/base/public/sbIFilterableMediaListView.idl</label>
         <link refid="sbIFilterableMediaListView.idl"/>
-        <childnode refid="182" relation="include">
+        <childnode refid="189" relation="include">
         </childnode>
       </node>
-      <node id="182">
+      <node id="189">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,28 +49,15 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(b776a7a8-6569-43a0-b7ed-ad7a804e8e64)]</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_filterable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_filterable_media_list_view" kindref="compound" tooltip="Control the filter settings on a media list.">sbIFilterableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="54" refid="interfacesb_i_filterable_media_list_view_1a9fbb56baedc4984085c58a1a38116d5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>filterableProperties;</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getFilterValues(in<sp/>AString<sp/>aPropertyName);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68" refid="interfacesb_i_filterable_media_list_view_12a577dfb25b178ea6c1a24255f78e8d5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>currentFilter;</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setFilters(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyArray);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateFilters(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyArray);</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeFilters(in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyArray);</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearFilters();</highlight></codeline>
-<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(79d48f19-3d80-4c23-b89d-de6438abad4c)]</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_filterable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_filterable_media_list_view" kindref="compound" tooltip="Control the filter settings on a media list.">sbIFilterableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_filterable_media_list_view_1fd564c7b97bd95b32357a673859fc655" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>filterConstraint;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/library/base/public/sbIFilterableMediaListView.idl"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbIFilterableMediaListView.idl"/>
   </compounddef>
 </doxygen>

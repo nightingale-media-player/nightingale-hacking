@@ -4,14 +4,14 @@
     <compoundname>sbIDeviceCompatibility.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="59">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="58">
         <label>components/devices/base/public/sbIDeviceCompatibility.idl</label>
         <link refid="sbIDeviceCompatibility.idl"/>
         <childnode refid="59" relation="include">
         </childnode>
-      </node>
-      <node id="59">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_compatibility" prot="public">sbIDeviceCompatibility</innerclass>
@@ -65,6 +65,6 @@
 <codeline lineno="59" refid="interfacesb_i_device_compatibility_1cb7c8a31e751e62262ea348c4563f0c0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>userPreference;</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/devices/base/public/sbIDeviceCompatibility.idl"/>
+    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCompatibility.idl"/>
   </compounddef>
 </doxygen>

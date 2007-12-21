@@ -4,13 +4,13 @@
     <compoundname>sbIMetadataUtils.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="334">
+      <node id="339">
         <label>components/mediacore/metadata/manager/public/sbIMetadataUtils.idl</label>
         <link refid="sbIMetadataUtils.idl"/>
-        <childnode refid="335" relation="include">
+        <childnode refid="340" relation="include">
         </childnode>
       </node>
-      <node id="335">
+      <node id="340">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,6 +55,6 @@
 <codeline lineno="36"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl"/>
   </compounddef>
 </doxygen>

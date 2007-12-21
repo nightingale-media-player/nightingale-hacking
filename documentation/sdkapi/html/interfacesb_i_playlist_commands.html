@@ -163,7 +163,7 @@
 An interface that represents the set of command buttons and context menu items available on a displayed playlist. 
 <p>
 This interface is meant to be implemented by user code.<p>
-Implementors that create their own specific database libraries and playlists (eg: <a class="el" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object's purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.<p>
+Implementors that create their own specific database libraries and playlists (eg: <a class="el" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>) may also specify a commands object to be shown when the tables are displayed in a &lt;sb-playlist&gt; element. This object's purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.<p>
 These objects ought to be created in javascript. When a new playlist is created, it will query <a class="el" href="interfacesb_i_playlist_commands_manager.html" title="The service used to register, unregister, and list playlist commands for a particular...">sbIPlaylistCommandsManager</a> for command objects, and the playlist source will call <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate()</a> on the objects it has stored and return the newly duplicated objects.<p>
 See documentation on <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate()</a> for more information.<p>
 <dl class="see" compact><dt><b>See also:</b></dt><dd>playlist.xml, sbLibraryPage.xul, <a class="el" href="interfacesb_i_playlist_commands.html#51cc0b067c69415f31b861762528cb55" title="Duplicate the command object.">duplicate</a> </dd></dl>
@@ -1227,7 +1227,7 @@ When a command instantiator is done with a command object, it calls its shutdown
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/playlistcommands/public/<a class="el" href="sb_i_playlist_commands_8idl-source.html">sbIPlaylistCommands.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:07 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

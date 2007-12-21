@@ -68,25 +68,25 @@
 <h1>components/devicesobsolete/download/public/sbIDownloadDevice.idl</h1><a href="sb_i_download_device_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
-<a name="l00004"></a>00004 <span class="comment">// </span>
+<a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
 <a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
-<a name="l00009"></a>00009 <span class="comment">// </span>
+<a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
 <a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the "GPL").</span>
-<a name="l00012"></a>00012 <span class="comment">// </span>
-<a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed </span>
-<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either </span>
-<a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language </span>
+<a name="l00012"></a>00012 <span class="comment">//</span>
+<a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed</span>
+<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either</span>
+<a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language</span>
 <a name="l00016"></a>00016 <span class="comment">// governing rights and limitations.</span>
 <a name="l00017"></a>00017 <span class="comment">//</span>
-<a name="l00018"></a>00018 <span class="comment">// You should have received a copy of the GPL along with this </span>
+<a name="l00018"></a>00018 <span class="comment">// You should have received a copy of the GPL along with this</span>
 <a name="l00019"></a>00019 <span class="comment">// program. If not, go to http://www.gnu.org/licenses/gpl.html</span>
-<a name="l00020"></a>00020 <span class="comment">// or write to the Free Software Foundation, Inc., </span>
+<a name="l00020"></a>00020 <span class="comment">// or write to the Free Software Foundation, Inc.,</span>
 <a name="l00021"></a>00021 <span class="comment">// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</span>
-<a name="l00022"></a>00022 <span class="comment">// </span>
+<a name="l00022"></a>00022 <span class="comment">//</span>
 <a name="l00023"></a>00023 <span class="comment">// END SONGBIRD GPL</span>
 <a name="l00024"></a>00024 <span class="comment">//</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
@@ -96,31 +96,33 @@
 <a name="l00035"></a>00035 
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
-<a name="l00038"></a>00038 interface nsISimpleEnumerator;
-<a name="l00039"></a>00039 
-<a name="l00049"></a>00049 [scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
-<a name="l00050"></a><a class="code" href="interfacesb_i_download_device.html">00050</a> interface <a class="code" href="interfacesb_i_download_device.html" title="Songbird DownloadDevice Interface.">sbIDownloadDevice</a> : <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>
-<a name="l00051"></a>00051 {
-<a name="l00055"></a><a class="code" href="interfacesb_i_download_device.html#c0735875642e9ce9ced23209641da2df">00055</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> downloadMediaList;
-<a name="l00056"></a>00056 
-<a name="l00060"></a><a class="code" href="interfacesb_i_download_device.html#d366c873bd3ea46b61cb5526febfd331">00060</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> completedItemCount;
-<a name="l00061"></a>00061 
-<a name="l00065"></a>00065   <span class="keywordtype">void</span> clearCompletedItems();
-<a name="l00066"></a>00066 };
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068 [scriptable, uuid(91196a23-03d4-4dd0-bd8e-09e66a1cb854)]
-<a name="l00069"></a><a class="code" href="interfacesb_i_download_device_helper.html">00069</a> interface <a class="code" href="interfacesb_i_download_device_helper.html">sbIDownloadDeviceHelper</a> : nsISupports
-<a name="l00070"></a>00070 {
-<a name="l00071"></a><a class="code" href="interfacesb_i_download_device_helper.html#783b4967e880d3a27a30fbde951b0ce9">00071</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> downloadMediaList;
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073   <span class="keywordtype">void</span> downloadItem(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00074"></a>00074 
-<a name="l00075"></a>00075   <span class="keywordtype">void</span> downloadSome(in nsISimpleEnumerator aMediaItems);
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077   <span class="keywordtype">void</span> downloadAll(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00078"></a>00078 };
+<a name="l00038"></a>00038 interface nsIFile;
+<a name="l00039"></a>00039 interface nsISimpleEnumerator;
+<a name="l00040"></a>00040 
+<a name="l00050"></a>00050 [scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
+<a name="l00051"></a><a class="code" href="interfacesb_i_download_device.html">00051</a> interface <a class="code" href="interfacesb_i_download_device.html" title="Songbird DownloadDevice Interface.">sbIDownloadDevice</a> : <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>
+<a name="l00052"></a>00052 {
+<a name="l00056"></a><a class="code" href="interfacesb_i_download_device.html#c0735875642e9ce9ced23209641da2df">00056</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> downloadMediaList;
+<a name="l00057"></a>00057 
+<a name="l00061"></a><a class="code" href="interfacesb_i_download_device.html#d366c873bd3ea46b61cb5526febfd331">00061</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> completedItemCount;
+<a name="l00062"></a>00062 
+<a name="l00066"></a>00066   <span class="keywordtype">void</span> clearCompletedItems();
+<a name="l00067"></a>00067 };
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 [scriptable, uuid(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
+<a name="l00070"></a><a class="code" href="interfacesb_i_download_device_helper.html">00070</a> interface <a class="code" href="interfacesb_i_download_device_helper.html">sbIDownloadDeviceHelper</a> : nsISupports
+<a name="l00071"></a>00071 {
+<a name="l00076"></a>00076   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> getDownloadMediaList();
+<a name="l00077"></a>00077   nsIFile getDownloadFolder();
+<a name="l00078"></a>00078   nsIFile getDefaultMusicFolder();
 <a name="l00079"></a>00079 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:20:59 2007 for Songbird by&nbsp;
+<a name="l00080"></a>00080   <span class="keywordtype">void</span> downloadItem(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082   <span class="keywordtype">void</span> downloadSome(in nsISimpleEnumerator aMediaItems);
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084   <span class="keywordtype">void</span> downloadAll(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00085"></a>00085 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

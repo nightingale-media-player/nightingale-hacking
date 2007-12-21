@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_library_constraint_group" kind="interface" prot="public">
+    <compoundname>sbILibraryConstraintGroup</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_constraint_group_1ba5f537b2daba23601c5b8abbdc093b0" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbILibraryConstraintGroup::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="105" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_constraint_group_15bdd16c6646dd31a5f899de13980b054" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbILibraryConstraintGroup::getValues</definition>
+        <argsstring>(in AString aProperty)</argsstring>
+        <name>getValues</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="106"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_group_1b4cecd122bf246ab820f4691eb1539df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbILibraryConstraintGroup::hasProperty</definition>
+        <argsstring>(in AString aProperty)</argsstring>
+        <name>hasProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="107"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_group_1392da5e639885728adc6a00f74eb83d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbILibraryConstraintGroup::equals</definition>
+        <argsstring>(in sbILibraryConstraintGroup aOtherGroup)</argsstring>
+        <name>equals</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_constraint_group" kindref="compound">sbILibraryConstraintGroup</ref></type>
+          <declname>aOtherGroup</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="108"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_constraint_group_1886522f8a2daa5aab0b794da37f1e44d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibraryConstraintGroup::toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" line="104" bodyfile="z:/projects/songbird/components/library/base/public/sbILibraryConstraints.idl" bodystart="103" bodyend="110"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_constraint_group_1392da5e639885728adc6a00f74eb83d7" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>equals</name></member>
+      <member refid="interfacesb_i_library_constraint_group_15bdd16c6646dd31a5f899de13980b054" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>getValues</name></member>
+      <member refid="interfacesb_i_library_constraint_group_1b4cecd122bf246ab820f4691eb1539df" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>hasProperty</name></member>
+      <member refid="interfacesb_i_library_constraint_group_1ba5f537b2daba23601c5b8abbdc093b0" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>properties</name></member>
+      <member refid="interfacesb_i_library_constraint_group_1886522f8a2daa5aab0b794da37f1e44d" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

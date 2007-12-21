@@ -87,8 +87,8 @@
 <a href="interfacesb_i_local_database_smart_media_list-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0db240cb4584ab9312efde2333619973"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::appendCondition" ref="0db240cb4584ab9312efde2333619973" args="(in AString aPropertyName, in sbIPropertyOperator aOperator, in AString aLeftValue, in AString aRightValue, in boolean limit)" -->
-<a class="el" href="interfacesb_i_local_database_smart_media_list_condition.html">sbILocalDatabaseSmartMediaListCondition</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#0db240cb4584ab9312efde2333619973">appendCondition</a> (in AString aPropertyName, in <a class="el" href="interfacesb_i_property_operator.html">sbIPropertyOperator</a> aOperator, in AString aLeftValue, in AString aRightValue, in boolean <a class="el" href="interfacesb_i_local_database_smart_media_list.html#7fd3a362c93b122e43ab9dc5c50f5ec0">limit</a>)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5acf1843072c2b5dfcff43351bcf840e"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::appendCondition" ref="5acf1843072c2b5dfcff43351bcf840e" args="(in AString aPropertyID, in sbIPropertyOperator aOperator, in AString aLeftValue, in AString aRightValue, in boolean limit)" -->
+<a class="el" href="interfacesb_i_local_database_smart_media_list_condition.html">sbILocalDatabaseSmartMediaListCondition</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#5acf1843072c2b5dfcff43351bcf840e">appendCondition</a> (in AString aPropertyID, in <a class="el" href="interfacesb_i_property_operator.html">sbIPropertyOperator</a> aOperator, in AString aLeftValue, in AString aRightValue, in boolean <a class="el" href="interfacesb_i_local_database_smart_media_list.html#7fd3a362c93b122e43ab9dc5c50f5ec0">limit</a>)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a condition or limiting condition. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="34cde1d28060618df773e932866d5bd0"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::removeConditionAt" ref="34cde1d28060618df773e932866d5bd0" args="(in unsigned long aConditionIndex)" -->
@@ -146,14 +146,14 @@ attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a cl
 attribute unsigned long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#7fd3a362c93b122e43ab9dc5c50f5ec0">limit</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Value to apply to the limit type. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="226dc93118447309b9720f57cce1e2a7"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::selectPropertyName" ref="226dc93118447309b9720f57cce1e2a7" args="" -->
-attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#226dc93118447309b9720f57cce1e2a7">selectPropertyName</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8e8866dc60505cc649e8dc1b4fe037f2"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::selectPropertyID" ref="8e8866dc60505cc649e8dc1b4fe037f2" args="" -->
+attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#8e8866dc60505cc649e8dc1b4fe037f2">selectPropertyID</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Property to select limited results by. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7cda6d768041f7abd8899ba75d9c1f0c"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::selectDirection" ref="7cda6d768041f7abd8899ba75d9c1f0c" args="" -->
 attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#7cda6d768041f7abd8899ba75d9c1f0c">selectDirection</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Direction to sort the selection property name, true for ascending, false for descending. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Direction to sort the selection property, true for ascending, false for descending. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e6d90ed82182954e774c1e47caba96e7"></a><!-- doxytag: member="sbILocalDatabaseSmartMediaList::randomSelection" ref="e6d90ed82182954e774c1e47caba96e7" args="" -->
 attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_smart_media_list.html#e6d90ed82182954e774c1e47caba96e7">randomSelection</a></td></tr>
 
@@ -174,7 +174,7 @@ Methods and attributes that are specific to the smart media list are implemented
 <p>
 Definition at line <a class="el" href="sb_i_local_database_smart_media_list_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_local_database_smart_media_list_8idl-source.html">sbILocalDatabaseSmartMediaList.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/localdatabase/public/<a class="el" href="sb_i_local_database_smart_media_list_8idl-source.html">sbILocalDatabaseSmartMediaList.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Oct 24 18:21:04 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

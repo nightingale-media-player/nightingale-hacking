@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_remote_player_factory" kind="interface" prot="public">
+    <compoundname>sbIRemotePlayerFactory</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_player_factory_1830c84eaceea41df7e992d3b60262d6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_remote_player" kindref="compound">sbIRemotePlayer</ref></type>
+        <definition>sbIRemotePlayer sbIRemotePlayerFactory::createPrivileged</definition>
+        <argsstring>(in nsIURI aCodebase, in nsIDOMWindow aWindow)</argsstring>
+        <name>createPrivileged</name>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aCodebase</declname>
+        </param>
+        <param>
+          <type>in nsIDOMWindow</type>
+          <declname>aWindow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="37"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="35" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" bodystart="34" bodyend="38"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_player_factory_1830c84eaceea41df7e992d3b60262d6d" prot="public" virt="non-virtual"><scope>sbIRemotePlayerFactory</scope><name>createPrivileged</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -22,7 +22,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="55" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="55" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="55" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_1b58b37fd21bf46258f846a6e744c1dc6" prot="public" static="no" mutable="no">
         <type>attribute nsIURI</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="62" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="62" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="62" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_1b9f5cf3980cdd17353168a62ce837c29" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
@@ -62,7 +62,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="69" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="69" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="69" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="69" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_182591348a2ab5b94a64e7c431784eb41" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -82,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="76" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="76" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="76" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_113aaee3d2e7bc707354d0e5be8dd3590" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -95,7 +95,7 @@
 <para>False by default. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="83" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="83" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="83" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_13748fe73fc2e08fa16b131126c50240e" prot="public" static="no" mutable="no">
         <type>attribute nsIObserver</type>
@@ -108,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="89" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="89" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="89" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_10d82a75ecee2a0d1cf1b8c669aa0787e" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -121,7 +121,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="94" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="94" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="94" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="94" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_reader_listener_17be28aecf118eeca510489fc4db2fd4c" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -134,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="99" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="99" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="99" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="99" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -143,71 +143,71 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_reader_manager" kindref="compound">sbIPlaylistReaderManager</ref>, <ref refid="interfacesb_i_playlist_reader" kindref="compound">sbIPlaylistReader</ref>, <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="500">
+      <node id="510">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="501" relation="public-inheritance">
+        <childnode refid="511" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="507">
+      <node id="517">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="499">
+      <node id="509">
         <label>sbIPlaylistReaderListener</label>
         <link refid="interfacesb_i_playlist_reader_listener"/>
-        <childnode refid="500" relation="usage">
+        <childnode refid="510" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="504">
+      <node id="514">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="505" relation="usage">
+        <childnode refid="515" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="507" relation="usage">
+        <childnode refid="517" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>
-      <node id="503">
+      <node id="513">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="500" relation="public-inheritance">
+        <childnode refid="510" relation="public-inheritance">
         </childnode>
-        <childnode refid="504" relation="usage">
+        <childnode refid="514" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="506" relation="usage">
+        <childnode refid="516" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="502">
+      <node id="512">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="501">
+      <node id="511">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="502" relation="public-inheritance">
+        <childnode refid="512" relation="public-inheritance">
         </childnode>
-        <childnode refid="503" relation="usage">
+        <childnode refid="513" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="505">
+      <node id="515">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="506" relation="usage">
+        <childnode refid="516" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="506">
+      <node id="516">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
     </collaborationgraph>
-    <location file="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="48" bodyend="100"/>
+    <location file="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" line="49" bodyfile="z:/projects/songbird/components/playlistreader/public/sbIPlaylistReader.idl" bodystart="48" bodyend="100"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_reader_listener_182591348a2ab5b94a64e7c431784eb41" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderListener</scope><name>addDistinctOnly</name></member>
       <member refid="interfacesb_i_playlist_reader_listener_1b58b37fd21bf46258f846a6e744c1dc6" prot="public" virt="non-virtual"><scope>sbIPlaylistReaderListener</scope><name>destinationURI</name></member>

@@ -4,14 +4,14 @@
     <compoundname>sbIPropertyFactory</compoundname>
     <includes refid="sb_i_property_factory_8idl" local="no">sbIPropertyFactory.idl</includes>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_property_factory_171a5288548c5a7bb445cfead2a62bb21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_property_factory_1d203e5c6555113b4568631e95f54a755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_property" kindref="compound">sbIProperty</ref></type>
         <definition>sbIProperty sbIPropertyFactory::createProperty</definition>
-        <argsstring>(in AString aName, in AString aValue)</argsstring>
+        <argsstring>(in AString aID, in AString aValue)</argsstring>
         <name>createProperty</name>
         <param>
           <type>in AString</type>
-          <declname>aName</declname>
+          <declname>aID</declname>
         </param>
         <param>
           <type>in AString</type>
@@ -23,16 +23,16 @@
 <para>Create a property </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyFactory.idl" line="47"/>
+        <location file="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="47"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to create <ref refid="interfacesb_i_property" kindref="compound">sbIProperty</ref> instances. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/property/public/sbIPropertyFactory.idl" line="42" bodyfile="e:/Projects/songbird/trunk/components/property/public/sbIPropertyFactory.idl" bodystart="41" bodyend="48"/>
+    <location file="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="42" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" bodystart="41" bodyend="48"/>
     <listofallmembers>
-      <member refid="interfacesb_i_property_factory_171a5288548c5a7bb445cfead2a62bb21" prot="public" virt="non-virtual"><scope>sbIPropertyFactory</scope><name>createProperty</name></member>
+      <member refid="interfacesb_i_property_factory_1d203e5c6555113b4568631e95f54a755" prot="public" virt="non-virtual"><scope>sbIPropertyFactory</scope><name>createProperty</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="56"/>
+        <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="56"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -35,7 +35,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_global_hotkeys" kindref="compound">sbIGlobalHotkeys</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" line="48" bodyfile="e:/Projects/songbird/trunk/components/integration/public/IGlobalHotkeys.idl" bodystart="47" bodyend="57"/>
+    <location file="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" line="48" bodyfile="z:/projects/songbird/components/integration/public/IGlobalHotkeys.idl" bodystart="47" bodyend="57"/>
     <listofallmembers>
       <member refid="interfacesb_i_global_hotkey_callback_1a931092f7e7b533e3a4ef21a3a3f31ba" prot="public" virt="non-virtual"><scope>sbIGlobalHotkeyCallback</scope><name>onHotkey</name></member>
     </listofallmembers>

@@ -4,13 +4,13 @@
     <compoundname>sbIFaceplatePane.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="136">
+      <node id="139">
         <label>components/faceplate/public/sbIFaceplatePane.idl</label>
         <link refid="sbIFaceplatePane.idl"/>
-        <childnode refid="137" relation="include">
+        <childnode refid="140" relation="include">
         </childnode>
       </node>
-      <node id="137">
+      <node id="140">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -74,6 +74,6 @@
 <codeline lineno="116"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="e:/Projects/songbird/trunk/components/faceplate/public/sbIFaceplatePane.idl"/>
+    <location file="z:/projects/songbird/components/faceplate/public/sbIFaceplatePane.idl"/>
   </compounddef>
 </doxygen>

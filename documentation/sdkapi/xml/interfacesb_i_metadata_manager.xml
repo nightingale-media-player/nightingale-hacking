@@ -27,7 +27,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" line="62"/>
+        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" line="62"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -35,7 +35,7 @@
     <detaileddescription>
 <para>User code gives the manager an url to a piece of media.</para><para>Manager returns a proper handler, or NULL if it can&apos;t find one.</para><para>User code uses that <ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> to read/write metadata.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" line="49" bodyfile="e:/Projects/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" bodystart="48" bodyend="63"/>
+    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" line="49" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl" bodystart="48" bodyend="63"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" prot="public" virt="non-virtual"><scope>sbIMetadataManager</scope><name>getHandlerForMediaURL</name></member>
     </listofallmembers>
