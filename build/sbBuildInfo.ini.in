@@ -1,7 +1,7 @@
 [Build]
 AppName=Songbird
 BuildID=00000000000000
-Milestone=0.4rc3pre
+Milestone=0.5pre
 MilestoneWindows=0.4.0.0
 Branch=trunk
 ProfileVersion=1
