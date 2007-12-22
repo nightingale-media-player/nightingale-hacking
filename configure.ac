@@ -99,6 +99,17 @@ fi
 AC_SUBST(SONGBIRD_OFFICIAL)
 
 #
+#  Check for --enable-nightly
+#
+
+AC_ARG_ENABLE(nightly,
+              [  --enable-nightly       whether or not to create an nightly build (disabled by default)])
+if test "$enable_nightly" == "yes"; then
+  SONGBIRD_NIGHTLY=1
+fi
+AC_SUBST(SONGBIRD_NIGHTLY)
+
+#
 #  Check for --enable-tests
 #
 

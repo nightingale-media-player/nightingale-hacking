@@ -83,6 +83,10 @@ ifdef SONGBIRD_OFFICIAL
 CONFIGURE_ARGS += --enable-official
 endif
 
+ifdef SONGBIRD_NIGHTLY
+CONFIGURE_ARGS += --enable-nightly
+endif
+
 ifdef SB_UPDATE_CHANNEL
 CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
 endif

@@ -212,10 +212,6 @@ targets += shell_execute
 endif
 
 ifdef XPI_NAME
-# set a specific location for the output if it doesn't already exist
-ifndef EXTENSION_DIR
-EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
-endif
 targets += make_xpi
 clean_targets += clean_xpi
 endif
@@ -1196,6 +1192,23 @@ endif
 endif
 
 ifdef XPI_NAME
+
+# set a specific location for the output if it doesn't already exist
+ifndef EXTENSION_DIR
+EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
+endif
+
+ifdef EXTENSION_VER
+ifndef SONGBIRD_OFFICIAL
+ifndef SONGBIRD_NIGHTLY
+EXTENSION_VER := $(EXTENSION_VER)+dev
+else
+# the minus makes it alpha in the comparator and less than an official
+# build of the same base version.
+EXTENSION_VER := $(EXTENSION_VER)-$(CURRENT_DATE)
+endif
+endif
+endif # EXTENSION_VER
 
 # Create install.rdf if it doesn't exist
 
