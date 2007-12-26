@@ -1626,7 +1626,7 @@
           var b = this.tree.treeBoxObject;
           b.getCellAt(evt.clientX, evt.clientY, row, col, obj);
 
-          if (row.value >= 0) {
+          if (row.value >= 0 && col.value) {
             this.sendPlayEvent();
           }
          ]]>
