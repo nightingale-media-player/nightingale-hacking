@@ -1925,9 +1925,6 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             return;
           }
 
-          // Fire the click event
-          fireEvent(this);
-
           // Get and assign the new value to the property
           try {
             var value = clickable.getValueForClick(oldValue,
