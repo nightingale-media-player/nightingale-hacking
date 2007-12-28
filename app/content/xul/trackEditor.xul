@@ -49,7 +49,7 @@
  ondialogcancel="if ( doCancel() ) onExit( );"
  buttonlabelextra1="&window.undo;"
  resizers="horiz"
- persist="screenX screenY width"
+ persist="screenX screenY"
 >
   
   <windowregion/>
