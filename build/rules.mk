@@ -38,6 +38,16 @@ RULES_MK_INCLUDED=1
 
 include $(topsrcdir)/build/config.mk
 
+ifneq (,$(SB_ENABLE_STATIC))
+  ifneq (,$(LIBSONGBIRD_COMPONENT))
+    STATIC_LIB:=$(DYNAMIC_LIB:$(DLL_SUFFIX)=$(LIB_SUFFIX))
+    DYNAMIC_LIB=
+    STATIC_LIB_OBJS=$(DYNAMIC_LIB_OBJS)
+  else
+    SB_ENABLE_STATIC=
+  endif
+endif
+
 #
 # Collect a list of rules to run. We use two variables so that 'make clean'
 # does what you'd expect.
@@ -228,6 +238,34 @@ clean:: $(clean_targets) \
         $(NULL)
 
 #------------------------------------------------------------------------------
+# Utilities
+#------------------------------------------------------------------------------
+
+# from mozilla/config/rules.mk (the Java rules section)
+# note that an extra slash was added between root-path and non-root-path to
+# account for non-standard mount points in msys
+# (C:/ vs C:/foo with missing trailing slash)
+# Cygwin and MSYS have their own special path form, but manifest tool expects
+# them to be in the DOS form (i.e. e:/builds/...).  This function
+# does the appropriate conversion on Windows, but is a noop on other systems.
+ifeq (windows,$(SB_PLATFORM))
+  ifneq (,$(CYGWIN_WRAPPER))
+    normalizepath = $(foreach p,$(1),$(shell cygpath -m $(p)))
+  else
+    # assume MSYS
+    #  We use 'pwd -W' to get DOS form of the path.  However, since the given path
+    #  could be a file or a non-existent path, we cannot call 'pwd -W' directly
+    #  on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
+    #  on it, then merge with the rest of the path.
+    root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
+    non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
+    normalizepath = $(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1))
+  endif
+else
+  normalizepath = $(1)
+endif
+
+#------------------------------------------------------------------------------
 # Redefine these for extensions
 #------------------------------------------------------------------------------
 
@@ -312,6 +350,10 @@ ifdef CPP_EXTRA_INCLUDES
 compile_includes += $(CPP_EXTRA_INCLUDES)
 endif
 endif
+
+ifneq (,$(SB_ENABLE_STATIC))
+compile_defs += -DXPCOM_TRANSLATE_NSGM_ENTRY_POINT
+endif # libsongbird_component + --enable-static
 
 compiler_objects = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
@@ -424,6 +466,9 @@ endif #DYNAMIC_LIB
 # STATIC_LIB_OBJS - the object files to link into the lib
 # STATIC_LIB_FLAGS - an override to the default linker flags
 # STATIC_LIB_EXTRA_FLAGS - a list of additional flags to pass to the linker
+# LIBSONGBIRD_COMPONENT - indicates that this is a static component;
+#                         the value must be the same as the first parameter used
+#                         for NS_IMPL_NSGETMODULE
 
 ifdef STATIC_LIB
 
@@ -454,10 +499,44 @@ lib_link: $(static_lib_deps)
 	$(ranlib_cmd)
 	$(makelink_cmd)
 
+ifneq (,$(SB_ENABLE_STATIC))
+  lib_link: lib_static_list
+
+  ifdef DYNAMIC_LIB_IMPORT_PATHS
+    linker_paths_temp1 = $(addprefix $(CURDIR)/, $(DYNAMIC_LIB_IMPORT_PATHS))
+    linker_paths_temp2 = $(foreach dir,$(linker_paths_temp1),$(call normalizepath,$(dir)))
+  endif
+
+lib_static_list:
+	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-names $(LIBSONGBIRD_COMPONENT)
+	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-libs $(CURDIR)/$(STATIC_LIB)
+ifneq (,$(strip $(linker_paths_temp2)))
+	for path in $(linker_paths_temp2) ; do \
+	  $(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-paths $${path} ;\
+	done
+endif #linker_paths_temp2
+ifneq (,$(strip $(DYNAMIC_LIB_EXTRA_IMPORTS)))
+	for import in $(DYNAMIC_LIB_EXTRA_IMPORTS) ; do \
+	  $(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-imports $${import} ;\
+	done
+endif #DYNAMIC_LIB_EXTRA_IMPORTS
+ifneq (,$(strip $(DYNAMIC_LIB_STATIC_IMPORTS)))
+	for import in $(DYNAMIC_LIB_STATIC_IMPORTS) ; do \
+	  $(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-static-imports $${import} ;\
+	done
+endif # DYNAMIC_LIB_STATIC_IMPORTS
+
+endif # static component
+
 lib_clean:
 	$(CYGWIN_WRAPPER) $(RM) -f $(STATIC_LIB)
 
-.PHONY : lib_clean
+.PHONY : lib_clean lib_static_list
 
 endif #STATIC_LIB
 
@@ -712,7 +791,9 @@ copy_sb_components:
 ifeq (,$(wildcard $(SONGBIRD_COMPONENTSDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_COMPONENTSDIR)
 endif
+ifneq (,$(strip $(SONGBIRD_COMPONENTS)))
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+endif
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
@@ -1267,30 +1348,6 @@ endif # XPI_NAME
 #-----------------------
 
 ifdef SONGBIRD_MAIN_APP
-
-# from mozilla/config/rules.mk (the Java rules section)
-# note that an extra slash was added between root-path and non-root-path to
-# account for non-standard mount points in msys
-# (C:/ vs C:/foo with missing trailing slash)
-# Cygwin and MSYS have their own special path form, but manifest tool expects
-# them to be in the DOS form (i.e. e:/builds/...).  This function
-# does the appropriate conversion on Windows, but is a noop on other systems.
-ifeq (windows,$(SB_PLATFORM))
-  ifneq (,$(CYGWIN_WRAPPER))
-    normalizepath = $(foreach p,$(1),$(shell cygpath -m $(p)))
-  else
-    # assume MSYS
-    #  We use 'pwd -W' to get DOS form of the path.  However, since the given path
-    #  could be a file or a non-existent path, we cannot call 'pwd -W' directly
-    #  on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
-    #  on it, then merge with the rest of the path.
-    root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
-    non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
-    normalizepath = $(foreach p,$(1),$(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1)))
-  endif
-else
-  normalizepath = $(1)
-endif
 
 ifeq (macosx,$(SB_PLATFORM))
 sb_executable_dir = $(SONGBIRD_MACOS)

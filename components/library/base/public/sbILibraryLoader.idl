@@ -97,7 +97,7 @@ interface sbILibraryLoader : nsISupports
  *     }
  *   };
  *
- *   NS_IMPL_NSGETMODULE(Sample Library Loader, components)
+ *   NS_IMPL_NSGETMODULE(SampleLibraryLoader, components)
  *
  */
 #define SB_LIBRARY_LOADER_REGISTRATION(_name, _desc)                           \

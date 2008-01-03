@@ -125,12 +125,22 @@ ifeq (macosx,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
   LDFLAGS += -Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver
+  ifneq (,$(SB_ENABLE_STATIC))
+
+  SHELL_EXECUTE += \
+	-c '$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	  $(SONGBIRD_OBJDIR)/components/static/link-flags \
+	  "-Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver"'
+
+  endif # SB_ENABLE_STATIC
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+
+LIBSONGBIRD_COMPONENT = SongbirdDatabaseEngineComponent
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(NULL)

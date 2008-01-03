@@ -95,4 +95,4 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(Songbird Local Database Library Module, components)
+NS_IMPL_NSGETMODULE(SongbirdLocalDatabaseLibraryModule, components)

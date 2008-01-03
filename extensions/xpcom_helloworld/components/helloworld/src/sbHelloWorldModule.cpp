@@ -40,5 +40,5 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE("Songbird HelloWorld Module", components)
+NS_IMPL_NSGETMODULE(SongbirdHelloWorldModule, components)
 

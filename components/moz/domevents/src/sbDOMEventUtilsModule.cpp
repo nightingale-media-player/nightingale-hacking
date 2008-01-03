@@ -28,8 +28,6 @@
 
 #include <nsIGenericFactory.h>
 
-#define SONGBIRD_DOM_EVENT_UTILS_MODULENAME "Songbird DOM Event Utilities Module"
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDOMEventWrapper)
 
 // fill out data struct to register with component system
@@ -44,5 +42,5 @@ static const nsModuleComponentInfo components[] =
 };
 
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SONGBIRD_DOM_EVENT_UTILS_MODULENAME, components)
+NS_IMPL_NSGETMODULE(SongbirdDOMEventUtilities, components)
 

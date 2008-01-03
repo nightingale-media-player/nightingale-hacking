@@ -54,4 +54,4 @@ static nsModuleComponentInfo sbFileScan[] =
   
 };
 
-NS_IMPL_NSGETMODULE("SongbirdFileScanComponent", sbFileScan)
+NS_IMPL_NSGETMODULE(SongbirdFileScanComponent, sbFileScan)

@@ -44,5 +44,5 @@ static nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdDownloadDeviceComponent", components)
+NS_IMPL_NSGETMODULE(SongbirdDownloadDeviceComponent, components)
 

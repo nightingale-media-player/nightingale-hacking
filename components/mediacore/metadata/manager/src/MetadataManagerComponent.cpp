@@ -117,7 +117,7 @@ sbMetadataManagerComponentDestructor(nsIModule* module)
   gMetadataJobManager = nsnull;
 }
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR("SongbirdMetadataManagerComponent",
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataManagerComponent,
                                    sbMetadataManagerComponent,
                                    sbMetadataManagerComponentConstructor,
                                    sbMetadataManagerComponentDestructor)

@@ -88,7 +88,7 @@ struct nsModuleComponentInfo;
  *     }
  *   };
  *
- *   NS_IMPL_NSGETMODULE("Sample Controller", components)
+ *   NS_IMPL_NSGETMODULE(SampleController, components)
  */
 #define SB_DEVICE_MARSHALL_REGISTERSELF(_name)                                 \
                                                                                \

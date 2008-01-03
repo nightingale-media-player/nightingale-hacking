@@ -63,4 +63,4 @@ static nsModuleComponentInfo componentInfo[] =
   }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMetadataHandlerTaglibComponent", componentInfo)
+NS_IMPL_NSGETMODULE(SongbirdMetadataHandlerTaglibComponent, componentInfo)

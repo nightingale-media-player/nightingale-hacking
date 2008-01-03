@@ -22,22 +22,21 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediaSniffer
+target := sbComponents
 
 CPP_SRCS = \
-  sbMediaSniffer.cpp \
-  sbMediaSnifferModule.cpp \
+  nsStaticComponents.cpp \
+  sbStaticModule.cpp \
   $(NULL)
 
 CPP_INCLUDES = \
-  $(DEPTH)/components/playlistplayback/public \
   $(MOZSDK_INCLUDE_DIR) \
   $(MOZSDK_INCLUDE_DIR)/nspr \
   $(MOZSDK_INCLUDE_DIR)/necko \
@@ -45,24 +44,39 @@ CPP_INCLUDES = \
   $(MOZSDK_INCLUDE_DIR)/xpcom \
   $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
+DYNAMIC_LIB = $(target)$(DEBUG:%:_d)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+    $(shell cat link-libs)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
-  plds4 \
-  nspr4 \
-  xpcom \
   xpcomglue_s \
+  $(shell cat link-imports) \
   $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
+DYNAMIC_LIB_STATIC_IMPORTS = \
+  $(shell cat link-static-imports)
 
-LIBSONGBIRD_COMPONENT = sbMediaSniffer
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+  $(shell cat link-paths)
 
 SONGBIRD_COMPONENTS = \
-  $(COMPONENTS_DIR)/contenthandling/media/sbMediaContentListener.js \
   $(DYNAMIC_LIB) \
   $(NULL)
 
+STATIC_COMPONENT_LIST = $(shell cat link-names)
+
+LDFLAGS += $(shell cat link-flags)
+
 include $(topsrcdir)/build/rules.mk
+
+clean::
+	$(RM) -f link-names link-libs link-paths link-imports link-static-imports \
+	         link-flags nsStaticComponents.cpp
+
+nsStaticComponents.cpp: nsStaticComponents.cpp.in link-names Makefile Makefile.in
+	rm -rf $@
+	cat $< | \
+            sed -e "s|%MODULE_LIST%|$(foreach m, $(STATIC_COMPONENT_LIST),MODULE($(m)))|" \
+            > $@
+

@@ -146,4 +146,4 @@ static const nsModuleComponentInfo components[] =
   },
 };
 
-NS_IMPL_NSGETMODULE(Songbird Properties Module, components)
+NS_IMPL_NSGETMODULE(SongbirdPropertiesModule, components)

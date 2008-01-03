@@ -71,4 +71,4 @@ static void sbDatabaseEngineDestructor(nsIModule* me)
   gEngine = nsnull;
 }
 
-NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdDatabaseEngineComponent", sbDatabaseEngine, sbDatabaseEngineDestructor)
+NS_IMPL_NSGETMODULE_WITH_DTOR(SongbirdDatabaseEngineComponent, sbDatabaseEngine, sbDatabaseEngineDestructor)

@@ -62,5 +62,5 @@ static nsModuleComponentInfo components[] =
   },
 };
 
-NS_IMPL_NSGETMODULE("SongbirdPlaylistCommandsComponent", components)
+NS_IMPL_NSGETMODULE(SongbirdPlaylistCommandsComponent, components)
 

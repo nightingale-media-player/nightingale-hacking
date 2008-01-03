@@ -90,4 +90,4 @@ static nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SONGBIRD_DEVICEMANAGER_DESCRIPTION, components)
+NS_IMPL_NSGETMODULE(SongbirdDeviceManagerModule, components)

@@ -77,4 +77,9 @@ SUBDIRDEPS9 = remoteapi : library
 SUBDIRDEPS10 = remoteapi : moz
 SUBDIRDEPS11 = contenthandling : playlistplayback
 
+ifdef SB_ENABLE_STATIC
+SUBDIRS += static
+
+endif # SB_ENABLE_STATIC
+
 include $(topsrcdir)/build/rules.mk

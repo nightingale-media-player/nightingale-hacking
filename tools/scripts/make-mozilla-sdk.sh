@@ -69,6 +69,7 @@ build_script_files="build/cygwin-wrapper
                     build/macosx/universal/unify
                     build/package/mac_osx/make-diskimage
                     build/package/mac_osx/mozilla.dsstore
+                    config/build-list.pl
                     config/configobj.py
                     config/make-jars.pl
                     config/mozLock.pm

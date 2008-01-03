@@ -126,4 +126,4 @@ static nsModuleComponentInfo sbIntegration[] =
 #endif
 };
 
-NS_IMPL_NSGETMODULE("SongbirdIntegrationComponent", sbIntegration)
+NS_IMPL_NSGETMODULE(SongbirdIntegrationComponent, sbIntegration)

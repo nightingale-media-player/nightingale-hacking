@@ -77,4 +77,4 @@ static nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(Songbird Library Manager, components)
+NS_IMPL_NSGETMODULE(SongbirdLibraryManager, components)

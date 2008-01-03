@@ -1,3 +1,4 @@
+/* vim: set sw=2 : */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -22,27 +23,28 @@
 // 
 // END SONGBIRD GPL
 //
- */
-
-/** 
-* \file  WMDeviceComponent.cpp
-* \brief Songbird DeviceBase Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
-#include "WMDevice.h"
+/** nsIModule implementation for the static components */
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbWMDevice)
+#ifndef sbStaticModule_h__
+#define sbStaticModule_h__
 
-static nsModuleComponentInfo components[] =
+#include "nsIModule.h"
+#include <nsCOMArray.h>
+
+class sbStaticModule : public nsIModule
 {
-  {
-    SONGBIRD_WMDevice_CLASSNAME, 
-    SONGBIRD_WMDevice_CID,
-    SONGBIRD_WMDevice_CONTRACTID,
-    sbWMDeviceConstructor,
-  }
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIMODULE
+public:
+  sbStaticModule();
+  nsresult Initialize(nsIComponentManager *aCompMgr,
+                      nsIFile* aLocation);
+protected:
+  nsCOMArray<nsIModule> mModules;
+private:
+  ~sbStaticModule();
 };
 
-NS_IMPL_NSGETMODULE(SongbirdWMDeviceComponent, components)
-
+#endif /* sbStaticModule_h__ */

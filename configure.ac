@@ -222,6 +222,21 @@ fi
 AC_SUBST(SB_ENABLE_BREAKPAD)
 
 #
+# Experimental static build support
+#
+
+AC_ARG_ENABLE(static,
+              [  --enable-static         experimental single-component static build support)])
+if test "$enable_static" == "yes" ; then
+  SB_ENABLE_STATIC=1
+else
+  SB_ENABLE_STATIC=
+fi
+
+AC_SUBST(SB_ENABLE_STATIC)
+
+
+#
 # Checks for programs.
 #
 

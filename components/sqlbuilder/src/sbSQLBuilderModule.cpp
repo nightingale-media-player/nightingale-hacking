@@ -65,5 +65,5 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE("Songbird SQL Statement Builder Module", components)
+NS_IMPL_NSGETMODULE(SongbirdSQLStatementBuilderModule, components)
 

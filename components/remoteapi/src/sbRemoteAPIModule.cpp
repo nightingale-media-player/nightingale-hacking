@@ -32,8 +32,6 @@
 
 #include <nsIClassInfoImpl.h>
 
-#define SONGBIRD_REMOTEAPI_MODULENAME "Songbird Remote API Module"
-
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteAPIService, Init)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbRemotePlayerFactory)
@@ -95,5 +93,5 @@ static const nsModuleComponentInfo components[] =
 };
 
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SONGBIRD_REMOTEAPI_MODULENAME, components)
+NS_IMPL_NSGETMODULE(SongbirdRemoteAPIModule, components)
 
