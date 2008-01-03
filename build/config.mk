@@ -119,6 +119,10 @@ ifdef SB_ENABLE_BREAKPAD
 PPDEFINES += -DSB_ENABLE_BREAKPAD=1
 endif
 
+ifdef SB_USER_EULA_FILE
+PPDEFINES += -DSB_USER_EULA_FILE="$(SB_USER_EULA_FILE)"
+endif
+
 # core wrappers to enable
 PPDEFINES += $(if $(MEDIA_CORE_VLC), -DMEDIA_CORE_VLC=1) \
              $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \

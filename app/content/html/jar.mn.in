@@ -1,3 +1,11 @@
+#filter substitution
 songbird.jar:
 % content  songbird  %content/songbird/
-@include_all_to content/songbird/html/
+  content/songbird/html/about.html        (about.html)
+  content/songbird/html/cannotLoad.html   (cannotLoad.html)
+  content/songbird/html/notConnected.html (notConnected.html)
+#ifdef SB_USER_EULA_FILE
+  content/songbird/html/eula.html         (@SB_USER_EULA_FILE@)
+#else
+  content/songbird/html/eula.html         (eula.html)
+#endif

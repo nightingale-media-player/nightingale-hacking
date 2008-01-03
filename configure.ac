@@ -616,10 +616,11 @@ AC_ARG_WITH(user-eula-file,
             [  --with-user-eula-file=PATH           the location of the user eula file to use. This file
                                                     is displayed when the application is first launched.
                                                     The user *must* accept this EULA for the application
-                                                    to continue.],
+                                                    to continue. The file *must* reside within the source 
+                                                    tree. Using / means the root of the source tree. ],
             SB_USER_EULA_FILE=$withval)
 if test -z "$SB_USER_EULA_FILE"; then
-  SB_USER_EULA_FILE=
+  SB_USER_EULA_FILE=eula.html
 fi
 AC_SUBST(SB_USER_EULA_FILE)
 
