@@ -1801,9 +1801,11 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
     rv = prefService->GetBoolPref( "songbird.rapi.promptForApproval",
                                    &shouldPrompt );
     if (NS_SUCCEEDED(rv) && !shouldPrompt) {
+      LOG(("sbRemotePlayer::GetUserApprovalForHost(URI) - shouldn't prompt or failed"));
       return PR_FALSE;
     }
   }
+  LOG(("sbRemotePlayer::GetUserApprovalForHost(URI) - here"));
 
   nsCString hostUTF8;
   rv = aURI->GetHost(hostUTF8);
@@ -1866,6 +1868,8 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                                   getter_Copies(allowOnce) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
+  LOG(("sbRemotePlayer::GetUserApprovalForHost(URI) - there"));
+
   // now we can actually go for the prompt
   nsCOMPtr<nsIPromptService> promptService =
     do_GetService( "@mozilla.org/embedcomp/prompt-service;1", &rv );
@@ -1889,6 +1893,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
     buttons =  nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_YES +
                nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_NO;
   }
+  LOG(("sbRemotePlayer::GetUserApprovalForHost(URI) - where"));
 
   PRInt32 allowed;
   // the buttons have to be in this weird order for the cancel button to be

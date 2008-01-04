@@ -40,11 +40,11 @@ function runTest(tester) {
 
     // downloading - set in test_ file to go to tmpD/remoteapi_test/
     var item = siteLib.createMediaItem(
-      "http://ccmixter.org/people/Sawtooth/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3");
+      "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3");
     var list = siteLib.createSimpleMediaList("testRemoteDownload1");
     list.add(item);
     item = siteLib.createMediaItem(
-      "http://ccmixter.org/people/Vanchy/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3");
+      "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3");
     list.add(item);
 
     tester.log("Downloading an item...");
@@ -63,7 +63,7 @@ function runTest(tester) {
 
     // test additions to the list
     item = siteLib.createMediaItem(
-      "http://ccmixter.org/people/DJBLUE/DJBLUE_-_Hear_Me.mp3");
+      "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3");
 
     tester.log("Adding an item to the download medialist...");
     dlList.add(item);

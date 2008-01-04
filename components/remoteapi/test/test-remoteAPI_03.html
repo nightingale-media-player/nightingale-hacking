@@ -30,8 +30,7 @@
   <head>
     <title>Remote API Test: 03</title>
     <script>
-      // create a global dataremote
-      var dr = new DataRemote();
+      var dr;
 
       function load() {
         var output = function (message) {
@@ -40,18 +39,29 @@
           myDiv.appendChild(document.createElement("br"));
         }
 
+        try {
+          dr = new DataRemote();
+          output("Could create DataRemote - FAILURE");
+        } catch (e) {
+          output("Could not create DataRemote - SUCCESS");
+        }
+
         var obs = {
           observe: function ( one, two, three ){
             output(three)
           }
         }
 
-        dr.init("metadata.artist", null);
-        dr.bindObserver(obs, false );
+        if (typeof(dr) != "undefined") {
+          dr.init("metadata.artist", null);
+          dr.bindObserver(obs, false );
+        }
       }
       
       function unload() {
-	dr.unbind();
+        if (typeof(dr) != "undefined") {
+	  dr.unbind();
+        }
       }
     </script>
   </head>
@@ -69,7 +79,6 @@
     <br />
 
     <div id="test-div">
-      Test Div into which the artist name would be inserted.
     </div>
     
   </body>
