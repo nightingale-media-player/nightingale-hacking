@@ -56,14 +56,11 @@ function testHiddenProperty(library) {
   var listener = {
     items: [],
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       this.items.push(item);
-      return true;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 
@@ -97,14 +94,11 @@ function testIsListProperty(library) {
   var listener = {
     items: [],
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       this.items.push(item);
-      return true;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 
@@ -145,14 +139,11 @@ function testBoth(library) {
   var listener = {
     items: [],
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       this.items.push(item);
-      return true;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 

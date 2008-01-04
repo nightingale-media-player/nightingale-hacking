@@ -206,20 +206,20 @@ class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
     sbRemoteLibraryEnumCallback( nsCOMArray<sbIMediaItem>& aArray ) :
       mArray(aArray) { }
 
-    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRBool* _retval )
+    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRUint16* _retval )
     {
       NS_ENSURE_ARG(_retval);
-      *_retval = PR_TRUE;
+      *_retval = sbIMediaListEnumerationListener::CONTINUE;
       return NS_OK;
     }
     NS_IMETHODIMP OnEnumerationEnd( sbIMediaList*, nsresult )
     {
       return NS_OK;
     }
-    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRBool* _retval )
+    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRUint16* _retval )
     {
       NS_ENSURE_ARG(_retval);
-      *_retval = PR_TRUE;
+      *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
       mArray.AppendObject( aItem );
 
@@ -828,7 +828,7 @@ sbRemoteLibraryBase::GetMediaList()
 
 NS_IMETHODIMP
 sbRemoteLibraryBase::OnEnumerationBegin( sbIMediaList *aMediaList,
-                                         PRBool *_retval )
+                                         PRUint16 *_retval )
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -837,19 +837,25 @@ sbRemoteLibraryBase::OnEnumerationBegin( sbIMediaList *aMediaList,
   NS_ASSERTION( mEnumerationResult == NS_ERROR_NOT_INITIALIZED,
                 "Someone forgot to reset mEnumerationResult!" );
 
-  *_retval = PR_TRUE;
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemoteLibraryBase::OnEnumeratedItem( sbIMediaList *aMediaList,
                                        sbIMediaItem *aMediaItem,
-                                       PRBool *_retval )
+                                       PRUint16 *_retval )
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  *_retval = mEnumerationArray.AppendObject(aMediaItem);
+  if (mEnumerationArray.AppendObject(aMediaItem)) {
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  }
+  else {
+    *_retval = sbIMediaListEnumerationListener::CANCEL;
+  }
+
   return NS_OK;
 }
 

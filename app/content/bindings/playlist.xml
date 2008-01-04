@@ -2535,14 +2535,12 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           var listener = {
             item: null,
             onEnumerationBegin: function() {
-              return true;
             },
             onEnumeratedItem: function(list, item) {
               this.item = item;
-              return false;
+              return this._Ci.sbIMediaListEnumerationListener.CANCEL;
             },
             onEnumerationEnd: function() {
-              return true;
             }
           };
 

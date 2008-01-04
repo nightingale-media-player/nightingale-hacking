@@ -56,15 +56,15 @@ function runTest () {
     var listener = {
       _item: null,
       onEnumerationBegin: function() {
-        return true;
       },
       onEnumeratedItem: function(list, item) {
         this._item = item;
+        return Ci.sbIMediaListEnumerationListener.CANCEL;
       },
       onEnumerationEnd: function() {
-        return true;
       }
     };
+
     library.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#contentURL",
                                      item.contentSrc.spec,
                                      listener,

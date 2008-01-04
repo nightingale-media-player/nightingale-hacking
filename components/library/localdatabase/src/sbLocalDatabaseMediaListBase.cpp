@@ -323,12 +323,12 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool continueEnumerating;
-    rv = aListener->OnEnumeratedItem(this, item, &continueEnumerating);
+    PRUint16 stepResult;
+    rv = aListener->OnEnumeratedItem(this, item, &stepResult);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Stop enumerating if the listener requested it.
-    if (NS_SUCCEEDED(rv) && !continueEnumerating) {
+    if (stepResult == sbIMediaListEnumerationListener::CANCEL) {
       return NS_ERROR_ABORT;
     }
   }
@@ -519,11 +519,11 @@ sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener*
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
       mLockedEnumerationActive = PR_TRUE;
 
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateAllItemsInternal(aEnumerationListener);
         }
         else {
@@ -537,11 +537,11 @@ sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener*
     } break; // ENUMERATIONTYPE_LOCKING
 
     case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateAllItemsInternal(aEnumerationListener);
         }
         else {
@@ -612,11 +612,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
       mLockedEnumerationActive = PR_TRUE;
 
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
                                                 aEnumerationListener);
         }
@@ -631,11 +631,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
     } break; // ENUMERATIONTYPE_LOCKING
 
     case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
                                                 aEnumerationListener);
         }
@@ -753,11 +753,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
       mLockedEnumerationActive = PR_TRUE;
 
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateItemsByPropertiesInternal(&propertyHash,
                                                   aEnumerationListener);
         }
@@ -772,11 +772,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     } break; // ENUMERATIONTYPE_LOCKING
 
     case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
-      PRBool beginEnumeration;
-      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+      PRUint16 stepResult;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &stepResult);
 
       if (NS_SUCCEEDED(rv)) {
-        if (beginEnumeration) {
+        if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
           rv = EnumerateItemsByPropertiesInternal(&propertyHash,
                                                   aEnumerationListener);
         }

@@ -267,20 +267,20 @@ class sbRemotePlayerEnumCallback : public sbIMediaListEnumerationListener
     sbRemotePlayerEnumCallback( nsCOMArray<sbIMediaItem>& aArray ) :
       mArray(aArray) { }
 
-    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRBool* _retval )
+    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRUint16* _retval )
     {
       NS_ENSURE_ARG(_retval);
-      *_retval = PR_TRUE;
+      *_retval = sbIMediaListEnumerationListener::CONTINUE;
       return NS_OK;
     }
     NS_IMETHODIMP OnEnumerationEnd( sbIMediaList*, nsresult )
     {
       return NS_OK;
     }
-    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRBool* _retval )
+    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRUint16* _retval )
     {
       NS_ENSURE_ARG(_retval);
-      *_retval = PR_TRUE;
+      *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
       mArray.AppendObject( aItem );
 

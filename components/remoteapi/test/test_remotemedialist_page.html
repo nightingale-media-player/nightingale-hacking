@@ -128,13 +128,12 @@ function runTest(tester) {
     var listener = {
       _item: null,
       onEnumerationBegin: function() {
-        return true;
       },
       onEnumeratedItem: function(list, item) {
         this._item = item;
+        return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
       },
       onEnumerationEnd: function() {
-        return true;
       }
     };
 

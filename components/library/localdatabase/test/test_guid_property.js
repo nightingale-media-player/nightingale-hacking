@@ -69,11 +69,9 @@ function runTest () {
   var listener = {
     _item: null,
     onEnumerationBegin: function(aMediaList) {
-      return true;
     },
     onEnumeratedItem: function(aMediaList, aMediaItem) {
       this._item = aMediaItem;
-      return true;
     },
     onEnumerationEnd: function(aMediaList, aStatusCode) {
     }

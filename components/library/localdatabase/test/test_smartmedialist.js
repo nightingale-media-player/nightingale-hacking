@@ -684,14 +684,11 @@ function countMediaItems(library) {
   var listener = {
     length: 0,
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       this.length++;
-      return true;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 

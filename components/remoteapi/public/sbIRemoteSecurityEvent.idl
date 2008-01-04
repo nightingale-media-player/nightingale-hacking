@@ -54,7 +54,6 @@ Example:
     // Enumerate some items in the mainLibrary.
     var listener = {
       onEnumerationBegin: function() {
-        return true;
       },
       onEnumeratedItem: function(list, item) {
         var artistName = item.getProperty("http://songbirdnest.com/data/1.0#artistName");
@@ -69,16 +68,15 @@ Example:
         myDiv.appendChild( document.createTextNode(msg) );
         myDiv.appendChild( document.createElement("br") );
 
-        // Returning false stops the enumeration process, returning true continues.
-        return true;
+        // Returning CANCEL stops the enumeration process, returning CONTINUE
+        // or omitting the return statement continues.
+        return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
       },
       onEnumerationEnd: function() {
         var msg = "I like a lot of tracks."
         
         // I like a lot of tracks.
         myDiv.appendChild( document.createTextNode(msg) );
-        
-        return true;
       }
     };
     

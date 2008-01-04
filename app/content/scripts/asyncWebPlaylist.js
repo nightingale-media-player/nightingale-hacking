@@ -282,14 +282,11 @@ try
                 var listener = {
                   items: [],
                   onEnumerationBegin: function() {
-                    return true;
                   },
                   onEnumeratedItem: function(list, item) {
                     this.items.push(item);
-                    return true;
                   },
                   onEnumerationEnd: function() {
-                    return true;
                   }
                 };
 
@@ -463,14 +460,16 @@ try
                 var listener = {
                   foundItem: null,
                   onEnumerationBegin: function onEnumerationBegin() {
-                    return this.foundItem == null;
+                    if (this.foundItem) {
+                      return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                    }
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
                   },
                   onEnumeratedItem: function onEnumeratedItem(list, item) {
                     this.foundItem = item;
-                    return false; // Just take the first item found
+                    return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
                   },
                   onEnumerationEnd: function onEnumerationEnd() {
-                    return;
                   }
                 };
 

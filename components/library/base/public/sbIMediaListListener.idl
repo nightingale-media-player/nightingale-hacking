@@ -132,17 +132,22 @@ interface sbIMediaListListener : nsISupports
 * \brief Interface used to enumerate the items in a media list.
 * \sa sbIMediaList
 */
-[scriptable, uuid(2f7c9d1b-ef9c-4522-af72-1acbeeddd366)]
+[scriptable, uuid(8060b316-1837-44df-a184-7f25c18ea4c0)]
 interface sbIMediaListEnumerationListener : nsISupports
 {
+  const unsigned short CANCEL   = 1;
+  const unsigned short CONTINUE = 0;
+
   /**
    * \brief Called when enumeration is about to begin.
    *
    * \param aMediaList - The media list that is being enumerated.
    *
-   * \return true to begin enumeration, false to cancel.
+   * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
+   *         JavaScript callers may omit the return statement entirely to
+   *         continue the enumeration.
    */
-  boolean onEnumerationBegin(in sbIMediaList aMediaList);
+  unsigned short onEnumerationBegin(in sbIMediaList aMediaList);
 
   /**
    * \brief Called once for each item in the enumeration.
@@ -150,10 +155,12 @@ interface sbIMediaListEnumerationListener : nsISupports
    * \param aMediaList - The media list that is being enumerated.
    * \param aMediaItem - The media item.
    *
-   * \return true to continue enumeration, false to cancel.
+   * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
+   *         JavaScript callers may omit the return statement entirely to
+   *         continue the enumeration.
    */
-  boolean onEnumeratedItem(in sbIMediaList aMediaList,
-                           in sbIMediaItem aMediaItem);
+  unsigned short onEnumeratedItem(in sbIMediaList aMediaList,
+                                  in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called when enumeration has completed.
@@ -164,3 +171,4 @@ interface sbIMediaListEnumerationListener : nsISupports
   void onEnumerationEnd(in sbIMediaList aMediaList,
                         in nsresult aStatusCode);
 };
+

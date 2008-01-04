@@ -676,14 +676,18 @@
             var listener = {
               foundItem: null,
               onEnumerationBegin: function onEnumerationBegin() {
-                return this.foundItem == null;
+                if (this.foundItem) {
+                  return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                }
+                else {
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
               },
               onEnumeratedItem: function onEnumeratedItem(list, item) {
                 this.foundItem = item;
-                return false; // Just take the first item found
+                return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
               },
               onEnumerationEnd: function onEnumerationEnd() {
-                return;
               }
             };
 
@@ -752,14 +756,12 @@
               var getFirstListener = {
                 item: null,
                 onEnumerationBegin: function() {
-                  return true;
                 },
                 onEnumeratedItem: function(list, item) {
                   this.item = item;
-                  return false;
+                  return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
                 },
                 onEnumerationEnd: function() {
-                  return true;
                 }
               };
 
@@ -1950,17 +1952,15 @@
             var listener = {
               foundList: null,
               onEnumerationBegin: function onEnumerationBegin(list) {
-                return true;
               },
               onEnumeratedItem: function onEnumeratedItem(list, item) {
                 if (!(item instanceof Components.interfaces.sbIMediaList)) {
                   throw new Error("Given an item, not a list!");
                 }
                 this.foundList = item;
-                return false;
+                return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
               },
               onEnumerationEnd: function onEnumerationEnd(list) {
-                return;
               }
             };
 

@@ -3807,7 +3807,7 @@ NS_IMPL_ISUPPORTS1(sbDownloadSession::LibraryMetadataUpdater,
 
 NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
     sbIMediaList                *aMediaList,
-    PRBool                      *_retval)
+    PRUint16                    *_retval)
 {
     nsresult                    result = NS_OK;
 
@@ -3819,9 +3819,9 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
 
     /* Return results. */
     if (NS_SUCCEEDED(result))
-        *_retval = PR_TRUE;
+        *_retval = sbIMediaListEnumerationListener::CONTINUE;
     else
-        *_retval = PR_FALSE;
+        *_retval = sbIMediaListEnumerationListener::CANCEL;
 
     return (result);
 }
@@ -3839,7 +3839,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
 NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumeratedItem(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
-    PRBool                      *_retval)
+    PRUint16                    *_retval)
 {
     nsresult                    result = NS_OK;
 
@@ -3850,7 +3850,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumeratedItem(
     result = mpMediaItemArray->AppendElement(aMediaItem, PR_FALSE);
 
     /* Return results. */
-    *_retval = PR_TRUE;
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
     return (NS_OK);
 }
@@ -3911,12 +3911,12 @@ NS_IMPL_ISUPPORTS1(sbDownloadSession::WebLibraryUpdater,
 
 NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationBegin(
     sbIMediaList                *aMediaList,
-    PRBool                      *_retval)
+    PRUint16                    *_retval)
 {
     nsresult                    result = NS_OK;
 
     /* Return results. */
-    *_retval = PR_TRUE;
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
     return (result);
 }
@@ -3934,7 +3934,7 @@ NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationBegin(
 NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumeratedItem(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
-    PRBool                      *_retval)
+    PRUint16                    *_retval)
 {
     nsresult                    result = NS_OK;
 
@@ -3942,7 +3942,7 @@ NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumeratedItem(
     aMediaItem->SetContentSrc(mpDownloadSession->mpDstURI);
 
     /* Return results. */
-    *_retval = PR_TRUE;
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
     return (result);
 }

@@ -204,14 +204,11 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
   var self = this;
   var listener = {
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       self._scheduledLists[FIX(item.guid)] = item;
-      return true;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 

@@ -387,19 +387,19 @@ TestMediaListEnumerationListener.prototype = {
   _index: 0,
 
   onEnumerationBegin: function onEnumerationBegin(list) {
-    if (this._enumBeginFunction)
+    if (this._enumBeginFunction) {
       return this._enumBeginFunction(list);
+    }
 
-    return true;
+    return Ci.sbIMediaListEnumerationListener.CONTINUE;
   },
 
   onEnumeratedItem: function onEnumeratedItem(list, item) {
-    var retval = true;
-
+    var retval = Ci.sbIMediaListEnumerationListener.CONTINUE;
     if (this._enumItemFunction)
       retval = this._enumItemFunction(list, item);
 
-    if (retval) {
+    if (retval == Ci.sbIMediaListEnumerationListener.CONTINUE) {
       this._items.push(item);
     }
 

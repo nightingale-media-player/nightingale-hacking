@@ -84,14 +84,11 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
     var listener = {
       item: null,
       onEnumerationBegin: function() {
-        return true;
       },
       onEnumeratedItem: function(list, item) {
         removeItemsByUri(aItems, item.contentSrc.spec);
-        return true;
       },
       onEnumerationEnd: function() {
-        return true;
       }
     };
 
@@ -109,14 +106,11 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
       listener = {
         item: null,
         onEnumerationBegin: function() {
-          return true;
         },
         onEnumeratedItem: function(list, item) {
           removeItemsByUri(aItems, item.getProperty(SBProperties.originURL));
-          return true;
         },
         onEnumerationEnd: function() {
-          return true;
         }
       };
 

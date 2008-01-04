@@ -974,14 +974,11 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
       var allItems = {
         items: [],
         onEnumerationBegin: function(aMediaList) {
-          return true;
         },
         onEnumeratedItem: function(aMediaList, aMediaItem) {
           this.items.push(aMediaItem);
-          return true;
         },
         onEnumerationEnd: function(aMediaList, aResultCode) {
-          return;
         }
       };
 

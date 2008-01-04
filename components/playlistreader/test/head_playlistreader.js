@@ -170,14 +170,12 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
   var listener = {
     item: null,
     onEnumerationBegin: function() {
-      return true;
     },
     onEnumeratedItem: function(list, item) {
       this.item = item;
-      return false;
+      return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
     },
     onEnumerationEnd: function() {
-      return true;
     }
   };
 

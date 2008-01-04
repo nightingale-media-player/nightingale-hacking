@@ -405,12 +405,13 @@ addToPlaylistHelper.prototype = {
         this._downloadListGUID =
           prefs.getComplexValue("songbird.library.download",
                                 Components.interfaces.nsISupportsString);
-        return true;
       },
-      onEnumerationEnd: function() {return true; },
+      onEnumerationEnd: function() { },
       onEnumeratedItem: function(list, item) {
         var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
-        if (hidden == "1") return true;
+        if (hidden == "1") {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
         var goodtype = false;
         for (var i in typearray) {
           if (typearray[i] == item.type) {
@@ -418,13 +419,17 @@ addToPlaylistHelper.prototype = {
             break;
           }
         }
-        if (!goodtype) return true;
+        if (!goodtype) {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
 
         // XXXsteve Prevent the download playlist from appearing in the list.
         // this should be fixable once we close bug 4017 and have a way to
         // interrogate the policy on each playlist to see if it should be
         // put in this menu
-        if (item.guid == this._downloadListGUID) return true;
+        if (item.guid == this._downloadListGUID) {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
 
         this.obj.m_listofplaylists.m_Types.push("action");
         this.obj.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_COMMAND_ID + item.library.guid + ";" + item.guid);
@@ -434,7 +439,8 @@ addToPlaylistHelper.prototype = {
         this.obj.m_listofplaylists.m_Keys.push("");
         this.obj.m_listofplaylists.m_Keycodes.push("");
         this.obj.m_listofplaylists.m_PlaylistCommands.push(null);
-        return true;
+
+        return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
       }
     };
 

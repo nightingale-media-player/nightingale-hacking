@@ -146,11 +146,11 @@ NS_IMPL_ISUPPORTS1(sbLibraryInsertingEnumerationListener,
  */
 NS_IMETHODIMP
 sbLibraryInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
-                                                          PRBool* _retval)
+                                                          PRUint16* _retval)
 {
-  if (_retval) {
-    *_retval = PR_TRUE;
-  }
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
   return NS_OK;
 }
@@ -161,9 +161,10 @@ sbLibraryInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaLi
 NS_IMETHODIMP
 sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
                                                         sbIMediaItem* aMediaItem,
-                                                        PRBool* _retval)
+                                                        PRUint16* _retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
   nsCOMPtr<sbILibrary> fromLibrary;
@@ -189,10 +190,7 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
     mShouldInvalidate = PR_TRUE;
   }
 
-  if (_retval) {
-    *_retval = PR_TRUE;
-  }
-
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
   return NS_OK;
 }
 
@@ -234,14 +232,18 @@ NS_IMPL_ISUPPORTS1(sbLibraryRemovingEnumerationListener,
  */
 NS_IMETHODIMP
 sbLibraryRemovingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
-                                                         PRBool* _retval)
+                                                         PRUint16* _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   // Prep the query
   nsresult rv = mFriendLibrary->MakeStandardQuery(getter_AddRefs(mDBQuery));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDBQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
   return NS_OK;
 }
@@ -252,15 +254,19 @@ sbLibraryRemovingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaLis
 NS_IMETHODIMP
 sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
                                                        sbIMediaItem* aMediaItem,
-                                                       PRBool* _retval)
+                                                       PRUint16* _retval)
 {
-  NS_ASSERTION(aMediaItem, "Null pointer!");
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   // Remember this media item for later so we can notify with it
   PRBool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mItemEnumerated = PR_TRUE;
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
   return NS_OK;
 }
 
@@ -3186,10 +3192,11 @@ sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
 
   sbLibraryInsertingEnumerationListener listener(this);
 
-  PRBool beginEnumeration;
-  nsresult rv = listener.OnEnumerationBegin(nsnull, &beginEnumeration);
+  PRUint16 stepResult;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(beginEnumeration, NS_ERROR_ABORT);
+  NS_ENSURE_TRUE(stepResult == sbIMediaListEnumerationListener::CONTINUE,
+                 NS_ERROR_ABORT);
 
   sbAutoBatchHelper batchHelper(*this);
 
@@ -3202,9 +3209,10 @@ sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
     SB_CONTINUE_IF_FAILED(rv);
 
-    PRBool continueEnumerating;
-    rv = listener.OnEnumeratedItem(nsnull, item, &continueEnumerating);
-    if (NS_FAILED(rv) || !continueEnumerating) {
+    PRUint16 stepResult;
+    rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
+    if (NS_FAILED(rv) ||
+        stepResult == sbIMediaListEnumerationListener::CANCEL) {
       break;
     }
   }
@@ -3229,10 +3237,11 @@ sbLocalDatabaseLibrary::Remove(sbIMediaItem* aMediaItem)
   // other remove methods.
   sbLibraryRemovingEnumerationListener listener(this);
 
-  nsresult rv = listener.OnEnumerationBegin(nsnull, nsnull);
+  PRUint16 stepResult;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = listener.OnEnumeratedItem(nsnull, aMediaItem, nsnull);
+  rv = listener.OnEnumeratedItem(nsnull, aMediaItem, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
@@ -3281,7 +3290,8 @@ sbLocalDatabaseLibrary::RemoveSome(nsISimpleEnumerator* aMediaItems)
   // other remove methods.
   sbLibraryRemovingEnumerationListener listener(this);
 
-  nsresult rv = listener.OnEnumerationBegin(nsnull, nsnull);
+  PRUint16 stepResult;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasMore;
@@ -3294,7 +3304,7 @@ sbLocalDatabaseLibrary::RemoveSome(nsISimpleEnumerator* aMediaItems)
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = listener.OnEnumeratedItem(nsnull, item, nsnull);
+    rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

@@ -166,12 +166,14 @@
               sbs: stringBundleService,
               downloadguid: downloadListGUID,
               items: [],
-              onEnumerationBegin: function(aMediaList) { return true; },
-              onEnumerationEnd: function(aMediaList) { return true; },
+              onEnumerationBegin: function(aMediaList) { },
+              onEnumerationEnd: function(aMediaList) { },
               onEnumeratedItem: function(aMediaList, aMediaItem) {
                 var listguid = aMediaItem.guid;
                 // skip the download playlist
-                if (listguid == this.downloadguid) return true;
+                if (listguid == this.downloadguid) {
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
                 var libraryguid = aMediaList.guid;
                 var item = document.createElement("menuitem");
                 var name = this._getLocalizedProperty(aMediaItem, SBProperties.mediaListName);
@@ -180,7 +182,7 @@
                 item.setAttribute("guid", listguid);
                 item.setAttribute("library", libraryguid);
                 this.items.push(item);
-                return true;
+                return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
               },
               _getLocalizedProperty: function(list, prop) {
                 var value = list.getProperty(prop);

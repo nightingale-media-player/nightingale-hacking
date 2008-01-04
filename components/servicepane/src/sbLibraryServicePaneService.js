@@ -805,11 +805,10 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
   // Listener to receive enumerated items and store then in an array
   var listener = {
     items: [],
-    onEnumerationBegin: function() { return true; },
-    onEnumerationEnd: function() {return true; },
+    onEnumerationBegin: function() { },
+    onEnumerationEnd: function() { },
     onEnumeratedItem: function(list, item) {
       this.items.push(item);
-      return true;
     }
   };
 

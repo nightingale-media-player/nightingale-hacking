@@ -430,7 +430,7 @@ sbMediaListEnumerationListenerWrapper::sbMediaListEnumerationListenerWrapper(sbR
 
 NS_IMETHODIMP
 sbMediaListEnumerationListenerWrapper::OnEnumerationBegin(sbIMediaList *aMediaList,
-                                                           PRBool *_retval)
+                                                          PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -447,7 +447,7 @@ sbMediaListEnumerationListenerWrapper::OnEnumerationBegin(sbIMediaList *aMediaLi
 NS_IMETHODIMP
 sbMediaListEnumerationListenerWrapper::OnEnumeratedItem(sbIMediaList *aMediaList,
                                                          sbIMediaItem *aMediaItem,
-                                                         PRBool *_retval)
+                                                         PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);

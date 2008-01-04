@@ -102,14 +102,12 @@ sbMediaContentListener.prototype = {
     var listener = {
       foundItem: null,
       onEnumerationBegin: function onEnumerationBegin() {
-        return true;
       },
       onEnumeratedItem: function onEnumeratedItem(list, item) {
         this.foundItem = item;
-        return false;
+        return Ci.sbIMediaListEnumerationListener.CANCEL;
       },
       onEnumerationEnd: function onEnumerationEnd() {
-        return;
       }
     };
 
