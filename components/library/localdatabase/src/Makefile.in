@@ -106,13 +106,15 @@ else
 moz_utils = sbMozStringUtils
 endif
 
-DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
 
 ifneq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
+
+LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
                       $(DYNAMIC_LIB) \

@@ -65,6 +65,8 @@ ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
+LIBSONGBIRD_COMPONENTS = sbTestHarnessConsoleListenerModule
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbTestHarness.js \
                       $(srcdir)/httpd.js \
                       $(DYNAMIC_LIB) \

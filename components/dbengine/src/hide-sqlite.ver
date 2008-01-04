@@ -1,1 +1,1 @@
-{ local: sqlite*; };
+SB_DBENGINE { local: sqlite*; };

@@ -70,6 +70,8 @@ ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
+LIBSONGBIRD_COMPONENT = SongbirdSQLStatementBuilderModule
+
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

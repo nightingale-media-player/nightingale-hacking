@@ -71,6 +71,8 @@ endif
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
+LIBSONGBIRD_COMPONENT = SongbirdPlaylistCommandsComponent
+
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(srcdir)/sbPlaylistCommandsBuilder.js \
                       $(srcdir)/sbPublicPlaylistCommands.js \

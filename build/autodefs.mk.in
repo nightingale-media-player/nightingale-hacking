@@ -96,7 +96,7 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 
 APP_DIR	           = $(topsrcdir)/app
 BUILD_DIR          = $(topsrcdir)/build
-DEPS_DIR           = $(DEPTH)/../@SB_DEPENDENCIES_DIR@
+DEPS_DIR           = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
 XULRUNNER_DIR      = $(DEPS_DIR)/xulrunner/@SB_CONFIGURATION@
 COMPONENTS_DIR     = $(topsrcdir)/components
 ID3LIB_DIR         = $(DEPS_DIR)/id3lib/@SB_CONFIGURATION@

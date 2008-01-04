@@ -503,8 +503,7 @@ ifneq (,$(SB_ENABLE_STATIC))
   lib_link: lib_static_list
 
   ifdef DYNAMIC_LIB_IMPORT_PATHS
-    linker_paths_temp1 = $(addprefix $(CURDIR)/, $(DYNAMIC_LIB_IMPORT_PATHS))
-    linker_paths_temp2 = $(foreach dir,$(linker_paths_temp1),$(call normalizepath,$(dir)))
+    linker_paths_temp2 = $(foreach dir,$(DYNAMIC_LIB_IMPORT_PATHS),$(call normalizepath,$(dir)))
   endif
 
 lib_static_list:
@@ -530,6 +529,12 @@ ifneq (,$(strip $(DYNAMIC_LIB_STATIC_IMPORTS)))
 	    $(SONGBIRD_OBJDIR)/components/static/link-static-imports $${import} ;\
 	done
 endif # DYNAMIC_LIB_STATIC_IMPORTS
+ifneq (,$(strip $(DYNAMIC_LIB_EXTRA_FLAGS)))
+	for flag in "$(DYNAMIC_LIB_EXTRA_FLAGS)" ; do \
+	  $(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
+	    $(SONGBIRD_OBJDIR)/components/static/link-flags "$${flag}" ;\
+	done
+endif # DYNAMIC_LIB_EXTRA_FLAGS
 
 endif # static component
 

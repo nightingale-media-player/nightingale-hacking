@@ -126,15 +126,7 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
-  LDFLAGS += -Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver
-  ifneq (,$(SB_ENABLE_STATIC))
-
-  SHELL_EXECUTE += \
-	-c '$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/build-list.pl \
-	  $(SONGBIRD_OBJDIR)/components/static/link-flags \
-	  "-Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver"'
-
-  endif # SB_ENABLE_STATIC
+  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

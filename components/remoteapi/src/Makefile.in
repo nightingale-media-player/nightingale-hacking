@@ -115,7 +115,7 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS = $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
@@ -130,6 +130,8 @@ endif
 ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += js3250
 endif
+
+LIBSONGBIRD_COMPONENT = SongbirdRemoteAPIModule
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 

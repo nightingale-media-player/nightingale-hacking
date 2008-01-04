@@ -72,7 +72,9 @@ else
 moz_utils = sbMozStringUtils
 endif
 
-DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
+
+LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbStorageFormatter.jsm \

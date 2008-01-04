@@ -102,7 +102,7 @@ else
 moz_stringutils = sbMozStringUtils
 endif
 
-DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_stringutils) \
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_stringutils) \
                               $(NULL)
 
 ifneq (linux,$(SB_PLATFORM))
@@ -110,6 +110,8 @@ ifneq (linux,$(SB_PLATFORM))
 else
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
+
+LIBSONGBIRD_COMPONENT = SongbirdPropertiesModule
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       sbProperties.jsm \

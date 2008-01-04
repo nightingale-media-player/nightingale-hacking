@@ -81,6 +81,8 @@ CPP_SRCS = ../WindowDragger.cpp \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-SONGBIRD_COMPONENTS = $(target_name)
+LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk
