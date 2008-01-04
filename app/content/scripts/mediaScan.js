@@ -38,10 +38,8 @@ var theProgress = document.getElementById( "songbird_media_scan" );
 theProgress.setAttribute( "mode", "undetermined" );
 theProgress.value = 0;
 
-var theProgressValue = 0; // to 100;
-var theProgressText = "";
-
-var aFileScan = null;
+var gFileScan = null;
+var gDirectoriesToScan = [];
 var aFileScanQuery = null;
 
 var theTargetLibrary = null;
@@ -69,8 +67,7 @@ function onLoad()
   {
     try
     {
-      aFileScan = new sbIFileScan();
-      aFileScanQuery = new sbIFileScanQuery();
+      gFileScan = new sbIFileScan();
 
       var libraryManager =
         Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -89,23 +86,9 @@ function onLoad()
 
       theTargetPlaylist = window.arguments[0].target_pl;
       theTargetInsertIndex = window.arguments[0].target_pl_row;
+      gDirectoriesToScan = window.arguments[0].URL;
+      scanNextDirectory();
 
-      if (aFileScan && aFileScanQuery)
-      {
-        aFileScanQuery.setDirectory(window.arguments[0].URL);
-        aFileScanQuery.setRecurse(true);
-
-        // Filter file extensions as part of the scan.        
-        var eExtensions = gPPS.getSupportedFileExtensions();
-        while (eExtensions.hasMore())
-          aFileScanQuery.addFileExtension(eExtensions.getNext());
-
-        aFileScan.submitQuery(aFileScanQuery);
-        
-        polling_interval = setInterval( onPollScan, 333 );
-        
-        theTitle.value = SBString("media_scan.scanning", "Scanning") + " -- " + window.arguments[0].URL;
-      }
     }
     catch(err)
     {
@@ -113,6 +96,36 @@ function onLoad()
     }
   }
   return true;
+}
+
+function scanNextDirectory()
+{
+  try {
+    aFileScanQuery = new sbIFileScanQuery();
+    if (gFileScan && aFileScanQuery)
+    {
+      nextStartIndex = 0;
+      scanIsDone = false;
+      var url = gDirectoriesToScan.pop();
+      aFileScanQuery.setDirectory(url);
+      aFileScanQuery.setRecurse(true);
+
+      // Filter file extensions as part of the scan.        
+      var eExtensions = gPPS.getSupportedFileExtensions();
+      while (eExtensions.hasMore())
+        aFileScanQuery.addFileExtension(eExtensions.getNext());
+
+      gFileScan.submitQuery(aFileScanQuery);
+      
+      polling_interval = setInterval( onPollScan, 333 );
+      
+      theTitle.value = SBString("media_scan.scanning", "Scanning") + " -- " + url;
+    }
+  }
+  catch (err)
+  {
+    alert("scanNextDirectory\n\n"+err);
+  }
 }
 
 function onPollScan()
@@ -154,6 +167,12 @@ function onPollScan()
 
   if (scanIsDone) {
     clearInterval(polling_interval);
+    
+    // if we have more things to look at, do that
+    if (gDirectoriesToScan.length > 0) {
+      scanNextDirectory();
+      return;
+    }
     
     // We didn't find any items. Let's indicate this to the user.
     if(count < 1) {
@@ -207,6 +226,12 @@ function sbBatchCreateListener_onComplete(aItemArray)
   }
 
   if (batchLoadsPending == 0 && scanIsDone) {
+
+    if (gDirectoriesToScan.length > 0) {
+      scanNextDirectory();
+      return;
+    }
+
     if (totalAdded > 0) {
       theTitle.value = totalAdded + " " + SBString("media_scan.added", "Added");
     }

@@ -257,17 +257,19 @@ function SBDropped()
           fileUrl = null; 
         }
         if (fileUrl) {
-          theDropIsDir = fileUrl.file.isDirectory();
-          if(theDropIsDir) {
+          if (fileUrl.file.isDirectory()) {
             theDropPath = fileUrl.file.path;
+            _dropped_directories.push(theDropPath);
+            setTimeout( SBDropped, 10 ); // Next frame
+            return;
           }
         }
-        else {
-          theDropIsDir = false;
-        }
+        SBDroppedEntry(false);
       }
-      SBDroppedEntry();
       setTimeout( SBDropped, 10 ); // Next frame
+    } else if (_dropped_directories.length > 0) {
+      SBDroppedEntry(true);
+      setTimeout( SBDropped, 10 ); // Check for more directories
     }
   } catch (e) {
     dump(e);
@@ -276,12 +278,12 @@ function SBDropped()
 }
 
 var theDropPath = "";
-var theDropIsDir = false;
+var _dropped_directories = [];
 
-function SBDroppedEntry()
+function SBDroppedEntry(aIsDir)
 {
   try {    
-    if ( theDropIsDir ) {
+    if ( aIsDir ) {
       theFileScanIsOpen.boolValue = true;
       
       // otherwise, fire off the media scan page.
@@ -300,8 +302,9 @@ function SBDroppedEntry()
         media_scan_data.target_pl_row = _insert_index;
       }
       
-      media_scan_data.URL = theDropPath;
+      media_scan_data.URL = _dropped_directories;
       media_scan_data.retval = "";
+      _dropped_directories = [];
 
       // Open the modal dialog
       SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
