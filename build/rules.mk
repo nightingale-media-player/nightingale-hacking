@@ -429,7 +429,8 @@ linker_imports_temp2 = $(addprefix $(LDFLAGS_IMPORT_PREFIX), $(linker_imports_te
 linker_imports = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), $(linker_imports_temp2))
 
 ifdef DYNAMIC_LIB_IMPORT_PATHS
-linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), $(DYNAMIC_LIB_IMPORT_PATHS))
+linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), \
+                      $(foreach dir,$(DYNAMIC_LIB_IMPORT_PATHS),$(call normalizepath,$(dir))))
 linker_paths = $(addsuffix $(LDFLAGS_PATH_SUFFIX), $(linker_paths_temp))
 endif
 
