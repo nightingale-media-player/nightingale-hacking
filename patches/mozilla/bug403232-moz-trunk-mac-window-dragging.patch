@@ -1,0 +1,190 @@
+Index: widget/src/cocoa/nsChildView.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
+retrieving revision 1.80
+diff -U 10 -r1.80 nsChildView.h
+--- widget/src/cocoa/nsChildView.h	19 Dec 2007 19:40:19 -0000	1.80
++++ widget/src/cocoa/nsChildView.h	21 Dec 2007 16:39:42 -0000
+@@ -124,21 +124,24 @@
+   
+   PRUint32 mLastModifierState;
+ }
+ 
+ // these are sent to the first responder when the window key status changes
+ - (void)viewsWindowDidBecomeKey;
+ - (void)viewsWindowDidResignKey;
+ 
+ // Stop NSView hierarchy being changed during [ChildView drawRect:]
+ - (void)delayedTearDown;
++
+ - (void)setTransparent:(BOOL)transparent;
++
++- (void)sendFocusEvent:(PRUint32)eventType;
+ @end
+ 
+ 
+ 
+ //-------------------------------------------------------------------------
+ //
+ // nsTSMManager
+ //
+ //-------------------------------------------------------------------------
+ 
+@@ -349,16 +352,18 @@
+ 
+   PRPackedBool          mDestructorCalled;
+   PRPackedBool          mVisible;
+ 
+   PRPackedBool          mDrawing;
+ 
+   PRPackedBool          mLiveResizeInProgress;
+   PRPackedBool          mIsPluginView; // true if this is a plugin view
+   PRPackedBool          mPluginDrawing;
+   PRPackedBool          mPluginIsCG; // true if this is a CoreGraphics plugin
+-  
++
++  PRInt32               mInSetFocusLevel;
++
+   nsPluginPort          mPluginPort;
+ };
+ 
+ 
+ #endif // nsChildView_h_
+Index: widget/src/cocoa/nsChildView.mm
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
+retrieving revision 1.290
+diff -U 10 -r1.290 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	19 Dec 2007 19:40:19 -0000	1.290
++++ widget/src/cocoa/nsChildView.mm	21 Dec 2007 16:39:46 -0000
+@@ -339,20 +339,21 @@
+ , mView(nsnull)
+ , mParentView(nsnull)
+ , mParentWidget(nsnull)
+ , mDestructorCalled(PR_FALSE)
+ , mVisible(PR_FALSE)
+ , mDrawing(PR_FALSE)
+ , mLiveResizeInProgress(PR_FALSE)
+ , mIsPluginView(PR_FALSE)
+ , mPluginDrawing(PR_FALSE)
+ , mPluginIsCG(PR_FALSE)
++, mInSetFocusLevel(0)
+ {
+ #ifdef PR_LOGGING
+   if (!sCocoaLog)
+     sCocoaLog = PR_NewLogModule("nsCocoaWidgets");
+ #endif
+ 
+   SetBackgroundColor(NS_RGB(255, 255, 255));
+   SetForegroundColor(NS_RGB(0, 0, 0));
+ }
+ 
+@@ -737,23 +738,63 @@
+ {
+   // unimplemented
+   if (aState)
+    *aState = PR_TRUE;
+   return NS_OK;
+ }
+ 
+ 
+ NS_IMETHODIMP nsChildView::SetFocus(PRBool aRaise)
+ {
++  PRBool reentered = (mInSetFocusLevel++ > 0);
+   NSWindow* window = [mView window];
+-  if (window)
+-    [window makeFirstResponder:mView];
++  if (window) {
++    // For reasons that aren't yet clear, focus changes within a window (as
++    // opposed to those between windows or between apps) should only trigger
++    // NS_LOSTFOCUS and NS_GOTFOCUS events (sent to Gecko) in the context of
++    // a call to nsChildView::SetFocus() (or nsCocoaWindow::SetFocus(), which
++    // in any case re-routes to nsChildView::SetFocus()).  If we send these
++    // events on every intra-window focus change (on every call to
++    // [ChildView becomeFirstResponder:] or [ChildView resignFirstResponder:]),
++    // the result will be strange focus bugs (like bmo bugs 399471, 403232,
++    // 404433 and 408266).
++    NSResponder* firstResponder = [window firstResponder];
++    if ([mView isEqual:firstResponder]) {
++      // Sometimes SetFocus() is called on an nsChildView object that's
++      // already focused.  In principle this shouldn't happen, and in any
++      // case we shouldn't have to dispatch any events.  But if we don't, we
++      // sometimes get text-input cursors blinking in more than one text
++      // field, or still blinking when the browser is no longer active.  For
++      // reasons that aren't at all clear, this problem can be avoided by
++      // always sending an NS_GOTFOCUS message here.
++      // But we need to avoid doing this if SetFocus() has been called
++      // reentrantly on the same object.  (This, too is probably the result
++      // of a bug -- sometimes calls to nsChildView::DispatchEvent() can get
++      // temporarily stuck, causing calls to [ChildView sendFocusEvent:] and
++      // SetFocus() to be reentered.)  This causes the Mochitests to get stuck
++      // in the toolkit/content/tests/widgets/test_popup_button.xul test.
++      if (!reentered && [mView isKindOfClass:[ChildView class]])
++        [(ChildView *)mView sendFocusEvent:NS_GOTFOCUS];
++    } else {
++      // Retain and release firstResponder around the call to
++      // makeFirstResponder.
++      [firstResponder retain];
++      if ([window makeFirstResponder:mView]) {
++        if ([firstResponder isKindOfClass:[ChildView class]])
++          [(ChildView *)firstResponder sendFocusEvent:NS_LOSTFOCUS];
++        if ([mView isKindOfClass:[ChildView class]])
++          [(ChildView *)mView sendFocusEvent:NS_GOTFOCUS];
++      }
++      [firstResponder release];
++    }
++  }
++  --mInSetFocusLevel;
+   return NS_OK;
+ }
+ 
+ 
+ // Set the colormap of the window
+ NS_IMETHODIMP nsChildView::SetColorMap(nsColorMap *aColorMap)
+ {
+   return NS_OK;
+ }
+ 
+@@ -4081,42 +4122,27 @@
+     }
+ 
+     mLastModifierState = modifiers;
+   }
+ 
+   // check if the hand scroll cursor needs to be set/unset
+   [self setHandScrollCursor:theEvent];
+ }
+ 
+ 
+-// This method is called when we are about to be focused.
+-- (BOOL)becomeFirstResponder
+-{
+-  if (!mGeckoChild)
+-    return NO;
+-
+-  [self sendFocusEvent:NS_GOTFOCUS];
+-
+-  return [super becomeFirstResponder];
+-}
+-
+-
+ // This method is called when are are about to lose focus.
+ // We must always call through to our superclass, even when mGeckoChild is
+ // nil -- otherwise the keyboard focus can end up in the wrong NSView.
+ - (BOOL)resignFirstResponder
+ {
+   nsTSMManager::CommitIME();
+ 
+-  if (mGeckoChild)
+-    [self sendFocusEvent:NS_LOSTFOCUS];
+-
+   return [super resignFirstResponder];
+ }
+ 
+ 
+ - (void)viewsWindowDidBecomeKey
+ {
+   if (!mGeckoChild)
+     return;
+ 
+   // check to see if the window implements the mozWindow protocol. This

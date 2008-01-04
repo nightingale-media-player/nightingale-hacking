@@ -1,10 +1,10 @@
 Index: toolkit/content/widgets/autocomplete.xml
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/content/widgets/autocomplete.xml,v
-retrieving revision 1.83
-diff -u -p -r1.83 autocomplete.xml
---- toolkit/content/widgets/autocomplete.xml	30 Sep 2007 19:00:10 -0000	1.83
-+++ toolkit/content/widgets/autocomplete.xml	2 Oct 2007 01:50:52 -0000
+retrieving revision 1.104
+diff -u -p -r1.104 autocomplete.xml
+--- toolkit/content/widgets/autocomplete.xml	3 Jan 2008 05:52:37 -0000	1.104
++++ toolkit/content/widgets/autocomplete.xml	4 Jan 2008 01:07:25 -0000
 @@ -53,7 +53,7 @@
        <stylesheet src="chrome://global/skin/autocomplete.css"/>
      </resources>
@@ -12,15 +12,15 @@ diff -u -p -r1.83 autocomplete.xml
 -    <content sizetopopup="pref">
 +    <content sizetopopup="pref" mousethrough="never">
        <xul:hbox class="autocomplete-textbox-container" flex="1">
-         <children includes="image|deck|stack">
+         <children includes="image|deck|stack|box">
            <xul:image class="autocomplete-icon" allowevents="true"/>
 Index: toolkit/content/widgets/menulist.xml
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/content/widgets/menulist.xml,v
-retrieving revision 1.32
-diff -u -p -r1.32 menulist.xml
---- toolkit/content/widgets/menulist.xml	30 Sep 2007 03:40:05 -0000	1.32
-+++ toolkit/content/widgets/menulist.xml	2 Oct 2007 01:50:52 -0000
+retrieving revision 1.33
+diff -u -p -r1.33 menulist.xml
+--- toolkit/content/widgets/menulist.xml	16 Nov 2007 01:30:23 -0000	1.33
++++ toolkit/content/widgets/menulist.xml	4 Jan 2008 01:07:25 -0000
 @@ -14,7 +14,7 @@
  
    <binding id="menulist" display="xul:menu"
@@ -30,7 +30,7 @@ diff -u -p -r1.32 menulist.xml
        <xul:hbox class="menulist-label-box" flex="1">
          <xul:image class="menulist-icon" xbl:inherits="src=image,src"/>
          <xul:label class="menulist-label" xbl:inherits="value=label,crop,accesskey" crop="right" flex="1"/>
-@@ -167,7 +167,7 @@
+@@ -176,7 +176,7 @@
                this.selectedItem = popup.childNodes[val];
              else
                this.selectedItem = null;
@@ -39,7 +39,7 @@ diff -u -p -r1.32 menulist.xml
            ]]>
          </setter>
        </property>
-@@ -389,7 +389,7 @@
+@@ -398,7 +398,7 @@
    </binding>
  
    <binding id="menulist-editable" extends="chrome://global/content/bindings/menulist.xml#menulist">
@@ -48,7 +48,7 @@ diff -u -p -r1.32 menulist.xml
        <xul:hbox class="menulist-editable-box textbox-input-box" xbl:inherits="context,disabled,readonly" flex="1">
          <html:input class="menulist-editable-input" flex="1" anonid="input" allowevents="true"
                      xbl:inherits="value=label,value,disabled,tabindex,readonly"/>
-@@ -588,7 +588,7 @@
+@@ -597,7 +597,7 @@
  
    <binding id="menulist-compact" display="xul:menu"
             extends="chrome://global/content/bindings/menulist.xml#menulist">
@@ -57,7 +57,7 @@ diff -u -p -r1.32 menulist.xml
        <xul:dropmarker class="menulist-dropmarker" type="menu"/>
        <xul:image class="menulist-icon" xbl:inherits="src=image,src"/>
        <xul:label class="menulist-label" xbl:inherits="value=label,crop,accesskey" crop="right" flex="1"/>
-@@ -598,7 +598,7 @@
+@@ -607,7 +607,7 @@
  
    <binding id="menulist-description" display="xul:menu"
             extends="chrome://global/content/bindings/menulist.xml#menulist">
@@ -69,10 +69,10 @@ diff -u -p -r1.32 menulist.xml
 Index: toolkit/content/widgets/textbox.xml
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/content/widgets/textbox.xml,v
-retrieving revision 1.46
-diff -u -p -r1.46 textbox.xml
---- toolkit/content/widgets/textbox.xml	18 Sep 2007 01:08:33 -0000	1.46
-+++ toolkit/content/widgets/textbox.xml	2 Oct 2007 01:50:52 -0000
+retrieving revision 1.47
+diff -u -p -r1.47 textbox.xml
+--- toolkit/content/widgets/textbox.xml	13 Nov 2007 05:35:17 -0000	1.47
++++ toolkit/content/widgets/textbox.xml	4 Jan 2008 01:07:25 -0000
 @@ -16,7 +16,7 @@
        <stylesheet src="chrome://global/skin/textbox.css"/>
      </resources>

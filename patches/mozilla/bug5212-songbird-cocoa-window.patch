@@ -1,10 +1,10 @@
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
-retrieving revision 1.43
-diff -u -8 -p -r1.43 nsCocoaWindow.h
---- widget/src/cocoa/nsCocoaWindow.h	30 Oct 2007 04:03:43 -0000	1.43
-+++ widget/src/cocoa/nsCocoaWindow.h	7 Dec 2007 20:12:48 -0000
+retrieving revision 1.45
+diff -u -8 -p -r1.45 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	19 Dec 2007 19:40:19 -0000	1.45
++++ widget/src/cocoa/nsCocoaWindow.h	3 Jan 2008 23:48:22 -0000
 @@ -94,17 +94,21 @@ class nsChildView;
  
  
@@ -30,11 +30,11 @@ diff -u -8 -p -r1.43 nsCocoaWindow.h
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.117
-diff -u -8 -p -r1.117 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	17 Nov 2007 12:49:04 -0000	1.117
-+++ widget/src/cocoa/nsCocoaWindow.mm	7 Dec 2007 20:12:48 -0000
-@@ -325,20 +325,34 @@ nsresult nsCocoaWindow::StandardCreate(n
+retrieving revision 1.128
+diff -u -8 -p -r1.128 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	19 Dec 2007 19:40:19 -0000	1.128
++++ widget/src/cocoa/nsCocoaWindow.mm	3 Jan 2008 23:48:22 -0000
+@@ -362,20 +362,34 @@ nsresult nsCocoaWindow::StandardCreate(n
      // Note that we need to check the window type because we mark sheets sheets as 
      // having titlebars.
      if (mWindowType == eWindowType_toplevel &&
@@ -47,7 +47,7 @@ diff -u -8 -p -r1.117 nsCocoaWindow.mm
 -    // BorderlessWindow class.
 -    else if (features == NSBorderlessWindowMask)
 -      windowClass = [BorderlessWindow class];
-+      
++
 +    // XXXmatt: If we use a borderless window the OS makes
 +    // assumptions about what the window should be able to do.
 +    // What we really want is a normal window in which
@@ -68,12 +68,12 @@ diff -u -8 -p -r1.117 nsCocoaWindow.mm
  
      // Create the window
      mWindow = [[windowClass alloc] initWithContentRect:rect styleMask:features 
-                                    backing:NSBackingStoreBuffered defer:NO];
+                                    backing:NSBackingStoreBuffered defer:YES];
      
      if (mWindowType == eWindowType_popup) {
-       [mWindow setAlphaValue:0.95];
+       [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
        [mWindow setLevel:NSPopUpMenuWindowLevel];
-@@ -357,17 +371,21 @@ nsresult nsCocoaWindow::StandardCreate(n
+@@ -394,17 +408,21 @@ nsresult nsCocoaWindow::StandardCreate(n
          [mWindow setContentView:newContentView];
        }
      }
@@ -96,7 +96,7 @@ diff -u -8 -p -r1.117 nsCocoaWindow.mm
      
      mWindowMadeHere = PR_TRUE;
    }
-@@ -1822,8 +1840,171 @@ void patternDraw(void* aInfo, CGContextR
+@@ -1920,8 +1938,171 @@ void patternDraw(void* aInfo, CGContextR
  {
    NSWindow *nativeWindow = [self retain];
    BOOL retval = [super performKeyEquivalent:theEvent];

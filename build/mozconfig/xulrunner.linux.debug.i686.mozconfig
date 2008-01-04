@@ -1,6 +1,5 @@
 mk_add_options MOZ_CO_PROJECT=xulrunner
 mk_add_options MOZ_CO_MODULE=mozilla/other-licenses/bsdiff,mozilla/tools/update-packaging
-mk_add_options MOZ_CO_TAG=FIREFOX_3_0b2_RELEASE
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-debug
 export MOZ_DEBUG_SYMBOLS=1
 export MOZILLA_OFFICIAL=1

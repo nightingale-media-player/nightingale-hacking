@@ -1,11 +1,11 @@
 Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
-retrieving revision 1.335
-diff -u -p -r1.335 nsTreeBodyFrame.cpp
---- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	15 Oct 2007 11:21:25 -0000	1.335
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	26 Oct 2007 03:01:05 -0000
-@@ -1264,6 +1264,12 @@ nsTreeBodyFrame::GetRowAt(PRInt32 aX, PR
+retrieving revision 1.345
+diff -u -p -r1.345 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	3 Jan 2008 00:01:30 -0000	1.345
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	3 Jan 2008 23:41:50 -0000
+@@ -1278,6 +1278,12 @@ nsTreeBodyFrame::GetRowAt(PRInt32 aX, PR
    return row;
  }
  
@@ -18,7 +18,7 @@ diff -u -p -r1.335 nsTreeBodyFrame.cpp
  void
  nsTreeBodyFrame::CheckTextForBidi(nsAutoString& aText)
  {
-@@ -2604,7 +2610,9 @@ nsTreeBodyFrame::HandleEvent(nsPresConte
+@@ -2621,7 +2627,9 @@ nsTreeBodyFrame::HandleEvent(nsPresConte
          mSlots->mTimer = nsnull;
        }
  
@@ -29,7 +29,7 @@ diff -u -p -r1.335 nsTreeBodyFrame.cpp
          if (!mSlots->mTimer && mSlots->mDropOrient == nsITreeView::DROP_ON) {
            // Either there wasn't a timer running or it was just killed above.
            // If over a folder, start up a timer to open the folder.
-@@ -4231,6 +4239,14 @@ nsTreeBodyFrame::ComputeDropPosition(nsG
+@@ -4258,6 +4266,14 @@ nsTreeBodyFrame::ComputeDropPosition(nsG
          *aOrient = nsITreeView::DROP_AFTER;
      }
    }
@@ -47,11 +47,11 @@ diff -u -p -r1.335 nsTreeBodyFrame.cpp
 Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.h
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.h,v
-retrieving revision 1.121
-diff -u -p -r1.121 nsTreeBodyFrame.h
---- layout/xul/base/src/tree/src/nsTreeBodyFrame.h	23 Aug 2007 15:57:55 -0000	1.121
-+++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	26 Oct 2007 03:01:05 -0000
-@@ -241,6 +241,11 @@ protected:
+retrieving revision 1.124
+diff -u -p -r1.124 nsTreeBodyFrame.h
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.h	1 Jan 2008 01:31:16 -0000	1.124
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.h	3 Jan 2008 23:41:50 -0000
+@@ -242,6 +242,11 @@ protected:
    // coordinate system of this frame.
    PRInt32 GetRowAt(nscoord aX, nscoord aY);
  

@@ -1,16 +1,13 @@
+? bug386826-xreonly-vistanorestartupdate.patch
+? sanity.diff
 Index: toolkit/xre/nsAppRunner.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
-retrieving revision 1.199
-diff -u -8 -p -r1.199 nsAppRunner.cpp
---- toolkit/xre/nsAppRunner.cpp	30 Nov 2007 20:08:55 -0000	1.199
-+++ toolkit/xre/nsAppRunner.cpp	3 Dec 2007 19:25:49 -0000
-@@ -1556,17 +1556,17 @@ static nsresult LaunchChild(nsINativeApp
-                             int needElevation = 0)
- {
-   aNative->Quit(); // release DDE mutex, if we're holding it
- 
-   // Restart this process by exec'ing it into the current process
+retrieving revision 1.202
+diff -u -p -r1.202 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	31 Dec 2007 15:15:44 -0000	1.202
++++ toolkit/xre/nsAppRunner.cpp	3 Jan 2008 22:43:43 -0000
+@@ -1602,7 +1602,7 @@ static nsresult LaunchChild(nsINativeApp
    // if supported by the platform.  Otherwise, use NSPR.
   
    if (aBlankCommandLine) {
@@ -19,17 +16,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
      gRestartArgv[gRestartArgc] = nsnull;
    }
  
-   PR_SetEnv("MOZ_LAUNCHED_CHILD=1");
- 
- #if defined(XP_MACOSX)
-   LaunchChildMac(gRestartArgc, gRestartArgv);
- #else
-@@ -2246,44 +2246,16 @@ static void RemoveComponentRegistries(ns
-   aLocalProfileDir->Clone(getter_AddRefs(file));
-   if (!file)
-     return;
- 
-   file->AppendNative(NS_LITERAL_CSTRING("XUL" PLATFORM_FASL_SUFFIX));
+@@ -2290,34 +2290,6 @@ static void RemoveComponentRegistries(ns
    file->Remove(PR_FALSE);
  }
  
@@ -64,17 +51,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
  #ifdef MOZ_CRASHREPORTER
  // When we first initialize the crash reporter we don't have a profile,
  // so we set the minidump path to $TEMP.  Once we have a profile,
- // we set it to $PROFILE/minidumps, creating the directory
- // if needed.
- static void MakeOrSetMinidumpPath(nsIFile* profD)
- {
-   nsCOMPtr<nsIFile> dumpD;
-@@ -2301,16 +2273,22 @@ static void MakeOrSetMinidumpPath(nsIFil
-     nsAutoString pathStr;
-     if(NS_SUCCEEDED(dumpD->GetPath(pathStr)))
-       CrashReporter::SetMinidumpPath(pathStr);
-   }
- }
+@@ -2345,6 +2317,12 @@ static void MakeOrSetMinidumpPath(nsIFil
  #endif
  
  const nsXREAppData* gAppData = nsnull;
@@ -87,17 +64,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
  
  #if defined(XP_OS2)
  // because we use early returns, we use a stack-based helper to un-set the OS2 FP handler
- class ScopedFPHandler {
- private:
-   EXCEPTIONREGISTRATIONRECORD excpreg;
- 
- public:
-@@ -2626,24 +2604,38 @@ XRE_main(int argc, char* argv[], const n
-     if (::GetCurrentProcess(&psn) == noErr)
-       ::SetFrontProcess(&psn);
-   }
- #endif
- 
+@@ -2693,14 +2671,28 @@ XRE_main(int argc, char* argv[], const n
    PR_SetEnv("MOZ_LAUNCHED_CHILD=");
  
    gRestartArgc = gArgc;
@@ -132,17 +99,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
  
  #if defined(XP_OS2)
    PRBool StartOS2App(int aArgc, char **aArgv);
-   if (!StartOS2App(gArgc, gArgv))
-     return 1;
-   ScopedFPHandler handler;
- #endif /* XP_OS2 */
- 
-@@ -3086,27 +3078,24 @@ XRE_main(int argc, char* argv[], const n
-         if (noEMRestart && *noEMRestart && *noEMRestart == '1') {
-           if (upgraded || needsRestart) {
-             NS_WARNING("EM tried to force us to restart twice! Forcefully preventing that.");
-           }
-           needsRestart = upgraded = PR_FALSE;
+@@ -3153,8 +3145,6 @@ XRE_main(int argc, char* argv[], const n
          }
  
          if (!upgraded && !needsRestart) {
@@ -151,8 +108,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
            // clear out any environment variables which may have been set 
            // during the relaunch process now that we know we won't be relaunching.
            PR_SetEnv("XRE_PROFILE_PATH=");
-           PR_SetEnv("XRE_PROFILE_LOCAL_PATH=");
-           PR_SetEnv("XRE_PROFILE_NAME=");
+@@ -3163,7 +3153,6 @@ XRE_main(int argc, char* argv[], const n
            PR_SetEnv("XRE_START_OFFLINE=");
            PR_SetEnv("XRE_IMPORT_PROFILES=");
            PR_SetEnv("NO_EM_RESTART=");
@@ -160,17 +116,7 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
            PR_SetEnv("XRE_BINARY_PATH=");
  
  #ifdef XP_MACOSX
-           // we re-initialize the command-line service and do appleevents munging
-           // after we are sure that we're not restarting
-           cmdLine = do_CreateInstance("@mozilla.org/toolkit/command-line;1");
-           NS_ENSURE_TRUE(cmdLine, 1);
- 
-@@ -3193,20 +3182,17 @@ XRE_main(int argc, char* argv[], const n
-     }
- 
-     // unlock the profile after ScopedXPCOMStartup object (xpcom) 
-     // has gone out of scope.  see bug #386739 for more details
-     profileLock->Unlock();
+@@ -3254,10 +3243,7 @@ XRE_main(int argc, char* argv[], const n
  
      // Restart the app after XPCOM has been shut down cleanly. 
      if (needsRestart) {
@@ -182,24 +128,14 @@ diff -u -8 -p -r1.199 nsAppRunner.cpp
          char* noEMRestart = PR_GetEnv("NO_EM_RESTART");
          if (noEMRestart && *noEMRestart) {
            PR_SetEnv("NO_EM_RESTART=1");
-         }
-         else {
-           PR_SetEnv("NO_EM_RESTART=0");
-         }
-       }
 Index: toolkit/xre/nsXULAppAPI.h
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsXULAppAPI.h,v
-retrieving revision 1.25
-diff -u -8 -p -r1.25 nsXULAppAPI.h
---- toolkit/xre/nsXULAppAPI.h	13 Oct 2007 05:47:04 -0000	1.25
-+++ toolkit/xre/nsXULAppAPI.h	3 Dec 2007 19:25:49 -0000
-@@ -398,9 +398,18 @@ XRE_API(nsresult,
-                            nsXREAppData *aAppData))
- 
- /**
-  * Free a nsXREAppData structure that was allocated with XRE_CreateAppData.
-  */
+retrieving revision 1.26
+diff -u -p -r1.26 nsXULAppAPI.h
+--- toolkit/xre/nsXULAppAPI.h	31 Dec 2007 15:15:45 -0000	1.26
++++ toolkit/xre/nsXULAppAPI.h	3 Jan 2008 22:43:43 -0000
+@@ -402,4 +402,13 @@ XRE_API(nsresult,
  XRE_API(void,
          XRE_FreeAppData, (nsXREAppData *aAppData))
  
@@ -216,16 +152,11 @@ diff -u -8 -p -r1.25 nsXULAppAPI.h
 Index: xulrunner/app/nsXULRunnerApp.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xulrunner/app/nsXULRunnerApp.cpp,v
-retrieving revision 1.37
-diff -u -8 -p -r1.37 nsXULRunnerApp.cpp
---- xulrunner/app/nsXULRunnerApp.cpp	29 Nov 2007 17:20:54 -0000	1.37
-+++ xulrunner/app/nsXULRunnerApp.cpp	3 Dec 2007 19:25:49 -0000
-@@ -402,44 +402,37 @@ int main(int argc, char* argv[])
-       rv = GetXULRunnerDir(argv[0], getter_AddRefs(regDir));
-       if (NS_FAILED(rv))
-         return 2;
- 
-       return InstallXULApp(regDir, appLocation, installTo, leafName);
+retrieving revision 1.39
+diff -u -p -r1.39 nsXULRunnerApp.cpp
+--- xulrunner/app/nsXULRunnerApp.cpp	31 Dec 2007 15:15:46 -0000	1.39
++++ xulrunner/app/nsXULRunnerApp.cpp	3 Jan 2008 22:43:43 -0000
+@@ -406,34 +406,27 @@ int main(int argc, char* argv[])
      }
    }
  
@@ -272,27 +203,11 @@ diff -u -8 -p -r1.37 nsXULRunnerApp.cpp
    nsCOMPtr<nsILocalFile> appDataLF;
    nsresult rv = XRE_GetFileFromPath(appDataFile, getter_AddRefs(appDataLF));
    if (NS_FAILED(rv)) {
-     Output(PR_TRUE, "Error: unrecognized application.ini path.\n");
+@@ -447,5 +440,7 @@ int main(int argc, char* argv[])
      return 2;
-   }
- 
-   AutoAppData appData(appDataLF);
-@@ -467,16 +460,18 @@ int main(int argc, char* argv[])
-     if (NS_FAILED(rv)) {
-       Output(PR_TRUE, "Error: unrecognized override.ini path.\n");
-       return 2;
-     }
- 
-     appData.Override(ovrDataLF);
    }
  
 +  XRE_SetAppDataFile(appDataLF);
 +
    return XRE_main(argc, argv, appData);
  }
- 
- #if defined( XP_WIN ) && defined( WIN32 ) && !defined(__GNUC__)
- // We need WinMain in order to not be a console app.  This function is
- // unused if we are a console application.
- int WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR args, int )
- {
