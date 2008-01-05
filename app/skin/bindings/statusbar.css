@@ -57,7 +57,8 @@ sb-player-scanning-label
 {
   padding-left:10px;
 }
-.sb-status-bar-text
+.sb-status-bar-text,
+.statusbarpanel-text
 {
   margin: 0;
 }
