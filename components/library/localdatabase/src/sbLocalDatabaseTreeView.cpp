@@ -56,7 +56,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
-#include <nsUnitConversion.h>
+#include <nsCoords.h>
 #include <prlog.h>
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseCID.h"
