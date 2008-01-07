@@ -374,7 +374,7 @@ function SBScanMedia( parentWindow )
   if ( res == nsIFilePicker.returnOK )
   {
     var media_scan_data = new Object();
-    media_scan_data.URL = fp.file.path;
+    media_scan_data.URL = [fp.file.path];
     media_scan_data.retval = "";
     // Open the modal dialog
     SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );

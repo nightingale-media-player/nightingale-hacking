@@ -87,6 +87,11 @@ function onLoad()
       theTargetPlaylist = window.arguments[0].target_pl;
       theTargetInsertIndex = window.arguments[0].target_pl_row;
       gDirectoriesToScan = window.arguments[0].URL;
+      if (("object" == typeof(opener)) && ("Array" in opener)) {
+        if (!(gDirectoriesToScan instanceof opener.Array)) {
+          gDirectoriesToScan = [gDirectoriesToScan];
+        }
+      }
       scanNextDirectory();
 
     }
