@@ -114,6 +114,7 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
   }
 
   this._setDownloadDestination([item], downloadFileURL);
+  this._checkAndRemoveExistingItem(item);
   this.getDownloadMediaList().add(item);
 }
 
@@ -137,6 +138,7 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
       items.push(item);
     }
     else {
+      this._checkAndRemoveExistingItem(item);
       this._addItemToArrays(item, uriArray, propertyArrayArray);
     }
   }
@@ -172,6 +174,7 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
   for (let i = 0; i < aMediaList.length; i++) {
     var item = aMediaList.getItemByIndex(i);
     if (isForeign) {
+      this._checkAndRemoveExistingItem(item);      
       this._addItemToArrays(item, uriArray, propertyArrayArray);
     }
     else {
@@ -310,6 +313,28 @@ function sbDownloadDeviceHelper_getDownloadFolder()
 
   prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
   return downloadFolder;
+}
+
+sbDownloadDeviceHelper.prototype._checkAndRemoveExistingItem =
+function sbDownloadDeviceHelper__checkAndRemoveExistingItem(aMediaItem)
+{
+  var downloadMediaList = this.getDownloadMediaList();
+  if (downloadMediaList) {
+    var itemOriginUrl = aMediaItem.getProperty(SBProperties.originURL);
+
+    var listEnumerationListener = {
+      onEnumerationBegin: function() {
+      },
+      onEnumeratedItem: function(list, item) {
+        downloadMediaList.remove(item);
+      },
+      onEnumerationEnd: function() {
+      },
+    };
+    downloadMediaList.enumerateItemsByProperty(SBProperties.originURL,
+                                               itemOriginUrl,
+                                               listEnumerationListener);
+  }
 }
 
 sbDownloadDeviceHelper.prototype._safeDownloadFileURL =
