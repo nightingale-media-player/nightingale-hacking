@@ -7,6 +7,7 @@
 #include "nsIDOMWindow.h"
 #include "nsITimer.h"
 #include "nsComponentManagerUtils.h"
+#include "nsIStringBundle.h"
 
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
@@ -46,6 +47,12 @@ private:
   NS_IMETHODIMP SetupPlaybin();
 
   NS_IMETHODIMP DestroyPlaybin();
+
+  NS_IMETHOD
+  CreateBundle(const char *aURLSpec, nsIStringBundle **_retval);
+
+  NS_IMETHOD
+  GetStringFromName(nsIStringBundle *aBundle, const nsAString & aName, nsAString & _retval);
 
   bool 
   SetInvisibleCursor(sbGStreamerSimple* gsts);

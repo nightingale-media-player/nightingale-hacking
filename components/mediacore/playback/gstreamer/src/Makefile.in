@@ -30,6 +30,10 @@ CPP_INCLUDES = \
       $(MOZSDK_INCLUDE_DIR)/locale \
       $(MOZSDK_INCLUDE_DIR)/dom \
       $(MOZSDK_INCLUDE_DIR)/docshell \
+      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+      $(MOZSDK_INCLUDE_DIR)/appshell \
+      $(MOZSDK_INCLUDE_DIR)/intl \
+      $(MOZSDK_INCLUDE_DIR)/pref \
       $(MOZSDK_IDL_DIR) \
       $(NULL)
 

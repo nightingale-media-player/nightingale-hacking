@@ -1,23 +1,30 @@
 #include "sbGStreamerSimple.h"
 #include "nsIInterfaceRequestorUtils.h"
 
-#include "nsIWebNavigation.h"
-#include "nsIDOMDocument.h"
-#include "nsIDOMDocumentView.h"
-#include "nsIDOMXULElement.h"
-#include "nsIDOMAbstractView.h"
+#include "nsIBaseWindow.h"
+#include "nsIBoxObject.h"
+#include "nsIBrowserDOMWindow.h"
 #include "nsIDocShellTreeItem.h"
 #include "nsIDocShellTreeOwner.h"
+#include "nsIDocument.h"
+#include "nsIDOMAbstractView.h"
+#include "nsIDOMChromeWindow.h"
+#include "nsIDOMDocument.h"
+#include "nsIDOMDocumentView.h"
 #include "nsIDOMEventTarget.h"
 #include "nsIDOMEvent.h"
 #include "nsIDOMEventListener.h"
 #include "nsIDOMWindow.h"
-#include "nsIDocument.h"
-#include "nsIScriptGlobalObject.h"
-#include "nsIBaseWindow.h"
-#include "nsIWidget.h"
-#include "nsIBoxObject.h"
+#include "nsIDOMWindowInternal.h"
+#include "nsIDOMXULElement.h"
+#include "nsIIOService.h"
+#include "nsIPrefBranch.h"
+#include "nsIPromptService.h"
 #include "nsIProxyObjectManager.h"
+#include "nsIScriptGlobalObject.h"
+#include "nsIWebNavigation.h"
+#include "nsIWidget.h"
+#include "nsIWindowMediator.h"
 #include "nsServiceManagerUtils.h"
 #include "nsStringGlue.h"
 #include "prlog.h"
@@ -854,6 +861,174 @@ sbGStreamerSimple::Resize()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbGStreamerSimple::CreateBundle(const char *aURLSpec,
+                                nsIStringBundle **_retval)
+{
+  NS_ASSERTION(aURLSpec, "aURLSpec is null");
+  NS_ASSERTION(_retval, "_retval is null");
+  *_retval = nsnull;
+
+  nsresult rv;
+  nsCOMPtr<nsIStringBundleService> stringBundleService =
+    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  rv = stringBundleService->CreateBundle(aURLSpec,
+                                         getter_AddRefs(stringBundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = stringBundle);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::GetStringFromName(nsIStringBundle *aBundle,
+                                     const nsAString & aName,
+                                     nsAString & _retval)
+{
+  NS_ASSERTION(aBundle, "aBundle is null");
+
+  nsAutoString value;
+  nsresult rv = aBundle->GetStringFromName(aName.BeginReading(),
+                                           getter_Copies(value));
+  if (NS_SUCCEEDED(rv)) {
+    _retval.Assign(value);
+  }
+  else {
+    _retval.Truncate();
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::ShowHelperPage(void)
+{
+  nsresult rv;
+  PRBool skipNotify = PR_TRUE;
+  nsCOMPtr<nsIPrefBranch> prefService =
+         do_GetService( "@mozilla.org/preferences-service;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv);
+  prefService->GetBoolPref( "songbird.skipGStreamerHelp", &skipNotify );
+
+  // Abort asking the user if the pref says to skip
+  if (skipNotify == PR_TRUE) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+  NS_ENSURE_SUCCESS( rv, rv);
+
+  // If possible we want the alert to pop off of the 
+  // main window and not the cheezy video window
+  nsCOMPtr<nsIWindowMediator> windowMediator =
+    do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
+  NS_ENSURE_SUCCESS( rv, rv);
+  nsCOMPtr<nsIDOMWindowInternal> mainWindow;  
+  windowMediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
+                                      getter_AddRefs(mainWindow));
+
+  // Get the localized strings using the helper functions above
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  rv = CreateBundle("chrome://songbird/locale/songbird.properties",
+                    getter_AddRefs(stringBundle));
+  NS_ENSURE_SUCCESS( rv, rv);
+
+  nsAutoString windowTitle;
+  nsAutoString windowText;
+  nsAutoString helpURL;
+  nsAutoString checkLabel;
+  rv = GetStringFromName(stringBundle,
+                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.title"),
+                         windowTitle);
+  NS_ENSURE_SUCCESS( rv, rv);
+  rv = GetStringFromName(stringBundle,
+                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.text"),
+                         windowText);
+  NS_ENSURE_SUCCESS( rv, rv);
+  rv = GetStringFromName(stringBundle,
+                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.helpUrl"),
+                         helpURL);
+  NS_ENSURE_SUCCESS( rv, rv);
+  rv = GetStringFromName(stringBundle,
+                         NS_LITERAL_STRING("mediacorecheck.dialog.skipCheckboxLabel"),
+                         checkLabel);
+  NS_ENSURE_SUCCESS( rv, rv);
+
+  // Ask the user if they would like to learn how to install the plug-ins
+  // Get flags to indicate yes/no option dialog
+  // Note: buttons need to be os dependent for position. (since this is currently
+  //       linux only we can assume Yes/No)
+  PRUint32 flags;
+  flags = nsIPromptService::BUTTON_TITLE_YES * nsIPromptService::BUTTON_POS_0 +
+          nsIPromptService::BUTTON_TITLE_NO * nsIPromptService::BUTTON_POS_1;
+
+  PRInt32 promptResult = 1;
+  PRBool checkState = PR_FALSE;
+  rv = promptService->ConfirmEx(mainWindow, // Window to bind to
+        windowTitle.get(),                  // Title of window
+        windowText.get(),                   // Text message
+        flags, NULL, NULL, NULL,            // button flags and titles (use default)
+        checkLabel.get(),                   // Check box label
+        &checkState,                        // State of checkbox
+        &promptResult);                     // Button Clicked
+  NS_ENSURE_SUCCESS( rv, rv);
+
+  // Set our pref to what the check box state is
+  prefService->SetBoolPref( "songbird.skipGStreamerHelp", checkState );
+  
+  if (promptResult == 0) { // They clicked Yes
+    // Load up the url to show the user how to configure
+    // First we need to get the url from preferences
+    nsCOMPtr<nsIIOService> ioService =
+      do_GetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS( rv, rv);
+
+    nsCOMPtr<nsIURI> uri;
+    NS_ConvertUTF16toUTF8 cstrURL(helpURL);
+    rv = ioService->NewURI(
+      cstrURL,
+      NULL, NULL, getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS( rv, rv);
+    
+    // Get the browser context so we can open a new tab with OpenURI,
+    // this is very long and confusing since we are not in the dom.
+    nsCOMPtr<nsIBrowserDOMWindow> bwin;
+    
+    nsCOMPtr<nsIWebNavigation> navNav(do_GetInterface(mainWindow, &rv));
+    NS_ENSURE_SUCCESS( rv, rv);
+    nsCOMPtr<nsIDocShellTreeItem> navItem(do_QueryInterface(navNav, &rv));
+    NS_ENSURE_SUCCESS( rv, rv);
+    if (navItem) {
+      nsCOMPtr<nsIDocShellTreeItem> rootItem;
+      rv = navItem->GetRootTreeItem(getter_AddRefs(rootItem));
+      NS_ENSURE_SUCCESS( rv, rv);
+      nsCOMPtr<nsIDOMWindow> rootWin(do_GetInterface(rootItem, &rv));
+      NS_ENSURE_SUCCESS( rv, rv);
+      nsCOMPtr<nsIDOMChromeWindow> chromeWin(do_QueryInterface(rootWin, &rv));
+      NS_ENSURE_SUCCESS( rv, rv);
+      if (chromeWin) {
+        rv = chromeWin->GetBrowserDOMWindow(getter_AddRefs(bwin));
+        NS_ENSURE_SUCCESS( rv, rv);
+      }
+    }
+    
+    if (bwin && uri) {
+      nsCOMPtr<nsIDOMWindow> container;
+      rv = bwin->OpenURI(uri, 0,
+                         nsIBrowserDOMWindow::OPEN_NEWTAB,
+                         nsIBrowserDOMWindow::OPEN_EXTERNAL,
+                         getter_AddRefs(container));
+      NS_ENSURE_SUCCESS( rv, rv);
+    }
+  }
+  
+  return NS_OK;
+}
+
 // Callbacks
 GstBusSyncReply
 sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
@@ -865,6 +1040,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_ERROR: {
       GError *error = NULL;
       gchar *debug = NULL;
+      PRBool showMessage = false;
 
       gst_message_parse_error(message, &error, &debug);
 
@@ -872,6 +1048,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       g_free (debug);
 
+      showMessage = ( (mLastErrorCode == 0) && (error->code != 0) );
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
       mBufferingPercent = 0;
@@ -881,6 +1058,26 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       }
       mCursorIntervalTimer->Cancel();
 
+      if (showMessage) {
+        // If we fail to show the dialog to the user then we just return
+        // the GST_BUS_PASS success code so that the GST stuff will keep
+        // going and not worry about the dialog this time.
+        nsresult rv;
+        nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
+          do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
+  
+        nsCOMPtr<sbIGStreamerSimple> proxy;
+        rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                            NS_GET_IID(sbIGStreamerSimple),
+                                            NS_ISUPPORTS_CAST(sbIGStreamerSimple*, this),
+                                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                            getter_AddRefs(proxy));
+        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS); 
+  
+        rv = proxy->ShowHelperPage();
+        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
+      }
       break;
     }
     case GST_MESSAGE_WARNING: {

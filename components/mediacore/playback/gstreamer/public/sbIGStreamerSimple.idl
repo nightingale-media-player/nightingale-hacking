@@ -62,6 +62,7 @@ interface sbIGStreamerSimple : nsISupports
   void stop();
   void seek(in unsigned long long aTimeNanos);
   void restartPlaybin();
+  void showHelperPage();
 };
 
 %{C++
