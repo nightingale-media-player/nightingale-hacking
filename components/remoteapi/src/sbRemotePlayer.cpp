@@ -95,6 +95,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
+#include <nsIProxyObjectManager.h>
+#include <sbProxyUtils.h>
 
 // added for download support. Some will stay after bug 3521 is fixed
 #include <sbIDeviceBase.h>
@@ -223,7 +225,17 @@ UnbindAndRelease ( const nsAString &aKey,
   NS_ASSERTION(aRemObs.remote, "GAH! Container contains a null remote");
   NS_ASSERTION(aRemObs.observer, "GAH! Container contains a null observer");
 
-  aRemObs.remote->Unbind();
+  // Proxy the calls to unbind the dataremotes to prevent this from happening
+  // during JSGC
+  nsCOMPtr<sbIDataRemote> proxy;
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                     NS_GET_IID(sbIDataRemote),
+                                     aRemObs.remote,
+                                     NS_PROXY_ASYNC,
+                                     getter_AddRefs(proxy));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_REMOVE);
+
+  proxy->Unbind();
   return PL_DHASH_REMOVE;
 }
 
