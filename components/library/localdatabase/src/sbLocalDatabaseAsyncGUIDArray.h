@@ -115,6 +115,8 @@ private:
   // True if the thread has been explictly shut down
   PRPackedBool mThreadShutDown;
 
+  PRPackedBool mSeenOneRefCnt;
+
   nsresult SendOnGetLength(PRUint32 aLength, nsresult aResult);
   nsresult SendOnGetGuidByIndex(PRUint32 aIndex,
                                 const nsAString& aGUID,

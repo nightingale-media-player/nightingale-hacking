@@ -37,6 +37,7 @@
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbProxyUtils.h>
+#include <nsProxyRelease.h>
 
 #include "sbLocalDatabaseGUIDArray.h"
 
@@ -55,15 +56,45 @@ static PRLogModuleInfo* gLocalDatabaseAsyncGUIDArrayLog = nsnull;
 
 static const char kShutdownMessage[] = "xpcom-shutdown-threads";
 
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
-                              sbILocalDatabaseGUIDArray,
-                              sbILocalDatabaseAsyncGUIDArray,
-                              nsIObserver,
-                              nsISupportsWeakReference)
+NS_IMPL_THREADSAFE_QUERY_INTERFACE4(sbLocalDatabaseAsyncGUIDArray,
+                                    sbILocalDatabaseGUIDArray,
+                                    sbILocalDatabaseAsyncGUIDArray,
+                                    nsIObserver,
+                                    nsISupportsWeakReference)
+NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseAsyncGUIDArray)
+
+// Override the standard release method so we can guarantee that we are deleted
+// outside of any JS GC
+NS_IMETHODIMP_(nsrefcnt) sbLocalDatabaseAsyncGUIDArray::Release(void)
+{
+  nsrefcnt count;
+  NS_PRECONDITION(0 != mRefCnt, "dup release");
+  count = PR_AtomicDecrement((PRInt32 *)&mRefCnt);
+  NS_LOG_RELEASE(this, count,"sbLocalDatabaseAsyncGUIDArray");
+
+  if (1 == count && !mSeenOneRefCnt) {
+    mSeenOneRefCnt = PR_TRUE;
+    nsCOMPtr<nsIThread> mainThread;
+    NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ProxyRelease(mainThread,
+                    NS_ISUPPORTS_CAST(sbILocalDatabaseGUIDArray*, this),
+                    PR_TRUE);
+  }
+
+  if (0 == count) {
+    mRefCnt = 1; /* stabilize */
+    /* enable this to find non-threadsafe destructors: */
+    /* NS_ASSERT_OWNINGTHREAD(_class); */
+    NS_DELETEXPCOM(this);
+    return 0;
+  }
+  return count;
+}
 
 sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
   mThreadShouldExit(PR_FALSE),
-  mThreadShutDown(PR_FALSE)
+  mThreadShutDown(PR_FALSE),
+  mSeenOneRefCnt(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseAsyncGUIDArrayLog) {
@@ -74,6 +105,10 @@ sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
 
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Created", this));
   MOZ_COUNT_CTOR(sbLocalDatabaseAsyncGUIDArray);
+
+  // Inflate the refcount of this instance by 1 so we can manage our own
+  // deletion when the refcount returns back to 1
+  NS_ADDREF(this);
 }
 
 sbLocalDatabaseAsyncGUIDArray::~sbLocalDatabaseAsyncGUIDArray() {

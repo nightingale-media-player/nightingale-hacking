@@ -56,7 +56,8 @@ static PRLogModuleInfo* gRemoteNotificationManagerLog = nsnull;
 NS_IMPL_ISUPPORTS1(sbRemoteNotificationManager, nsITimerCallback)
 
 sbRemoteNotificationManager::sbRemoteNotificationManager() :
-  mCurrentActionType(eNone)
+  mCurrentActionType(eNone),
+  mCancelPending(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gRemoteNotificationManagerLog) {
@@ -111,19 +112,9 @@ sbRemoteNotificationManager::Cancel()
     return NS_OK;
   }
 
-  nsRefPtr<sbRemoteNotificationManager> kungFuDeathGrip(this);
-  nsresult rv, rv2;
-  // clear the status bar text
-  mCurrentActionType = eNone;
-  rv = UpdateStatus();
-  
-  // and clear the timer (regardless of if the status bar was cleared)
-  // keep the return value so we always return the worst one
-  rv2 = mTimer->Cancel();
-  mTimer = nsnull;
-  
-  NS_ENSURE_SUCCESS(rv, rv);
-  return rv2;
+  mCancelPending = PR_TRUE;
+
+  return NS_OK;
 }
 
 nsresult
@@ -187,6 +178,23 @@ sbRemoteNotificationManager::Notify(nsITimer* aTimer)
   NS_ENSURE_ARG_POINTER(aTimer);
 
   nsresult rv;
+
+  if (mCancelPending) {
+    nsRefPtr<sbRemoteNotificationManager> kungFuDeathGrip(this);
+    nsresult rv, rv2;
+    // clear the status bar text
+    mCurrentActionType = eNone;
+    rv = UpdateStatus();
+
+    // and clear the timer (regardless of if the status bar was cleared)
+    // keep the return value so we always return the worst one
+    rv2 = mTimer->Cancel();
+    mTimer = nsnull;
+
+    NS_ENSURE_SUCCESS(rv, rv);
+    return rv2;
+  }
+
   PRTime now = PR_Now();
 
   // If we're currently showing a message, check to see if it has been up
