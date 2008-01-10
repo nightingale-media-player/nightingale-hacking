@@ -271,6 +271,9 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
   }
 
   NS_ASSERTION(!mIsListeningToPlayback, "Still listening when dtor called");
+  // declare ourselves dead, in case the async listener is actually in the
+  // process of waiting to fire. yay.
+  ClearWeakReferences();
 }
 
 nsresult
