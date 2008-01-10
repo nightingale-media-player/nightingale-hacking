@@ -331,9 +331,13 @@ function sbDownloadDeviceHelper__checkAndRemoveExistingItem(aMediaItem)
       onEnumerationEnd: function() {
       },
     };
-    downloadMediaList.enumerateItemsByProperty(SBProperties.originURL,
-                                               itemOriginUrl,
-                                               listEnumerationListener);
+    
+    if ( (itemOriginUrl != "") &&
+         (itemOriginUrl != null) ) {
+      downloadMediaList.enumerateItemsByProperty(SBProperties.originURL,
+                                                 itemOriginUrl,
+                                                 listEnumerationListener);
+    }
   }
 }
 
