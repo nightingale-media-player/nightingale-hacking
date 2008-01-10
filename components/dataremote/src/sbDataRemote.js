@@ -451,7 +451,7 @@ DataRemote.prototype = {
         !iid.equals(Ci.nsIClassInfo) && 
         !iid.equals(Ci.nsIObserver) && 
         !iid.equals(Ci.nsISecurityCheckedComponent) &&
-        !iid.equals(Ci.nsISecurityAggregator) &&
+        !iid.equals(Ci.sbISecurityAggregator) &&
         !iid.equals(Ci.nsISupportsWeakReference) &&
         !iid.equals(Ci.nsISupports)) {
       throw Cr.NS_ERROR_NO_INTERFACE;
