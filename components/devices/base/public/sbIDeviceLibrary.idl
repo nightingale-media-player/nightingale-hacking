@@ -24,42 +24,14 @@
 //
 */
 
-#include "nsISupports.idl"
-
-interface nsISimpleEnumerator;
-
-interface sbIDeviceController;
+#include "sbILibrary.idl"
 
 /**
- * \interface sbIDeviceControllerRegistrar
+ * \interface sbIDeviceLibrary
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(d4db083c-3d1f-494a-9740-e1ba3851790d)]
-interface sbIDeviceControllerRegistrar : nsISupports
+[scriptable, uuid(1fcdbc71-f637-45f5-b1cc-41d2e71c69c3)]
+interface sbIDeviceLibrary : sbILibrary
 {
-  /**
-   * Registers an sbIDeviceController object.
-   */
-  void registerController(in sbIDeviceController aController);
-
-  /**
-   * Unregisters an sbIDeviceController object.
-   */
-  void unregisterController(in sbIDeviceController aController);
-
-  /**
-   * An enumeration of sbIDeviceControllers currently registered.
-   */
-  readonly attribute nsISimpleEnumerator controllers;
-
-  /**
-   * The number of sbIDeviceControllers currently registered.
-   */
-  readonly attribute unsigned long controllerCount;
-
-  /**
-   * Retrieve a registered controller.
-   */
-  sbIDeviceController getController(in nsIDPtr aControllerId);
 };

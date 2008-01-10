@@ -36,6 +36,7 @@ interface sbILibraryFactory;
 /**
  * \interface sbIDeviceContent
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  */
 [scriptable, uuid(13dbf4ca-6473-4f1b-abd9-eb7e2dfe1e56)]
 interface sbIDeviceContent : nsISupports
