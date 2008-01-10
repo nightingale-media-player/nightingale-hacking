@@ -41,6 +41,7 @@ interface sbIDeviceParameters;
 /**
  * \interface sbIDevice
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  *
  * The main interface to all device objects
  */

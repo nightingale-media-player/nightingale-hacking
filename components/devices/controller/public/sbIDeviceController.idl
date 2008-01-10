@@ -35,6 +35,7 @@ interface sbIDeviceCompatibility;
 /**
  * \interface sbIDeviceController
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  */
 [scriptable, uuid(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]
 interface sbIDeviceController : nsISupports
@@ -56,7 +57,13 @@ interface sbIDeviceController : nsISupports
   readonly attribute nsIDPtr marshallId;
 
   /**
-   * 
+   * List of devices that are currently in-use.
+   */
+  readonly attribute nsISimpleEnumerator devices;
+
+  /**
+   * Given a set of device parameters, attempt to determine if the device
+   * is supported, and with what level of functionality.
    */
   sbIDeviceCompatibility getCompatibility(in nsIPropertyBag aParams);
 

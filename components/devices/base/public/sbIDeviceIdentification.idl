@@ -32,9 +32,10 @@ interface nsIVariant;
 /**
  * \interface sbIDeviceIdentification
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  */
 [scriptable, uuid(9db04aec-8802-4885-93e6-1639dede0f82)]
-interface sbIDeviceIdentification : nsISupports
+interface sbIDeviceProperties : nsISupports
 {
  /**
   * A string identifying the vendor of a device. Included in the hash code.
@@ -55,7 +56,8 @@ interface sbIDeviceIdentification : nsISupports
 
  /**
   * A human readable name. Not included in the hash code and therefore
-  * optional.
+  * optional. This name can be written to by the user and should be reflected
+  * back to the device.
   */
  attribute AString friendlyName;
 
@@ -64,4 +66,15 @@ interface sbIDeviceIdentification : nsISupports
   * code and therefore optional.
   */
  attribute nsIURI uri;
+
+ /**
+  * The preferred icon to be displayed to the user.
+  */
+ attribute nsIURI iconUri;
+
+ /** 
+  * All of the properties available for a device. 
+  * Should only contain objects that implement nsIProperty!
+  */
+ attribute nsISimpleEnumerator properties;
 };

@@ -31,8 +31,10 @@ interface sbIDeviceEvent;
 /**
  * \interface sbIDeviceEventListener
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface are always called on the thread they are created.
  *
  * Used to listen to events on a particular device, controller, etc.
+ *
  */
 [scriptable, uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]
 interface sbIDeviceEventListener : nsISupports

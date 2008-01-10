@@ -33,6 +33,7 @@ interface sbIDeviceEventTarget;
 /**
  * \interface sbIDeviceEvent
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  */
 [scriptable, uuid(54a5ba3c-d409-458f-9cab-60f499c603e7)]
 interface sbIDeviceEvent : nsISupports

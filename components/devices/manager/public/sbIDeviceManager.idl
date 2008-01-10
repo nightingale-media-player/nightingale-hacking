@@ -26,11 +26,13 @@
 
 #include "nsISupports.idl"
 
+interface sbIDeviceMarshall;
 interface nsISimpleEnumerator;
 
 /**
  * \interface sbIDeviceManager
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
  *
  * This is the DeviceManager service.
  * Make sure to use getService rather than createInstance when using.
@@ -38,6 +40,26 @@ interface nsISimpleEnumerator;
 [scriptable, uuid(82102e1c-e620-4c9e-9a3f-059eee1355b5)]
 interface sbIDeviceManager : nsISupports
 {
+  /**
+   * List of marshalls that are currently instantiated.
+   */
+  attribute readonly nsISimpleEnumerator marshalls;
+  
+  /**
+   * List of controllers that are currently instantiated.
+   */
+  attribute readonly nsISimpleEnumerator controllers;
+
+  /**
+   * List of devices that are currently in-use.
+   */
+  attribute readonly nsISimpleEnumerator devices;
+
+  /**
+   * Get a device marshall by nsISupportsID.
+   */
+  sbIDeviceMarshall getMarshallByID(in nsIDPtr aIDPtr);
+
   /**
    * Simply calls updateDevices on all loaded controllers.
    */
