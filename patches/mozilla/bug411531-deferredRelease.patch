@@ -1,0 +1,155 @@
+Index: js/src/xpconnect/src/xpcjsruntime.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcjsruntime.cpp,v
+retrieving revision 1.69
+diff -u -8 -p -d -r1.69 xpcjsruntime.cpp
+--- js/src/xpconnect/src/xpcjsruntime.cpp	31 Dec 2007 18:17:36 -0000	1.69
++++ js/src/xpconnect/src/xpcjsruntime.cpp	10 Jan 2008 17:04:11 -0000
+@@ -789,17 +789,16 @@ JSBool XPCJSRuntime::GCCallback(JSContex
+             }
+             case JSGC_END:
+             {
+                 // NOTE that this event happens outside of the gc lock in
+                 // the js engine. So this could be simultaneous with the
+                 // events above.
+ 
+                 // Do any deferred released of native objects.
+-                if(self->GetDeferReleases())
+                 {
+                     nsVoidArray* array = &self->mNativesToReleaseArray;
+ #ifdef XPC_TRACK_DEFERRED_RELEASES
+                     printf("XPC - Begin deferred Release of %d nsISupports pointers\n",
+                            array->Count());
+ #endif
+                     while(1)
+                     {
+@@ -1050,17 +1049,16 @@ XPCJSRuntime::XPCJSRuntime(nsXPConnect* 
+    mNativeScriptableSharedMap(XPCNativeScriptableSharedMap::newMap(XPC_NATIVE_JSCLASS_MAP_SIZE)),
+    mDyingWrappedNativeProtoMap(XPCWrappedNativeProtoMap::newMap(XPC_DYING_NATIVE_PROTO_MAP_SIZE)),
+    mDetachedWrappedNativeProtoMap(XPCWrappedNativeProtoMap::newMap(XPC_DETACHED_NATIVE_PROTO_MAP_SIZE)),
+    mExplicitNativeWrapperMap(XPCNativeWrapperMap::newMap(XPC_NATIVE_WRAPPER_MAP_SIZE)),
+    mMapLock(XPCAutoLock::NewLock("XPCJSRuntime::mMapLock")),
+    mThreadRunningGC(nsnull),
+    mWrappedJSToReleaseArray(),
+    mNativesToReleaseArray(),
+-   mDeferReleases(JS_FALSE),
+    mDoingFinalization(JS_FALSE),
+    mVariantRoots(nsnull),
+    mWrappedJSRoots(nsnull),
+    mObjectHolderRoots(nsnull)
+ {
+ #ifdef XPC_CHECK_WRAPPERS_AT_SHUTDOWN
+     DEBUG_WrappedNativeHashtable =
+         JS_NewDHashTable(JS_DHashGetStubOps(), nsnull,
+@@ -1253,17 +1251,16 @@ XPCJSRuntime::GenerateStringIDs(JSContex
+     }
+     return JS_TRUE;
+ }
+ 
+ JSBool
+ XPCJSRuntime::DeferredRelease(nsISupports* obj)
+ {
+     NS_ASSERTION(obj, "bad param");
+-    NS_ASSERTION(GetDeferReleases(), "bad call");
+ 
+     if(!mNativesToReleaseArray.Count())
+     {
+         // This array sometimes has 1000's
+         // of entries, and usually has 50-200 entries. Avoid lots
+         // of incremental grows.  We compact it down when we're done.
+         mNativesToReleaseArray.SizeTo(256);
+     }
+Index: js/src/xpconnect/src/xpcprivate.h
+===================================================================
+RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
+retrieving revision 1.258
+diff -u -8 -p -d -r1.258 xpcprivate.h
+--- js/src/xpconnect/src/xpcprivate.h	10 Jan 2008 14:10:03 -0000	1.258
++++ js/src/xpconnect/src/xpcprivate.h	10 Jan 2008 17:04:13 -0000
+@@ -651,23 +651,16 @@ public:
+     XPCNativeWrapperMap* GetExplicitNativeWrapperMap() const
+         {return mExplicitNativeWrapperMap;}
+ 
+     XPCLock* GetMapLock() const {return mMapLock;}
+ 
+     XPCContext* GetXPCContext(JSContext* cx);
+     XPCContext* SyncXPCContextList(JSContext* cx = nsnull);
+ 
+-    JSBool GetDeferReleases() const {return mDeferReleases;}
+-    void   SetDeferReleases(JSBool b) 
+-        {/* If deferring is turned off while any are pending they'll leak! */
+-         NS_ASSERTION((mDeferReleases && b) || 
+-                      !mNativesToReleaseArray.Count(), "bad"); 
+-         mDeferReleases = b;}
+-
+     JSBool DeferredRelease(nsISupports* obj);
+ 
+     JSBool GetDoingFinalization() const {return mDoingFinalization;}
+ 
+     // Mapping of often used strings to jsid atoms that live 'forever'.
+     //
+     // To add a new string: add to this list and to XPCJSRuntime::mStrings
+     // at the top of xpcjsruntime.cpp
+@@ -782,17 +775,16 @@ private:
+     XPCNativeScriptableSharedMap* mNativeScriptableSharedMap;
+     XPCWrappedNativeProtoMap* mDyingWrappedNativeProtoMap;
+     XPCWrappedNativeProtoMap* mDetachedWrappedNativeProtoMap;
+     XPCNativeWrapperMap*     mExplicitNativeWrapperMap;
+     XPCLock* mMapLock;
+     PRThread* mThreadRunningGC;
+     nsVoidArray mWrappedJSToReleaseArray;
+     nsVoidArray mNativesToReleaseArray;
+-    JSBool mDeferReleases;
+     JSBool mDoingFinalization;
+     XPCRootSetElem *mVariantRoots;
+     XPCRootSetElem *mWrappedJSRoots;
+     XPCRootSetElem *mObjectHolderRoots;
+     JSDHashTable mJSHolders;
+     JSDHashTable mClearedGlobalObjects;
+ };
+ 
+Index: js/src/xpconnect/src/xpcwrappednative.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappednative.cpp,v
+retrieving revision 1.174
+diff -u -8 -p -d -r1.174 xpcwrappednative.cpp
+--- js/src/xpconnect/src/xpcwrappednative.cpp	10 Jan 2008 14:10:03 -0000	1.174
++++ js/src/xpconnect/src/xpcwrappednative.cpp	10 Jan 2008 17:04:15 -0000
+@@ -659,17 +659,17 @@ XPCWrappedNative::~XPCWrappedNative()
+     {   // scoped lock
+         XPCAutoLock lock(GetRuntime()->GetMapLock());
+         map->Remove(this);
+     }
+ 
+     if(mIdentity)
+     {
+         XPCJSRuntime* rt = GetRuntime();
+-        if(rt && rt->GetDeferReleases() && rt->GetDoingFinalization())
++        if(rt && rt->GetDoingFinalization())
+         {
+             if(!rt->DeferredRelease(mIdentity))
+             {
+                 NS_WARNING("Failed to append object for deferred release.");
+                 // XXX do we really want to do this???
+                 NS_RELEASE(mIdentity);
+             }
+         }
+@@ -1000,17 +1000,17 @@ XPCWrappedNative::FlatJSObjectFinalized(
+             if(obj)
+             {
+ #ifdef XP_WIN
+                 // Try to detect free'd pointer
+                 NS_ASSERTION(*(int*)obj != 0xdddddddd, "bad pointer!");
+                 NS_ASSERTION(*(int*)obj != 0,          "bad pointer!");
+ #endif
+                 XPCJSRuntime* rt = GetRuntime();
+-                if(rt && rt->GetDeferReleases())
++                if(rt)
+                 {
+                     if(!rt->DeferredRelease(obj))
+                     {
+                         NS_WARNING("Failed to append object for deferred release.");
+                         // XXX do we really want to do this???
+                         obj->Release();
+                     }
+                 }
