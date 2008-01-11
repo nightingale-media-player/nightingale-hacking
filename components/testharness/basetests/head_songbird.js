@@ -97,22 +97,27 @@ function doMain() {
 }
 
 function doQuit() {
-  //log("*** [" + _test_name + "] - exiting\n");
-
   _quit = true;
-
 }
 
-function doThrow(text) {
-  _fail = true;
-  _tests_pending = 0;
-  doQuit();
-  log("*** [" + _test_name + "] - CHECK FAILED: " + text);
+function dumpStack() {
   var frame = Components.stack;
   while (frame != null) {
     log(frame);
     frame = frame.caller;
   }
+}
+
+function doFail(text) {
+  _fail = true;
+  _tests_pending = 0;
+  doQuit();
+  log("*** [" + _test_name + "] - CHECK FAILED: " + text);
+  dumpStack();
+}
+
+function doThrow(text) {
+  doFail(text);
   throw Cr.NS_ERROR_ABORT;
 }
 
@@ -144,6 +149,11 @@ function assertNotEqual( aExpected, aActual, aMessage) {
 function fail(aMessage) {
   var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
   doThrow(msg);
+}
+
+function failNoThrow(aMessage) {
+  var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
+  doFail(msg);
 }
 
 function testPending() {

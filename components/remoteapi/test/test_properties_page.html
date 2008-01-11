@@ -148,7 +148,7 @@ function runTest(tester) {
         if ( nonRemoteWritableNames.indexOf(stuff) > -1 ) {
           try {
             foo.setProperty( props[stuff], "FAIL" );
-            tester.fail( "property (!w)\t" + stuff +
+            tester.failNoThrow( "property (!w)\t" + stuff +
                          " ERR: writable when not supposed to be" );
           } catch (e) {
             // could not write to a property - SUCCESS
@@ -158,27 +158,32 @@ function runTest(tester) {
         }
 
         // Everything else is writable, no test for write only
-        tester.log( "property ( w)\t" + stuff );
 
-        // year has a min value
-        if ( stuff == "year" ) {
-          foo.setProperty( props[stuff], "1877" );
-        }
-        // these properties get a number
-        else if ( numericalPropNames.indexOf(stuff) > -1 ) {
-          foo.setProperty( props[stuff], "4" );
-        }
-        // these get special numbers
-        else if ( booleanPropNames.indexOf(stuff) > -1 ) {
-          foo.setProperty( props[stuff], "1" );
-        }
-        // these get url format strings
-        else if ( uriPropNames.indexOf(stuff) > -1 ) {
-          foo.setProperty( props[stuff], "http://example.com/foo" );
-        }
-        // everything else gets a test string
-        else {
-          foo.setProperty( props[stuff], "test" );
+        try {
+          // year has a min value
+          if ( stuff == "year" ) {
+            foo.setProperty( props[stuff], "1877" );
+          }
+          // these properties get a number
+          else if ( numericalPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "4" );
+          }
+          // these get special numbers
+          else if ( booleanPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "1" );
+          }
+          // these get url format strings
+          else if ( uriPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "http://example.com/foo" );
+          }
+          // everything else gets a test string
+          else {
+            foo.setProperty( props[stuff], "test" );
+          }
+          tester.log( "property ( w)\t" + stuff );
+        } catch (e) {
+          tester.failNoThrow( "property ( w)\t" + stuff +
+                              " ERR: not writable when supposed to be" );
         }
       }
 
@@ -193,7 +198,7 @@ function runTest(tester) {
         if ( nonRemoteReadableNames.indexOf(stuff) > -1 ) {
           try {
             foo.getProperty( props[stuff] );
-            tester.fail( "property (!r)\t" + stuff +
+            tester.failNoThrow( "property (!r)\t" + stuff +
                          " ERR: Was able to read non-readable property:" );
           } catch (e) {
             // couldn't read from a property we shouldn't be able to read
@@ -216,7 +221,7 @@ function runTest(tester) {
             if ( obj == "sitelist" || obj == "siteitem" ) {
               tester.log( "property (ro)\t" + stuff + " is: " + val );
             } else {
-              tester.fail( "property (ro)\t" + stuff +
+              tester.failNoThrow( "property (ro)\t" + stuff +
                            " ERR: Able to read library contentURL" );
             }
           } catch (e) {
@@ -228,7 +233,7 @@ function runTest(tester) {
                  obj == "item" ) {
               tester.log( "property (!r)\t" + stuff );
             } else {
-              tester.fail( "property (!r)\t" + stuff +
+              tester.failNoThrow( "property (!r)\t" + stuff +
                            " ERR: Not able to read list/item contentURL" );
             }
           }
@@ -241,40 +246,44 @@ function runTest(tester) {
             foo.getProperty( props[stuff] );
             tester.log( "property (ro)\t" + stuff );
           } catch (e) {
-            tester.fail( "property (ro)\t" + stuff +
-                         " ERR: Not actually readable" );
+            tester.failNoThrow( "property (ro)\t" + stuff +
+                                " ERR: Not actually readable" );
           }
           // continue because the following asserts will fail since we didn't
           // write anything into them above, they're read only.
           continue;
         }
 
-        tester.log( "property ( r)\t" + stuff );
 
-        // year has a min value
-        if ( stuff == "year" ) {
-          tester.assertEqual( foo.getProperty(props[stuff]), "1877" );
-        }
-        // these properties get a number
-        else if ( numericalPropNames.indexOf(stuff) > -1 ) {
-          tester.assertEqual( foo.getProperty( props[stuff] ), "4" );
-        }
-        // these get special numbers
-        else if ( booleanPropNames.indexOf(stuff) > -1 ) {
-          tester.assertEqual( foo.getProperty(props[stuff] ), "1" );
-        }
-        // these get url format strings
-        else if ( uriPropNames.indexOf(stuff) > -1 ) {
-          tester.assertEqual( foo.getProperty( props[stuff] ),
-                              "http://example.com/foo" );
-        }
-        // everything else gets a test string
-        else {
-          tester.assertEqual( foo.getProperty( props[stuff] ), "test" );
+        try {
+          // year has a min value
+          if ( stuff == "year" ) {
+            tester.assertEqual( foo.getProperty(props[stuff]), "1877" );
+          }
+          // these properties get a number
+          else if ( numericalPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty( props[stuff] ), "4" );
+          }
+          // these get special numbers
+          else if ( booleanPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty(props[stuff] ), "1" );
+          }
+          // these get url format strings
+          else if ( uriPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty( props[stuff] ),
+                                "http://example.com/foo" );
+          }
+          // everything else gets a test string
+          else {
+            tester.assertEqual( foo.getProperty( props[stuff] ), "test" );
+          }
+          tester.log( "property ( r)\t" + stuff );
+        } catch (e) {
+          tester.failNoThrow( "property ( r)\t" + stuff +
+                              " ERR: not readable when supposed to be" );
         }
       }
     }
-
   } catch (e) {
     tester.endRemoteAPITest(e);
   }
