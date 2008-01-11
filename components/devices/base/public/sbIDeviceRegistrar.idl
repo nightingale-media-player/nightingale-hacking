@@ -39,16 +39,6 @@ interface sbIDevice;
 interface sbIDeviceRegistrar : nsISupports
 {
   /**
-   * Registers an sbIDevice object.
-   */
-  void registerDevice(in sbIDevice aDevice);
-
-  /**
-   * Unregisters an sbIDevice object.
-   */
-  void unregisterDevice(in sbIDevice aDevice);
-
-  /**
    * An enumeration of sbIDevices currently registered.
    */
   readonly attribute nsISimpleEnumerator devices;
@@ -57,6 +47,16 @@ interface sbIDeviceRegistrar : nsISupports
    * The number of sbIDevices currently registered.
    */
   readonly attribute unsigned long deviceCount;
+
+  /**
+   * Registers an sbIDevice object.
+   */
+  void registerDevice(in sbIDevice aDevice);
+
+  /**
+   * Unregisters an sbIDevice object.
+   */
+  void unregisterDevice(in sbIDevice aDevice);
 
   /**
    * Retrieve a registered device.

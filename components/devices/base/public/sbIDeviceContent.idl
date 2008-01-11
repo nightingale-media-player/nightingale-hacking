@@ -30,7 +30,7 @@ interface nsIFactory;
 interface nsISimpleEnumerator;
 
 interface sbIDevice;
-interface sbILibrary;
+interface sbIDeviceLibrary;
 interface sbILibraryFactory;
 
 /**
@@ -41,16 +41,6 @@ interface sbILibraryFactory;
 [scriptable, uuid(13dbf4ca-6473-4f1b-abd9-eb7e2dfe1e56)]
 interface sbIDeviceContent : nsISupports
 {
-  /**
-   * 
-   */
-  void addLibrary(in sbILibrary aLibrary);
-
-  /**
-   * 
-   */
-  void removeLibrary(in sbILibrary aLibrary);
-
   /**
    * 
    */
@@ -65,4 +55,14 @@ interface sbIDeviceContent : nsISupports
    * 
    */
   readonly attribute sbILibraryFactory libraryFactory;
+
+  /**
+   * 
+   */
+  void addLibrary(in sbIDeviceLibrary aLibrary);
+
+  /**
+   * 
+   */
+  void removeLibrary(in sbIDeviceLibrary aLibrary);
 };

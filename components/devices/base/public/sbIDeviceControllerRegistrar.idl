@@ -39,16 +39,6 @@ interface sbIDeviceController;
 interface sbIDeviceControllerRegistrar : nsISupports
 {
   /**
-   * Registers an sbIDeviceController object.
-   */
-  void registerController(in sbIDeviceController aController);
-
-  /**
-   * Unregisters an sbIDeviceController object.
-   */
-  void unregisterController(in sbIDeviceController aController);
-
-  /**
    * An enumeration of sbIDeviceControllers currently registered.
    */
   readonly attribute nsISimpleEnumerator controllers;
@@ -57,6 +47,16 @@ interface sbIDeviceControllerRegistrar : nsISupports
    * The number of sbIDeviceControllers currently registered.
    */
   readonly attribute unsigned long controllerCount;
+
+    /**
+   * Registers an sbIDeviceController object.
+   */
+  void registerController(in sbIDeviceController aController);
+
+  /**
+   * Unregisters an sbIDeviceController object.
+   */
+  void unregisterController(in sbIDeviceController aController);
 
   /**
    * Retrieve a registered controller.

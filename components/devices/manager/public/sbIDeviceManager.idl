@@ -51,11 +51,6 @@ interface sbIDeviceManager : nsISupports
   attribute readonly nsISimpleEnumerator controllers;
 
   /**
-   * List of devices that are currently in-use.
-   */
-  attribute readonly nsISimpleEnumerator devices;
-
-  /**
    * Get a device marshall by nsISupportsID.
    */
   sbIDeviceMarshall getMarshallByID(in nsIDPtr aIDPtr);

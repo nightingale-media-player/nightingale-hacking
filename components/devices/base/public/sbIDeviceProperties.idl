@@ -38,9 +38,16 @@ interface nsIVariant;
 interface sbIDeviceProperties : nsISupports
 {
  /**
+  * A human readable name. Not included in the hash code and therefore
+  * optional. This name can be written to by the user and should be reflected
+  * back to the device.
+  */
+ attribute AString friendlyName;
+
+  /**
   * A string identifying the vendor of a device. Included in the hash code.
   */
- attribute AString vendorName;
+ readonly attribute AString vendorName;
 
  /**
   * Model number for the device. Can be set in any appropriate format, but
@@ -55,26 +62,20 @@ interface sbIDeviceProperties : nsISupports
  readonly attribute nsIVariant serialNumber;
 
  /**
-  * A human readable name. Not included in the hash code and therefore
-  * optional. This name can be written to by the user and should be reflected
-  * back to the device.
-  */
- attribute AString friendlyName;
-
- /**
   * A URI representing the location of the device. Not included in the hash
   * code and therefore optional.
   */
- attribute nsIURI uri;
+ readonly attribute nsIURI uri;
 
  /**
   * The preferred icon to be displayed to the user.
+  * The user may be able to specify a custom icon for the device in the future.
   */
- attribute nsIURI iconUri;
+ readonly attribute nsIURI iconUri;
 
  /** 
   * All of the properties available for a device. 
   * Should only contain objects that implement nsIProperty!
   */
- attribute nsISimpleEnumerator properties;
+ readonly attribute nsISimpleEnumerator properties;
 };
