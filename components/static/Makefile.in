@@ -68,7 +68,15 @@ STATIC_COMPONENT_LIST = $(shell cat link-names)
 
 LDFLAGS += $(shell cat link-flags)
 
+SHELL_EXECUTE = -c echo Running xpt_link...
+
 include $(topsrcdir)/build/rules.mk
+
+shell_execute: $(SONGBIRD_COMPONENTSDIR)/songbird.xpt
+
+$(SONGBIRD_COMPONENTSDIR)/songbird.xpt: $(wildcard *.xpt)
+	$(CYGWIN_WRAPPER) $(XPTLINK) $@ $^
+	$(CHMOD) -x $@
 
 clean::
 	$(RM) -f link-names link-libs link-paths link-imports link-static-imports \

@@ -44,6 +44,8 @@ ifneq (,$(SB_ENABLE_STATIC))
     DYNAMIC_LIB=
     STATIC_LIB_OBJS=$(DYNAMIC_LIB_OBJS)
   else
+    # if the component does not support --enable-static, pretend it's not set
+    # so that the files end up in the right place
     SB_ENABLE_STATIC=
   endif
 endif
@@ -649,7 +651,7 @@ xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
 xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
 
 $(xpidl_typelibs): %.xpt: %.idl
-	$(CYGWIN_WRAPPER) $(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
+	$(CYGWIN_WRAPPER) $(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) -e $@ $<
 	$(CHMOD) -x $@
 
 xpidl_clean_typelibs:
@@ -663,14 +665,22 @@ endif #XPIDL_TYPELIB_SRCS
 
 ifdef XPIDL_MODULE
 
+ifneq (,$(SB_ENABLE_STATIC))
+    # in static builds, don't put the xpt in the dist directory
+    xpidl_module := $(addprefix $(SONGBIRD_OBJDIR)/components/static/, $(XPIDL_MODULE))
+    XPIDL_MODULE =
+else
+    xpidl_module = $(XPIDL_MODULE)
+endif
+
 xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
 
 xpidl_link: $(xpidl_module_typelibs)
-	$(CYGWIN_WRAPPER) $(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
-	$(CHMOD) -x $(XPIDL_MODULE)
+	$(CYGWIN_WRAPPER) $(XPTLINK) $(xpidl_module) $(xpidl_module_typelibs)
+	$(CHMOD) -x $(xpidl_module)
 
 xpidl_clean_link:
-	$(CYGWIN_WRAPPER) $(RM) -f $(XPIDL_MODULE)
+	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_module)
 
 .PHONY : xpidl_link xpidl_clean_link
 

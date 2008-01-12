@@ -35,6 +35,7 @@ XPIDL_SRCS = sbIDataRemote.idl \
 XPIDL_MODULE = sbDataRemote.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbDataRemote
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

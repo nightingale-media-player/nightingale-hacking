@@ -46,6 +46,7 @@ XPIDL_SRCS = \
 XPIDL_MODULE = sbBrowserAPI.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbBrowserAPI
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

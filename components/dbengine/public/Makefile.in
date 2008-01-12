@@ -37,6 +37,7 @@ XPIDL_SRCS = sbIDatabaseEngine.idl \
 XPIDL_MODULE = sbDatabaseEngine.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbDatabaseEngine
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

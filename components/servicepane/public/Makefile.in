@@ -40,6 +40,7 @@ XPIDL_SRCS = sbIServicePaneService.idl \
 XPIDL_MODULE = sbServicePane.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbServicePane
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

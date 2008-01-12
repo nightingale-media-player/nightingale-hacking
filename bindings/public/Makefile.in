@@ -38,6 +38,7 @@ XPIDL_SRCS = sbITabBrowser.idl \
 XPIDL_MODULE = sbWidgets.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbWidgets
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

@@ -35,6 +35,7 @@ XPIDL_SRCS = sbIDeviceBase.idl \
 XPIDL_MODULE = sbDeviceBase.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbDeviceBase
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

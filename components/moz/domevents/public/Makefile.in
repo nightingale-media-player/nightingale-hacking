@@ -35,6 +35,7 @@ XPIDL_SRCS = sbIDOMEventWrapper.idl \
 XPIDL_MODULE = sbDOMEventUtils.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbDOMEventUtils
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

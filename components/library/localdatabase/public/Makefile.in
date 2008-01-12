@@ -47,6 +47,7 @@ XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+LIBSONGBIRD_COMPONENT = sbLocalDatabaseLibrary
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk
