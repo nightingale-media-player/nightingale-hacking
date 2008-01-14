@@ -579,123 +579,98 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     nsCOMPtr<sbIURIPropertyInfo>
                                 pURIPropertyInfo;
     nsCOMPtr<sbILibraryManager> pLibraryManager;
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Initialize the base services. */
-    result = Init();
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Set the download device identifier. */
     mDeviceIdentifier = NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID);
 
     /* Initialize the device state. */
-    if (NS_SUCCEEDED(result))
-        result = InitDeviceState(mDeviceIdentifier);
+    rv = InitDeviceState(mDeviceIdentifier);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Create the download device lock. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpDeviceMonitor = nsAutoMonitor::NewMonitor
+    mpDeviceMonitor = nsAutoMonitor::NewMonitor
                                         ("sbDownloadDevice::mpDeviceMonitor");
-        if (!mpDeviceMonitor)
-            result = NS_ERROR_OUT_OF_MEMORY;
-    }
+    NS_ENSURE_TRUE(mpDeviceMonitor, NS_ERROR_OUT_OF_MEMORY);
 
     /* Get the IO service. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpIOService = do_GetService("@mozilla.org/network/io-service;1",
-                                    &result);
-    }
+    mpIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the pref service. */
-    if (NS_SUCCEEDED(result))
-        mpPrefBranch = do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
+    mpPrefBranch = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the library manager. */
-    if (NS_SUCCEEDED(result))
-    {
-        pLibraryManager =
-            do_GetService("@songbirdnest.com/Songbird/library/Manager;1",
-                          &result);
-    }
+    pLibraryManager =
+            do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the string bundle. */
-    if (NS_SUCCEEDED(result))
     {
         nsCOMPtr<nsIStringBundleService>
                                     pStringBundleService;
 
         /* Get the download device string bundle. */
-        pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID,
-                                             &result);
-        if (NS_SUCCEEDED(result))
-        {
-            result = pStringBundleService->CreateBundle
-                                            (SB_STRING_BUNDLE_CHROME_URL,
-                                             getter_AddRefs(mpStringBundle));
-        }
+        pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = pStringBundleService->CreateBundle(SB_STRING_BUNDLE_CHROME_URL,
+                                                getter_AddRefs(mpStringBundle));
+        NS_ENSURE_SUCCESS(rv, rv);
     }
 
     /* Get some strings. */
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpStringBundle->GetStringFromName
+    rv = mpStringBundle->GetStringFromName
                             (NS_LITERAL_STRING("device.download.queued").get(),
                              getter_Copies(mQueuedStr));
-    }
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the main library. */
-    if (NS_SUCCEEDED(result))
-        result = pLibraryManager->GetMainLibrary(getter_AddRefs(mpMainLibrary));
+    rv = pLibraryManager->GetMainLibrary(getter_AddRefs(mpMainLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the web library. */
-    if (NS_SUCCEEDED(result))
     {
         nsCOMPtr<nsISupportsString> pSupportsString;
         nsAutoString                webLibraryGUID;
 
         /* Read the web library GUID from the preferences. */
-        if (NS_SUCCEEDED(result))
-        {
-            result = mpPrefBranch->GetComplexValue
-                                            (SB_PREF_WEB_LIBRARY,
-                                             NS_GET_IID(nsISupportsString),
-                                             getter_AddRefs(pSupportsString));
-        }
-        if (NS_SUCCEEDED(result))
-            result = pSupportsString->GetData(webLibraryGUID);
+        rv = mpPrefBranch->GetComplexValue(SB_PREF_WEB_LIBRARY,
+                                           NS_GET_IID(nsISupportsString),
+                                           getter_AddRefs(pSupportsString));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = pSupportsString->GetData(webLibraryGUID);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         /* Get the web library. */
-        if (NS_SUCCEEDED(result))
-        {
-            result = pLibraryManager->GetLibrary(webLibraryGUID,
-                                                 getter_AddRefs(mpWebLibrary));
-        }
-
+        rv = pLibraryManager->GetLibrary(webLibraryGUID,
+                                         getter_AddRefs(mpWebLibrary));
+        NS_ENSURE_SUCCESS(rv, rv);
     }
 
     /* Initialize the download media list. */
-    if (NS_SUCCEEDED(result))
-        result = InitializeDownloadMediaList();
+    rv = InitializeDownloadMediaList();
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Listen to the main library to detect     */
     /* when the download media list is deleted. */
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpMainLibrary->AddListener
+    rv = mpMainLibrary->AddListener
                                 (this,
                                  PR_FALSE,
                                    sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED
                                  | sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                                  nsnull);
-    }
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Create the device transfer queue. */
-    if (NS_SUCCEEDED(result))
-        result = CreateTransferQueue(mDeviceIdentifier);
+    rv = CreateTransferQueue(mDeviceIdentifier);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Create temporary download directory. */
-    if (NS_SUCCEEDED(result))
     {
         nsCOMPtr<nsIProperties>     pProperties;
         PRUint32                    permissions;
@@ -703,62 +678,58 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
         /* Get the system temporary directory. */
         pProperties = do_GetService("@mozilla.org/file/directory_service;1",
-                                    &result);
-        if (NS_SUCCEEDED(result))
-        {
-            result = pProperties->Get("TmpD",
-                                      NS_GET_IID(nsIFile),
-                                      getter_AddRefs(mpTmpDownloadDir));
-        }
-        if (NS_SUCCEEDED(result))
-            result = mpTmpDownloadDir->GetPermissions(&permissions);
+                                    &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = pProperties->Get("TmpD",
+                              NS_GET_IID(nsIFile),
+                              getter_AddRefs(mpTmpDownloadDir));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mpTmpDownloadDir->GetPermissions(&permissions);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         /* Get the Songbird temporary directory and make sure it exists. */
-        if (NS_SUCCEEDED(result))
-            result = mpTmpDownloadDir->Append(NS_LITERAL_STRING(SB_TMP_DIR));
-        if (NS_SUCCEEDED(result))
-            result = mpTmpDownloadDir->Exists(&exists);
-        if (NS_SUCCEEDED(result) && !exists)
+        rv = mpTmpDownloadDir->Append(NS_LITERAL_STRING(SB_TMP_DIR));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mpTmpDownloadDir->Exists(&exists);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (!exists)
         {
-            result = mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE,
-                                              permissions);
+            rv = mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
+            NS_ENSURE_SUCCESS(rv, rv);
         }
 
-        /* Get the download temporary directory and make sure it's empty. */
-        if (NS_SUCCEEDED(result))
+        /* Get the download temporary directory and make sure it's empty.  If */
+        /* directory cannot be deleted, don't propagate error (bug #6453).    */
+        rv = mpTmpDownloadDir->Append(NS_LITERAL_STRING(SB_DOWNLOAD_TMP_DIR));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mpTmpDownloadDir->Exists(&exists);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (exists)
         {
-            result = mpTmpDownloadDir->Append
-                                    (NS_LITERAL_STRING(SB_DOWNLOAD_TMP_DIR));
+            rv = mpTmpDownloadDir->Remove(PR_TRUE);
+            if (NS_SUCCEEDED(rv))
+                exists = PR_FALSE;
         }
-        if (NS_SUCCEEDED(result))
-            result = mpTmpDownloadDir->Exists(&exists);
-        if (NS_SUCCEEDED(result) && exists)
-            result = mpTmpDownloadDir->Remove(PR_TRUE);
-        if (NS_SUCCEEDED(result))
+        if (!exists)
         {
-            result = mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE,
-                                              permissions);
+            rv = mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
+            NS_ENSURE_SUCCESS(rv, rv);
         }
     }
 
     /* Watch for the app quitting so we can gracefully abort. */
-    if (NS_SUCCEEDED(result))
     {
-      nsCOMPtr<nsIObserverService> obsSvc =
-            do_GetService("@mozilla.org/observer-service;1", &result);
-      if (NS_SUCCEEDED(result))
-      {
-        result = obsSvc->AddObserver(this,
-                                     "quit-application-granted",
-                                     PR_FALSE);
-      }
+        nsCOMPtr<nsIObserverService> obsSvc =
+                        do_GetService("@mozilla.org/observer-service;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = obsSvc->AddObserver(this, "quit-application-granted", PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
     }
 
     /* Resume incomplete transfers. */
-    if (NS_SUCCEEDED(result))
-        ResumeTransfers();
+    ResumeTransfers();
 
-    return (result);
+    return NS_OK;
 }
 
 
