@@ -606,8 +606,9 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
     node.isOpen = true;
   }
 
-  // by default nothing is editable
+  // by default nothing is editable and everything is very heavy
   node.editable = false;
+  node.setAttributeNS(SP, 'Weight', 9999);
   return node;
 }
 ServicePaneService.prototype.removeNode =
