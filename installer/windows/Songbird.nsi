@@ -59,20 +59,7 @@ Var StartMenuDir
 !include nsProcess.nsh
 !include x64.nsh
 
-!insertmacro FileJoin
-!insertmacro GetTime
-!insertmacro LineFind
-!insertmacro StrFilter
-!insertmacro TrimNewLines
-!insertmacro WordFind
-!insertmacro WordReplace
-!insertmacro un.WordReplace
-!insertmacro GetSize
-!insertmacro GetParameters
-!insertmacro GetParent
-!insertmacro GetOptions
-!insertmacro GetRoot
-!insertmacro DriveSpace
+!insertmacro DirState
 
 ; The following includes are custom. 
 ; defines.nsi is generated from defines.nsi.in!
@@ -133,6 +120,8 @@ ShowUninstDetails hide
 !insertmacro MUI_PAGE_COMPONENTS
 
 ; Install directory page
+!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE shouldPickNewDirectory
 !insertmacro MUI_PAGE_DIRECTORY
 
 ; Start Menu Folder Page Configuration
@@ -173,6 +162,7 @@ ShowUninstDetails hide
 var LinkIconFile
 var HasBeenBackedUp
 var BackupLocation
+var HasValidInstallDirectory
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -465,11 +455,6 @@ Function LaunchApp
   Exec "$INSTDIR\${FileMainEXE}"
 FunctionEnd
 
-Function CreateProfile
-  Call CloseApp
-  ExecWait "$INSTDIR\${FileMainEXE} -CreateProfile"
-FunctionEnd
-
 Function CloseApp
   loop:
 
@@ -587,6 +572,13 @@ Function BackupOldVersion
 
 FunctionEnd
 
+Function shouldPickNewDirectory
+  ${If} $HasValidInstallDirectory == "0"
+    MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
+    Abort
+  ${EndIf}
+FunctionEnd
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstaller Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -634,13 +626,27 @@ Function un.CloseApp
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Initialization Functions
+; Installer Initialization Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
   StrCpy $HasBeenBackedUp "False"
 FunctionEnd
 
-Function un.onInit
+Function .onVerifyInstDir
+  ${DirState} "$INSTDIR" $0
 
+  ${If} $0 == 1
+    StrCpy $HasValidInstallDirectory 0
+  ${Else}
+    StrCpy $HasValidInstallDirectory 1
+  ${EndIf}
+
+FunctionEnd
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstaller Initialization Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Function un.onInit
 FunctionEnd
