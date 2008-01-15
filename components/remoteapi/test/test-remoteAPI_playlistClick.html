@@ -30,20 +30,44 @@
 <head>
   <title>Remote API Test: Playlist click</title>
   <script type="application/javascript">
+    var webPL;
+    // create this property before the page finished loading so the scraped
+    // webplaylist has this available.
+    songbird.createImageProperty("logo-image", "logo");     
+
     function onload() {
-      document.addEventListener("PlaylistCellClick", onplaylistclick, false);
-      songbird.createImageProperty("logo-image", "logo");     
-
-        var list = songbird.siteLibrary.createSimpleMediaList("MyList");
-        var item = songbird.siteLibrary.createMediaItem("http://mirrors.creativecommons.org/ccmixter/contrib/Wired/David%20Byrne%20-%20My%20Fair%20Lady.mp3");
-        
-        item.setProperty("logo-image", "http://songbirdnest.com/favicon.ico");
-
-        list.add(item);
-        
-        songbird.webPlaylist.mediaList = list;
+        document.addEventListener("PlaylistCellClick", onplaylistclick, false);
         songbird.webPlaylist.appendColumn("logo-image", 20);
     }
+
+    function setScrapedList() {
+      if (webPL) {
+        songbird.webPlaylist.mediaList = webPL;
+      }
+    }
+
+    function setMainList() {
+      if (!webPL) {
+        webPL = songbird.webPlaylist.mediaList;
+      }
+
+      songbird.webPlaylist.mediaList = songbird.mainLibrary;
+    }
+
+    function setSiteList() {
+      if (!webPL) {
+        webPL = songbird.webPlaylist.mediaList;
+      }
+
+      var list = songbird.siteLibrary.createSimpleMediaList("MyList");
+      var item = songbird.siteLibrary.createMediaItem(
+        "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3");
+        
+      item.setProperty("logo-image", "http://songbirdnest.com/favicon.ico");
+      list.add(item);
+      songbird.webPlaylist.mediaList = list;
+    }
+
     function onplaylistclick(event) {
       var myDiv = document.getElementById("output");
       myDiv.appendChild(document.createTextNode(event.button + ", "));
@@ -51,9 +75,11 @@
       myDiv.appendChild(document.createTextNode(event.property));
       if ("item" in event) {
         myDiv.appendChild(document.createTextNode(", " + event.item.guid));
+        myDiv.appendChild(document.createTextNode(", " + event.item.getProperty(event.property)));
       }
       myDiv.appendChild(document.createElement("br"));
     }
+
   </script>
 </head>
 <body>
@@ -61,20 +87,33 @@
   
   <h2>Instructions</h2>
   <p>
+    <a href="http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Love</a>
+    <br/>
     Click on the items in the playlist.
-  <dl>
-    <dt>Expected results:</dt>
-    <dd>New text should show up, containing
-      <ol>
-        <li>the button pressed (0 for left)
-        <li>the state of the Ctrl key
-        <li>the property clicked on
-        <li>the guid of the item clicked on
-      </ol>
-    </dd>
-  </dl>
-  <hr>
+    <dl>
+      <dt>Expected results:</dt>
+      <dd>New text should show up, containing
+        <ol>
+          <li>the button pressed (0 for left)
+          <li>the state of the Ctrl key
+          <li>the property clicked on
+          <li>the guid of the item clicked on
+          <li>the value of the property clicked on
+        </ol>
+      </dd>
+    </dl>
+    <form>
+      Click on button to change to a main list away from the scraped playlist.<br/>
+      <input type="button" id="main_list_button" value="Set Main List" onclick="setMainList();" />
+      <br />
+      Click on button to change to a site list away from the scraped playlist.<br/>
+      <input type="button" id="site_list_button" value="Set Site List" onclick="setSiteList();" /> 
+      <br />
+      Click on button to change to a site list back to the scraped playlist.<br/>
+      <input type="button" id="scraped_list_button" value="Set Scraped List" onclick="setScrapedList();" /> 
+    </form>
   </p>
+  <hr>
   <div id="output">
   </div>
 </body>
