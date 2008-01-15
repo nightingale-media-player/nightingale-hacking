@@ -26,6 +26,7 @@
 
 #include "sbRemoteWebMediaList.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteLibraryResource.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -104,7 +105,9 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteWebMediaList,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebMediaList)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebMediaList)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteWebMediaList,
+                                        sbRemoteLibraryResource,
+                                        (mRemotePlayer, mMediaList) )
 
 sbRemoteWebMediaList::sbRemoteWebMediaList( sbRemotePlayer* aRemotePlayer,
                                             sbIMediaList* aMediaList,

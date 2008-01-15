@@ -26,6 +26,7 @@
 
 #include "sbRemoteWebMediaItem.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteLibraryResource.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -87,7 +88,10 @@ NS_IMPL_CI_INTERFACE_GETTER5( sbRemoteWebMediaItem,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebMediaItem)
+// Try using the 'main' Library resource first.
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteWebMediaItem,
+                                        sbRemoteLibraryResource,
+                                        (mRemotePlayer, mMediaItem) )
 
 sbRemoteWebMediaItem::sbRemoteWebMediaItem( sbRemotePlayer* aRemotePlayer,
                                             sbIMediaItem* aMediaItem ) :
