@@ -1,14 +1,20 @@
 #!/bin/sh
 
+if [ $# < 2 ]; then
+  echo usage: make-installer architecture readme
+  exit 1
+fi
+
 DEPTH=../../..
 CURRENT_DIR=`pwd`
 CURRENT_DATE=`date +%Y%m%d`
 ARCH="$1"
+README_FILE="$2"
 
 rm -rf ${DEPTH}/compiled/_built_installer
 mkdir ${DEPTH}/compiled/_built_installer
 
-cp ${DEPTH}/compiled/dist/Songbird.app/Contents/Resources/README.txt ${DEPTH}/compiled/dist/README.txt
+cp ${DEPTH}/compiled/dist/Songbird.app/Contents/Resources/${README_FILE} ${DEPTH}/compiled/dist/README.txt
 ln -s /Applications/ ${DEPTH}/compiled/dist/Applications
 
 ${DEPTH}/installer/macosx/make-diskimage \

@@ -1,10 +1,16 @@
 #!/bin/bash
 
+if [ $# < 2 ]; then
+  echo usage: make-installer architecture readme
+  exit 1
+fi
+
 DEPTH=../../..
 CURRENT_DATE=`date +%Y%m%d`
 SONGBIRD_DIR=Songbird_${CURRENT_DATE}
 SONGBIRD_ARCH=$1
 SONGBIRD_FILENAME=${SONGBIRD_DIR}_${SONGBIRD_ARCH}
+README_FILE=$2
 
 cd ${DEPTH}/compiled
 
@@ -17,6 +23,8 @@ mkdir ./${SONGBIRD_DIR}
 
 rm -f ./${SONGBIRD_FILENAME}.tar
 rm -f ./${SONGBIRD_FILENAME}.tar.gz
+
+mv ./dist/${README_FILE} ./dist/README.txt
 
 # pull everything we want into the installer working dir
 cp -RL ./dist/* ./${SONGBIRD_DIR}

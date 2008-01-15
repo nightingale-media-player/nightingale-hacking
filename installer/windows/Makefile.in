@@ -30,8 +30,14 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
+ifdef SONGBIRD_OFFICIAL
+readme = README_OFFICIAL.txt
+else
+readme = README_NIGHTLY.txt
+endif
+
 SONGBIRD_DIST = $(srcdir)/TRADEMARK.txt \
-                $(topsrcdir)/installer/common/README.txt \
+                $(topsrcdir)/installer/common/$(readme) \
                 $(NULL)
 
 ifdef SONGBIRD_OFFICIAL
@@ -54,6 +60,6 @@ SONGBIRD_INSTALLER = common.nsh \
 INSTALLER_PREPROCESS = defines.nsi \
                        $(NULL)
 
-SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH)
+SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(readme)
 
 include $(topsrcdir)/build/rules.mk
