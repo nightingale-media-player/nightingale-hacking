@@ -111,8 +111,6 @@ PublicPlaylistCommands.prototype = {
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
   m_cmd_CleanUpDownloads          : null, // clean up completed download items
   m_cmd_ClearHistory              : null, // clear the web media history
-  m_cmd_BurnToCD                  : null, // burn selected tracks to CD
-  m_cmd_CopyToDevice              : null, // copy selected tracks to device
 
   // Commands that act on playlist themselves
   m_cmd_list_Remove               : null, // remove the selected playlist
@@ -482,56 +480,6 @@ PublicPlaylistCommands.prototype = {
                                                          plCmd_ContextHasBrowser);
 
     // --------------------------------------------------------------------------
-    // The BURN TO CD button
-    // --------------------------------------------------------------------------
-
-    this.m_cmd_BurnToCD = new PlaylistCommandsBuilder();
-
-    this.m_cmd_BurnToCD.appendAction(null,
-                                     "library_cmd_burntocd",
-                                     "&command.burntocd",
-                                     "&command.tooltip.burntocd",
-                                     plCmd_BurnToCD_TriggerCallback);
-
-    this.m_cmd_BurnToCD.setCommandShortcut(null,
-                                           "library_cmd_burntocd",
-                                           "&command.shortcut.key.burntocd",
-                                           "&command.shortcut.keycode.burntocd",
-                                           "&command.shortcut.modifiers.burntocd",
-                                           true);
-
-    //XXX burn to cd is not yet implemented
-    this.m_cmd_BurnToCD.setCommandEnabledCallback(null,
-                                                  "library_cmd_burntocd",
-                                                  /*plCmd_IsAnyTrackSelected*/
-                                                  plCmd_False);
-
-    // --------------------------------------------------------------------------
-    // The COPY TO DEVICE button
-    // --------------------------------------------------------------------------
-
-    this.m_cmd_CopyToDevice = new PlaylistCommandsBuilder();
-
-    this.m_cmd_CopyToDevice.appendAction(null,
-                                         "library_cmd_device",
-                                         "&command.device",
-                                         "&command.tooltip.device",
-                                         plCmd_CopyToDevice_TriggerCallback);
-
-    this.m_cmd_CopyToDevice.setCommandShortcut(null,
-                                               "library_cmd_device",
-                                               "&command.shortcut.key.device",
-                                               "&command.shortcut.keycode.device",
-                                               "&command.shortcut.modifiers.device",
-                                               true);
-
-    //XXX copy to device is not yet implemented
-    this.m_cmd_CopyToDevice.setCommandEnabledCallback(null,
-                                                      "library_cmd_device",
-                                                      /*plCmd_IsAnyTrackSelected*/
-                                                      plCmd_False);
-
-    // --------------------------------------------------------------------------
     // The Remove Playlist action
     // --------------------------------------------------------------------------
 
@@ -585,8 +533,6 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
-    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
-    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
 
     this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
@@ -609,13 +555,6 @@ PublicPlaylistCommands.prototype = {
     this.m_defaultCommands.appendPlaylistCommands(null,
                                                   "library_cmdobj_addtoplaylist",
                                                   SBPlaylistCommand_AddToPlaylist);
-    this.m_defaultCommands.appendPlaylistCommands(null,
-                                                  "library_cmdobj_burntocd",
-                                                  this.m_cmd_BurnToCD);
-    this.m_defaultCommands.appendPlaylistCommands(null,
-                                                  "library_cmdobj_device",
-                                                  this.m_cmd_CopyToDevice);
-
     this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
@@ -810,8 +749,6 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_BURNTOCD, this.m_cmd_BurnToCD);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTODEVICE, this.m_cmd_CopyToDevice);
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
@@ -884,8 +821,6 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_PauseResumeDownload.shutdown();
     this.m_cmd_CleanUpDownloads.shutdown();
     this.m_cmd_ClearHistory.shutdown();
-    this.m_cmd_BurnToCD.shutdown();
-    this.m_cmd_CopyToDevice.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
     this.m_defaultCommands.shutdown();
