@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-interface nsISimpleEnumerator;
+interface nsIArray;
 
 interface sbIDeviceController;
 
@@ -39,16 +39,12 @@ interface sbIDeviceController;
 interface sbIDeviceControllerRegistrar : nsISupports
 {
   /**
-   * An enumeration of sbIDeviceControllers currently registered.
+   * An array of sbIDeviceControllers currently registered.
+   * The ordering within the array is undefined, even in consecutive reads.
    */
-  readonly attribute nsISimpleEnumerator controllers;
+  readonly attribute nsIArray controllers;
 
   /**
-   * The number of sbIDeviceControllers currently registered.
-   */
-  readonly attribute unsigned long controllerCount;
-
-    /**
    * Registers an sbIDeviceController object.
    */
   void registerController(in sbIDeviceController aController);
@@ -61,5 +57,5 @@ interface sbIDeviceControllerRegistrar : nsISupports
   /**
    * Retrieve a registered controller.
    */
-  sbIDeviceController getController(in nsIDPtr aControllerId);
+  sbIDeviceController getController(in nsIDRef aControllerId);
 };

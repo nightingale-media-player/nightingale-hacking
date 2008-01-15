@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIPropertyBag2;
 interface nsIURI;
 interface nsIVariant;
 
@@ -77,5 +78,5 @@ interface sbIDeviceProperties : nsISupports
   * All of the properties available for a device. 
   * Should only contain objects that implement nsIProperty!
   */
- readonly attribute nsISimpleEnumerator properties;
+ readonly attribute nsIPropertyBag2 properties;
 };

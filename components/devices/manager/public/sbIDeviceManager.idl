@@ -26,8 +26,8 @@
 
 #include "nsISupports.idl"
 
-interface sbIDeviceMarshall;
-interface nsISimpleEnumerator;
+interface sbIDeviceMonitor;
+interface nsIArray;
 
 /**
  * \interface sbIDeviceManager
@@ -37,23 +37,29 @@ interface nsISimpleEnumerator;
  * This is the DeviceManager service.
  * Make sure to use getService rather than createInstance when using.
  */
+/*
+ * XXXMook: rename this to sbIDeviceManager once the old interface has been
+ * properly removed
+ */
 [scriptable, uuid(82102e1c-e620-4c9e-9a3f-059eee1355b5)]
-interface sbIDeviceManager : nsISupports
+interface sbIDeviceManager2 : nsISupports
 {
   /**
    * List of marshalls that are currently instantiated.
+   * Order is undefined and may change between reads.
    */
-  attribute readonly nsISimpleEnumerator marshalls;
+  readonly attribute nsIArray monitors;
   
   /**
    * List of controllers that are currently instantiated.
+   * Order is undefined and may change between reads.
    */
-  attribute readonly nsISimpleEnumerator controllers;
+  readonly attribute nsIArray controllers;
 
   /**
    * Get a device marshall by nsISupportsID.
    */
-  sbIDeviceMarshall getMarshallByID(in nsIDPtr aIDPtr);
+  sbIDeviceMonitor getMonitorByID(in nsIDRef aIDPtr);
 
   /**
    * Simply calls updateDevices on all loaded controllers.

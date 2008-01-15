@@ -107,17 +107,22 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_CLIENT_DEFINED = 0x60000000;
 
   /**
-   * 
+   * The type of the event
    */
-  readonly attribute PRUint32 id;
+  readonly attribute PRUint32 type;
 
   /**
-   * 
+   * The data being passed through the event
    */
   readonly attribute nsIVariant data;
 
   /**
-   * 
+   * The event target this event is happening on
    */
-  readonly attribute sbIDeviceEventTarget source;
+  readonly attribute sbIDeviceEventTarget target;
+  
+  /**
+   * Something that invoked this event
+   */
+  readonly attribute nsISupports origin;
 };

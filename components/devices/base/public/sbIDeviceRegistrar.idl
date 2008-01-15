@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-interface nsISimpleEnumerator;
+interface nsIArray;
 
 interface sbIDevice;
 
@@ -39,14 +39,10 @@ interface sbIDevice;
 interface sbIDeviceRegistrar : nsISupports
 {
   /**
-   * An enumeration of sbIDevices currently registered.
+   * An array of sbIDevices currently registered.
+   * The ordering within the array is undefined, even in consecutive reads.
    */
-  readonly attribute nsISimpleEnumerator devices;
-
-  /**
-   * The number of sbIDevices currently registered.
-   */
-  readonly attribute unsigned long deviceCount;
+  readonly attribute nsIArray devices;
 
   /**
    * Registers an sbIDevice object.
@@ -61,5 +57,5 @@ interface sbIDeviceRegistrar : nsISupports
   /**
    * Retrieve a registered device.
    */
-  sbIDevice getDevice(in unsigned long aDeviceId);
+  sbIDevice getDevice(in nsIDRef aDeviceId);
 };
