@@ -411,8 +411,13 @@
 
           if (this.browser) {
             try {
-              this.browser.stop();
-              this.browser.loadURI(aURL, null, null, aEvent);
+              if ( gPPS.isPlaylistURL(aURL) ||
+                   gPPS.isMediaURL(aURL) ) {
+                this.browser.handleMediaURL(aURL);
+              } else {
+                this.browser.stop();
+                this.browser.loadURI(aURL, null, null, aEvent);
+              }
               
             }
             catch (err) {

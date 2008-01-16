@@ -775,9 +775,21 @@
                 mediaList.clear();
               }
               else {
-                mediaList = library.createMediaList("simple");
-                mediaList.name = gPPS.convertURLToDisplayName(aURL);
-                mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+                if ( scheme == "http" ){
+                  mediaList = this.mCurrentTab.outerPlaylist.mediaList;
+                  if (mediaList) {
+                    mediaList.clear();
+                    this.showWebPlaylist = true;
+                    var locationBar = document.getElementById("location_bar");
+                    locationBar.uri = aURL;
+                  }
+                }
+                
+                if (!mediaList) {
+                  mediaList = library.createMediaList("simple");
+                  mediaList.name = gPPS.convertURLToDisplayName(aURL);
+                  mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+                }
               }
 
               var playlistReaderManager =
