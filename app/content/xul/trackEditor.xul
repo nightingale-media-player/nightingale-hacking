@@ -98,20 +98,54 @@
       <sb-tageditor-drawer id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
     </hbox>
 -->          
-
-  
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
-    src="chrome://global/content/globalOverlay.js"/>  
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js" />
   
   <script>
 
   <![CDATA[
+
+  if (typeof(Ci) == "undefined")
+    var Ci = Components.interfaces;
+  if (typeof(Cc) == "undefined")
+    var Cc = Components.classes;
+  if (typeof(Cr) == "undefined")
+    var Cr = Components.results;
+
+  // BEGIN localstore fixup
+  
+  // We remove the values for "width" saved in the localstore in previous
+  // sessions from previous versions of Songbird, otherwise size restoration 
+  // may still occur on width/height, eventho we're no longer using "width" in
+  // the window's persist attribute. This is the same fix as the one used in
+  // the trackeditorfix extension for Songbird 0.4.
+
+  var nsIRDFService            = Ci.nsIRDFService;
+  var nsIRDFNode               = Ci.nsIRDFNode;
+  var RDFSERVICE_CONTRACTID    = "@mozilla.org/rdf/rdf-service;1";
+  var TRACKEDITOR_RESOURCE     = "chrome://songbird/content/xul/trackEditor.xul#track_editor";
+  var WIDTH_PROPERTY           = "width";
+
+  // get the datasource for profile/localstore.rdf
+  var rdf = Cc[RDFSERVICE_CONTRACTID].getService(nsIRDFService);
+  var localStore = rdf.GetDataSource("rdf:local-store");
+
+  if (localStore) {
+    // look for the trackeditor's rdf resource for persistant values
+    var trackeditor_resource = rdf.GetResource(TRACKEDITOR_RESOURCE, true);
+    // look for the width property
+    var width_property = rdf.GetResource(WIDTH_PROPERTY, true);
+    // see if it has anything
+    var enum = localStore.GetTargets(trackeditor_resource, width_property, true);
+    while (enum.hasMoreElements()) {
+      var node = enum.getNext().QueryInterface(nsIRDFNode);
+      if (node) {
+        // if it does, nuke that property
+        localStore.Unassert(trackeditor_resource, width_property, node);
+      }
+    }
+  }
+  // END locastore fixup
+
+
 
   const VK_ESCAPE = 27;
   const VK_ENTER = 13;
@@ -140,7 +174,7 @@
   };
   
   function onLoadTrackEditor() {
-    var playlist = window.arguments[0];
+    playlist = window.arguments[0];
     var _trackeditor = document.getElementById("trackeditor.trackeditor");
     _trackeditor.setPlaylist(playlist);
     _trackeditor.setDirtyObject(dirty);
@@ -234,9 +268,9 @@
   function setTrackeditorMinMaxCallback()
   {
     try {
-      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      var windowMinMax = Cc["@songbirdnest.com/Songbird/WindowMinMax;1"];
       if (windowMinMax) {
-        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        var service = windowMinMax.getService(Ci.sbIWindowMinMax);
         if (service)
           service.setCallback(document, SBTrackeditorWindowMinMaxCB);
       }
@@ -297,11 +331,11 @@
 
     QueryInterface : function(aIID)
     {
-      if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
-          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-          !aIID.equals(Components.interfaces.nsISupports)) 
+      if (!aIID.equals(Ci.sbIWindowMinMaxCallback) &&
+          !aIID.equals(Ci.nsISupportsWeakReference) &&
+          !aIID.equals(Ci.nsISupports)) 
       {
-        throw Components.results.NS_ERROR_NO_INTERFACE;
+        throw Cr.NS_ERROR_NO_INTERFACE;
       }
       
       return this;
