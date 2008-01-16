@@ -71,7 +71,6 @@ document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
  */
 function SBInitialize()
 {
-
   try
   {
     //Whatever migration is required between version, this function takes care of it.

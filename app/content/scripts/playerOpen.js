@@ -219,7 +219,7 @@ try
           var metadataJob = metadataJobManager.newJob(array, 5);
 
           // Give the new media list focus
-          if (gBrowser) {
+          if (typeof gBrowser != 'undefined') {
             var librarySPS =
               Components.classes['@songbirdnest.com/servicepane/library;1']
                         .getService(Components.interfaces.sbILibraryServicePaneService);
@@ -282,6 +282,20 @@ try
     return retval;
   }
 
+  // This function should be called when we need to open a URL but gBrowser is 
+  // not available. Eventually this should be replaced by code that opens a new 
+  // Songbird window, when we are able to do that, but for now, open in the 
+  // default external browser.
+  function SBBrowserOpenURLInNewWindow( the_url ) {
+    var externalLoader = (Components
+              .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+            .getService(Components.interfaces.nsIExternalProtocolService));
+    var nsURI = (Components
+            .classes["@mozilla.org/network/io-service;1"]
+            .getService(Components.interfaces.nsIIOService)
+            .newURI(the_url, null, null));
+    externalLoader.loadURI(nsURI, null);
+  }
 
 // Help
 function onHelp()
@@ -395,7 +409,7 @@ function SBGetBrowser()
                     .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                     .getInterface(Components.interfaces.nsIDOMWindow);
 
-  if ( typeof mainWindow.gBrowser != 'undefined' ) {
+  if ( mainWindow.gBrowser ) {
     return mainWindow.gBrowser;
   }
 
@@ -421,13 +435,19 @@ function SBNewSmartPlaylist()
  *       once it exists.
  */
 function makeNewPlaylist(mediaListType) {
-  var servicePane = gServicePane;
+  var servicePane = null;
+  if (typeof gServicePane != 'undefined') servicePane = gServicePane;
 
   // Try to find the currently selected service pane node
   var selectedNode;
   if (servicePane) {
     selectedNode = servicePane.getSelectedNode();
   }
+  
+  // ensure the service pane is initialized (safe to do multiple times)
+  var servicePaneService = Components.classes['@songbirdnest.com/servicepane/service;1']
+                              .getService(Components.interfaces.sbIServicePaneService);
+  servicePaneService.init();
 
   // Ask the library service pane provider to suggest where
   // a new playlist should be created
@@ -504,7 +524,7 @@ function SBExtensionsManagerOpen( parentWindow )
   parentWindow.openDialog(EM_URL, "", EM_FEATURES);
 }
 
-function SBTrackEditorOpen( parentWindow )
+function SBTrackEditorOpen( parentWindow, playlist )
 {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
@@ -514,7 +534,7 @@ function SBTrackEditorOpen( parentWindow )
   } else {
     const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist, parentWindow);
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist ? playlist : gBrowser.currentPlaylist, parentWindow);
   }
 }
 

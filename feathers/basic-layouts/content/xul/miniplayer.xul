@@ -41,9 +41,10 @@
 
 <!-- Include this to automatically import the standard scripts for the miniplayer window -->
 <?xul-overlay href="chrome://songbird/content/xul/miniScriptsOverlay.xul"?>
-
-<!-- Include this to automatically populate a menubar -->
-<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+<!-- Include this to automatically insert the mini action sets -->
+<?xul-overlay href="chrome://songbird/content/xul/miniActionSetsOverlay.xul"?>
+<!-- Include this to automatically populate a mini menubar -->
+<?xul-overlay href="chrome://songbird/content/xul/miniMenuOverlay.xul"?>
 
 <window 
  xmlns:html="http://www.w3.org/1999/xhtml"
@@ -71,13 +72,24 @@
     <hbox id="miniplayer_box" flex="1" align="center" pack="center">
       <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
   
-      <!-- Magic menu to keep OS X happy.
-           Note: This menu must have the id "main-menubar", as it is the overlay
-           target of menuOverlay.xul.  This cannot be put inside of a binding
-           as that would break OSX menu handling. 
-           See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
-        -->
-      <menubar id="main-menubar" hidden="true"/>
+      <!-- BEGIN magic
+      
+          This whole section gives overlay points for menu items, keys, commands,
+          and broadcasters necessary for handling actions that apply to a mini 
+          window.
+           
+          Note that the menubar is not visible on any other platform than OSX,
+          although the actions themselves are, and can always be triggered by
+          using the associated key -->
+
+          <commandset id="mainCommandSet" />
+          <broadcasterset id="mainBroadcasterSet" />
+          <keyset id="mainKeyset"/>
+          <stringbundleset id="mainBundleSet"/> 
+        
+          <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
+
+      <!-- END magic -->
   
       <!-- PLAYER DISPLAY AND CONTROLS -->
       <sb-mini-player-controls id="miniplayer_controls" flex="1"/>
@@ -92,10 +104,7 @@
     </hbox>
   </sb-draggable>
 
-  <keyset>
-<!-- XXXsteve bug 5303 disable jumpto
-    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
--->
+  <keyset id="miniPlayerKeyset">
     <key id="feathers-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
   </keyset>
 

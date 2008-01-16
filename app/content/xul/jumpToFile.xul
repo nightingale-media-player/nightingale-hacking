@@ -31,6 +31,14 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!-- Include this to automatically import the standard scripts for the miniplayer window -->
+<?xul-overlay href="chrome://songbird/content/xul/miniScriptsOverlay.xul"?>
+
+<!-- Include these to automatically insert the mini menuitems and action sets -->
+<?xul-overlay href="chrome://songbird/content/xul/miniMenuOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/miniActionSetsOverlay.xul"?>
+
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -45,6 +53,25 @@
  type="songbird"
  persist="screenX screenY"
 >
+    <!-- BEGIN magic
+    
+         This whole section gives overlay points for menu items, keys, commands,
+         and broadcasters necessary for handling actions that apply to a mini 
+         window.
+         
+         Note that the menubar is not visible on any other platform than OSX,
+         although the actions themselves are, and can always be triggered by
+         using the associated key -->
+
+        <commandset id="mainCommandSet" />
+        <broadcasterset id="mainBroadcasterSet" />
+        <keyset id="mainKeyset"/>
+        <stringbundleset id="mainBundleSet"/> 
+      
+        <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
+
+    <!-- END magic -->
+    
     <hbox align="center">
       <menulist id="playable_list" 
         value="1" 
@@ -77,15 +104,7 @@
   <keyset>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onExit();"/>
   </keyset>
-  
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
-    src="chrome://global/content/globalOverlay.js"/> 
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js" />
+
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/jumpToFile.js" />
 

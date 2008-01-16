@@ -176,46 +176,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\add_tag.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\xul\add_to_playlist.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\addTag.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\balloonTip.xul">
@@ -239,6 +200,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\baseMenuOverlay.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\browserToolbarOverlay.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -260,67 +224,13 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\command_test2.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\controlToolbarOverlay.xul">
 				</File>
 				<File
-					RelativePath=".\content\xul\control_pane.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\coreGStreamerOverlay.xul">
 				</File>
 				<File
-					RelativePath=".\content\xul\download.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\coreVLCOverlay.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\editbookmark.xul">
@@ -449,48 +359,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\koshi_test.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\xul\mab.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\xul\macCmdLineFwd.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -512,25 +380,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\main_pane.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\mainScriptsOverlay.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\Makefile.in">
@@ -554,25 +404,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\media_scan.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\mediaScan.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\menuOverlay.xul">
@@ -617,70 +449,16 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\new_playlist.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\miniMenuOverlay.xul">
 				</File>
 				<File
-					RelativePath=".\content\xul\open_url.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\miniScriptsOverlay.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\openURL.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\parsererror.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\xul\playlist_exists.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -722,27 +500,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\remote_download.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\xul\restartbox.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -764,67 +521,13 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\sb-library-page.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\sbLibraryPage.xul">
 				</File>
 				<File
-					RelativePath=".\content\xul\setup_progress.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\setupProgress.xul">
 				</File>
 				<File
-					RelativePath=".\content\xul\smart_playlist.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\smartPlaylist.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\songbird.xul">
@@ -846,6 +549,12 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\standardScripts.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\statusBarOverlay.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\subscribe.xul">
@@ -890,25 +599,10 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\trackeditor_form.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\trackEditorForm.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\unknownContentTypeOverlay.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\updateOverlay.xul">
@@ -932,46 +626,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\watch_folders.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\xul\yahoo_hybrid.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\xul\watchFolders.xul">
 				</File>
 				<Filter
 					Name="preferences"
@@ -1001,28 +656,16 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\content\xul\preferences\main_overlay.xul">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCustomBuildTool"
-								Description="Performing Custom Build Step $(InputFileName)"
-								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)
-"
-								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCustomBuildTool"
-								Description="Performing Custom Build Step $(InputFileName)"
-								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)
-"
-								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
-						</FileConfiguration>
+						RelativePath=".\content\xul\preferences\mainOverlay.xul">
+					</File>
+					<File
+						RelativePath=".\content\xul\preferences\permissionsOverlay.xul">
 					</File>
 					<File
 						RelativePath=".\content\xul\preferences\remoteAPI.xul">
+					</File>
+					<File
+						RelativePath=".\content\xul\preferences\sanitizeOverlay.xul">
 					</File>
 				</Filter>
 			</Filter>

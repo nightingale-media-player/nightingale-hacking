@@ -30,9 +30,12 @@
  * \internal
  */
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var Cr = Components.results;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
 
 var firstDrop;
 var importingDrop = false;

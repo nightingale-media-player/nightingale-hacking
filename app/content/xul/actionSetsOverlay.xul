@@ -37,6 +37,8 @@
 %browserDTD;
 ]>
 
+<?xul-overlay href="chrome://songbird/content/xul/baseActionSetsOverlay.xul"?>
+
 <overlay id="ovActions"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -83,65 +85,17 @@
                 inverted="true" />
     </command>
 
-    <command id="cmd_bm_newsubscription"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
-      <observes type="dataremote"
-                key="browser.cansubscription" 
-                attribute="disabled" 
-                boolean="true"
-                inverted="true" />  
-    </command>
-
     <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
   </commandset>
   
   <broadcasterset id="mainBroadcasterSet">
-    <!-- Used by the Control menu -->
-    <broadcaster id="controlModeShuffle" >
-      <observes type="dataremote"
-                key="playlist.shuffle" 
-                attribute="checked" 
-                boolean="true" />
-    </broadcaster>
-    <broadcaster id="controlModeRepeatAlways" >
-      <observes type="dataremote"
-                key="playlist.repeat" 
-                attribute="checked" 
-                onchange="return value == '2'" /> 
-    </broadcaster>
-    <broadcaster id="controlModeRepeatOnce" >
-      <observes type="dataremote"
-                key="playlist.repeat" 
-                attribute="checked" 
-                onchange="return value == '1'" /> 
-    </broadcaster>
-    <broadcaster id="controlModeRepeatNever" >
-      <observes type="dataremote"
-                key="playlist.repeat" 
-                attribute="checked" 
-                onchange="return value == '0'" /> 
-    </broadcaster>
-    <broadcaster id="controlJumpTo" >
-      <observes type="dataremote"
-                key="jumpto.visible" 
-                attribute="checked" 
-                boolean="true" />
-    </broadcaster>
   </broadcasterset>
   
   <keyset id="mainKeyset">
     <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('menuitem_file_new');"/>
-    <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
-    <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
     <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
     <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
-    <!--<key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/> -->
-    <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
-    <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
-    <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
-    <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
-    <key id="selectall-key" modifiers="accel" key="A" />
-    <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
-    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
+    <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>

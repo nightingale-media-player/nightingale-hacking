@@ -55,9 +55,11 @@ try
           "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", 
           [document, window.gBrowser?gBrowser:null] );
     else {
-      document.__JUMPTO__.defaultView.focus();
-      var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");
-      textbox.focus();
+      if (document.__JUMPTO__) {
+        document.__JUMPTO__.defaultView.focus();
+        var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");
+        textbox.focus();
+      }
     }
   }
 
@@ -75,6 +77,19 @@ try
   var service_tree;
   var libraryManager;
   var previous_play_view;
+  
+  // setting this variable to true will make the play function operate on the 
+  // jumpto view itself, with its search parameters, rather that the source, 
+  // unfiltered view
+  var play_own_view = false;
+  
+  // setting this variable to false will prevent the jumpto box from monitoring 
+  // playback and automatically switching to the currently playing playlist
+  var monitor_playback = true;
+  
+  // setting this variable to true will cause the jumpto sort order to be applied
+  // to the source view when playback is requested
+  var sync_sort = false;
   
   var search_widget;
   var source_playlist;
@@ -137,15 +152,21 @@ try
   }
 
   function doSyncJumpTo(nofocus) {
-    window.arguments[0][0].__JUMPTO__ = document;
+    if (window.arguments && 
+        window.arguments[0] &&
+        window.arguments[0][0]) {
+      window.arguments[0][0].__JUMPTO__ = document;
+      search_widget = window.arguments[0][0].__SEARCHWIDGET__;
+      source_playlist = window.arguments[0][1]?window.arguments[0][1].currentPlaylist:null;
+    } else {
+      source_playlist = null;
+    }
     document.syncJumpTo = syncJumpTo;
-    search_widget = window.arguments[0][0].__SEARCHWIDGET__;
     var guid;
     var search;
     var filters;
     var plsource;
     var libraryguid;
-    source_playlist = window.arguments[0][1]?window.arguments[0][1].currentPlaylist:null;
     if (source_playlist) displayed_view = source_playlist.mediaListView;
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -181,15 +202,17 @@ try
       search = "";
       filters = [];
     }
-    _setPlaylist( guid, libraryguid, search, filters, view, nofocus );
-    _selectPlaylist( guid, libraryguid );
+    if (monitor_playback) {
+      _setPlaylist( guid, libraryguid, search, filters, view, nofocus );
+      _selectPlaylist( guid, libraryguid );
+    }
     _updateSubSearchItem(search, filters);
   }
 
   function onPlaylistlistSelect( evt ) {
     var guid, libraryguid, search, view;
     var filters = [];
-    if (evt.target.getAttribute("id") != "current_play_queue") {
+    if (evt && evt.target.getAttribute("id") != "current_play_queue") {
       var guid = evt.target.getAttribute("guid");
       var libraryguid = evt.target.getAttribute("library");
       //alert(guid + ' - ' + libraryguid);
@@ -228,6 +251,7 @@ try
   }
   
   function _onMenuItemsChanged() {
+    if (!monitor_playback) return;
     var menulist = document.getElementById("playable_list");
     var menupopup = menulist.menupopup;
     if (source_search != "" || _hasFilters(source_filters)) {
@@ -280,6 +304,7 @@ try
     if (!sourceview) {
       var library = libraryManager.getLibrary(libraryguid);
       if ( library ) {
+        var mediaItem;
         if (guid == libraryguid) mediaItem = library;
         else mediaItem = library.getMediaItem(guid);
         if (mediaItem) {
@@ -445,14 +470,22 @@ try
     }
 
     var mediaItem = playlist.mediaListView.getItemByIndex(first);
-    var rowid = source_view.getIndexForItem( mediaItem );
+    var rowid;
+    if (!play_own_view) {
+      if (sync_sort) 
+        source_view.setSort(jumpto_view.getSort());
+      rowid = source_view.getIndexForItem( mediaItem );
+    } else {
+      rowid = first;
+    }
 
     setTimeout("playSourceViewAndClose("+rowid+");", 0);
   }
   
   function playSourceViewAndClose(rowid) {
+    var view = play_own_view ? jumpto_view : source_view;
     var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.playView(source_view, rowid);
+    PPS.playView(view, rowid);
     onExit();
   }
 
@@ -476,6 +509,10 @@ try
   
   function _updateSubSearchItem(search, filters) {
     var item = document.getElementById("current_play_queue");
+    if (!monitor_playback) {
+      item.setAttribute("hidden", "true");
+      return;
+    }
     var menulist = document.getElementById("playable_list");
     // show or hide and customize the "Current Play Queue" item according to the presence or absence of a search string and filters
     var no_search = (!search || search == "");

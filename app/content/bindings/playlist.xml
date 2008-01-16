@@ -1911,15 +1911,19 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             var originPageURI = item.getProperty(SBProperties.originPage);
             var originPageImage = item.getProperty(SBProperties.originPageImage);
 
-            var browser = SBGetBrowser();
+            var browser = null;
+            if (typeof SBGetBrowser == 'function') browser = SBGetBrowser();
 
-            if(originPageURI &&
-               browser &&
+            if (originPageURI &&
                originPageImage != null &&
                originPageImage != "" &&
                originPageImage != "unknownOrigin") {
-              browser.loadURI(originPageURI, null, null, evt);
-            }
+              if (browser) {
+                browser.loadURI(originPageURI, null, null, evt);
+              } else {
+                SBBrowserOpenURLInNewWindow(originPageURI);
+              }
+            } 
 
             evt.stopPropagation();
             return;

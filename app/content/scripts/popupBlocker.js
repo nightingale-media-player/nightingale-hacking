@@ -53,11 +53,13 @@ try
     window.removeEventListener("unload", popupBlocker.onUnload, false);
     gPopupBlockerObserver.shutdown();
   }
-
-  // Auto-init/deinit registration
-  window.addEventListener("load", popupBlocker.onLoad, false);
-  window.addEventListener("unload", popupBlocker.onUnload, false);
-
+  
+  if (typeof gBrowser != 'undefined') {
+    // Auto-init/deinit registration
+    window.addEventListener("load", popupBlocker.onLoad, false);
+    window.addEventListener("unload", popupBlocker.onUnload, false);
+  }
+  
   var gPopupBlockerObserver = {
     _reportButton: null,
     _kIPM: Components.interfaces.nsIPermissionManager,

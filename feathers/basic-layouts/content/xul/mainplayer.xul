@@ -78,10 +78,8 @@
   <popupset id="mainPopupSet" />
   <commandset id="mainCommandSet" />
   <broadcasterset id="mainBroadcasterSet" />
-  <keyset id="mainKeyset" />  
-  <stringbundleset id="stringbundleset"> 
-     <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
-  </stringbundleset>  
+  <keyset id="mainKeyset"/>  
+  <stringbundleset id="mainBundleSet"/>  
 
   <sb-sys-outer-frame flex="1">
 
@@ -195,10 +193,3 @@
 
   </sb-sys-outer-frame>
 </window>
-
-
-
-
-
-
-

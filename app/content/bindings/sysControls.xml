@@ -501,8 +501,15 @@
           window.gOuterFrame = this;
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
-          var plucked = SBDataGetBoolValue( "accessibility.enabled" );
-          if ( plucked ) {
+
+          // we cannot use SBDataGetBoolValue here because that is loaded via an
+          // overlay, but this object is loaded via a binding on dialog, which
+          // is instantiated before the overlay is applied.
+          plucked = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+                                  .createInstance(Components.interfaces.sbIDataRemote);
+          plucked.init("accessibility.enabled", null);
+
+          if ( plucked.boolValue ) {
             // If plucked, everything stays hidden.
             hideFrame();
             // and we show the system chrome

@@ -709,19 +709,19 @@ const gSearchHandler = {
 // compatibility with FireFox
 const BrowserSearch = gSearchHandler;
 
+if (typeof gBrowser != 'undefined') {
 
-// Initialize the search handler on load
-window.addEventListener("load", 
-  function() {
-    gSearchHandler.init();
-  }, 
-  false);
-  
-// Shutdown the search handler on unload
-window.addEventListener("unload", 
-  function() {
-    gSearchHandler.uninit();
-  }, 
-  false);  
-
-                
+  // Initialize the search handler on load
+  window.addEventListener("load", 
+    function() {
+      gSearchHandler.init();
+    }, 
+    false);
+    
+  // Shutdown the search handler on unload
+  window.addEventListener("unload", 
+    function() {
+      gSearchHandler.uninit();
+    }, 
+    false);  
+}

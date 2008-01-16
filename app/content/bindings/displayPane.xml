@@ -458,10 +458,10 @@
             }
             item.setAttribute("label", label);
             item.setAttribute("target", instantiator.id);
-	    item.className = "menu-iconic displaypane-topmenu";
+            item.className = "menu-iconic displaypane-topmenu";
 
             var popup = instantiator.popup;
-            item.appendChild(popup);
+            item.appendChild(document.importNode(popup, true));
             this.parentNode.insertBefore(item, this);
             this._items.push(item);
           }

@@ -127,7 +127,11 @@
                 var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                                           .getService(Components.interfaces.nsIURLFormatter);
                 var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
-                gBrowser.loadURI(getMoreURL);
+                if (typeof gBrowser != 'undefined') {
+                  gBrowser.loadURI(getMoreURL);
+                } else {
+                  SBBrowserOpenURLInNewWindow(getMoreURL);
+                }
                 return true;
                 break;
                 
@@ -222,12 +226,7 @@
               allFeathersPopup.appendChild(skinMenu);
             }
             
-            // If the current window has a browser/servicepane, then add a link
-            // to get more feathers.
-            // NOTE: This is brittle. Please change this once we have a proper API.
-            if (typeof(gBrowser) != "undefined") {
-              this._appendGetMoreFeathers(allFeathersPopup);
-            }
+            this._appendGetMoreFeathers(allFeathersPopup);
           ]]>
         </body>
       </method>
@@ -544,5 +543,7 @@
   </binding>
   
 </bindings>
+
+
 
 

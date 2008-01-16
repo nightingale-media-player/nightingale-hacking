@@ -5,9 +5,11 @@
  */
 
 function delayedStartup() {
-  gBrowser.addEventListener("pageshow", function(evt) {
-    setTimeout(charsetLoadListener, 0, evt);
-  }, true);
+  if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
+    gBrowser.addEventListener("pageshow", function(evt) {
+      setTimeout(charsetLoadListener, 0, evt);
+    }, true);
+  }
 }
 
 window.addEventListener("load", function(e) {

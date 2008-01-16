@@ -62,6 +62,10 @@ function onLoad()
   // It seems to have to do with the window getting opened immediately after
   // the file picker.
   window.focus();
+  
+  // disable the media scan menu item, since we're already in it (although that
+  // does not disable the item in the parent window's menu)
+  document.getElementById("menuitem_file_scan").setAttribute("disabled", "true");
 
   if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
   {
@@ -308,4 +312,6 @@ function createDefaultTitle(aURI) {
   }
   return s;
 }
+
+
 

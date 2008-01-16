@@ -39,6 +39,8 @@
 %browserDTD;
 ]>
 
+<?xul-overlay href="chrome://songbird/content/xul/baseMenuOverlay.xul"?>
+
 <overlay
   id="ovMenu"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -50,80 +52,29 @@
   <menubar id="main-menubar">
     <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="menu_FilePopup">
-        <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-        <!-- XXX Mook: disabled; see bug 4001
-        <menuitem id="menuitem_file_smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
-        -->
-        <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
-        <!-- XXX lone: disabled; see bug 4387
-        <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;"/>
-        -->
-        <menuitem id="menuitem_file_file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
-        <menuitem id="menuitem_file_url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
-        <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
-        <menuseparator/>
+        <menuseparator id="menu_FileTopSeparator"/>
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;"/>
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-        <!-- BUG 3961 "Comment out watch folder UI"
-          <menuitem id="menuitem_file_watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
-        -->
-        <menuseparator/>
-        <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
-          <menupopup id="locale-popup" onpopupshowing="fillLocaleList(this);" />
-        </menu>
-        <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
-        <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-
-        <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
-        <menuseparator id="menu_FileQuitSeparator"/>
-        <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
-
       </menupopup>
     </menu>
 
     <menu id="edit-menu" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
       <menupopup id="menu_EditPopup">
-        <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="menuitem_edit_cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-        <menuitem id="menuitem_edit_copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-        <menuitem id="menuitem_edit_paste"  disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
-        <menuitem id="menuitem_edit_clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="menuitem_edit_selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
-        <menuitem id="menuitem_edit_selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
       </menupopup>
     </menu>
 
     <menu id="controls-menu" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
       <menupopup id="menu_ControlsPopup">
-        <menuitem id="menuitem_control_play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="menuitem_control_next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
-        <menuitem id="menuitem_control_prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="menuitem_control_shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
-        <menuseparator/>
-        <menuitem id="menuitem_control_repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
-        <menuitem id="menuitem_control_repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
-        <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
-        <menuseparator/>
-        <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
       </menupopup>
     </menu>
 
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
       <menupopup id="menu_viewPopup">
-        <sb-feathers-menuitems id="menuitem_view_feathers"/>
-        <sb-addon-pane-menuitems id="menuitem_view_addon_panes"/>
-        <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
 <!--+
     | The rest of this menu is copied from the Firefox View menu, see:
     | http://mxr.mozilla.org/seamonkey/source/browser/base/content/browser-menubar.inc#144
     +-->
-        <menuseparator/>
+        <menuseparator id="menu_viewTopSeparator"/>
         <menuitem label="&stopCmd.label;"
                   accesskey="&stopCmd.accesskey;"
                   command="Browser:Stop"
@@ -173,121 +124,105 @@
                 </rule>
             </template>
             <menupopup>
-            <menu label="&charsetMenuAutodet.label;" accesskey="&charsetMenuAutodet.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserAutodetMenuRoot">
-                <template>
-                    <rule rdf:type="http://home.netscape.com/NC-rdf#CharsetDetector">
-                        <menupopup>
-                        <menuitem type="radio" name="detectorGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                        </menupopup>
-                    </rule>
-                </template>
-                <menupopup>
-                </menupopup>
-            </menu>
-            <menu label="&charsetMenuMore.label;" accesskey="&charsetMenuMore.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMoreCharsetMenuRoot">
-                <template>
-                    <rule>
-                        <menupopup>
-                        <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                        </menupopup>
-                    </rule>
-                </template>
-                <menupopup>
-                    <menu label="&charsetMenuMore1.label;" accesskey="&charsetMenuMore1.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore1CharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menu label="&charsetMenuMore2.label;" accesskey="&charsetMenuMore2.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore2CharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menu label="&charsetMenuMore3.label;" accesskey="&charsetMenuMore3.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore3CharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menu label="&charsetMenuMore4.label;" accesskey="&charsetMenuMore4.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore4CharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menu label="&charsetMenuMore5.label;" accesskey="&charsetMenuMore5.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore5CharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menu label="&charsetMenuUnicode.label;" accesskey="&charsetMenuUnicode.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserUnicodeCharsetMenuRoot">
-                        <template>
-                            <rule>
-                                <menupopup>
-                                <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
-                                </menupopup>
-                            </rule>
-                        </template>
-                        <menupopup>
-                        </menupopup>
-                    </menu>
-                    <menuseparator />
-                </menupopup>
-            </menu>
-            <menuitem name="charsetCustomize" accesskey="&charsetCustomize.accesskey;" label="&charsetCustomize.label;" oncommand="window.openDialog('chrome://global/content/customizeCharset.xul','PrefWindow', 'chrome,modal=yes,resizable=yes', 'browser')"/>
+              <menu label="&charsetMenuAutodet.label;" accesskey="&charsetMenuAutodet.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserAutodetMenuRoot">
+                  <template>
+                      <rule rdf:type="http://home.netscape.com/NC-rdf#CharsetDetector">
+                          <menupopup>
+                          <menuitem type="radio" name="detectorGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                          </menupopup>
+                      </rule>
+                  </template>
+                  <menupopup>
+                  </menupopup>
+              </menu>
+              <menu label="&charsetMenuMore.label;" accesskey="&charsetMenuMore.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMoreCharsetMenuRoot">
+                  <template>
+                      <rule>
+                          <menupopup>
+                          <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                          </menupopup>
+                      </rule>
+                  </template>
+                  <menupopup>
+                      <menu label="&charsetMenuMore1.label;" accesskey="&charsetMenuMore1.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore1CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore2.label;" accesskey="&charsetMenuMore2.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore2CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore3.label;" accesskey="&charsetMenuMore3.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore3CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore4.label;" accesskey="&charsetMenuMore4.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore4CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore5.label;" accesskey="&charsetMenuMore5.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore5CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuUnicode.label;" accesskey="&charsetMenuUnicode.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserUnicodeCharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menuseparator />
+                  </menupopup>
+              </menu>
+              <menuitem name="charsetCustomize" accesskey="&charsetCustomize.accesskey;" label="&charsetCustomize.label;" oncommand="window.openDialog('chrome://global/content/customizeCharset.xul','PrefWindow', 'chrome,modal=yes,resizable=yes', 'browser')"/>
             </menupopup>
           </menu>
         <menuseparator/>
-        <menuitem accesskey="&pageSourceCmd.accesskey;" label="&pageSourceCmd.label;" key="key_viewSource" command="View:PageSource"/>        
+        <menuitem accesskey="&pageSourceCmd.accesskey;" label="&pageSourceCmd.label;" key="key_viewSource" command="View:PageSource"/>
       </menupopup>
     </menu>
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menu_extensions"
-                  label="&menu.extensions;"
-                  accesskey="&menu.extensions.accesskey;"/>
-        <menuseparator id="devToolsSeparator"/>
-        <menuitem id="javascriptConsole"
-                  label="&menu.errorconsole;"
-                  accesskey="&menu.errorconsole.accesskey;"/>
-        <menuseparator id="sanitizeSeparator" hidden="true"/>
-        <menuitem id="menuitem_tools_clearprivatedata"
-                  key="sanitize-key"
-                  label="&menu.clearprivatedata;"
-                  accesskey="&menu.clearprivatedata.accesskey;"/>
-        <menuseparator id="menu_PrefsSeparator"/>
-        <menuitem id="menu_preferences"
-                  label="&menu.preferences;"
-                  accesskey="&menu.preferences.accesskey;"/>
       </menupopup>
     </menu>
 
@@ -296,24 +231,6 @@
           accesskey="&menu.help.accesskey;"
           onpopupshowing="buildHelpMenu();">
       <menupopup id="menu_HelpPopup">
-        <menuitem id="menuitem_help_bugz"
-                  label="&menu.help.bugz;"
-                  value="songbird.url.bugzilla"
-                  accesskey="&menu.help.bugz.accesskey;"/>
-        <menuitem id="menuitem_help_topics"
-                  label="&menu.help.topics;"
-                  value="songbird.url.support"
-                  key="help-key"
-                  accesskey="&menu.help.help.accesskey;"/>
-        <menuseparator/>
-        <menuitem id="updateCmd"
-                  label="&menu.updateCmd.label;"
-                  accesskey="&menu.updateCmd.accessKey;"
-                  oncommand="checkForUpdates();"/>
-        <menuseparator/>
-        <menuitem id="aboutName"
-                  label="&menu.help.about;"
-                  accesskey="&menu.help.about.accesskey;"/>
       </menupopup>
     </menu>
 

@@ -1625,17 +1625,32 @@
       <method name="onCurrentTrack">
         <body>
           <![CDATA[
+
           if (!gPPS.playingView) {
             // nothing to see here, move along
             return;
           }
+
+          // In addition to showing the current track, we trigger
+          // a custom event, so that if this object is used wihout
+          // a gBrowser object, the current window may still perform
+          // its own custom action.
           
-          if (!gBrowser) {
+          var e = document.createEvent("Events");
+          e.initEvent("current-track", false, true);
+          this.dispatchEvent(e);
+
+          if (typeof gBrowser == 'undefined') {
             // where do you expect me to show you this currently playing
             // track of yours?
             return;
           }
           
+          // We do not perform selectCurrentIndex if there is no gBrowser, 
+          // because there is no guarantee that the custom code actually wants 
+          // to select the track on the playing view, maybe the user wants to 
+          // select it on a cloned view (ie, jumptofeathers)
+
           // Create a self-calling function to try to set the selection over time.
           function selectCurrentIndex( iterationCount ) {
             // Tell the view to select the item?  

@@ -27,7 +27,6 @@
 
 // This is a temporary file to house methods that need to roll into
 // our new Menubar XBL object that we'll be building for 0.3
-
 function doMenu( command ) {
   switch ( command )
   {
@@ -161,7 +160,11 @@ function onMenu(target) {
   if (target.value) {
     var pref = Application.prefs.get(target.value);
     if (pref && pref.value) {
-      gBrowser.loadURI(pref.value);
+      if (typeof gBrowser != 'undefined') {
+        gBrowser.loadURI(pref.value);
+      } else {
+        SBBrowserOpenURLInNewWindow(pref.value);
+      }
     }
   }
 }

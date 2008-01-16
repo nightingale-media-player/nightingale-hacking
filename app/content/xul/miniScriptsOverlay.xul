@@ -51,6 +51,9 @@
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/playerOpen.js"/>
      
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/deviceTEMP.js" />
+
     <!-- This should be put in the menubarOverlay.xul? -->
     <script type="application/x-javascript"   
     src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
@@ -60,6 +63,13 @@
 
     <script type="application/x-javascript" 
     src="chrome://songbird/content/scripts/jumpToFile.js" />
+
+    <!-- Load the locale switcher -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/switchLocale.js" />
+    <!-- Generic restart box -->
+    <script type="application/x-javascript"   
+    src="chrome://songbird/content/scripts/restartBox.js" />
     
     <!-- Drag and drop -->
     <script type="application/x-javascript" 
