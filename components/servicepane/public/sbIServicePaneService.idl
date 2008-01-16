@@ -208,6 +208,11 @@ interface sbIServicePaneService : nsISupports
    */
   sbIServicePaneNode getNodeForURL(in AString aURL);
 
+  /* \brief Sort a node based on its weight attribute
+   * \param aNode the node to sort
+   */
+  void sortNode(in sbIServicePaneNode aNode);
+
   /* \brief Save the state of the tree to disk.
    * This should go away and be handled magically
    */

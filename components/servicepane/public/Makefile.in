@@ -34,6 +34,7 @@ XPIDL_INCLUDES = \
 
 XPIDL_SRCS = sbIServicePaneService.idl \
              sbIBookmarks.idl \
+             sbIDeviceServicePaneService.idl \
              sbILibraryServicePaneService.idl \
              $(NULL)
 

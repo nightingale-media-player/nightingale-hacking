@@ -1,0 +1,52 @@
+/* vim: ts=2 sw=2 expandtab
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIDeviceServicePaneService.idl
+ * \brief Interface to the device service pane provider
+ */
+
+#include "nsISupports.idl"
+
+interface sbIServicePaneNode;
+interface sbIDeviceBase;
+
+/**
+ * \interface sbIDeviceServicePaneService
+ * \brief Provides information about devices needed by the service pane
+ */
+[scriptable, uuid(fa08bcaa-0fed-4d10-b2da-a52cf33e8948)]
+interface sbIDeviceServicePaneService : nsISupports {
+  /* \brief Attempts to create a service pane node for a given device. Will
+   *        group similar devices together in the service pane.
+   *
+   * \param aDevice an sbIDeviceBase.
+   * \param aDeviceIdentifier Device identifier string.
+   * \return a service pane node that represents the given device
+   */
+  sbIServicePaneNode createNodeForDevice (in sbIDeviceBase aDevice,
+                                          in AString aDeviceIdentifier);
+};

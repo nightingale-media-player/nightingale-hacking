@@ -669,6 +669,24 @@ function ServicePaneService_getNodeForURL(aURL) {
   return (target) ? this.getNode(target.Value) : null;
 }
 
+ServicePaneService.prototype.sortNode =
+function ServicePaneService_sortNode(aNode) {
+  // move node to the end of the service pane.
+  this._root.appendChild(aNode);
+
+  // sort the node by its weight.
+  var value = parseInt(aNode.getAttributeNS(SP, 'Weight'));
+  while (aNode.previousSibling) {
+    var prev_value =
+        parseInt(aNode.previousSibling.getAttributeNS(SP, 'Weight'));
+    if (prev_value > value) {
+      this._root.insertBefore(aNode, aNode.previousSibling);
+    } else {
+      break;
+    }
+  }
+}
+
 ServicePaneService.prototype.save =
 function ServicePaneService_save() {
   /* FIXME: this function should go away */
