@@ -52,8 +52,9 @@ interface sbIDeviceMarshall : nsISupports
   void loadControllers(in sbIDeviceControllerRegistrar aRegistrar);
 
   /**
-   * 
+   * Lets the monitor know the device manager is shutting down
    */
+   void shutdown();
 };
 
 %{C++
