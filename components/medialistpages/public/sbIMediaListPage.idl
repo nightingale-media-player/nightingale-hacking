@@ -1,0 +1,71 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface sbIMediaListView;
+
+/**
+ * \interface sbIMediaListPage
+ * \brief A generic interface for UI that renders a media list view
+ *
+ * Pages that display libraries or playlists must supply this interface
+ * in order for browser history, playback, find current track, and other 
+ * external functionality to work as expected.
+ *
+ * The primary purpose of the interface is to facilitate getting the underlying
+ * media list view that the page is displaying, and setting the view on page
+ * load.  
+ *
+ * For sample code and more information, see 
+ *    http://developer.songbirdnest.com/add-on-api/
+ *
+ * \sa sbIMediaListView, sbIMediaList
+ */
+[scriptable, uuid(7b7cf120-c098-11dc-95ff-0800200c9a66)]
+interface sbIMediaListPage : nsISupports
+{
+
+  /**
+   * \brief A filtered, sorted view of the media list that the page is rendering.
+   */
+  attribute sbIMediaListView mediaListView;
+
+  /**
+   * \brief Tell the page to make the MediaItem at the given index visible.
+   * \param aViewIndex Index into the MediaListView (needed, since 
+   *        MediaItems may appear multiple times in a list)
+   */
+  void ensureListItemVisible(in unsigned long aViewIndex);
+  
+  // TODO
+  // Exact drag/drop requirements TBD in http://bugzilla.songbirdnest.com/show_bug.cgi?id=6812
+  // when drag and drop handling is moved from dndDefaultHandler.js and sbTabBrowser.xml
+  // into playlist.xml
+  PRBool canDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+  PRBool onDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+};
+
+
