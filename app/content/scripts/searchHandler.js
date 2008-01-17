@@ -59,6 +59,12 @@ const gSearchHandler = {
    * Register search handler listeners
    */
   init: function SearchHandler_init() {
+  
+    // If there is no gBrowser, then there is nothing
+    // for us to do.
+    if (typeof gBrowser == 'undefined') {
+      return;
+    }
    
     // Listen for browser links in order to detect embedded search engines
     gBrowser.addEventListener("DOMLinkAdded", 
@@ -709,19 +715,18 @@ const gSearchHandler = {
 // compatibility with FireFox
 const BrowserSearch = gSearchHandler;
 
-if (typeof gBrowser != 'undefined') {
 
-  // Initialize the search handler on load
-  window.addEventListener("load", 
-    function() {
-      gSearchHandler.init();
-    }, 
-    false);
-    
-  // Shutdown the search handler on unload
-  window.addEventListener("unload", 
-    function() {
-      gSearchHandler.uninit();
-    }, 
-    false);  
-}
+// Initialize the search handler on load
+window.addEventListener("load", 
+  function() {
+    gSearchHandler.init();
+  }, 
+  false);
+  
+// Shutdown the search handler on unload
+window.addEventListener("unload", 
+  function() {
+    gSearchHandler.uninit();
+  }, 
+  false);  
+
