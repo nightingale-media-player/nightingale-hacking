@@ -50,6 +50,12 @@ interface sbIMediaListPage : nsISupports
 
   /**
    * \brief A filtered, sorted view of the media list that the page is rendering.
+   * 
+   * The mediaListView will be set by the browser during the capturing phase 
+   * of the window load event, and may then be set again at any time.
+   *
+   * When set, pages should immediately update themselves to display
+   * the given view.
    */
   attribute sbIMediaListView mediaListView;
 
@@ -57,8 +63,11 @@ interface sbIMediaListPage : nsISupports
    * \brief Tell the page to make the MediaItem at the given index visible.
    * \param aViewIndex Index into the MediaListView (needed, since 
    *        MediaItems may appear multiple times in a list)
+   * Note that no error is given if the index is invalid, or the item
+   * cannot be shown.
    */
   void ensureListItemVisible(in unsigned long aViewIndex);
+  
   
   // TODO
   // Exact drag/drop requirements TBD in http://bugzilla.songbirdnest.com/show_bug.cgi?id=6812
