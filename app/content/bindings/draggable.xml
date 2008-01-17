@@ -33,9 +33,10 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
   <binding id="draggable" extends="xul:vbox">
+    <!-- Apparently, the only way to prevent dragging via titlebar is to hide it. -->
     <content>
       <xul:stack mousethrough="always" flex="1">
-        <xul:titlebar flex="1"/>
+        <xul:titlebar sbid="draggable-titlebar" flex="1"/>
         <xul:vbox mousethrough="always" flex="1">
           <children />
         </xul:vbox>
@@ -43,8 +44,47 @@
     </content>
     <implementation>
       <constructor><![CDATA[
+        // Dont trap mouseclicks
         this.setAttribute('mousethrough', 'always');
+        
+        // If you start maximized, prevent dragging.
+        var titlebar = document.getAnonymousElementByAttribute(this, 'sbid', 'draggable-titlebar');
+        if ( document.documentElement.getAttribute( "sizemode" ) == "maximized" ) {
+          titlebar.setAttribute("hidden", "true");
+        }
+        
+        // Pay attention to if the window changes state
+        var self = this;
+        this._windowmutation = function(evt) {
+          self.onWindowMaximize(evt);
+        };
+        window.addEventListener("DOMAttrModified", this._windowmutation, true);        
       ]]></constructor>
+      <destructor><![CDATA[
+        // Remove the crappycrap
+        window.removeEventListener("DOMAttrModified", this._windowmutation, true);
+        this._windowmutation = null;
+      ]]></destructor>
+      <method name="onWindowMaximize">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            // If the sizemode changed...
+            if ( evt.attrName == "sizemode" ) {
+              var mode = document.documentElement.getAttribute( evt.attrName );
+              var titlebar = document.getAnonymousElementByAttribute(this, 'sbid', 'draggable-titlebar');
+              if ( mode == "maximized" ) {
+                // Hide the titlebar (prevent drag) if we are now maximized
+                titlebar.setAttribute("hidden", "true");
+              }
+              else {
+                // Show the titlebar (allow drag) if we are not maximized
+                titlebar.removeAttribute("hidden");
+              }
+            }
+          ]]>
+        </body>
+      </method>
     </implementation>
   </binding>
 </bindings>
