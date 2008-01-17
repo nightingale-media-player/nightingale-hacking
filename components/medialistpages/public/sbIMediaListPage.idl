@@ -63,10 +63,9 @@ interface sbIMediaListPage : nsISupports
    * \brief Tell the page to make the MediaItem at the given index visible.
    * \param aViewIndex Index into the MediaListView (needed, since 
    *        MediaItems may appear multiple times in a list)
-   * Note that no error is given if the index is invalid, or the item
-   * cannot be shown.
+   * \return True if the page is able to show the corresponding item
    */
-  void ensureListItemVisible(in unsigned long aViewIndex);
+  PRBool ensureListItemVisible(in unsigned long aViewIndex);
   
   
   // TODO
