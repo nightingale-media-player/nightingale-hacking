@@ -122,7 +122,7 @@ sb-sys-maximize-button:hover
   background-position: -18px -9px; 
 }
 /* Restore */
-sb-sys-maximize-button[checked="true"] 
+window[sizemode="maximized"] sb-sys-maximize-button 
 {
   background-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
   background-position: -54px 0px; 
@@ -130,7 +130,7 @@ sb-sys-maximize-button[checked="true"]
   height: 9px;  
   width: 9px;
 }
-sb-sys-maximize-button[checked="true"]:hover
+window[sizemode="maximized"] sb-sys-maximize-button:hover
 {
   background-position: -54px -9px; 
 }
@@ -187,7 +187,7 @@ MAC OSX TITLE BAR
   width: 14px;
 }
 /* Restore */
-#sb-sys-osx-buttons > sb-sys-maximize-button[checked="true"] 
+window[sizemode="maximized"] #sb-sys-osx-buttons > sb-sys-maximize-button 
 {
   background-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
   background-position: 0px 0px; 
