@@ -41,6 +41,9 @@ try
       dump("WARNING: popupBlocker double init!!\n"); 
       return; 
     }
+    if (typeof gBrowser == 'undefined') {
+      return;
+    }
     gPopupBlockerObserver.init();
   }
   popupBlocker.onUnload = function()
@@ -51,14 +54,15 @@ try
     }
     window.removeEventListener("load", popupBlocker.onLoad, false);
     window.removeEventListener("unload", popupBlocker.onUnload, false);
+    if (typeof gBrowser == 'undefined') {
+      return;
+    }
     gPopupBlockerObserver.shutdown();
   }
   
-  if (typeof gBrowser != 'undefined') {
-    // Auto-init/deinit registration
-    window.addEventListener("load", popupBlocker.onLoad, false);
-    window.addEventListener("unload", popupBlocker.onUnload, false);
-  }
+  // Auto-init/deinit registration
+  window.addEventListener("load", popupBlocker.onLoad, false);
+  window.addEventListener("unload", popupBlocker.onUnload, false);
   
   var gPopupBlockerObserver = {
     _reportButton: null,
