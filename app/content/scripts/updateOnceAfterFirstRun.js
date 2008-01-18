@@ -32,15 +32,15 @@ function updateOnceAfterFirstRun() {
   window.removeEventListener('load', updateOnceAfterFirstRun, false);
 
   // make sure first-run has already run
-  var ran_first_run = Application.prefs.get('songbird.firstrun.check.0.3');
-  if (!ran_first_run || !ran_first_run.value) {
+  var ranFirstRun = Application.prefs.get('songbird.firstrun.check.0.3');
+  if (!ranFirstRun || !ranFirstRun.value) {
     return;
   }
 
   // make sure we haven't run
   var PREF_SONGBIRD_FIRSTRUN_UPDATEONCE = 'songbird.firstrun.update-once';
-  var ran_uoafr = Application.prefs.get(PREF_SONGBIRD_FIRSTRUN_UPDATEONCE);
-  if (ran_uoafr && ran_uoafr.value) {
+  var ranUpdate = Application.prefs.get(PREF_SONGBIRD_FIRSTRUN_UPDATEONCE);
+  if (ranUpdate && ranUpdate.value) {
     return;
   }
 
@@ -48,9 +48,9 @@ function updateOnceAfterFirstRun() {
   var PREF_APP_UPDATE_URL = 'app.update.url';
   var PREF_APP_UPDATE_URL_OVERRIDE = 'app.update.url.override';
   // add "?firstrun=1" to the end of the update url temporarilly
-  var app_update_url = Application.prefs.get(PREF_APP_UPDATE_URL);
+  var appUpdateUrl = Application.prefs.get(PREF_APP_UPDATE_URL);
   Application.prefs.setValue(PREF_APP_UPDATE_URL_OVERRIDE, 
-      app_update_url.value + "?firstrun=1");
+      appUpdateUrl.value + "?firstrun=1");
   
   // request an update check
   var updateSvc = Components.classes['@mozilla.org/updates/update-service;1']
