@@ -63,9 +63,9 @@ private:
 protected:
   // copies the given hash table into the given mutable array
   template<class T>
-  static PLDHashOperator EnumerateIntoArray(const nsID& aKey,
-                                            T* aData,
-                                            void* aArray);
+  static NS_HIDDEN_(PLDHashOperator) EnumerateIntoArray(const nsID& aKey,
+                                                        T* aData,
+                                                        void* aArray);
   
   // helpers
   nsresult Init();

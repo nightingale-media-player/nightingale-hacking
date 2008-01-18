@@ -75,11 +75,10 @@ sbDeviceManager::~sbDeviceManager()
 }
 
 template<class T>
-static PLDHashOperator sbDeviceManager::EnumerateIntoArray(const nsID& aKey,
-                                                           T* aData,
-                                                           void* aArray)
+PLDHashOperator sbDeviceManager::EnumerateIntoArray(const nsID& aKey,
+                                                    T* aData,
+                                                    void* aArray)
 {
-  // Note that since we don't return rv, we have to split out the
   nsIMutableArray *array = (nsIMutableArray*)aArray;
   nsresult rv;
   nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
