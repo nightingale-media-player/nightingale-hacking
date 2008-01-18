@@ -1,105 +1,55 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 
 <!--
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 -->
 
-<?xml-stylesheet href="chrome://global/skin/pageReport.css" type="text/css"?>
+<!DOCTYPE overlay>
 
-<!DOCTYPE overlay [
-<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
-%brandDTD;
-%songbirdDTD;
-%browserDTD;
-]>
+<!-- ********************************************************************** -->
+<!-- **                                                                  ** -->
+<!-- **            THIS OVERLAY IS OBSOLETE ! DO NOT TARGET IT !         ** -->
+<!-- **                                                                  ** -->
+<!-- **                Instead, use the following targets:               ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithBrowserOverlay.xul if your items only apply to a    ** -->
+<!-- **    window with a web browser (such as the default mainplayer.xul ** -->
+<!-- **    layout)                                                       ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithoutBrowserOverlay.xul if your items only apply to a ** -->
+<!-- **    window that does NOT have a web browser (such as the default  ** -->
+<!-- **    miniplayer.xul layout)                                        ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutBaseOverlay.xul if your items apply to all modeless     ** -->
+<!-- **    windows regardless of whether or not they have a web browser  ** -->
+<!-- **                                                                  ** -->
+<!-- ********************************************************************** -->
 
-<overlay id="ovStatusBar"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <statusbar id="status-bar">
-    <statusbarpanel id="statusbar-display" flex="1">
-      <sb-status-label id="sb-status-bar-status-label" 
-          class="sb-status-bar-status-label sb-status-bar-text" 
-          value=" " flex="1" crop="end" pack="center"/>
-    </statusbarpanel>
-    <sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label"
-          class="sb-status-bar-numplaylistitems-label sb-status-bar-text" 
-          crop="end" pack="center"/>
-    <sb-player-scanning-label id="sb-status-bar-scanning-label" 
-          class="sb-status-bar-scanning-label sb-status-bar-text" crop="end" pack="center"/>
-    <statusbarpanel class="statusbarpanel-progress" 
-          id="statusbar-progresspanel">
-      <vbox pack="center">
-        <sb-status-progressmeter id="sb-status-bar-status-progressmeter" 
-            class="sb-status-bar-status-progressmeter" mode="undetermined"/>
-      </vbox>
-    </statusbarpanel>
-    <statusbarpanel id="page-report-button" type="menu" mousethrough="never"
-                     class="statusbarpanel-menu-iconic" 
-                     tooltiptext="&pageReportIcon.tooltip;">
-       <menupopup id="blockedPopupOptionsPanel" 
-                  onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
-         <menuitem sbid="blockedPopupAllowSite" 
-                   accesskey="&allowPopups.accesskey;"
-                   oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
-         <menuitem sbid="blockedPopupEditSettings" 
-                   label="&editPopupSettings.label;" 
-                   accesskey="&editPopupSettings.accesskey;" 
-                   oncommand="gPopupBlockerObserver.editPopupSettings();"/>
-         <menuitem sbid="blockedPopupDontShowMessage" 
-                   type="checkbox"
-                   accesskey="&dontShowMessage.accesskey;"
-                   oncommand="gPopupBlockerObserver.dontShowMessage();"/>
-         <menuseparator sbid="blockedPopupSeparator"/>
-       </menupopup>
-     </statusbarpanel>
-  </statusbar>
-
-<popupset>
-  <menupopup id="blockedPopupOptions" 
-             onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
-    <menuitem sbid="blockedPopupAllowSite" 
-              accesskey="&allowPopups.accesskey;"
-              oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
-    <menuitem sbid="blockedPopupEditSettings" 
-              label="&editPopupSettings.label;" 
-              accesskey="&editPopupSettings.accesskey;" 
-              oncommand="gPopupBlockerObserver.editPopupSettings();"/>
-    <menuitem sbid="blockedPopupDontShowMessage" 
-              type="checkbox"
-              accesskey="&dontShowMessage.accesskey;"
-              oncommand="gPopupBlockerObserver.dontShowMessage();"/>
-    <menuseparator sbid="blockedPopupSeparator"/>
-  </menupopup>
-</popupset>
-
+<overlay>
 </overlay>
-
-
 

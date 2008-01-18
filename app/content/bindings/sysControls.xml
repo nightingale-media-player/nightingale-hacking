@@ -505,7 +505,7 @@
           // we cannot use SBDataGetBoolValue here because that is loaded via an
           // overlay, but this object is loaded via a binding on dialog, which
           // is instantiated before the overlay is applied.
-          plucked = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+          var plucked = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
           plucked.init("accessibility.enabled", null);
 

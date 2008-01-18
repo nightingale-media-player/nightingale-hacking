@@ -542,7 +542,7 @@
             }
 
             // Nothing in the status text
-            theStatusText.stringValue = "";
+            SBDataSetStringValue( "faceplate.status.text", "");
 
             if (!aLocation) {
               aLocation = "about:blank";
@@ -1372,11 +1372,11 @@
         if (!url) {
           return;
         }
-        theStatusText.stringValue = url;
+        SBDataSetStringValue( "faceplate.status.text", url);
         if (gPPS.isMediaURL(url) || gPPS.isPlaylistURL(url)) {
-          theStatusStyle.stringValue = "font-weight: bold;";
+          SBDataSetStringValue( "faceplate.status.style", "font-weight: bold;");
         } else {
-          theStatusStyle.stringValue = "font-weight: normal;";
+          SBDataSetStringValue( "faceplate.status.style", "font-weight: normal;");
         }
       ]]></handler>
       <handler event="mouseout"><![CDATA[
@@ -1390,7 +1390,7 @@
           return;
         }
 
-        theStatusText.stringValue = '';
+        SBDataSetStringValue( "faceplate.status.text", "");
       ]]></handler>
       <handler event="unload" phase="capturing"><![CDATA[
         // If we are about to unload a page that has a playlist, save its

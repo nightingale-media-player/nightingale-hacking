@@ -1,0 +1,418 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- 
+
+     This overlay is applied to all layout windows, regardless of whether or not
+     they contain a gBrowser element 
+
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%songbirdDTD;
+%charsetDTD;
+%browserDTD;
+]>
+
+<!-- These are only here for backward compatibility, do not target them -->
+<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/actionSetsOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/statusBarOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/controlToolbarOverlay.xul"?>
+
+<overlay
+  id="layoutBaseOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                      Menubar Overlay Items                      ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+  
+
+  <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
+
+  <menubar id="main-menubar">
+    <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
+      <menupopup id="menu_FilePopup">
+        <menuitem id="menuitem_file_file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;" />
+        <menuitem id="menuitem_file_url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;" />
+        <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;" />
+        <menuseparator />
+        <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+        <!-- XXX Mook: disabled; see bug 4001
+        <menuitem id="menuitem_file_smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
+        -->
+        <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
+        <!-- XXX lone: disabled; see bug 4387
+        <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;" />
+        -->
+
+        <menuseparator id="menu_FileScanSeparator"/>
+        <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+        <menuseparator/>
+        <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
+          <menupopup id="locale-popup" onpopupshowing="fillLocaleList(this);" />
+        </menu>
+        <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
+        <menuseparator id="menu_FileQuitSeparator"/>
+        <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="edit-menu" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
+      <menupopup id="menu_EditPopup">
+        <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_edit_cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+        <menuitem id="menuitem_edit_copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+        <menuitem id="menuitem_edit_paste"  disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+        <menuitem id="menuitem_edit_clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_edit_selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+        <menuitem id="menuitem_edit_selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="controls-menu" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
+      <menupopup id="menu_ControlsPopup">
+        <menuitem id="menuitem_control_play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_control_next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
+        <menuitem id="menuitem_control_prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_control_shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
+        <menuseparator/>
+        <menuitem id="menuitem_control_repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
+        <menuitem id="menuitem_control_repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
+        <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
+        <menuseparator/>
+        <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
+      </menupopup>
+    </menu>
+
+    <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
+      <menupopup id="menu_viewPopup">
+        <sb-feathers-menuitems id="menuitem_view_feathers"/>
+        <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
+      </menupopup>
+    </menu>
+
+    <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="menu_extensions"
+                  label="&menu.extensions;"
+                  accesskey="&menu.extensions.accesskey;"/>
+        <menuseparator id="devToolsSeparator"/>
+        <menuitem id="javascriptConsole"
+                  label="&menu.errorconsole;"
+                  accesskey="&menu.errorconsole.accesskey;"/>
+        <menuseparator id="sanitizeSeparator" hidden="true"/>
+        <menuitem id="menuitem_tools_clearprivatedata"
+                  key="sanitize-key"
+                  label="&menu.clearprivatedata;"
+                  accesskey="&menu.clearprivatedata.accesskey;"/>
+        <menuseparator id="menu_PrefsSeparator"/>
+        <menuitem id="menu_preferences"
+                  label="&menu.preferences;"
+                  accesskey="&menu.preferences.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="helpMenu" label="&menu.help;" accesskey="&menu.help.accesskey;" onpopupshowing="buildHelpMenu();">
+      <menupopup id="menu_HelpPopup">
+        <menuitem id="menuitem_help_bugz"
+                  label="&menu.help.bugz;"
+                  value="songbird.url.bugzilla"
+                  accesskey="&menu.help.bugz.accesskey;"/>
+        <menuitem id="menuitem_help_topics"
+                  label="&menu.help.topics;"
+                  value="songbird.url.support"
+                  key="help-key"
+                  accesskey="&menu.help.help.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="updateCmd"
+                  label="&menu.updateCmd.label;"
+                  accesskey="&menu.updateCmd.accessKey;"
+                  oncommand="checkForUpdates();"/>
+        <menuseparator/>
+        <menuitem id="aboutName"
+                  label="&menu.help.about;"
+                  accesskey="&menu.help.about.accesskey;"/>
+      </menupopup>
+    </menu>
+  </menubar>
+
+
+
+  <!-- group overlay items for popups, command, broadcasters, keys and 
+       stringbundles into a single target -->
+  <sb-support id="mainSupportSet">
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Popup Overlay Items                        ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <!-- no common popups -->
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                     Commands Overlay Items                      ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <!-- no common command -->
+    
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Broadcasters Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <broadcasterset id="mainBroadcasterSet">
+      <!-- Used by the Control menu -->
+      <broadcaster id="controlModeShuffle" >
+        <observes type="dataremote"
+                  key="playlist.shuffle" 
+                  attribute="checked" 
+                  boolean="true" />
+      </broadcaster>
+      <broadcaster id="controlModeRepeatAlways" >
+        <observes type="dataremote"
+                  key="playlist.repeat" 
+                  attribute="checked" 
+                  onchange="return value == '2'" /> 
+      </broadcaster>
+      <broadcaster id="controlModeRepeatOnce" >
+        <observes type="dataremote"
+                  key="playlist.repeat" 
+                  attribute="checked" 
+                  onchange="return value == '1'" /> 
+      </broadcaster>
+      <broadcaster id="controlModeRepeatNever" >
+        <observes type="dataremote"
+                  key="playlist.repeat" 
+                  attribute="checked" 
+                  onchange="return value == '0'" /> 
+      </broadcaster>
+      <broadcaster id="controlJumpTo" >
+        <observes type="dataremote"
+                  key="jumpto.visible" 
+                  attribute="checked" 
+                  boolean="true" />
+      </broadcaster>
+    </broadcasterset>
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Keyset Overlay Items                       ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+    
+    <keyset id="mainKeyset">
+      <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
+      <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
+      <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
+      <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
+      <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
+      <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
+      <key id="selectall-key" modifiers="accel" key="A" />
+      <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
+      <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
+      <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
+    </keyset>
+    
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Stringbundle Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+    
+    <stringbundleset id="mainBundleSet">
+      <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+    </stringbundleset> 
+
+  <!-- end overlay group -->
+  </sb-support>
+  
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                       Scripts Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <!-- Load the Mozilla helpers -->
+  <script type="application/x-javascript"   
+  src="chrome://global/content/dialogOverlay.js" />
+
+  <!-- Common interfaces declarations -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
+  
+  <!-- Dataremotes utility functions -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  
+  <!-- Mouse wheel support for volume control -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
+
+  <!-- Support for media file/url opening -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/playerOpen.js"/>
+
+  <!-- Mozilla helpers -->
+  <script type="application/x-javascript" 
+  src="chrome://global/content/globalOverlay.js"/>
+
+  <!-- Drag and drop -->
+  <script type="application/x-javascript" 
+  src="chrome://global/content/nsDragAndDrop.js"/>
+  <script type="application/x-javascript" 
+  src="chrome://global/content/nsTransferable.js"/>
+  <script type="application/x-javascript"  
+  src="chrome://songbird/content/scripts/dndSourceTracker.js" />
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
+
+  <!-- Command line -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/commandLine.js"/>
+
+  <!-- Window utilities -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/windowUtils.js" />
+
+  <!-- Menubar handler -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
+
+  <!-- Locales switcher -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/switchLocale.js" />
+
+  <!-- Generic message box -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/messageBox.js" />
+
+  <!-- Generic restart box -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/restartBox.js" />
+
+  <!-- Metrics functions -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/metrics.js" />
+
+  <!-- Jumpto file dialog support -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/jumpToFile.js" />
+
+  <!-- Javascript JSON utility -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/json.js" />
+
+  <!-- Balloon tips -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/balloonTip.js" />
+
+  <!-- Sanitizer Support (moz) -->
+  <script type="application/x-javascript" 
+  src="chrome://browser/content/sanitize.js" />
+
+  <!-- Sanitizer Support (songbird) -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/sanitize.js" />
+
+  <!-- Extension Overlay Support -->
+  <script type="application/x-javascript" 
+  src="chrome://songbird/content/scripts/overlayLoader.js" />
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                     Statusbar Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <statusbar id="status-bar">
+
+    <statusbarpanel id="statusbar-display" flex="1" 
+      insertbefore="sb-status-bar-numplaylistitems-label">
+      <sb-status-label id="sb-status-bar-status-label" 
+          class="sb-status-bar-status-label sb-status-bar-text" 
+          value=" " flex="1" crop="end" pack="center"/>
+    </statusbarpanel>
+
+    <sb-player-scanning-label insertbefore="statusbar-progresspanel" 
+          id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label 
+          sb-status-bar-text" crop="end" pack="center"/>
+
+  </statusbar>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                 Control Toolbar Overlay Items                   ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <toolbox id="control_pane_toolbox" 
+           mode="icons"
+           defaultmode="icons"
+           iconsize="small">
+    <toolbarpalette id="control_pane_toolbar_palette">
+    </toolbarpalette>
+    <toolbar
+      id="control_pane_toolbar"
+      toolbarname="ControlPaneToolbar"
+      mode="icons"
+      iconsize="small"
+      customizable="true"
+      defaultset=""
+    >
+    </toolbar>
+  </toolbox>
+
+ 
+</overlay>

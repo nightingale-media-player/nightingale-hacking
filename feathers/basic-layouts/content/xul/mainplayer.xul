@@ -3,7 +3,6 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
@@ -11,15 +10,8 @@
 %songbirdDTD;
 ]>
 
-<!-- Include this to automatically import the standard scripts for the main window -->
-<?xul-overlay href="chrome://songbird/content/xul/mainScriptsOverlay.xul"?>
-
-<?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/actionSetsOverlay.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/browserToolbarOverlay.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/statusBarOverlay.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/controlToolbarOverlay.xul"?>
+<!-- Include this to import the standard overlays for a window containing a gBrowser element -->
+<?xul-overlay href="chrome://songbird/content/xul/layoutWithBrowserOverlay.xul"?>
 
 <!--
 /*
@@ -71,15 +63,8 @@
   
   <windowregion/> <!-- No matter what mig says, don't take this out!! -->
   
-  <!--
-     Standard sets, filled by overlay files.  
-     NOTE: These items must retain their IDs for Firefox extension compatibility.
-  -->
-  <popupset id="mainPopupSet" />
-  <commandset id="mainCommandSet" />
-  <broadcasterset id="mainBroadcasterSet" />
-  <keyset id="mainKeyset"/>  
-  <stringbundleset id="mainBundleSet"/>  
+  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
+  <sb-support id="mainSupportSet"/>
 
   <sb-sys-outer-frame flex="1">
 

@@ -79,13 +79,10 @@
 					Name="xul"
 					Filter="">
 					<File
-						RelativePath=".\basic-layouts\content\xul\mainwin.xul">
+						RelativePath=".\basic-layouts\content\xul\mainplayer.xul">
 					</File>
 					<File
 						RelativePath=".\basic-layouts\content\xul\miniplayer.xul">
-					</File>
-					<File
-						RelativePath=".\basic-layouts\content\xul\test.xul">
 					</File>
 				</Filter>
 			</Filter>

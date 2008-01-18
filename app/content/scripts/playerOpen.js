@@ -31,7 +31,6 @@ Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 const SBJUMPTOINDEXRETRYCOUNT = 3;    // Retries for highlighting new item
 const SBJUMPTOINDEXDELAY      = 500;  // Delay in milliseconds to hightlight
 
-
 // Open functions
 //
 // This file is not standalone
@@ -105,10 +104,10 @@ try
       else
       {
         // And if we're good, play it.
-        seen_playing.boolValue = false;
-        theTitleText.stringValue = fp.file.leafName;
-        theArtistText.stringValue = "";
-        theAlbumText.stringValue = "";
+        SBDataSetBoolValue("faceplate.seenplaying", false);
+        SBDataSetStringValue("metadata.title", fp.file.leafName);
+        SBDataSetStringValue("metadata.artist", "");
+        SBDataSetStringValue("metadata.album", "");
 
         // Import the item.
         var item = SBImportURLIntoMainLibrary(uri);
@@ -126,7 +125,7 @@ try
   {
     // Make a magic data object to get passed to the dialog
     var url_open_data = new Object();
-    url_open_data.URL = URL.stringValue;
+    url_open_data.URL = SBDataGetStringValue("faceplate.play.url");
     url_open_data.retval = "";
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow );
@@ -136,9 +135,9 @@ try
       var item = SBImportURLIntoWebLibrary(url_open_data.URL);
 
       // And if we're good, play it.
-      theTitleText.stringValue = url_open_data.URL;
-      theArtistText.stringValue = "";
-      theAlbumText.stringValue = "";
+      SBDataSetStringValue("metadata.title", url_open_data.URL);
+      SBDataSetStringValue("metadata.artist", "");
+      SBDataSetStringValue("metadata.album", "");
 
       SBDisplayViewForListAndPlayItem(library, item);
     }

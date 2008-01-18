@@ -40,16 +40,6 @@ try
 // XUL Event Methods
 //
 
-var URL = SB_NewDataRemote( "faceplate.play.url", null );
-var thePlaylistIndex = SB_NewDataRemote( "playlist.index", null );
-var seen_playing = SB_NewDataRemote( "faceplate.seenplaying", null );
-var theTitleText = SB_NewDataRemote( "metadata.title", null );
-var theArtistText = SB_NewDataRemote( "metadata.artist", null );
-var theAlbumText = SB_NewDataRemote( "metadata.album", null );
-var theStatusText = SB_NewDataRemote( "faceplate.status.text", null );
-var theStatusStyle = SB_NewDataRemote( "faceplate.status.style", null );
-
-
 var SBCDCommands = 
 {
   DEVICE_IDLE :               0,

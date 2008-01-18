@@ -1,66 +1,55 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 
 <!--
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
-<overlay id="ovPopupsMain"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<!DOCTYPE overlay>
+
+<!-- ********************************************************************** -->
+<!-- **                                                                  ** -->
+<!-- **            THIS OVERLAY IS OBSOLETE ! DO NOT TARGET IT !         ** -->
+<!-- **                                                                  ** -->
+<!-- **                Instead, use the following targets:               ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithBrowserOverlay.xul if your items only apply to a    ** -->
+<!-- **    window with a web browser (such as the default mainplayer.xul ** -->
+<!-- **    layout)                                                       ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithoutBrowserOverlay.xul if your items only apply to a ** -->
+<!-- **    window that does NOT have a web browser (such as the default  ** -->
+<!-- **    miniplayer.xul layout)                                        ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutBaseOverlay.xul if your items apply to all modeless     ** -->
+<!-- **    windows regardless of whether or not they have a web browser  ** -->
+<!-- **                                                                  ** -->
+<!-- ********************************************************************** -->
 
 
-  <popupset id="mainPopupSet">
-  
-    <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
-    <popup id="contentAreaContextMenu"
-           onpopupshowing="if(event.target!=this)return true; return gBrowser.onContextPopupShowing(this, event)"
-           onpopuphiding="gBrowser.onContextPopupHiding(this)"
-           oncommand="gBrowser.onHTMLContextMenu(event.target)">
-      <menuitem id="html.context.open" label="&html.context.open;"/>
-      <menuitem id="html.context.opentab" label="&html.context.opentab;" />
-      <menuitem id="html.context.openexternal" label="&html.context.openexternal;"/>
-      <menuitem id="html.context.play" label="&html.context.play;"/>
-      <menuitem id="html.context.add"  label="&html.context.add;"/>
-      <menuitem id="html.context.playlist"  label="&html.context.playlist;"/>
-      <menuseparator/>
-      <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
-    </popup>
-    <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
-    <popup id="playlist_edit_popup"  ignorekeys="true">
-      <textbox id="playlist_edit" multiline="false" wrap="off" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
-    </popup>
-    <!-- EDIT POPUP FOR THE SERVICE PANE -->
-    <popup id="service_edit_popup"  ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
-      <textbox id="service_edit" multiline="false" wrap="off" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
-    </popup>
-	
-	<panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
-  </popupset>
-
+<overlay>
 </overlay>
-
 

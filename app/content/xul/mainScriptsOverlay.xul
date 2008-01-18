@@ -1,158 +1,55 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 
 <!--
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 -->
 
-<!DOCTYPE window [
-<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%brandDTD;
-%songbirdDTD;
-]>
+<!DOCTYPE overlay>
 
-<overlay id="ovScriptsMain"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<!-- ********************************************************************** -->
+<!-- **                                                                  ** -->
+<!-- **            THIS OVERLAY IS OBSOLETE ! DO NOT TARGET IT !         ** -->
+<!-- **                                                                  ** -->
+<!-- **                Instead, use the following targets:               ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithBrowserOverlay.xul if your items only apply to a    ** -->
+<!-- **    window with a web browser (such as the default mainplayer.xul ** -->
+<!-- **    layout)                                                       ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutWithoutBrowserOverlay.xul if your items only apply to a ** -->
+<!-- **    window that does NOT have a web browser (such as the default  ** -->
+<!-- **    miniplayer.xul layout)                                        ** -->
+<!-- **                                                                  ** -->
+<!-- **  - layoutBaseOverlay.xul if your items apply to all modeless     ** -->
+<!-- **    windows regardless of whether or not they have a web browser  ** -->
+<!-- **                                                                  ** -->
+<!-- ********************************************************************** -->
 
-  <!-- scripts for main window -->
 
-  <window>
-    <!-- Load the main window data bindings -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/mainWinInit.js" />
-
-    <!-- Load the Mozilla helpers -->
-    <script type="application/x-javascript" 
-    src="chrome://global/content/globalOverlay.js"/>
-    <script type="application/x-javascript"   
-    src="chrome://global/content/dialogOverlay.js" />
-    <script type="application/x-javascript"   
-    src="chrome://global/content/viewSourceUtils.js" />
-
-    <!-- Drag and drop -->
-    <script type="application/x-javascript" 
-    src="chrome://global/content/nsDragAndDrop.js"/>
-    <script type="application/x-javascript" 
-    src="chrome://global/content/nsTransferable.js"/>
-    <script type="application/x-javascript"  
-    src="chrome://songbird/content/scripts/dndSourceTracker.js" />
-
-    <!-- Command line -->
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/commandLine.js"/>
-
-    <!-- Load the interface code -->
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/playerOpen.js"/>
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/asyncForLoop.js"/>
-
-    <!-- Load the Songbird stuff -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/windowUtils.js" />
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/deviceTEMP.js" />
-
-    <!-- Firefox compatibility functions -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/browserUtilities.js" />
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/browserViewMenu.js" />
-    <script type="application/x-javascript"
-    src="chrome://browser/content/browser-textZoom.js"/>
-    <script type="application/x-javascript"
-    src="chrome://global/content/viewZoomOverlay.js"/>
-
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/searchHandler.js" />
-
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/serviceTreeXBLTEMP.js" />
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
-
-    <!-- Load the locale switcher -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/switchLocale.js" />
-
-    <!-- Generic message box -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/messageBox.js" />
-    <!-- Generic restart box -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/restartBox.js" />
-    <!-- Metrics functions -->
-    <script type="application/x-javascript"   
-    src="chrome://songbird/content/scripts/metrics.js" />
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/jumpToFile.js" />
-
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/json.js" />
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/bookmarks.js" />
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/bookmarksProxy.js" />
-
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/balloonTip.js" />
-
-    <!-- Sanitizer Support -->
-    <script type="application/x-javascript" 
-    src="chrome://browser/content/sanitize.js" />
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/sanitize.js" />
-
-    <!-- Popup Blocker UI -->
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/popupBlocker.js" />
-
-    <!-- Extension Overlay Support -->
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/overlayLoader.js" />
-
-    <!-- callbacks for the xpinstall denied hat (notification) -->
-    <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/xpInstallHat.js" />
-
-    <!-- after first-run has run - run the update service with special args -->
-    <script type="application/x-javascript"
-      src="chrome://songbird/content/scripts/updateOnceAfterFirstRun.js" />
-
-  </window>
-  
+<overlay>
 </overlay>
+
