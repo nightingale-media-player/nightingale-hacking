@@ -31,11 +31,12 @@
 
 #include "nsISupports.idl"
 
+interface nsIPropertyBag2;
 interface nsIVariant;
 
 interface sbIDeviceCapabilities;
 interface sbIDeviceContent;
-interface sbIDeviceIdentification;
+interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 
 /**
@@ -57,6 +58,11 @@ interface sbIDevice : nsISupports
    * The id of the controller that created the device.
    */
   readonly attribute nsIDPtr controllerId;
+  
+  /**
+   * The id of the device
+   */
+  readonly attribute nsIDPtr id;
 
   /**
    * Called when the device should initialize.
@@ -103,5 +109,5 @@ interface sbIDevice : nsISupports
   /**
    * The parameters with which the device was created
    */
-  readonly attribute sbIDeviceParamaters parameters;
+  readonly attribute nsIPropertyBag2 parameters;
 };

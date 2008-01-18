@@ -125,4 +125,23 @@ interface sbIDeviceEvent : nsISupports
    * Something that invoked this event
    */
   readonly attribute nsISupports origin;
+  
+  /**
+   * The initEvent method is used to intialize the value of a sbIDeviceEvent.
+   * This method must be called before the event is dispatched via the
+   * dispatchEvent method of sbIDeviceEventTarget.  It may be called multiple
+   * times during that phase if necessary; the last invocation takes precedence.
+   * It must not be called once the event has been dispatched.
+   *
+   * @param aType The type of the event; should be one of the COMMAND_* or
+   *              EVENT_* constants on this interface.
+   *
+   * @param aData (Optional) The data to pass to any listeners that would
+   *              receive this event.
+   *
+   * @param aOrigin (Optional) Some indication of the source of the event.
+   */
+  void initEvent(in unsigned long aType,
+                 [optional] in nsIVariant aData,
+                 [optional] in nsISupports aOrigin);
 };

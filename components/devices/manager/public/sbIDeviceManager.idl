@@ -26,12 +26,11 @@
 
 #include "nsISupports.idl"
 
-interface sbIDeviceMonitor;
+interface sbIDeviceMarshall;
 interface nsIArray;
 
 /**
  * \interface sbIDeviceManager
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  *
  * This is the DeviceManager service.
@@ -48,18 +47,12 @@ interface sbIDeviceManager2 : nsISupports
    * List of marshalls that are currently instantiated.
    * Order is undefined and may change between reads.
    */
-  readonly attribute nsIArray monitors;
-  
-  /**
-   * List of controllers that are currently instantiated.
-   * Order is undefined and may change between reads.
-   */
-  readonly attribute nsIArray controllers;
+  readonly attribute nsIArray marshalls;
 
   /**
-   * Get a device marshall by nsISupportsID.
+   * Get a device marshall by ID.
    */
-  sbIDeviceMonitor getMonitorByID(in nsIDRef aIDPtr);
+  sbIDeviceMarshall getMarshallByID(in nsIDPtr aIDPtr);
 
   /**
    * Simply calls updateDevices on all loaded controllers.

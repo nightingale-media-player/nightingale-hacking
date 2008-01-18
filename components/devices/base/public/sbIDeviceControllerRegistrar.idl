@@ -57,5 +57,5 @@ interface sbIDeviceControllerRegistrar : nsISupports
   /**
    * Retrieve a registered controller.
    */
-  sbIDeviceController getController(in nsIDRef aControllerId);
+  sbIDeviceController getController(in nsIDPtr aControllerId);
 };

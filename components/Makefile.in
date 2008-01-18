@@ -36,6 +36,7 @@ SUBDIRS = addonmetadata \
           controller \
           dataremote \
           dbengine \
+          devices \
           devicesobsolete \
           displaypanes \
           draganddrop \

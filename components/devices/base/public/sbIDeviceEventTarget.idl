@@ -38,17 +38,30 @@ interface sbIDeviceEventListener;
 interface sbIDeviceEventTarget : nsISupports
 {
   /**
-   * 
+   * Dispatch a given event.
+   * The event will always be synchronously dispatched on the main (UI) thread.
+   *
+   * An event may only be dispatched once; it may not be re-used.
+   *
+   * @param aEvent the event to dispatch
    */
   void dispatchEvent(in sbIDeviceEvent aEvent);
 
   /**
+   * Add a event listener
    * 
+   * If the event listener is added while an event is being dispatched, the new
+   * listener will not be triggered until the next event is dispatched. (This is
+   * true even if the new event is dispatched before the current listener
+   * finishes; the new listener will see any nested events.)
    */
   void addEventListener(in sbIDeviceEventListener aListener);
 
   /**
+   * Remove a event listener
    * 
+   * If an event is currently being dispatched, the listener will not be
+   * triggered for the event if it has not already done so.
    */
   void removeEventListener(in sbIDeviceEventListener aListener);
 };

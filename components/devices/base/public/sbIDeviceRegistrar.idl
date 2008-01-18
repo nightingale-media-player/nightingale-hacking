@@ -57,5 +57,5 @@ interface sbIDeviceRegistrar : nsISupports
   /**
    * Retrieve a registered device.
    */
-  sbIDevice getDevice(in nsIDRef aDeviceId);
+  sbIDevice getDevice(in nsIDPtr aDeviceId);
 };

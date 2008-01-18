@@ -30,7 +30,6 @@ interface sbIDeviceControllerRegistrar;
 
 /**
  * \interface sbIDeviceMarshall
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(8e7daa39-f4d2-4366-8841-a76de3cff7be)]
 interface sbIDeviceMarshall : nsISupports
@@ -52,9 +51,10 @@ interface sbIDeviceMarshall : nsISupports
   void loadControllers(in sbIDeviceControllerRegistrar aRegistrar);
 
   /**
-   * Lets the monitor know the device manager is shutting down
+   * After calling this method, the marshall will stop monitoring for any new
+   * devices.
    */
-   void shutdown();
+  void stopMonitoring();
 };
 
 %{C++
