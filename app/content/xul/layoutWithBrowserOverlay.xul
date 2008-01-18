@@ -455,10 +455,6 @@
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/xpInstallHat.js" />
 
-  <!-- after first-run has run - run the update service with special args -->
-  <script type="application/x-javascript"
-    src="chrome://songbird/content/scripts/updateOnceAfterFirstRun.js" />
-
 
   <!-- ********************************************************************* -->
   <!-- **                                                                 ** -->
