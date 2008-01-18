@@ -44,17 +44,21 @@
 
   <!-- Astounding complexity! -->
   <sb-draggable flex="1">
-    <label id="version_number" value="&about.version;" />
-    <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" flex="1"/>
+    <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
+    <separator/>
+    <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
   </sb-draggable>
 
   <!-- And intrepid instructions! -->  
   <script>
   <![CDATA[
     function doInit() {
+      // Make sure we're initially focused on the browser, not the version
+      setTimeout(function() { document.getElementById( "about_browser" ).focus(); } , 0);   
+    
       // Figure out a string to use from the user agent.
       var user_agent = navigator.userAgent;
-      sb_idx = user_agent.indexOf("Songbird");
+      var sb_idx = user_agent.indexOf("Songbird");
       if ( sb_idx != -1 )
       {
         // Try to get rid of the annoying mozilla crap at the beginning.
@@ -66,7 +70,7 @@
 
       // include the XULRunner buildid for easy reference      
       var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
-      version.value += " (" + appInfo.platformBuildID + ") ";    
+      version.value += " (" + appInfo.platformBuildID + ") "; 
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
@@ -76,4 +80,3 @@
   ]]>
   </script>
 </dialog>
-
