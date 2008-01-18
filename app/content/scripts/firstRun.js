@@ -329,7 +329,8 @@ function doOK()
       return false;
     gPrefs.setCharPref("songbird.installedbundle", firstrun_bundle.bundleDataVersion);
   }
-  
+ 
+  // when changing this update, updateOnceAfterFirstRun.js and appInit.js 
   gPrefs.setBoolPref("songbird.firstrun.check.0.3", true);  
   gPrefs.setBoolPref("songbird.firstrun.libraryerror.check.0.3", true);
   
