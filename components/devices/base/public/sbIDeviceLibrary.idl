@@ -25,7 +25,124 @@
 */
 
 #include "sbILibrary.idl"
+#include "nsISupports.idl"
 
+interface nsIArray;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIPropertyArray;
+interface nsIURI;
+
+
+/**
+ * \interface sbIDeviceLibraryListener
+ * \brief Interface used to listen to changes to a device library.
+ * \note Implementations of this interface must be threadsafe.
+ *
+ * \sa sbIDeviceLibrary
+ */
+[scriptable, uuid(b08465ce-3e7a-41de-a554-3f5ed851dc86)]
+interface sbIDeviceLibraryListener : nsISupports
+{
+  /**
+   * \brief Called when the library is about to perform multiple operations at
+   *        once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to ignore further notifications until the onBatchEnd notification
+   * is received.
+   *
+   * \param aMediaList The list that has changed.
+   */
+  void onBatchBegin(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called when the library has finished performing multiple operations
+   *        at once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to stop ignoring notifications after receiving this notification.
+   *
+   * \param aMediaList The list that has changed.
+   */
+  void onBatchEnd(in sbIMediaList aMediaList);
+
+  /**
+   * Listener functions for media list changes (sbIMediaList)
+   */
+  /**
+   * \brief Called when a media item is added to a list, through add or addAll.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The new media item.
+   * \return True if you do not want any further onItemAdded notifications for
+   *         the current batch.  If there is no current batch, the return value
+   *         is ignored.
+   */
+  boolean onItemAdded(in sbIMediaList aMediaList,
+                      in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called before a media item is removed from a list, through remove,
+   *        removeAll or removeByIndex.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The removed media item.
+   * \return True if you do not want any further onItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
+   */
+  boolean onBeforeItemRemoved(in sbIMediaList aMediaList,
+                              in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called after a media item has been removed from a list, through
+   *        remove, removeAll or removeByIndex.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The removed media item.
+   * \return True if you do not want any further onItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
+   */
+  boolean onAfterItemRemoved(in sbIMediaList aMediaList,
+                             in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called when a media list is cleared.
+   * \return True if you do not want any further onListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onListCleared(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called when a media item is changed.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The item that has changed.
+   * \param aProperties Array of properties that were updated.  Each property's
+   *        value is the previous value of the property
+   * \return True if you do not want any further onItemUpdated notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onItemUpdated(in sbIMediaList aMediaList,
+                        in sbIMediaItem aMediaItem,
+                        in sbIPropertyArray aProperties);
+                        
+
+  /**
+   * \brief Called when a media item has been copied.
+   * \param aMediaItem The item that was copied from.
+   * \param aMediaItem The item that was copied to.
+   */
+  void onItemCopied(in sbIMediaItem aSourceItem, 
+                    in sbIMediaItem aDestItem);
+
+
+  boolean onBeforeCreateMediaItem(in nsIURI aContentUri,
+                                  in sbIPropertyArray aProperties,
+                                  in boolean aAllowDuplicates);
+
+};
+ 
 /**
  * \interface sbIDeviceLibrary
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
@@ -34,4 +151,15 @@
 [scriptable, uuid(1fcdbc71-f637-45f5-b1cc-41d2e71c69c3)]
 interface sbIDeviceLibrary : sbILibrary
 {
+  /**
+   * \brief Add a listener to this device library.
+   * \param sbIDeviceLibraryListener aListener listener to add.
+   */
+  void addDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
+
+  /**
+   * \brief Remove a listener from this device library.
+   * \param sbIDeviceLibraryListener aListener listener to remove.
+   */
+  void removeDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
 };
