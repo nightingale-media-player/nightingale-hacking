@@ -498,11 +498,55 @@ try
       var uri = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURI);
       
       uri.spec = url;
-      checker.init(uri);
-      checker.asyncCheck(observer, null);
       
-      this.pushAsync();
-      
+      if( uri.scheme != "file" ) {
+        checker.init(uri);
+        checker.asyncCheck(observer, null);
+        
+        this.pushAsync();
+      }
+      else if( uri.scheme == "file" ) {
+        var uri = newURI(url);
+        
+        if( !(uri instanceof Components.interfaces.nsIFileURL) ) {
+          return true;
+        }
+        
+        uri = uri.QueryInterface(Components.interfaces.nsIFileURL);
+        
+        if ( !uri.file.exists() ) {
+          return true;
+        }
+
+        // Try to see if we've already found and scanned this url
+        var listener = {
+          foundItem: null,
+          onEnumerationBegin: function onEnumerationBegin() {
+            if (this.foundItem) {
+              return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+            }
+            return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+          },
+          onEnumeratedItem: function onEnumeratedItem(list, item) {
+            this.foundItem = item;
+            return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+          },
+          onEnumerationEnd: function onEnumerationEnd() {
+          }
+        };
+
+        var library = aMediaListView.mediaList.library;
+        library.enumerateItemsByProperty(SBProperties.originURL, url, listener );
+        library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
+        
+        if (listener.foundItem) {
+          this.items.push(listener.foundItem);
+        }
+        else {
+          this.items.push(url);
+        }
+      }
+
       return true;
     };
 
