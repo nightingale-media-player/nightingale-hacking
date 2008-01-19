@@ -29,6 +29,7 @@
 #include "sbIDeviceControllerRegistrar.h"
 #include "sbIDeviceRegistrar.h"
 #include "sbIDeviceEventTarget.h"
+#include "sbBaseDeviceEventTarget.h"
 
 #include <prmon.h>
 #include <nsHashKeys.h>
@@ -40,10 +41,10 @@
 #include "sbIDeviceController.h"
 #include "sbIDeviceMarshall.h"
 
-class sbDeviceManager : public sbIDeviceManager2,
+class sbDeviceManager : public sbBaseDeviceEventTarget,
+                        public sbIDeviceManager2,
                         public sbIDeviceControllerRegistrar,
                         public sbIDeviceRegistrar,
-                        public sbIDeviceEventTarget,
                         public nsIClassInfo,
                         public nsIObserver
 {
@@ -52,7 +53,6 @@ public:
   NS_DECL_SBIDEVICEMANAGER2
   NS_DECL_SBIDEVICECONTROLLERREGISTRAR
   NS_DECL_SBIDEVICEREGISTRAR
-  NS_DECL_SBIDEVICEEVENTTARGET
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
   sbDeviceManager();

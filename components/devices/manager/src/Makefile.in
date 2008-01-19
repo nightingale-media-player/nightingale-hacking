@@ -40,6 +40,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
+               $(topsrcdir)/components/devices/base/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
@@ -59,6 +60,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
+                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDeviceManager
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)

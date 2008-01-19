@@ -41,6 +41,7 @@
 #include <nsServiceManagerUtils.h>
 
 #include "sbIDeviceController.h"
+#include "sbDeviceEvent.h"
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID "profile-after-change"
@@ -148,6 +149,14 @@ NS_IMETHODIMP sbDeviceManager::UpdateDevices()
   return NS_OK;
 }
 
+/* sbIDeviceEvent sbIDeviceManager::createEvent (); */
+NS_IMETHODIMP sbDeviceManager::CreateEvent(sbIDeviceEvent **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_IF_ADDREF(*_retval = new sbDeviceEvent());
+  return _retval ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
+}
+
 /* readonly attribute nsIArray sbIDeviceControllerRegistrar::controllers; */
 NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
 {
@@ -182,6 +191,7 @@ NS_IMETHODIMP sbDeviceManager::RegisterController(sbIDeviceController *aControll
   nsID* id;
   rv = aController->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_POINTER(id);
   
   PRBool succeeded = mControllers.Put(*id, aController);
   NS_Free(id);
@@ -197,6 +207,7 @@ NS_IMETHODIMP sbDeviceManager::UnregisterController(sbIDeviceController *aContro
   nsID* id;
   rv = aController->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_POINTER(id);
   
   mControllers.Remove(*id);
   NS_Free(id);
@@ -251,6 +262,7 @@ NS_IMETHODIMP sbDeviceManager::RegisterDevice(sbIDevice *aDevice)
   nsID* id;
   rv = aDevice->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_POINTER(id);
   
   PRBool succeeded = mDevices.Put(*id, aDevice);
   NS_Free(id);
@@ -276,6 +288,7 @@ NS_IMETHODIMP sbDeviceManager::UnregisterDevice(sbIDevice *aDevice)
   nsID* id;
   rv = aDevice->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_POINTER(id);
   
   mDevices.Remove(*id);
   NS_Free(id);
@@ -291,24 +304,6 @@ NS_IMETHODIMP sbDeviceManager::GetDevice(const nsID * aDeviceId,
 
   PRBool succeded = mDevices.Get(*aDeviceId, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
-}
-
-/* void sbIDeviceEventTarget::dispatchEvent (in sbIDeviceEvent aEvent); */
-NS_IMETHODIMP sbDeviceManager::DispatchEvent(sbIDeviceEvent *aEvent)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* void sbIDeviceEventTarget::addEventListener (in sbIDeviceEventListener aListener); */
-NS_IMETHODIMP sbDeviceManager::AddEventListener(sbIDeviceEventListener *aListener)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* void sbIDeviceEventTarget::removeEventListener (in sbIDeviceEventListener aListener); */
-NS_IMETHODIMP sbDeviceManager::RemoveEventListener(sbIDeviceEventListener *aListener)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void nsIObserver::observe (in nsISupports aSubject, in string aTopic, in wstring aData); */

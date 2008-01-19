@@ -1,0 +1,99 @@
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "sbDeviceEvent.h"
+
+#include <nsIVariant.h>
+
+#include "sbIDeviceEventTarget.h"
+
+/* note that we have a "sbDeviceEvent" IID so we can get pointers to this
+   concrete class from a COM pointer */
+NS_IMPL_ISUPPORTS2(sbDeviceEvent,
+                   sbDeviceEvent,
+                   sbIDeviceEvent)
+
+sbDeviceEvent::sbDeviceEvent()
+ : mWasDispatched(PR_FALSE),
+   mType(0)
+{
+  /* member initializers and constructor code */
+}
+
+sbDeviceEvent::~sbDeviceEvent()
+{
+  /* destructor code */
+}
+
+/* readonly attribute PRUint32 type; */
+NS_IMETHODIMP sbDeviceEvent::GetType(PRUint32 *aType)
+{
+  NS_ENSURE_ARG_POINTER(aType);
+  *aType = mType;
+  return NS_OK;
+}
+
+/* readonly attribute nsIVariant data; */
+NS_IMETHODIMP sbDeviceEvent::GetData(nsIVariant * *aData)
+{
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_IF_ADDREF(*aData = mData);
+  return NS_OK;
+}
+
+/* attribute sbIDeviceEventTarget target setter; */
+nsresult sbDeviceEvent::SetTarget(sbIDeviceEventTarget *aTarget)
+{
+  mTarget = aTarget;
+  return NS_OK;
+}
+
+/* readonly attribute sbIDeviceEventTarget target; */
+NS_IMETHODIMP sbDeviceEvent::GetTarget(sbIDeviceEventTarget * *aTarget)
+{
+  NS_ENSURE_ARG_POINTER(aTarget);
+  NS_IF_ADDREF(*aTarget = mTarget);
+  return NS_OK;
+}
+
+/* readonly attribute nsISupports origin; */
+NS_IMETHODIMP sbDeviceEvent::GetOrigin(nsISupports * *aOrigin)
+{
+  NS_ENSURE_ARG_POINTER(aOrigin);
+  NS_IF_ADDREF(*aOrigin = mOrigin);
+  return NS_OK;
+}
+
+/* void initEvent (in unsigned long aType, [optional] in nsIVariant aData, [optional] in nsISupports aOrigin); */
+NS_IMETHODIMP sbDeviceEvent::InitEvent(PRUint32 aType, nsIVariant *aData, nsISupports *aOrigin)
+{
+  NS_ENSURE_FALSE(mWasDispatched, NS_ERROR_UNEXPECTED);
+  mType = aType;
+  mData = aData;
+  mOrigin = aOrigin;
+  return NS_OK;
+}

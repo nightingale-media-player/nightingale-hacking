@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 
+interface sbIDeviceEvent;
 interface sbIDeviceMarshall;
 interface nsIArray;
 
@@ -58,4 +59,12 @@ interface sbIDeviceManager2 : nsISupports
    * Simply calls updateDevices on all loaded controllers.
    */
   void updateDevices();
+  
+  /**
+   * Create a new event
+   * @see sbIDeviceEvent
+   * @see sbIDeviceEventTarget
+   * @see sbIDeviceEventListener
+   */
+  sbIDeviceEvent createEvent();
 };

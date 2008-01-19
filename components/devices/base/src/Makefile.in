@@ -31,9 +31,9 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbDeviceBase$(DEBUG:%=_d)
 
-#CPP_SRCS = sbBaseDeviceEventTarget.cpp \
-#           sbDeviceEvent.cpp \
-#           $(NULL)
+CPP_SRCS = sbBaseDeviceEventTarget.cpp \
+           sbDeviceEvent.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(topsrcdir)/components/include \
@@ -44,20 +44,8 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
-#DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+STATIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(LIB_SUFFIX)
 
-#DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-#LIBSONGBIRD_COMPONENT = SongbirdDeviceBase
-#SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk
