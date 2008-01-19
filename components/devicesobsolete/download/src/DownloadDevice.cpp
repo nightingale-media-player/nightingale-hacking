@@ -97,6 +97,9 @@
  * SB_PREF_WEB_LIBRARY          Web library GUID preference name.
  * SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS
  *                              Update period for download progress.
+ * SB_DOWNLOAD_IDLE_TIMEOUT_MS  How long to wait after progress before 
+ *                              considering a download to be failed.
+ *                 
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
@@ -116,6 +119,7 @@
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
 #define SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS   1000
+#define SB_DOWNLOAD_IDLE_TIMEOUT_MS (60*1000)
 
 
 /* *****************************************************************************
@@ -2685,6 +2689,11 @@ nsresult sbDownloadSession::Initiate()
                                        nsnull,
                                        mpTmpFile);
 
+    /* Create the idle timer */
+    if (NS_SUCCEEDED(result)) {
+        mIdleTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &result);
+    }
+
     return (result);
 }
 
@@ -2830,8 +2839,9 @@ PRBool sbDownloadSession::IsSuspended()
  *
  ******************************************************************************/
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDownloadSession,
-                              nsIWebProgressListener)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDownloadSession,
+                              nsIWebProgressListener,
+                              nsITimerCallback)
 
 /* *****************************************************************************
  *
@@ -2886,6 +2896,14 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         /* Lock the session. */
         nsAutoLock lock(mpSessionLock);
 
+        if (aStateFlags & STATE_START) {
+          /* start the timer */
+          StartTimer();
+        } else if (aStateFlags & STATE_STOP) {
+          /* stop the timer */
+          StopTimer();
+        }
+
         /* Do nothing if download has not stopped or if shutting down. */
         if (!(aStateFlags & STATE_STOP) || mShutdown)
             return NS_OK;
@@ -2922,7 +2940,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             if (NS_SUCCEEDED(result))
                 complete = PR_TRUE;
         }
-
+        
         if (complete) {
             // Set the progress to complete.
             sbAutoDownloadButtonPropertyValue property(mpMediaItem,
@@ -3018,6 +3036,9 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
            "aCurTotalProgress %d aMaxTotalProgress %d",
            this, aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress,
            aCurTotalProgress, aMaxTotalProgress));
+
+    /* we got some progress, let's reset the idle timer */
+    ResetTimer();
 
     PRBool                      suspendRequest = PR_FALSE;
 
@@ -3141,6 +3162,21 @@ NS_IMETHODIMP sbDownloadSession::OnSecurityChange(
            this, aWebProgress, aRequest, aState));
 
     return (NS_OK);
+}
+
+
+/* *****************************************************************************
+ *
+ * Download session nsITimerCallback services.
+ *
+ ******************************************************************************/
+NS_IMETHODIMP sbDownloadSession::Notify(nsITimer* aTimer)
+{
+    /* Once the idle timer has timed out we should abort the request.
+     * Our onStateChange handler will take care of reflecting the state
+     * into the UI. */
+    mpRequest->Cancel(NS_BINDING_ABORTED);
+    return NS_OK;
 }
 
 /* *****************************************************************************
@@ -3751,6 +3787,37 @@ nsresult sbDownloadSession::FormatTime(
     NS_ENSURE_SUCCESS(rv, rv);
 
     return (NS_OK);
+}
+
+
+/**
+ * \brief Start the idle timer.
+ */
+nsresult sbDownloadSession::StartTimer()
+{
+    mIdleTimer->Cancel();
+    return mIdleTimer->InitWithCallback(this, SB_DOWNLOAD_IDLE_TIMEOUT_MS,
+        nsITimer::TYPE_ONE_SHOT);
+}
+
+
+/**
+ * \brief Stop the idle timer.
+ */
+nsresult sbDownloadSession::StopTimer()
+{
+    return mIdleTimer->Cancel();
+}
+
+
+/**
+ * \brief Reset the idle timer.
+ */
+nsresult sbDownloadSession::ResetTimer()
+{
+    mIdleTimer->Cancel();
+    return mIdleTimer->InitWithCallback(this, SB_DOWNLOAD_IDLE_TIMEOUT_MS,
+        nsITimer::TYPE_ONE_SHOT);
 }
 
 

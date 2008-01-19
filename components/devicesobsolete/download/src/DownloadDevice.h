@@ -262,6 +262,7 @@ class sbDownloadDevice : public nsIObserver,
 #include <nsIProgressEventSink.h>
 #include <nsIWebBrowserPersist.h>
 #include <nsIWebProgressListener.h>
+#include <nsITimer.h>
 
 
 /* *****************************************************************************
@@ -274,7 +275,7 @@ class sbDownloadDevice : public nsIObserver,
  * sbDownloadSession class.
  */
 
-class sbDownloadSession : public nsIWebProgressListener
+class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
 {
     /* *************************************************************************
      *
@@ -301,6 +302,7 @@ class sbDownloadSession : public nsIWebProgressListener
 
     NS_DECL_ISUPPORTS
     NS_DECL_NSIWEBPROGRESSLISTENER
+    NS_DECL_NSITIMERCALLBACK
 
     /*
      * Public download session services.
@@ -350,6 +352,8 @@ class sbDownloadSession : public nsIWebProgressListener
      * mLastUpdate              Last time progress was updated.
      * mLastProgressBytes       Number of progress bytes on last update.
      * mRate                    Download rate.
+     * mIdleTimer               Idle timer cancels downloads that aren't
+     *                          seeing progress.
      */
 
     PRLock                      *mpSessionLock;
@@ -371,6 +375,7 @@ class sbDownloadSession : public nsIWebProgressListener
     PRTime                      mLastUpdate;
     PRUint64                    mLastProgressBytes;
     double                      mRate;
+    nsCOMPtr<nsITimer>          mIdleTimer;
 
 
     /*
@@ -412,6 +417,10 @@ class sbDownloadSession : public nsIWebProgressListener
     nsresult FormatTime(
         nsString                    &aTimeStr,
         PRUint32                    aSeconds);
+
+    nsresult StartTimer();
+    nsresult StopTimer();
+    nsresult ResetTimer();
 
 
     /* *************************************************************************
