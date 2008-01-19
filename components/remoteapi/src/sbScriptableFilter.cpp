@@ -284,7 +284,7 @@ NS_IMETHODIMP sbScriptableFilter::GetProperty( nsIXPConnectWrappedNative *wrappe
       rv = xpc->WrapNative( cx,
                             obj,
                             result,
-                            sbIScriptableFilterResult::GetIID(),
+                            NS_GET_IID(sbIScriptableFilterResult),
                             getter_AddRefs(objHolder) );
       NS_ENSURE_SUCCESS( rv, rv );
       

@@ -39,8 +39,8 @@
  * the Songbird 0.3 API.
  */
 
-class sbScriptableFunction : public nsISecurityCheckedComponent,
-                             public sbXPCScriptableStub
+class sbScriptableFunctionBase : public nsISecurityCheckedComponent,
+                                 public sbXPCScriptableStub
 {
 public:
   NS_DECL_ISUPPORTS
@@ -50,16 +50,61 @@ public:
   /* nsIXPCScriptable */
   NS_IMETHOD GetClassName(char * *aClassName);
   NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
-  NS_IMETHOD Call(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, PRUint32 argc, jsval * argv, jsval * vp, PRBool *_retval);
-
-  sbScriptableFunction(nsISupports *aObject, const nsIID& aIID);
-
-private:
-  ~sbScriptableFunction();
+  /* not implemented base classes must impl */
+  NS_IMETHOD Call( nsIXPConnectWrappedNative *wrapper,
+                   JSContext *cx,
+                   JSObject *obj,
+                   PRUint32 argc,
+                   jsval *argv,
+                   jsval *vp,
+                   PRBool *_retval ) = 0;
 
 protected:
+  sbScriptableFunctionBase();
+  virtual ~sbScriptableFunctionBase();
+};
+
+class sbScriptableLibraryFunction : public sbScriptableFunctionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+ 
+  /* nsIXPCScriptable */
+  NS_IMETHOD Call(nsIXPConnectWrappedNative *wrapper,
+                   JSContext *cx,
+                   JSObject *obj,
+                   PRUint32 argc,
+                   jsval *argv,
+                   jsval *vp,
+                   PRBool *_retval );
+
+  sbScriptableLibraryFunction( nsISupports *aObject, const nsIID& aIID );
+
+protected:
+  virtual ~sbScriptableLibraryFunction();
+
   nsCOMPtr<nsISupports> mObject;
   nsIID mIID;
+};
+
+class sbScriptableMediaListFunction : public sbScriptableFunctionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+ 
+  /* nsIXPCScriptable */
+  NS_IMETHOD Call( nsIXPConnectWrappedNative *wrapper,
+                   JSContext * cx,
+                   JSObject * obj,
+                   PRUint32 argc,
+                   jsval * argv,
+                   jsval * vp,
+                   PRBool *_retval );
+
+  sbScriptableMediaListFunction();
+
+protected:
+  virtual ~sbScriptableMediaListFunction();
 };
 
 #endif // __SB_SCRIPTABLE_FUNCTION_H__

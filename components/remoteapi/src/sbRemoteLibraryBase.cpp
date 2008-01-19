@@ -944,8 +944,8 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
   
     if ( stringEnum ) {
       // make the callable wrapper
-      nsRefPtr<sbScriptableFunction> func =
-        new sbScriptableFunction( stringEnum, nsIStringEnumerator::GetIID() );
+      nsRefPtr<sbScriptableLibraryFunction> func =
+        new sbScriptableLibraryFunction( stringEnum, NS_GET_IID(nsIStringEnumerator) );
       NS_ENSURE_TRUE( stringEnum, NS_ERROR_OUT_OF_MEMORY );
       
       supports = NS_ISUPPORTS_CAST( nsIXPCScriptable*, func );
@@ -957,8 +957,8 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
     rv = GetPlaylists( getter_AddRefs(simpleEnum) );
     NS_ENSURE_SUCCESS( rv, rv );
 
-    nsRefPtr<sbScriptableFunction> func =
-      new sbScriptableFunction( simpleEnum, nsISimpleEnumerator::GetIID() );
+    nsRefPtr<sbScriptableLibraryFunction> func =
+      new sbScriptableLibraryFunction( simpleEnum, NS_GET_IID(nsISimpleEnumerator) );
     NS_ENSURE_TRUE( simpleEnum, NS_ERROR_OUT_OF_MEMORY );
     
     supports = NS_ISUPPORTS_CAST( nsIXPCScriptable*, func );

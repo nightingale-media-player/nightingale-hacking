@@ -214,7 +214,7 @@ NS_IMETHODIMP sbScriptableFilterItems::GetProperty( nsIXPConnectWrappedNative *w
       rv = xpc->WrapNative( cx,
                             obj,
                             remoteItem,
-                            sbIMediaItem::GetIID(),
+                            NS_GET_IID(sbIMediaItem),
                             getter_AddRefs(objHolder) );
       NS_ENSURE_SUCCESS( rv, rv );
       
@@ -587,3 +587,4 @@ NS_IMETHODIMP sbScriptableFilterItems::CanSetProperty( const nsIID * iid,
 NS_DECL_CLASSINFO(sbScriptableFilterItems)
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFilterItems)
+

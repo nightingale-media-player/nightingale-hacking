@@ -43,27 +43,27 @@ static PRLogModuleInfo* gScriptableFunctionLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gScriptableFunctionLog, PR_LOG_WARN, args)
-#define TRACE(args) PR_LOG(gScriptableFunctionLog, PR_LOG_DEBUG, args)
+#define LOG(args) PR_LOG( gScriptableFunctionLog, PR_LOG_WARN, args )
+#define TRACE(args) PR_LOG( gScriptableFunctionLog, PR_LOG_DEBUG, args )
 
-NS_IMPL_ISUPPORTS2_CI( sbScriptableFunction,
+NS_IMPL_ISUPPORTS2_CI( sbScriptableFunctionBase,
                        nsISecurityCheckedComponent,
                        nsIXPCScriptable )
+NS_DECL_CLASSINFO(sbScriptableFunctionBase)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFunctionBase)
 
-sbScriptableFunction::sbScriptableFunction( nsISupports *aObject,
-                                            const nsIID& aIID )
-  : mObject(aObject),
-    mIID(aIID)
+
+sbScriptableFunctionBase::sbScriptableFunctionBase()
 {
 #ifdef PR_LOGGING
   if (!gScriptableFunctionLog) {
     gScriptableFunctionLog = PR_NewLogModule( "sbScriptableFunction" );
   }
 #endif
-  TRACE(("sbScriptableFunction::sbScriptableFunction()"));
+  TRACE(("sbScriptableFunctionBase::sbScriptableFunctionBase()"));
 }
 
-sbScriptableFunction::~sbScriptableFunction()
+sbScriptableFunctionBase::~sbScriptableFunctionBase()
 {
 }
 
@@ -73,7 +73,8 @@ sbScriptableFunction::~sbScriptableFunction()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP sbScriptableFunction::GetClassName(char * *aClassName)
+NS_IMETHODIMP
+sbScriptableFunctionBase::GetClassName(char **aClassName)
 {
   NS_ENSURE_ARG_POINTER(aClassName);
   
@@ -82,13 +83,10 @@ NS_IMETHODIMP sbScriptableFunction::GetClassName(char * *aClassName)
   return aClassName ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
 
-/* readonly attribute PRUint32 scriptableFlags; */
-NS_IMETHODIMP sbScriptableFunction::GetScriptableFlags(PRUint32 *aScriptableFlags)
+NS_IMETHODIMP
+sbScriptableFunctionBase::GetScriptableFlags(PRUint32 *aScriptableFlags)
 {
   NS_ENSURE_ARG_POINTER(aScriptableFlags);
-  // XXX Mook: USE_JSSTUB_FOR_ADDPROPERTY is needed to define things on the
-  //           prototype properly; even with it set scripts cannot add
-  //           properties onto the object (because they're not allow to *set*)
   *aScriptableFlags = DONT_ENUM_STATIC_PROPS |
                       DONT_ENUM_QUERY_INTERFACE |
                       WANT_CALL |
@@ -96,15 +94,97 @@ NS_IMETHODIMP sbScriptableFunction::GetScriptableFlags(PRUint32 *aScriptableFlag
   return NS_OK;
 }
 
-NS_IMETHODIMP sbScriptableFunction::Call( nsIXPConnectWrappedNative *wrapper,
-                                          JSContext * cx,
-                                          JSObject * obj,
-                                          PRUint32 argc,
-                                          jsval * argv,
-                                          jsval * vp,
-                                          PRBool *_retval)
+// ---------------------------------------------------------------------------
+//
+//                          nsISecurityCheckedComponent
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbScriptableFunctionBase::CanCreateWrapper( const nsIID *iid, char **_retval )
 {
-  TRACE(("sbScriptableFunction::Call()"));
+  TRACE(("sbScriptableFunctionBase::CanCreateWrapper()"));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbScriptableFunctionBase::CanCallMethod( const nsIID *iid,
+                                         const PRUnichar *methodName,
+                                         char **_retval )
+{
+  TRACE(( "sbScriptableFunctionBase::CanCallMethod() - %s",
+          NS_LossyConvertUTF16toASCII(methodName).BeginReading() ));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbScriptableFunctionBase::CanGetProperty( const nsIID *iid,
+                                          const PRUnichar *propertyName,
+                                          char **_retval )
+{
+  TRACE(( "sbScriptableFunctionBase::CanGetProperty() - %s",
+          NS_LossyConvertUTF16toASCII(propertyName).BeginReading() ));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbScriptableFunctionBase::CanSetProperty( const nsIID *iid,
+                                          const PRUnichar *propertyName,
+                                          char **_retval )
+{
+  TRACE(( "sbScriptableFunctionBase::CanSetProperty() - %s",
+          NS_LossyConvertUTF16toASCII(propertyName).BeginReading() ));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = ToNewCString( NS_LITERAL_CSTRING("NoAccess") );
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                       Class:  sbScriptableLibraryFunction
+//
+// ---------------------------------------------------------------------------
+
+NS_IMPL_ISUPPORTS_INHERITED0( sbScriptableLibraryFunction,
+                              sbScriptableFunctionBase )
+ 
+sbScriptableLibraryFunction::sbScriptableLibraryFunction( nsISupports *aObject,
+                                                          const nsIID& aIID )
+  : mObject(aObject),
+    mIID(aIID)
+{
+#ifdef PR_LOGGING
+  if (!gScriptableFunctionLog) {
+    gScriptableFunctionLog = PR_NewLogModule( "sbScriptableFunction" );
+  }
+#endif
+  TRACE(("sbScriptableLibraryFunction::sbScriptableLibraryFunction()"));
+}
+
+sbScriptableLibraryFunction::~sbScriptableLibraryFunction()
+{
+}
+
+NS_IMETHODIMP
+sbScriptableLibraryFunction::Call( nsIXPConnectWrappedNative *wrapper,
+                                   JSContext *cx,
+                                   JSObject *obj,
+                                   PRUint32 argc,
+                                   jsval *argv,
+                                   jsval *vp,
+                                   PRBool *_retval )
+{
+  TRACE(("sbScriptableLibraryFunction::Call()"));
   
   // this can get called because library.getArtists should map to a function
   // that returns library.artists, but instead it returns the object itself.
@@ -135,61 +215,36 @@ NS_IMETHODIMP sbScriptableFunction::Call( nsIXPConnectWrappedNative *wrapper,
 
 // ---------------------------------------------------------------------------
 //
-//                          nsISecurityCheckedComponent
+//                       Class:  sbScriptableMediaListFunction
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP sbScriptableFunction::CanCreateWrapper( const nsIID * iid,
-                                                     char **_retval)
-{
-  TRACE(("sbScriptableFunction::CanCreateWrapper()"));
+NS_IMPL_ISUPPORTS_INHERITED0( sbScriptableMediaListFunction,
+                              sbScriptableFunctionBase )
 
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
-  return NS_OK;
+sbScriptableMediaListFunction::sbScriptableMediaListFunction()
+{
+#ifdef PR_LOGGING
+  if (!gScriptableFunctionLog) {
+    gScriptableFunctionLog = PR_NewLogModule( "sbScriptableFunction" );
+  }
+#endif
+  TRACE(("sbScriptableMediaListFunction::sbScriptableMediaListFunction()"));
 }
 
-NS_IMETHODIMP sbScriptableFunction::CanCallMethod( const nsIID * iid,
-                                                  const PRUnichar *methodName,
-                                                  char **_retval)
+sbScriptableMediaListFunction::~sbScriptableMediaListFunction()
 {
-  TRACE(("sbScriptableFunction::CanCallMethod() - %s",
-         NS_LossyConvertUTF16toASCII(methodName).BeginReading()));
-
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
-  return NS_OK;
 }
 
-NS_IMETHODIMP sbScriptableFunction::CanGetProperty( const nsIID * iid,
-                                                   const PRUnichar *propertyName,
-                                                   char **_retval)
+NS_IMETHODIMP
+sbScriptableMediaListFunction::Call( nsIXPConnectWrappedNative *wrapper,
+                                     JSContext *cx,
+                                     JSObject *obj,
+                                     PRUint32 argc,
+                                     jsval *argv,
+                                     jsval *vp,
+                                     PRBool *_retval )
 {
-  TRACE(("sbScriptableFunction::CanGetProperty() - %s",
-         NS_LossyConvertUTF16toASCII(propertyName).BeginReading()));
-
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
+  TRACE(("sbScriptableMediaListFunction::Call()"));
   return NS_OK;
 }
-
-NS_IMETHODIMP sbScriptableFunction::CanSetProperty( const nsIID * iid,
-                                                   const PRUnichar *propertyName,
-                                                   char **_retval)
-{
-  TRACE(("sbScriptableFunction::CanSetProperty() - %s",
-         NS_LossyConvertUTF16toASCII(propertyName).BeginReading()));
-
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = ToNewCString( NS_LITERAL_CSTRING("NoAccess") );
-  return NS_OK;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                          nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-NS_DECL_CLASSINFO(sbScriptableFunction)
-
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFunction)
