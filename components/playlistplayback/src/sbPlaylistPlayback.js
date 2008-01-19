@@ -272,9 +272,11 @@ PlaylistPlayback.prototype = {
   _metadataPollCount: 0,
   
   /**
-   *
+   * Shuffle related data
    */
   _shuffle: false,
+  _shuffleWasTriggered: false,
+  _shuffleData: { shuffleView: null, indexes: [], availableIndexes: [], position: 0 },
 
   /**
    * An array of cores to use
@@ -882,9 +884,7 @@ PlaylistPlayback.prototype = {
       aIndex = 0;
       // See if we should shuffle on it
       if ( this._shuffle.boolValue ) {
-        var num_items = this._playingView.length;
-        var rand = num_items * Math.random();
-        aIndex = Math.floor( rand );
+        aIndex = this._shufflerGetNextTrack();
       }
     }
 
@@ -896,6 +896,14 @@ PlaylistPlayback.prototype = {
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
+
+    if ( !this._shuffleWasTriggered ) {
+      this._shufflerResetData();
+      this._shuffleData.availableIndexes.splice(aIndex, 1);
+      this._shuffleData.indexes.push(aIndex);
+    }
+
+    this._shuffleWasTriggered = false;
 
     // Notify listeners of a track change
     this._listeners.forEach(function(aListener) {
@@ -1755,8 +1763,14 @@ PlaylistPlayback.prototype = {
         }
         // Are we SHUFFLE?
         else if ( this._shuffle.boolValue ) {
-          var rand = num_items * Math.random();
-          next_index = Math.floor( rand );
+          var increment = parseInt(incr);
+          if(increment > -1) {
+            next_index = this._shufflerGetNextTrack();
+          }
+          else {
+            next_index = this._shufflerGetPreviousTrack(increment);
+          }
+
           LOG( "shuffle: " + next_index );
         }
         else {
@@ -1867,6 +1881,99 @@ PlaylistPlayback.prototype = {
     this._metadataAlbum.stringValue = album;
     this._metadataGenre.stringValue = genre;
     this._metadataLen.intValue = parseInt(duration, 10) / 1000;
+  },
+
+  _shufflerGetPreviousTrack: function sbPlaylistPlayback_shufflerGetPreviousTrack(aIncrement) {
+
+    // Check if our view is still the playing view.
+    if(this._playingView != this._shuffleData.shuffleView) {
+      this._shufflerResetData();
+    }
+
+    var requestedIndex = this._shuffleData.position + aIncrement;
+    if( requestedIndex < 0 ) {
+      return -1;
+    }
+
+    this._shuffleWasTriggered = true;
+    this._shuffleData.position = requestedIndex;
+    
+    return this._shuffleData.indexes[requestedIndex];
+  },
+  
+  _shufflerGetNextTrack: function sbPlaylistPlayback_shufflerGetNextTrack() {
+    
+    // Check if our view is still the playing view.
+    if(this._playingView != this._shuffleData.shuffleView) {
+      this._shufflerResetData();
+    }
+    
+    var view = this._shuffleData.shuffleView;
+    var length = view.length;
+    var indexesLength = this._shuffleData.indexes.length;
+    var availableIndexesLength = this._shuffleData.availableIndexes.length;
+    var shuffleIndex = -1;
+    
+    // Check to see if we're in the shuffler history or not.
+    if ( this._shuffleData.position != (indexesLength - 1) ) {
+      // We are indeed in the shuffler history, 
+      // let's grab the next one in the list.
+      shuffleIndex = this._shuffleData.indexes[this._shuffleData.position];
+      this._shuffleData.position++;
+      
+      return shuffleIndex;
+    }
+    
+    // We're not in the shuffler history, make sure we haven't 
+    // played everything already. If not, pick something fresh.
+    if( indexesLength >= length ) {
+      // Check to see if we are in repeat mode.
+      if( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ALL ) {
+        this._shufflerResetData();
+      }
+      else {
+        // We played everything already.
+        return -1;
+      }
+    }
+    
+    shuffleIndex = Math.floor( availableIndexesLength * Math.random() );
+    var actualIndex = this._shuffleData.availableIndexes[shuffleIndex];
+
+    this._shuffleData.indexes.push(actualIndex);
+    this._shuffleData.availableIndexes.splice(shuffleIndex, 1);
+    this._shuffleData.position = this._shuffleData.indexes.length - 1;
+    this._shuffleWasTriggered = true;
+    
+    return actualIndex;
+  },
+
+  _shufflerHasPlayedAll: function sbPlaylistPlayback_shufflerHasPlayedAll() {
+    var view = this._shuffleData.shuffleView;
+    if ( view instanceof Components.interfaces.sbIMediaListView ) {
+      var length = view.length;
+      var indexesLength = this._shuffleData.indexes.length;
+
+      if( indexesLength >= length ) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+  _shufflerResetData: function sbPlaylistPlayback_shufflerResetData() {
+    this._shuffleData.shuffleView = this._playingView;
+    this._shuffleData.indexes = [];
+    
+    // Fill pool of indexes.
+    var i = 0;
+    var length = this._playingView.length;
+    for(; i < length; i++) {
+      this._shuffleData.availableIndexes[i] = i;
+    }
+    
+    this._shuffleData.position = 0;
   },
 
   _restartApp: function() {
