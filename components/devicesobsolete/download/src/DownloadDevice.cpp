@@ -99,6 +99,8 @@
  *                              Update period for download progress.
  * SB_DOWNLOAD_IDLE_TIMEOUT_MS  How long to wait after progress before 
  *                              considering a download to be failed.
+ * SB_DOWNLOAD_PROGRESS_TIMER_MS
+ *                              How often should we update progress.
  *                 
  */
 
@@ -120,6 +122,7 @@
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
 #define SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS   1000
 #define SB_DOWNLOAD_IDLE_TIMEOUT_MS (60*1000)
+#define SB_DOWNLOAD_PROGRESS_TIMER_MS 1000
 
 
 /* *****************************************************************************
@@ -2694,6 +2697,11 @@ nsresult sbDownloadSession::Initiate()
         mIdleTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &result);
     }
 
+    /* Create the progress timer */
+    if (NS_SUCCEEDED(result)) {
+        mProgressTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &result);
+    }
+
     return (result);
 }
 
@@ -2797,6 +2805,9 @@ void sbDownloadSession::Shutdown()
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
+    /* Stop the timers */
+    StopTimers();
+
     // Keep a ref to ourselves since the clean up code will release us too
     // early
     nsRefPtr<sbDownloadSession> kungFuDeathGrip(this);
@@ -2898,10 +2909,10 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
         if (aStateFlags & STATE_START) {
           /* start the timer */
-          StartTimer();
+          StartTimers();
         } else if (aStateFlags & STATE_STOP) {
           /* stop the timer */
-          StopTimer();
+          StopTimers();
         }
 
         /* Do nothing if download has not stopped or if shutting down. */
@@ -3038,7 +3049,7 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
            aCurTotalProgress, aMaxTotalProgress));
 
     /* we got some progress, let's reset the idle timer */
-    ResetTimer();
+    ResetTimers();
 
     PRBool                      suspendRequest = PR_FALSE;
 
@@ -3172,10 +3183,14 @@ NS_IMETHODIMP sbDownloadSession::OnSecurityChange(
  ******************************************************************************/
 NS_IMETHODIMP sbDownloadSession::Notify(nsITimer* aTimer)
 {
-    /* Once the idle timer has timed out we should abort the request.
-     * Our onStateChange handler will take care of reflecting the state
-     * into the UI. */
-    mpRequest->Cancel(NS_BINDING_ABORTED);
+    if (aTimer == mIdleTimer) {
+      /* Once the idle timer has timed out we should abort the request.
+       * Our onStateChange handler will take care of reflecting the state
+       * into the UI. */
+      mpRequest->Cancel(NS_BINDING_ABORTED);
+    } else if (aTimer == mProgressTimer) {
+      UpdateProgress(mLastProgressBytes, mLastProgressBytesMax);
+    }
     return NS_OK;
 }
 
@@ -3523,6 +3538,7 @@ void sbDownloadSession::UpdateDownloadDetails(
     /* Save update state. */
     mLastUpdate = now;
     mLastProgressBytes = aProgress;
+    mLastProgressBytesMax = aProgressMax;
 }
 
 
@@ -3791,33 +3807,47 @@ nsresult sbDownloadSession::FormatTime(
 
 
 /**
- * \brief Start the idle timer.
+ * \brief Start the idle and progress timers.
  */
-nsresult sbDownloadSession::StartTimer()
+nsresult sbDownloadSession::StartTimers()
 {
+    mProgressTimer->Cancel();
+    mProgressTimer->InitWithCallback(this, SB_DOWNLOAD_PROGRESS_TIMER_MS,
+        nsITimer::TYPE_REPEATING_SLACK);
+
     mIdleTimer->Cancel();
-    return mIdleTimer->InitWithCallback(this, SB_DOWNLOAD_IDLE_TIMEOUT_MS,
+    mIdleTimer->InitWithCallback(this, SB_DOWNLOAD_IDLE_TIMEOUT_MS,
         nsITimer::TYPE_ONE_SHOT);
+
+    return NS_OK;
 }
 
 
 /**
- * \brief Stop the idle timer.
+ * \brief Stop the idle and progress timers.
  */
-nsresult sbDownloadSession::StopTimer()
+nsresult sbDownloadSession::StopTimers()
 {
-    return mIdleTimer->Cancel();
+    mProgressTimer->Cancel();
+    mIdleTimer->Cancel();
+    return NS_OK;
 }
 
 
 /**
- * \brief Reset the idle timer.
+ * \brief Reset the idle and progress timers.
  */
-nsresult sbDownloadSession::ResetTimer()
+nsresult sbDownloadSession::ResetTimers()
 {
+    mProgressTimer->Cancel();
+    mProgressTimer->InitWithCallback(this, SB_DOWNLOAD_PROGRESS_TIMER_MS,
+        nsITimer::TYPE_REPEATING_SLACK);
+
     mIdleTimer->Cancel();
     return mIdleTimer->InitWithCallback(this, SB_DOWNLOAD_IDLE_TIMEOUT_MS,
         nsITimer::TYPE_ONE_SHOT);
+
+    return NS_OK;
 }
 
 

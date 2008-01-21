@@ -374,8 +374,10 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
     PRBool                      mSuspended;
     PRTime                      mLastUpdate;
     PRUint64                    mLastProgressBytes;
+    PRUint64                    mLastProgressBytesMax;
     double                      mRate;
     nsCOMPtr<nsITimer>          mIdleTimer;
+    nsCOMPtr<nsITimer>          mProgressTimer;
 
 
     /*
@@ -418,9 +420,9 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
         nsString                    &aTimeStr,
         PRUint32                    aSeconds);
 
-    nsresult StartTimer();
-    nsresult StopTimer();
-    nsresult ResetTimer();
+    nsresult StartTimers();
+    nsresult StopTimers();
+    nsresult ResetTimers();
 
 
     /* *************************************************************************
