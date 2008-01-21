@@ -397,7 +397,9 @@ we should nix the painting of the selection.*/
 
 .servicepane-tree > treechildren::-moz-tree-row( dropOn )
 {
-  background-color: #202220; /** Button Shadow */
+  background-color: #313131; /* color of the Main Window **/
+  border:1px solid #5c5f58 !important; /** Selected Focus Row */
+  -moz-border-radius:3px;
 }
 
 .servicepane-toolbar-newitem-button > .clickhold-button
