@@ -74,6 +74,9 @@ try
 
     // add a filter to show only supported media files
     fp.appendFilter(mediafiles, files);
+    
+    // add a filter to allow HTML files to be opened.
+    fp.appendFilters(Components.interfaces.nsIFilePicker.filterHTML);
 
     // Show the filepicker
     var fp_status = fp.show();
@@ -100,6 +103,12 @@ try
       if ( isXPI( uri.spec ) )
       {
         installXPI( uri.spec );
+      }
+      // Load the HTML page if necessary
+      else if ( isHTMLFileExtension( uri.spec ) )
+      {
+        if ( isHTML( fp.file ))
+          gBrowser.loadURI( uri.spec );
       }
       else
       {
@@ -693,6 +702,54 @@ function javascriptConsole() {
 // Match filenames ending with .xpi or .jar
 function isXPI(filename) {
   return /\.(xpi|jar)$/i.test(filename);
+}
+
+/**
+ * \brief Check to see if a file is really HTML.
+ * \param inFile The |nsIFile| to peek inside of
+ * \return If the file is of HTML content or not.
+ */
+function isHTML(inFile) {
+  var isHTML = false;
+  
+  // Check the file extension before attempting to sneak inside the file:
+  var fileStream = 
+    Components.classes["@mozilla.org/network/file-input-stream;1"]
+              .createInstance(Components.interfaces.nsIFileInputStream);
+  
+  var scriptStream =
+    Components.classes["@mozilla.org/scriptableinputstream;1"]
+              .createInstance(Components.interfaces.nsIScriptableInputStream);
+              
+  try {
+    fileStream.init(inFile, -1, 0, 0);
+    scriptStream.init(fileStream);
+  
+    // Look in the first 2k of a file for '<HTML>'.
+    var str = scriptStream.read(2048);
+    
+    isHTML = containsHTMLStartTag(str);
+    if (!isHTML) {
+      // Nothing in the first 2k, let's have one more look at the next 2k:
+      str = scriptStream.read(2048);
+      isHTML = containsHTMLStartTag(str);
+    }
+    
+    fileStream.close();
+    scriptStream.close();
+  }
+  catch (e) {
+  } 
+  
+  return isHTML;
+}
+
+function containsHTMLStartTag(inBuffer) {
+  return (inBuffer.toLowerCase().indexOf("<html") > -1);
+}
+
+function isHTMLFileExtension(inFilename) {
+  return /\.(html|htm)$/i.test(inFilename);
 }
 
 // Prompt the user to install the given XPI.
