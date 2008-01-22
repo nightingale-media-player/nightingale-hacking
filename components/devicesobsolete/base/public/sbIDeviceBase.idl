@@ -123,7 +123,7 @@ interface sbIDeviceBaseCallback : nsISupports
  * instance "Songbird CD Device" is the Device Category and "D:\" is the Device
  * String.
  */
-[scriptable, uuid(2e67cb89-e971-4bdc-b801-de7d250513ea)]
+[scriptable, uuid(e3cd687e-683b-4c78-b7df-bf35aae9ac10)]
 interface sbIDeviceBase : nsISupports
 {
   /**
