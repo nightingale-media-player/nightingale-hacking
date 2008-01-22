@@ -1049,53 +1049,6 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     return (result);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::CreatePlaylists(
-    const nsAString             &aDeviceIdentifier,
-    nsIArray                    *aMediaLists,
-    PRUint32                    *aItemCount)
-{
-    return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::DeletePlaylists(
-    const nsAString             &aDeviceIdentifier,
-    nsIArray                    *aMediaLists,
-    PRUint32                    *aItemCount)
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::AddToPlaylist(
-    const nsAString             &aDeviceIdentifier,
-    sbIMediaList                *aMediaList,
-    nsIArray                    *aMediaLists,
-    PRUint16                    aBeforeIndex,
-    PRUint32                    *aItemCount)
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::RemoveFromPlaylist(
-    const nsAString             &aDeviceIdentifier,
-    sbIMediaList                *aMediaList,
-    PRUint16                    aIndex,
-    PRUint32                    *aItemCount)
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::ClearPlaylist(
-    const nsAString             &aDeviceIdentifier,
-    sbIMediaList                *aMediaList,
-    PRUint32                    *aItemCount)
-{
-  return NS_OK;
-}
 
 /**
  * \brief Delete all items from the device.

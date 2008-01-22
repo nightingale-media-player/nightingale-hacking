@@ -151,8 +151,6 @@ sbDeviceBaseLibraryListener::Init(const nsAString &aDeviceIdentifier,
 
   mDeviceIdentifier = aDeviceIdentifier;
   mDevice = aDevice;
-  PRBool success = mBeforeRemoveIndexes.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -175,82 +173,34 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
   nsresult rv;
+  nsCOMPtr<nsIMutableArray> items;
 
   //XXXAus: Before adding to queue, make sure it doesn't come from
   //another device. Ask DeviceManager for the device library
   //containing this item.
 
-  nsCOMPtr<sbILibrary> library;
-  rv = aMediaList->GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool destinationIsLibrary;
-  rv = aMediaList->Equals(library, &destinationIsLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
-  PRBool addedIsList = NS_SUCCEEDED(rv);
-
-  // If a list is being added to the library, we need to attach a listener
-  // so we can track changes to the list
-  if (destinationIsLibrary && addedIsList) {
-    rv = list->AddListener(this,
-                           PR_FALSE,
-                           sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                           sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
-                           sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                           sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
-                           nsnull);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if(mIgnoreListener) {
-    return NS_OK;
-  }
-
-  nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+  items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIURI> uri;
+  //XXXAus: Read this from a library pref???
+
   PRUint32 transferItemCount = 0;
-  if (destinationIsLibrary) {
-    if (addedIsList) {
-      rv = mDevice->CreatePlaylists(mDeviceIdentifier,
-                                    items,
-                                    &transferItemCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      nsCOMPtr<nsIURI> uri;
-      //XXXAus: Read this from a library pref???
-      rv = mDevice->TransferItems(mDeviceIdentifier, 
-                                  items, 
-                                  uri,
-                                  sbIDeviceBase::OP_UPLOAD, 
-                                  PR_TRUE,
-                                  nsnull, 
-                                  &transferItemCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else {
-    if (addedIsList) {
-      NS_WARNING("DeviceBase does not support lists of lists!");
-    }
-    else {
-      // An item is getting added to a list
-      rv = mDevice->AddToPlaylist(mDeviceIdentifier,
-                                  aMediaList,
-                                  items,
-                                  0,
-                                  &transferItemCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
+  rv = mDevice->TransferItems(mDeviceIdentifier, 
+                              items, 
+                              uri,
+                              sbIDeviceBase::OP_UPLOAD, 
+                              PR_TRUE,
+                              nsnull, 
+                              &transferItemCount);
 
   return NS_OK;
 }
@@ -264,29 +214,7 @@ sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
-  nsresult rv;
   *aNoMoreForBatch = PR_FALSE;
-
-  // We need to track the indexes of items that are about to be removed from
-  // lists.  Note that this will not work as expected when removing an item
-  // from a list that has multiple instances of the same item.
-  nsCOMPtr<sbILibrary> library;
-  rv = aMediaList->GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool fromListIsLibrary;
-  rv = aMediaList->Equals(library, &fromListIsLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!fromListIsLibrary) {
-    PRUint32 index;
-    rv = aMediaList->IndexOf(aMediaItem, 0, &index);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool success = mBeforeRemoveIndexes.Put(aMediaItem, index);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  }
-
   return NS_OK;
 }
 
@@ -299,67 +227,24 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
-  nsresult rv;
-
   *aNoMoreForBatch = PR_FALSE;
-
-  nsCOMPtr<sbILibrary> library;
-  rv = aMediaList->GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool fromListIsLibrary;
-  rv = aMediaList->Equals(library, &fromListIsLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
-  PRBool removedIsList = NS_SUCCEEDED(rv);
-
-  if (fromListIsLibrary && removedIsList) {
-    rv = list->RemoveListener(this);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   if(mIgnoreListener) {
     return NS_OK;
   }
 
-  nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> items;
+
+  items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 deleteItemCount;
-  if (fromListIsLibrary) {
-    if (removedIsList) {
-      rv = mDevice->DeletePlaylists(mDeviceIdentifier, items, &deleteItemCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = mDevice->DeleteItems(mDeviceIdentifier, items, &deleteItemCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else {
-    if (removedIsList) {
-      NS_WARNING("Removal of lists that contain lists is not suported");
-    }
-    else {
-      PRUint32 index;
-      PRBool found = mBeforeRemoveIndexes.Get(aMediaItem, &index);
-      if (found) {
-        rv = mDevice->RemoveFromPlaylist(mDeviceIdentifier,
-                                         aMediaList,
-                                         index,
-                                         &deleteItemCount);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        NS_WARNING("OnAfterItemRemoved on item not in mBeforeRemoveIndexes");
-      }
-    }
-  }
+  rv = mDevice->DeleteItems(mDeviceIdentifier, items, &deleteItemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
