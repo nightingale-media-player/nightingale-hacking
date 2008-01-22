@@ -52,8 +52,8 @@ dndDefaultHandler_module.onLoad = function(event)
 {
   if (dndDefaultHandler_module.init_once++) { dump("WARNING: dndDefaultHandler_module double init!!\n"); return; }
   
-  document.addEventListener( "dragover", dndDefaultHandler_module.onDragOver, true );
-  document.addEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, true );
+  document.addEventListener( "dragover", dndDefaultHandler_module.onDragOver, false );
+  document.addEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, false );
 }
 
 dndDefaultHandler_module.onUnload = function()
