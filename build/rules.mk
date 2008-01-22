@@ -983,10 +983,10 @@ copy_sb_license_file:
 ifeq (,$(wildcard $(SONGBIRD_DISTDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
 endif
-	$(CYGWIN_WRAPPER) $(CP) -f $(SONGBIRD_LICENSE_FILE) $(SONGBIRD_DISTDIR)/LICENSE.txt
+	$(CYGWIN_WRAPPER) $(CP) -f $(SONGBIRD_LICENSE_FILE) $(SONGBIRD_DISTDIR)/LICENSE.html
 
 clean_copy_sb_license_file:
-	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/LICENSE.txt
+	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/LICENSE.html
 
 .PHONY : copy_sb_license_file clean_copy_sb_license_file
 endif #SONGBIRD_LICENSE_FILE
