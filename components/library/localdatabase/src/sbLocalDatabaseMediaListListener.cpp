@@ -289,9 +289,9 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
   // longer be notified in the current batch.  Match up the listeners in this
   // array with the main listener array by comparing the listener comptr
 
-  for (PRUint32 i = 0; i  < numStopNotifying; i++) {
+  for (PRInt32 i = numStopNotifying - 1; i >= 0; i--) {
     const StopNotifyFlags& stop = aStopNotifying[i];
-    for (PRUint32 j = 0; j < numListeners; j++) {
+    for (PRInt32 j = numListeners - 1; j >= 0; j--) {
       if (stop.listener == mListenerArray[j]->mProxy) {
         if (stop.isGone) {
           mListenerArray.RemoveElementAt(j);
