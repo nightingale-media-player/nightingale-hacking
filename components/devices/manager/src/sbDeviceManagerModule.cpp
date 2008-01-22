@@ -55,8 +55,8 @@ sbDeviceManagerRegisterSelf(nsIComponentManager* aCompMgr,
 
   rv = categoryManager->
          AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SONGBIRD_DEVICEMANAGER_DESCRIPTION,
-                          "service," SONGBIRD_DEVICEMANAGER_CONTRACTID,
+                          SONGBIRD_DEVICEMANAGER2_DESCRIPTION,
+                          "service," SONGBIRD_DEVICEMANAGER2_CONTRACTID,
                           PR_TRUE, PR_TRUE, nsnull);
   return rv;
 }
@@ -73,7 +73,7 @@ sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SONGBIRD_DEVICEMANAGER_DESCRIPTION,
+                                            SONGBIRD_DEVICEMANAGER2_DESCRIPTION,
                                             PR_TRUE);
 
   return rv;
@@ -82,9 +82,9 @@ sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
 static nsModuleComponentInfo sbDeviceManagerComponents[] =
 {
   {
-    SONGBIRD_DEVICEMANAGER_CLASSNAME,
-    SONGBIRD_DEVICEMANAGER_CID,
-    SONGBIRD_DEVICEMANAGER_CONTRACTID,
+    SONGBIRD_DEVICEMANAGER2_CLASSNAME,
+    SONGBIRD_DEVICEMANAGER2_CID,
+    SONGBIRD_DEVICEMANAGER2_CONTRACTID,
     sbDeviceManagerConstructor,
     sbDeviceManagerRegisterSelf,
     sbDeviceManagerUnregisterSelf

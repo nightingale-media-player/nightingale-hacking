@@ -30,14 +30,14 @@
  */
 
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
+var gUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"]
+                               .createInstance(Components.interfaces.nsIUUIDGenerator);
+
 
 function DummyController(aParam) {
-  var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"]
-                                 .createInstance(Components.interfaces.nsIUUIDGenerator);
-
   this.wrappedJSObject = this;
   this.name = aParam;
-  this.id = aUUIDGenerator.generateUUID();
+  this.id = gUUIDGenerator.generateUUID();
 }
 
 function runTest () {

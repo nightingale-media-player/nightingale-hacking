@@ -79,13 +79,13 @@ protected:
   nsInterfaceHashtable<nsIDHashKey, sbIDeviceMarshall> mMarshalls;
 };
 
-#define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
-  "Songbird DeviceManager Service"
-#define SONGBIRD_DEVICEMANAGER_CONTRACTID                  \
+#define SONGBIRD_DEVICEMANAGER2_DESCRIPTION                \
+  "Songbird DeviceManager2 Service"
+#define SONGBIRD_DEVICEMANAGER2_CONTRACTID                 \
   "@songbirdnest.com/Songbird/DeviceManager;2"
-#define SONGBIRD_DEVICEMANAGER_CLASSNAME                   \
-  "Songbird Device Manager"
-#define SONGBIRD_DEVICEMANAGER_CID                         \
+#define SONGBIRD_DEVICEMANAGER2_CLASSNAME                  \
+  "Songbird Device Manager 2"
+#define SONGBIRD_DEVICEMANAGER2_CID                        \
 { /* {F1B2417E-2515-481d-B03A-DA3D5B7F62FA} */             \
   0xf1b2417e, 0x2515, 0x481d,                              \
   { 0xb0, 0x3a, 0xda, 0x3d, 0x5b, 0x7f, 0x62, 0xfa } }
