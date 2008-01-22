@@ -97,6 +97,14 @@ NS_IMETHODIMP sbDeviceManager::GetMarshalls(nsIArray * *aMarshalls)
   NS_ENSURE_ARG_POINTER(aMarshalls);
 
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -121,6 +129,13 @@ NS_IMETHODIMP sbDeviceManager::GetMarshallByID(const nsID * aIDPtr,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aIDPtr);
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool succeded = mMarshalls.Get(*aIDPtr, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -163,6 +178,14 @@ NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
   NS_ENSURE_ARG_POINTER(aControllers);
 
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -188,6 +211,14 @@ NS_IMETHODIMP sbDeviceManager::RegisterController(sbIDeviceController *aControll
   NS_ENSURE_ARG_POINTER(aController);
   
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsID* id;
   rv = aController->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -204,6 +235,14 @@ NS_IMETHODIMP sbDeviceManager::UnregisterController(sbIDeviceController *aContro
   NS_ENSURE_ARG_POINTER(aController);
   
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsID* id;
   rv = aController->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -220,6 +259,14 @@ NS_IMETHODIMP sbDeviceManager::GetController(const nsID * aControllerId,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aControllerId);
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
 
   PRBool succeded = mControllers.Get(*aControllerId, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -231,6 +278,14 @@ NS_IMETHODIMP sbDeviceManager::GetDevices(nsIArray * *aDevices)
   NS_ENSURE_ARG_POINTER(aDevices);
 
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -285,6 +340,14 @@ NS_IMETHODIMP sbDeviceManager::UnregisterDevice(sbIDevice *aDevice)
   NS_ENSURE_ARG_POINTER(aDevice);
   
   nsresult rv;
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   nsID* id;
   rv = aDevice->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -301,6 +364,13 @@ NS_IMETHODIMP sbDeviceManager::GetDevice(const nsID * aDeviceId,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aDeviceId);
+  
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool succeded = mDevices.Get(*aDeviceId, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -385,11 +455,8 @@ nsresult sbDeviceManager::Init()
   NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
   
   // load the marshalls
-  nsCOMPtr<nsIComponentManager> compMgr;
-  rv = NS_GetComponentManager(getter_AddRefs(compMgr));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsICategoryManager> catMgr = do_QueryInterface(compMgr, &rv);
+  nsCOMPtr<nsICategoryManager> catMgr =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsISimpleEnumerator> enumerator;

@@ -91,4 +91,4 @@ static nsModuleComponentInfo sbDeviceManagerComponents[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManager, sbDeviceManagerComponents)
+NS_IMPL_NSGETMODULE(SongbirdDeviceManager2, sbDeviceManagerComponents)

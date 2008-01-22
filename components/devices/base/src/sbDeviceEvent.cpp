@@ -33,9 +33,9 @@
 
 /* note that we have a "sbDeviceEvent" IID so we can get pointers to this
    concrete class from a COM pointer */
-NS_IMPL_ISUPPORTS2(sbDeviceEvent,
-                   sbDeviceEvent,
-                   sbIDeviceEvent)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceEvent,
+                              sbDeviceEvent,
+                              sbIDeviceEvent)
 
 sbDeviceEvent::sbDeviceEvent()
  : mWasDispatched(PR_FALSE),
