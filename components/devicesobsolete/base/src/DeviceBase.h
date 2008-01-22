@@ -98,6 +98,8 @@ protected:
   nsString mDeviceIdentifier;
 
   PRBool mIgnoreListener;
+
+  nsDataHashtable<nsISupportsHashKey, PRUint32> mBeforeRemoveIndexes;
 };
 
 class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener
