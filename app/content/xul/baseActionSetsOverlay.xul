@@ -97,8 +97,9 @@
     <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
   </keyset>
-  
-  <stringbundleset id="mainBundleSet">
+
+  <!-- this id matches Firefox's --> 
+  <stringbundleset id="stringbundleset">
     <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
   </stringbundleset>
   

@@ -267,8 +267,9 @@
     <!-- **                   Stringbundle Overlay Items                    ** -->
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
-    
-    <stringbundleset id="mainBundleSet">
+
+    <!-- this id matches Firefox's --> 
+    <stringbundleset id="stringbundleset">
       <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
     </stringbundleset> 
 
