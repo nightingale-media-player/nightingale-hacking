@@ -1216,6 +1216,7 @@ menupopup,
 popup
 {
   background-color: #0f100f; /** Groove */
+  border: 1px solid #202220; /** Button Shadow */
   color: #feffff; /** Light Color Brightest */
 }
 
