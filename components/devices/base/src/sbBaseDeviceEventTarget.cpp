@@ -28,6 +28,7 @@
 #include "sbBaseDeviceEventTarget.h"
 
 #include <nsIThread.h>
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsDeque.h>
 #include <nsThreadUtils.h>
@@ -60,6 +61,8 @@ class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
 sbBaseDeviceEventTarget::sbBaseDeviceEventTarget()
 {
   /* member initializers and constructor code */
+  mMonitor = nsAutoMonitor::NewMonitor(__FILE__);
+  NS_ASSERTION(mMonitor, "Failed to create monitor");
 }
 
 sbBaseDeviceEventTarget::~sbBaseDeviceEventTarget()
@@ -75,12 +78,16 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent)
   if (!NS_IsMainThread()) {
     // we need to proxy to the main thread
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIDeviceEventTarget),
-                              this,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(proxiedSelf));
-    NS_ENSURE_SUCCESS(rv, rv);
+    { /* scope the monitor */
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+      nsAutoMonitor mon(mMonitor);
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIDeviceEventTarget),
+                                this,
+                                NS_PROXY_SYNC,
+                                getter_AddRefs(proxiedSelf));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     return proxiedSelf->DispatchEvent(aEvent);
   }
 
@@ -137,12 +144,16 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
     // because we can't just use a monitor (that'll deadlock if we're in the
     // middle of a listener, then got proxied onto a second thread)
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIDeviceEventTarget),
-                              this,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(proxiedSelf));
-    NS_ENSURE_SUCCESS(rv, rv);
+    { /* scope the monitor */
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+      nsAutoMonitor mon(mMonitor);
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIDeviceEventTarget),
+                                this,
+                                NS_PROXY_SYNC,
+                                getter_AddRefs(proxiedSelf));
+      NS_ENSURE_SUCCESS(rv, rv);
+	}
     
     // XXX Mook: consider wrapping the listener in a proxy
     
@@ -167,12 +178,16 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::RemoveEventListener(sbIDeviceEventListene
   if (!NS_IsMainThread()) {
     // we need to proxy to the main thread
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIDeviceEventTarget),
-                              this,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(proxiedSelf));
-    NS_ENSURE_SUCCESS(rv, rv);
+    { /* scope the monitor */
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+      nsAutoMonitor mon(mMonitor);
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIDeviceEventTarget),
+                                this,
+                                NS_PROXY_SYNC,
+                                getter_AddRefs(proxiedSelf));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     return proxiedSelf->RemoveEventListener(aListener);
   }
   
