@@ -78,6 +78,7 @@ LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbStorageFormatter.jsm \
+                      $(srcdir)/sbTimeFormatter.jsm \
                       $(DYNAMIC_LIB) \
                       $(NULL)
 
