@@ -1930,8 +1930,8 @@ PlaylistPlayback.prototype = {
     if ( this._shuffleData.position != (indexesLength - 1) ) {
       // We are indeed in the shuffler history, 
       // let's grab the next one in the list.
-      shuffleIndex = this._shuffleData.indexes[this._shuffleData.position];
       this._shuffleData.position++;
+      shuffleIndex = this._shuffleData.indexes[this._shuffleData.position];
       
       return shuffleIndex;
     }
