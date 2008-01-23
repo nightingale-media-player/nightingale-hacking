@@ -1661,7 +1661,7 @@
           
           // Find a gBrowser in the window hierarchy chain (for display panels, etc)
           var browser = this.getBrowser();
-          if (browser == 'undefined') {
+          if (typeof browser == 'undefined') {
             // where do you expect me to show you this currently playing
             // track of yours?
             return;
