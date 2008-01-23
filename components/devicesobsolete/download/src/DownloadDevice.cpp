@@ -1661,6 +1661,49 @@ NS_IMETHODIMP sbDownloadDevice::OnListCleared(
 }
 
 
+NS_IMETHODIMP
+sbDownloadDevice::CreatePlaylists(const nsAString &aDeviceIdentifier,
+                                  nsIArray *aMediaLists,
+                                  PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadDevice::DeletePlaylists(const nsAString &aDeviceIdentifier,
+                                  nsIArray *aMediaLists,
+                                  PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadDevice::AddToPlaylist(const nsAString &aDeviceIdentifier,
+                                sbIMediaList *aMediaList,
+                                nsIArray *aMediaLists,
+                                PRUint16 aBeforeIndex,
+                                PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadDevice::RemoveFromPlaylist(const nsAString &aDeviceIdentifier,
+                                     sbIMediaList *aMediaList,
+                                     PRUint16 aIndex,
+                                     PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadDevice::ClearPlaylist(const nsAString &aDeviceIdentifier,
+                                sbIMediaList *aMediaList,
+                                PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
 /**
  * \brief Called when the library is about to perform multiple operations at
  *        once.

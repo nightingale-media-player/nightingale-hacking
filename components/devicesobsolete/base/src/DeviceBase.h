@@ -45,6 +45,7 @@
 #include <nsAutoPtr.h>
 #include <nsIMutableArray.h>
 #include <nsInterfaceHashtable.h>
+#include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
@@ -91,6 +92,7 @@ public:
                 sbIDeviceBase* aDevice);
 
   nsresult SetIgnoreListener(PRBool aIgnoreListener);
+  nsresult SetManagePlaylists(PRBool aManagePlaylists);
 
 protected:
   // The device owns the listener, so use a non-owning reference here
@@ -98,6 +100,10 @@ protected:
   nsString mDeviceIdentifier;
 
   PRBool mIgnoreListener;
+  PRBool mManagePlaylists;
+
+  typedef nsDataHashtable<nsISupportsHashKey, PRUint32> sbRemovedItemIndexes;
+  nsClassHashtable<nsISupportsHashKey, sbRemovedItemIndexes> mBeforeRemoveIndexes;
 };
 
 class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener
