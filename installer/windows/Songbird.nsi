@@ -210,7 +210,7 @@ Section "-Application" Section1
   File ${VistaIcon}
   
   ; List of text files to install
-  File LICENSE.txt
+  File LICENSE.html
   File TRADEMARK.txt
   File README.txt
   
