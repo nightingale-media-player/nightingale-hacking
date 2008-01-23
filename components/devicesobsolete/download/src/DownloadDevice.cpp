@@ -1681,7 +1681,7 @@ NS_IMETHODIMP
 sbDownloadDevice::AddToPlaylist(const nsAString &aDeviceIdentifier,
                                 sbIMediaList *aMediaList,
                                 nsIArray *aMediaLists,
-                                PRUint16 aBeforeIndex,
+                                PRUint32 aBeforeIndex,
                                 PRUint32 *aItemCount)
 {
   return NS_OK;
@@ -1690,7 +1690,8 @@ sbDownloadDevice::AddToPlaylist(const nsAString &aDeviceIdentifier,
 NS_IMETHODIMP
 sbDownloadDevice::RemoveFromPlaylist(const nsAString &aDeviceIdentifier,
                                      sbIMediaList *aMediaList,
-                                     PRUint16 aIndex,
+                                     sbIMediaItem *aMediaItem,
+                                     PRUint32 aIndex,
                                      PRUint32 *aItemCount)
 {
   return NS_OK;

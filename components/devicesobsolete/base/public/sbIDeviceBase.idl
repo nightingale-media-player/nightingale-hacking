@@ -123,7 +123,7 @@ interface sbIDeviceBaseCallback : nsISupports
  * instance "Songbird CD Device" is the Device Category and "D:\" is the Device
  * String.
  */
-[scriptable, uuid(e3cd687e-683b-4c78-b7df-bf35aae9ac10)]
+[scriptable, uuid(a411c3c7-b0a5-4a62-be32-9f4c3ad93eed)]
 interface sbIDeviceBase : nsISupports
 {
   /**
@@ -305,11 +305,12 @@ interface sbIDeviceBase : nsISupports
   unsigned long addToPlaylist(in AString aDeviceIdentifier,
                               in sbIMediaList aMediaList,
                               in nsIArray aMediaItems,
-                              in unsigned short aBeforeIndex);
+                              in unsigned long aBeforeIndex);
 
   unsigned long removeFromPlaylist(in AString aDeviceIdentifier,
                                    in sbIMediaList aMediaList,
-                                   in unsigned short aIndex);
+                                   in sbIMediaItem aMediaItem,
+                                   in unsigned long aIndex);
 
   unsigned long clearPlaylist(in AString aDeviceIdentifier,
                               in sbIMediaList aMediaList);

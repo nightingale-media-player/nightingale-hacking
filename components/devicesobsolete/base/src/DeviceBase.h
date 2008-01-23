@@ -95,6 +95,11 @@ public:
   nsresult SetManagePlaylists(PRBool aManagePlaylists);
 
 protected:
+  static PLDHashOperator PR_CALLBACK
+    ShiftIndexesCallback(nsISupportsHashKey::KeyType aKey,
+                         PRUint32& aEntry,
+                         void* aUserData);
+
   // The device owns the listener, so use a non-owning reference here
   sbIDeviceBase* mDevice;
   nsString mDeviceIdentifier;

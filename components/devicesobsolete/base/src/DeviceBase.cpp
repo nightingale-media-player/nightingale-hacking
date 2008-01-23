@@ -133,6 +133,23 @@ ReplaceChars(nsACString& aOldString,
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryListener, 
                               sbIMediaListListener);
 
+/* static */ PLDHashOperator PR_CALLBACK
+sbDeviceBaseLibraryListener::ShiftIndexesCallback(nsISupportsHashKey::KeyType aKey,
+                                                  PRUint32& aEntry,
+                                                  void* aUserData)
+{
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  PRUint32* index = static_cast<PRUint32*>(aUserData);
+  NS_ENSURE_TRUE(index, PL_DHASH_STOP);
+
+  if (aEntry > *index) {
+    aEntry--;
+  }
+
+  return PL_DHASH_NEXT;
+}
+
 sbDeviceBaseLibraryListener::sbDeviceBaseLibraryListener() 
 : mDevice(nsnull),
   mIgnoreListener(PR_FALSE),
@@ -402,11 +419,18 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
         PRUint32 index;
         PRBool found = removedIndexes->Get(aMediaItem, &index);
         if (found) {
+          removedIndexes->Remove(aMediaItem);
           rv = mDevice->RemoveFromPlaylist(mDeviceIdentifier,
                                            aMediaList,
+                                           aMediaItem,
                                            index,
                                            &deleteItemCount);
           NS_ENSURE_SUCCESS(rv, rv);
+
+          // Removing an item from the playlist will shift the indexes of the
+          // items that come after it, so we shift the indexes in the
+          // mBeforeRemoveIndexes list to keep them in sync.
+          removedIndexes->Enumerate(ShiftIndexesCallback, &index);
         }
         else {
           NS_WARNING("OnAfterItemRemoved on item not in mBeforeRemoveIndexes");
