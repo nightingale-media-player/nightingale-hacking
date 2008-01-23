@@ -2752,6 +2752,17 @@ sbLocalDatabaseTreeView::OnStop()
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnBeforeTrackChange(sbIMediaItem* aItem,
+                                             sbIMediaListView* aView,
+                                             PRUint32 aIndex)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
                                        sbIMediaListView* aView,
                                        PRUint32 aIndex)

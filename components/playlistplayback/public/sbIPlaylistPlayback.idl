@@ -45,13 +45,22 @@ interface sbIMediaItem;
  * \interface sbIPlaylistPlaybackListener
  * \brief Interface that handles the tracking of playback changes
  */
-[scriptable, uuid(6a687f00-b6df-4efc-83e4-35670a714222)]
+[scriptable, uuid(d74160e7-c798-48ed-9b9a-9248e779a25d)]
 interface sbIPlaylistPlaybackListener : nsISupports
 {
   /**
    * \brief Called when playback stops
    */
   void onStop();
+
+  /**
+   * \brief Called before a new track starts playing. Note that this
+   *        gets called even when the new track is the same as 
+   *        the last track played.
+   */
+  void onBeforeTrackChange(in sbIMediaItem aItem,
+                           in sbIMediaListView aView,
+                           in unsigned long aIndex);
 
   /**
    * \brief Called when a new track starts playing.  Note that this gets called

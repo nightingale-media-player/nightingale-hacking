@@ -895,6 +895,19 @@ PlaylistPlayback.prototype = {
     // Remember this item's view UID so we can find it if the view changes
     this._playingViewItemUID = aView.getViewItemUIDForIndex(aIndex);
 
+    // Ensure we have already stopped playback.
+    this.stop();
+
+    // Notify listeners before track change
+    this._listeners.forEach(function(aListener) {
+      try {
+        aListener.onBeforeTrackChange(aView.getItemByIndex(aIndex), aView, aIndex);
+      }
+      catch(e) {
+        Components.utils.reportError(e);
+      }
+    });
+
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
 
@@ -927,8 +940,6 @@ PlaylistPlayback.prototype = {
 
       this._playURL.stringValue = "";
       this._metadataURL.stringValue = "";
-
-      this.stop();
       
       var uri = newURI(aURL);
       
