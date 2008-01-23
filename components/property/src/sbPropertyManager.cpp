@@ -669,6 +669,15 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Default MediaListPage URL
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_DEFAULT_MEDIALISTPAGE_URL),
+    NS_LITERAL_STRING("property.default_medialistpage_url"),
+    stringBundle,
+    PR_TRUE,
+    PR_FALSE,
+    PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

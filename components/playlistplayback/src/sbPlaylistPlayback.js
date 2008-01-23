@@ -858,7 +858,8 @@ PlaylistPlayback.prototype = {
       if (core.getPaused()) {
         core.play()
       } else {
-        this.playView( this._playingView, this.currentIndex );
+        this.playView( this._playingView, 
+                       (this.currentIndex != -1) ? this.currentIndex : 0);
       }
     }
     // Otherwise figure out the default action

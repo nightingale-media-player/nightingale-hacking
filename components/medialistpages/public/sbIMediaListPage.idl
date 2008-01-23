@@ -26,6 +26,8 @@
 
 #include "nsISupports.idl"
 interface sbIMediaListView;
+interface nsIDOMEvent;
+interface nsIDragSession;
 
 /**
  * \interface sbIMediaListPage

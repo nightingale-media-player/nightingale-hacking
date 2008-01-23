@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIMediaListPage.idl \
+             sbIMediaListPageManager.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediaListPages.xpt
