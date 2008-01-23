@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 interface nsIPropertyBag;
-interface nsISimpleEnumerator;
+interface nsIArray;
 
 interface sbIDevice;
 interface sbIDeviceCompatibility;
@@ -58,8 +58,10 @@ interface sbIDeviceController : nsISupports
 
   /**
    * List of devices that are currently in-use.
+   * Ordering is not guaranteed to be consistent between
+   * reads!
    */
-  readonly attribute nsISimpleEnumerator devices;
+  readonly attribute nsIArray devices;
 
   /**
    * Given a set of device parameters, attempt to determine if the device
