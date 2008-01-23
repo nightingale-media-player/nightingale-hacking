@@ -1926,12 +1926,17 @@ PlaylistPlayback.prototype = {
     var availableIndexesLength = this._shuffleData.availableIndexes.length;
     var shuffleIndex = -1;
     
+    dump("\n\n" + this._shuffleData.position + " : " + (indexesLength - 1) + "\n\n");
+    
     // Check to see if we're in the shuffler history or not.
     if ( this._shuffleData.position != (indexesLength - 1) ) {
       // We are indeed in the shuffler history, 
       // let's grab the next one in the list.
       this._shuffleData.position++;
       shuffleIndex = this._shuffleData.indexes[this._shuffleData.position];
+      
+      // Don't forget to tell everyone that shuffle was triggered.
+      this._shuffleWasTriggered = true;
       
       return shuffleIndex;
     }
