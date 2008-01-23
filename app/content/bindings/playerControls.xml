@@ -1622,6 +1622,25 @@
         }
       </destructor>
       
+      <method name="getBrowser">
+        <body>
+          <![CDATA[
+            var retval = null;
+            try {
+              // Dig through the parent chain to find a happy gBrowser.
+              for ( var win = window; 
+                    win != null && win != win.parent && 
+                    typeof win.gBrowser == 'undefined'; 
+                    win = win.parent ) ; // Yes, it is there on purpose.
+              if ( win ) {
+                retval = win.gBrowser;
+              }
+            } catch(e) {}
+            return retval;
+          ]]>
+        </body>
+      </method>
+          
       <method name="onCurrentTrack">
         <body>
           <![CDATA[
@@ -1639,8 +1658,10 @@
           var e = document.createEvent("Events");
           e.initEvent("current-track", false, true);
           this.dispatchEvent(e);
-
-          if (typeof gBrowser == 'undefined') {
+          
+          // Find a gBrowser in the window hierarchy chain (for display panels, etc)
+          var browser = this.getBrowser();
+          if (browser == 'undefined') {
             // where do you expect me to show you this currently playing
             // track of yours?
             return;
@@ -1672,15 +1693,16 @@
           }
           selectCurrentIndex( 0 );
 
-          var tab = gBrowser.getTabForView(gPPS.playingView);          
+          var tab = browser.getTabForView(gPPS.playingView);          
           if (tab) {
-            gBrowser.selectedTab = tab;
+            browser.selectedTab = tab;
           } else {
             var mediaList = gPPS.playingView.mediaList;
-            gBrowser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?" +
+            browser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?" +
                              'library,' + mediaList.library.guid, 
                              null, null, null, null,
                              gPPS.playingView);
+                             
           }
           ]]>
         </body>
