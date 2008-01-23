@@ -103,7 +103,7 @@ AC_SUBST(SONGBIRD_OFFICIAL)
 #
 
 AC_ARG_ENABLE(nightly,
-              [  --enable-nightly       whether or not to create an nightly build (disabled by default)])
+              [  --enable-nightly        whether or not to create an nightly build (disabled by default)])
 if test "$enable_nightly" == "yes"; then
   SONGBIRD_NIGHTLY=1
 fi
@@ -114,7 +114,7 @@ AC_SUBST(SONGBIRD_NIGHTLY)
 #
 
 AC_ARG_ENABLE(tests,
-              [  --enable-tests      whether or not to build tests (defaults: debug:enabled rel:disabled)])
+              [  --enable-tests          whether or not to build tests (defaults: debug:enabled rel:disabled)])
 if test "$enable_tests" == "yes"; then
   SB_ENABLE_TESTS=1
 fi
@@ -125,7 +125,7 @@ AC_SUBST(SB_ENABLE_TESTS)
 #
 
 AC_ARG_ENABLE(update-channel,
-              [  --enable-update-channel=CHANNEL      which update channel to use ("default")],
+              [  --enable-update-channel=CHANNEL    which update channel to use ("default")],
               SB_UPDATE_CHANNEL=`echo $enableval | tr A-Z a-z`)
 if test -z "$SB_UPDATE_CHANNEL"; then
   SB_UPDATE_CHANNEL=default
@@ -616,7 +616,7 @@ AC_SUBST(XULRUNNERDIR)
 #
 
 AC_ARG_WITH(license-file,
-            [  --with-license-file=PATH             the location of the license file to use],
+            [  --with-license-file=PATH             the location of the license file to use.],
             SB_LICENSE_FILE=$withval)
 if test -z "$SB_LICENSE_FILE"; then
   SB_LICENSE_FILE=${srcdir}/installer/common/LICENSE.html
@@ -629,10 +629,11 @@ AC_SUBST(SB_LICENSE_FILE)
 
 AC_ARG_WITH(user-eula-file,
             [  --with-user-eula-file=PATH           the location of the user eula file to use. This file
-                                                    is displayed when the application is first launched.
-                                                    The user *must* accept this EULA for the application
-                                                    to continue. The file *must* reside within the source
-                                                    tree. Using / means the root of the source tree. ],
+                                       is displayed when the application is first launched.
+                                       The user *must* accept this EULA for the application
+                                       to continue. The file *must* reside within the source
+                                       tree. Using / means the root of the source tree.
+                                       ],
             SB_USER_EULA_FILE=$withval)
 if test -z "$SB_USER_EULA_FILE"; then
   SB_USER_EULA_FILE=eula.html
@@ -640,11 +641,22 @@ fi
 AC_SUBST(SB_USER_EULA_FILE)
 
 #
+# Check for --with-flash-redistributable
+#
+
+AC_ARG_WITH(flash-redistributable,
+            [  --with-flash-redistributable=PATH    the location of the flash redistributable to
+                                       package into and install from the application
+                                       installer. *Windows only*.],
+            SB_FLASH_REDISTRIBUTABLE=$withval)
+AC_SUBST(SB_FLASH_REDISTRIBUTABLE)
+
+#
 # Check for an alternate dependencies location
 #
 
 AC_ARG_WITH(dependencies-dir,
-            [  --with-dependencies-dir=DIR          the location of the dependencies directory],
+            [  --with-dependencies-dir=DIR          the location of the dependencies directory.],
             SB_DEPENDENCIES_DIR=$withval)
 if test -z "$SB_DEPENDENCIES_DIR"; then
   DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
