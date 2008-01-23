@@ -425,3 +425,10 @@ const SB_PROPERTY_ENABLE_AUTO_DOWNLOAD = SB_PROPERTY_PREFACE + "enableAutoDownlo
  * \internal
  */
 const SB_PROPERTY_TRANSFER_POLICY = SB_PROPERTY_PREFACE + "transferPolicy";
+
+/**
+ * \brief Part of standard set of properties.
+ * \deprecated Needed for unit tests to pass. Please see sbProperties.jsm.
+ * \internal
+ */
+const SB_PROPERTY_DEFAULT_MEDIALISTPAGE_URL = SB_PROPERTY_PREFACE + "defaultMediaListPageURL";
