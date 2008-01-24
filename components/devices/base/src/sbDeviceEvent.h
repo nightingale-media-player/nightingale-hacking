@@ -43,6 +43,9 @@ public:
   NS_DECL_SBIDEVICEEVENT
 
   sbDeviceEvent();
+  nsresult sbDeviceEvent::InitEvent(PRUint32 aType,
+                                    nsIVariant *aData,
+                                    nsISupports *aOrigin);
 
 private:
   ~sbDeviceEvent();

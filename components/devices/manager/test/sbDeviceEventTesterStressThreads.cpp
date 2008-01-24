@@ -128,12 +128,10 @@ void sbDeviceEventTesterStressThreads::OnEvent()
   NS_ENSURE_SUCCESS(rv, /* void */);
   
   nsCOMPtr<sbIDeviceEvent> event;
-  rv = manager->CreateEvent(getter_AddRefs(event));
-  NS_ENSURE_SUCCESS(rv, /* void */);
-  
-  rv = event->InitEvent(sbIDeviceEvent::EVENT_DEVICE_BASE,
-                        nsnull,
-                        NS_ISUPPORTS_CAST(sbIDeviceEventListener*, this));
+  rv = manager->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_BASE,
+                            nsnull,
+                            NS_ISUPPORTS_CAST(sbIDeviceEventListener*, this),
+                            getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, /* void */);
   
   rv = target->DispatchEvent(event);

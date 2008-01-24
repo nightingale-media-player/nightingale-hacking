@@ -43,15 +43,13 @@ function runTest () {
 
   manager.addEventListener(onEvent);
 
-  var event = manager.createEvent();
-  event.initEvent(event.COMMAND_DEVICE_BASE);
+  var event = manager.createEvent(Components.interfaces.sbIDeviceEvent.COMMAND_DEVICE_BASE);
   manager.dispatchEvent(event);
   assertTrue(hasEvent, "event listener not fired");
   
   manager.removeEventListener(onEvent);
   hasEvent = false;
-  event = manager.createEvent();
-  event.initEvent(event.COMMAND_DEVICE_BASE);
+  event = manager.createEvent(event.COMMAND_DEVICE_BASE);
   manager.dispatchEvent(event);
   assertFalse(hasEvent, "event listener not removed");
   

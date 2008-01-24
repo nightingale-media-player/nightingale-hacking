@@ -49,6 +49,17 @@ sbDeviceEvent::~sbDeviceEvent()
   /* destructor code */
 }
 
+nsresult sbDeviceEvent::InitEvent(PRUint32 aType,
+                                  nsIVariant *aData,
+                                  nsISupports *aOrigin)
+{
+  NS_ENSURE_FALSE(mWasDispatched, NS_ERROR_UNEXPECTED);
+  mType = aType;
+  mData = aData;
+  mOrigin = aOrigin;
+  return NS_OK;
+}
+
 /* readonly attribute PRUint32 type; */
 NS_IMETHODIMP sbDeviceEvent::GetType(PRUint32 *aType)
 {
@@ -85,15 +96,5 @@ NS_IMETHODIMP sbDeviceEvent::GetOrigin(nsISupports * *aOrigin)
 {
   NS_ENSURE_ARG_POINTER(aOrigin);
   NS_IF_ADDREF(*aOrigin = mOrigin);
-  return NS_OK;
-}
-
-/* void initEvent (in unsigned long aType, [optional] in nsIVariant aData, [optional] in nsISupports aOrigin); */
-NS_IMETHODIMP sbDeviceEvent::InitEvent(PRUint32 aType, nsIVariant *aData, nsISupports *aOrigin)
-{
-  NS_ENSURE_FALSE(mWasDispatched, NS_ERROR_UNEXPECTED);
-  mType = aType;
-  mData = aData;
-  mOrigin = aOrigin;
   return NS_OK;
 }

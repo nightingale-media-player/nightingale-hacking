@@ -164,12 +164,21 @@ NS_IMETHODIMP sbDeviceManager::UpdateDevices()
   return NS_OK;
 }
 
-/* sbIDeviceEvent sbIDeviceManager::createEvent (); */
-NS_IMETHODIMP sbDeviceManager::CreateEvent(sbIDeviceEvent **_retval)
+/* sbIDeviceEvent createEvent (in unsigned long aType,
+                               [optional] in nsIVariant aData,
+                               [optional] in nsISupports aOrigin); */
+NS_IMETHODIMP sbDeviceManager::CreateEvent(PRUint32 aType,
+                                           nsIVariant *aData,
+                                           nsISupports *aOrigin,
+                                           sbIDeviceEvent **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_IF_ADDREF(*_retval = new sbDeviceEvent());
-  return _retval ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
+  nsCOMPtr<sbDeviceEvent> event = new sbDeviceEvent();
+  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = event->InitEvent(aType, aData, aOrigin);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return CallQueryInterface(event, _retval);
 }
 
 /* readonly attribute nsIArray sbIDeviceControllerRegistrar::controllers; */

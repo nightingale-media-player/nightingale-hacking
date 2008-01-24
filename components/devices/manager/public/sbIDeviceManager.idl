@@ -29,6 +29,7 @@
 interface sbIDeviceEvent;
 interface sbIDeviceMarshall;
 interface nsIArray;
+interface nsIVariant;
 
 /**
  * \interface sbIDeviceManager
@@ -41,7 +42,7 @@ interface nsIArray;
  * XXXMook: rename this to sbIDeviceManager once the old interface has been
  * properly removed
  */
-[scriptable, uuid(82102e1c-e620-4c9e-9a3f-059eee1355b5)]
+[scriptable, uuid(0c9597b8-a530-411f-8672-5cfe0a19ab07)]
 interface sbIDeviceManager2 : nsISupports
 {
   /**
@@ -62,9 +63,20 @@ interface sbIDeviceManager2 : nsISupports
   
   /**
    * Create a new event
+   * 
+   * @param aType The type of the event; should be one of the COMMAND_* or
+   *              EVENT_* constants on this interface.
+   *
+   * @param aData (Optional) The data to pass to any listeners that would
+   *              receive this event.
+   *
+   * @param aOrigin (Optional) Some indication of the source of the event.
+   * 
    * @see sbIDeviceEvent
    * @see sbIDeviceEventTarget
    * @see sbIDeviceEventListener
    */
-  sbIDeviceEvent createEvent();
+  sbIDeviceEvent createEvent(in unsigned long aType,
+                             [optional] in nsIVariant aData,
+                             [optional] in nsISupports aOrigin);
 };

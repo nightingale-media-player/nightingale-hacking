@@ -177,9 +177,11 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<sbIDeviceEvent> event;
-  rv = manager->CreateEvent(getter_AddRefs(event));
+  rv = manager->CreateEvent(sbIDeviceEvent::EVENT_CLIENT_DEFINED,
+                            nsnull,
+                            nsnull,
+                            getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = event->InitEvent(sbIDeviceEvent::EVENT_CLIENT_DEFINED, nsnull, nsnull);
 
   rv = target->DispatchEvent(event);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -269,17 +271,15 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
       case ACTION_DISPATCH:
         nsCOMPtr<sbIDeviceManager2> manager =
           do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
-        nsCOMPtr<sbIDeviceEvent> event;
-        rv = manager->CreateEvent(getter_AddRefs(event));
-        NS_ENSURE_SUCCESS(rv, rv);
-        
         PRUint32 eventType;
         rv = aEvent->GetType(&eventType);
         NS_ENSURE_SUCCESS(rv, rv);
-  
-        rv = event->InitEvent(eventType,
-                              nsnull,
-                              nsnull);
+
+        nsCOMPtr<sbIDeviceEvent> event;
+        rv = manager->CreateEvent(eventType,
+                                  nsnull,
+                                  nsnull,
+                                  getter_AddRefs(event));
         NS_ENSURE_SUCCESS(rv, rv);
   
         nsCOMPtr<sbIDeviceEventTarget> target;
