@@ -45,6 +45,12 @@
 #endif
 #endif
 
+#ifdef SB_FLASH_REDISTRIBUTABLE
+!define InstallFlashRedistributable      "true"
+!define FlashRedistributableInstaller    "@SB_FLASH_REDISTRIBUTABLE@"
+!define FlashRedistributableInstallerEXE "flash_installer.exe"
+#endif
+
 #ifdef SONGBIRD_OFFICIAL
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}_${ARCH}.exe"
@@ -67,3 +73,4 @@
 !define UninstallMessage          "We found an older version of @SB_APPNAME@ present on this computer, do you wish to uninstall it before installing @SB_APPNAME@ ${AppVersion}?"
 !define DirectoryNotEmptyMessage  "The folder selected for installation is not empty. $\n$\nYou must choose an empty folder to continue installation of ${BrandShortName}. "
 !define AbortInstallMessage       "Are you sure you want to cancel installation of ${BrandShortName}?"
+!define FlashRedistributableInstallMessage "Installing Adobe Flash Redistributable"

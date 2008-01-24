@@ -201,6 +201,23 @@ Section "-Application" Section1
     ${EndIf}
   ${EndIf}
 
+!ifdef InstallFlashRedistributable
+  ; Include Flash Redistributable
+  File /oname=$INSTDIR\${FlashRedistributableInstallerEXE} ${FlashRedistributableInstaller}
+  
+  ; Print extra info for user
+  DetailPrint "${FlashRedistributableInstallMessage}"
+  
+  ; Disable details for this section
+  SetDetailsPrint none
+  
+  ; Execute Flash Redistributable Installer
+  ExecWait '${FlashRedistributableInstaller} /S'
+  
+  ; Done with scary stuff, enable details.
+  SetDetailsPrint both
+!endif
+
   ; List of files to install
   File ${ApplicationIni}
   File ${FileMainEXE}

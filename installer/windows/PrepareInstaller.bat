@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 
 REM Songbird Installer Build Script
 REM
