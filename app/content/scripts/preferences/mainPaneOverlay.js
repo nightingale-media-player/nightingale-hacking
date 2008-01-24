@@ -195,7 +195,6 @@ var SongbirdMainPaneOverlay = {
     // Build the rest of the content.
     const groupbox = document.createElement("groupbox");
     groupbox.setAttribute("id","mediaDownloadsGroup");
-    groupbox.setAttribute("flex","1");
 
     const caption = document.createElement("caption");
     caption.setAttribute("id","mediaDownloadsCaption");
@@ -242,13 +241,8 @@ var SongbirdMainPaneOverlay = {
 
     // Finally hook it all up
     const mainPrefPane = document.getElementById("paneMain");
-    const bottomBoxElements = mainPrefPane.getElementsByAttribute("class",
-                                                                  "bottomBox");
-
-    const parent = bottomBoxElements.length ?
-                   bottomBoxElements.item(0) :
-                   mainPrefPane;
-    parent.appendChild(groupbox);
+    const downloadsGroup = document.getElementById("downloadsGroup");
+    mainPrefPane.insertBefore(groupbox, downloadsGroup);
   },
 
   /**
