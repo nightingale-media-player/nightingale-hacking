@@ -35,6 +35,7 @@
 interface sbITabBrowserTab;
 interface nsIDOMDocument;
 interface nsIDOMElement;
+interface sbIMediaListPage;
 
 /**
  * \interface sbITabBrowser
@@ -53,11 +54,12 @@ interface sbITabBrowser : nsISupports
  * \brief 
  * \sa sbITabBrowser
  */
-[scriptable, uuid(821f6247-5773-49ad-83e5-33f88683b5cb)]
+[scriptable, uuid(6d8f7e40-ca05-11dc-95ff-0800200c9a66)]
 interface sbITabBrowserTab : nsISupports
 {
   readonly attribute nsIDOMElement innerPlaylist;
   readonly attribute nsIDOMElement outerPlaylist;
+  readonly attribute sbIMediaListPage mediaListPage;
   nsIDOMElement getPlaylist();
   void clearOuterPlaylist();
   void disableScan();

@@ -512,6 +512,7 @@
         <parameter name="collapse"/>
         <body>
 <![CDATA[
+  dump("MATT: playlist.bind() \n");
 
   // Make sure we save the column spec
   // for the existing view
@@ -563,6 +564,9 @@
         <body>
 <![CDATA[
   if (!this._destroyed) {
+  
+    dump("MATT: playlist.destroy();\n");
+    
     if (this._columnSpecIsDirty) {
       this._saveColumnSpec();
     }

@@ -36,8 +36,8 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  onload="LocalLoad();"
-  onunload="LocalUnload();"
+  onload="gMediaListPage.onLoad();"
+  onunload="gMediaListPage.onUnload();"
   windowtype="Songbird:Library"
 >
   <sb-playlist id="sb-library-page-playlist" 
@@ -47,6 +47,9 @@
       editable="true"
   />
 
+
+  <!-- TODO: Remove as many of these as possible? --> 
+  
   <!-- Extension Overlay Support -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/overlayLoader.js" />
@@ -89,63 +92,87 @@ if (typeof(kPlaylistCommands) == "undefined") {
     throw new Error("Import of kPlaylistCommands module failed!");
 }
 
-try
-{
-  // Helper function to extract and unescape a query string param
-  // from the given url string
-  function getQueryStringParam(param, url) {
-            
-    // Build a regular expression to extract param=string 
-    var re = new RegExp("[&\\?]" + param + "=([\\w%]*)(&.*)?$");
-    
-    var results = re.exec(url);    
-    if (results && results.length >= 2) {
-      return unescape(results[1]);
+
+// TODO Comment
+var gMediaListPage = {
+
+  onLoad:  function(e) {
+
+    // The tab hasn't been updated yet, so for now
+    // just run the original init functionality.
+    if (!this._mediaListView) {
+      performLegacyInitialization();
     }
-    return "";
-  }
+
+    this._playlist = document.getElementById("sb-library-page-playlist");
+
+    // TODO: Get cmds that are appropriate for the list    
+    var mgr = new sbIPlaylistCommandsManager();
+    var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
+    
+    
+    // TODO tweak filter sets?
+    
+    // Set up the playlist
+    this._playlist.bind(this._mediaListView, cmds);
+  },
+
+  onUnload:  function(e) {
+    // TODO: This should be good, right?
+    // this._playlist.destroy()
+  },
+
+  _mediaListView: null,
   
-  function LocalLoad()
-  {
-    try
-    { 
-      // Default values, in case we get confused
-      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                     .getService(Components.interfaces.sbILibraryManager);
-      var libraryGUID = libraryManager.mainLibrary.guid;
-      var mediaListGUID = "library";
-      
-      var url = window.location.href;
+  _playlist: null, 
 
-      // Cook the mediaListGUID from the magic browser uri?
-      // Extract things like ?library,main@library.songbirdnest.com
-      var libraryStrings = /\?(([\w\.-]+),)?([\w\.-]+)/.exec(url);
-      if (libraryStrings && libraryStrings.length == 4) {
-        // Match form ?library,main@library.songbirdnest.com
-        if (libraryStrings[2]) {
-          mediaListGUID = libraryStrings[2];
-          libraryGUID = libraryStrings[3];
-        // Match form ?main@library.songbirdnest.com
-        } else {
-          mediaListGUID = libraryStrings[3];      
-        }
-      }
+  get mediaListView()  {
+    return this._mediaListView;
+  },
 
-      // Assuming we have any clue
-      if ( ( mediaListGUID.length > 0 ) && ( libraryGUID.length > 0 ) )
-      {
-        // Get the correct sbILibrary
-        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
-                              getService(Components.interfaces.sbILibraryManager);
-        var library = null;
-        
-    //
-    // Bulletproof the code from things being deleted
-    //        
-        try {
-          // Try to get the requested library
-          library = libraryManager.getLibrary( libraryGUID );
-        } catch(e) {
+  set mediaListView(value)  {
+    this._mediaListView = value;
+  },
+
+  ensureListItemVisible: function(aIndex) {
+    // TODO expose this on the playlist binding
+    this._playlist.tree.treeBoxObject.ensureRowIsVisible(aIndex);
+  }
+
+  // TODO Drag and drop
+}
+
+
+
+
+
+
+
+
+
+
+/**
+    // CODE TO BE MOVED INTO PLAYLIST.XML AND SBTABBROWSER.XML
+
+    // TODO: Move this code inside the playlist binding!
+    
+    // Apply the customtype of the medialist/library to the playlist
+    // element just in case we want to apply special styles
+    var customType = mediaList.getProperty(SBProperties.customType);
+    if (mediaList instanceof Components.interfaces.sbILibrary) {
+      playlist.setAttribute("library-customtype", customType); 
+    } else {
+      var libCustomType = mediaList.library.getProperty(SBProperties.customType);          
+      playlist.setAttribute("library-customtype", libCustomType);
+      playlist.setAttribute("list-customtype", customType);
+    }
+
+
+
+    
+          // TODO: Move into the tab browser.  On media list page load, if no
+          // list available, or the list is broken somehow, do the following
+
           // If something bad happens, freak out.
           try {
             // If possible, hit the back button if there's something to go back to.
@@ -159,39 +186,14 @@ try
                     "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
                     libraryManager.mainLibrary.guid;
           return;
-        }
-
-        // Then the sbIMediaList
-        var mediaList = null;
-        if ( mediaListGUID == "library" )
-          mediaList = library;
-        else try {
-          mediaList = library.getMediaItem( mediaListGUID );
-        } catch(e) {
-          // If something bad happens, freak out.
-          try {
-            // If possible, hit the back button if there's something to go back to.
-            if ( history.previous ) {
-              history.back();
-              return;
-            }
-          } catch (e) {}
-          // Otherwise, just show the mediaList's library?
-          location.href =
-                    "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                    library.guid;
-          return;
-        }
-          
-        // Doublecheck that you actually have what you think you have.
-        if ( mediaList )
-        {
-          mediaList = mediaList.QueryInterface(Components.interfaces.sbIMediaList);
-        }
-        
-        // And if you do, use it.  
-        if ( mediaList )
-        {
+     
+     
+     
+     
+      
+          // TODO: Move initial view creation logic into the tab
+     
+ 
           var view = mediaList.createView();
 
           // By default, we never want to show lists and hidden things in the
@@ -235,194 +237,185 @@ try
             var valArray = searchTerm.split(" ");
             filter.set(0, valArray, valArray.length);
           }
+**/ 
+
+
+/**
+ * Temporary compatibility functions
+ */
+/** TODO: Remove! **/
+
+// Helper function to extract and unescape a query string param
+// from the given url string
+function getQueryStringParam(param, url) {
           
-          var playlist = document.getElementById("sb-library-page-playlist");
-          var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
-          playlist.bind(view, cmds);
-          
-          // Apply the customtype of the medialist/library to the playlist
-          // element just in case we want to apply special styles
-          var customType = mediaList.getProperty(SBProperties.customType);
-          if (mediaList instanceof Components.interfaces.sbILibrary) {
-            playlist.setAttribute("library-customtype", customType); 
-          } else {
-            var libCustomType = mediaList.library.getProperty(SBProperties.customType);          
-            playlist.setAttribute("library-customtype", libCustomType);
-            playlist.setAttribute("list-customtype", customType);
-          }
-            
-          // Listen for changes to library or media list
-          SBLPListener.initialize(library, mediaList);
-        }
-        else
-        {
-          // Bad bad bad.
-        }
-      }      
-    }
-    catch ( err )
-    {
-      alert( err );
-    }
-
+  // Build a regular expression to extract param=string 
+  var re = new RegExp("[&\\?]" + param + "=([\\w%]*)(&.*)?$");
+  
+  var results = re.exec(url);    
+  if (results && results.length >= 2) {
+    return unescape(results[1]);
   }
-
-  function LocalUnload()
-  {
-    SBLPListener.finalize();
-  }
-
-  var SBLPListener =
-  {
-    // Currently displayed media list and library being listened for.
-    libMgr: null,
-    library: null,
-    mediaList: null,
-    mediaListName: null,
-    batchHelper: null,
-    refreshPending: false,
-
-    initialize: function(aLibrary, aMediaList)
-    {
-        this.library = aLibrary;
-        this.mediaList = aMediaList;
-        this.mediaListName = this.mediaList.name;
-
-        this.batchHelper = new BatchHelper();
-        this.refreshPending = false;
-
-        var flags;
-        flags = Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED |
-                Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
-                Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND;
-        if (this.mediaList != this.library) {
-          flags |= Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
-                   Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED;
-        }
-        var filter =
-            SBProperties.createArray([ [ SBProperties.mediaListName, null ] ]);
-        this.library.addListener(this, false, flags, filter);
-
-        this.libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Ci.sbILibraryManager);
-        this.libMgr.addListener(this);
-    },
-
-    finalize: function()
-    {
-        this.library.removeListener(this);
-        this.libMgr.removeListener(this);
-        this.libMgr = null;
-        this.library = null;
-        this.mediaList = null;
-        this.mediaListName = null;
-        this.batchHelper = null;
-    },
-
-    onItemAdded: function(aMediaList, aMediaItem) { return (true); },
-    onBeforeItemRemoved: function(aMediaList, aMediaItem) { return (true); },
-    onAfterItemRemoved: function(aMediaList, aMediaItem)
-    {
-      // Do no more if in a batch
-      if (this.batchHelper.isActive()) {
-        this.refreshPending = true;
-        return (true);
-      }
-
-      // If the current media list was removed, handle event by reloading page
-      if (aMediaItem == this.mediaList)
-        location.reload(true);
-
-      return (false);
-    },
-    onItemUpdated: function(aMediaList, aMediaItem, aProperties)
-    {
-      // Do no more if in a batch
-      if (this.batchHelper.isActive()) {
-        this.refreshPending = true;
-        return (true);
-      }
-
-      // If the current media list was modified, handle event by reloading page
-      if (aMediaItem == this.mediaList) {
-        if (this.mediaList.name != this.mediaListName) {
-          this.mediaListName = this.mediaList.name;
-          location.reload(true);
-        }
-      }
-
-      return (false);
-    },
-    onListCleared: function(aMediaList)
-    {
-      // Do no more if in a batch
-      if (this.batchHelper.isActive()) {
-        this.refreshPending = true;
-        return (true);
-      }
-
-      // The current media list must have been removed, so reload
-      location.reload(true);
-
-      return (false);
-    },
-    onBatchBegin: function(aMediaList)
-    {
-      this.batchHelper.begin();
-    },
-    onBatchEnd: function(aMediaList)
-    {
-      this.batchHelper.end();
-
-      if (!this.batchHelper.isActive() && this.refreshPending) {
-        var needReload = false;
-
-        this.refreshPending = false;
-
-        // Check if media list was removed
-        if (this.mediaList != this.library) {
-          try {
-            this.library.getMediaItem(this.mediaList.guid);
-          } catch (e) {
-            needReload = true;
-          }
-        }
-
-        // Check if media list name changed
-        if (!needReload && (this.mediaList.name != this.mediaListName)) {
-          this.mediaListName = this.mediaList.name;
-          needReload = true;
-        }
-
-        // Reload if needed
-        if (needReload)
-          location.reload(true);
-      }
-    },
-
-    onLibraryRegistered: function(aLibrary) {},
-    onLibraryUnregistered: function(aLibrary)
-    {
-      // If the current library was unregistered, handle event by reloading page
-      if (aLibrary == this.library)
-        location.reload(true);
-    },
-
-    QueryInterface: function(aIID) {
-      if (!aIID.equals(Components.interfaces.nsISupports) &&
-          !aIID.equals(Components.interfaces.sbILibraryManagerListener) &&
-          !aIID.equals(Components.interfaces.sbIMediaListListener)) {
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-      }
-      return this;
-    }
-  };
+  return "";
 }
-catch ( err )
+
+function performLegacyInitialization()
 {
-  alert( err );
+  dump("MATT: libraryPage.performLegacyInitialization \n");
+
+  // Default values, in case we get confused
+  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                 .getService(Components.interfaces.sbILibraryManager);
+  var libraryGUID = libraryManager.mainLibrary.guid;
+  var mediaListGUID = "library";
+  
+  var url = window.location.href;
+
+  // Cook the mediaListGUID from the magic browser uri?
+  // Extract things like ?library,main@library.songbirdnest.com
+  var libraryStrings = /\?(([\w\.-]+),)?([\w\.-]+)/.exec(url);
+  if (libraryStrings && libraryStrings.length == 4) {
+    // Match form ?library,main@library.songbirdnest.com
+    if (libraryStrings[2]) {
+      mediaListGUID = libraryStrings[2];
+      libraryGUID = libraryStrings[3];
+    // Match form ?main@library.songbirdnest.com
+    } else {
+      mediaListGUID = libraryStrings[3];      
+    }
+  }
+
+  // Assuming we have any clue
+  if ( ( mediaListGUID.length > 0 ) && ( libraryGUID.length > 0 ) )
+  {
+    // Get the correct sbILibrary
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
+                          getService(Components.interfaces.sbILibraryManager);
+    var library = null;
+    
+//
+// Bulletproof the code from things being deleted
+//        
+    try {
+      // Try to get the requested library
+      library = libraryManager.getLibrary( libraryGUID );
+    } catch(e) {
+      // If something bad happens, freak out.
+      try {
+        // If possible, hit the back button if there's something to go back to.
+        if ( history.previous ) {
+          history.back();
+          return;
+        }
+      } catch (e) {}
+      // Otherwise, just show the main library?
+      location.href =
+                "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
+                libraryManager.mainLibrary.guid;
+      return;
+    }
+
+    // Then the sbIMediaList
+    var mediaList = null;
+    if ( mediaListGUID == "library" )
+      mediaList = library;
+    else try {
+      mediaList = library.getMediaItem( mediaListGUID );
+    } catch(e) {
+      // If something bad happens, freak out.
+      try {
+        // If possible, hit the back button if there's something to go back to.
+        if ( history.previous ) {
+          history.back();
+          return;
+        }
+      } catch (e) {}
+      // Otherwise, just show the mediaList's library?
+      location.href =
+                "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
+                library.guid;
+      return;
+    }
+      
+    // Doublecheck that you actually have what you think you have.
+    if ( mediaList )
+    {
+      mediaList = mediaList.QueryInterface(Components.interfaces.sbIMediaList);
+    }
+    
+    // And if you do, use it.  
+    if ( mediaList )
+    {
+      var view = mediaList.createView();
+
+      // By default, we never want to show lists and hidden things in the
+      // playlist
+      view.filterConstraint = LibraryUtils.standardFilterConstraint;
+
+      var filter = view.cascadeFilterSet;
+      filter.appendSearch([
+        SBProperties.artistName,
+        SBProperties.albumName,
+        SBProperties.trackName
+      ], 3);
+      
+      // If we're a library, set our desired filterlists
+      if ( mediaListGUID == "library" ) {
+        // Restore the last library filterset or set our defaults
+        var desiredFilterSet;
+        var defaultFilterSet = [
+          SBProperties.year,
+          SBProperties.artistName,
+          SBProperties.albumName
+        ];
+        var savedFilterSet = SBDataGetStringValue( "library.filterset" );
+        if ( savedFilterSet.length > 0 ) {
+          desiredFilterSet = savedFilterSet.split(";");
+        } else {
+          desiredFilterSet = defaultFilterSet;
+        }
+        
+        for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
+          filter.appendFilter(desiredFilterSet[i]);
+        }
+      }
+
+      // If a search parameter was passed in, use it
+      var searchTerm = getQueryStringParam("search", url);
+      if (searchTerm == "") {
+        filter.set(0, [], 0);
+      }
+      else {
+        var valArray = searchTerm.split(" ");
+        filter.set(0, valArray, valArray.length);
+      }
+      
+      // Handoff to the page!
+      // This will be done by the tab.
+      gMediaListPage.mediaListView = view;
+
+      var playlist = document.getElementById("sb-library-page-playlist");
+      // Apply the customtype of the medialist/library to the playlist
+      // element just in case we want to apply special styles
+      var customType = mediaList.getProperty(SBProperties.customType);
+      if (mediaList instanceof Components.interfaces.sbILibrary) {
+        playlist.setAttribute("library-customtype", customType); 
+      } else {
+        var libCustomType = mediaList.library.getProperty(SBProperties.customType);          
+        playlist.setAttribute("library-customtype", libCustomType);
+        playlist.setAttribute("list-customtype", customType);
+      }
+    }
+    else
+    {
+      // Bad bad bad.
+    }
+  }
 }
+
+
+
+
   ]]>
   </script>
 

@@ -87,7 +87,7 @@ function sbLibraryServicePane() {
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
 
-  this._batch = new BatchHelper();
+  this._batch = new LibraryUtils.BatchHelper();
   this._refreshPending = false;
 }
 sbLibraryServicePane.prototype.QueryInterface =

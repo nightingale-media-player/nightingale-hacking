@@ -71,7 +71,7 @@ function sbLocalDatabaseDynamicPlaylistService()
   this._started = false;
   this._scheduledLists = {};
   this._ignoreLibraryNotifications = {};
-  this._libraryBatch = new MultiBatchHelper();
+  this._libraryBatch = new LibraryUtils.MultiBatchHelper();
   this._libraryRefreshPending = {};
 
   var obs = Cc["@mozilla.org/observer-service;1"]

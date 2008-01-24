@@ -25,11 +25,15 @@
 */
 Components.utils.import("resource://app/components/sbProperties.jsm");
 
-EXPORTED_SYMBOLS = ["BatchHelper", "MultiBatchHelper", "LibraryUtils"];
+EXPORTED_SYMBOLS = ["LibraryUtils"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+/**
+ * \class LibraryUtils
+ * \brief Javascript wrappers for common library tasks
+ */
 var LibraryUtils = {
 
   get manager() {
@@ -128,17 +132,24 @@ var LibraryUtils = {
   }
 }
 
-function BatchHelper() {
+
+
+/**
+ * \class LibraryUtils.BatchHelper
+ * \brief Helper object for monitoring the state of 
+ *        batch library operations.
+ */
+LibraryUtils.BatchHelper = function() {
   this._depth = 0;
 }
 
-BatchHelper.prototype.begin =
+LibraryUtils.BatchHelper.prototype.begin =
 function BatchHelper_begin()
 {
   this._depth++;
 }
 
-BatchHelper.prototype.end =
+LibraryUtils.BatchHelper.prototype.end =
 function BatchHelper_end()
 {
   this._depth--;
@@ -147,57 +158,285 @@ function BatchHelper_end()
   }
 }
 
-BatchHelper.prototype.depth =
+LibraryUtils.BatchHelper.prototype.depth =
 function BatchHelper_depth()
 {
   return this._depth;
 }
 
-BatchHelper.prototype.isActive =
+LibraryUtils.BatchHelper.prototype.isActive =
 function BatchHelper_isActive()
 {
   return this._depth > 0;
 }
 
-function MultiBatchHelper() {
+
+
+/**
+ * \class LibraryUtils.MultiBatchHelper
+ * \brief Helper object for monitoring the state of 
+ *        batch operations in multiple libraries
+ */
+LibraryUtils.MultiBatchHelper = function() {
   this._libraries = {};
 }
 
-MultiBatchHelper.prototype.get =
+LibraryUtils.MultiBatchHelper.prototype.get =
 function MultiBatchHelper_get(aLibrary)
 {
   var batch = this._libraries[aLibrary.guid];
   if (!batch) {
-    batch = new BatchHelper();
+    batch = new LibraryUtils.BatchHelper();
     this._libraries[aLibrary.guid] = batch;
   }
   return batch;
 }
 
-MultiBatchHelper.prototype.begin =
+LibraryUtils.MultiBatchHelper.prototype.begin =
 function MultiBatchHelper_begin(aLibrary)
 {
   var batch = this.get(aLibrary);
   batch.begin();
 }
 
-MultiBatchHelper.prototype.end =
+LibraryUtils.MultiBatchHelper.prototype.end =
 function MultiBatchHelper_end(aLibrary)
 {
   var batch = this.get(aLibrary);
   batch.end();
 }
 
-MultiBatchHelper.prototype.depth =
+LibraryUtils.MultiBatchHelper.prototype.depth =
 function MultiBatchHelper_depth(aLibrary)
 {
   var batch = this.get(aLibrary);
   return batch.depth();
 }
 
-MultiBatchHelper.prototype.isActive =
+LibraryUtils.MultiBatchHelper.prototype.isActive =
 function MultiBatchHelper_isActive(aLibrary)
 {
   var batch = this.get(aLibrary);
   return batch.isActive();
 }
+
+
+
+
+/**
+ * \class LibraryUtils.RemovalMonitor
+ * \brief Helps track removal/deletion of medialists.
+ * \param aCallback An object with an onMediaListRemoved function.
+ */
+LibraryUtils.RemovalMonitor = function(aCallback) {
+  //dump("RemovalMonitor: RemovalMonitor()\n");
+    
+  if (!aCallback || !aCallback.onMediaListRemoved) {
+    throw new Error("RemovalMonitor() requires a callback object");
+  }
+
+  this._callback = aCallback;
+}
+
+LibraryUtils.RemovalMonitor.prototype = {
+
+  // An object with an onMediaListRemoved function
+  _callback: null,
+ 
+  // MediaList GUID to monitor for removal
+  _targetGUID: null,
+  
+  // Library that owns the target MediaList
+  _library: null,
+  
+  _libraryManager: null,
+  _batchHelper: null,
+  
+  // Flag to indicate that the target item
+  // was deleted in a batch operation
+  _removedInBatch: false,
+ 
+ 
+  /**
+   * Watch for removal of the given sbIMediaList.
+   * Pass null to stop listening.
+   */
+  setMediaList:  function RemovalMonitor_setMediaList(aMediaList) {
+    //dump("RemovalMonitor: RemovalMonitor.setMediaList()\n");
+    this._removedInBatch = false;
+  
+    // If passed a medialist, hook up listeners
+    if (aMediaList instanceof Ci.sbIMediaList) {
+      
+      // Listen to the library if we aren't doing so already
+      if (aMediaList.library != this._library) {
+        if (this._library && this._library.guid != this._targetGUID) {
+          this._library.removeListener(this);
+        }
+        
+        this._library = aMediaList.library
+      
+        // If this is a list within a library, then
+        // we need to listen for clear/remove in the
+        // library
+        if (!(aMediaList instanceof Ci.sbILibrary)) {
+          this._batchHelper = new LibraryUtils.BatchHelper();
+
+          var flags = Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                      Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                      Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED;
+                      
+          this._library.addListener(this, false, flags, null);
+        }
+      }
+      
+      if (!this._libraryManager) {
+        this._libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                                .getService(Ci.sbILibraryManager);
+        this._libraryManager.addListener(this);            
+      }
+        
+      // Remember which medialist we are supposed to watch
+      this._targetGUID = aMediaList.guid;
+    
+    
+    // If set to null, shut down any listeners
+    } else {
+      if (this._libraryManager) {
+        this._libraryManager.removeListener(this);
+        this._libraryManager = null;
+      }
+      
+      if (this._library) {
+        this._library.removeListener(this);
+        this._library = null;
+      }
+      this._batchHelper = null;
+      this._targetGUID = null;
+    } 
+  },
+
+
+  /**
+   * Notifies the listener that the list has been removed, 
+   * and then stops monitoring
+   */
+  _onMediaListRemoved: function RemovalMonitor_onMediaListRemoved() {
+    //dump("RemovalMonitor: RemovalMonitor.onMediaListRemoved()\n");
+    
+    // Our list has been removed. Stop tracking.
+    this.setMediaList(null);
+    
+    // Notify
+    this._callback.onMediaListRemoved();
+  },
+
+
+  /**
+   * \sa sbIMediaListListener
+   */
+  onItemAdded: function(aMediaList, aMediaItem) { return true; },
+  onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true },
+  onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
+  onAfterItemRemoved: function RemovalMonitor_onAfterItemRemoved(aMediaList, 
+                                                                 aMediaItem)
+  {
+    //dump("RemovalMonitor: RemovalMonitor.onAfterItemRemoved()\n");
+    
+    // Do no more if in a batch
+    if (this._batchHelper.isActive()) {
+      if (aMediaItem.guid == this._targetGUID) {
+        this._removedInBatch = true;
+      }
+      return true;
+    }
+
+    // If our list was removed, notify
+    if (aMediaItem.guid == this._targetGUID) {
+      this._onMediaListRemoved();
+    }
+
+    return false;
+  },
+  onListCleared: function RemovalMonitor_onListCleared(aMediaList)
+  {
+    //dump("RemovalMonitor: RemovalMonitor.onListCleared()\n");
+
+    // Do no more if in a batch
+    if (this._batchHelper.isActive()) {
+      this._removedInBatch = true;
+      return true;
+    }
+
+    // The current media list must have been removed, so notify
+    this._onMediaListRemoved();
+
+    return false;
+  },
+  
+  onBatchBegin: function RemovalMonitor_onBatchBegin(aMediaList)
+  {
+    this._batchHelper.begin();
+  },
+  onBatchEnd: function RemovalMonitor_onBatchEnd(aMediaList)
+  {
+    //dump("RemovalMonitor: RemovalMonitor.onBatchEnd()\n");
+    
+    this._batchHelper.end();
+    // If the batch is still in progress do nothing
+    if (this._batchHelper.isActive()) {
+      return;
+    }
+
+    var removed = false;
+    
+    // If we know our target was removed during the batch, notify
+    if (this._removedInBatch) {
+      removed = true;
+      
+    // If we don't know for sure, we need to check
+    } else if (this._targetGUID != this._library.guid) {
+
+      // Check if our media list was removed
+      try {
+        this._library.getMediaItem(this._targetGUID);
+      } catch (e) {
+        removed = true;
+      }
+    }
+
+    this._removedInBatch = false;
+
+    if (removed) { 
+      this._onMediaListRemoved();    
+    }
+  },
+
+  /**
+   * \sa sbILibraryManagerListener
+   */
+  onLibraryRegistered: function(aLibrary) {},
+  onLibraryUnregistered: function RemovalMonitor_onLibraryUnregistered(aLibrary)
+  {
+    //dump("RemovalMonitor: RemovalMonitor.onLibraryUnregistered()\n");
+    // If the current library was unregistered, notify
+    if (aLibrary == this._library) {
+      this._onMediaListRemoved(); 
+    }
+  },
+
+
+  /**
+   * \sa nsISupports
+   */
+  QueryInterface: function RemovalMonitor_QueryInterface(aIID) {
+    if (!aIID.equals(Components.interfaces.nsISupports) &&
+        !aIID.equals(Components.interfaces.sbILibraryManagerListener) &&
+        !aIID.equals(Components.interfaces.sbIMediaListListener)) {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    return this;
+  }
+}
+

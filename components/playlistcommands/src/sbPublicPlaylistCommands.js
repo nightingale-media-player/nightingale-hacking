@@ -1257,7 +1257,7 @@ function plCmd_ShowForToolbarCheck(aContext, aHost) {
 function plCmd_DownloadInit(aContext, aHost) {
   var implementorContext = {
     context: aContext,
-    batchHelper: new BatchHelper(),
+    batchHelper: new LibraryUtils.BatchHelper(),
     needRefresh: false,
 
     // sbIDeviceBaseCallback
