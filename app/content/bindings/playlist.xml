@@ -3121,6 +3121,65 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         <parameter name="aOrientation"/>
         <body>
 <![CDATA[
+
+  // look for the source of the dnd, if it is ourselves, we need to test whether
+  // we are a sorted playlist, or a library (cannot reorder tracks in a library), 
+  // in which case we disallow dropping, because it does not make sense.
+  
+  var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                    .getService(this._Ci.sbIDndSourceTracker);
+
+  var context;
+  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
+  if (data) {
+    context = dnd.getSourceSupports(data)
+                 .QueryInterface(this._Ci.sbISingleItemTransferContext);
+  } else {
+    data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+    if (data) {
+      context = dnd.getSourceSupports(data)
+                  .QueryInterface(this._Ci.sbISingleListTransferContext);
+    } else {
+      data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+      if (data) {
+        context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
+      } else {
+        // the dnd does not contain songbird mediaitems, it cannot have 
+        // been made by ourselves so always accept the drop
+        return true;
+      }
+    }
+  }
+  
+  if (context.source != this.mediaList) {
+    // the drop source is not ourselves, always accept the drop
+    return true;
+  }
+  
+  // the source is ourselves, so this is a track reordering operation, only
+  // allow it if we are not sorted
+
+  // is this a library ? libraries cannot have their tracks reordered
+  if (this.mediaList == this.library) 
+    return false;
+  
+  var sort = this.mediaListView.currentSort;
+
+  if (sort && sort.length > 0) {
+    if (sort.length > 1) {
+      // multiple sort criteria, obviously we're sorted, refuse reordering
+      return false;
+    } else {
+      // only one sort criteria, check if that's the ordinal order (unsorted)
+      if (sort.getPropertyAt(0).id != SBProperties.ordinal) {
+        // not the ordinal order, we're sorted on something else, refuse reordering
+        return false;
+      }
+    }
+  }
+
+  // looks like it's safe to perform a track reordering, so go for it!
   return true;
 ]]>
         </body>
