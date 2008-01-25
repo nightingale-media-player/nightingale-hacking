@@ -649,6 +649,7 @@ ServicePaneService.prototype.getNodeForURL =
 function ServicePaneService_getNodeForURL(aURL) {
   if (!this._initialized) { this.init(); }
 
+  // TODO Remove!
   // HACK:  See BUG 4662 for more information.
   //
   // Library searches can cause the library to load as

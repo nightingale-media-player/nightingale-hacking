@@ -556,6 +556,20 @@
   if (parseInt(resize) > 0) {
     this.height = resize;
   }
+  
+  // Apply the customtype of the medialist/library to the playlist
+  // element just in case we want to apply special styles
+  var customType = this.mediaList.getProperty(SBProperties.customType);
+  if (this.mediaList instanceof Components.interfaces.sbILibrary) {
+    this.setAttribute("library-customtype", customType); 
+    if (this.hasAttribute("list-customtype")) {
+      this.removeAttribute("list-customtype");
+    }
+  } else {
+    var libCustomType = this.mediaList.library.getProperty(SBProperties.customType);          
+    this.setAttribute("library-customtype", libCustomType);
+    this.setAttribute("list-customtype", customType);
+  }
 ]]>
         </body>
       </method>

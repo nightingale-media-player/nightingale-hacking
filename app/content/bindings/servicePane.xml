@@ -555,8 +555,23 @@
           if (node && node.url) {
             this.highlightURL(node.url);
 
-            this.loadURL(node.url, event);
+            // TEMP HACK!
+            // TODO: The media list page service pane cleanup task
+            // should involve adding an onclick handler or asking
+            // the library service pane service, on click, which 
+            // URL to load.
+            // For now just cheat.
+            var nsLSP = 'http://songbirdnest.com/rdf/library-servicepane#';
+            var libGUID = node.getAttributeNS(nsLSP, "LibraryGUID");
+            var listGUID = node.getAttributeNS(nsLSP, "ListGUID");
 
+            // If this is a library node, ask the browser to load it.
+            if (libGUID && listGUID) {
+              gBrowser.loadMediaListGUID(libGUID, listGUID);
+            } else {
+              this.loadURL(node.url, event);
+            }
+            
             // Bookmarks keep the http url in the id
             if ( node.id.indexOf("http://") != 0 ) {
               //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
