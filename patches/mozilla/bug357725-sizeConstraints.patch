@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.cpp,v
 retrieving revision 1.38
 diff -p -U 8 -r1.38 nsResizerFrame.cpp
 --- layout/xul/base/src/nsResizerFrame.cpp	11 Dec 2007 10:08:35 -0000	1.38
-+++ layout/xul/base/src/nsResizerFrame.cpp	23 Jan 2008 02:27:35 -0000
++++ layout/xul/base/src/nsResizerFrame.cpp	25 Jan 2008 18:11:58 -0000
 @@ -16,16 +16,17 @@
   *
   * The Initial Developer of the Original Code is
@@ -501,7 +501,7 @@ RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.h,v
 retrieving revision 1.13
 diff -p -U 8 -r1.13 nsResizerFrame.h
 --- layout/xul/base/src/nsResizerFrame.h	26 Mar 2006 21:30:34 -0000	1.13
-+++ layout/xul/base/src/nsResizerFrame.h	23 Jan 2008 02:27:36 -0000
++++ layout/xul/base/src/nsResizerFrame.h	25 Jan 2008 18:11:58 -0000
 @@ -34,30 +34,34 @@
   * the provisions above, a recipient may use your version of this file under
   * the terms of any one of the MPL, the GPL or the LGPL.
@@ -575,7 +575,7 @@ RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
 retrieving revision 3.167
 diff -p -U 8 -r3.167 nsIWidget.h
 --- widget/public/nsIWidget.h	19 Dec 2007 19:40:19 -0000	3.167
-+++ widget/public/nsIWidget.h	23 Jan 2008 02:27:57 -0000
++++ widget/public/nsIWidget.h	25 Jan 2008 18:11:59 -0000
 @@ -90,20 +90,20 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
  #define NS_NATIVE_PLUGIN_PORT 8
  #define NS_NATIVE_SCREEN      9
@@ -724,7 +724,7 @@ RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.cpp,v
 retrieving revision 3.720
 diff -p -U 8 -r3.720 nsWindow.cpp
 --- widget/src/windows/nsWindow.cpp	19 Dec 2007 19:40:20 -0000	3.720
-+++ widget/src/windows/nsWindow.cpp	23 Jan 2008 02:28:59 -0000
++++ widget/src/windows/nsWindow.cpp	25 Jan 2008 18:12:04 -0000
 @@ -29,16 +29,17 @@
   *   Pierre Phaneuf <pp@ludusdesign.com>
   *   Robert O'Callahan <roc+moz@cs.cmu.edu>
@@ -743,7 +743,28 @@ diff -p -U 8 -r3.720 nsWindow.cpp
   * of those above. If you wish to allow use of your version of this file only
   * under the terms of either the GPL or the LGPL, and not to allow others to
   * use your version of this file under the terms of the MPL, indicate your
-@@ -753,16 +754,25 @@ nsWindow::nsWindow() : nsBaseWidget()
+@@ -145,16 +146,20 @@
+ #include "nsCRT.h"
+ #include "nsAppDirectoryServiceDefs.h"
+ #include "nsXPIDLString.h"
+ #include "nsIFile.h"
+ 
+ #include "prprf.h"
+ #include "prmem.h"
+ 
++// size constraints
++#include "nsIFrame.h"
++#include "nsIView.h"
++
+ static const char kMozHeapDumpMessageString[] = "MOZ_HeapDump";
+ 
+ #define kWindowPositionSlop 20
+ 
+ #ifndef SPI_GETWHEELSCROLLLINES
+ #define SPI_GETWHEELSCROLLLINES 104
+ #endif
+ 
+@@ -753,16 +758,25 @@ nsWindow::nsWindow() : nsBaseWidget()
    mLastSize.width     = 0;
    mLastSize.height    = 0;
    mOldStyle           = 0;
@@ -769,7 +790,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
      gbInitGlobalValue = TRUE;
      gKeyboardLayout = GetKeyboardLayout(0);
  
-@@ -2013,16 +2023,52 @@ NS_METHOD nsWindow::ConstrainPosition(PR
+@@ -2013,16 +2027,128 @@ NS_METHOD nsWindow::ConstrainPosition(PR
        *aY = screenRect.top;
      else if (*aY >= screenRect.bottom - mBounds.height)
        *aY = screenRect.bottom - mBounds.height;
@@ -803,14 +824,90 @@ diff -p -U 8 -r3.720 nsWindow.cpp
 +                                           PRInt32* aMinHeight,
 +                                           PRInt32* aMaxHeight)
 +{
++  SizeConstraints constraints;
++  
++  // read the constraints from CSS
++  nsresult rv;
++  nsCOMPtr<nsIDeviceContext> devContext = GetDeviceContext();
++  nsCOMPtr<nsIRenderingContext> renderingContext = GetRenderingContext();
++
++  nsIWidget* widget = GetFirstChild();
++  nsIView* view = nsnull;
++  if (widget) {
++    view = nsIView::GetViewFor(widget);
++  }
++  nsIFrame* frame = nsnull;
++  if (view) {
++    /* see nsLayoutUtils, except we can't use it */
++    frame = static_cast<nsIFrame*>(view->GetClientData());
++  }
++  const nsStylePosition* position = nsnull;
++  if (frame) {
++    position = frame->GetStylePosition();
++  }
++  if (position) {
++    PRInt32 appUnitsPerDevPixel = devContext->AppUnitsPerDevPixel();
++    nscoord coordTwips, appUnits;
++
++    nsStyleUnit unit = position->mMinWidth.GetUnit();
++    if (eStyleUnit_Coord != unit) {
++      coordTwips = nscoord_MIN;
++    } else {
++      coordTwips = position->mMinWidth.GetCoordValue();
++    }
++    if (coordTwips != nscoord_MIN) {
++      appUnits = NS_TWIPS_TO_INCHES(coordTwips) * devContext->AppUnitsPerInch();
++      constraints.minWidth = NSAppUnitsToIntPixels(appUnits, appUnitsPerDevPixel);
++    }
++
++    unit = position->mMaxWidth.GetUnit();
++    if (eStyleUnit_Coord != unit) {
++      coordTwips = nscoord_MAX;
++    } else {
++      coordTwips = position->mMaxWidth.GetCoordValue();
++    }
++    if (coordTwips != nscoord_MAX) {
++      appUnits = NS_TWIPS_TO_INCHES(coordTwips) * devContext->AppUnitsPerInch();
++      constraints.maxWidth = NSAppUnitsToIntPixels(appUnits, appUnitsPerDevPixel);
++    }
++
++    unit = position->mMinHeight.GetUnit();
++    if (eStyleUnit_Coord != unit) {
++      coordTwips = nscoord_MIN;
++    } else {
++      coordTwips = position->mMinHeight.GetCoordValue();
++    }
++    if (coordTwips != nscoord_MIN) {
++      appUnits = NS_TWIPS_TO_INCHES(coordTwips) * devContext->AppUnitsPerInch();
++      constraints.minHeight = NSAppUnitsToIntPixels(appUnits, appUnitsPerDevPixel);
++    }
++
++    unit = position->mMaxHeight.GetUnit();
++    if (eStyleUnit_Coord != unit) {
++      coordTwips = nscoord_MIN;
++    } else {
++      coordTwips = position->mMaxHeight.GetCoordValue();
++    }
++    if (coordTwips != nscoord_MAX) {
++      appUnits = NS_TWIPS_TO_INCHES(coordTwips) * devContext->AppUnitsPerInch();
++      constraints.maxHeight = NSAppUnitsToIntPixels(appUnits, appUnitsPerDevPixel);
++    }
++  }
++  
++  // override them with attributes, as usual for XUL
++  constraints.minWidth = PR_MAX(constraints.minWidth, mSizeConstraints.minWidth);
++  constraints.maxWidth = PR_MIN(constraints.maxWidth, mSizeConstraints.maxWidth);
++  constraints.minHeight = PR_MAX(constraints.minHeight, mSizeConstraints.minHeight);
++  constraints.maxHeight = PR_MIN(constraints.maxHeight, mSizeConstraints.maxHeight);
++  
 +  if (aMinWidth)
-+    *aMinWidth = mSizeConstraints.minWidth;
++    *aMinWidth = constraints.minWidth;
 +  if (aMaxWidth)
-+    *aMaxWidth = mSizeConstraints.maxWidth;
++    *aMaxWidth = constraints.maxWidth;
 +  if (aMinHeight)
-+    *aMinHeight = mSizeConstraints.minHeight;
++    *aMinHeight = constraints.minHeight;
 +  if (aMaxHeight)
-+    *aMaxHeight = mSizeConstraints.maxHeight;
++    *aMaxHeight = constraints.maxHeight;
 +  return NS_OK;
 +}
 +
@@ -822,7 +919,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  NS_METHOD nsWindow::Move(PRInt32 aX, PRInt32 aY)
  {
    // Check to see if window needs to be moved first
-@@ -2737,16 +2783,18 @@ NS_IMETHODIMP nsWindow::HideWindowChrome
+@@ -2737,16 +2863,18 @@ NS_IMETHODIMP nsWindow::HideWindowChrome
      }
  
      style = mOldStyle;
@@ -841,7 +938,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  //
  // Validate a visible area of a widget.
  //
-@@ -4046,16 +4094,22 @@ PRBool nsWindow::ProcessMessage(UINT msg
+@@ -4046,16 +4174,22 @@ PRBool nsWindow::ProcessMessage(UINT msg
          NS_RELEASE(event.widget);
        }
      }
@@ -864,7 +961,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
        // The Win32 toolkit normally only sends these events to top-level windows.
        // But we cycle through all of the childwindows and send it to them as well
        // so all presentations get notified properly.
-@@ -4612,16 +4666,91 @@ PRBool nsWindow::ProcessMessage(UINT msg
+@@ -4612,16 +4746,90 @@ PRBool nsWindow::ProcessMessage(UINT msg
          ConstrainZLevel(&info->hwndInsertAfter);
        // prevent rude external programs from making hidden window visible
        if (mWindowType == eWindowType_invisible)
@@ -875,12 +972,11 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  
 +    case WM_GETMINMAXINFO:
 +    {
-+      PRInt32 minTrackWidth = mSizeConstraints.minWidth;
-+      PRInt32 minTrackHeight = mSizeConstraints.minHeight;
-+      PRInt32 maxTrackWidth = mSizeConstraints.maxWidth;
-+      PRInt32 maxTrackHeight = mSizeConstraints.maxHeight;
-+      PRInt32 maxWidth = mSizeConstraints.maxWidth;
-+      PRInt32 maxHeight = mSizeConstraints.maxHeight;
++      PRInt32 minTrackWidth, maxTrackWidth, minTrackHeight, maxTrackHeight;
++      GetSizeConstraints(&minTrackWidth, &maxTrackWidth,
++                         &minTrackHeight, &maxTrackHeight);
++      PRInt32 maxWidth = maxTrackWidth;
++      PRInt32 maxHeight = maxTrackHeight;
 +
 +      PRInt32 left = -1, top = -1;
 +
@@ -956,7 +1052,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
          result = DispatchFocus(NS_ACTIVATE, PR_TRUE);
        }
  
-@@ -4681,16 +4810,21 @@ PRBool nsWindow::ProcessMessage(UINT msg
+@@ -4681,16 +4889,21 @@ PRBool nsWindow::ProcessMessage(UINT msg
          gJustGotDeactivate = PR_FALSE;
          result = DispatchFocus(NS_DEACTIVATE, isMozWindowTakingFocus);
        }
@@ -978,7 +1074,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
        if (0 == (wp->flags & SWP_NOSIZE)) {
          // XXX Why are we using the client size area? If the size notification
          // is for the client area then the origin should be (0,0) and not
-@@ -4952,20 +5086,51 @@ PRBool nsWindow::ProcessMessage(UINT msg
+@@ -4952,20 +5165,51 @@ PRBool nsWindow::ProcessMessage(UINT msg
            }
          }
        }
@@ -1040,7 +1136,7 @@ RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.h,v
 retrieving revision 3.246
 diff -p -U 8 -r3.246 nsWindow.h
 --- widget/src/windows/nsWindow.h	19 Dec 2007 19:40:20 -0000	3.246
-+++ widget/src/windows/nsWindow.h	23 Jan 2008 02:29:00 -0000
++++ widget/src/windows/nsWindow.h	25 Jan 2008 18:12:05 -0000
 @@ -52,16 +52,18 @@
  #include "nsIKBStateControl.h"
  
@@ -1146,7 +1242,7 @@ RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
 retrieving revision 1.167
 diff -p -U 8 -r1.167 nsBaseWidget.cpp
 --- widget/src/xpwidgets/nsBaseWidget.cpp	19 Dec 2007 19:40:20 -0000	1.167
-+++ widget/src/xpwidgets/nsBaseWidget.cpp	23 Jan 2008 02:29:02 -0000
++++ widget/src/xpwidgets/nsBaseWidget.cpp	25 Jan 2008 18:12:05 -0000
 @@ -763,16 +763,49 @@ NS_METHOD nsBaseWidget::GetScreenBounds(
  NS_METHOD nsBaseWidget::SetBounds(const nsRect &aRect)
  {
@@ -1203,7 +1299,7 @@ RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
 retrieving revision 1.92
 diff -p -U 8 -r1.92 nsBaseWidget.h
 --- widget/src/xpwidgets/nsBaseWidget.h	19 Dec 2007 19:40:20 -0000	1.92
-+++ widget/src/xpwidgets/nsBaseWidget.h	23 Jan 2008 02:29:02 -0000
++++ widget/src/xpwidgets/nsBaseWidget.h	25 Jan 2008 18:12:05 -0000
 @@ -133,16 +133,20 @@ public:
    NS_IMETHOD              GetLastInputEventTime(PRUint32& aTime);
    NS_IMETHOD              SetIcon(const nsAString &anIconSpec);
@@ -1231,7 +1327,7 @@ RCS file: /cvsroot/mozilla/xpfe/appshell/src/nsXULWindow.cpp,v
 retrieving revision 1.178
 diff -p -U 8 -r1.178 nsXULWindow.cpp
 --- xpfe/appshell/src/nsXULWindow.cpp	14 Dec 2007 17:32:41 -0000	1.178
-+++ xpfe/appshell/src/nsXULWindow.cpp	23 Jan 2008 02:29:12 -0000
++++ xpfe/appshell/src/nsXULWindow.cpp	25 Jan 2008 18:12:07 -0000
 @@ -20,16 +20,17 @@
   * Netscape Communications, Inc.
   * Portions created by the Initial Developer are Copyright (C) 1999
@@ -1350,7 +1446,7 @@ RCS file: /cvsroot/mozilla/xpfe/appshell/src/nsXULWindow.h,v
 retrieving revision 1.63
 diff -p -U 8 -r1.63 nsXULWindow.h
 --- xpfe/appshell/src/nsXULWindow.h	5 Oct 2007 23:37:26 -0000	1.63
-+++ xpfe/appshell/src/nsXULWindow.h	23 Jan 2008 02:29:12 -0000
++++ xpfe/appshell/src/nsXULWindow.h	25 Jan 2008 18:12:07 -0000
 @@ -171,16 +171,17 @@ protected:
     PRPackedBool            mIsHiddenWindow;
     PRPackedBool            mLockedUntilChromeLoad;
