@@ -56,7 +56,7 @@ NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 #ifdef XP_WIN
   wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WIDGET));
 #elif defined(XP_MACOSX)
-  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_DISPLAY)); 
+  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WINDOW)); 
 #elif defined(XP_UNIX)
   wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WIDGET));
 #endif

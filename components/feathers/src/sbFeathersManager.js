@@ -914,7 +914,29 @@ FeathersManager.prototype = {
     return false; 
   },
 
-  isOnTop: function isChromeEnabled(layoutURL, internalName) {
+
+  getFeatherPrefBranch: function getFeatherPrefBranch (layoutURL, internalName) {
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+      .getService(Components.interfaces.nsIPrefService);
+
+    // a really simple url escaping algorithm
+    // turn all non-alphanumeric characters into:
+    //   "_" upper case hex charactre code "_"
+    function escape_url(url) {
+      return url.replace(/[^a-zA-Z0-9]/g, 
+          function(c) { 
+            return '_'+(c.charCodeAt(0).toString(16)).toUpperCase()+'_'; });
+    }
+
+    var branchName = 'songbird.feather.' +
+      (internalName?internalName:'null') + '.' +
+      (layoutURL?escape_url(layoutURL):'null') + '.';
+
+    return prefs.getBranch(branchName);
+  },
+
+
+  canOnTop: function canOnTop(layoutURL, internalName) {
     this._init();
     
     if (this._mappings[layoutURL]) {
@@ -925,6 +947,39 @@ FeathersManager.prototype = {
    
     return false; 
   },
+
+
+  isOnTop: function isOnTop(layoutURL, internalName) {
+    this._init();
+
+    if (!this.canOnTop(layoutURL, internalName)) {
+      return false;
+    }
+
+    var prefBranch = this.getFeatherPrefBranch(layoutURL, null);
+    if (prefBranch.prefHasUserValue('on_top')) {
+      return prefBranch.getBoolPref('on_top');
+    }
+    
+    return true;
+  },
+
+
+  setOnTop: function setOnTop(layoutURL, internalName, onTop) {
+    this._init();
+    
+    if (!this.canOnTop(layoutURL, internalName)) {
+      return false;
+    }
+
+    var prefBranch = this.getFeatherPrefBranch(layoutURL, null);
+    prefBranch.setBoolPref('on_top', onTop);
+
+    return;
+  },
+
+
+  /* FIXME: add the ability to observe onTop state */
 
 
   /**
@@ -1046,35 +1101,9 @@ FeathersManager.prototype = {
       return;
     }
 
-    var onTop;
-    // On MacOS, popup=yes breaks too many things, so always set it to false
-    var sysInfo = Components.classes["@mozilla.org/system-info;1"]
-                            .getService(Components.interfaces.nsIPropertyBag2);
-    var platform = sysInfo.getProperty("name");
-    if (platform == "Darwin") {
-      onTop = false;
-    } else {
-      onTop = this.isOnTop(this.currentLayoutURL, this.currentSkinName);
-    }
-
-    // if the native window manager service is available
-    var nwm = Components.classes['@songbirdnest.com/integration/native-window-manager;1'];
-    if (nwm) {
-      nwm = nwm.getService(Components.interfaces.sbINativeWindowManager);
-    }
-
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,resizable=yes,centerscreen,toolbar=yes";
-    if ( (nwm && nwm.supportsOnTop) || !onTop ) {
-      // if we have a native window manager component that supports onTop, 
-      // or we don't want this window on top then set popup=no
-      chromeFeatures += ",popup=no";
-    } else {
-      // if we don't have a native window manger component that supports onTop
-      // and we want the window on top, set popup=yes
-      chromeFeatures += ",popup=yes";
-    }
+    var chromeFeatures = "chrome,modal=no,resizable=yes,centerscreen,toolbar=yes,popup=no";
     var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",titlebar=yes";
@@ -1088,11 +1117,6 @@ FeathersManager.prototype = {
     // Open the new player window
     var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
     newMainWin.focus();
-
-    // if we can, tell the window manager to keep this window on top
-    if (nwm && nwm.supportsOnTop) {
-      nwm.setOnTop(newMainWin, onTop);
-    }
   },
   
   

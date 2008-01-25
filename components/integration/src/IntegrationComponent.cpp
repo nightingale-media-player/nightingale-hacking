@@ -34,8 +34,16 @@
 #include "WindowDragger.h"
 #include "WindowCloak.h"
 
-#if defined(XP_UNIX) && !defined(XP_MACOSX)
+#include "sbNativeWindowManagerCID.h"
+
+#ifdef XP_UNIX
+#ifdef XP_MACOSX
+#include "macosx/sbNativeWindowManager.h"
+#else
 #include "linux/sbNativeWindowManager.h"
+#endif
+#else
+#include "win32/sbNativeWindowManager.h"
 #endif
 
 #ifdef XP_WIN
@@ -47,15 +55,13 @@
 #endif
 
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
 
-#if defined(XP_UNIX) && !defined(XP_MACOSX)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNativeWindowManager)
-#endif
 
 #ifdef XP_WIN
+NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
@@ -66,29 +72,27 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 static nsModuleComponentInfo sbIntegration[] =
 {
   {
-    SONGBIRD_WINDOWDRAGGER_CLASSNAME,
-    SONGBIRD_WINDOWDRAGGER_CID,
-    SONGBIRD_WINDOWDRAGGER_CONTRACTID,
-    CWindowDraggerConstructor
-  },
-
-  {
     SONGBIRD_WINDOWCLOAK_CLASSNAME,
     SONGBIRD_WINDOWCLOAK_CID,
     SONGBIRD_WINDOWCLOAK_CONTRACTID,
     sbWindowCloakConstructor
   },
 
-#if defined(XP_UNIX) && !defined(XP_MACOSX)
   {
     SONGBIRD_NATIVEWINDOWMANAGER_CLASSNAME,
     SONGBIRD_NATIVEWINDOWMANAGER_CID,
     SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID,
     sbNativeWindowManagerConstructor
   },
-#endif
 
 #ifdef XP_WIN
+  {
+    SONGBIRD_WINDOWDRAGGER_CLASSNAME,
+    SONGBIRD_WINDOWDRAGGER_CID,
+    SONGBIRD_WINDOWDRAGGER_CONTRACTID,
+    CWindowDraggerConstructor
+  },
+
   {
     SONGBIRD_WINDOWMINMAX_CLASSNAME,
     SONGBIRD_WINDOWMINMAX_CID,

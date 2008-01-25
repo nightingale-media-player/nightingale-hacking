@@ -38,8 +38,8 @@
 #define NATIVEWINDOW HWND
 #define NATIVEDEVICENOTIFY HDEVNOTIFY 
 #elif defined(XP_MACOSX)
-#include <Carbon/Carbon.h>
-#define NATIVEWINDOW WindowPtr
+#include <Cocoa/Cocoa.h>
+#define NATIVEWINDOW NSWindow*
 #elif defined(XP_UNIX)
 #include <gdk/gdk.h>
 #define NATIVEWINDOW GdkWindow*

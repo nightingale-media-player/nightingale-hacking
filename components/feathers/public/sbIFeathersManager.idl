@@ -209,6 +209,29 @@ interface sbIFeathersManager : nsISupports
                   in AString aInternalName);
 
 
+  /**
+   * \brief Should the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \param aOnTop Should the window be kept on top
+   */
+  void setOnTop(in AString aLayoutURL,
+                in AString aInternalName,
+                in boolean aOnTop);
+
+
+  /**
+   * \brief Can the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \return True if the given pair can be kept on top
+   */
+  boolean canOnTop(in AString aLayoutURL,
+                   in AString aInternalName);
+
+
 
   /**
    * \brief Get an enumerator for all registered skins compatible with 

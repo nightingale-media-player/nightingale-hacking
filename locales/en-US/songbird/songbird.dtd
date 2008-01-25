@@ -380,3 +380,6 @@
 <!ENTITY prefs.homepage.url.label          "URL:" >
 <!ENTITY prefs.homepage.url.accesskey          "" >
 <!ENTITY prefs.security.addons.label   "Add-On Installation" >
+
+<!ENTITY menu.windowpopup.alwaysontop  "Always On Top" >
+<!ENTITY menu.windowpopup.alwaysontop.accesskey  "" >

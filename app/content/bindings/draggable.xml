@@ -82,5 +82,31 @@
         </body>
       </method>
     </implementation>
+    <handlers>
+      <handler event="contextmenu"><![CDATA[
+        var feathersManager = Components.classes[
+            '@songbirdnest.com/songbird/feathersmanager;1']
+            .getService(Components.interfaces.sbIFeathersManager);
+
+        if (feathersManager.currentLayoutURL != window.location.href) {
+          // only show the popup menu for the current primary layout window
+          return;
+        }
+
+        var nativeWindowManager = Components.classes[
+          '@songbirdnest.com/integration/native-window-manager;1']
+          .getService(Components.interfaces.sbINativeWindowManager);
+
+        if (!feathersManager.canOnTop(feathersManager.currentLayoutURL, 
+            feathersManager.currentSkinName) &&
+            nativeWindowManager && nativeWindowManager.supportsOnTop) {
+          // if we can't go on top then don't show the popup menu
+          return;
+        }
+
+        document.getElementById('windowPopupMenu').showPopup(null, 
+            event.screenX, event.screenY, "context", "bottomleft", "topleft");
+      ]]></handler>
+    </handlers>
   </binding>
 </bindings>

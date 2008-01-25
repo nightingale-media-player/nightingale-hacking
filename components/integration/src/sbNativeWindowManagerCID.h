@@ -24,26 +24,23 @@
 //
  */
 
-/** 
-* \file  sbINativeWindowManager.h
-* \brief Native window manager interface implementation
-*/
-
-#ifndef __SB_NATIVE_WINDOW_MANAGER_H__
-#define __SB_NATIVE_WINDOW_MANAGER_H__
+#ifndef __SB_NATIVE_WINDOW_MANAGER_CID_H__
+#define __SB_NATIVE_WINDOW_MANAGER_CID_H__
 
 #include "sbINativeWindowManager.h"
-#include "../sbNativeWindowManagerCID.h"
 
-class sbNativeWindowManager : public sbINativeWindowManager
-{
-public:
-  sbNativeWindowManager() { };
-  virtual ~sbNativeWindowManager() { };
+#define SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID                  \
+  "@songbirdnest.com/integration/native-window-manager;1"
+#define SONGBIRD_NATIVEWINDOWMANAGER_CLASSNAME                   \
+  "Songbird native window manager interface"
+#define SONGBIRD_NATIVEWINDOWMANAGER_CID                         \
+{ /* 3ec4c167-4dee-45c5-b7f1-5091cc8192e8 */              \
+  0x3ec4c167,                                             \
+  0x4dee,                                                 \
+  0x45c5,                                                 \
+  {0xb7, 0xf1, 0x50, 0x91, 0xcc, 0x81, 0x92, 0x8e}        \
+}
 
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBINATIVEWINDOWMANAGER
-};
+#endif // __SB_NATIVE_WINDOW_MANAGER_CID_H__
 
-#endif // __SB_NATIVE_WINDOW_MANAGER_H__
 

@@ -86,6 +86,7 @@ CPP_SRCS = MultiMonitor.cpp \
            WindowResizeHook.cpp \
            GlobalHotkeys.cpp \
            ../IntegrationComponent.cpp \
+           sbNativeWindowManager.cpp \
            $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
