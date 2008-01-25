@@ -213,6 +213,12 @@ Section "-Application" Section1
   
   ; Execute Flash Redistributable Installer
   ExecWait '${FlashRedistributableInstaller} /S'
+
+  ; Add Application as Trusted user of Flash
+  CreateDirectory $SYSDIR\Macromed\Flash\FlashPlayerTrust
+  FileOpen $0 $SYSDIR\Macromed\Flash\FlashPlayerTrust\${BrandShortName}_${AppVersion} w
+  FileWrite $0 "$INSTDIR"
+  FileClose $0
   
   ; Done with scary stuff, enable details.
   SetDetailsPrint both
