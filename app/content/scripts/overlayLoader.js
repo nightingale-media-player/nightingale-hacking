@@ -145,11 +145,11 @@ var OverlayLoader = {
       if (OverlayLoader.loadInProgress) {
         alert("An extension overlay has failed to load.\n\n" +
               "Known causes include: \n" +
-              "  - A malformed overlay file\n" +
-              "  - An overlay which is itself the target of an overlay\n\n" +
-              "Open the Add-Ons window and disable extensions one by one until\n" +
-              "you have isolated which extension is causing the problem.\n"+
-              "Please report this error to the extension author, or\n" +
+              "  - a malformed overlay file\n" +
+              "  - an overlay which is itself the target of an overlay.\n\n" +
+              "Open the Add-Ons window and disable extensions one by one until " +
+              "you have isolated which extension is causing the problem.\n\n"+
+              "Please report this error to the extension author, or " +
               "http://bugzilla.songbirdnest.com.");
 
         // Then send the event that we're done              
