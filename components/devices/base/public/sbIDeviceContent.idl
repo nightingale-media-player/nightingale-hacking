@@ -26,10 +26,8 @@
 
 #include "nsISupports.idl"
 
-interface nsIFactory;
-interface nsISimpleEnumerator;
+interface nsIArray;
 
-interface sbIDevice;
 interface sbIDeviceLibrary;
 interface sbILibraryFactory;
 
@@ -38,31 +36,27 @@ interface sbILibraryFactory;
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(13dbf4ca-6473-4f1b-abd9-eb7e2dfe1e56)]
+[scriptable, uuid(6ec1bd9c-e6e0-4c92-83dc-9439791a3b4b)]
 interface sbIDeviceContent : nsISupports
 {
   /**
-   * 
+   * \brief A simple array of the libraries for this device
    */
-  readonly attribute nsISimpleEnumerator libraries;
+  readonly attribute nsIArray libraries;
 
   /**
-   * 
-   */
-  readonly attribute PRUint32 libraryCount;
-
-  /**
-   * 
+   * \brief Not currently implemented
    */
   readonly attribute sbILibraryFactory libraryFactory;
 
   /**
-   * 
+   * \brief Add a device library to the device
    */
   void addLibrary(in sbIDeviceLibrary aLibrary);
 
   /**
-   * 
+   * \brief Remove a device library from the device
    */
   void removeLibrary(in sbIDeviceLibrary aLibrary);
 };
+
