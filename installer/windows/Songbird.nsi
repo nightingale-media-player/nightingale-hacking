@@ -212,7 +212,8 @@ Section "-Application" Section1
   SetDetailsPrint none
   
   ; Execute Flash Redistributable Installer
-  ExecWait '${FlashRedistributableInstaller} /S'
+  ExecWait '$INSTDIR\${FlashRedistributableInstallerEXE} /S'
+  Delete '$INSTDIR\${FlashRedistributableInstallerEXE}'
 
   ; Add Application as Trusted user of Flash
   CreateDirectory $SYSDIR\Macromed\Flash\FlashPlayerTrust
@@ -435,7 +436,7 @@ Section "Uninstall"
   Delete $INSTDIR\${VistaIcon}
   
   ; Text files to uninstall
-  Delete $INSTDIR\LICENSE.txt
+  Delete $INSTDIR\LICENSE.html
   Delete $INSTDIR\TRADEMARK.txt
   Delete $INSTDIR\README.txt
   
