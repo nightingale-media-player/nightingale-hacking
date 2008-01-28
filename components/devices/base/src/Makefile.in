@@ -33,15 +33,23 @@ target_name = sbDeviceBase$(DEBUG:%=_d)
 
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceEvent.cpp \
+           sbDeviceLibrary.cpp \
+           sbDeviceContent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/devices/base/src \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(DEPTH)/components/property/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(NULL)
 
 STATIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(LIB_SUFFIX)

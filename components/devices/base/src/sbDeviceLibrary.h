@@ -35,6 +35,60 @@
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
 
+// These are the methods from sbLibrary that we're going to
+// override in sbDeviceLibrary.
+#define SB_DECL_SBILIBRARY_OVERRIDES  \
+  NS_IMETHOD CreateMediaItem(nsIURI *aContentUri, sbIPropertyArray *aProperties, PRBool aAllowDuplicates, sbIMediaItem **_retval); \
+  NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
+
+// Use this macro to declare functions that forward the behavior of this
+// interface to another object in a safe way.
+#define SB_FORWARD_SAFE_SBILIBRARY(_to) \
+  NS_IMETHOD GetDevice(sbIDevice * *aDevice) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDevice(aDevice); } \
+  NS_IMETHOD GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
+  NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
+  NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
+  NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
+  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, _retval); } \
+  NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \
+  NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \
+  NS_IMETHOD RegisterMediaListFactory(sbIMediaListFactory *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterMediaListFactory(aFactory); } \
+  NS_IMETHOD Optimize(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(); } \
+  NS_IMETHOD Sync(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Sync(); } \
+  NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
+  NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); } 
+
+// These are the methods from sbLibrary that we're going to
+// override in sbDeviceLibrary.
+#define SB_DECL_SBIMEDIALIST_OVERRIDES \
+  NS_IMETHOD Add(sbIMediaItem *aMediaItem); \
+  NS_IMETHOD AddAll(sbIMediaList *aMediaList); \
+  NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems); \
+  NS_IMETHOD Clear(void);
+
+#define SB_FORWARD_SAFE_SBIMEDIALIST(_to) \
+  NS_IMETHOD GetName(nsAString & aName) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetName(aName); } \
+  NS_IMETHOD SetName(const nsAString & aName) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetName(aName); } \
+  NS_IMETHOD GetType(nsAString & aType) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetType(aType); } \
+  NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } \
+  NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
+  NS_IMETHOD GetItemByGuid(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByGuid(aGuid, _retval); } \
+  NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByIndex(aIndex, _retval); } \
+  NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperty(aPropertyID, aPropertyValue, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperties(sbIPropertyArray *aProperties, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperties(aProperties, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->IndexOf(aMediaItem, aStartFrom, _retval); } \
+  NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->LastIndexOf(aMediaItem, aStartFrom, _retval); } \
+  NS_IMETHOD Contains(sbIMediaItem *aMediaItem, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Contains(aMediaItem, _retval); } \
+  NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
+  NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
+  NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \
+  NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
+  NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
+  NS_IMETHOD CreateView(sbIMediaListViewState *aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
+  NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); } \
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } 
+
 class sbDeviceLibrary : public sbIDeviceLibrary,
                         public sbIMediaListListener,
                         public sbILocalDatabaseMediaListCopyListener
@@ -50,9 +104,12 @@ public:
 
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mDeviceLibrary)
   NS_FORWARD_SAFE_SBIMEDIAITEM(mDeviceLibrary)
-  NS_FORWARD_SAFE_SBIMEDIALIST(mDeviceLibrary)
-  NS_FORWARD_SAFE_SBILIBRARY(mDeviceLibrary)
+  SB_FORWARD_SAFE_SBIMEDIALIST(mDeviceLibrary)
+  SB_FORWARD_SAFE_SBILIBRARY(mDeviceLibrary)
 
+  SB_DECL_SBILIBRARY_OVERRIDES
+  SB_DECL_SBIMEDIALIST_OVERRIDES
+  
   nsresult Init(const nsAString& aDeviceIdentifier);
 
 private:
@@ -97,8 +154,8 @@ private:
    * \brief Register the device library with the library manager.
    *
    * Registering the device library with the library manager enables the user
-   * to view the library. It becomes accessible to others programmatically as well
-   * through the library manager.
+   * to view the library. It becomes accessible to others programmatically as
+   * well through the library manager.
    *
    * \param aDeviceLibrary The library instance to register.
    */
@@ -112,8 +169,8 @@ private:
    * as well.
    * 
    * A device should always unregister the device library when the application
-   * shuts down, when the device is disconnected suddenly and when the user ejects
-   * the device.
+   * shuts down, when the device is disconnected suddenly and when the user
+   * ejects the device.
    *
    * \param aDeviceLibrary The library instance to unregister.
    */

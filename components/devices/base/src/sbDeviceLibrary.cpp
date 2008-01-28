@@ -305,6 +305,9 @@ sbDeviceLibrary::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey
   }                                                                           \
 
 #define SB_NOTIFY_LISTENERS_ASK_PERMISSION(call)                              \
+  PRBool mShouldProcceed = PR_TRUE;                                           \
+  PRBool mPerformAction = PR_FALSE;                                           \
+                                                                              \
   nsCOMArray<sbIDeviceLibraryListener> listeners;                             \
   {                                                                           \
     nsAutoLock lock(mLock);                                                   \
@@ -315,8 +318,9 @@ sbDeviceLibrary::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey
   for (PRInt32 index = 0; index < count; index++) {                           \
     nsCOMPtr<sbIDeviceLibraryListener> listener = listeners.ObjectAt(index);  \
     NS_ASSERTION(listener, "Null listener!");                                 \
-    listener->call;                                                           \
+    listener->call/*(param, ..., &mShouldProcceed)*/;                         \
     if (!mShouldProcceed) {                                                   \
+      /* Abort as soon as one returns false */                                \
       mPerformAction = PR_FALSE;                                              \
       break;                                                                  \
     }                                                                         \
@@ -413,4 +417,109 @@ sbDeviceLibrary::OnItemCopied(sbIMediaItem *aSourceItem,
   SB_NOTIFY_LISTENERS(OnItemCopied(aSourceItem, aDestItem));
 
   return NS_OK;
+}
+
+/*
+ * See sbILibrary
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
+                                 sbIPropertyArray *aProperties,
+                                 PRBool aAllowDuplicates,
+                                 sbIMediaItem **_retval)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaItem(aContentUri,
+                                                             aProperties,
+                                                             aAllowDuplicates,
+                                                             &mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->CreateMediaItem(aContentUri,
+                                           aProperties,
+                                           aAllowDuplicates,
+                                           _retval);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbILibrary
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::CreateMediaList(const nsAString & aType,
+                                 sbIPropertyArray *aProperties,
+                                 sbIMediaList **_retval)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaList(aType, 
+                                                             aProperties,
+                                                             &mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->CreateMediaList(aType, aProperties, _retval);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, &mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->Add(aMediaItem);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::AddAll(sbIMediaList *aMediaList)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddAll(aMediaList,
+                                                    &mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->AddAll(aMediaList);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
+                                                    &mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->AddSome(aMediaItems);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::Clear(void)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeClear(&mShouldProcceed));
+  if (mPerformAction) {
+    return mDeviceLibrary->Clear();
+  } else {
+    return NS_OK;
+  }
 }

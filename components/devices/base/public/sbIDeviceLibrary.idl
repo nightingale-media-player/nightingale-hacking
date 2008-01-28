@@ -52,7 +52,7 @@ interface sbIDeviceLibraryListener : nsISupports
    * choose to ignore further notifications until the onBatchEnd notification
    * is received.
    *
-   * \param aMediaList The list that has changed.
+   * \param sbIMediaList aMediaList The list that has changed.
    */
   void onBatchBegin(in sbIMediaList aMediaList);
 
@@ -63,7 +63,7 @@ interface sbIDeviceLibraryListener : nsISupports
    * This notification can be used to optimize behavior. The consumer may
    * choose to stop ignoring notifications after receiving this notification.
    *
-   * \param aMediaList The list that has changed.
+   * \param sbIMediaList aMediaList The list that has changed.
    */
   void onBatchEnd(in sbIMediaList aMediaList);
 
@@ -72,8 +72,8 @@ interface sbIDeviceLibraryListener : nsISupports
    */
   /**
    * \brief Called when a media item is added to a list, through add or addAll.
-   * \param aMediaList The list that has changed.
-   * \param aMediaItem The new media item.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The new media item.
    * \return True if you do not want any further onItemAdded notifications for
    *         the current batch.  If there is no current batch, the return value
    *         is ignored.
@@ -84,8 +84,8 @@ interface sbIDeviceLibraryListener : nsISupports
   /**
    * \brief Called before a media item is removed from a list, through remove,
    *        removeAll or removeByIndex.
-   * \param aMediaList The list that has changed.
-   * \param aMediaItem The removed media item.
+   * \param sbIMediaList sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem sbIMediaItem aMediaItem The removed media item.
    * \return True if you do not want any further onItemRemoved for the
    *         current batch.  If there is no current batch, the return value is
    *         ignored.
@@ -96,8 +96,8 @@ interface sbIDeviceLibraryListener : nsISupports
   /**
    * \brief Called after a media item has been removed from a list, through
    *        remove, removeAll or removeByIndex.
-   * \param aMediaList The list that has changed.
-   * \param aMediaItem The removed media item.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The removed media item.
    * \return True if you do not want any further onItemRemoved for the
    *         current batch.  If there is no current batch, the return value is
    *         ignored.
@@ -107,6 +107,7 @@ interface sbIDeviceLibraryListener : nsISupports
 
   /**
    * \brief Called when a media list is cleared.
+   * \param sbIMediaList aMediaList The list that has been cleared.
    * \return True if you do not want any further onListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
@@ -115,8 +116,8 @@ interface sbIDeviceLibraryListener : nsISupports
 
   /**
    * \brief Called when a media item is changed.
-   * \param aMediaList The list that has changed.
-   * \param aMediaItem The item that has changed.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The item that has changed.
    * \param aProperties Array of properties that were updated.  Each property's
    *        value is the previous value of the property
    * \return True if you do not want any further onItemUpdated notifications
@@ -130,16 +131,56 @@ interface sbIDeviceLibraryListener : nsISupports
 
   /**
    * \brief Called when a media item has been copied.
-   * \param aMediaItem The item that was copied from.
-   * \param aMediaItem The item that was copied to.
+   * \param sbIMediaItem aSourceItem The item that was copied from.
+   * \param sbIMediaItem aDestItem The item that was copied to.
    */
   void onItemCopied(in sbIMediaItem aSourceItem, 
                     in sbIMediaItem aDestItem);
 
 
+  /**
+   * These are listener functions that will get called before some actions
+   * take place, like adding, or creating items in the library.
+   */
+
+  /**
+   * \brief Called before a media item is going to be created.
+   * \sa sbILibrary::CreateMediaItem
+   */
   boolean onBeforeCreateMediaItem(in nsIURI aContentUri,
-                                  in sbIPropertyArray aProperties,
-                                  in boolean aAllowDuplicates);
+                                  [optional] in sbIPropertyArray aProperties,
+                                  [optional] in boolean aAllowDuplicates);
+
+  /**
+   * \brief Called before a media list is going to be created.
+   * \sa sbILibrary::CreateMediaList
+   */
+  boolean onBeforeCreateMediaList(in AString aType,
+                                  [optional] in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Called before an item is added.
+   * \sa sbIMediaList::Add
+   */
+  boolean onBeforeAdd(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called before all item from a list are added.
+   * \sa sbIMediaList::AddAll
+   */
+  boolean onBeforeAddAll(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called before some items are added.
+   * \sa sbIMediaList::AddSome
+   */
+  boolean onBeforeAddSome(in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Called before the device is cleared.
+   * \sa sbIMediaList::Clear
+   */
+  boolean onBeforeClear();
 
 };
  
