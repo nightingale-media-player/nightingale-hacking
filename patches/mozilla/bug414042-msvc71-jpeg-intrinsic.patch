@@ -4,8 +4,8 @@ RCS file: /cvsroot/mozilla/jpeg/jdapimin.c,v
 retrieving revision 3.9
 diff -p -U 8 -r3.9 jdapimin.c
 --- jpeg/jdapimin.c	25 Jan 2008 07:15:32 -0000	3.9
-+++ jpeg/jdapimin.c	26 Jan 2008 00:58:26 -0000
-@@ -16,17 +16,37 @@
++++ jpeg/jdapimin.c	28 Jan 2008 19:29:40 -0000
+@@ -16,17 +16,58 @@
   * case.
   */
  
@@ -14,20 +14,40 @@ diff -p -U 8 -r3.9 jdapimin.c
  #include "jpeglib.h"
  
  #ifdef HAVE_MMX_INTEL_MNEMONICS
-+#if _MSC_VER >= 0x800
++#if _MSC_VER >= 1400
  #include "intrin.h"
 +#else
-+/* no __cpuid intrinsic, use a slower replacement */
-+void __cpuid( int CPUInfo[4], int InfoType )
++/* no __cpuid intrinsic, use a manually rewritten replacement */
++void __stdcall __cpuid( int CPUInfo[4], int InfoType )
 +{
-+  int my_eax, my_ebx, my_ecx, my_edx;
++  int my_eax = 0, my_ebx = 0, my_ecx = 0, my_edx = 0;
 +  __asm {
-+    mov eax, InfoType;
++    /* check eflags bit 21 to see if cpuid is supported */
++    pushfd             /* save eflags to stack */
++    pop eax            /* and put it in eax */
++    mov ecx, eax       /* save a copy in ecx to compare against */
++    xor eax, 0x200000  /* toggle ID bit (bit 21) in eflags */
++    push eax           /* save modified eflags to stack */
++    popfd              /* set eflags register with modified value */
++    pushfd             /* read eflags back out */
++    pop eax
++    xor eax, ecx       /* check for modified eflags */
++    jz NOT_SUPPORTED   /* cpuid not supported */
++
++    /* check to see if the requested cpuid type is supported */
++    xor eax, eax       /* set eax to zero */
++    cpuid
++    cmp eax, InfoType
++    jl NOT_SUPPORTED   /* the requested cpuid type is not supported */
++
++    /* actually make the cpuid call */
++    mov eax, InfoType
 +    cpuid
 +    mov my_eax, eax
 +    mov my_ebx, ebx
 +    mov my_ecx, ecx
 +    mov my_edx, edx
++NOT_SUPPORTED:
 +  }
 +  CPUInfo[0] = my_eax;
 +  CPUInfo[1] = my_ebx;
@@ -35,6 +55,7 @@ diff -p -U 8 -r3.9 jdapimin.c
 +  CPUInfo[3] = my_edx;
 +}
 +#endif /* _MSC_VER >= 0x800 */
++
  int MMXAvailable;
  static int mmxsupport();
  #endif
