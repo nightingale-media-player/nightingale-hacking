@@ -634,13 +634,18 @@ AC_ARG_WITH(user-eula-file,
                                        is displayed when the application is first launched.
                                        The user *must* accept this EULA for the application
                                        to continue. The file *must* reside within the source
-                                       tree. Using / means the root of the source tree.
+                                       tree. Using / means the root of the source tree. This file
+                                       also replaces the About dialog license!
                                        ],
             SB_USER_EULA_FILE=$withval)
 if test -z "$SB_USER_EULA_FILE"; then
   SB_USER_EULA_FILE=eula.html
+  SB_USER_ABOUT_FILE=about.html
+else
+  SB_USER_ABOUT_FILE=$SB_USER_EULA_FILE
 fi
 AC_SUBST(SB_USER_EULA_FILE)
+AC_SUBST(SB_USER_ABOUT_FILE)
 
 #
 # Check for --with-flash-redistributable

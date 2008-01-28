@@ -1,7 +1,11 @@
 #filter substitution
 songbird.jar:
 % content  songbird  %content/songbird/
+#ifdef SB_USER_ABOUT_FILE
+  content/songbird/html/about.html        (@SB_USER_ABOUT_FILE@)
+#else
   content/songbird/html/about.html        (about.html)
+#endif
   content/songbird/html/cannotLoad.html   (cannotLoad.html)
   content/songbird/html/notConnected.html (notConnected.html)
 #ifdef SB_USER_EULA_FILE

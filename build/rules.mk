@@ -195,11 +195,6 @@ targets += copy_sb_license_file
 clean_targets += clean_copy_sb_license_file
 endif
 
-ifdef SONGBIRD_USER_EULA_FILE
-targets += copy_sb_user_eula_file
-clean_targets += clean_copy_sb_user_eula_file
-endif
-
 ifdef JAR_MANIFEST
 targets += make_jar
 clean_targets += clean_jar_postprocess
@@ -1055,21 +1050,6 @@ clean_copy_sb_license_file:
 
 .PHONY : copy_sb_license_file clean_copy_sb_license_file
 endif #SONGBIRD_LICENSE_FILE
-
-#-----------------------
-
-ifdef SONGBIRD_USER_EULA_FILE
-copy_sb_user_eula_file:
-ifeq (,$(wildcard $(SONGBIRD_DISTDIR)))
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
-endif
-	$(CYGWIN_WRAPPER) $(CP) -f $(SONGBIRD_USER_EULA_FILE) $(SONGBIRD_DISTDIR)/eula.html
-
-clean_copy_sb_user_eula_file:
-	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/eula.html
-
-.PHONY : copy_sb_user_eula_file clean_copy_sb_user_eula_file
-endif #SONGBIRD_USER_EULA_FILE
 
 #------------------------------------------------------------------------------
 # Rules for preprocessing
