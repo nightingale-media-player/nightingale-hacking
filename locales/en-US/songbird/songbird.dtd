@@ -9,6 +9,22 @@
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.browse      "Browse..." >
 
+<!-- Mac system menu -->
+<!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
+<!ENTITY menu.mac.exit.key              "Q">
+<!ENTITY menu.mac.exit.modifiers        "accel">
+<!ENTITY menu.mac.preferences           "Preferences...">
+<!ENTITY menu.mac.preferences.key       ",">
+<!ENTITY menu.mac.preferences.modifiers "accel">
+<!ENTITY menu.mac.services              "Services">
+<!ENTITY menu.mac.hide                  "Hide &brandShortName;">
+<!ENTITY menu.mac.hide.key              "H">
+<!ENTITY menu.mac.hide.modifiers        "accel">
+<!ENTITY menu.mac.hideothers            "Hide Others">
+<!ENTITY menu.mac.hideothers.key        "H">
+<!ENTITY menu.mac.hideothers.modifiers  "accel,alt">
+<!ENTITY menu.mac.showall               "Show All">
+
 <!ENTITY menu.file          "File" >
 <!ENTITY menu.file.new      "New Playlist..." >
 <!ENTITY menu.file.smart    "New Smart Playlist..." >
