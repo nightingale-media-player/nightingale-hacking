@@ -779,6 +779,8 @@
         <parameter name="aURL" />
         <parameter name="aShouldBeginPlayback" />
         <parameter name="forcePlaylist" />
+        <parameter name="target" />
+        <parameter name="referrer" />
         <body><![CDATA[
           var retval = false;
           try
@@ -869,11 +871,10 @@
               var playlist_observer = {
                 observe: function ( aSubject, aTopic, aData ) {
                   if (aTopic.indexOf("error") != -1) {
-                    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                                  .getService(Components.interfaces.nsIPromptService);
-                    promptService.alert(null,
-                                        "Playlist Error",
-                                        "Unable to read playlist file - please try again later.");
+                    // if we get an error parsing a page we thought was a 
+                    // playlist then we were probably wrong. let's just load
+                    // it in the browser
+                    gBrowser.loadURI(aURL, referrer, null, null, target);
                   }
                   else {
                     var array =
@@ -1132,19 +1133,17 @@
               case "html.context.open":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false) )
+                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false, null, this.currentURI.spec) )
                 {
-                  // should we add the referrer?
-                  this.loadURI(this.theHTMLContextURL, null, null);
+                  this.loadURI(this.theHTMLContextURL, this.currentURI.spec, null);
                 }
               break;
               case "html.context.opentab":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false) )
+                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false, '_blank', this.currentURI.spec) )
                 {
-                  // should we add the referrer?
-                  this.loadOneTab(this.theHTMLContextURL, null, null, null, null, null);
+                  this.loadOneTab(this.theHTMLContextURL, this.currentURI.spec, null, null, null, null);
                 }
                 break;
               case "html.context.openexternal":
@@ -1425,7 +1424,7 @@
           // we need to handle playlists and media items specially
           if ( gPPS.isPlaylistURL(href) ||
                gPPS.isMediaURL(href) ) {
-            this.handleMediaURL(href);
+            this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
           } else {
