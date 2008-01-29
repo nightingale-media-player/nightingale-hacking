@@ -134,6 +134,6 @@ void sbDeviceEventTesterStressThreads::OnEvent()
                             getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, /* void */);
   
-  rv = target->DispatchEvent(event);
+  rv = target->DispatchEvent(event, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, /* void */);
 }

@@ -70,12 +70,14 @@ sbBaseDeviceEventTarget::~sbBaseDeviceEventTarget()
   /* destructor code */
 }
 
-/* void dispatchEvent (in sbIDeviceEvent aEvent); */
-NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent)
+/* boolean dispatchEvent (in sbIDeviceEvent aEvent, [optional] PRBool aAsync); */
+NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent,
+                                                     PRBool aAsync,
+                                                     PRBool* _retval)
 {
   nsresult rv;
   
-  if (!NS_IsMainThread()) {
+  if (aAsync || (!NS_IsMainThread())) {
     // we need to proxy to the main thread
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
     { /* scope the monitor */
@@ -84,18 +86,25 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent)
       rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
-                                NS_PROXY_SYNC,
+                                aAsync ?
+                                  NS_PROXY_ASYNC | NS_PROXY_ALWAYS :
+                                  NS_PROXY_SYNC,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    return proxiedSelf->DispatchEvent(aEvent);
+    // don't have a return value if dispatching asynchronously
+    // (since the variable is likely to be dead by that point)
+    return proxiedSelf->DispatchEvent(aEvent,
+                                      PR_FALSE,
+                                      aAsync ? nsnull : _retval);
   }
 
-  return DispatchEventInternal(aEvent);
+  return DispatchEventInternal(aEvent, _retval);
 }
 
 /* Dispatch an event, assuming we're already on the main thread */
-nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent)
+nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
+                                                        PRBool* _retval)
 {
   DispatchState state;
   state.length = mListeners.Count();
@@ -115,12 +124,18 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent)
   // listener we get updated
   mStates.Push(&state);
   
+  // note that the return value doesn't exist if we're an async proxy
+  if (_retval)
+    *_retval = PR_FALSE;
+  
   for (state.index = 0; state.index < state.length; ++state.index) {
     rv = mListeners[state.index]->OnDeviceEvent(aEvent);
     if (NS_FAILED(rv)) {
       // can't early return, we need to clean up!
       break;
     }
+    if (_retval)
+      *_retval = PR_TRUE;
   }
   
   // pop the stored state, to ensure we don't end up with a pointer to a stack

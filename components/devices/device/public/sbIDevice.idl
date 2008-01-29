@@ -110,4 +110,20 @@ interface sbIDevice : nsISupports
    * The parameters with which the device was created
    */
   readonly attribute nsIPropertyBag2 parameters;
+  
+  /**
+   * Whether the device is busy, etc.
+   * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
+   * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*
+   * @see STATE_*
+   */
+  readonly attribute unsigned long state;
+
+  const PRUint32 STATE_IDLE            = 0;
+  const PRUint32 STATE_DOWNLOADING     = 1;
+  const PRUint32 STATE_UPLOADING       = 2;
+  const PRUint32 STATE_BUSY            = 3;
+  const PRUint32 STATE_DELETING        = 4;
+  const PRUint32 STATE_DOWNLOAD_PAUSED = 5;
+  const PRUint32 STATE_UPLOAD_PAUSED   = 6;
 };

@@ -44,5 +44,13 @@ nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                                    nsIStringEnumerator* aRight,
                                    PRBool* _retval);
 
+/**
+ * Searches a string for any occurences of any character of a set and replace
+ * them with a replacement character.  Modifies the string in-place.
+ * @see nsString_internal::ReplaceChar
+ */
+void nsString_ReplaceChar(/* inout */ nsAString& aString,
+                          const nsAString& aOldChars,
+                          const PRUnichar aNewChar);
 #endif /* __SBSTRINGUTILS_H__ */
 

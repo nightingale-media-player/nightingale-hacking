@@ -33,7 +33,7 @@ interface sbIDeviceEventListener;
  * \interface sbIDeviceEventTarget
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(c83fad0a-d0f7-4b66-9596-b6a3cfa21d65)]
+[scriptable, uuid(877c03e8-b834-44de-b7c1-bcb5dd62d693)]
 interface sbIDeviceEventTarget : nsISupports
 {
   /**
@@ -43,8 +43,11 @@ interface sbIDeviceEventTarget : nsISupports
    * An event may only be dispatched once; it may not be re-used.
    *
    * @param aEvent the event to dispatch
+   * @param aSync dispatch the event asynchronously (default false)
+   * @return Undefined if the event was dispatched asynchournously
+   *         True if the event has been dispatched (false if no listeners)
    */
-  void dispatchEvent(in sbIDeviceEvent aEvent);
+  boolean dispatchEvent(in sbIDeviceEvent aEvent, [optional] in PRBool aAsync);
 
   /**
    * Add a event listener

@@ -46,10 +46,10 @@ public:
   sbBaseDeviceEventTarget();
 
 protected:
-  ~sbBaseDeviceEventTarget();
+  virtual ~sbBaseDeviceEventTarget();
 
 protected:
-  nsresult DispatchEventInternal(sbIDeviceEvent *aEvent);
+  nsresult DispatchEventInternal(sbIDeviceEvent *aEvent, PRBool* _retval);
 
 protected:
   // the listener array should always be accessed from the main thread

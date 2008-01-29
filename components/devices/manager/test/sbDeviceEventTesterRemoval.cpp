@@ -183,10 +183,10 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
                             getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = target->DispatchEvent(event);
+  rv = target->DispatchEvent(event, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = target->DispatchEvent(event);
+  rv = target->DispatchEvent(event, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -285,7 +285,7 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
         nsCOMPtr<sbIDeviceEventTarget> target;
         rv = aEvent->GetTarget(getter_AddRefs(target));
         NS_ENSURE_SUCCESS(rv, rv);
-        rv = target->DispatchEvent(event);
+        rv = target->DispatchEvent(event, PR_FALSE, nsnull);
         NS_ENSURE_SUCCESS(rv, rv);
         
         break;

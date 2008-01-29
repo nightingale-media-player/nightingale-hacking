@@ -144,3 +144,15 @@ SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
   return NS_OK;
 }
 
+void nsString_ReplaceChar(/* inout */ nsAString& aString,
+                          const nsAString& aOldChars,
+                          const PRUnichar aNewChar)
+{
+  PRUint32 length = aString.Length();
+  for (PRUint32 index = 0; index < length; index++) {
+    PRUnichar currentChar = aString.CharAt(index);
+    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar);
+    if (oldCharsIndex > -1)
+      aString.Replace(index, 1, aNewChar);
+  }
+}

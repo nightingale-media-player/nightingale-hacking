@@ -34,36 +34,36 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(4f5dcbee-650a-43b5-90af-0d7dd2f0e4c6)]
+[scriptable, uuid(f2474d9a-3dc5-4376-8cb3-9df6b78bfd39)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
    * 
    */
   const unsigned long COMMAND_DEVICE_BASE         = 0x00000000;
-  const unsigned long COMMAND_DEVICE_RESET        = 0x00000001;
-  const unsigned long COMMAND_DEVICE_POWER_DOWN   = 0x00000002;
-  const unsigned long COMMAND_DEVICE_POWER_UP     = 0x00000003;
-  const unsigned long COMMAND_DEVICE_MEDIA_EJECT  = 0x00000004;
-  const unsigned long COMMAND_DEVICE_MEDIA_FORMAT = 0x00000005;
+  const unsigned long COMMAND_DEVICE_RESET        = COMMAND_DEVICE_BASE + 1;
+  const unsigned long COMMAND_DEVICE_POWER_DOWN   = COMMAND_DEVICE_BASE + 2;
+  const unsigned long COMMAND_DEVICE_POWER_UP     = COMMAND_DEVICE_BASE + 3;
+  const unsigned long COMMAND_DEVICE_MEDIA_EJECT  = COMMAND_DEVICE_BASE + 4;
+  const unsigned long COMMAND_DEVICE_MEDIA_FORMAT = COMMAND_DEVICE_BASE + 5;
 
   /**
    * 
    */
   const unsigned long COMMAND_CONTROLLER_BASE  = 0x00020000;
-  const unsigned long COMMAND_CONTROLLER_RESET = 0x00020001;
+  const unsigned long COMMAND_CONTROLLER_RESET = COMMAND_CONTROLLER_BASE + 1;
 
   /**
    * 
    */
   const unsigned long COMMAND_MARSHALL_BASE  = 0x00040000;
-  const unsigned long COMMAND_MARSHALL_RESET = 0x00040001;
+  const unsigned long COMMAND_MARSHALL_RESET = COMMAND_MARSHALL_BASE + 1;
 
   /**
    * 
    */
   const unsigned long COMMAND_MANAGER_BASE    = 0x00060000;
-  const unsigned long COMMAND_MANAGER_REFRESH = 0x00060001;
+  const unsigned long COMMAND_MANAGER_REFRESH = COMMAND_MANAGER_BASE + 1;
 
   /**
    * 
@@ -71,19 +71,32 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long COMMAND_CLIENT_DEFINED = 0x20000000;
 
   /**
-   * 
+   * Device events
    */
   const unsigned long EVENT_DEVICE_BASE               = 0x40000000;
-  const unsigned long EVENT_DEVICE_ADDED              = 0x40000001;
-  const unsigned long EVENT_DEVICE_REMOVED            = 0x40000002;
-  const unsigned long EVENT_DEVICE_MEDIA_INSERTED     = 0x40000003;
-  const unsigned long EVENT_DEVICE_MEDIA_REMOVED      = 0x40000004;
-  const unsigned long EVENT_DEVICE_MEDIA_READ_START   = 0x40000005;
-  const unsigned long EVENT_DEVICE_MEDIA_READ_END     = 0x40000006;
-  const unsigned long EVENT_DEVICE_MEDIA_READ_FAILED  = 0x40000007;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = 0x40000008;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = 0x40000009;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = 0x4000000A;
+  
+  // the device was connected
+  const unsigned long EVENT_DEVICE_ADDED              = EVENT_DEVICE_BASE + 1;
+  // the device was disconnected
+  const unsigned long EVENT_DEVICE_REMOVED            = EVENT_DEVICE_BASE + 2;
+  
+  // some sort of storage media was inserted into the device
+  const unsigned long EVENT_DEVICE_MEDIA_INSERTED     = EVENT_DEVICE_BASE + 3;
+  // some sort of storage media was removed from the device
+  // (note that there may be more than one, and some may still be in the device)
+  const unsigned long EVENT_DEVICE_MEDIA_REMOVED      = EVENT_DEVICE_BASE + 4;
+
+  const unsigned long EVENT_DEVICE_TRANSFER_START     = EVENT_DEVICE_BASE + 5;
+  const unsigned long EVENT_DEVICE_TRANSFER_PROGRESS  = EVENT_DEVICE_BASE + 6;
+  const unsigned long EVENT_DEVICE_TRANSFER_END       = EVENT_DEVICE_BASE + 7;
+
+  // device state changes
+  const unsigned long EVENT_DEVICE_MEDIA_READ_START   = EVENT_DEVICE_BASE + 8;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_END     = EVENT_DEVICE_BASE + 9;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_FAILED  = EVENT_DEVICE_BASE + 10;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 11;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 12;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 13;
 
   /**
    * 
