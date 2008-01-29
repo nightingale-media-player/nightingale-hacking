@@ -31,7 +31,7 @@ var gRemoteAPIPane = {
   ],
   isChanged: false,
 
-  configureWhitelist: function (aType)
+  configureWhitelist: function (aType, aScope)
   {
     // get ref to the properties file string bundle
     var bundlePreferences = document.getElementById("bundleSongbirdPreferences");
@@ -41,9 +41,9 @@ var gRemoteAPIPane = {
       blockVisible: false,
       sessionVisible: false,
       allowVisible: true,
-      prefilledHost: "",
+      prefilledHost: (aScope ? aScope : ""),
       permissionType: "rapi." + aType,
-      windowTitle: bundlePreferences.getString("rapi.permissions_title"),
+      windowTitle: bundlePreferences.getString("rapi." + aType + ".permissions_title"),
       introText: bundlePreferences.getString("rapi." + aType + ".permissions_text"),
       blocking: {
         settings: bundlePreferences.getString("rapi." + aType + ".block_settings"),
@@ -86,6 +86,12 @@ var gRemoteAPIPane = {
     }
     window.removeEventListener('paneload', gRemoteAPIPane.onLoad, false);
     gRemoteAPIPane.updateDisabledState();
+
+    if (window.pleaseConfigureWhitelist) {
+      gRemoteAPIPane.configureWhitelist(window.pleaseConfigureWhitelist[0],
+          window.pleaseConfigureWhitelist[1]);
+      window.pleaseConfigureWhitelist = null;
+    }
   },
   
   onUnload: function(event) {

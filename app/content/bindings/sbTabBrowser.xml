@@ -994,7 +994,19 @@
 
             aHat.closeEvent = editEvt;
 
-            SBOpenPreferences("paneRemoteAPI");
+            var prefWindow = SBOpenPreferences("paneRemoteAPI");
+            if (prefWindow.gRemoteAPIPane) {
+              /* if the window is already open ask it to configure the 
+                 whitelist */
+              prefWindow.gRemoteAPIPane.configureWhitelist(closure.categoryID,
+                  closure.siteScope.spec);
+            } else {
+              /* if it's not yet open, ask it to open the whitelist when 
+                 it's ready */
+              prefWindow.pleaseConfigureWhitelist = 
+                  [closure.categoryID, closure.siteScope.spec];
+            }
+            
 
             // add metrics reporting here
           }

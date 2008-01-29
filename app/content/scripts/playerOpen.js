@@ -337,9 +337,10 @@ function SBOpenPreferences(paneID, parentWindow)
       var pane = win.document.getElementById(paneID);
       win.document.documentElement.showPane(pane);
     }
+    return win;
+  } else {
+    return parentWindow.openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
   }
-  else
-    parentWindow.openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
 
   // to open connection settings only:
   // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null);
