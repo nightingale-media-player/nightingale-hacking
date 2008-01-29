@@ -76,8 +76,6 @@ tree
 }
 
 /* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
-#service_edit_popup autorepeatbutton,
-#service_edit_popup arrowscrollbox,
 #playlist_edit_popup autorepeatbutton,
 #playlist_edit_popup arrowscrollbox
 {
@@ -86,21 +84,6 @@ tree
   border: none !important;
   height: 0px !important;
   max-height: 0px !important;
-  margin: 0px 0px 0px 0px !important; 
-  padding: 0px 0px 0px 0px !important; 
-}
-
-#service_edit,
-#service_edit *,
-#service_edit_popup
-{
-  -moz-appearance: none !important;
-  -moz-box-pack: center !important;
-  background-color: #333 !important;
-  color: #CCC !important;
-  font-weight: bold !important;
-  border: none !important;
-  height: 100% !important;
   margin: 0px 0px 0px 0px !important; 
   padding: 0px 0px 0px 0px !important; 
 }

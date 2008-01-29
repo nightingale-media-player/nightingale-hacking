@@ -263,11 +263,6 @@
         <textbox id="playlist_edit" multiline="false" wrap="off" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
       </popup>
 
-      <!-- EDIT POPUP FOR THE SERVICE PANE -->
-      <popup id="service_edit_popup"  ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
-        <textbox id="service_edit" multiline="false" wrap="off" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
-      </popup>
-  	
 	    <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
 
       <!-- POPUP FOR THE POPUPBLOCKER MENU -->
@@ -428,6 +423,10 @@
   <!-- Asynchronous web page media scan -->
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
+
+  <!-- Devices support -->
+  <script type="application/x-javascript"   
+  src="chrome://songbird/content/scripts/deviceTEMP.js" />
 
   <!-- Generic search engine support -->
   <script type="application/x-javascript"   
