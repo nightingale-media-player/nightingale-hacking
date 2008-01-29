@@ -429,10 +429,6 @@
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
 
-  <!-- Devices support -->
-  <script type="application/x-javascript"   
-  src="chrome://songbird/content/scripts/deviceTEMP.js" />
-
   <!-- Generic search engine support -->
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/searchHandler.js" />
