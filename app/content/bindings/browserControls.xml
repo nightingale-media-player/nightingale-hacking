@@ -256,18 +256,8 @@
             
           case 13: // Enter
             this._saveFocus == '';
-            this.value = SBTabcompleteService(this.value);
-
-            var value = this.value;
-            if (value && value.length) {
-              // Make sure the value is an url
-              value = SBGetUrlFromService( value );
-              // And then put it back in the box as a service
-              this.uri = SBGetUrlFromService( value );
-              // And then go to the url.  Easy, no?
-              window.gBrowser.loadURI(value);
-            }
-            break; 
+            this.uri = this.value;
+            window.gBrowser.loadURI(this.value);
         }
       ]]></handler>
     </handlers>

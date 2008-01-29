@@ -432,10 +432,6 @@
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/searchHandler.js" />
 
-  <!-- Service tree support functions -->
-  <script type="application/x-javascript"   
-  src="chrome://songbird/content/scripts/serviceTreeXBLTEMP.js" />
-  
   <!-- Bookmarks manager -->
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/bookmarks.js" />
