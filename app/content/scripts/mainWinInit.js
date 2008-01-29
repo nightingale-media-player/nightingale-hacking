@@ -101,8 +101,6 @@ function SBInitialize()
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
-
-    window.gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
   }
   catch(err)
   {
