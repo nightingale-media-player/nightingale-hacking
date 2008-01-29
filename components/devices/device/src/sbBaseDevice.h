@@ -119,7 +119,7 @@ public:
   
   /* A request has been added, process the request
      (or schedule it to be processed) */
-  virtual ProcessRequest() = 0;
+  virtual nsresult ProcessRequest() = 0;
 
   /* sbIDevice */
   /* note to device implementors: just set mState directly. */
