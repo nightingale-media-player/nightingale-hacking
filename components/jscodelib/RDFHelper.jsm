@@ -153,7 +153,7 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
       }*/
       
       // memoize the result to avoid n^2 iterations
-      that.__defineGetter__(alias, function() {return ary; });
+      that[alias] = ary;
       return ary;
     }
     
