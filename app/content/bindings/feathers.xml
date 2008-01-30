@@ -385,9 +385,12 @@
     <content>
       <xul:hbox id="sb-feathers-toggle-button">
         <xul:sb-clickhold-button anonid="clickhold"  
-                  xbl:inherits="position,popupanchor,popupalign"
-                  class="sb-feathers-toggle-button sb-player-button"
-                  menupopuptype="feathers"/>
+                  xbl:inherits="position"
+                  class="sb-feathers-toggle-button sb-player-button">
+           <xul:menupopup anonid="popup" orient="vertical" xbl:inherits="popupanchor,popupalign">
+             <!--sb-feathers-menuitems/-->
+           </xul:menupopup>
+        </xul:sb-clickhold-button>
       </xul:hbox>
     </content>
     <implementation type="application/x-javascript">

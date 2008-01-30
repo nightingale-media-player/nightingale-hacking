@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
 //
@@ -43,9 +43,7 @@
 
     <content>
         <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
-        <xul:menupopup sbid="popup" class="clickhold-menupopup" xbl:inherits="position,popupanchor,popupalign,type=menupopuptype,onpopupshowing=onmenushowing,onpopupshown=onmenushown,onpopuphiding=onmenuhiding">
-          <children includes="menuitem|menupopup|menu"/>
-        </xul:menupopup>        
+          <children includes="menupopup"/>
         <children/>
     </content>
 
@@ -54,8 +52,17 @@
      <constructor>
        <![CDATA[
        this.popupInterval = null;
-       this.popup = document.getAnonymousElementByAttribute(this, 'sbid', 'popup');
        this.button = document.getAnonymousElementByAttribute(this, 'sbid', 'button');
+       
+       var popupid;
+       if (popupid = this.getAttribute("popup")) {
+          this.popup = document.getElementById(popupid);
+       }
+       if (!this.popup) {
+          this.popup  = this.getElementsByTagNameNS(
+              "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+              "menupopup")[0];
+       }
 
        this.popupShowing = false;
        ]]>
@@ -71,12 +78,13 @@
      <method name="showPopup">
        <body>
          <![CDATA[
-         if (!this.popupShowing) 
+         if (this.popup && !this.popupShowing) 
          {
           var anchor = this.popup.getAttribute("popupanchor");
           var align = this.popup.getAttribute("popupalign");
           // anchor = 'topleft';
           // align = 'bottomleft';
+          
           this.popup.showPopup(this, -1, -1, 'popup', anchor, align);
          }
          ]]>

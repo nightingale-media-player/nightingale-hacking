@@ -777,21 +777,24 @@
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="servicepane_toolbar_box" class="servicepane-toolbar-box">
-        <xul:sb-clickhold-button anonid='clickhold' class="servicepane-toolbar-newitem-button" flex="1" popupanchor="topleft" popupalign="bottomleft" />
+        <xul:sb-clickhold-button class="servicepane-toolbar-newitem-button" anonid="clickhold" flex="1">
+          <xul:menupopup anonid="popup" popupanchor="topleft" popupalign="bottomleft"/>
+        </xul:sb-clickhold-button>
       </xul:hbox>
     </content>
     <implementation>
       <constructor><![CDATA[
         var service = Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
-        this._clickHold =
-            document.getAnonymousElementByAttribute(this, 'anonid', 'clickhold');
-        service.fillNewItemMenu(null, this._clickHold, window);
-        var item = this._clickHold.firstChild;
-        if (!item) {
-          // bad news
-          return;
-        }
+        this._clickHold = document.getAnonymousElementByAttribute(this, 'anonid', 'clickhold');
+        this._popup     = document.getAnonymousElementByAttribute(this, 'anonid', 'popup');
+        
+        service.fillNewItemMenu(null, this._popup, window);
+        
+        // Make the button look like the first item in the list.
+        var item = this._popup.firstChild;
+        if (!item) { /* bad news */ return; }
+        
         this._clickHold.setAttribute('label', item.getAttribute('label'));
         // FIXME: this is needed for styling but sucks
         this._clickHold.setAttribute('id', item.getAttribute('id'));
@@ -809,7 +812,7 @@
           }
         }
         // this wasn't heading to any of our children - let's do the first one
-        this._clickHold.firstChild.doCommand();
+        this._popup.firstChild.doCommand();
       ]]></handler>
     </handlers>
   </binding>

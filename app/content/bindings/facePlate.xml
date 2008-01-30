@@ -657,12 +657,16 @@
                            onmenushowing="buildMenu();" 
                            oncommand="onMenu(event.target)" 
                            class="sb-player-cyclefaceplate-button-cycle sb-player-button" 
-                           xbl:inherits="position,popupanchor,popupalign,label"/>    
+                           xbl:inherits="position,label">
+        <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
+      </xul:sb-clickhold-button>
+      
+                               
     </content>
   
     <implementation>
       
-      <field name="button">document.getAnonymousElementByAttribute(this, 'sbid', 'button');</field>
+      <field name="button">document.getAnonymousElementByAttribute(this, 'sbid', 'button').firstChild;</field>
       <field name="faceplate">document.getElementById(this.getAttribute("faceplate"));</field>
       
       <method name="buildMenu">
@@ -676,6 +680,8 @@
             while (this.button.firstChild) {
               this.button.removeChild(this.button.firstChild);
             }
+            
+            // TODO: If this comes back (it's dead right now) it should be like the <sb-mediapages-menuitems/> binding!  
             
             // Add a menu item for each registered faceplate
             var faceplateManager = Components.classes["@songbirdnest.com/faceplate/manager;1"]

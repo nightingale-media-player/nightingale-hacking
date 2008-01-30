@@ -253,7 +253,7 @@ sb-smart-splitter {
 }
 
 sb-clickhold-button {
-  -moz-binding: url("chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button") !important;
+  -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button')
 }
 
 menupopup[type="feathers"] {
