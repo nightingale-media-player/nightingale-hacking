@@ -26,10 +26,9 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/RDFHelper.jsm");
 
-function SB_NewDataRemote(a,b) {
-  return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
-                    "sbIDataRemote", "init"))(a,b);
-}
+var SB_NewDataRemote = Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
+                                              "sbIDataRemote",
+                                              "init");
 
 /**
  * sbIContentPaneInfo
