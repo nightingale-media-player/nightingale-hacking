@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(srcdir)/XPCOMUtils.jsm \
+                      $(srcdir)/RDFHelper.jsm \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -1,4 +1,3 @@
-/**
 //
 // BEGIN SONGBIRD GPL
 // 
@@ -22,58 +21,23 @@
 // 
 // END SONGBIRD GPL
 //
- */
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
-
-const SONGBIRD_DISPLAYPANE_MANAGER_IID = Components.interfaces.sbIDisplayPaneManager;
-
-const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
-const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
-
+Components.utils.import("resource://app/components/RDFHelper.jsm");
 
 function SB_NewDataRemote(a,b) {
   return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
                     "sbIDataRemote", "init"))(a,b);
 }
 
-
-
-
-/**
- * Debug helper that serializes an RDF datasource to the console
- */
-function dumpDS(prefix, ds) {
-  var outputStream = {
-    data: "",
-    close : function(){},
-    flush : function(){},
-    write : function (buffer,count){
-      this.data += buffer;
-      return count;
-    },
-    writeFrom : function (stream,count){},
-    isNonBlocking: false
-  }
-
-  var serializer = Components.classes["@mozilla.org/rdf/xml-serializer;1"]
-                           .createInstance(Components.interfaces.nsIRDFXMLSerializer);
-  serializer.init(ds);
-
-  serializer.QueryInterface(Components.interfaces.nsIRDFXMLSource);
-  serializer.Serialize(outputStream);
-  
-  outputStream.data.split('\n').forEach( function(line) {
-    dump(prefix + line + "\n");
-  });
-}
-
 /**
  * sbIContentPaneInfo
  */
+ 
 function PaneInfo() {};
-PaneInfo.prototype = {
 
+PaneInfo.prototype = {
   requiredProperties: [ "contentUrl", 
                         "contentTitle",
                         "contentIcon",
@@ -81,21 +45,25 @@ PaneInfo.prototype = {
                         "defaultWidth", 
                         "defaultHeight" ],
   optionalProperties: [ "showOnInstall" ],
-  
-  updateContentInfo: function(aNewTitle, aNewIcon) {
-    this.contentTitle = aNewTitle;
-    this.contentIcon = aNewIcon;
-  },
-  
+    
   verify: function() {
+    var errorList = [];
     for (var i = 0; i < this.requiredProperties.length; i++) {
       var property = this.requiredProperties[i];
       if (! (typeof(this[property]) == 'string'
                && this[property].length > 0)) 
       {
-        throw("Invalid description. '" + property + "' is a required property.");
+        errorList.push("Invalid description. '" + property + "' is a required property.");
       }
     }
+    try {
+      this.defaultWidth = parseInt(this.defaultWidth);
+      this.defaultHeight = parseInt(this.defaultHeight);
+      this.showOnInstall = this.showOnInstall == "true";
+    } catch (e) {
+      errorList.push(e.toString());
+    }
+    return(errorList);
   },
   
   QueryInterface: function(iid) {
@@ -105,11 +73,6 @@ PaneInfo.prototype = {
   }
 };
 
-
-
-
-
-
 /**
  * /class DisplayPaneMetadataReader
  * Responsible for reading addon metadata and performing 
@@ -117,109 +80,56 @@ PaneInfo.prototype = {
  */
 function DisplayPaneMetadataReader() {
   //debug("DisplayPaneMetadataReader: ctor\n");
-  this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);
-  this._datasource = this._RDF.GetDataSourceBlocking("rdf:addon-metadata");
   this._manager = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                            .getService(SONGBIRD_DISPLAYPANE_MANAGER_IID);
-    
-  this._resources = {
-    root: this._RDF.GetResource(RDFURI_ADDON_ROOT),
-    // Helper to convert a string array into 
-    // RDF resources in this object
-    addSongbirdResources: function(list){
-      for (var i = 0; i < list.length; i++) {
-        this[list[i]] = this._RDF.GetResource(PREFIX_NS_SONGBIRD + list[i]);
-      }
-    },
-    _RDF: this._RDF
-  };
-  
-  // Make RDF resources for all properties expected
-  // in the displayPanes portion of an install.rdf     
-  this._resources.addSongbirdResources(PaneInfo.prototype.requiredProperties);
-  this._resources.addSongbirdResources(PaneInfo.prototype.optionalProperties);
-  this._resources.addSongbirdResources(
-     [ "displayPane",
-       "displayPanes" ] );
+                            .getService(Components.interfaces.sbIDisplayPaneManager);
 }
 DisplayPaneMetadataReader.prototype = {
-
-  _RDF: null,
-  
   _manager: null,
-
-  // Addon metadata rdf datasource
-  _datasource: null,
-
-  // Hash of addon metadata RDF resources
-  _resources: null,
 
   /**
    * Populate DisplayPaneManager using addon metadata
    */
   loadPanes: function loadPanes() {
     //debug("DisplayPaneMetadataReader: loadPanes\n");
+    var addons = RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.DEFAULT_RDF_NAMESPACES);
     
-    // Get addon list
-    var containerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"]
-                                   .getService(Components.interfaces.nsIRDFContainerUtils);
-    var container = containerUtils.MakeSeq(this._datasource, this._resources.root);
-    var addons = container.GetElements();
-    
-    // Search all addons for displayPanes metadata
-    while (addons.hasMoreElements()) {
-      var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-      //debug("DisplayPaneMetadataReader.displayPanes: - processing " + addon.Value + "\n");
+    for (var i = 0; i < addons.length; i++) {
+    	// skip addons with no panes.
+      if (! (addons[i].displayPanes && addons[i].displayPanes[0].displayPane)) 
+        continue;
+      // NB: this assumes only one displayPanes element. 
+      //     this could have some additional checking added to it.
+      //     or better yet, the wholly unnecessary displayPanes could be removed.
       try {
-      
-        if (this._datasource.hasArcOut(addon, this._resources.displayPanes)) {
-          var displayPanesTarget = this._datasource.GetTarget(addon, this._resources.displayPanes, true)
-                                       .QueryInterface(Components.interfaces.nsIRDFResource);
-          
-          // Process all pane metadata
-          var items = this._datasource.GetTargets(displayPanesTarget, this._resources.displayPane, true)
-          while (items.hasMoreElements()) {
-            var item = items.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-            this._processDisplayPane(addon, item);
-          }
+        var panes = addons[i].displayPanes[0].displayPane;
+        for (var j = 0; j < panes.length; j++) {
+          this._registerDisplayPane(addons[i], panes[j]) 
         }
-        
       } catch (e) {
         this._reportErrors("", [  "An error occurred while processing " +
-                    "extension " + addon.Value + ".  Exception: " + e  ]);
+                  "extension " + addons[i].Value + ".  Exception: " + e  ]);
       }
     }
   },
   
-  
   /**
-   * Extract pane metadata
+   * Extract pane metadata and register it with the manager.
    */
-  _processDisplayPane: function _processDisplayPane(addon, pane) {
+  _registerDisplayPane: function _registerDisplayPane(addon, pane) {
+    // create and validate our pane info
     var info = new PaneInfo();
-    
-    // Array of error messages
-    var errorList = [];
-    
-    // Fill the description object
-    this._populateDescription(pane, info, errorList);
-
-    try {
-      info.verify();
-      info.defaultWidth = parseInt(info.defaultWidth);
-      info.defaultHeight = parseInt(info.defaultHeight);
-      info.showOnInstall = info.showOnInstall == "true";
-    } catch (e) {
-      errorList.push(e.toString());
+    for (property in pane) {
+      if (pane[property])
+       info[property] = pane[property][0];
     }
+    var errorList = info.verify();
     
     // If errors were encountered, then do not submit 
     // to the Display Pane Manager
     if (errorList.length > 0) {
       this._reportErrors(
           "Ignoring display pane addon in the install.rdf of extension " +
-          addon.Value + ". Message: ", errorList);
+          addon.Value + " due to these error(s):\n", errorList);
       return;
     }
     
@@ -235,80 +145,7 @@ DisplayPaneMetadataReader.prototype = {
     //debug("DisplayPaneMetadataReader: registered pane " + info.contentTitle
     //        + " from addon " + addon.Value + " \n");
   },
-
-
-
-  /**
-   * \brief Populate a description object by looking up requiredProperties and
-   *        optionalProperties in a the given rdf source.
-   *
-   * \param source RDF resource from which to obtain property values
-   * \param description Object with requiredProperties and optionalProperties arrays
-   * \param errorList An array to which error messages should be added
-   */
-  _populateDescription: function _populateDescription(source, description, errorList) {
-
-    for (var i = 0; i < description.requiredProperties.length; i++) {
-      this._requireProperty(source, description, 
-                description.requiredProperties[i], errorList);
-    }
-    for (var i = 0; i < description.optionalProperties.length; i++) {
-      this._copyProperty(source, description, 
-                description.optionalProperties[i], errorList);
-    }
-  },
   
-  
-  /**
-   * \brief Attempts to copy a property from an RDFResource into a
-   *        container object and reports an error on failure.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   * \param errorList An array to which error messages should be added
-   */
-  _requireProperty: function _requireProperty(source, description, property, errorList) {
-    this._copyProperty(source, description, property);
-    if (description[property] == undefined) 
-    {
-      errorList.push(
-        property + " is a required property."
-      );
-    }
-  },
- 
-  /**
-   * \brief Copies a property from an RDFResource into a container object.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   */
-  _copyProperty: function _copyProperty(source, description, property) {
-    description[property] = this._getProperty(source, property);
-  },
-
-
-  /**
-   * \brief Copies a property from an RDFResource into a container object.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   */  
-  _getProperty: function _getProperty(source, property) {
-    //debug("DisplayPaneMetadataReader._getProperty " + source.Value + " " + property + "\n");
-    var target = this._datasource.GetTarget(source, this._resources[property], true);
-    if ( target instanceof Components.interfaces.nsIRDFInt
-         || target instanceof Components.interfaces.nsIRDFLiteral 
-         || target instanceof Components.interfaces.nsIRDFResource )
-    {
-      return target.Value;
-    }
-    return undefined;
-  },
-
   
   /**
    * \brief Dump a list of errors to the console and jsconsole
@@ -326,11 +163,6 @@ DisplayPaneMetadataReader.prototype = {
     }
   }
 }
-
-
-
-
-
 
 /**
  * /class DisplayPaneManager
@@ -360,7 +192,7 @@ DisplayPaneManager.prototype = {
   _instantiatorsList: [],
   _delayedInstantiations: [],
   _listenersList: [],
-
+  
   _addonMetadataLoaded: false,
   
   /**
@@ -617,7 +449,9 @@ DisplayPaneManager.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
 
-    info.updateContentInfo(aNewContentTitle, aNewContentIcon);
+    info.contentTitle = aNewContentTitle;
+    info.contentIcon  = aNewContentIcon;
+    
     // change the live title for every instance of this content
     for each (var instantiator in this._instantiatorsList) {
       if (instantiator.contentUrl == aContentUrl) {
@@ -634,10 +468,9 @@ DisplayPaneManager.prototype = {
    * \see nsISupports.idl
    */
   QueryInterface:
-    XPCOMUtils.generateQI([SONGBIRD_DISPLAYPANE_MANAGER_IID])
+    XPCOMUtils.generateQI([Components.interfaces.sbIDisplayPaneManager])
 }; // DisplayPaneManager.prototype
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([DisplayPaneManager]);
 }
-
