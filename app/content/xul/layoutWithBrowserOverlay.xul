@@ -534,8 +534,8 @@
 
 	    <!--  MEDIA PAGES -->
 	    <toolbarbutton id="mediapages-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
-	                     label="&tooltip.browser.libraryviews;"
-	                     tooltiptext="&tooltip.browser.libraryviews;"
+	                     label="&tooltip.browser.mediapages;"
+	                     tooltiptext="&tooltip.browser.mediapages;"
 	                     type="menu">
 	        <menupopup>
 	          <sb-mediapages-menuitems/>

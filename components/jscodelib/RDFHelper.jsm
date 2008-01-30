@@ -1,12 +1,18 @@
 /**
  * RDFHelper.jsm
  * 
+ * USE: RDFHelper(aRdf, aRDFDatasource, aRDFResource, aNamespacesHash)
+ * 
  * This class allows you to treat an RDF datasource as though it were a read-only structured object.
  * (Please, don't try to write to it. It will only lead to grief.)
  * 
  * Arcs are mapped to properties by trimming their namespaces (they can be reduced to prefixes if you prefer).
  * Because there may be several arcs leading from a resource, each property is returned as an array of the targets.
  * Literals become values directly, and all other arcs lead to further arcs.
+ * 
+ * STATIC RDF SOURCE:
+ * The RDFHelper is not so clever as to notice changes to your datasource after it creates the value.
+ * As a result, you should not reuse RDFHelpers unless you are sure your data has not changed in-between.
  * 
  * CYCLIC RELATIONSHIPS:
  * Links are evaluated lazily, so creating an RDFHelper object on a cyclic graph will not kill your process,
@@ -19,18 +25,18 @@
  * indices and a .length property, but is not actually an instanceof Array.
  * 
  * HELP:
- * because looking up RDF resources is tedious and unpleasant, a few helper bits are provided.
+ * Because looking up RDF resources is tedious and unpleasant, a few helper bits are provided.
  * 
  *   RDFHelper.help:
- *     accepts URI strings representing a datasource, a resource, and an object containing namespaces
- *     a namespaces object takes the form { "rdf:/namespace/prefix/whatever": "prefix_", "trimmed-prefix": "" }
- *     for example -- RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
+ *     Accepts URI strings representing a datasource, a resource, and an object containing namespaces.
+ *     namespaces look like: { "rdf:/namespace/prefix/whatever": "prefix_", "trimmed-prefix": "" }
+ *     EXAMPLE: RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
  * 
  *   RDFHelper.DEFAULT_RDF_NAMESPACES{_PREFIXED}:
  *     For convenience, provides rdf, mozilla, and songbird namespace objects that translate namespaces into object property prefixes.
  *     With _PREFIXED, your properties will begin with rdf_, moz_ or sb_. Without, namespaces will simply be removed.
  *     If you are concerned about collisions, be sure to map only one prefix to "".
- *  
+ * 
  * USAGE EXAMPLE:
  * 
  * get the first display pane from the first addon and copy its properties into the "info" object. 
@@ -53,19 +59,20 @@ Cc = Components.classes;
 
 // make a constructor
 function RDFHelper(rdf, datasource, resource, namespaces) {
-	// this is a Crockfordian constructor with private methods.
-	// the actual construction logic takes place after all these methods are defined.
-	// this enables me to hide these methods from the outside world so that
-	// users of the class can iterate over properties without seeing them.
-	var that = this; // for use in private functions
-	this._rdf = rdf; 
+  // this is a Crockfordian constructor with private methods.
+  // see: http://www.crockford.com/javascript/private.html
+  // the actual construction logic takes place after all these method def'ns.
+  // this enables me to hide these methods from the outside world so that
+  // users of the class can iterate over properties without seeing them.
+  var that = this; // for use in private functions
+  this._rdf = rdf; 
   this._datasource = datasource; 
   this._resource = resource;
   this.Value = resource.Value; // TODO: is this Good Enough?
   this._namespaces = namespaces;
   this._containerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"]
-                           .getService(Components.interfaces.nsIRDFContainerUtils);
-	var createProperties = function() {
+                         .getService(Components.interfaces.nsIRDFContainerUtils);
+  var createProperties = function() {
     //dump("Resource "+that._resource.Value+" is a ")
     if (that._containerUtils.IsContainer(that._datasource, that._resource)) {
       //dump("container.\n");
@@ -81,12 +88,21 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
     var container = that._containerUtils.MakeSeq(that._datasource, resource);
     var contents = container.GetElements();
     
+    // urgh, this doesn't actually mean "this" is an array 
+    // but at least it's sort of like one.
     var i = 0;
     while (contents.hasMoreElements()) {
-      var resource = contents.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-      that[i] = new RDFHelper(that._rdf, that._datasource, resource, that._namespaces); i++;
+      var resource = contents.getNext()
+      resource.QueryInterface(Components.interfaces.nsIRDFResource);
+      that[i] = new RDFHelper(
+        that._rdf, 
+        that._datasource, 
+        resource, 
+        that._namespaces
+      ); 
+      i++;
     }
-    that.length = i; // urgh, this doesn't actually mean "this" is an array but at least it's sort of like one.
+    that.length = i;
   };
   
   var createStandardProperties = function(resource) {
@@ -120,15 +136,24 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
         }
         else {
           //dump(resource.Value + " inserted an RDF property.\n");
-          ary.push(new RDFHelper(that._rdf, that._datasource, resource, that._namespaces));
+          ary.push(new RDFHelper(
+            that._rdf, 
+            that._datasource, 
+            resource, 
+            that._namespaces
+          ));
         }
       } 
-      // this turns out to be a really horrible idea if you want to write nice code.
-      // but it's a nice idea and i'd like to talk to someone about whether or not it's 
-      // worth salvaging (pvh jan08)
+      // this turns out to be a really horrible idea if you want to write nice 
+      // code.
+      // but it's a nice idea and i'd like to talk to someone about whether or
+      // not it's worth salvaging (pvh jan08) 
       /*if (ary.length == 1) {
         ary = ary[0];
-      }*/ 
+      }*/
+      
+      // memoize the result to avoid n^2 iterations
+      that.__defineGetter__(alias, function() {return ary; });
       return ary;
     }
     
@@ -140,7 +165,7 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
     }*/
   };
   
-	createProperties();
+  createProperties();
 }
 
 RDFHelper.help = function(datasource, resource, namespaces) {

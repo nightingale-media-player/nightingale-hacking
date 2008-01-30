@@ -34,133 +34,155 @@
 
 
   <!--
-    A binding that adds feathers-related menu elements that allows selection of feathers
-    skin and layout
+    A binding that adds mediapages-related menu elements that allows selection of media pages
   -->
-  <binding id="mediapages-menuitems" extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base">
+  <binding 
+    id="mediapages-menuitems" 
+    extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
+  >
     <content/>
-    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+    <implementation type="application/x-javascript">
       <constructor>
-        <![CDATA[
-          // NOTE: this would be much nicer in the base class but their constructor fires first!
-          // We need to explicitly call onPopupShowing() here since the first
-          // time this constructor is called it is after the popupshowing event
-          // has fired.
-          this.onPopupShowing();
-        ]]>
+      <![CDATA[
+        // NOTE: this would be much nicer in the base class but their constructor fires first!
+        // We need to explicitly call onPopupShowing() here since the first
+        // time this constructor is called it is after the popupshowing event
+        // has fired.
+        this.onPopupShowing();
+      ]]>
       </constructor>
 
       <destructor>
-        <![CDATA[
-        ]]>
+      <![CDATA[
+      ]]>
       </destructor>
 
       <!--
         Called when a child menuitem is selected.  Attempts 
-        to switch feathers based on the properties of the
+        to switch media pages based on the properties of the
         menuitem.
       -->
       <method name="onCommand">
         <parameter name="item"/>
         <body>
-          <![CDATA[
-            item.onCommand();
-          ]]>
+        <![CDATA[
+          item.onCommand();
+        ]]>
         </body>
       </method>
 
       <!--
-        Populates the this menupopup with a menu allowing selection
-        of compatible skins and layouts.
+        Populates the menupopup with a menu allowing selection
+        of compatible media pages
       -->
-      <!--  NOTE: this function uses _addToMenu directly instead of returning an array of content -->
-      <!--        either method is fine, and here this one probably makes more sense              -->
+      <!-- 
+        NOTE: this function uses _addToMenu directly instead of returning an array
+              of content either method is fine, and here this one probably makes
+              more sense
+      -->
       <method name="generateMenuItems">
         <body>
-          <![CDATA[
-            var ml = gBrowser.mediaListPage.mediaListView.mediaList;
+        <![CDATA[
+          // bail out if we don't have a mediaListPage
+          if (!gBrowser.mediaListPage) {
+            return;
+          }
+          
+          var ml = gBrowser.mediaListPage.mediaListView.mediaList;
 
-            // Make a disabled menuitem to act as a label above the page items
-            var item = document.createElement("menuitem");
-              item.setAttribute("label", ml.getProperty(SBProperties.mediaListName));
-              item.setAttribute("name", "feathers.item");
-              item.setAttribute("disabled", "true");
-              item.setAttribute("class", "feathers-menu-selected-skin-title");
+          // Make a disabled menuitem to act as a label above the page items
+          var item = document.createElement("menuitem");
+            item.setAttribute("label", ml.getProperty(SBProperties.mediaListName));
+            item.setAttribute("name", "mediapage.item");
+            item.setAttribute("disabled", "true");
+            item.setAttribute("class", "mediapage-menu-selected-page-title");
+          this._addToMenu(item);
+          
+          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
+                        .getService(Components.interfaces.sbIMediaListPageManager);
+          var pages = mgr.getAvailablePages(ml);
+          
+          // Attach a menuitem for each compatible layout
+          while (pages.hasMoreElements()) {
+            var page = pages.getNext()
+            page.QueryInterface(Components.interfaces.sbIMediaListPageInfo);
+            
+            var item = this._makeMenuItem(page);
+            
+            if (page.contentUrl == gBrowser.currentURI.spec) {
+              item.setAttribute("checked", "true");
+            }
+            else {
+              item.setAttribute("checked", "false");
+            }
+          
+            item.setAttribute("class", "mediapage-menu-selected-page");
+            
             this._addToMenu(item);
-            
-            var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
-                          .getService(Components.interfaces.sbIMediaListPageManager);
-            var layouts = mgr.getAvailablePages(ml);
-            
-            // Attach a menuitem for each compatible layout
-            while (layouts.hasMoreElements()) {
-              var layout = layouts.getNext().QueryInterface(Components.interfaces.sbIMediaListPageInfo);
-              
-              var item = this._makeMenuItem(layout);
-              
-              // TODO: for demo
-              if (item.url == "TODO") {
-                item.setAttribute("checked", "true");
-              }
-              else {
-                item.setAttribute("checked", "false");
-              }
-            
-              item.setAttribute("class", "feathers-menu-selected-skin");
-              
-              this._addToMenu(item);
-            }
-                       
-            // If the current window has a browser/servicepane, then add a link
-            // to get more feathers.
-            // NOTE: This is brittle. Please change this once we have a proper API.
-            if (typeof(gBrowser) != "undefined") {
-              this._addToMenu(document.createElement("menuseparator"));
-              this._addToMenu(this._makeGetMore());
-            }
-          ]]>
+          }
+          
+          // If the current window has a browser/servicepane, then add a link
+          // to get more media pages.
+          // NOTE: This is brittle. Please change this once we have a proper API.
+          if (typeof(gBrowser) != "undefined") {
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(this._makeGetMore());
+          }
+        ]]>
         </body>
       </method>
 
-      <!-- Return a menuitem element for the given skin-layout pair -->
+      <!-- Return a menuitem element for the given page -->
       <method name="_makeMenuItem">
-        <parameter name="layout"/>
+        <parameter name="page"/>
         <body>
-          <![CDATA[
-            var item = document.createElement("menuitem");
-            item.setAttribute("label", layout.contentTitle);
-            item.setAttribute("name", "feathers.item");
-            item.setAttribute("layoutURL", layout.contentUrl);
-            item.setAttribute("type", "radio");
-            
-            item.onCommand = function() {
-              gBrowser.loadURI(layout.contentUrl, null, null, null, '_top', gBrowser.mediaListPage.mediaListView);
-            }
-            return item;
-          ]]>
+        <![CDATA[
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", page.contentTitle);
+          item.setAttribute("name", "mediapage.item");
+          item.setAttribute("pageUrl", page.contentUrl);
+          item.setAttribute("type", "radio");
+          
+          item.onCommand = function() {
+            gBrowser.loadURI(
+              page.contentUrl,
+              null, null, null,
+              '_top',
+              gBrowser.mediaListPage.mediaListView
+            );
+          }
+          return item;
+        ]]>
         </body>
       </method>
       
       <!-- Adds a "Get More" menu item that links to the addons site -->
       <method name="_makeGetMore">
         <body>
-          <![CDATA[
-            var item = document.createElement("menuitem");
+        <![CDATA[
+          var item = document.createElement("menuitem");
 
-            var getMoreText;
-            try {
-              getMoreText = this._stringBundle.GetStringFromName("feathers.getmore");
-            } catch (e) { 
-              getMoreText="Error";
-              dump("\n\n\nfeathers.xml:  Error getting menu text from songbird.properties" +
-                   " bundle\n"+ e + "\n"); 
-            }
-            
-            item.setAttribute("label", getMoreText);
-            item.setAttribute("name", "menu.getmore");
-            item.onCommand = function() { gBrowser.top.openLink("http://addons.songbirdnest.com"); }
-            return item;
-          ]]>
+          var getMoreText;
+          try {
+            getMoreText = this._stringBundle.GetStringFromName("mediapages.getmore");
+          } catch (e) { 
+            getMoreText="Error";
+            dump("\n\n\nmediaPages.xml:  Error getting menu text from songbird.properties" +
+                 " bundle\n"+ e + "\n"); 
+          }
+          
+          item.setAttribute("label", getMoreText);
+          item.setAttribute("name", "menu.getmore");
+          item.onCommand = function() { 
+            gBrowser.loadURI(
+              "http://addons.songbirdnest.com/",
+              null, null, null,
+              '_blank',
+              gBrowser.mediaListPage.mediaListView
+            ); 
+          }
+          return item;
+        ]]>
         </body>
       </method>
     </implementation>

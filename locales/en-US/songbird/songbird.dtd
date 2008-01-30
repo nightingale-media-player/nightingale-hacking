@@ -150,7 +150,7 @@
 <!ENTITY tooltip.browser.subscription "Create Subscription" >
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
-<!ENTITY tooltip.browser.libraryviews "View..." >
+<!ENTITY tooltip.browser.mediapages "View..." >
 
 
 <!ENTITY smart.window             "Smart Playlist Builder" >

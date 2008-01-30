@@ -168,6 +168,10 @@ sb-player-fullscreen-button:hover
   -moz-image-region: rect(9px 45px 18px 36px);
 }
 
+/* Media Pages */
+.mediapages-menu-selected-page > .menu-iconic-left {
+  margin-left: 16px !important;
+}
 
 
 /** 

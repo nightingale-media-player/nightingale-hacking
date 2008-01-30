@@ -190,7 +190,8 @@ MediaListPageManager.prototype = {
   _registerDefaults: function() {
     this.registerPage( "Normal View",
                        "chrome://songbird/content/xul/sbLibraryPage.xul",
-                       {match: function(mediaList) { return(true); }} // the default page matches everything
+                       {match: function(mediaList) { return(true); }} 
+                       // the default page matches everything
                      );
   },
   
@@ -200,7 +201,11 @@ var MediaListPageMetadataReader = {
   loadMetadata: function(manager) {
     this._manager = manager;
     
-    var addons = RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.DEFAULT_RDF_NAMESPACES);
+    var addons = RDFHelper.help(
+      "rdf:addon-metadata",
+      "urn:songbird:addon:root",
+      RDFHelper.DEFAULT_RDF_NAMESPACES
+    );
     
     for (var i = 0; i < addons.length; i++) {
       // skip addons with no panes.
@@ -221,7 +226,7 @@ var MediaListPageMetadataReader = {
   /**
    * Extract pane metadata and register it with the manager.
    */
-  _registerMediaPage: function _registerDisplayPane(addon, page) {
+  _registerMediaPage: function _registerMediaPage(addon, page) {
     // create and validate our pane info
     var info = {};
     for (property in page) {
@@ -239,12 +244,11 @@ var MediaListPageMetadataReader = {
         errorList.push("Missing required property " + requiredProperties[p] + ".\n")
       }
     }
-    for (p in info) { 
+    for (p in info) {
       if (!requiredProperties[p] && !optionalProperties[p]) {
         warningList.push("Unrecognized property " + p + ".\n")
       }
     } 
-    //var errorList = info.verify();
     
     // If errors were encountered, then do not submit
     if (warningList.length > 0){
@@ -281,9 +285,9 @@ var MediaListPageMetadataReader = {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
          getService(Components.interfaces.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
-      consoleService.logStringMessage("Display Pane Metadata Reader: " 
+      consoleService.logStringMessage("Media Page Metadata Reader: " 
                                        + contextMessage + errorList[i]);
-      dump("DisplayPaneMetadataReader: " + contextMessage + errorList[i] + "\n");
+      dump("MediaPageMetadataReader: " + contextMessage + errorList[i] + "\n");
     }
   }
 }

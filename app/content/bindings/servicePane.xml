@@ -793,7 +793,10 @@
         
         // Make the button look like the first item in the list.
         var item = this._popup.firstChild;
-        if (!item) { /* bad news */ return; }
+        if (!item) {
+          /* bad news */
+          return;
+        }
         
         this._clickHold.setAttribute('label', item.getAttribute('label'));
         // FIXME: this is needed for styling but sucks

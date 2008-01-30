@@ -1804,7 +1804,7 @@
                     tooltiptext="&tooltip.control.curtrack;" 
                     xbl:inherits="label,position">
           <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
-        </sb-clickhold-button>
+        </xul:sb-clickhold-button>
       </xul:hbox>
     </content>
 

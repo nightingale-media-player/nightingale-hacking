@@ -51,13 +51,9 @@
       * or just call _addToMenu 
    -->
   <binding id="generated-menuitems-base">
-  	<implementation type="application/x-javascript" implements="nsIDOMEventListener">
-  	  <constructor>
-  		<![CDATA[
-  		    // !!!
-  		    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-          // !!!
-        
+    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+      <constructor>
+      <![CDATA[
           this._addedElements = [];
           
           // Get the songbird string bundle.  Can't use dtd to localize dynamically
@@ -67,34 +63,25 @@
                         .getService(Components.interfaces.nsIStringBundleService);
           this._stringBundle = stringBundleService.createBundle( 
                       "chrome://songbird/locale/songbird.properties" );
-
-
-          // TODO: ask someone why i had to use 
-          //   function(evt) { _that.handleEvent(evt); }
-          // instead of
-          //   this
-          // even though i'm implementing the interface (handleEvent)
-          // -pvh
-          var _that = this;
-          this.eventHandlerObject = function(evt) { _that.handleEvent(evt); }; 
-          this.parentNode.addEventListener("popupshowing", this.eventHandlerObject, false);
-          this.parentNode.addEventListener("command",      this.eventHandlerObject, false);
+          
+          this.QueryInterface(Components.interfaces.nsIDOMEventListener);
+          this.parentNode.addEventListener("popupshowing", this, false);
+          this.parentNode.addEventListener("command",      this, false);
           
           // XXXpvh: this is a great place to call onPopUpShowing() except... 
           //         it's too early and the derived class hasn't run its constructor yet
           //         instead, i'll just call it from in the derived class.
-	  	]]>
-	  	
-  	  </constructor>
-  	  <destructor>
-  		<![CDATA[
-  		    // see todo above
-          this.parentNode.removeEventListener("command",      this.eventHandlerObject, false);
-          this.parentNode.removeEventListener("popupshowing", this.eventHandlerObject, false);
+      ]]>
+      
+      </constructor>
+      <destructor>
+      <![CDATA[
+          this.parentNode.removeEventListener("command",      this, false);
+          this.parentNode.removeEventListener("popupshowing", this, false);
           this._stringBundle = null;
         ]]>
-  	  </destructor>
-  		
+      </destructor>
+      
       <method name="handleEvent">
         <parameter name="event"/>
         <body>
@@ -122,8 +109,12 @@
         <parameter name="item"/>
         <body>
         <![CDATA[
-          item.onCommand(item);
-          return false;
+          if (item.onCommand) {
+            return item.onCommand(item);
+          }
+          else {
+            return false;
+          }
         ]]>
         </body>
       </method>
@@ -158,10 +149,10 @@
         <![CDATA[
           var menuItems = this.generateMenuItems();
           if(menuItems) {
-	          for( var i = 0; i < menuItems.length; i++ ) { 
-	            this._addToMenu(menuItems[i]); 
-	          }
-	        }
+            for( var i = 0; i < menuItems.length; i++ ) { 
+              this._addToMenu(menuItems[i]); 
+            }
+          }
         ]]>
         </body>
       </method>
@@ -176,9 +167,8 @@
         </body>
       </method>
          
-  	</implementation>
+    </implementation>
   </binding>
 
 </bindings>
-
 
