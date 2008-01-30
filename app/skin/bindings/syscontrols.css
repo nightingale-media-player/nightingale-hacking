@@ -52,7 +52,7 @@ WINDOWS TITLE BAR
 /*  Topbar Icon */
 sb-sys-icon
 {
-  list-style-image: url(chrome://songbird-branding/skin/logo_16_white.png) ;
+  list-style-image: url(chrome://songbird-branding/skin/application-icon-16x16.png) ;
   margin-top:5px;
 }
 
