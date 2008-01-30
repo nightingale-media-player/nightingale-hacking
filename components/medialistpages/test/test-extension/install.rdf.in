@@ -17,12 +17,19 @@
       </Description>
     </em:targetApplication>
 
-    <em:name>Display Pane Test</em:name>
-    <em:description>Sample install.rdf used to test the medialistpage metadata reader</em:description>
+    <em:name>Media Page Test</em:name>
+    <em:description>Sample install.rdf used to test the media page metadata reader</em:description>
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
     
     <!-- insert metadata here -->
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul</songbird:contentUrl>
+        <songbird:match>all</songbird:match>
+      </Description>
+    </songbird:mediaPage>
 
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>

@@ -180,6 +180,24 @@ Imported by bindings.css or directly into feathers.
   -moz-image-region: rect(32px 112px 48px 96px);
 }
 
+/** The Media Pages button **/
+#mediapages-button > .toolbarbutton-icon
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 144px 16px 128px);
+}
+#mediapages-button:hover > .toolbarbutton-icon
+{
+  -moz-image-region: rect(16px 144px 32px 128px);
+}
+#mediapages-button[disabled="true"] > .toolbarbutton-icon
+{
+  -moz-image-region: rect(48px 144px 64px 128px);
+}
+#mediapages-button[active="true"] > .toolbarbutton-icon
+{
+  -moz-image-region: rect(32px 144px 48px 128px);
+}
 
 
 /** 

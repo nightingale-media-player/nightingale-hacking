@@ -532,6 +532,15 @@
           <sb-browser-spinner />
       </toolbaritem>
 
+	    <!--  MEDIA PAGES -->
+	    <toolbarbutton id="mediapages-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+	                     label="&tooltip.browser.libraryviews;"
+	                     tooltiptext="&tooltip.browser.libraryviews;"
+	                     type="menu">
+	        <menupopup>
+	          <sb-mediapages-menuitems/>
+	        </menupopup>
+	    </toolbarbutton>
     </toolbarpalette>
     
     <toolbar id="nav-bar" class="toolbar-primary chromeclass-toolbar"
@@ -539,7 +548,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container,mediapages-button"
              flex="1">            
     </toolbar>
     

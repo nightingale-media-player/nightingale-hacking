@@ -31,6 +31,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/components/ArrayConverter.jsm");
+Cu.import("resource://app/components/RDFHelper.jsm");
 Cu.import("resource://app/components/sbProperties.jsm");
 
 function MediaListPageManager() {
@@ -56,10 +57,10 @@ MediaListPageManager.prototype = {
       get guid() {
         return aUUID;
       },
-      get name() { 
+      get contentTitle() { 
         return aName;
       },
-      get url() {
+      get contentUrl() {
         return aURL;
       },
       get matchInterface() {
@@ -94,6 +95,8 @@ MediaListPageManager.prototype = {
   },
   
   getAvailablePages: function(aList) {
+    this._ensureMediaPageRegistration();
+    
     // If no list is provided, return the entire set
     if (!aList) {
       return ArrayConverter.enumerator(this._pageInfoArray); 
@@ -113,6 +116,8 @@ MediaListPageManager.prototype = {
   },
   
   getPage: function(aList) {
+    this._ensureMediaPageRegistration();
+    
     // Read the saved state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
@@ -171,10 +176,117 @@ MediaListPageManager.prototype = {
       return pageInfo;
     }
     return null;
-  }
+  },
 
+  _ensureMediaPageRegistration: function() {
+    if(this.registrationComplete) { return };
+    
+    this._registerDefaults();
+    MediaListPageMetadataReader.loadMetadata(this);
+    
+    this.registrationComplete = true;
+  },
+  
+  _registerDefaults: function() {
+    this.registerPage( "Normal View",
+                       "chrome://songbird/content/xul/sbLibraryPage.xul",
+                       {match: function(mediaList) { return(true); }} // the default page matches everything
+                     );
+  },
   
 } // MediaListPageManager.prototype
+
+var MediaListPageMetadataReader = {
+  loadMetadata: function(manager) {
+    this._manager = manager;
+    
+    var addons = RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.DEFAULT_RDF_NAMESPACES);
+    
+    for (var i = 0; i < addons.length; i++) {
+      // skip addons with no panes.
+      if (!addons[i].mediaPage) 
+        continue;
+      try {
+        var pages = addons[i].mediaPage;
+        for (var j = 0; j < pages.length; j++) {
+          this._registerMediaPage(addons[i], pages[j]) 
+        }
+      } catch (e) {
+        this._reportErrors("", [  "An error occurred while processing " +
+                  "extension " + addons[i].Value + ".  Exception: " + e  ]);
+      }
+    }
+  },
+  
+  /**
+   * Extract pane metadata and register it with the manager.
+   */
+  _registerMediaPage: function _registerDisplayPane(addon, page) {
+    // create and validate our pane info
+    var info = {};
+    for (property in page) {
+      if (page[property])
+       info[property] = page[property][0];
+    }
+    requiredProperties = ["contentTitle", "contentUrl"];
+    optionalProperties = ["match"];
+    
+    var errorList = [];
+    var warningList = [];
+    
+    for (p in requiredProperties) { 
+      if (!info[requiredProperties[p]]) {
+        errorList.push("Missing required property " + requiredProperties[p] + ".\n")
+      }
+    }
+    for (p in info) { 
+      if (!requiredProperties[p] && !optionalProperties[p]) {
+        warningList.push("Unrecognized property " + p + ".\n")
+      }
+    } 
+    //var errorList = info.verify();
+    
+    // If errors were encountered, then do not submit
+    if (warningList.length > 0){
+      this._reportErrors(
+          "Warning media page addon in the install.rdf of extension " +
+          addon.Value + " reported these warning(s):\n", warningList);
+    } 
+    if (errorList.length > 0) {
+      this._reportErrors(
+          "Ignoring media page addon in the install.rdf of extension " +
+          addon.Value + " due to these error(s):\n", errorList);
+      return;
+    }
+    
+    // TODO: write the parser for the info.match() part
+    
+    // Submit description
+    this._manager.registerPage( info.contentTitle,
+                                info.contentUrl,
+                                {match: function(mediaList) { return(true); }}
+                               );
+    
+    dump("MediaPageMetadataReader: registered pane " + info.contentTitle
+            + " from addon " + addon.Value + " \n");
+  },
+  
+  /**
+   * \brief Dump a list of errors to the console and jsconsole
+   *
+   * \param contextMessage Additional prefix to use before every line
+   * \param errorList Array of error messages
+   */
+  _reportErrors: function _reportErrors(contextMessage, errorList) {
+    var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
+         getService(Components.interfaces.nsIConsoleService);
+    for (var i = 0; i  < errorList.length; i++) {
+      consoleService.logStringMessage("Display Pane Metadata Reader: " 
+                                       + contextMessage + errorList[i]);
+      dump("DisplayPaneMetadataReader: " + contextMessage + errorList[i] + "\n");
+    }
+  }
+}
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([MediaListPageManager]);

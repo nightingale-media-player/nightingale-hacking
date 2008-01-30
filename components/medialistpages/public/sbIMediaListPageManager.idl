@@ -105,12 +105,12 @@ interface sbIMediaListPageInfo: nsISupports
   /**
    * \brief The localized name of the page.
    */
-  readonly attribute AString name;
+  readonly attribute AString contentTitle;
 
   /**
    * \brief The chrome URL to the page
    */
-  readonly attribute AString url;
+  readonly attribute AString contentUrl;
 
   /**
    * \brief The interface used to match medialists

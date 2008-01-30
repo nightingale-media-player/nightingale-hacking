@@ -256,10 +256,6 @@ sb-clickhold-button {
   -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button')
 }
 
-menupopup[type="feathers"] {
-  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menupopup") !important;
-}
-
 sb-feathers-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menuitems") !important;
 }
@@ -404,6 +400,12 @@ sb-displaypane {
 }
 sb-displaypane-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-menuitems");
+}
+
+/* Media Pages */
+
+sb-mediapages-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/mediaPages.xml#mediapages-menuitems");
 }
 
 /* Replacement text-link label */
