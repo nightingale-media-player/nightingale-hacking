@@ -207,6 +207,8 @@
 
       ]]></constructor>
       <destructor><![CDATA[
+        dump("MATT: tab browser destructor\n");
+              
         this.removeProgressListener(this);
         if (this.tabChangeEventListener) {
           if (this.tabChangeEventListener.timer) {
@@ -243,22 +245,38 @@
       <method name="saveTabState">
         <body><![CDATA[
           dump('MATT: tabBrowser.saveTabState\n');
-          // TODO: For medialistpages, store guids and page url
+
           var tab = this.mTabContainer.firstChild;
           var urls = [];
           while (tab) {
             try {
-              urls.push(tab.linkedBrowser.currentURI.spec);
-            } catch (e) { }
+              // For media list pages, store the list GUIDs
+              // so that the page can be restored correctly
+              if (tab.mediaListPage) {
+                var mediaList = tab.mediaListPage.mediaListView.mediaList;
+                urls.push({
+                    listGUID: mediaList.guid,
+                    libraryGUID: mediaList.library.guid,
+                    pageURL: tab.linkedBrowser.currentURI.spec
+                  });
+              // For all other pages, just keep the URI
+              } else {
+                urls.push(tab.linkedBrowser.currentURI.spec);
+              }
+            } catch (e) { 
+              Components.utils.reportError(e);
+            }
             tab = tab.nextSibling;
           }
+          
+          // TODO remove
+          dump("MATT: tabBrowser.saveTabState = " + urls.toSource() + "\n");
           this._tabState = urls;
         ]]></body>
       </method>
       <method name="restoreTabState">
         <body><![CDATA[
           if ( !SBDataGetBoolValue( "firstrun.tabs.restore" ) ) {
-            //
             // If we have never run the app before, load this keen stuff!@
             var homePageURL = this.homePage;
             var firstrunURL = SBDataGetStringValue( "url.firstrun" );
@@ -266,13 +284,27 @@
             this.loadURI(firstrunURL, null, null, null, '_blank');
             SBDataSetBoolValue( "firstrun.tabs.restore", true );
           } else {
-            //
+
             // Otherwise, just restore whatever was there, previously.
             var tabs = this._tabState;
             if (tabs) {
-              for (var i=0; i<tabs.length; i++) {
-                /* load the first url into the current tab and subsequent urls into new tabs */
-                this.loadURI(tabs[i], null, null, null, i?'_blank':'_top');
+              var location = "_top";
+              var tab;
+              for (var i=0; i<tabs.length; i++) {  
+                tab = tabs[i];             
+                // If the tab had a media list page, restore it by reloading
+                // the media list
+                if (tab.listGUID) {
+                  this.loadMediaListGUID(tab.libraryGUID, tab.listGUID, null,
+                                         location, tab.pageURL);
+                // Otherwise just reload the URL
+                } else {
+                  this.loadURI(tab, null, null, null, location);
+                }
+                
+                // Load the first url into the current tab and subsequent 
+                // urls into new tabs 
+                location = "_blank";
               }
             }
           }
@@ -332,9 +364,6 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
-            // TODO: Remove this!
-            debugger;
-            
             var retval = null;
             var where = this._checkTarget(aDefaultLocation, aEvent);
 
@@ -369,11 +398,13 @@
         </body>
       </method>
 
+      <!-- TODO: Comment -->
       <method name="loadMediaList">
         <parameter name="aMediaList"/>
         <parameter name="aEvent"/>
         <parameter name="aDefaultLocation"/>
         <parameter name="aMediaListView"/>
+        <parameter name="aPageURL"/>
         <body>
           <![CDATA[
             // If we weren't passed a view, create one
@@ -402,9 +433,11 @@
             }
 
             // TODO figure out which url to load.  For now continue hardcoding
-            var uri = 'chrome://songbird/content/xul/sbLibraryPage.xul';
+            if (!aPageURL) {
+              aPageURL = 'chrome://songbird/content/xul/sbLibraryPage.xul';
+            }
                                     
-            this.loadURI(uri, null, null, aEvent, aDefaultLocation, aMediaListView);
+            this.loadURI(aPageURL, null, null, aEvent, aDefaultLocation, aMediaListView);
           ]]>
         </body>
       </method>
@@ -415,7 +448,9 @@
       <method name="loadMediaListGUID">
         <parameter name="aLibraryGUID"/>
         <parameter name="aListGUID"/>
+        <parameter name="aEvent"/>
         <parameter name="aDefaultLocation"/>
+        <parameter name="aPageURL"/>
         <body>
           <![CDATA[
             dump("MATT: tabBrowser.loadMediaListGUID " + aLibraryGUID
@@ -432,7 +467,8 @@
               mediaList = mediaList.getMediaItem( aListGUID );            
             }
             
-            this.loadMediaList(mediaList, null, aDefaultLocation, null);
+            this.loadMediaList(mediaList, aEvent, aDefaultLocation, 
+                               null, aPageURL);
           ]]>
         </body>
       </method>
@@ -484,9 +520,14 @@
         ]]></getter>
       </property>
       
-      <!-- get the sbIMediaListPage for the current tab -->
-      <property name="mediaListPage" readonly="true"
+      <!-- Get the sbIMediaListPage for the current tab -->
+      <property name="currentMediaPage" readonly="true"
                 onget="return this.mCurrentTab.mediaListPage" />
+
+      <!-- Get the sbIMediaListView for the current tab.
+           May come from the web playlist or media list page. -->
+      <property name="currentMediaListView" readonly="true"
+                onget="return this.mCurrentTab.mediaListView" />
 
       <!-- control the visibility of the web playlist on the current tab -->
       <property name="currentOuterPlaylistShowing"
@@ -567,17 +608,14 @@
 
       <method name="getTabForView">
         <parameter name="aView" />
-        <body><![CDATA[
-          // Search open tabs for a playlist that is showing the given view
+        <body><![CDATA[        
+          // Search open tabs for an sbIMediaListView that is showing the given view
           var tabs = this.mTabContainer.childNodes;
+          var tab;
           for (var i = 0; i < tabs.length; i++) {
-            var contentDocument = tabs[i].linkedBrowser.contentDocument;
-            var playlist = contentDocument.getElementById("sb-library-page-playlist");
-            if (contentDocument.location.protocol == "chrome:" && playlist) {
-              playlist = playlist.wrappedJSObject;
-              if (playlist.getListView() == aView) {
-                return tabs[i];
-              }
+            tab = tabs[i];
+            if (tab.mediaListView && tab.mediaListView == aView) {
+              return tab;
             }
           }
           return null;
@@ -661,6 +699,12 @@
 
             SBDataSetBoolValue('browser.cansubscription',
                                this.mCurrentTab.outerPlaylistShowing);
+                               
+            // TODO remove dump
+            dump("MATT: browser.onLocationChange - sending TabContentChanged\n");
+
+            // Let listeners know that the tab location has changed
+            this.notifyTabContentChanged();                            
           }
           catch ( err )
           {
@@ -698,6 +742,12 @@
         <body><![CDATA[
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
+            
+          // if this state change isn't on the top-level window, ignore it
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
+              !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
+            return;
+          }
 
           if (aState & nsIWebProgressListener.STATE_START) {
             // Start the spinner if necessary
@@ -706,6 +756,17 @@
           else if (aState & nsIWebProgressListener.STATE_STOP) {
             // Stop the spinner if necessary
             this.loading = false;
+            
+            // TODO remove dump
+            dump("MATT: browser.onStateChange - sending TabContentChanged\n");
+            
+            // Let listeners know that the tab has finished loading
+            this.notifyTabContentChanged();
+            
+            // Save the tab state after every page load, just in case we crash
+            if (this.tabStateRestored) {
+              this.saveTabState();
+            }
           }
         ]]></body>
       </method>
@@ -720,6 +781,30 @@
         ]]></body>
       </method>
 
+
+      <!-- Sends a "TabContentChanged" event from the current tab. 
+           Called when the user switches tabs, and before and after
+           a new page is loaded in the current tab.
+           
+           Use this event if you want to track what the user is
+           viewing in the tab browser.
+           
+           This event is needed because:
+             * nsIWebProgressListener does not provide access to 
+               the changing tab
+             * "load" is dispatched only for tab favicons
+             * "TabSelect" is dispatched only on tab change, not on 
+                new content
+       -->
+      <method name="notifyTabContentChanged">
+        <body>
+        <![CDATA[
+          var event = document.createEvent("Events");
+          event.initEvent("TabContentChanged", true, false);
+          this.dispatchEvent(event);
+        ]]></body>
+      </method>
+      
 
       <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
            I'm not convinced they belong here, but till we refactor a couple
@@ -1298,6 +1383,9 @@
       </method>
       <method name="reload">
         <body><![CDATA[
+        
+          // TODO Reload + mediaListPage doesn't work so well
+          // need to highjack this somehow.
           return this.mCurrentBrowser.reload();
         ]]></body>
       </method>
@@ -1491,6 +1579,7 @@
         var history = browser.webNavigation.sessionHistory;
         var entry = history.getEntryAtIndex( history.index, false );
 
+        // TODO this needs to be updated
         var viewMap =
           Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                     .getService(Components.interfaces.sbIMediaListViewMap);
@@ -1845,6 +1934,23 @@
           }
 
           return pageWindow.mediaListPage;
+        ]]></getter>
+      </property>
+
+      <!-- sbITabBrowserTab -->
+      <property name="mediaListView" readonly="true">
+        <getter><![CDATA[
+          if (this.mediaListPage) {
+            return this.mediaListPage.mediaListView;
+          } 
+          // TODO rename
+          if (this.viewForNextPlaylist) {
+            return this.viewForNextPlaylist;
+          } 
+          if (this.outerPlaylist && this.outerPlaylist.mediaListView) {
+            return this.outerPlaylist.mediaListView;
+          } 
+          return null;
         ]]></getter>
       </property>
 
@@ -2293,7 +2399,7 @@
             return;
           }
 
-          dump("MATT: onStateChange\n");
+          dump("MATT: tab.onStateChange\n");
 
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
@@ -2303,10 +2409,6 @@
               return;
             }
             this._loadingURL = "";
-
-            if (window && window.gBrowser && window.gBrowser.tabStateRestored) {
-              window.gBrowser.saveTabState();
-            }
 
             if (!this.mediaListPage) {
               this._metrics.metricsInc("app.browser", "pageViews", "");
@@ -2448,6 +2550,7 @@
               }
             } catch (e) { }
 
+            // TODO REMOVE THIS!!!!
             // Use the main library as default
             if (!uriSpec) {
               var libraryManager =

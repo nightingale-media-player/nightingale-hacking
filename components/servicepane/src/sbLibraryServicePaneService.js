@@ -44,9 +44,6 @@ const PROP_ISHIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';
 
-// TODO: Remove this
-const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
-
 const LSP = 'http://songbirdnest.com/rdf/library-servicepane#';
 const SP='http://songbirdnest.com/rdf/servicepane#';
 
@@ -1008,29 +1005,6 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
 }
 
 
-/**
- * Make a URL for the given library resource.
- * Loading this URL should display the resource in a playlist.
- */
-sbLibraryServicePane.prototype._getDisplayURL =
-function sbLibraryServicePane__getDisplayURL(aResource) {
-  //logcall(arguments);
-
-  // Should really ask someone else... but for now just hardcode
-  var url = URL_PLAYLIST_DISPLAY;
-  if (aResource instanceof Ci.sbILibrary) {
-    url += "library,"
-  }
-  url += aResource.guid;
-  if (aResource instanceof Ci.sbIMediaList &&
-      !(aResource instanceof Ci.sbILibrary))
-  {
-    url += "," + aResource.library.guid;
-  }
-  return url;
-}
-
-
 
 /**
  * Get the service pane node for the given library,
@@ -1054,7 +1028,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
 
   // Refresh the information just in case it is supposed to change
   node.name = aLibrary.name;
-  node.url = this._getDisplayURL(aLibrary);
+  node.url = null;
   node.contractid = CONTRACTID;
   node.editable = false;
   node.hidden = aLibrary.getProperty(SBProperties.hidden) == "1";
@@ -1120,7 +1094,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   // Refresh the information just in case it is supposed to change
   node.name = aMediaList.name;
-  node.url = this._getDisplayURL(aMediaList);
+  node.url = null;
   node.contractid = CONTRACTID;
   if (customType == 'download') {
     // the download media list isn't editable

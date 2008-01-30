@@ -84,15 +84,15 @@
         <body>
         <![CDATA[
           // bail out if we don't have a mediaListPage
-          if (!gBrowser.mediaListPage) {
+          if (!gBrowser.currentMediaPage) {
             return;
           }
           
-          var ml = gBrowser.mediaListPage.mediaListView.mediaList;
+          var ml = gBrowser.currentMediaPage.mediaListView.mediaList;
 
           // Make a disabled menuitem to act as a label above the page items
           var item = document.createElement("menuitem");
-            item.setAttribute("label", ml.getProperty(SBProperties.mediaListName));
+            item.setAttribute("label", ml.name);
             item.setAttribute("name", "mediapage.item");
             item.setAttribute("disabled", "true");
             item.setAttribute("class", "mediapage-menu-selected-page-title");
@@ -148,7 +148,7 @@
               page.contentUrl,
               null, null, null,
               '_top',
-              gBrowser.mediaListPage.mediaListView
+              gBrowser.currentMediaPage.mediaListView
             );
           }
           return item;
@@ -178,7 +178,7 @@
               "http://addons.songbirdnest.com/",
               null, null, null,
               '_blank',
-              gBrowser.mediaListPage.mediaListView
+              gBrowser.currentMediaPage.mediaListView
             ); 
           }
           return item;

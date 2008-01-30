@@ -74,13 +74,7 @@ try
     handleItem: function(aUriSpec, aCount, aTotal) {
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
-        // lone> this should open tabs if necessary, rather than override the last url that might have been loaded on the previous handleItem call
-        if (!gServicePane.doneInit) {
-          // put the requested url into our dataremote
-          SBDataSetStringValue("servicetree.selected_url", aUriSpec);
-        } else {
-          gBrowser.loadURI(aUriSpec);
-        }
+        gBrowser.loadURI(aUriSpec);
       } else {
         if (!_drop_filelist) 
           _drop_filelist = Array();
