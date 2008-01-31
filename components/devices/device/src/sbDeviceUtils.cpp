@@ -47,6 +47,9 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
   NS_ENSURE_ARG_POINTER(_retval);
   
   nsresult rv;
+  
+  nsString kIllegalChars = NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS);
+  kIllegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
 
   nsCOMPtr<nsIFile> file;
   rv = aParent->Clone(getter_AddRefs(file));
@@ -56,9 +59,7 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
                           propValue);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!propValue.IsEmpty()) {
-    nsString_ReplaceChar(propValue,
-                         NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS),
-                         PRUnichar('_'));
+    nsString_ReplaceChar(propValue, kIllegalChars, PRUnichar('_'));
     rv = file->Append(propValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -67,9 +68,7 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
                           propValue);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!propValue.IsEmpty()) {
-    nsString_ReplaceChar(propValue,
-                         NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS),
-                         PRUnichar('_'));
+    nsString_ReplaceChar(propValue, kIllegalChars, PRUnichar('_'));
     rv = file->Append(propValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -86,9 +85,7 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsString fileName = NS_ConvertUTF8toUTF16(fileCName);
-  nsString_ReplaceChar(fileName,
-                       NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS),
-                       PRUnichar('_'));
+  nsString_ReplaceChar(fileName, kIllegalChars, PRUnichar('_'));
   rv = file->Append(fileName);
   NS_ENSURE_SUCCESS(rv, rv);
   
