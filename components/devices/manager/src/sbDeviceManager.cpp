@@ -485,12 +485,17 @@ nsresult sbDeviceManager::Init()
     nsCOMPtr<nsISupportsCString> data = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    nsCString contractId;
-    rv = data->GetData(contractId);
+    nsCString entryName;
+    rv = data->GetData(entryName);
     NS_ENSURE_SUCCESS(rv, rv);
     
+    char * contractId;
+    rv = catMgr->GetCategoryEntry("songbird-device-marshall", entryName.get(), &contractId);
+    NS_ENSURE_SUCCESS(rv, rv);
+        
     nsCOMPtr<sbIDeviceMarshall> marshall =
-      do_CreateInstance(contractId.BeginReading(), &rv);
+      do_CreateInstance(contractId, &rv);
+    NS_Free(contractId);
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsID* id;

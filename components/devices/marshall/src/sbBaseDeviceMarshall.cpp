@@ -34,13 +34,11 @@
 #include <sbIDeviceController.h>
 #include <sbIDeviceCompatibility.h>
 #include <nsIPropertyBag.h>
+#include <nsIUUIDGenerator.h>
 
 sbBaseDeviceMarshall::sbBaseDeviceMarshall(nsACString const & categoryName) :
   mCategoryName(categoryName), mIsMonitoring(PR_TRUE)
 {
-  nsresult rv;
-  mControllers = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create an array");
 }
 
 sbBaseDeviceMarshall::~sbBaseDeviceMarshall()
@@ -76,7 +74,7 @@ void AppendDeviceController(nsCOMPtr<nsISupports> & ptr,
   nsCString controllerName;
   nsresult rv;
   if (stringValue && NS_SUCCEEDED(stringValue->GetData(controllerName))) {
-    nsCOMPtr<sbIDeviceController> deviceController(do_CreateInstance(PromiseFlatCString(controllerName).get() , &rv));
+    nsCOMPtr<sbIDeviceController> deviceController(do_CreateInstance(nsCString(controllerName).get() , &rv));
     if (NS_SUCCEEDED(rv) && deviceController) {
       controllers->AppendElement(deviceController, PR_FALSE);
     }
@@ -103,8 +101,14 @@ static nsresult CopyCategoriesToArray(nsCOMPtr<nsISimpleEnumerator> & enumerator
 
 nsIArray * sbBaseDeviceMarshall::RefreshControllers()
 {
-  NS_ASSERTION(mControllers,
-               "sbBaseDeviceMarshall::mControllers is not allocated");
+  if (!mControllers) {
+    nsresult rv;
+    mControllers = do_CreateInstance("@mozilla.org/array;1", &rv);
+    if (NS_FAILED(rv)) {
+      NS_ERROR("unable to create an nsArray");
+      return nsnull;
+    }
+  }
   nsCOMPtr<nsIMutableArray> controllers(do_QueryInterface(mControllers));
   nsCOMPtr<nsISimpleEnumerator> categoryEnumerator;
   if (NS_SUCCEEDED(GetCategoryManagerEnumerator(categoryEnumerator))) {

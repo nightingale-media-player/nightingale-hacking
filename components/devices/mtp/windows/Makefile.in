@@ -29,21 +29,26 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceMarshall$(DEBUG:%=_d)
+target_name = sbMTPWin32$(DEBUG:%=_d)
 
-CPP_SRCS = sbBaseDeviceMarshall.cpp \
+CPP_SRCS = sbWPDMarshall.cpp \
+           sbWPDModule.cpp \
+           sbPortableDeviceEventsCallback.cpp \
+           sbWPDCommon.cpp \
+#           sbPropertyVariant.cpp \
+#           sbWPDDevice.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/device/public \
+               $(topsrcdir)/components/devices/device/src \
 			   $(DEPTH)/components/devices/marshall/public \
+			   $(topsrcdir)/components/devices/marshall/src \
                $(DEPTH)/components/devices/controller/public \
                $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public \
-               $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
+               $(DEPTH)/components/library/base/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
@@ -52,10 +57,35 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
+               $(DEPS_DIR)/wpdsdk/Include \
                $(NULL)
 
-STATIC_LIB = sbDeviceMarshall$(DEBUG:%=_d)$(LIB_SUFFIX)
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
+                            xpcom \
+                            xpcomglue_s \
+                            mssachlp \
+                            PortableDeviceGuids \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(DEPS_DIR)/wpdsdk/Lib/x86/ \
+                           $(NULL)
+
+ifdef DEBUG
+DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/MSWMSDK/debug
+else
+DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/MSWMSDK/release
+endif
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceMarshall$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d)\                              $(NULL)
+
+LIBSONGBIRD_COMPONENT = sbMTPWin32
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

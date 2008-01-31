@@ -29,13 +29,14 @@
 
 #include <sbIDeviceMarshall.h>
 #include <nsCOMPtr.h>
+#include <sbIDeviceCompatibility.h>
+#include <nsID.h>
+#include <nsIArray.h>
 
-class nsIArray;
 class nsISimpleEnumerator;
 class sbIDeviceControllerRegistrar;
 class nsIPropertyBag;
 class sbIDeviceController;
-class sbIDeviceCompatibility;
 
 /**
  * This class provides a set of common tools for use by device marshall
@@ -50,35 +51,7 @@ class sbIDeviceCompatibility;
  */
 class sbBaseDeviceMarshall : public sbIDeviceMarshall
 {
-protected:
-  /**
-   * Verifies that shutdown has been called.
-   */
-  virtual ~sbBaseDeviceMarshall();
-  /**
-   * Initializes the shutdown flag.
-   */
-  sbBaseDeviceMarshall(nsACString const & categoryName);
-  void RegisterControllers(sbIDeviceControllerRegistrar * registrar);
-  /**
-   * Retrieves the controllers for the category and loads them into the
-   * controllers array
-   */
-  nsIArray* GetControllers() const
-  {
-    if (!mControllers) {
-      // Logically const
-      if (!const_cast<sbBaseDeviceMarshall*>(this)->RefreshControllers()) {
-        NS_ASSERTION(PR_FALSE, "Something bad happened while refreshing the controllers");
-        return nsnull;
-      }
-    }
-    return mControllers.get();
-  }
-  /**
-   * Refreshes the list of controllers returning an array interface to them
-   */
-  nsIArray* RefreshControllers();
+public:
   /**
    * Class to compare controllers. This allows 
    */
@@ -134,6 +107,35 @@ protected:
    */
   sbIDeviceController* FindCompatibleControllers(nsIPropertyBag* deviceParams,
                                                  CompatibilityComparer & deviceComparer);
+protected:
+  /**
+   * Verifies that shutdown has been called.
+   */
+  virtual ~sbBaseDeviceMarshall();
+  /**
+   * Initializes the shutdown flag.
+   */
+  sbBaseDeviceMarshall(nsACString const & categoryName);
+  void RegisterControllers(sbIDeviceControllerRegistrar * registrar);
+  /**
+   * Retrieves the controllers for the category and loads them into the
+   * controllers array
+   */
+  nsIArray* GetControllers() const
+  {
+    if (!mControllers) {
+      // Logically const
+      if (!const_cast<sbBaseDeviceMarshall*>(this)->RefreshControllers()) {
+        NS_ASSERTION(PR_FALSE, "Something bad happened while refreshing the controllers");
+        return nsnull;
+      }
+    }
+    return mControllers.get();
+  }
+  /**
+   * Refreshes the list of controllers returning an array interface to them
+   */
+  nsIArray* RefreshControllers();
   /**
    * Derived classes call this at the start of their stopMonitoring implementation.
    * An assert will fire on destruction if this is not called. Monitoring would
@@ -146,7 +148,7 @@ protected:
   /**
    * Derived classes can use this to determine whether or not monitoring is active
    */
-  bool IsMonitoring() const
+  PRBool IsMonitoring() const
   {
     return mIsMonitoring;
   }
@@ -157,8 +159,7 @@ private:
   /**
    * Retrieves the enumerator for our category with the name mCategoryName
    */
-  nsresult
-      GetCategoryManagerEnumerator(nsCOMPtr<nsISimpleEnumerator> & enumerator);
+  nsresult GetCategoryManagerEnumerator(nsCOMPtr<nsISimpleEnumerator> & enumerator);
 };
 
 #endif

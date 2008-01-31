@@ -22,35 +22,16 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIContentTypeFormat.idl \
-             sbIDeviceCapabilities.idl \
-             sbIDeviceCompatibility.idl \
-             sbIDeviceContent.idl \
-             sbIDeviceControllerRegistrar.idl \
-             sbIDeviceEvent.idl \
-             sbIDeviceEventListener.idl \
-             sbIDeviceEventTarget.idl \
-             sbIDeviceLibrary.idl \
-             sbIDeviceProperties.idl \
-             sbIDeviceRegistrar.idl \
-             sbIDeviceManager.idl \
-             $(NULL)
-
-XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
-                 $(NULL)
-
-# XXXMook: TODO: rename this once deviceobsolete is gone
-XPIDL_MODULE = sbDeviceBase2.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
-
-LIBSONGBIRD_COMPONENT = sbDeviceBase
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
+ifeq (windows,$(SB_PLATFORM))
+SUBDIRS = windows \
+          $(NULL)
+endif
 
 include $(topsrcdir)/build/rules.mk
