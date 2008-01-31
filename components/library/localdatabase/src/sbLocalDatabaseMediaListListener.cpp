@@ -467,6 +467,21 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
 }
 
 /**
+ * \brief Notifies all listeners that an item has been moved.
+ */
+void
+sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(sbIMediaList* aList,
+                                                           PRUint32 aFromIndex,
+                                                           PRUint32 aToIndex)
+{
+  SB_ENSURE_TRUE_VOID(aList);
+
+  SB_NOTIFY_LISTENERS(NotifyListenersItemMoved,
+                      OnItemMoved(aList, aFromIndex, aToIndex, &noMoreForBatch),
+                      LISTENER_FLAGS_ITEMMOVED);
+}
+
+/**
  * \brief Notifies all listeners that the list has been cleared.
  */
 void
@@ -815,6 +830,18 @@ sbWeakMediaListListenerWrapper::OnItemUpdated(sbIMediaList* aMediaList,
                               aMediaItem,
                               aProperties,
                               aNoMoreForBatch))
+}
+
+NS_IMETHODIMP
+sbWeakMediaListListenerWrapper::OnItemMoved(sbIMediaList* aMediaList,
+                                            PRUint32 aFromIndex,
+                                            PRUint32 aToIndex,
+                                            PRBool* aNoMoreForBatch)
+{
+  SB_TRY_NOTIFY(OnItemMoved(aMediaList,
+                            aFromIndex,
+                            aToIndex,
+                            aNoMoreForBatch))
 }
 
 NS_IMETHODIMP

@@ -50,7 +50,7 @@ function CompareResults(aJSArray, aEnumerator, aMessage) {
 
 function runTest () {
   var formats = Components.classes["@songbirdnest.com/Songbird/Device/ContentTypeFormat;1"]
-                          .CreateInstance(Components.interfaces.sbIContentTypeFormat);
+                          .createInstance(Components.interfaces.sbIContentTypeFormat);
   assertTrue(formats, "Failed to create content type format component");
   
   var FCCContainer = generateFourCC();

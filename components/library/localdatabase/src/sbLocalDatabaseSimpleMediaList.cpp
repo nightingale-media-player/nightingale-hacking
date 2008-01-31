@@ -822,23 +822,15 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If the from index is smaller than the to index, then moving the item out
+  // of the from index causes everything to shift once
+  if (aFromIndex < aToIndex) {
+    aToIndex--;
+  }
 
-  nsCOMPtr<sbIMutablePropertyArray> properties =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString movedIndex;
-  movedIndex.AppendInt(aFromIndex);
-
-  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
-                                  movedIndex);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
-                                                               item,
-                                                               properties);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(list,
+                                                             aFromIndex,
+                                                             aToIndex);
 
   return NS_OK;
 }
@@ -859,6 +851,11 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   rv = UpdateOrdinalByIndex(aIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Grab the length before the invalidation since it won't be changing
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Invalidate the cached list
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -867,23 +864,9 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMutablePropertyArray> properties =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString movedIndex;
-  movedIndex.AppendInt(aIndex);
-
-  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
-                                  movedIndex);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
-                                                               item,
-                                                               properties);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(list,
+                                                             aIndex,
+                                                             length - 1);
 
   return NS_OK;
 }
@@ -986,7 +969,10 @@ sbLocalDatabaseSimpleMediaList::MoveSomeBefore(PRUint32* aFromIndexArray,
   NS_ENSURE_SUCCESS(rv, rv);
 
   ordinal.AppendLiteral(".");
-  rv = MoveSomeInternal(aFromIndexArray, aFromIndexArrayCount, ordinal);
+  rv = MoveSomeInternal(aFromIndexArray,
+                        aFromIndexArrayCount,
+                        aToIndex,
+                        ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1005,7 +991,12 @@ sbLocalDatabaseSimpleMediaList::MoveSomeLast(PRUint32* aIndexArray,
   NS_ENSURE_SUCCESS(rv, rv);
 
   ordinal.AppendLiteral(".");
-  rv = MoveSomeInternal(aIndexArray, aIndexArrayCount, ordinal);
+
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = MoveSomeInternal(aIndexArray, aIndexArrayCount, length, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1411,6 +1402,7 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
 nsresult
 sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
                                                  PRUint32 aFromIndexArrayCount,
+                                                 PRUint32 aToIndex,
                                                  const nsAString& aOrdinalRoot)
 {
   NS_ASSERTION(aFromIndexArray, "aFromIndexArray is null");
@@ -1474,30 +1466,47 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMutablePropertyArray> properties =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsTArray<PRUint32> shiftedIndexes;
+  PRUint32* success = shiftedIndexes.AppendElements(aFromIndexArray,
+                                                    aFromIndexArrayCount);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   for (PRUint32 i = 0; i < aFromIndexArrayCount; i++) {
-    nsAutoString movedIndex;
-    movedIndex.AppendInt(aFromIndexArray[i]);
+    PRUint32 fromIndex = shiftedIndexes[i];
 
-    rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
-                                    movedIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // If this item has moved forward, the we shift the to-index back once since
+    // the incoming indexes are all "move before" indicies
+    PRUint32 shift = 0;
+    if (fromIndex < aToIndex) {
+      shift = 1;
+    }
 
-    sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
-                                                                 item,
-                                                                 properties);
+    sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(list,
+                                                               fromIndex,
+                                                               aToIndex - shift);
 
-    nsCOMPtr<nsIMutableArray> array = do_QueryInterface(properties, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // If this moved shifted the remaining indexes to be notified, shift them
+    for (PRUint32 j = i + 1; j < aFromIndexArrayCount; j++) {
+      // The moved item has jumped behind this index, causing this index to
+      // shift forward.  Shift it back.
+      if (fromIndex < shiftedIndexes[j] && aToIndex > shiftedIndexes[j]) {
+        shiftedIndexes[j]--;
+      }
+      else {
+        // The moved item has jumped in front of this index, causing this index
+        // to shift backwards.  Shift it forward.
+        if (aToIndex <= shiftedIndexes[j] && fromIndex > shiftedIndexes[j]) {
+          shiftedIndexes[j]++;
+        }
+      }
+    }
 
-    rv = array->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
+    // If we're moving indexes backwards, we need to adjust the insert point
+    // so the next item is put after the previous
+    if (fromIndex > aToIndex) {
+      aToIndex++;
+    }
+
   }
 
   return NS_OK;

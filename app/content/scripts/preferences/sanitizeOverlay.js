@@ -109,6 +109,7 @@ var gSongbirdSanitizeOverlay = {
   onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
   onAfterItemRemoved: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true; },
+  onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
   onListCleared: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onBatchBegin: function(aMediaList) {},
   onBatchEnd: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },

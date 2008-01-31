@@ -41,7 +41,7 @@ interface nsIURI;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(b08465ce-3e7a-41de-a554-3f5ed851dc86)]
+[scriptable, uuid(5a5d8652-d772-49da-b873-f63ced21b65c)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -127,9 +127,21 @@ interface sbIDeviceLibraryListener : nsISupports
   boolean onItemUpdated(in sbIMediaList aMediaList,
                         in sbIMediaItem aMediaItem,
                         in sbIPropertyArray aProperties);
-                        
 
   /**
+   * \brief Called when a media item is moved.
+   * \param sbIMediaList aMediaList The list that contains the item that moved.
+   * \param aFromIndex Index of the item that was moved
+   * \param aToIndex New index of the moved item
+   * \return True if you do not want any further onItemMoved notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onItemMoved(in sbIMediaList aMediaList,
+                      in unsigned long aFromIndex,
+                      in unsigned long aToIndex);
+
+ /**
    * \brief Called when a media item has been copied.
    * \param sbIMediaItem aSourceItem The item that was copied from.
    * \param sbIMediaItem aDestItem The item that was copied to.

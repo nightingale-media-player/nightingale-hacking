@@ -163,10 +163,15 @@ protected:
   void NotifyListenersAfterItemRemoved(sbIMediaList* aList,
                                        sbIMediaItem* aItem);
 
-  // Enumerate listeners and call OnItemRemoved
+  // Enumerate listeners and call OnItemUpdated
   void NotifyListenersItemUpdated(sbIMediaList* aList,
                                   sbIMediaItem* aItem,
                                   sbIPropertyArray* aProperties);
+
+  // Enumerate listeners and call OnItemMoved
+  void NotifyListenersItemMoved(sbIMediaList* aList,
+                                PRUint32 aFromIndex,
+                                PRUint32 aToIndex);
 
   // Enumerate listeners and call OnListCleared
   void NotifyListenersListCleared(sbIMediaList* aList);

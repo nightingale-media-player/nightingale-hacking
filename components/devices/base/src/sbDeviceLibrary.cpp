@@ -398,6 +398,21 @@ sbDeviceLibrary::OnItemUpdated(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
+sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
+                             PRUint32 aFromIndex,
+                             PRUint32 aToIndex,
+                             PRBool* aNoMoreForBatch)
+{
+  TRACE(("sbDeviceLibrary[0x%x] - OnItemMoved", this));
+
+  SB_NOTIFY_LISTENERS(OnItemMoved(aMediaList,
+                                  aFromIndex,
+                                  aToIndex,
+                                  aNoMoreForBatch));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceLibrary::OnListCleared(sbIMediaList *aMediaList,
                                PRBool* aNoMoreForBatch)
 {

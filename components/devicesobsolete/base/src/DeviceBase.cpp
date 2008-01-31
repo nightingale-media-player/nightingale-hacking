@@ -58,6 +58,7 @@
 #include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
 #include <sbLocalDatabaseCID.h>
+#include <sbStandardProperties.h>
 
 #define MSG_DEVICE_BASE             (0x2000) // Base message ID
 
@@ -226,6 +227,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                            sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
                            sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
                            sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                           sbIMediaList::LISTENER_FLAGS_ITEMMOVED |
                            sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                            nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -464,8 +466,8 @@ sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   }
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> items;
 
+  nsCOMPtr<nsIMutableArray> items;
   items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -477,6 +479,38 @@ sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceBaseLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
+                                         PRUint32 aFromIndex,
+                                         PRUint32 aToIndex,
+                                         PRBool *aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  *aNoMoreForBatch = PR_FALSE;
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
+  if (aFromIndex == aToIndex) {
+    return NS_OK;
+  }
+
+  PRUint32 updateItemCount;
+  nsresult rv;
+  rv = mDevice->MovePlaylistItem(mDeviceIdentifier,
+                                 aMediaList,
+                                 aFromIndex,
+                                 aToIndex,
+                                 &updateItemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+
 }
 
 NS_IMETHODIMP 

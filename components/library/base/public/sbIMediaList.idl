@@ -840,6 +840,7 @@ interface sbIMediaList : sbIMediaItem
   const unsigned long LISTENER_FLAGS_LISTCLEARED       = 1 << 4;
   const unsigned long LISTENER_FLAGS_BATCHBEGIN        = 1 << 5;
   const unsigned long LISTENER_FLAGS_BATCHEND          = 1 << 6;
+  const unsigned long LISTENER_FLAGS_ITEMMOVED         = 1 << 7;
   const unsigned long LISTENER_FLAGS_ALL               = 0xffffffff;
 
  /**

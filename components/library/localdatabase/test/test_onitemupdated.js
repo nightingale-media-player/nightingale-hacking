@@ -42,6 +42,7 @@ function runTest () {
     onItemUpdated: function(list, item, properties) {
       this.properties = properties;
     },
+    onItemMoved: function(list, fromIndex, toIndex) {},
     onListCleared: function(list) {},
     onBatchBegin: function(list) {},
     onBatchEnd: function(list) {}

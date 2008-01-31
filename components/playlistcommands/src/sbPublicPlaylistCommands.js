@@ -380,7 +380,7 @@ PublicPlaylistCommands.prototype = {
                                                       "&command.shortcut.key.showdlplaylist",
                                                       "&command.shortcut.keycode.showdlplaylist",
                                                       "&command.shortcut.modifiers.showdlplaylist",
-                                                      this.true);
+                                                      true);
 
     this.m_cmd_ShowDownloadPlaylist.setCommandVisibleCallback(null,
                                                               "library_cmd_showdlplaylist",
@@ -1298,6 +1298,7 @@ function plCmd_DownloadInit(aContext, aHost) {
     onItemAdded: function(aMediaList, aMediaItem) { return true; },
     onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
     onItemUpdated: function(aMediaList, aMediaItem) { return true; },
+    onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
 
 
     onMediaListChanged: function() {

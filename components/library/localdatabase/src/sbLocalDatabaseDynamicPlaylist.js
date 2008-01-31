@@ -518,6 +518,13 @@ function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
   this._scheduledLists[FIX(aMediaItem.guid)] = aMediaItem;
 }
 
+sbLocalDatabaseDynamicPlaylistService.prototype.onItemMoved =
+function sbLocalDatabaseDynamicPlaylistService_onItemMoved(aMediaList,
+                                                           aFromIndex,
+                                                           aToIndex)
+{
+}
+
 sbLocalDatabaseDynamicPlaylistService.prototype.onListCleared =
 function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 {

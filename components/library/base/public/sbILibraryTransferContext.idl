@@ -101,10 +101,11 @@ interface sbISingleListTransferContext : sbILibraryTransferContext
  *   application/x-sb-transfer-media-items (enumerator returns sbIMediaItem)
  *   application/x-sb-transfer-media-lists (enumerator returns sbIMediaList)
  *
- * Note that since a media items is a media list, a transfer context whose
- * flavor is "application/x-sb-transfer-media-items" may indeed still media
- * lists.  Therefore consumers who want to treat lists differently will need to
- * check the contents of the enumerator to determine if lists are present.
+ * Note that since a media item is a media list, a transfer context whose
+ * flavor is "application/x-sb-transfer-media-items" may indeed still contain
+ * media lists.  Therefore consumers who want to treat lists differently will
+ * need to check the contents of the enumerator to determine if lists are
+ * present.
  */
 [scriptable, uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]
 interface sbIMultipleItemTransferContext : sbILibraryTransferContext

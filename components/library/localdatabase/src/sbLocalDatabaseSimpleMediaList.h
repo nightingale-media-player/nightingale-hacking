@@ -92,6 +92,7 @@ private:
 
   nsresult MoveSomeInternal(PRUint32* aFromIndexArray,
                             PRUint32 aFromIndexArrayCount,
+                            PRUint32 aToIndex,
                             const nsAString& aOrdinalRoot);
 
   nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);

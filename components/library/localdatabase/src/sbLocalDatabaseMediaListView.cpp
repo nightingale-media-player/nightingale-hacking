@@ -1410,6 +1410,29 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
+                                          PRUint32 aFromIndex,
+                                          PRUint32 aToIndex,
+                                          PRBool* aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  if (mBatchHelper.IsActive()) {
+    mInvalidatePending = PR_TRUE;
+    *aNoMoreForBatch = PR_TRUE;
+    return NS_OK;
+  }
+
+  // Invalidate the view array
+  nsresult rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aNoMoreForBatch = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
                                             PRBool* aNoMoreForBatch)
 {

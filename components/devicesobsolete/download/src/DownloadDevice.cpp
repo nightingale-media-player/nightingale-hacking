@@ -1638,6 +1638,18 @@ NS_IMETHODIMP sbDownloadDevice::OnItemUpdated(
     return (NS_OK);
 }
 
+NS_IMETHODIMP sbDownloadDevice::OnItemMoved(
+    sbIMediaList                *aMediaList,
+    PRUint32                    aFromIndex,
+    PRUint32                    aToIndex,
+    PRBool                      *_retval)
+{
+    /* Validate parameters. */
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    *_retval = PR_TRUE;
+    return (NS_OK);
+}
 
 /**
  * \brief Called when a media list is cleared.
@@ -1701,6 +1713,16 @@ NS_IMETHODIMP
 sbDownloadDevice::ClearPlaylist(const nsAString &aDeviceIdentifier,
                                 sbIMediaList *aMediaList,
                                 PRUint32 *aItemCount)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadDevice::MovePlaylistItem(const nsAString &aDeviceIdentifier,
+                                   sbIMediaList *aMediaList,
+                                   PRUint32 aFromIndex,
+                                   PRUint32 aToIndex,
+                                   PRUint32 *aItemCount)
 {
   return NS_OK;
 }

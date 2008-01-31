@@ -338,6 +338,7 @@ LibraryUtils.RemovalMonitor.prototype = {
    */
   onItemAdded: function(aMediaList, aMediaItem) { return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true },
+  onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true },
   onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
   onAfterItemRemoved: function RemovalMonitor_onAfterItemRemoved(aMediaList, 
                                                                  aMediaItem)

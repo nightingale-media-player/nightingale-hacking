@@ -603,6 +603,11 @@ addToPlaylistHelper.prototype = {
     return true;
   },
 
+  onItemMoved: function onItemMoved(list, fromIndex, toIndex) {
+    XXXsteve Do we need to do anything here?
+    return true;
+  },
+
   onListCleared: function onListCleared(list) {
     // If we are in a batch, ignore future notifications
     if (!this._inbatch) {

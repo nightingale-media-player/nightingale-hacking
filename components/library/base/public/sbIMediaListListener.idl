@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(7ed06a74-6df1-4483-b222-fdaaf6ffcd5e)]
+[scriptable, uuid(7918d068-fb4c-49a6-a267-2f4af9e4d9a5)]
 interface sbIMediaListListener : nsISupports
 {
   /**
@@ -95,7 +95,20 @@ interface sbIMediaListListener : nsISupports
                         in sbIPropertyArray aProperties);
 
   /**
-   * \brief Called when a media list is cleared.
+   * \brief Called when a media item is moved.
+   * \param sbIMediaList aMediaList The list that contains the item that moved.
+   * \param aFromIndex Index of the item that was moved
+   * \param aToIndex New index of the moved item
+   * \return True if you do not want any further onItemMoved notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onItemMoved(in sbIMediaList aMediaList,
+                      in unsigned long aFromIndex,
+                      in unsigned long aToIndex);
+
+  /**
+   * \Brief Called when a media list is cleared.
    * \return True if you do not want any further onListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
@@ -135,8 +148,8 @@ interface sbIMediaListListener : nsISupports
 [scriptable, uuid(8060b316-1837-44df-a184-7f25c18ea4c0)]
 interface sbIMediaListEnumerationListener : nsISupports
 {
-  const unsigned short CANCEL   = 1;
   const unsigned short CONTINUE = 0;
+  const unsigned short CANCEL   = 1;
 
   /**
    * \brief Called when enumeration is about to begin.

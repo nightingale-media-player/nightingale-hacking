@@ -2292,6 +2292,20 @@ sbLocalDatabaseSmartMediaList::OnItemUpdated(sbIMediaList* aMediaList,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::OnItemMoved(sbIMediaList* aMediaList,
+                                           PRUint32 aFromIndex,
+                                           PRUint32 aToIndex,
+                                           PRBool* aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  // Don't care
+  *aNoMoreForBatch = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList,
                                              PRBool* aNoMoreForBatch)
 {

@@ -1454,6 +1454,11 @@ function sbLibraryServicePane_onItemUpdated(aMediaList,
     return false;
   }
 }
+sbLibraryServicePane.prototype.onItemMoved =
+function sbLibraryServicePane_onItemMoved(aMediaList,
+                                          aFromIndex,
+                                          aToIndex) {
+}
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList) {
   if (this._batch.isActive()) {

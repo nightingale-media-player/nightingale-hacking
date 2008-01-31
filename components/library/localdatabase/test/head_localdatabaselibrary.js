@@ -282,6 +282,8 @@ TestMediaListListener.prototype = {
   _removedItem: null,
   _updatedItem: null,
   _updatedProperties: null,
+  _movedItemFromIndex: [],
+  _movedItemToIndex: [],
   _batchBeginList: null,
   _batchEndList: null,
   _listCleared: false,
@@ -307,6 +309,14 @@ TestMediaListListener.prototype = {
     return this._updatedProperties;
   },
 
+  get movedItemFromIndex() {
+    return this._movedItemFromIndex;
+  },
+
+  get movedItemToIndex() {
+    return this._movedItemToIndex;
+  },
+
   get batchBeginList() {
     return this._batchBeginList;
   },
@@ -328,6 +338,8 @@ TestMediaListListener.prototype = {
     this._removedItemAfter = null;
     this._updatedItem = null;
     this._updatedProperties = null;
+    this._movedItemFromIndex = [];
+    this._movedItemToIndex = [];
     this._batchBeginList = null;
     this._batchEndList = null;
     this._listCleared = false;
@@ -352,6 +364,12 @@ TestMediaListListener.prototype = {
   onItemUpdated: function onItemUpdated(list, item, properties) {
     this._updatedItem = item;
     this._updatedProperties = properties;
+    return this._retval;
+  },
+
+  onItemMoved: function onItemMoved(list, fromIndex, toIndex) {
+    this._movedItemFromIndex.push(fromIndex);
+    this._movedItemToIndex.push(toIndex);
     return this._retval;
   },
 
