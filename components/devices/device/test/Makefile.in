@@ -66,10 +66,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(DEPTH)/components/moz/strings/src \
                            $(NULL)
 
-DYNAMIC_LIB_STATIC_IMPORTS += sbMozStringUtils$(DEBUG:%=_d) \
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
                               $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(XPIDL_MODULE)
