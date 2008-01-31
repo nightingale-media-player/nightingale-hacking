@@ -604,7 +604,7 @@ addToPlaylistHelper.prototype = {
   },
 
   onItemMoved: function onItemMoved(list, fromIndex, toIndex) {
-    XXXsteve Do we need to do anything here?
+    // XXXsteve Do we need to do anything here?
     return true;
   },
 
