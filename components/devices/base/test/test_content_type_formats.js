@@ -33,12 +33,13 @@ Components.utils.import("resource://app/components/ArrayConverter.jsm");
 
 /* return a new random FourCC. well, smells like one anyway. */
 function generateFourCC() {
-  return (Math.random() * (-1 >>> 0)) << 0;
+  // note that we generate a random 32-bit *unsigned* integer.
+  return (Math.random() * (-1 >>> 0)) << 0 >>> 0;
 }
 
 function CompareResults(aJSArray, aEnumerator, aMessage) {
   var result = ArrayConverter.JSArray(aEnumerator);
-  assertTrue(aJSArray.length, result.length, aMessage);
+  assertEqual(aJSArray.length, result.length, aMessage);
   
   const nsISupportsPRUint32 = Components.interfaces.nsISupportsPRUint32;
   
@@ -61,13 +62,14 @@ function runTest () {
   }
   
   formats.init(FCCContainer, FCCEncode, FCCEncode.length, FCCDecode, FCCDecode.length);
+
   try {
     formats.init(FCCContainer, FCCEncode, FCCEncode.length, FCCDecode, FCCDecode.length);
     fail("re-initialization of content type format did not throw");
   } catch (ex) {
     /* expected to throw */
   }
-  
+
   assertEqual(formats.containerFormat, FCCContainer);
   CompareResults(FCCEncode, formats.encodingFormats, "encodingFormats");
   CompareResults(FCCDecode, formats.decodingFormats, "decodingFormats");

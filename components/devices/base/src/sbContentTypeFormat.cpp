@@ -82,7 +82,7 @@ NS_IMETHODIMP FourCCEnumerator::GetNext(nsISupports **_retval)
   NS_ENSURE_SUCCESS(rv, rv);
   ++mIndex;
   
-  return NS_OK;
+  return CallQueryInterface(fourCC, _retval);
 }
 
 /******************************************************************************/
