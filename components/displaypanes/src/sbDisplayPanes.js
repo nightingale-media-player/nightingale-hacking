@@ -26,10 +26,6 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/RDFHelper.jsm");
 
-var SB_NewDataRemote = Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
-                                              "sbIDataRemote",
-                                              "init");
-
 /**
  * sbIContentPaneInfo
  */
@@ -295,6 +291,9 @@ DisplayPaneManager.prototype = {
       listener.onRegisterContent(info);
     }
     // if we have never seen this pane, show it in its prefered group
+    var SB_NewDataRemote = Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
+                                                  "sbIDataRemote",
+                                                  "init");
     var known = SB_NewDataRemote("displaypane.known." + aContentUrl, null);
     if (!known.boolValue) {
       if (aAutoShow) {
