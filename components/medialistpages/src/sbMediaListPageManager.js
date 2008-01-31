@@ -163,7 +163,7 @@ MediaListPageManager.prototype = {
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
     remote.init("medialistpage." + aList.guid, null);
-    remote.stringValue = aPageInfo.url;
+    remote.stringValue = aPageInfo.contentUrl;
   },
   
   // internal. checks that a url is registered in the list of pages, and that 
@@ -171,7 +171,7 @@ MediaListPageManager.prototype = {
   _checkPageForList: function(aList, aUrl) {
     for (var i in this._pageInfoArray) {
       var pageInfo = this._pageInfoArray[i];
-      if (pageInfo.url != aUrl) continue;
+      if (pageInfo.contentUrl != aUrl) continue;
       if (!pageInfo.matchInterface.match(aList)) continue;
       return pageInfo;
     }
@@ -179,12 +179,12 @@ MediaListPageManager.prototype = {
   },
 
   _ensureMediaPageRegistration: function() {
-    if(this.registrationComplete) { return };
+    if(this._registrationComplete) { return };
     
     this._registerDefaults();
     MediaListPageMetadataReader.loadMetadata(this);
     
-    this.registrationComplete = true;
+    this._registrationComplete = true;
   },
   
   _registerDefaults: function() {
@@ -246,7 +246,7 @@ var MediaListPageMetadataReader = {
     }
     for (p in info) {
       if (!requiredProperties[p] && !optionalProperties[p]) {
-        warningList.push("Unrecognized property " + p + ".\n")
+        //TODO: warningList.push("Unrecognized property " + p + ".\n")
       }
     } 
     
@@ -271,8 +271,8 @@ var MediaListPageMetadataReader = {
                                 {match: function(mediaList) { return(true); }}
                                );
     
-    dump("MediaPageMetadataReader: registered pane " + info.contentTitle
-            + " from addon " + addon.Value + " \n");
+    //dump("MediaPageMetadataReader: registered pane " + info.contentTitle
+    //     + " at " + info.contentUrl + " from addon " + addon.Value + " \n");
   },
   
   /**

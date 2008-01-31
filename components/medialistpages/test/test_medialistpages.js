@@ -44,6 +44,8 @@ function runTest () {
   log("OK");
 }
 
+const DEFAULTPAGE = "chrome://songbird/content/xul/sbLibraryPage.xul"
+const EXTENSIONPAGE = "chrome://songbird-test-media-page/content/testMediaPage.xul"
 const BADURL = "http://non/registered/url.xul";
 const URL1 = "http://fake/url1.xul";
 const URL2 = "http://fake/url2.xul";
@@ -61,15 +63,14 @@ function testMediaListPageManager() {
   // Create list of type "simple"
   var list1 = library1.createMediaList("simple");
 
-  // This matches ALL lists
-  var page_matchall = pageMgr.registerPage("MatchAll", 
-                                           URL1, 
-                                           function(aList) { return true; } );
-
-  // Verify that giving a list that has no default returns the global default 
+  // Verify that the built-in page has been registered
+  // and that giving a list that has no default returns the global default 
   // page
   var pageInfo = pageMgr.getPage(list1);
-  assertEqual(pageInfo.url, URL1);
+  assertEqual(
+    pageInfo.contentUrl, DEFAULTPAGE, 
+    "built-in page not found (" + pageInfo.contentUrl + ")\n"
+  );
   
   // Set a default for the list
   list1.setProperty(SBProperties.defaultMediaListPageURL, BADURL);
@@ -77,14 +78,33 @@ function testMediaListPageManager() {
   // Verify that giving a list that has an obsolete default returns the 
   // global default page
   pageInfo = pageMgr.getPage(list1);
-  assertEqual(pageInfo.url, URL1);
-
-  // Unregister global default
-  pageMgr.unregisterPage(page_matchall);
+  assertEqual(
+    pageInfo.contentUrl, DEFAULTPAGE,
+    "setting a default page to a BADURL should give DEFAULT"
+  );
+  var defaultInfo = pageInfo;
   
-  // Verify that no page remains
+  // test install.rdf loaded page from the test extension
+  var rdfInfo = {};
+  var pages = pageMgr.getAvailablePages();
+  while (pages.hasMoreElements()) {
+    var pageInfo = pages.getNext();
+    pageInfo.QueryInterface(Components.interfaces.sbIMediaListPageInfo);
+    if (pageInfo.contentUrl == EXTENSIONPAGE) {
+      rdfInfo = pageInfo;
+    }
+  }
+  assertEqual(rdfInfo.contentUrl, EXTENSIONPAGE,
+    "the extension page should be registered among the available pages"
+  );
+  
+  // unregister both and verify that no page remains
+  pageMgr.unregisterPage(defaultInfo);
+  pageMgr.unregisterPage(rdfInfo);
   var enumerator = pageMgr.getAvailablePages();
-  assertEqual(enumerator.hasMoreElements(), false);
+  assertEqual(enumerator.hasMoreElements(), false,
+    "after unregistering the one built-in page and the extension, the list should be empty"
+  );
 
   // Tabula rasa
   library1.clear();
@@ -98,17 +118,17 @@ function testMediaListPageManager() {
   // Verify that matching works :
   // Step 1, only a type match is registered, must match
   pageInfo = pageMgr.getPage(list1);
-  assertEqual(pageInfo.url, URL2);
+  assertEqual(pageInfo.contentUrl, URL2);
 
   // Set up a match for all lists again
-  page_matchall = pageMgr.registerPage("MatchAll", 
+  var page_matchall = pageMgr.registerPage("MatchAll", 
                                        URL1, 
                                        function(aList) { return true; } );
   
   // Verify that matching works:
   // Step 2, type(*) + global
   pageInfo = pageMgr.getPage(list1);
-  assertEqual(pageInfo.url, URL2);
+  assertEqual(pageInfo.contentUrl, URL2);
  
   // Create a list of type "smart"
   var list2 = library1.createMediaList("smart");
@@ -116,7 +136,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 3, non matching type + global(*)
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL1);
+  assertEqual(pageInfo.contentUrl, URL1);
   
   // Set up a match for all smart lists
   var page_smarttype = pageMgr.registerPage("MatchSmartType", 
@@ -126,7 +146,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 4, type + global(*) + type
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL1);
+  assertEqual(pageInfo.contentUrl, URL1);
   
   // Set the default for the smart list to the smart page
   list2.setProperty(SBProperties.defaultMediaListPageURL, URL3);
@@ -134,7 +154,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 5, bypass search, use list default, check that its match works
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL3);
+  assertEqual(pageInfo.contentUrl, URL3);
 
   // Set the default for the smart list to the simple page (non-matching page 
   // on purpose)
@@ -143,7 +163,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 6, check that list default is dropped when it does not match
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL1);
+  assertEqual(pageInfo.contentUrl, URL1);
 
   // Tabula rasa
   library1.clear();
@@ -156,7 +176,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 7, bypass search, use saved state, check that its match works
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL3);
+  assertEqual(pageInfo.contentUrl, URL3);
 
   // Save page_simpletype as user state for list2 (non-matching page on purpose)
   pageMgr.setPage(list2, page_simpletype);
@@ -164,7 +184,7 @@ function testMediaListPageManager() {
   // Verify that matching works:
   // Step 8, check that saved state is dropped when it does not match
   pageInfo = pageMgr.getPage(list2);
-  assertEqual(pageInfo.url, URL1);
+  assertEqual(pageInfo.contentUrl, URL1);
   
   // Verify that the internal page list really looks like what we 
   // expected all along
@@ -172,15 +192,15 @@ function testMediaListPageManager() {
   // 0 elements ? no !
   assertEqual(enumerator.hasMoreElements(), true);
   // element 0 is type match = simple
-  assertEqual(enumerator.getNext().url, URL2);
+  assertEqual(enumerator.getNext().contentUrl, URL2);
   // 1 element ? no !
   assertEqual(enumerator.hasMoreElements(), true);
   // element 1 is global match
-  assertEqual(enumerator.getNext().url, URL1);
+  assertEqual(enumerator.getNext().contentUrl, URL1);
   // 2 elements ? no !
   assertEqual(enumerator.hasMoreElements(), true);
   // element 2 is type match = smart
-  assertEqual(enumerator.getNext().url, URL3);
+  assertEqual(enumerator.getNext().contentUrl, URL3);
   // any more element ? no !
   assertEqual(enumerator.hasMoreElements(), false);
 
@@ -191,18 +211,18 @@ function testMediaListPageManager() {
   enumerator = pageMgr.getAvailablePages(list1);
   // perform list check
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL2);
+  assertEqual(enumerator.getNext().contentUrl, URL2);
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL1);
+  assertEqual(enumerator.getNext().contentUrl, URL1);
   assertEqual(enumerator.hasMoreElements(), false);
 
   // This should return the global match and the smart type match
   enumerator = pageMgr.getAvailablePages(list2);
   // perform list check
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL1);
+  assertEqual(enumerator.getNext().contentUrl, URL1);
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL3);
+  assertEqual(enumerator.getNext().contentUrl, URL3);
   assertEqual(enumerator.hasMoreElements(), false);
 
   // Verify that unregistering pages works with multiple pages
@@ -212,9 +232,9 @@ function testMediaListPageManager() {
   // perform list check
   enumerator = pageMgr.getAvailablePages();
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL2);
+  assertEqual(enumerator.getNext().contentUrl, URL2);
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL3);
+  assertEqual(enumerator.getNext().contentUrl, URL3);
   assertEqual(enumerator.hasMoreElements(), false);
 
   // Step 2, remove 2nd of 2 items
@@ -222,7 +242,7 @@ function testMediaListPageManager() {
   // perform list check again
   enumerator = pageMgr.getAvailablePages();
   assertEqual(enumerator.hasMoreElements(), true);
-  assertEqual(enumerator.getNext().url, URL2);
+  assertEqual(enumerator.getNext().contentUrl, URL2);
   assertEqual(enumerator.hasMoreElements(), false);
 
   // Step 3, remove last item
