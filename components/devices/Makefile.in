@@ -34,7 +34,7 @@ SUBDIRS = base \
           device \
           manager \
           marshall \
-          mtp \
+#          mtp \
           $(NULL)
 
 SUBDIRDEPS  = controller: base device
