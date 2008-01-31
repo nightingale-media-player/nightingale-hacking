@@ -65,6 +65,7 @@ sbScriptableFunctionBase::sbScriptableFunctionBase()
 
 sbScriptableFunctionBase::~sbScriptableFunctionBase()
 {
+  TRACE(("sbScriptableFunctionBase::~sbScriptableFunctionBase()"));
 }
 
 // ---------------------------------------------------------------------------
@@ -76,6 +77,7 @@ sbScriptableFunctionBase::~sbScriptableFunctionBase()
 NS_IMETHODIMP
 sbScriptableFunctionBase::GetClassName(char **aClassName)
 {
+  LOG(("sbScriptableFunctionBase::GetClassName()"));
   NS_ENSURE_ARG_POINTER(aClassName);
   
   NS_NAMED_LITERAL_CSTRING( kClassName, "sbScriptableFunction" );
@@ -86,6 +88,7 @@ sbScriptableFunctionBase::GetClassName(char **aClassName)
 NS_IMETHODIMP
 sbScriptableFunctionBase::GetScriptableFlags(PRUint32 *aScriptableFlags)
 {
+  LOG(("sbScriptableFunctionBase::GetScriptableFlags()"));
   NS_ENSURE_ARG_POINTER(aScriptableFlags);
   *aScriptableFlags = DONT_ENUM_STATIC_PROPS |
                       DONT_ENUM_QUERY_INTERFACE |
@@ -173,6 +176,7 @@ sbScriptableLibraryFunction::sbScriptableLibraryFunction( nsISupports *aObject,
 
 sbScriptableLibraryFunction::~sbScriptableLibraryFunction()
 {
+  TRACE(("sbScriptableLibraryFunction::~sbScriptableLibraryFunction()"));
 }
 
 NS_IMETHODIMP
@@ -234,6 +238,7 @@ sbScriptableMediaListFunction::sbScriptableMediaListFunction()
 
 sbScriptableMediaListFunction::~sbScriptableMediaListFunction()
 {
+  TRACE(("sbScriptableMediaListFunction::~sbScriptableMediaListFunction()"));
 }
 
 NS_IMETHODIMP

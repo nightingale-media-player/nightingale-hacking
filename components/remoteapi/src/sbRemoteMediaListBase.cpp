@@ -28,6 +28,7 @@
 #include "sbRemoteMediaListBase.h"
 #include "sbRemoteWrappingStringEnumerator.h"
 #include "sbRemotePlayer.h"
+#include "sbScriptableFunction.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIRemoteMediaList.h>
@@ -46,6 +47,15 @@
 #include <nsStringGlue.h>
 #include <prlog.h>
 
+// includes for XPCScriptable impl
+#include <nsNetUtil.h>
+#include <nsIXPConnect.h>
+#include <jsapi.h>
+#include <jsobj.h>
+#include <sbIPropertyArray.h>
+#include <nsServiceManagerUtils.h>
+#include <nsIScriptSecurityManager.h>
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbRemoteMediaList:5
@@ -57,9 +67,16 @@ PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 #undef LOG
 #define LOG(args) LOG_LIST(args)
 
+#define SB_ENSURE_WITH_JSTHROW( _cx, _rv, _msg )        \
+  if ( NS_FAILED(_rv) ) {                               \
+    ThrowJSException( _cx, NS_LITERAL_CSTRING(_msg)  ); \
+    return JS_FALSE;                                    \
+  }
+
 // derived classes must impl nsIClassInfo
-NS_IMPL_ISUPPORTS8(sbRemoteMediaListBase,
+NS_IMPL_ISUPPORTS9(sbRemoteMediaListBase,
                    nsISecurityCheckedComponent,
+                   nsIXPCScriptable,
                    sbISecurityAggregator,
                    sbIRemoteMediaList,
                    sbIMediaList,
@@ -146,6 +163,272 @@ sbRemoteMediaListBase::GetMediaList()
   NS_ADDREF(list);
   return list;
 }
+
+// ---------------------------------------------------------------------------
+//
+//                           nsIXPCScriptable
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::GetClassName( char **aClassName )
+{
+  LOG_LIST(("sbRemoteMediaListBase::GetClassName()"));
+  NS_ENSURE_ARG_POINTER(aClassName);
+  *aClassName = ToNewCString( NS_LITERAL_CSTRING("SongbirdMediaList") );
+  NS_ENSURE_TRUE( aClassName, NS_ERROR_OUT_OF_MEMORY );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::GetScriptableFlags( PRUint32 *aScriptableFlags )
+{
+  LOG_LIST(("sbRemoteMediaListBase::GetScriptableFlags()"));
+  NS_ENSURE_ARG_POINTER(aScriptableFlags);
+  *aScriptableFlags = WANT_NEWRESOLVE |
+                      ALLOW_PROP_MODS_DURING_RESOLVE |
+                      DONT_ENUM_STATIC_PROPS |
+                      DONT_ENUM_QUERY_INTERFACE |
+                      DONT_REFLECT_INTERFACE_NAMES ;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
+                                   JSContext *cx,
+                                   JSObject *obj,
+                                   jsval id,
+                                   PRUint32 flags,
+                                   JSObject **objp,
+                                   PRBool *_retval )
+{
+  LOG_LIST(("sbRemoteMediaListBase::NewResolve()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_POINTER(objp);
+
+  if ( JSVAL_IS_STRING(id) ) {
+    nsDependentString jsid( (PRUnichar *)
+                            ::JS_GetStringChars( JSVAL_TO_STRING(id) ),
+                            ::JS_GetStringLength( JSVAL_TO_STRING(id) ) );
+
+    TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
+
+    // If we're being asked for add, define the function and point the
+    // caller to the AddHelper method.
+    if ( jsid.EqualsLiteral("add") ) {
+      JSString *str = JSVAL_TO_STRING(id);
+      JSFunction *fnc = ::JS_DefineFunction( cx,
+                                             obj,
+                                             ::JS_GetStringBytes(str),
+                                             AddHelper,
+                                             1,
+                                             JSPROP_ENUMERATE );
+
+      *objp = obj;
+
+      return fnc ? NS_OK : NS_ERROR_UNEXPECTED;
+    }
+  }
+  return NS_OK;
+}
+
+// static
+nsresult
+sbRemoteMediaListBase::ThrowJSException( JSContext *cx,
+                                         const nsACString &aExceptionMsg ) {
+  JSAutoRequest ar(cx);
+
+  JSString *str = JS_NewStringCopyN( cx,
+                                     aExceptionMsg.BeginReading(),
+                                     aExceptionMsg.Length() );
+  if (!str) {
+    // JS_NewStringCopyN reported the error for us.
+    return NS_OK;
+  }
+
+  JS_SetPendingException( cx, STRING_TO_JSVAL(str) );
+  return NS_OK;
+}
+
+// static
+JSBool JS_DLL_CALLBACK
+sbRemoteMediaListBase::AddHelper( JSContext *cx,
+                                  JSObject *obj,
+                                  uintN argc,
+                                  jsval *argv,
+                                  jsval *rval )
+{
+  // Returning JS_FALSE from this method without setting an exception will
+  // cause XPConnect to hang. Either call ThrowJSExcpeption first, or
+  // return JS_TRUE if you want to fail silently.
+
+  LOG_LIST(("sbRemoteMediaListBase::AddHelper()"));
+  nsresult rv;
+
+  if ( argc != 1 ) {
+    ThrowJSException( cx, NS_LITERAL_CSTRING("Wrong number of arguments.") );
+    return JS_FALSE;
+  }
+
+  //
+  // Make sure the object is cleared to call this method
+  //
+
+  OBJ_TO_INNER_OBJECT(cx, obj);
+
+  nsCOMPtr<nsIXPConnect> xpc(
+    do_GetService( "@mozilla.org/js/xpc/XPConnect;1", &rv ) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Failed to get XPConnect service." )
+
+  nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
+  rv = xpc->GetWrappedNativeOfJSObject( cx, obj, getter_AddRefs(wrapper) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "No wrapper for native object." )
+
+  nsCOMPtr<nsISecurityCheckedComponent> checkedComponent(
+    do_QueryWrappedNative( wrapper, &rv ) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Not a checked object.")
+
+  // do the security check
+  char* access;
+  nsIID iid = NS_GET_IID(nsISupports);
+  // note that an error return value also means access denied
+  rv = checkedComponent->CanCallMethod( &iid,
+                                        NS_LITERAL_STRING("add").get(),
+                                        &access );
+  PRBool canCallMethod = NS_SUCCEEDED(rv);
+  if (canCallMethod) {
+    if (!access) {
+      canCallMethod = PR_FALSE;
+    } else {
+      canCallMethod = !strcmp( access, "AllAccess" );
+      NS_Free(access);
+    }
+  }
+
+  if (!canCallMethod) {
+    ThrowJSException( cx, NS_LITERAL_CSTRING("Permission Denied to call method RemoteMediaList.add()")  );
+    return JS_FALSE;
+  }
+
+  //
+  // Passed the security check, do the work of calling Add() or doing
+  // the additions by hand from the array of strings passed in
+  //
+
+  JSAutoRequest ar(cx);
+
+  if ( JSVAL_IS_STRING(argv[0]) ) {
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is a string"));
+    LOG_LIST(("          length: %d", ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) ) );
+
+    if ( ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) == 0 ) {
+      // empty strings are not failure cases
+      return JS_TRUE;
+    }
+
+    nsDependentString url( (PRUnichar *)
+                           ::JS_GetStringChars( JSVAL_TO_STRING(argv[0]) ),
+                           ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) );
+
+    nsCOMPtr<sbIMediaItem> selfItem( do_QueryWrappedNative( wrapper, &rv ) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Not a valid MediaItem.")
+
+    nsCOMPtr<sbILibrary> library;
+    rv = selfItem->GetLibrary( getter_AddRefs(library) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get library for MediaItem.")
+   
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri), url);
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get create new URI object.")
+
+    nsCOMPtr<sbIMediaItem> item;
+    nsCOMPtr<sbIPropertyArray> dummyProps;
+    rv = library->CreateMediaItem( uri , dummyProps, PR_FALSE,  getter_AddRefs(item) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get create new Media Item.")
+
+    nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
+
+    nsCOMPtr<sbIRemotePlayer> remotePlayer;
+    rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
+
+    nsCOMPtr<sbIMediaItem> wrappedItem;
+    rv = SB_WrapMediaItem( (sbRemotePlayer*)remotePlayer.get(),
+                           item,
+                           getter_AddRefs(wrappedItem) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get wrap MediaItem.")
+
+    nsCOMPtr<sbIMediaList> self( do_QueryWrappedNative( wrapper, &rv ) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid MediaList.")
+
+    rv = self->Add(wrappedItem);
+    if ( NS_FAILED(rv) ) {
+      NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
+    }
+  } else if ( JSVAL_IS_OBJECT(argv[0]) ) {
+    JSObject* jsobj;
+    jsobj = JSVAL_TO_OBJECT(argv[0]);
+    if (!jsobj) {
+      ThrowJSException( cx, NS_LITERAL_CSTRING("Failed to convert object.")  );
+      return JS_FALSE;
+    }
+
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is an object"));
+
+    if ( JS_IsArrayObject(cx, jsobj) ) {
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is an array"));
+
+      // loop over the array and take each string, create an item.
+      jsuint len;
+      jsval val;
+      if ( JS_GetArrayLength( cx, jsobj, &len ) ) {
+        for ( JSUint32 index = 0; index < len; index++ ) {
+          LOG_LIST(("sbRemoteMediaListBase::AddHelper() - checking index; %d.", index));
+          if ( JS_GetElement( cx, jsobj, index, &val ) ) {
+            LOG_LIST(("sbRemoteMediaListBase::AddHelper() - found a val in the array."));
+            // got the element
+            if ( JSVAL_IS_STRING(val) ) {
+              LOG_LIST(("sbRemoteMediaListBase::AddHelper() - found a val in the array, recursing"));
+              if ( !AddHelper( cx, obj, 1, &val, rval ) ) {
+                // AddHelper will already have set the exception for us.
+                return JS_FALSE;
+              }
+            } else {
+              ThrowJSException( cx, NS_LITERAL_CSTRING("Arrays should only contain strings.") );
+              return JS_FALSE;
+            }
+          }
+        }
+      }
+    } else {
+
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is an object, not an array"));
+      // check to make sure it's an sbIRemoteMediaItem and if so pass it to the
+      // add() method directly
+      nsCOMPtr<nsIXPConnectWrappedNative> wn;
+      rv = xpc->GetWrappedNativeOfJSObject(cx, JSVAL_TO_OBJECT( argv[0] ), getter_AddRefs(wn) );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Failed to get wrapper for argument." )
+
+      nsCOMPtr<sbIMediaItem> item( do_QueryWrappedNative( wn, &rv ) );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Argument not a proper MediaItem." )
+
+      nsCOMPtr<sbIMediaList> self( do_QueryWrappedNative( wrapper, &rv ) );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not a proper MediaList.")
+
+      rv = self->Add(item);
+      if ( NS_FAILED(rv) ) {
+        NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
+      }
+    }
+  } else if ( argv[0] ) {
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, not a string, or object"));
+  }
+
+  LOG_LIST(("sbRemoteMediaListBase::AddHelper() - returning JS_TRUE"));
+  return JS_TRUE;
+}
+
 
 // ---------------------------------------------------------------------------
 //
@@ -293,6 +576,7 @@ sbRemoteMediaListBase::Add(sbIMediaItem *aMediaItem)
 
   rv = mMediaList->Add(internalMediaItem);
   if (NS_SUCCEEDED(rv)) {
+    LOG_LIST(("sbRemoteMediaListBase::Add() - added the item"));
     mRemotePlayer->GetNotificationManager()
       ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
   }

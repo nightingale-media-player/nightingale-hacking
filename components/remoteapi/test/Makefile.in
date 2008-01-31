@@ -33,6 +33,8 @@ SONGBIRD_TEST_COMPONENT = remoteapi
 
 SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/tail_remoteapi.js \
+                 $(srcdir)/test_batchCalls.js \
+                 $(srcdir)/test_batchCalls_page.html \
                  $(srcdir)/test_crossLibAdd.js \
                  $(srcdir)/test_crossLibAdd_page.html \
                  $(srcdir)/test_empty.js \

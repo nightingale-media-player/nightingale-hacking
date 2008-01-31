@@ -636,8 +636,22 @@ interface sbIMediaList : sbIMediaItem
   Prototype:
     add(<MediaItem> mediaItem);
 
+    // additional forms
+
+    add(String urlToMedia);
+
+    add(Array mediaItemURLArray);
+
   Parameters:
     mediaItem - The <MediaItem> to add.
+    urlToMediaItem - The address of the <MediaItem>(s) to add.
+    mediaItemURLArray - An array containing the address(es)
+      of the <MediaItem>(s) to add.
+
+    In the additional forms urls to the <MediaItem>s can be passed directly
+    to the <MediaList> for addition. The <MediaItems> will be created and
+    added this <MediaList>. The additional forms are ONLY available through
+    the WebpageAPI.
 
   Example:
     (start code)
@@ -652,6 +666,12 @@ interface sbIMediaList : sbIMediaItem
 
     //Add same item twice. We now have mediaItem at index 0 and 1.
     mediaList.add(mediaItem);
+
+    //Alternate forms
+    mediaList.add("http://path/to/another/item.mp3");
+    mediaList.add(["http://path/to/another/cool/item.mp3",
+                   "http://path/to/another/great/item.mp3",
+                   "http://path/to/another/rockin/item.mp3"]);
     (end)
 
   See Also:

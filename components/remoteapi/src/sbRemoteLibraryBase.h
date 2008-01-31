@@ -97,9 +97,21 @@ public:
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
   
   // nsIXPCScriptable
-  NS_IMETHOD GetClassName(char * *aClassName);
+  NS_IMETHOD GetClassName(char **aClassName);
   NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
-  NS_IMETHOD GetProperty(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, jsval * vp, PRBool *_retval);
+  NS_IMETHOD NewResolve(nsIXPConnectWrappedNative *wrapper,
+                        JSContext *cx,
+                        JSObject *obj,
+                        jsval id,
+                        PRUint32 flags,
+                        JSObject **objp,
+                        PRBool *_retval);
+  NS_IMETHOD GetProperty(nsIXPConnectWrappedNative *wrapper,
+                         JSContext *cx,
+                         JSObject *obj,
+                         jsval id,
+                         jsval *vp,
+                         PRBool *_retval);
 
   // sbIWrappedMediaList
   virtual already_AddRefed<sbIMediaItem> GetMediaItem();

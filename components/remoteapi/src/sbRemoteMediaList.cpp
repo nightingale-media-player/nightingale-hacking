@@ -124,7 +124,7 @@ SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteMediaList,
                                         sbRemoteLibraryResource,
-                                        (mRemotePlayer, mMediaList) )
+                                        (mRemotePlayer, mMediaItem) )
 
 sbRemoteMediaList::sbRemoteMediaList( sbRemotePlayer* aRemotePlayer,
                                       sbIMediaList* aMediaList,

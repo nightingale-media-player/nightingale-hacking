@@ -112,7 +112,7 @@ function runTest(tester) {
     tester.assertEqual(list.type, "simple");
     tester.assertEqual(list.length, 0);
 
-    var url = "http://www.foo.com/foo.mp3";
+    var url = "http://www.example.com/foo.mp3";
     var item = library.createMediaItem(url);
     list.add(item);
     tester.assertEqual(list.length, 1);
@@ -159,9 +159,6 @@ function runTest(tester) {
 
     list.clear();
     tester.assertEqual(list.length, 0);
-
-    var enumerator = list.selection;
-    tester.assertFalse(enumerator);
 
     try {
       list.enumerateItemsByProperties(null, null, 0);

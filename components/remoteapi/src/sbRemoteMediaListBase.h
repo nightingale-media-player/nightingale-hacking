@@ -30,6 +30,7 @@
 #include "sbRemoteAPI.h"
 #include "sbRemoteForwardingMacros.h"
 #include <sbILibraryResource.h>
+#include "sbXPCScriptableStub.h"
 
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -61,7 +62,8 @@ class sbRemoteMediaListBase : public sbIMediaList,
                               public nsISecurityCheckedComponent,
                               public sbISecurityAggregator,
                               public sbIRemoteMediaList,
-                              public sbIWrappedMediaList
+                              public sbIWrappedMediaList,
+                              public sbXPCScriptableStub
 {
 public:
   NS_DECL_ISUPPORTS
@@ -72,6 +74,17 @@ public:
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
+
+  // nsIXPCScriptable
+  NS_IMETHOD GetClassName(char **aClassName);
+  NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
+  NS_IMETHOD NewResolve( nsIXPConnectWrappedNative *wrapper,
+                         JSContext *cx,
+                         JSObject *obj,
+                         jsval id,
+                         PRUint32 flags,
+                         JSObject **objp,
+                         PRBool *_retval );
 
   // sbIMediaList
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
@@ -109,6 +122,16 @@ public:
 
 protected:
   virtual ~sbRemoteMediaListBase();
+
+  // Helper method to do the throwing for AddHelper
+  static nsresult ThrowJSException( JSContext *cx,
+                                    const nsACString &aExceptionMsg );
+
+  static JSBool JS_DLL_CALLBACK AddHelper( JSContext *cx,
+                                           JSObject *obj,
+                                           uintN argc,
+                                           jsval *argv,
+                                           jsval *rval );
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 

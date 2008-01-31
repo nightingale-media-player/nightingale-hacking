@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 if [ $# = 0 ]; then
   echo usage: apply-patches patchdir targetdir [-R]

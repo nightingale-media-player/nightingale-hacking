@@ -893,9 +893,30 @@ sbRemoteLibraryBase::GetScriptableFlags( PRUint32 *aScriptableFlags )
                       DONT_ENUM_STATIC_PROPS |
                       DONT_ENUM_QUERY_INTERFACE |
                       WANT_GETPROPERTY |
+                      WANT_NEWRESOLVE |
                       ALLOW_PROP_MODS_DURING_RESOLVE |
                       DONT_REFLECT_INTERFACE_NAMES ;
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
+                                 JSContext *cx,
+                                 JSObject *obj,
+                                 jsval id,
+                                 PRUint32 flags,
+                                 JSObject **objp,
+                                 PRBool *_retval )
+{
+  LOG_LIB(("sbRemoteLibraryBase::NewResolve()"));
+#ifdef DEBUG
+  if ( JSVAL_IS_STRING(id) ) {
+    nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(JSVAL_TO_STRING(id)),
+                            ::JS_GetStringLength(JSVAL_TO_STRING(id)));
+    TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
+  }
+#endif
+  return mRemMediaList->NewResolve( wrapper, cx, obj, id, flags, objp, _retval );
 }
 
 NS_IMETHODIMP
@@ -911,9 +932,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
   NS_ENSURE_ARG_POINTER(vp);
   
   nsresult rv;
- 
-  *_retval = PR_FALSE;
-  
+
   if ( !JSVAL_IS_STRING(id) ) {
     // we don't care about non-strings
     return NS_OK;
@@ -946,7 +965,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
       // make the callable wrapper
       nsRefPtr<sbScriptableLibraryFunction> func =
         new sbScriptableLibraryFunction( stringEnum, NS_GET_IID(nsIStringEnumerator) );
-      NS_ENSURE_TRUE( stringEnum, NS_ERROR_OUT_OF_MEMORY );
+      NS_ENSURE_TRUE( func, NS_ERROR_OUT_OF_MEMORY );
       
       supports = NS_ISUPPORTS_CAST( nsIXPCScriptable*, func );
     }
@@ -967,7 +986,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
   if (supports) {
     // do the security check
     char* access;
-    nsIID iid = nsISupports::GetIID();
+    nsIID iid = NS_GET_IID(nsISupports);
     // note that an error return value also means access denied
     rv = mSecurityMixin->CanCallMethod( &iid,
                                         jsid.BeginReading(),
@@ -1027,7 +1046,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
     rv = xpc->WrapNative( cx,
                           obj,
                           supports,
-                          nsISupports::GetIID(),
+                          NS_GET_IID(nsISupports),
                           getter_AddRefs(objHolder) );
     NS_ENSURE_SUCCESS( rv, rv );
   
