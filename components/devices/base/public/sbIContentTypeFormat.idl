@@ -28,20 +28,26 @@
 
 interface nsISimpleEnumerator;
 
+typedef unsigned long FourCC;
+
 /**
  * \interface sbIContentTypeFormat
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
 [scriptable, uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]
 interface sbIContentTypeFormat : nsISupports
 {
+  void init(in FourCC aContainerFormat,
+            [array, size_is(aEncodingFormatsCount)] in FourCC aEncodingFormats,
+            in unsigned long aEncodingFormatsCount,
+            [array, size_is(aDecodingFormatsCount)] in FourCC aDecodingFormats,
+            in unsigned long aDecodingFormatsCount);
   /**
    * Code for the container type
    * Using an unsigned long is up for debate. I may want to opt for FourCC 
    * as well here if that's a viable option.
    */
-  readonly attribute unsigned long containerFormat;
+  readonly attribute FourCC containerFormat;
    
   /**
    * Enumerates nsISupportsPRUint32 values of FourCC codes

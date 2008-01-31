@@ -33,6 +33,8 @@ target_name = sbDeviceManager2$(DEBUG:%=_d)
 
 CPP_SRCS = sbDeviceManagerModule.cpp \
            sbDeviceManager.cpp \
+           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
@@ -48,9 +50,13 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
+#XXX Mook : Temporary hack pending bug 7150 (proper static lib)
+CPP_INCLUDES += $(topsrcdir)/components/include \
+                $(NULL)
+
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -60,9 +66,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
-                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDeviceManager
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)

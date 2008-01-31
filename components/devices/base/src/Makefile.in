@@ -29,12 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceBase$(DEBUG:%=_d)
-
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
+           sbContentTypeFormat.cpp \
            sbDeviceEvent.cpp \
            sbDeviceLibrary.cpp \
            sbDeviceContent.cpp \
+           sbDeviceBaseModule.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
@@ -52,8 +52,22 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(NULL)
 
-STATIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(LIB_SUFFIX)
+DYNAMIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(DLL_SUFFIX)
 
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
+                            xpcom \
+                            xpcomglue_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(NULL)
+
+LIBSONGBIRD_COMPONENTS = SongbirdDeviceBaseComps
 
 include $(topsrcdir)/build/rules.mk
