@@ -111,4 +111,6 @@ function runTest () {
                         .createEvent(0);
   device.dispatchEvent(event);
   assertTrue(wasFired, "event handler not called");
+  
+  device.removeEventListener(handler);
 }
