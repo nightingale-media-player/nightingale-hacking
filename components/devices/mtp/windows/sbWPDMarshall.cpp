@@ -49,6 +49,7 @@
 #include <PortableDeviceTypes.h>
 #include <mswmdm_i.c>
 #include <nsCOMArray.h>
+#include "sbWPDDevice.h"
 
 // Dealing with Win32 macro mess
 #undef CreateDevice
@@ -56,7 +57,7 @@
 
 typedef std::vector<nsString> StringArray;
 
-static char const * const HASH_PROPERTY_BAG_CID = "@mozilla.org/hash-property-bag;1";
+static char const * const HASH_PROPERTY_BAG_CONTRACTID = "@mozilla.org/hash-property-bag;1";
 
 /**
  * sbWMDMarshall framework installation
@@ -80,13 +81,18 @@ NS_IMPL_THREADSAFE_CI(sbWPDMarshall)
 inline
 HRESULT GetDeviceManager(IPortableDeviceManager ** deviceManager)
 {
+  CComPtr<IPortableDeviceManager> devMgr;
   // CoCreate the IPortableDeviceManager interface to enumerate
   // portable devices and to get information about them.
-  return CoCreateInstance(CLSID_PortableDeviceManager,
+  if (SUCCEEDED(CoCreateInstance(CLSID_PortableDeviceManager,
                         NULL,
                         CLSCTX_INPROC_SERVER,
                         IID_IPortableDeviceManager,
-                        (VOID**) deviceManager);
+                        (VOID**) &devMgr))) {
+    *deviceManager = devMgr.Detach();
+    return NS_OK;
+  }
+  return NS_ERROR_FAILURE;
 }
 
 /**
@@ -116,36 +122,6 @@ static nsresult GetDeviceIDs(IPortableDeviceManager * deviceManager,
   return NS_OK;
 }
 
-/**
- * Creates our client information and returns it
- */
-static nsresult GetClientInformation(
-    IPortableDeviceValues** ppClientInformation)
-{
-  NS_ENSURE_ARG(ppClientInformation);
-  
-  *ppClientInformation = nsnull;
-  
-  // CoCreate an IPortableDeviceValues interface to hold the client information.
-  if (FAILED(CoCreateInstance(CLSID_PortableDeviceValues,
-                        NULL,
-                        CLSCTX_INPROC_SERVER,
-                        IID_IPortableDeviceValues,
-                        (VOID**) ppClientInformation)) || !*ppClientInformation)
-    return NS_ERROR_FAILURE;
-  // Attempt to set all bits of client information
-  LPCWSTR const CLIENT_NAME = L"Songbird";
-  DWORD const MAJOR_VERSION = 0;
-  DWORD const MINOR_VERSION = 5;
-  DWORD const REVISION = 42;
-  if (FAILED((*ppClientInformation)->SetStringValue(WPD_CLIENT_NAME, CLIENT_NAME)) ||
-      FAILED((*ppClientInformation)->SetUnsignedIntegerValue(WPD_CLIENT_MAJOR_VERSION, MAJOR_VERSION)) ||
-      FAILED((*ppClientInformation)->SetUnsignedIntegerValue(WPD_CLIENT_MINOR_VERSION, MINOR_VERSION)) ||
-      FAILED((*ppClientInformation)->SetUnsignedIntegerValue(WPD_CLIENT_REVISION, REVISION)) ||
-      FAILED((*ppClientInformation)->SetUnsignedIntegerValue(WPD_CLIENT_SECURITY_QUALITY_OF_SERVICE, SECURITY_IMPERSONATION)))
-    return NS_ERROR_FAILURE;
-  return NS_OK;
-}
 
 /**
  * Creates a device listner that is attached to an IPortableDevice instance
@@ -193,12 +169,17 @@ public:
    * Initializes the writer with the device manager and property bag that is being
    * written to
    */
-  PropertyBagWriter(IPortableDeviceManager * deviceManager, nsIWritablePropertyBag * bag) :
+  PropertyBagWriter(IPortableDeviceManager * deviceManager, 
+                    IPortableDevice * device, 
+                    nsIWritablePropertyBag * bag) :
     mDeviceManager(deviceManager),
+    mDevice(device),
     mBag(bag),
     mBuffer(nsnull),
     mCurrentBufferSize(0)
   {
+    NS_ASSERTION(device, "Device is null");
+    sbWPDDevice::GetDeviceProperties(device, &mDeviceProperties);
   }
   /**
    * Release the buffer we were using
@@ -224,13 +205,25 @@ public:
                        nsAString const & value)
   {
     nsCOMPtr<nsIVariant> var;
-    if (NS_SUCCEEDED(CreateVariant(nsString(propKey), getter_AddRefs(var))) &&
-      mBag->SetProperty(nsString(propKey), var))
-      return NS_OK;
-    return NS_ERROR_FAILURE;
+    nsresult rv = CreateVariant(nsString(propKey), getter_AddRefs(var));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBag->SetProperty(nsString(propKey), var);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+  nsresult SetPropertyFromDevice(PROPERTYKEY const & deviceProperty, nsAString const & propKey)
+  {
+    nsCOMPtr<nsIVariant> var;
+    nsresult rv = sbWPDDevice::GetProperty(mDeviceProperties, deviceProperty, getter_AddRefs(var));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBag->SetProperty(nsString(propKey), var);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
   }
 private:
   IPortableDeviceManager* mDeviceManager;
+  IPortableDevice* mDevice;
+  CComPtr<IPortableDeviceProperties> mDeviceProperties;
   nsIWritablePropertyBag* mBag;
   WCHAR * mBuffer;
   DWORD mCurrentBufferSize;
@@ -279,8 +272,7 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
   LPWSTR deviceID;
   if (FAILED(device->GetPnPDeviceID(&deviceID)))
     return NS_ERROR_FAILURE;
-  
-  PropertyBagWriter writer(deviceManager, propertyBag);
+  PropertyBagWriter writer(deviceManager, device, propertyBag);
   // If any of these properties fail, they just don't get assigned
   writer.SetProperty(&IPortableDeviceManager::GetDeviceFriendlyName, 
                      NS_LITERAL_STRING("DeviceFriendlyName"),
@@ -294,6 +286,10 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
   // Set the device ID as a property
   writer.SetProperty(NS_LITERAL_STRING("DeviceID"),
                      nsString(deviceID));
+  writer.SetPropertyFromDevice(WPD_DEVICE_SERIAL_NUMBER,
+                               NS_LITERAL_STRING("SerialNo"));
+  writer.SetPropertyFromDevice(WPD_DEVICE_MODEL,
+                               NS_LITERAL_STRING("ModelNo"));
   CoTaskMemFree(deviceID);
   return NS_OK;
 }
@@ -308,13 +304,15 @@ static nsresult CreatePortableDevice(nsString const & deviceID,
                                      IPortableDevice** device)
 {
   CComPtr<IPortableDeviceValues> clientInfo;
+  CComPtr<IPortableDevice> dev;
   if (SUCCEEDED(CoCreateInstance(CLSID_PortableDevice,
                                     NULL,
                                     CLSCTX_INPROC_SERVER,
                                     IID_IPortableDevice,
-                                    (VOID**) device)) && device &&                                    
-      SUCCEEDED(GetClientInformation(&clientInfo)) && clientInfo &&
-      SUCCEEDED((*device)->Open(deviceID.get(), clientInfo))) {
+                                    (VOID**) &dev)) && dev &&                                    
+      SUCCEEDED(sbWPDDevice::GetClientInfo(&clientInfo)) && clientInfo &&
+      SUCCEEDED(dev->Open(deviceID.get(), clientInfo))) {
+    *device = dev.Detach();
     return NS_OK;
   }
   return NS_ERROR_FAILURE;
@@ -518,7 +516,7 @@ nsresult sbWPDMarshall::DiscoverDevices()
 {
   nsresult rv = NS_OK;
   // Create the property bad to pass to the control
-  nsCOMPtr<nsIWritablePropertyBag> propBag = do_CreateInstance(HASH_PROPERTY_BAG_CID, &rv);
+  nsCOMPtr<nsIWritablePropertyBag> propBag = do_CreateInstance(HASH_PROPERTY_BAG_CONTRACTID, &rv);
   if (NS_SUCCEEDED(rv) && propBag)
   {
     // Create the WPD device manager

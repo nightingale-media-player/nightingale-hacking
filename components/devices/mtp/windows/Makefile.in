@@ -35,8 +35,8 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbWPDModule.cpp \
            sbPortableDeviceEventsCallback.cpp \
            sbWPDCommon.cpp \
-#           sbPropertyVariant.cpp \
-#           sbWPDDevice.cpp \
+           sbPropertyVariant.cpp \
+           sbWPDDevice.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
@@ -70,6 +70,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             mssachlp \
                             PortableDeviceGuids \
+                            propsys \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
@@ -83,7 +84,9 @@ DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/MSWMSDK/release
 endif
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceMarshall$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d)\                              $(NULL)
+                              $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
+                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = sbMTPWin32
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
