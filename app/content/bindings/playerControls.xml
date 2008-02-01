@@ -1779,12 +1779,7 @@
           if (tab) {
             browser.selectedTab = tab;
           } else {
-            var mediaList = gPPS.playingView.mediaList;
-            browser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?" +
-                             'library,' + mediaList.library.guid, 
-                             null, null, null, null,
-                             gPPS.playingView);
-                             
+            browser.loadMediaList(gPPS.playingView.mediaList, null, null, gPPS.playingView);
           }
           ]]>
         </body>
