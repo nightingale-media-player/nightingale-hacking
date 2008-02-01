@@ -27,6 +27,16 @@
  */
 -->
 
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%songbirdDTD;
+%charsetDTD;
+%browserDTD;
+]>
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -205,7 +215,36 @@
       </method>
     </implementation>
   </binding>
-  
+  <binding id="mediapages-button">
+    <content>
+      <xul:toolbarbutton id="mediapages-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button"
+                         label="&tooltip.browser.mediapages;"
+                         tooltiptext="&tooltip.browser.mediapages;"
+                         type="menu">
+          <xul:menupopup orient="vertical">
+            <xul:sb-mediapages-menuitems/>
+          </xul:menupopup>
+      </xul:toolbarbutton>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        var button = document.getAnonymousElementByAttribute(this, "anonid", "mediapages-button");
+        this.disabler = function() {
+          if(gBrowser.currentMediaPage) {
+            button.setAttribute("disabled", "false");
+          }
+          else {
+            button.setAttribute("disabled", "true");
+          }
+        };
+        gBrowser.addEventListener('TabContentChanged', this.disabler, false); 
+      ]]></constructor>
+      <destructor><![CDATA[
+        gBrowser.removeEventListener('TabContentChanged', this.disabler, false);
+      ]]></destructor>
+    </implementation>
+  </binding>
 </bindings>
 
 

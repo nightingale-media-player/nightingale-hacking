@@ -263,7 +263,7 @@
         <textbox id="playlist_edit" multiline="false" wrap="off" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
       </popup>
 
-	    <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
+      <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
 
       <!-- POPUP FOR THE POPUPBLOCKER MENU -->
       <menupopup id="blockedPopupOptions" 
@@ -532,15 +532,11 @@
           <sb-browser-spinner />
       </toolbaritem>
 
-	    <!--  MEDIA PAGES -->
-	    <toolbarbutton id="mediapages-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
-	                     label="&tooltip.browser.mediapages;"
-	                     tooltiptext="&tooltip.browser.mediapages;"
-	                     type="menu">
-	        <menupopup>
-	          <sb-mediapages-menuitems/>
-	        </menupopup>
-	    </toolbarbutton>
+      <!--  MEDIA PAGES -->
+      <toolbaritem id="mediapages-container" align="center" pack="center">
+          <sb-mediapages-button />
+      </toolbaritem>
+
     </toolbarpalette>
     
     <toolbar id="nav-bar" class="toolbar-primary chromeclass-toolbar"
@@ -548,7 +544,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container,mediapages-button"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container,mediapages-container"
              flex="1">            
     </toolbar>
     

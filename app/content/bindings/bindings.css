@@ -408,6 +408,10 @@ sb-mediapages-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/mediaPages.xml#mediapages-menuitems");
 }
 
+sb-mediapages-button {
+  -moz-binding: url("chrome://songbird/content/bindings/mediaPages.xml#mediapages-button");
+}
+
 /* Replacement text-link label */
 label.text-link {
   -moz-binding: url("chrome://songbird/content/bindings/textLink.xml#text-link") !important;
