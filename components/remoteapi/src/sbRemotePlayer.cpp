@@ -769,8 +769,8 @@ NS_IMETHODIMP
 sbRemotePlayer::OnCommandsChanged()
 {
   LOG(("sbRemotePlayer::OnCommandsChanged()"));
-  if (!mWebPlaylistWidget) {
-    nsresult rv = AcquirePlaylistWidget();
+  if (!mRemWebPlaylist) {
+    nsresult rv = InitRemoteWebPlaylist();
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
@@ -784,7 +784,7 @@ sbRemotePlayer::OnCommandsChanged()
   // the playlist to rescan so it picks up new/deleted commands.
   // Theoretically we could just fire an event here, but it wasn't getting
   // caught in the binding, need to look in to that more.
-  mWebPlaylistWidget->RescanCommands();
+  mRemWebPlaylist->RescanCommands();
   return NS_OK;
 }
 
@@ -795,13 +795,13 @@ sbRemotePlayer::GetWebPlaylist( sbIRemoteWebPlaylist **aWebPlaylist )
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
   nsresult rv;
 
-  if (!mWebPlaylistWidget) {
-    rv = AcquirePlaylistWidget();
+  if (!mRemWebPlaylist) {
+    rv = InitRemoteWebPlaylist();
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
-  nsCOMPtr<sbIRemoteWebPlaylist> remotePlaylist(
-                                do_QueryInterface( mWebPlaylistWidget, &rv ) );
+  nsCOMPtr<sbIRemoteWebPlaylist> remotePlaylist( do_QueryInterface(
+    NS_ISUPPORTS_CAST( sbIRemoteWebPlaylist*, mRemWebPlaylist ), &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   NS_ADDREF( *aWebPlaylist = remotePlaylist );
@@ -1211,13 +1211,13 @@ sbRemotePlayer::Play()
     return isPlaying ? NS_OK : NS_ERROR_FAILURE;
   }
 
-  if (!mWebPlaylistWidget) {
-    rv = AcquirePlaylistWidget();
+  if (!mRemWebPlaylist) {
+    rv = InitRemoteWebPlaylist();
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
   nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = mWebPlaylistWidget->GetListView( getter_AddRefs(mediaListView) );
+  rv = mRemWebPlaylist->GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // If the page does not have a web playlist, fall back
@@ -1523,6 +1523,22 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     // bubble up, so just gracefully ignore it if the event wasn't from a playlist
     if (NS_FAILED(rv))
       return NS_OK;
+
+    if (!mRemWebPlaylist) {
+      rv = InitRemoteWebPlaylist();
+      NS_ENSURE_SUCCESS( rv, rv );
+    }
+
+    // Get the actual XBL widget from the RemoteWebPlaylist member
+    nsCOMPtr<sbIPlaylistWidget> playlistWidget;
+    rv = mRemWebPlaylist->GetPlaylistWidget( getter_AddRefs(playlistWidget) );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // check if this is the right document being clicked on (yay tabs)
+    if ( !SameCOMIdentity( playlist, playlistWidget ) ) {
+      // not the playlist for this RemotePlayer
+      return NS_OK;
+    }
 
     nsCOMPtr<sbIPlaylistClickEvent> playlistClickEvent;
     rv = playlist->GetLastClickEvent( getter_AddRefs(playlistClickEvent) );
@@ -2162,10 +2178,10 @@ sbRemotePlayer::GetJSScopeNameFromScope( const nsACString &aScopeName,
 }
 
 nsresult
-sbRemotePlayer::AcquirePlaylistWidget()
+sbRemotePlayer::InitRemoteWebPlaylist()
 {
   nsresult rv;
-  LOG(("sbRemotePlayer::AcquirePlaylistWidget()"));
+  LOG(("sbRemotePlayer::InitRemoteWebPlaylist()"));
 
   // These get set in initialization, so if they aren't set, bad news
   if (!mChromeDoc || !mContentDoc)
@@ -2208,8 +2224,8 @@ sbRemotePlayer::AcquirePlaylistWidget()
   rv = pWebPlaylist->Init();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  mWebPlaylistWidget = pWebPlaylist;
-  NS_ENSURE_TRUE( mWebPlaylistWidget, NS_ERROR_FAILURE );
+  mRemWebPlaylist = pWebPlaylist;
+  NS_ENSURE_TRUE( mRemWebPlaylist, NS_ERROR_FAILURE );
 
   return NS_OK;
 }

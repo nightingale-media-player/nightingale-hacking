@@ -61,6 +61,7 @@ public:
   sbRemoteWebPlaylist( sbRemotePlayer *aRemotePlayer,
                        sbIPlaylistWidget *aPlaylistWidget,
                        sbITabBrowserTab *aBrowserTab );
+  nsresult GetPlaylistWidget ( sbIPlaylistWidget **aWebPlaylist );
 protected:
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

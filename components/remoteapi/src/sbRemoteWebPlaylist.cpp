@@ -296,4 +296,13 @@ sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
   return NS_OK;
 }
 
+nsresult
+sbRemoteWebPlaylist::GetPlaylistWidget( sbIPlaylistWidget **aWebPlaylist )
+{
+  LOG(("sbRemoteWebPlaylist::SetSelectionByIndex()"));
+  NS_ENSURE_ARG_POINTER(aWebPlaylist);
+  NS_IF_ADDREF( *aWebPlaylist = mPlaylistWidget );
+  return NS_OK;
+}
+
 

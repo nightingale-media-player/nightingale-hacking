@@ -30,12 +30,12 @@
 #include "sbRemoteAPI.h"
 #include "sbRemoteMediaListBase.h"
 #include "sbRemoteNotificationManager.h"
+#include "sbRemoteWebPlaylist.h"
 
 #include <sbIDataRemote.h>
 #include <sbIDownloadDevice.h>
 #include <sbIMediaList.h>
 #include <sbIPlaylistPlayback.h>
-#include <sbIPlaylistWidget.h>
 #include <sbIRemoteLibrary.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
@@ -143,7 +143,7 @@ protected:
 
   // Helper Methods
   nsresult InitInternal(nsPIDOMWindow* aWindow);
-  nsresult AcquirePlaylistWidget();
+  nsresult InitRemoteWebPlaylist();
   nsresult RegisterCommands( PRBool aUseDefaultCommands );
   nsresult UnregisterCommands();
   nsresult ConfirmPlaybackControl();
@@ -172,7 +172,7 @@ protected:
   nsCOMPtr<nsIDOMDocument> mChromeDoc;
 
   // the remote impl for the playlist binding
-  nsRefPtr<sbIPlaylistWidget> mWebPlaylistWidget;
+  nsRefPtr<sbRemoteWebPlaylist> mRemWebPlaylist;
 
   // The download device callback
   nsRefPtr<sbRemotePlayerDownloadCallback> mDownloadCallback;
