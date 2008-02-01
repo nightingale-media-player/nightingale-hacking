@@ -26,6 +26,7 @@
 */
 
 #include "nsISupports.idl"
+#include "sbIDevice.idl"
 
 interface nsIFile;
 interface sbIMediaItem;
@@ -34,7 +35,11 @@ interface sbIMediaItem;
  */
 
 [scriptable, uuid(b30b198f-03b3-4660-a842-ec7b3569120e)]
-interface sbIDeviceDeviceTesterUtils: nsISupports {
+interface sbIDeviceDeviceTesterUtils : nsISupports {
   nsIFile GetOrganizedPath(in nsIFile aParent, in sbIMediaItem aItem);
 };
 
+[scriptable, uuid(187d4370-b1d2-459c-8fa4-0b0187bb6d17)]
+interface sbIDeviceDeviceTesterBase : sbIDevice {
+  
+};

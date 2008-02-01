@@ -32,6 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbDeviceDeviceTesterInterfaces.idl \
              $(NULL)
 
+XPIDL_INCLUDES = $(topsrcdir)/components/devices/device/public \
+                 $(NULL)
+
 XPIDL_MODULE = DeviceDeviceTester.xpt
 
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
@@ -39,18 +42,27 @@ XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbDeviceDeviceTesterUtils.cpp \
+           sbMockDevice.cpp \
+           $(topsrcdir)/components/devices/device/src/sbBaseDevice.cpp \
            $(topsrcdir)/components/devices/device/src/sbDeviceUtils.cpp \
+           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public/ \
+               $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
+               $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
@@ -77,6 +89,7 @@ SONGBIRD_TEST_COMPONENT = devicedevice
 
 SONGBIRD_TESTS = \
                  $(srcdir)/test_device_utils.js \
+                 $(srcdir)/test_device_mock.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

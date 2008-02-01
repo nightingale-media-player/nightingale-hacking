@@ -27,6 +27,8 @@
 
 #include "sbBaseDevice.h"
 
+#include <new>
+
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 
@@ -36,8 +38,16 @@
 
 NS_IMPL_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
+/*
+ * NOTE: Since nsDeque deletes the base class, which has no virtual destructor,
+ * our destructor will never get called.  Hence, this class must not have any
+ * destructors - and no member variables either.  This also means we cannot use
+ * MOZ_COUNT_CTOR / MOZ_COUNT_DTOR for leak checking, since the DTOR will never
+ * get called and it will look like things are leaking.
+ */
 class RequestDeallocator : public nsDequeFunctor
 {
+public:
   void* operator()(void* anObject)
   {
     ((sbBaseDevice::TransferRequest*)anObject)->Release();
@@ -47,14 +57,15 @@ class RequestDeallocator : public nsDequeFunctor
 
 sbBaseDevice::sbBaseDevice()
 {
-  mRequestDeallocator = new RequestDeallocator();
-  NS_ASSERTION(mRequestDeallocator, "Failed to create queue deallocator");
-  mRequests.SetDeallocator(mRequestDeallocator);
+  nsDequeFunctor* deallocator = new RequestDeallocator();
+  NS_ASSERTION(deallocator, "Failed to create queue deallocator");
+  mRequests.SetDeallocator(deallocator);
+  /* the deque owns the deallocator */
 }
 
 sbBaseDevice::~sbBaseDevice()
 {
-  delete mRequestDeallocator;
+  mRequests.SetDeallocator(nsnull);
 }
 
 nsresult sbBaseDevice::PushRequest(const int aType,

@@ -34,8 +34,8 @@
 #include <nsISupportsImpl.h>
 #include <prlock.h>
 
-class sbIMediaItem;
-class sbIMediaList;
+#include "sbIMediaItem.h"
+#include "sbIMediaList.h"
 
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
@@ -128,7 +128,6 @@ public:
 protected:
   PRLock *mRequestLock;
   nsDeque/*<TransferRequest>*/ mRequests;
-  nsDequeFunctor* mRequestDeallocator;
   PRInt32 mState;
   
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;

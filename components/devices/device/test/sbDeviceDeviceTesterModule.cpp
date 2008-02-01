@@ -31,8 +31,10 @@
 #include <nsIGenericFactory.h>
 
 #include "sbDeviceDeviceTesterUtils.h"
+#include "sbMockDevice.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceDeviceTesterUtils);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockDevice);
 
 static nsModuleComponentInfo sbDeviceDeviceTesterComponents[] =
 {
@@ -42,6 +44,13 @@ static nsModuleComponentInfo sbDeviceDeviceTesterComponents[] =
         { 0xbc, 0x77, 0xba, 0x4e, 0x11, 0xae, 0xfc, 0x62 } },
     "@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1",
     sbDeviceDeviceTesterUtilsConstructor
+  },
+  {
+    "Songbird Device Device Tester - Mock Device",
+      { 0x3f023adc, 0x11ef, 0x4f63,
+        { 0xa9, 0x69, 0xed, 0x55, 0x4d, 0xc9, 0x73, 0x6a } },
+    "@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1",
+    sbMockDeviceConstructor
   }
 };
 
