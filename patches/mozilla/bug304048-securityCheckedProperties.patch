@@ -23,7 +23,7 @@ diff -u -p -r1.329 nsScriptSecurityManager.cpp
      // Do the same-origin check -- this sets a JS exception if the check fails.
      // Pass the parent object's class name, as we have no class-info for it.
 -    nsresult rv =
--        ssm->CheckPropertyAccess(cx, target, JS_GetClass(cx, obj)->name, id,
+-        ssm->CheckPropertyAccess(cx, target, STOBJ_GET_CLASS(obj)->name, id,
 -                                 (mode & JSACC_WRITE) ?
 -                                 nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
 -                                 nsIXPCSecurityManager::ACCESS_GET_PROPERTY);
@@ -31,7 +31,7 @@ diff -u -p -r1.329 nsScriptSecurityManager.cpp
 +                                        nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
 +                                        nsIXPCSecurityManager::ACCESS_GET_PROPERTY ),
 +                                      nsnull, cx, target, native, nsnull,
-+                                      nsnull, JS_GET_CLASS(cx, obj)->name, id,
++                                      nsnull, STOBJ_GET_CLASS(obj)->name, id,
 +                                      nsnull);
 +
  
