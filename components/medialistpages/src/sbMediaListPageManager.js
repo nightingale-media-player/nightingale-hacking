@@ -188,7 +188,19 @@ MediaListPageManager.prototype = {
   },
   
   _registerDefaults: function() {
-    this.registerPage( "Normal View",
+    var string = "mediapages.standardview";
+    try {
+      var stringBundleService =
+          Components.classes["@mozilla.org/intl/stringbundle;1"]
+                    .getService(Components.interfaces.nsIStringBundleService);
+      var stringBundle = stringBundleService.createBundle(
+           "chrome://songbird/locale/songbird.properties" );
+      string = stringBundle.GetStringFromName(string);
+    } catch (e) {
+      Component.utils.reportError("L10N: Couldn't localize default media page name.\n")
+    }
+    
+    this.registerPage( string,
                        "chrome://songbird/content/xul/sbLibraryPage.xul",
                        {match: function(mediaList) { return(true); }} 
                        // the default page matches everything
