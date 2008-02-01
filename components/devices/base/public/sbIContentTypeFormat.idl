@@ -26,36 +26,37 @@
 
 #include "nsISupports.idl"
 
-interface nsISimpleEnumerator;
-
-typedef unsigned long FourCC;
+interface nsIUTF8StringEnumerator;
 
 /**
  * \interface sbIContentTypeFormat
  * \note Implementations of this interface must be threadsafe.
+ *
+ * \note the formats may be either a content type or a GUID.  This will be
+ * determined by whether the first character is a literal "{".  The strings are
+ * in UTF8 (though they will be 7-bit ASCII in most instances).
  */
-[scriptable, uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]
+[scriptable, uuid(9c369502-815e-457c-b7f8-ec75162a6a7c)]
 interface sbIContentTypeFormat : nsISupports
 {
-  void init(in FourCC aContainerFormat,
-            [array, size_is(aEncodingFormatsCount)] in FourCC aEncodingFormats,
+  void init(in string aContainerFormat,
+            [array, size_is(aEncodingFormatsCount)] in string aEncodingFormats,
             in unsigned long aEncodingFormatsCount,
-            [array, size_is(aDecodingFormatsCount)] in FourCC aDecodingFormats,
+            [array, size_is(aDecodingFormatsCount)] in string aDecodingFormats,
             in unsigned long aDecodingFormatsCount);
   /**
-   * Code for the container type
-   * Using an unsigned long is up for debate. I may want to opt for FourCC 
-   * as well here if that's a viable option.
+   * The format of the media container.  See above - may be a content type
+   * string ("application/ogg") or guid.
    */
-  readonly attribute FourCC containerFormat;
+  readonly attribute ACString containerFormat;
    
   /**
-   * Enumerates nsISupportsPRUint32 values of FourCC codes
+   * The encoding formats (may be content type or guid)
    */
-  readonly attribute nsISimpleEnumerator encodingFormats;
+  readonly attribute nsIUTF8StringEnumerator encodingFormats;
    
   /**
-   * Enumerates nsISupportsPRUint32 values of FourCC codes
+   * The decoding formats (may be content type or guid)
    */
-  readonly attribute nsISimpleEnumerator decodingFormats; 
+  readonly attribute nsIUTF8StringEnumerator decodingFormats; 
 };

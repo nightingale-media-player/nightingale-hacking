@@ -62,3 +62,40 @@ sbTArrayStringEnumerator::GetNext(nsAString& _retval)
   }
 };
 
+NS_IMPL_ISUPPORTS1(sbTArrayCStringEnumerator, nsIUTF8StringEnumerator)
+
+sbTArrayCStringEnumerator::sbTArrayCStringEnumerator(const sbStringArray* aStringArray) :
+  mNextIndex(0)
+{
+  for ( PRUint32 index = 0; index < aStringArray->Length(); index ++ ) {
+    mCStringArray.AppendElement(NS_ConvertUTF16toUTF8((*aStringArray)[index]));
+  }
+};
+
+sbTArrayCStringEnumerator::sbTArrayCStringEnumerator(const sbCStringArray* aCStringArray) :
+  mNextIndex(0)
+{
+  mCStringArray.InsertElementsAt(0, *aCStringArray);
+};
+
+NS_IMETHODIMP
+sbTArrayCStringEnumerator::HasMore(PRBool *_retval)
+{
+  *_retval = mNextIndex < mCStringArray.Length();
+  return NS_OK;
+};
+
+NS_IMETHODIMP
+sbTArrayCStringEnumerator::GetNext(nsACString& _retval)
+{
+  if (mNextIndex < mCStringArray.Length()) {
+    _retval = mCStringArray[mNextIndex];
+    mNextIndex++;
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+};
+
+

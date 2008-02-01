@@ -32,8 +32,6 @@
 #include <nsTArray.h>
 #include <nsIStringEnumerator.h>
 
-class nsIURI;
-
 class sbTArrayStringEnumerator : public nsIStringEnumerator
 {
 typedef nsTArray<nsString> sbStringArray;
@@ -48,6 +46,24 @@ public:
 
 private:
   nsTArray<nsString> mStringArray;
+  PRUint32 mNextIndex;
+};
+
+class sbTArrayCStringEnumerator : public nsIUTF8StringEnumerator
+{
+typedef nsTArray<nsString> sbStringArray;
+typedef nsTArray<nsCString> sbCStringArray;
+
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIUTF8STRINGENUMERATOR
+
+  sbTArrayCStringEnumerator(const sbStringArray* aStringArray);
+  sbTArrayCStringEnumerator(const sbCStringArray* aStringArray);
+
+private:
+  nsTArray<nsCString> mCStringArray;
+  nsCOMPtr<nsISupports> mOwner;
   PRUint32 mNextIndex;
 };
 

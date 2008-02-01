@@ -31,6 +31,7 @@
 #include "sbIContentTypeFormat.h"
 
 #include <nsTArray.h>
+#include <nsStringGlue.h>
 
 struct PRLock;
 
@@ -47,10 +48,9 @@ private:
 
 protected:
   /* additional members */
-  FourCC mContainerFormat;
-  nsTArray<FourCC> mEncodingFormats;
-  nsTArray<FourCC> mDecodingFormats;
-  friend class FourCCEnumerator;
+  nsCString mContainerFormat;
+  nsTArray<nsCString> mEncodingFormats;
+  nsTArray<nsCString> mDecodingFormats;
   
   PRBool mHasInitialized;
   PRLock* mInitLock;
@@ -63,8 +63,8 @@ protected:
 #define SONGBIRD_CONTENTTYPEFORMAT_CLASSNAME                  \
   "Songbird Content Type Format"
 #define SONGBIRD_CONTENTTYPEFORMAT_CID                        \
-  /* {E4AD189F-F5B1-4500-8FC0-DAE48E93E497} */                \
-  { 0xe4ad189f, 0xf5b1, 0x4500,                               \
+  /* {0DC38FC0-F5B1-4500-8FC0-DAE48E93E497} */                \
+  { 0x0dc38fc0, 0xf5b1, 0x4500,                               \
     { 0x8f, 0xc0, 0xda, 0xe4, 0x8e, 0x93, 0xe4, 0x97 } }
 
 #endif /* __SBCONTENTTYPEFORMAT_H__ */

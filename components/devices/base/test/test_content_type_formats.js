@@ -31,22 +31,17 @@
 
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 
-/* return a new random FourCC. well, smells like one anyway. */
-function generateFourCC() {
+/* return a new random content type. well, smells like one anyway. */
+function generateContentType() {
   // note that we generate a random 32-bit *unsigned* integer.
-  return (Math.random() * (-1 >>> 0)) << 0 >>> 0;
+  return ((Math.random() * (-1 >>> 0)) << 0).toString(16);
 }
 
 function CompareResults(aJSArray, aEnumerator, aMessage) {
-  var result = ArrayConverter.JSArray(aEnumerator);
-  assertEqual(aJSArray.length, result.length, aMessage);
-  
-  const nsISupportsPRUint32 = Components.interfaces.nsISupportsPRUint32;
-  
-  for (var i = 0; i < result.length; ++i) {
-    var data = result[i].QueryInterface(nsISupportsPRUint32).data;
-    assertEqual(aJSArray[i], data, aMessage + "[" + i + "]");
+  for (var i = 0; i < aJSArray.length; ++i) {
+    assertEqual(aJSArray[i], aEnumerator.getNext(), aMessage + "[" + i + "]");
   }
+  assertFalse(aEnumerator.hasMore());
 }
 
 function runTest () {
@@ -54,11 +49,11 @@ function runTest () {
                           .createInstance(Components.interfaces.sbIContentTypeFormat);
   assertTrue(formats, "Failed to create content type format component");
   
-  var FCCContainer = generateFourCC();
+  var FCCContainer = generateContentType();
   var FCCEncode = [], FCCDecode = [];
   for (var i = 0; i < 10; ++i) {
-    FCCEncode.push(generateFourCC());
-    FCCDecode.push(generateFourCC());
+    FCCEncode.push(generateContentType());
+    FCCDecode.push(generateContentType());
   }
   
   formats.init(FCCContainer, FCCEncode, FCCEncode.length, FCCDecode, FCCDecode.length);

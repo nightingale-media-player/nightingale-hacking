@@ -30,17 +30,20 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 
-class FourCCEnumerator : public nsISimpleEnumerator {
+#include "sbTArrayStringEnumerator.h"
+
+
+#if 0
+class ContentTypeEnumerator : public nsISimpleEnumerator {
 public:
   NS_DECL_NSISIMPLEENUMERATOR;
   NS_DECL_ISUPPORTS;
 protected:
   friend class sbContentTypeFormat;
   FourCCEnumerator(sbContentTypeFormat* aFormat,
-                   nsTArray<FourCC>* aArray)
+                   nsTArray<nsCString>* aArray)
    : mFormat(aFormat),
      mArray(aArray),
      mIndex(0)
@@ -84,6 +87,7 @@ NS_IMETHODIMP FourCCEnumerator::GetNext(nsISupports **_retval)
   
   return CallQueryInterface(fourCC, _retval);
 }
+#endif
 
 /******************************************************************************/
 
@@ -100,18 +104,21 @@ sbContentTypeFormat::~sbContentTypeFormat()
   /* destructor code */
 }
 
-/* void Init (in FourCC aContainerFormat,
-              [array, size_is (aEncodingFormatsCount)] in FourCC aEncodingFormats,
+/* void Init (in string aContainerFormat,
+              [array, size_is (aEncodingFormatsCount)] in string aEncodingFormats,
               in unsigned long aEncodingFormatsCount,
-              [array, size_is (aDecodingFormatsCount)] in FourCC aDecodingFormats,
+              [array, size_is (aDecodingFormatsCount)] in string aDecodingFormats,
               in unsigned long aDecodingFormatsCount); */
-NS_IMETHODIMP sbContentTypeFormat::Init(FourCC aContainerFormat,
-                                        FourCC *aEncodingFormats,
+NS_IMETHODIMP sbContentTypeFormat::Init(const char* aContainerFormat,
+                                        const char**aEncodingFormats,
                                         PRUint32 aEncodingFormatsCount,
-                                        FourCC *aDecodingFormats,
+                                        const char**aDecodingFormats,
                                         PRUint32 aDecodingFormatsCount)
 {
   NS_ENSURE_TRUE(mInitLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aContainerFormat);
+  NS_ENSURE_ARG_POINTER(aEncodingFormats);
+  NS_ENSURE_ARG_POINTER(aDecodingFormats);
   
   { /* scope the initialization lock */
     nsAutoLock initLock(mInitLock);
@@ -120,41 +127,46 @@ NS_IMETHODIMP sbContentTypeFormat::Init(FourCC aContainerFormat,
     mHasInitialized = PR_TRUE;
   } /* end scope for initialization lock */
   
-  mContainerFormat = aContainerFormat;
+  mContainerFormat.Assign(aContainerFormat);
   // since this is init and the only mutator, it is safe to assume that the
   // arrays are all empty at this point.  Just append is fine.
+  
   NS_ASSERTION(mEncodingFormats.IsEmpty(), "Encoding formats before init!");
+  mEncodingFormats.SetCapacity(aEncodingFormatsCount);
+  for (PRUint32 i = 0; i < aEncodingFormatsCount; ++i) {
+    mEncodingFormats.AppendElement(nsDependentCString(aEncodingFormats[i]));
+  }
+  mEncodingFormats.Compact();
+
   NS_ASSERTION(mDecodingFormats.IsEmpty(), "Decoding formats before init!");
-  mEncodingFormats.AppendElements(aEncodingFormats, aEncodingFormatsCount);
-  mDecodingFormats.AppendElements(aDecodingFormats, aDecodingFormatsCount);
+  mDecodingFormats.SetCapacity(aDecodingFormatsCount);
+  for (PRUint32 i = 0; i < aDecodingFormatsCount; ++i) {
+    mDecodingFormats.AppendElement(nsDependentCString(aDecodingFormats[i]));
+  }
+  mDecodingFormats.Compact();
   
   return NS_OK;
 }
 
-/* readonly attribute FourCC containerFormat; */
-NS_IMETHODIMP sbContentTypeFormat::GetContainerFormat(FourCC *aContainerFormat)
+/* readonly attribute ACString containerFormat; */
+NS_IMETHODIMP sbContentTypeFormat::GetContainerFormat(nsACString & aContainerFormat)
 {
-  NS_ENSURE_ARG_POINTER(aContainerFormat);
-  *aContainerFormat = mContainerFormat;
+  aContainerFormat.Assign(mContainerFormat);
   return NS_OK;
 }
 
-/* readonly attribute nsISimpleEnumerator encodingFormats; */
-NS_IMETHODIMP sbContentTypeFormat::GetEncodingFormats(nsISimpleEnumerator * *aEncodingFormats)
+/* readonly attribute nsIUTF8StringEnumerator encodingFormats; */
+NS_IMETHODIMP sbContentTypeFormat::GetEncodingFormats(nsIUTF8StringEnumerator * *aEncodingFormats)
 {
   NS_ENSURE_ARG_POINTER(aEncodingFormats);
-  nsRefPtr<FourCCEnumerator> enumerator =
-    new FourCCEnumerator(this, &mEncodingFormats);
-  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-  return CallQueryInterface(enumerator.get(), aEncodingFormats);
+  NS_IF_ADDREF(*aEncodingFormats = new sbTArrayCStringEnumerator(&mEncodingFormats));
+  return *aEncodingFormats ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
 
-/* readonly attribute nsISimpleEnumerator decodingFormats; */
-NS_IMETHODIMP sbContentTypeFormat::GetDecodingFormats(nsISimpleEnumerator * *aDecodingFormats)
+/* readonly attribute nsIUTF8StringEnumerator decodingFormats; */
+NS_IMETHODIMP sbContentTypeFormat::GetDecodingFormats(nsIUTF8StringEnumerator * *aDecodingFormats)
 {
   NS_ENSURE_ARG_POINTER(aDecodingFormats);
-  nsRefPtr<FourCCEnumerator> enumerator =
-    new FourCCEnumerator(this, &mDecodingFormats);
-  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-  return CallQueryInterface(enumerator.get(), aDecodingFormats);
+  NS_IF_ADDREF(*aDecodingFormats = new sbTArrayCStringEnumerator(&mDecodingFormats));
+  return *aDecodingFormats ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
