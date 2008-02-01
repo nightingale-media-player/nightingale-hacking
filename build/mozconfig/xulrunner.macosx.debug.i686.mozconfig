@@ -11,10 +11,7 @@ ac_add_options --disable-optimize --enable-debug
 ac_add_options --disable-tests
 ac_add_options --disable-javaxpcom
 ac_add_options --enable-update-packaging
-ac_add_options --enable-dtrace
-ac_add_options --enable-shark
-ac_add_options --enable-debugger-info-modules
 ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
-ac_add_options --with-macos-sdk=/Developer/SDKs/MacOSX10.5.sdk
+ac_add_options --with-macos-sdk=/Developer/SDKs/MacOSX10.4u.sdk
 ac_add_options --disable-dbus
