@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/toolkit/components/places/public/nsIFaviconService.id
 retrieving revision 1.6
 diff -u -p -r1.6 nsIFaviconService.idl
 --- toolkit/components/places/public/nsIFaviconService.idl	25 Mar 2007 12:28:30 -0000	1.6
-+++ toolkit/components/places/public/nsIFaviconService.idl	7 Jan 2008 17:54:41 -0000
++++ toolkit/components/places/public/nsIFaviconService.idl	1 Feb 2008 18:39:03 -0000
 @@ -40,7 +40,7 @@
  
  interface nsIURI;
@@ -32,11 +32,11 @@ diff -u -p -r1.6 nsIFaviconService.idl
 Index: toolkit/components/places/src/nsFaviconService.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.cpp,v
-retrieving revision 1.17
-diff -u -p -r1.17 nsFaviconService.cpp
---- toolkit/components/places/src/nsFaviconService.cpp	22 Nov 2007 00:44:33 -0000	1.17
-+++ toolkit/components/places/src/nsFaviconService.cpp	7 Jan 2008 17:54:41 -0000
-@@ -83,7 +83,7 @@ class FaviconLoadListener : public nsISt
+retrieving revision 1.20
+diff -u -p -r1.20 nsFaviconService.cpp
+--- toolkit/components/places/src/nsFaviconService.cpp	20 Jan 2008 06:48:07 -0000	1.20
++++ toolkit/components/places/src/nsFaviconService.cpp	1 Feb 2008 18:39:03 -0000
+@@ -81,7 +81,7 @@ class FaviconLoadListener : public nsISt
  public:
    FaviconLoadListener(nsFaviconService* aFaviconService,
                        nsIURI* aPageURI, nsIURI* aFaviconURI,
@@ -45,7 +45,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
  
    NS_DECL_ISUPPORTS
    NS_DECL_NSIREQUESTOBSERVER
-@@ -99,6 +99,8 @@ private:
+@@ -97,6 +97,8 @@ private:
    nsCOMPtr<nsIURI> mPageURI;
    nsCOMPtr<nsIURI> mFaviconURI;
  
@@ -54,7 +54,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
    nsCString mData;
  };
  
-@@ -381,7 +383,7 @@ nsFaviconService::SendFaviconNotificatio
+@@ -379,7 +381,7 @@ nsFaviconService::SendFaviconNotificatio
  
  NS_IMETHODIMP
  nsFaviconService::SetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
@@ -63,7 +63,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
  {
    NS_ENSURE_ARG_POINTER(aPage);
    NS_ENSURE_ARG_POINTER(aFavicon);
-@@ -390,9 +392,9 @@ nsFaviconService::SetAndLoadFaviconForPa
+@@ -388,9 +390,9 @@ nsFaviconService::SetAndLoadFaviconForPa
    nsNavHistory* historyService = nsNavHistory::GetHistoryService();
    NS_ENSURE_TRUE(historyService, NS_ERROR_OUT_OF_MEMORY);
    return historyService->AddLazyLoadFaviconMessage(aPage, aFavicon,
@@ -75,7 +75,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
  #endif
  }
  
-@@ -401,7 +403,8 @@ nsFaviconService::SetAndLoadFaviconForPa
+@@ -399,7 +401,8 @@ nsFaviconService::SetAndLoadFaviconForPa
  
  nsresult
  nsFaviconService::DoSetAndLoadFaviconForPage(nsIURI* aPage, nsIURI* aFavicon,
@@ -85,7 +85,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
  {
    nsCOMPtr<nsIURI> page(aPage);
  
-@@ -525,7 +528,7 @@ nsFaviconService::DoSetAndLoadFaviconFor
+@@ -523,7 +526,7 @@ nsFaviconService::DoSetAndLoadFaviconFor
    NS_ENSURE_SUCCESS(rv, rv);
  
    nsCOMPtr<nsIStreamListener> listener =
@@ -94,7 +94,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
    NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
    nsCOMPtr<nsIInterfaceRequestor> listenerRequestor =
      do_QueryInterface(listener, &rv);
-@@ -810,11 +813,12 @@ NS_IMPL_ISUPPORTS4(FaviconLoadListener,
+@@ -868,11 +871,12 @@ NS_IMPL_ISUPPORTS4(FaviconLoadListener,
  
  FaviconLoadListener::FaviconLoadListener(nsFaviconService* aFaviconService,
                                           nsIURI* aPageURI, nsIURI* aFaviconURI,
@@ -109,7 +109,7 @@ diff -u -p -r1.17 nsFaviconService.cpp
  {
  }
  
-@@ -891,26 +895,28 @@ FaviconLoadListener::OnStopRequest(nsIRe
+@@ -949,26 +953,28 @@ FaviconLoadListener::OnStopRequest(nsIRe
      return NS_OK;
    }
  
@@ -152,10 +152,10 @@ diff -u -p -r1.17 nsFaviconService.cpp
 Index: toolkit/components/places/src/nsFaviconService.h
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsFaviconService.h,v
-retrieving revision 1.7
-diff -u -p -r1.7 nsFaviconService.h
---- toolkit/components/places/src/nsFaviconService.h	5 Jun 2007 23:18:47 -0000	1.7
-+++ toolkit/components/places/src/nsFaviconService.h	7 Jan 2008 17:54:42 -0000
+retrieving revision 1.10
+diff -u -p -r1.10 nsFaviconService.h
+--- toolkit/components/places/src/nsFaviconService.h	20 Jan 2008 06:48:07 -0000	1.10
++++ toolkit/components/places/src/nsFaviconService.h	1 Feb 2008 18:39:03 -0000
 @@ -81,7 +81,7 @@ public:
  
    // internal version called by history when done lazily
@@ -168,11 +168,11 @@ diff -u -p -r1.7 nsFaviconService.h
 Index: toolkit/components/places/src/nsNavHistory.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.cpp,v
-retrieving revision 1.223
-diff -u -p -r1.223 nsNavHistory.cpp
---- toolkit/components/places/src/nsNavHistory.cpp	5 Jan 2008 05:16:27 -0000	1.223
-+++ toolkit/components/places/src/nsNavHistory.cpp	7 Jan 2008 17:54:45 -0000
-@@ -3600,7 +3600,8 @@ nsNavHistory::Observe(nsISupports *aSubj
+retrieving revision 1.231
+diff -u -p -r1.231 nsNavHistory.cpp
+--- toolkit/components/places/src/nsNavHistory.cpp	25 Jan 2008 17:11:14 -0000	1.231
++++ toolkit/components/places/src/nsNavHistory.cpp	1 Feb 2008 18:39:03 -0000
+@@ -4011,7 +4011,8 @@ nsNavHistory::Observe(nsISupports *aSubj
  
  nsresult
  nsNavHistory::AddLazyLoadFaviconMessage(nsIURI* aPage, nsIURI* aFavicon,
@@ -182,7 +182,7 @@ diff -u -p -r1.223 nsNavHistory.cpp
  {
    LazyMessage message;
    nsresult rv = message.Init(LazyMessage::Type_Favicon, aPage);
-@@ -3608,6 +3609,7 @@ nsNavHistory::AddLazyLoadFaviconMessage(
+@@ -4019,6 +4020,7 @@ nsNavHistory::AddLazyLoadFaviconMessage(
    rv = aFavicon->Clone(getter_AddRefs(message.favicon));
    NS_ENSURE_SUCCESS(rv, rv);
    message.alwaysLoadFavicon = aForceReload;
@@ -190,7 +190,7 @@ diff -u -p -r1.223 nsNavHistory.cpp
    return AddLazyMessage(message);
  }
  
-@@ -3695,7 +3697,8 @@ nsNavHistory::CommitLazyMessages()
+@@ -4106,7 +4108,8 @@ nsNavHistory::CommitLazyMessages()
            message.uri->GetSpec(spec);
            faviconService->DoSetAndLoadFaviconForPage(message.uri,
                                                       message.favicon,
@@ -203,11 +203,11 @@ diff -u -p -r1.223 nsNavHistory.cpp
 Index: toolkit/components/places/src/nsNavHistory.h
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/components/places/src/nsNavHistory.h,v
-retrieving revision 1.119
-diff -u -p -r1.119 nsNavHistory.h
---- toolkit/components/places/src/nsNavHistory.h	5 Jan 2008 05:16:27 -0000	1.119
-+++ toolkit/components/places/src/nsNavHistory.h	7 Jan 2008 17:54:48 -0000
-@@ -167,7 +167,7 @@ public:
+retrieving revision 1.123
+diff -u -p -r1.123 nsNavHistory.h
+--- toolkit/components/places/src/nsNavHistory.h	25 Jan 2008 17:11:14 -0000	1.123
++++ toolkit/components/places/src/nsNavHistory.h	1 Feb 2008 18:39:03 -0000
+@@ -175,7 +175,7 @@ public:
     * that favicons are handled lazily just like page adds.
     */
    nsresult AddLazyLoadFaviconMessage(nsIURI* aPage, nsIURI* aFavicon,
@@ -216,7 +216,7 @@ diff -u -p -r1.119 nsNavHistory.h
  #endif
  
    /**
-@@ -440,6 +440,7 @@ protected:
+@@ -469,6 +469,7 @@ protected:
        isToplevel = PR_FALSE;
        time = 0;
        alwaysLoadFavicon = PR_FALSE;
@@ -224,7 +224,7 @@ diff -u -p -r1.119 nsNavHistory.h
      }
  
      // call this with common parms to initialize. Caller is responsible for
-@@ -470,6 +471,7 @@ protected:
+@@ -499,6 +500,7 @@ protected:
      // valid when type == LAZY_FAVICON
      nsCOMPtr<nsIURI> favicon;
      PRBool alwaysLoadFavicon;

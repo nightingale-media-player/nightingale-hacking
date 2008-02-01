@@ -1,11 +1,11 @@
 Index: xpcom/glue/nsTArray.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsTArray.cpp,v
-retrieving revision 1.8
-diff -u -p -r1.8 nsTArray.cpp
---- xpcom/glue/nsTArray.cpp	30 Aug 2007 16:59:34 -0000	1.8
-+++ xpcom/glue/nsTArray.cpp	31 Aug 2007 18:40:11 -0000
-@@ -67,7 +67,10 @@ nsTArray_base::EnsureCapacity(size_type 
+retrieving revision 1.16
+diff -u -p -r1.16 nsTArray.cpp
+--- xpcom/glue/nsTArray.cpp	25 Jan 2008 11:32:59 -0000	1.16
++++ xpcom/glue/nsTArray.cpp	1 Feb 2008 18:40:28 -0000
+@@ -70,7 +70,10 @@ nsTArray_base::EnsureCapacity(size_type 
      return PR_FALSE;
    }
  

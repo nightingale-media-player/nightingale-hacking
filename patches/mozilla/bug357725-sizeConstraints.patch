@@ -2,15 +2,10 @@ Index: layout/xul/base/src/nsResizerFrame.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.cpp,v
 retrieving revision 1.38
-diff -p -U 8 -r1.38 nsResizerFrame.cpp
+diff -u -p -r1.38 nsResizerFrame.cpp
 --- layout/xul/base/src/nsResizerFrame.cpp	11 Dec 2007 10:08:35 -0000	1.38
-+++ layout/xul/base/src/nsResizerFrame.cpp	25 Jan 2008 18:11:58 -0000
-@@ -16,16 +16,17 @@
-  *
-  * The Initial Developer of the Original Code is
-  * Netscape Communications Corporation.
-  * Portions created by the Initial Developer are Copyright (C) 1998
-  * the Initial Developer. All Rights Reserved.
++++ layout/xul/base/src/nsResizerFrame.cpp	1 Feb 2008 18:29:12 -0000
+@@ -21,6 +21,7 @@
   *
   * Contributor(s):
   *   Original Author: Eric J. Burley (ericb@neoplanet.com)
@@ -18,17 +13,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
   *
   * Alternatively, the contents of this file may be used under the terms of
   * either of the GNU General Public License Version 2 or later (the "GPL"),
-  * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-  * in which case the provisions of the GPL or the LGPL are applicable instead
-  * of those above. If you wish to allow use of your version of this file only
-  * under the terms of either the GPL or the LGPL, and not to allow others to
-  * use your version of this file under the terms of the MPL, indicate your
-@@ -49,41 +50,47 @@
- #include "nsPresContext.h"
- #include "nsIDocShell.h"
- #include "nsIDocShellTreeItem.h"
- #include "nsIDocShellTreeOwner.h"
- #include "nsIBaseWindow.h"
+@@ -54,6 +55,7 @@
  #include "nsPIDOMWindow.h"
  #include "nsGUIEvent.h"
  #include "nsEventDispatcher.h"
@@ -36,13 +21,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  
  //
  // NS_NewResizerFrame
- //
- // Creates a new Resizer frame and returns it
- //
- nsIFrame*
- NS_NewResizerFrame(nsIPresShell* aPresShell, nsStyleContext* aContext)
- {
-   return new (aPresShell) nsResizerFrame(aPresShell, aContext);
+@@ -67,7 +69,7 @@ NS_NewResizerFrame(nsIPresShell* aPresSh
  } // NS_NewResizerFrame
  
  nsResizerFrame::nsResizerFrame(nsIPresShell* aPresShell, nsStyleContext* aContext)
@@ -51,10 +30,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  {
    mDirection = topleft; // by default...
  }
- 
- NS_IMETHODIMP
- nsResizerFrame::Init(nsIContent*      aContent,
-                      nsIFrame*        aParent,
+@@ -78,7 +80,12 @@ nsResizerFrame::Init(nsIContent*      aC
                       nsIFrame*        asPrevInFlow)
  {
    nsresult rv = nsTitleBarFrame::Init(aContent, aParent, asPrevInFlow);
@@ -68,17 +44,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
    GetInitialDirection(mDirection);
  
    return rv;
- }
- 
- 
- NS_IMETHODIMP
- nsResizerFrame::HandleEvent(nsPresContext* aPresContext,
-@@ -95,187 +102,242 @@ nsResizerFrame::HandleEvent(nsPresContex
- 
-   switch (aEvent->message) {
- 
-    case NS_MOUSE_BUTTON_DOWN: {
-        if (aEvent->eventStructType == NS_MOUSE_EVENT &&
+@@ -100,9 +107,11 @@ nsResizerFrame::HandleEvent(nsPresContex
             static_cast<nsMouseEvent*>(aEvent)->button ==
               nsMouseEvent::eLeftButton)
         {
@@ -91,8 +57,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
           // what direction should we go in? 
           // convert eDirection to horizontal and vertical directions
           static const PRInt8 directions[][2] = {
-            {-1, -1}, {0, -1}, {1, -1},
-            {-1,  0},          {1,  0},
+@@ -111,28 +120,34 @@ nsResizerFrame::HandleEvent(nsPresContex
             {-1,  1}, {0,  1}, {1,  1}
           };
  
@@ -148,7 +113,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
         }
       }
       break;
- 
+@@ -140,16 +155,23 @@ nsResizerFrame::HandleEvent(nsPresContex
  
     case NS_MOUSE_BUTTON_UP: {
  
@@ -176,8 +141,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  
           *aEventStatus = nsEventStatus_eConsumeNoDefault;
           doDefault = PR_FALSE;
-        }
-      }
+@@ -158,101 +180,141 @@ nsResizerFrame::HandleEvent(nsPresContex
       break;
  
     case NS_MOUSE_MOVE: {
@@ -382,8 +346,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
        {
          MouseClicked(aPresContext, aEvent);
        }
-       break;
-   }
+@@ -261,8 +323,8 @@ nsResizerFrame::HandleEvent(nsPresContex
  
    if (doDefault && weakFrame.IsAlive())
      return nsTitleBarFrame::HandleEvent(aPresContext, aEvent, aEventStatus);
@@ -394,7 +357,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  }
  
  
- 
+@@ -270,7 +332,7 @@ nsResizerFrame::HandleEvent(nsPresContex
  /* returns true if aText represented a valid direction
   */
  PRBool
@@ -403,17 +366,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  {
    PRBool aResult = PR_TRUE;
  
-   if( aText.Equals( NS_LITERAL_STRING("topleft") ) )
-   {
-     aDir = topleft;
-   }
-   else if( aText.Equals( NS_LITERAL_STRING("top") ) )
-@@ -345,20 +407,85 @@ nsResizerFrame::AttributeChanged(PRInt32
-   if (aAttribute == nsGkAtoms::dir) {
-     GetInitialDirection(mDirection);
-   }
- 
-   return rv;
+@@ -350,7 +412,6 @@ nsResizerFrame::AttributeChanged(PRInt32
  }
  
  
@@ -421,11 +374,7 @@ diff -p -U 8 -r1.38 nsResizerFrame.cpp
  void
  nsResizerFrame::MouseClicked(nsPresContext* aPresContext, nsGUIEvent *aEvent)
  {
-   // Execute the oncommand event handler.
-   nsEventStatus status = nsEventStatus_eIgnore;
- 
-   nsXULCommandEvent event(aEvent ? NS_IS_TRUSTED_EVENT(aEvent) : PR_FALSE,
-                           NS_XUL_COMMAND, nsnull);
+@@ -362,3 +423,69 @@ nsResizerFrame::MouseClicked(nsPresConte
  
    nsEventDispatcher::Dispatch(mContent, aPresContext, &event, nsnull, &status);
  }
@@ -499,15 +448,10 @@ Index: layout/xul/base/src/nsResizerFrame.h
 ===================================================================
 RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.h,v
 retrieving revision 1.13
-diff -p -U 8 -r1.13 nsResizerFrame.h
+diff -u -p -r1.13 nsResizerFrame.h
 --- layout/xul/base/src/nsResizerFrame.h	26 Mar 2006 21:30:34 -0000	1.13
-+++ layout/xul/base/src/nsResizerFrame.h	25 Jan 2008 18:11:58 -0000
-@@ -34,30 +34,34 @@
-  * the provisions above, a recipient may use your version of this file under
-  * the terms of any one of the MPL, the GPL or the LGPL.
-  *
-  * ***** END LICENSE BLOCK ***** */
- #ifndef nsResizerFrame_h___
++++ layout/xul/base/src/nsResizerFrame.h	1 Feb 2008 18:29:12 -0000
+@@ -39,6 +39,10 @@
  #define nsResizerFrame_h___
  
  #include "nsTitleBarFrame.h"
@@ -518,8 +462,7 @@ diff -p -U 8 -r1.13 nsResizerFrame.h
  
  class nsResizerFrame : public nsTitleBarFrame 
  {
- 
- protected:
+@@ -47,12 +51,12 @@ protected:
    enum eDirection {
      topleft,
      top,
@@ -538,17 +481,7 @@ diff -p -U 8 -r1.13 nsResizerFrame.h
    };
    
  
- public:
-   friend nsIFrame* NS_NewResizerFrame(nsIPresShell* aPresShell, nsStyleContext* aContext);  
- 
-   nsResizerFrame(nsIPresShell* aPresShell, nsStyleContext* aContext);
- 
-@@ -71,17 +75,21 @@ public:
-   
-   NS_IMETHOD AttributeChanged(PRInt32 aNameSpaceID,
-                               nsIAtom* aAttribute,
-                               PRInt32 aModType);
- 
+@@ -76,12 +80,16 @@ public:
    virtual void MouseClicked(nsPresContext* aPresContext, nsGUIEvent *aEvent);
  
  protected:
@@ -572,16 +505,11 @@ diff -p -U 8 -r1.13 nsResizerFrame.h
 Index: widget/public/nsIWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
-retrieving revision 3.167
-diff -p -U 8 -r3.167 nsIWidget.h
---- widget/public/nsIWidget.h	19 Dec 2007 19:40:19 -0000	3.167
-+++ widget/public/nsIWidget.h	25 Jan 2008 18:11:59 -0000
-@@ -90,20 +90,20 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
- #define NS_NATIVE_PLUGIN_PORT 8
- #define NS_NATIVE_SCREEN      9
- #define NS_NATIVE_SHELLWIDGET 10      // Get the shell GtkWidget
- #ifdef XP_MACOSX
- #define NS_NATIVE_PLUGIN_PORT_QD    100
+retrieving revision 3.168
+diff -u -p -r3.168 nsIWidget.h
+--- widget/public/nsIWidget.h	18 Jan 2008 18:39:51 -0000	3.168
++++ widget/public/nsIWidget.h	1 Feb 2008 18:29:12 -0000
+@@ -95,10 +95,10 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
  #define NS_NATIVE_PLUGIN_PORT_CG    101
  #endif
  
@@ -595,17 +523,7 @@ diff -p -U 8 -r3.167 nsIWidget.h
  
  // Hide the native window systems real window type so as to avoid
  // including native window system types and APIs. This is necessary
- // to ensure cross-platform code.
- typedef void* nsNativeWidget;
- 
- /**
-  * Border styles
-@@ -246,16 +246,48 @@ struct nsWidgetInitData {
-   PRPackedBool  mListenForResizes;
-   nsWindowType mWindowType;
-   nsBorderStyle mBorderStyle;
-   nsContentType mContentType;  // Exposed so screen readers know what's UI
-   PRPackedBool mUnicode;
+@@ -252,6 +252,38 @@ struct nsWidgetInitData {
  };
  
  /**
@@ -644,17 +562,7 @@ diff -p -U 8 -r3.167 nsIWidget.h
   * The base class for all the widgets. It provides the interface for
   * all basic and necessary functionality.
   */
- class nsIWidget : public nsISupports {
- 
-   public:
- 
-     NS_DECLARE_STATIC_IID_ACCESSOR(NS_IWIDGET_IID)
-@@ -448,16 +480,68 @@ class nsIWidget : public nsISupports {
-      * @return vapid success indication. but see also the parameters.
-      *
-      **/
-     NS_IMETHOD ConstrainPosition(PRBool aAllowSlop,
-                                  PRInt32 *aX,
+@@ -454,6 +486,58 @@ class nsIWidget : public nsISupports {
                                   PRInt32 *aY) = 0;
  
      /**
@@ -713,24 +621,14 @@ diff -p -U 8 -r3.167 nsIWidget.h
       * Move this widget.
       *
       * @param aX the new x position expressed in the parent's coordinate system
-      * @param aY the new y position expressed in the parent's coordinate system
-      *
-      **/
-     NS_IMETHOD Move(PRInt32 aX, PRInt32 aY) = 0;
- 
 Index: widget/src/windows/nsWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.cpp,v
-retrieving revision 3.720
-diff -p -U 8 -r3.720 nsWindow.cpp
---- widget/src/windows/nsWindow.cpp	19 Dec 2007 19:40:20 -0000	3.720
-+++ widget/src/windows/nsWindow.cpp	25 Jan 2008 18:12:04 -0000
-@@ -29,16 +29,17 @@
-  *   Pierre Phaneuf <pp@ludusdesign.com>
-  *   Robert O'Callahan <roc+moz@cs.cmu.edu>
-  *   Roy Yokoyama <yokoyama@netscape.com>
-  *   Makoto Kato  <m_kato@ga2.so-net.ne.jp>
-  *   Masayuki Nakano <masayuki@d-toybox.com>
+retrieving revision 3.722
+diff -u -p -r3.722 nsWindow.cpp
+--- widget/src/windows/nsWindow.cpp	18 Jan 2008 18:39:52 -0000	3.722
++++ widget/src/windows/nsWindow.cpp	1 Feb 2008 18:29:12 -0000
+@@ -34,6 +34,7 @@
   *   Dainis Jonitis <Dainis_Jonitis@swh-t.lv>
   *   Christian Biesinger <cbiesinger@web.de>
   *   Mats Palmgren <mats.palmgren@bredband.net>
@@ -738,17 +636,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
   *
   * Alternatively, the contents of this file may be used under the terms of
   * either the GNU General Public License Version 2 or later (the "GPL"), or
-  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-  * in which case the provisions of the GPL or the LGPL are applicable instead
-  * of those above. If you wish to allow use of your version of this file only
-  * under the terms of either the GPL or the LGPL, and not to allow others to
-  * use your version of this file under the terms of the MPL, indicate your
-@@ -145,16 +146,20 @@
- #include "nsCRT.h"
- #include "nsAppDirectoryServiceDefs.h"
- #include "nsXPIDLString.h"
- #include "nsIFile.h"
- 
+@@ -150,6 +151,10 @@
  #include "prprf.h"
  #include "prmem.h"
  
@@ -759,17 +647,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  static const char kMozHeapDumpMessageString[] = "MOZ_HeapDump";
  
  #define kWindowPositionSlop 20
- 
- #ifndef SPI_GETWHEELSCROLLLINES
- #define SPI_GETWHEELSCROLLLINES 104
- #endif
- 
-@@ -753,16 +758,25 @@ nsWindow::nsWindow() : nsBaseWidget()
-   mLastSize.width     = 0;
-   mLastSize.height    = 0;
-   mOldStyle           = 0;
-   mOldExStyle         = 0;
-   mPainting           = 0;
+@@ -758,6 +763,15 @@ nsWindow::nsWindow() : nsBaseWidget()
    mOldIMC             = NULL;
    mIMEEnabled         = nsIKBStateControl::IME_STATUS_ENABLED;
  
@@ -785,17 +663,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
    mLeadByte = '\0';
    mBlurEventSuppressionLevel = 0;
  
-   static BOOL gbInitGlobalValue = FALSE;
-   if (! gbInitGlobalValue) {
-     gbInitGlobalValue = TRUE;
-     gKeyboardLayout = GetKeyboardLayout(0);
- 
-@@ -2013,16 +2027,128 @@ NS_METHOD nsWindow::ConstrainPosition(PR
-       *aY = screenRect.top;
-     else if (*aY >= screenRect.bottom - mBounds.height)
-       *aY = screenRect.bottom - mBounds.height;
-   }
- 
+@@ -2018,6 +2032,118 @@ NS_METHOD nsWindow::ConstrainPosition(PR
    return NS_OK;
  }
  
@@ -914,17 +782,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  //-------------------------------------------------------------------------
  //
  // Move this component
- //
- //-------------------------------------------------------------------------
- NS_METHOD nsWindow::Move(PRInt32 aX, PRInt32 aY)
- {
-   // Check to see if window needs to be moved first
-@@ -2737,16 +2863,18 @@ NS_IMETHODIMP nsWindow::HideWindowChrome
-     }
- 
-     style = mOldStyle;
-     exStyle = mOldExStyle;
-   }
+@@ -2746,6 +2872,8 @@ NS_IMETHODIMP nsWindow::HideWindowChrome
  
    ::SetWindowLongW(hwnd, GWL_STYLE, style);
    ::SetWindowLongW(hwnd, GWL_EXSTYLE, exStyle);
@@ -933,17 +791,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
  
    return NS_OK;
  }
- 
- // ------------------------------------------------------------------------
- //
- // Validate a visible area of a widget.
- //
-@@ -4046,16 +4174,22 @@ PRBool nsWindow::ProcessMessage(UINT msg
-         NS_RELEASE(event.widget);
-       }
-     }
-     break;
- 
+@@ -4055,6 +4183,12 @@ PRBool nsWindow::ProcessMessage(UINT msg
  #ifndef WINCE
      case WM_DISPLAYCHANGE:
        DispatchStandardEvent(NS_DISPLAYCHANGED);
@@ -956,17 +804,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
        break;
  #endif
  
-     case WM_SYSCOLORCHANGE:
-       // Note: This is sent for child windows as well as top-level windows.
-       // The Win32 toolkit normally only sends these events to top-level windows.
-       // But we cycle through all of the childwindows and send it to them as well
-       // so all presentations get notified properly.
-@@ -4612,16 +4746,90 @@ PRBool nsWindow::ProcessMessage(UINT msg
-         ConstrainZLevel(&info->hwndInsertAfter);
-       // prevent rude external programs from making hidden window visible
-       if (mWindowType == eWindowType_invisible)
-         info->flags &= ~SWP_SHOWWINDOW;
-     }
+@@ -4621,6 +4755,80 @@ PRBool nsWindow::ProcessMessage(UINT msg
      break;
  #endif
  
@@ -1047,17 +885,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
      case WM_SETFOCUS:
        result = DispatchFocus(NS_GOTFOCUS, PR_TRUE);
        if (gJustGotActivate) {
-         gJustGotActivate = PR_FALSE;
-         gJustGotDeactivate = PR_FALSE;
-         result = DispatchFocus(NS_ACTIVATE, PR_TRUE);
-       }
- 
-@@ -4681,16 +4889,21 @@ PRBool nsWindow::ProcessMessage(UINT msg
-         gJustGotDeactivate = PR_FALSE;
-         result = DispatchFocus(NS_DEACTIVATE, isMozWindowTakingFocus);
-       }
-       result = DispatchFocus(NS_LOSTFOCUS, isMozWindowTakingFocus);
-       break;
+@@ -4690,6 +4898,11 @@ PRBool nsWindow::ProcessMessage(UINT msg
  
      case WM_WINDOWPOSCHANGED:
      {
@@ -1069,17 +897,7 @@ diff -p -U 8 -r3.720 nsWindow.cpp
        WINDOWPOS *wp = (LPWINDOWPOS)lParam;
  
        // We only care about a resize, so filter out things like z-order
-       // changes. Note: there's a WM_MOVE handler above which is why we're
-       // not handling them here...
-       if (0 == (wp->flags & SWP_NOSIZE)) {
-         // XXX Why are we using the client size area? If the size notification
-         // is for the client area then the origin should be (0,0) and not
-@@ -4952,20 +5165,51 @@ PRBool nsWindow::ProcessMessage(UINT msg
-           }
-         }
-       }
-     }
- #endif
+@@ -4961,10 +5174,41 @@ PRBool nsWindow::ProcessMessage(UINT msg
  
  #ifndef WINCE
      case WM_SYSCOMMAND:
@@ -1125,24 +943,14 @@ diff -p -U 8 -r3.720 nsWindow.cpp
        }
        break;
  #endif
- 
- 
- #ifdef WINCE
-   case WM_HIBERNATE:        
-     nsMemory::HeapMinimize(PR_TRUE);
 Index: widget/src/windows/nsWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.h,v
 retrieving revision 3.246
-diff -p -U 8 -r3.246 nsWindow.h
+diff -u -p -r3.246 nsWindow.h
 --- widget/src/windows/nsWindow.h	19 Dec 2007 19:40:20 -0000	3.246
-+++ widget/src/windows/nsWindow.h	25 Jan 2008 18:12:05 -0000
-@@ -52,16 +52,18 @@
- #include "nsIKBStateControl.h"
- 
- #include "nsIMouseListener.h"
- #include "nsIEventListener.h"
- #include "nsString.h"
++++ widget/src/windows/nsWindow.h	1 Feb 2008 18:29:12 -0000
+@@ -57,6 +57,8 @@
  
  #include "nsVoidArray.h"
  
@@ -1151,17 +959,7 @@ diff -p -U 8 -r3.246 nsWindow.h
  class nsNativeDragTarget;
  class nsIRollupListener;
  
- class nsIMenuBar;
- class nsIFile;
- 
- class imgIContainer;
- 
-@@ -153,16 +155,20 @@ public:
-   virtual nsIWidget*      GetParent(void);
-   NS_IMETHOD              Show(PRBool bState);
-   NS_IMETHOD              IsVisible(PRBool & aState);
-   NS_IMETHOD              PlaceBehind(nsTopLevelWidgetZPlacement aPlacement, nsIWidget *aWidget, PRBool aActivate);
-   NS_IMETHOD              SetSizeMode(PRInt32 aMode);
+@@ -158,6 +160,10 @@ public:
    NS_IMETHOD              ModalEventFilter(PRBool aRealEvent, void *aEvent, PRBool *aForWindow);
    NS_IMETHOD              CaptureMouse(PRBool aCapture);
    NS_IMETHOD              ConstrainPosition(PRBool aAllowSlop, PRInt32 *aX, PRInt32 *aY);
@@ -1172,17 +970,7 @@ diff -p -U 8 -r3.246 nsWindow.h
    NS_IMETHOD              Move(PRInt32 aX, PRInt32 aY);
    NS_IMETHOD              Resize(PRInt32 aWidth, PRInt32 aHeight, PRBool aRepaint);
    NS_IMETHOD              Resize(PRInt32 aX, PRInt32 aY, PRInt32 aWidth, PRInt32 aHeight, PRBool aRepaint);
-   NS_IMETHOD              Enable(PRBool aState);
-   NS_IMETHOD              IsEnabled(PRBool *aState);
-   NS_IMETHOD              SetFocus(PRBool aRaise);
-   NS_IMETHOD              GetBounds(nsRect &aRect);
-   NS_IMETHOD              GetClientBounds(nsRect &aRect);
-@@ -351,16 +357,17 @@ protected:
- 
-   void GetNonClientBounds(nsRect &aRect);
-   void HandleTextEvent(HIMC hIMEContext, PRBool aCheckAttr=PR_TRUE);
-   BOOL HandleStartComposition(HIMC hIMEContext);
-   void HandleEndComposition(void);
+@@ -356,6 +362,7 @@ protected:
    void GetTextRangeList(PRUint32* textRangeListLengthResult, nsTextRangeArray* textRangeListResult);
  
    void ConstrainZLevel(HWND *aAfter);
@@ -1190,17 +978,7 @@ diff -p -U 8 -r3.246 nsWindow.h
  
    LPARAM lParamToScreen(LPARAM lParam);
    LPARAM lParamToClient(LPARAM lParam);
- 
-   PRBool CanTakeFocus();
- 
- private:
- 
-@@ -425,16 +432,20 @@ protected:
-   PRPackedBool  mIsAltDown;
-   PRPackedBool  mIsDestroying;
-   PRPackedBool  mOnDestroyCalled;
-   PRPackedBool  mIsVisible;
-   PRPackedBool  mIsInMouseCapture;
+@@ -430,6 +437,10 @@ protected:
    PRPackedBool  mIsInMouseWheelProcessing;
    PRPackedBool  mUnicodeWidget;
  
@@ -1211,17 +989,7 @@ diff -p -U 8 -r3.246 nsWindow.h
    PRPackedBool  mPainting;
    char          mLeadByte;
    PRUint32      mBlurEventSuppressionLevel;
-   nsContentType mContentType;
- 
-   PRInt32       mPreferredWidth;
-   PRInt32       mPreferredHeight;
- 
-@@ -451,16 +462,19 @@ protected:
-   static HKL    gKeyboardLayout;
-   static PRBool gSwitchKeyboardLayout;
- 
-   HKL           mLastKeyboardLayout;
- 
+@@ -456,6 +467,9 @@ protected:
    // Drag & Drop
    nsNativeDragTarget * mNativeDragTarget;
  
@@ -1231,24 +999,14 @@ diff -p -U 8 -r3.246 nsWindow.h
    // Enumeration of the methods which are accessible on the "main GUI thread"
    // via the CallMethod(...) mechanism...
    // see nsSwitchToUIThread
-   enum {
-     CREATE = 0x0101,
-     CREATE_NATIVE,
-     DESTROY,
-     SET_FOCUS,
 Index: widget/src/xpwidgets/nsBaseWidget.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
-retrieving revision 1.167
-diff -p -U 8 -r1.167 nsBaseWidget.cpp
---- widget/src/xpwidgets/nsBaseWidget.cpp	19 Dec 2007 19:40:20 -0000	1.167
-+++ widget/src/xpwidgets/nsBaseWidget.cpp	25 Jan 2008 18:12:05 -0000
-@@ -763,16 +763,49 @@ NS_METHOD nsBaseWidget::GetScreenBounds(
- NS_METHOD nsBaseWidget::SetBounds(const nsRect &aRect)
- {
-   mBounds = aRect;
- 
-   return NS_OK;
+retrieving revision 1.168
+diff -u -p -r1.168 nsBaseWidget.cpp
+--- widget/src/xpwidgets/nsBaseWidget.cpp	5 Jan 2008 05:34:00 -0000	1.168
++++ widget/src/xpwidgets/nsBaseWidget.cpp	1 Feb 2008 18:29:12 -0000
+@@ -764,6 +764,39 @@ NS_METHOD nsBaseWidget::SetBounds(const 
  }
   
  
@@ -1288,24 +1046,14 @@ diff -p -U 8 -r1.167 nsBaseWidget.cpp
  
  /**
  * Calculates the border width and height  
- *
- **/
- NS_METHOD nsBaseWidget::GetBorderSize(PRInt32 &aWidth, PRInt32 &aHeight)
- {
-   nsRect rectWin;
 Index: widget/src/xpwidgets/nsBaseWidget.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
-retrieving revision 1.92
-diff -p -U 8 -r1.92 nsBaseWidget.h
---- widget/src/xpwidgets/nsBaseWidget.h	19 Dec 2007 19:40:20 -0000	1.92
-+++ widget/src/xpwidgets/nsBaseWidget.h	25 Jan 2008 18:12:05 -0000
-@@ -133,16 +133,20 @@ public:
-   NS_IMETHOD              GetLastInputEventTime(PRUint32& aTime);
-   NS_IMETHOD              SetIcon(const nsAString &anIconSpec);
-   NS_IMETHOD              BeginSecureKeyboardInput();
-   NS_IMETHOD              EndSecureKeyboardInput();
-   NS_IMETHOD              SetWindowTitlebarColor(nscolor aColor);
+retrieving revision 1.93
+diff -u -p -r1.93 nsBaseWidget.h
+--- widget/src/xpwidgets/nsBaseWidget.h	5 Jan 2008 05:34:00 -0000	1.93
++++ widget/src/xpwidgets/nsBaseWidget.h	1 Feb 2008 18:29:12 -0000
+@@ -137,6 +137,10 @@ public:
    virtual void            ConvertToDeviceCoordinates(nscoord  &aX,nscoord &aY) {}
    virtual void            FreeNativeData(void * data, PRUint32 aDataType) {}
    NS_IMETHOD              BeginResizeDrag(nsGUIEvent* aEvent, PRInt32 aHorizontal, PRInt32 aVertical);
@@ -1316,24 +1064,14 @@ diff -p -U 8 -r1.92 nsBaseWidget.h
  
  protected:
  
-   virtual void            ResolveIconName(const nsAString &aIconName,
-                                           const nsAString &aIconSuffix,
-                                           nsILocalFile **aResult);
-   virtual void            OnDestroy();
-   virtual void            BaseCreate(nsIWidget *aParent,
 Index: xpfe/appshell/src/nsXULWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpfe/appshell/src/nsXULWindow.cpp,v
 retrieving revision 1.178
-diff -p -U 8 -r1.178 nsXULWindow.cpp
+diff -u -p -r1.178 nsXULWindow.cpp
 --- xpfe/appshell/src/nsXULWindow.cpp	14 Dec 2007 17:32:41 -0000	1.178
-+++ xpfe/appshell/src/nsXULWindow.cpp	25 Jan 2008 18:12:07 -0000
-@@ -20,16 +20,17 @@
-  * Netscape Communications, Inc.
-  * Portions created by the Initial Developer are Copyright (C) 1999
-  * the Initial Developer. All Rights Reserved.
-  *
-  * Contributor(s):
++++ xpfe/appshell/src/nsXULWindow.cpp	1 Feb 2008 18:29:12 -0000
+@@ -25,6 +25,7 @@
   *   Travis Bogard <travis@netscape.com>
   *   Dan Rosen <dr@netscape.com>
   *   Ben Goodger <ben@netscape.com>
@@ -1341,17 +1079,7 @@ diff -p -U 8 -r1.178 nsXULWindow.cpp
   *
   * Alternatively, the contents of this file may be used under the terms of
   * either of the GNU General Public License Version 2 or later (the "GPL"),
-  * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-  * in which case the provisions of the GPL or the LGPL are applicable instead
-  * of those above. If you wish to allow use of your version of this file only
-  * under the terms of either the GPL or the LGPL, and not to allow others to
-  * use your version of this file under the terms of the MPL, indicate your
-@@ -1072,17 +1073,17 @@ PRBool nsXULWindow::LoadPositionFromXUL(
-     SetPosition(specX, specY);
- 
-   return gotPosition;
- }
- 
+@@ -1077,7 +1078,7 @@ PRBool nsXULWindow::LoadPositionFromXUL(
  PRBool nsXULWindow::LoadSizeFromXUL()
  {
    nsresult rv;
@@ -1360,17 +1088,7 @@ diff -p -U 8 -r1.178 nsXULWindow.cpp
    
    // if we're the hidden window, don't try to validate our size/position. We're
    // special.
-   if (mIsHiddenWindow)
-     return PR_FALSE;
- 
-   nsCOMPtr<nsIDOMElement> windowElement;
-   GetWindowDOMElement(getter_AddRefs(windowElement));
-@@ -1114,16 +1115,48 @@ PRBool nsXULWindow::LoadSizeFromXUL()
-   if (NS_SUCCEEDED(rv)) {
-     temp = sizeString.ToInteger(&errorCode);
-     if (NS_SUCCEEDED(errorCode) && temp > 0) {
-       specHeight = temp > 100 ? temp : 100;
-       gotSize = PR_TRUE;
+@@ -1119,6 +1120,38 @@ PRBool nsXULWindow::LoadSizeFromXUL()
      }
    }
  
@@ -1409,17 +1127,7 @@ diff -p -U 8 -r1.178 nsXULWindow.cpp
    if (gotSize) {
      // constrain to screen size
      nsCOMPtr<nsIDOMWindowInternal> domWindow;
-     GetWindowDOMWindow(getter_AddRefs(domWindow));
-     if (domWindow) {
-       nsCOMPtr<nsIDOMScreen> screen;
-       domWindow->GetScreen(getter_AddRefs(screen));
-       if (screen) {
-@@ -1138,16 +1171,25 @@ PRBool nsXULWindow::LoadSizeFromXUL()
-       }
-     }
- 
-     mIntrinsicallySized = PR_FALSE;
-     if (specWidth != currWidth || specHeight != currHeight)
+@@ -1143,6 +1176,15 @@ PRBool nsXULWindow::LoadSizeFromXUL()
        SetSize(specWidth, specHeight, PR_FALSE);
    }
  
@@ -1435,24 +1143,14 @@ diff -p -U 8 -r1.178 nsXULWindow.cpp
    return gotSize;
  }
  
- /* Miscellaneous persistent attributes are attributes named in the
-    |persist| attribute, other than size and position. Those are special
-    because it's important to load those before one of the misc
-    attributes (sizemode) and they require extra processing. */
- PRBool nsXULWindow::LoadMiscPersistentAttributesFromXUL()
 Index: xpfe/appshell/src/nsXULWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpfe/appshell/src/nsXULWindow.h,v
 retrieving revision 1.63
-diff -p -U 8 -r1.63 nsXULWindow.h
+diff -u -p -r1.63 nsXULWindow.h
 --- xpfe/appshell/src/nsXULWindow.h	5 Oct 2007 23:37:26 -0000	1.63
-+++ xpfe/appshell/src/nsXULWindow.h	25 Jan 2008 18:12:07 -0000
-@@ -171,16 +171,17 @@ protected:
-    PRPackedBool            mIsHiddenWindow;
-    PRPackedBool            mLockedUntilChromeLoad;
-    PRUint32                mContextFlags;
-    PRUint32                mBlurSuppressionLevel;
-    PRUint32                mPersistentAttributesDirty; // persistentAttributes
++++ xpfe/appshell/src/nsXULWindow.h	1 Feb 2008 18:29:12 -0000
+@@ -176,6 +176,7 @@ protected:
     PRUint32                mPersistentAttributesMask;
     PRUint32                mChromeFlags;
     nsString                mTitle;
@@ -1460,8 +1158,3 @@ diff -p -U 8 -r1.63 nsXULWindow.h
  
     nsCOMArray<nsIWeakReference> mTargetableShells; // targetable shells only
  };
- 
- NS_DEFINE_STATIC_IID_ACCESSOR(nsXULWindow, NS_XULWINDOW_IMPL_CID)
- 
- // nsContentShellInfo
- // Used (in an nsVoidArray) to map shell IDs to nsIDocShellTreeItems.
