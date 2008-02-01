@@ -529,3 +529,95 @@ function getWebNavigation()
   }
 }
 
+
+
+
+
+/**
+ * This is a hacked version of nsBrowserStatusHandler
+ * from firefox/browser.js.
+ *
+ * nsBrowserStatusHandler is registered as window.XULBrowserWindow,
+ * which allows the C++ browser back-end to update window status
+ * and other UI.
+ */
+function nsBrowserStatusHandler()
+{}
+nsBrowserStatusHandler.prototype =
+{
+  // Stored Status, Link and Loading values
+  status : "",
+  defaultStatus : "",
+  jsStatus : "",
+  jsDefaultStatus : "",
+  overLink : "",
+  statusText: "",
+
+  QueryInterface : function(aIID)
+  {
+    if (aIID.equals(Ci.nsIWebProgressListener) ||
+        aIID.equals(Ci.nsIWebProgressListener2) ||
+        aIID.equals(Ci.nsISupportsWeakReference) ||
+        aIID.equals(Ci.nsIXULBrowserWindow) ||
+        aIID.equals(Ci.nsISupports))
+      return this;
+    throw Cr.NS_NOINTERFACE;
+  },
+
+  setJSStatus : function(status)
+  {
+    this.jsStatus = status;
+    this.updateStatusField();
+  },
+
+  setJSDefaultStatus : function(status)
+  {
+    this.jsDefaultStatus = status;
+    this.updateStatusField();
+  },
+
+  setDefaultStatus : function(status)
+  {
+    this.defaultStatus = status;
+    this.updateStatusField();
+  },
+
+  setOverLink : function(link, b)
+  {
+    // Encode bidirectional formatting characters.
+    // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
+    this.overLink = link.replace(/[\u200e\u200f\u202a\u202b\u202c\u202d\u202e]/g,
+                                 encodeURIComponent);
+    this.updateStatusField();
+  },
+
+  updateStatusField : function()
+  {
+    var text = this.overLink || this.status || this.jsStatus || this.jsDefaultStatus || this.defaultStatus;
+
+    // check the current value so we don't trigger an attribute change
+    // and cause needless (slow!) UI updates
+    if (this.statusText != text) {
+      SBDataSetStringValue( "faceplate.status.text", text);
+      if (this.overLink && (gPPS.isMediaURL(this.overLink) || 
+                            gPPS.isPlaylistURL(this.overLink))) {
+        SBDataSetStringValue( "faceplate.status.style", "font-weight: bold;");
+      } else {
+        SBDataSetStringValue( "faceplate.status.style", "font-weight: normal;");
+      }
+      this.statusText = text;
+    }
+  }
+}
+
+// initialize observers and listeners
+// and give C++ access to gBrowser
+window.XULBrowserWindow = new nsBrowserStatusHandler();
+window.QueryInterface(Ci.nsIInterfaceRequestor)
+      .getInterface(Ci.nsIWebNavigation)
+      .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
+      .QueryInterface(Ci.nsIInterfaceRequestor)
+      .getInterface(Ci.nsIXULWindow)
+      .XULBrowserWindow = window.XULBrowserWindow;
+
+

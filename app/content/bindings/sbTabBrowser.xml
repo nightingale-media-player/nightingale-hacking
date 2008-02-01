@@ -443,11 +443,21 @@
             if (where == "_blank") {
               var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
               tab._viewForPage = aMediaListView;
+              tab._isNewViewForPage = true;
               retval = tab;
             } else if (where == "_top") {
               this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
               this.mCurrentTab._viewForPage = aMediaListView;
+              this.mCurrentTab._isNewViewForPage = true;
               retval = this.mCurrentTab;
+            
+            // If aDefaultLocation is a tab, load there
+            } else if (where && where.linkedBrowser) {
+              var tab = where;
+              tab.linkedBrowser.loadURI(aURI, aReferrerURI, aCharset);
+              tab._viewForPage = aMediaListView;
+              tab._isNewViewForPage = true;
+              retval = tab;
             } else {
               // eek! unknown target
             }
@@ -1254,27 +1264,30 @@
         ]]></body>
       </method>
 
+      
+      
       <!-- context menu handler -->
+      <field name="_urlForHTMLContextMenu">null</field>
       <method name="onHTMLContextMenu">
         <parameter name="target" />
         <body><![CDATA[
-          if ( this.theHTMLContextURL ) {
+          if ( this._urlForHTMLContextMenu ) {
             var v = target.getAttribute( "id" );
             switch ( v ) {
               case "html.context.open":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false, null, this.currentURI.spec) )
+                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
                 {
-                  this.loadURI(this.theHTMLContextURL, this.currentURI.spec, null);
+                  this.loadURI(this._urlForHTMLContextMenu, this.currentURI.spec, null);
                 }
               break;
               case "html.context.opentab":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false, '_blank', this.currentURI.spec) )
+                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
                 {
-                  this.loadOneTab(this.theHTMLContextURL, this.currentURI.spec, null, null, null, null);
+                  this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI.spec, null, null, null, null);
                 }
                 break;
               case "html.context.openexternal":
@@ -1284,26 +1297,26 @@
                   var nsURI = (Components
                           .classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService)
-                          .newURI(this.theHTMLContextURL, null, null));
+                          .newURI(this._urlForHTMLContextMenu, null, null));
                   externalLoader.loadURI(nsURI, null);
               break;
               case "html.context.play":
                 // can be track or playlist
-                this.handleMediaURL(this.theHTMLContextURL, true, false);
+                this.handleMediaURL(this._urlForHTMLContextMenu, true, false);
               break;
               case "html.context.add":
-                gPPS.importURL(this.theHTMLContextURL);
+                gPPS.importURL(this._urlForHTMLContextMenu);
               break;
               case "html.context.playlist":
                 // Add playlists to the service pane (force it as a playlist)
-                this.handleMediaURL(this.theHTMLContextURL, false, true);
+                this.handleMediaURL(this._urlForHTMLContextMenu, false, true);
               break;
               case "html.context.copytoclipboard":
                 var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
-                clipboard.copyString(this.theHTMLContextURL);
+                clipboard.copyString(this._urlForHTMLContextMenu);
               break;
             }
-            this.theHTMLContextURL = null; // clear it because now we're done.
+            this._urlForHTMLContextMenu = null; // clear it because now we're done.
           }
         ]]></body>
       </method>
@@ -1317,7 +1330,7 @@
 
           var XLINK_NS = 'http://www.w3.org/1999/xlink';
 
-          this.theHTMLContextURL = '';
+          this._urlForHTMLContextMenu = '';
 
           // are we on a link?
           var onLink = false;
@@ -1339,7 +1352,7 @@
             // looks like we've got something
             if (elem.href) {
               // it's some kind of HTML link
-              this.theHTMLContextURL = elem.href;
+              this._urlForHTMLContextMenu = elem.href;
             } else if (elem.hasAttributeNS(XLINK_NS, 'href')) {
               // it's an XLink link
               var xlink_href = elem.getAttributeNS(XLINK_NS, 'href');
@@ -1352,7 +1365,7 @@
                 .getService(Components.interfaces.nsIIOService);
               var baseURI  = ioService.newURI(elem.baseURI, null, null);
               onLink = true;
-              this.theHTMLContextURL = ioService.newURI(baseURI.resolve(xlink_href), null, null).spec;
+              this._urlForHTMLContextMenu = ioService.newURI(baseURI.resolve(xlink_href), null, null).spec;
             } else {
               // we shouldn't get here, but if we do that thing we thought was a link isn't
               onLink = false;
@@ -1360,11 +1373,11 @@
 
           }
 
-          if (this.theHTMLContextURL) {
+          if (this._urlForHTMLContextMenu) {
             // Disable "Add" if the url isn't media or is already there.
             document.getElementById("html.context.add").setAttribute("disabled",
-              SBUrlExistsInDatabase(this.theHTMLContextURL) ||
-              !gPPS.isMediaURL(this.theHTMLContextURL));
+              SBUrlExistsInDatabase(this._urlForHTMLContextMenu) ||
+              !gPPS.isMediaURL(this._urlForHTMLContextMenu));
             // allow the popup to be shown
             this._popupShowing = true;
 
@@ -1381,33 +1394,6 @@
         ]]></body>
       </method>
 
-      <!-- this method extracts the target url of click event targetted at html -->
-      <method name="GetHREFFromEvent">
-        <parameter name="evt" />
-        <body><![CDATA[
-          var the_href = "";
-          try
-          {
-            var node = evt.target;
-            while ( node ) // Walk up from the event target to find the A?
-            {
-              if ( node.href )
-              {
-                the_href = node.href;
-                break;
-              }
-              node = node.parentNode;
-            }
-          }
-          catch ( err )
-          {
-            alert( err );
-          }
-          return the_href;
-        ]]></body>
-      </method>
-
-      <field name="theHTMLContextURL">null</field>
 
       <!-- Override tabBrowser.xul homepage.  Uses mozilla.org by default -->
       <property name="homePage">
@@ -1531,36 +1517,6 @@
 
         }
         return true;
-      ]]></handler>
-      <handler event="mouseover"><![CDATA[
-        // we only care about these events when they occur in the content doc
-        if (event.target.ownerDocument != this.contentDocument) {
-          return;
-        }
-
-        var url = this.GetHREFFromEvent(event);
-        if (!url) {
-          return;
-        }
-        SBDataSetStringValue( "faceplate.status.text", url);
-        if (gPPS.isMediaURL(url) || gPPS.isPlaylistURL(url)) {
-          SBDataSetStringValue( "faceplate.status.style", "font-weight: bold;");
-        } else {
-          SBDataSetStringValue( "faceplate.status.style", "font-weight: normal;");
-        }
-      ]]></handler>
-      <handler event="mouseout"><![CDATA[
-        // we only care about these events when they occur in the content doc
-        if (event.target.ownerDocument != this.contentDocument) {
-          return;
-        }
-
-        var url = this.GetHREFFromEvent(event);
-        if (!url) {
-          return;
-        }
-
-        SBDataSetStringValue( "faceplate.status.text", "");
       ]]></handler>
     </handlers>
   </binding>
@@ -2064,6 +2020,12 @@
            Set when loadURI is passed a view, and cleared when
            loading a non media page. -->
       <field name="_viewForPage">null</field>
+      
+      <!-- Indicates that _viewForPage has been newly set
+           by browser.loadURI, and is to be loaded for the 
+           first time in setUpMediaPage.  Used to determine
+           when _viewForPage should be cleared. -->
+      <field name="_isNewViewForPage">false</field>
 
       <method name="setUpMediaListPage">
         <body><![CDATA[
@@ -2074,7 +2036,7 @@
           // do anything with the view we were given.  
           // Throw it away.
           this._viewForPage = null;
-          
+          this._isNewViewForPage = false;
           return;
         }
         dump("MATT: setUpMediaListPage \n");
@@ -2098,21 +2060,14 @@
           
           
           var page = this.mediaListPage;
-
-          // Look for an existing view using the browser history
-          var viewMap =
-            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                      .getService(Components.interfaces.sbIMediaListViewMap);
-
-          var browser = this.linkedBrowser;
-          var history = browser.webNavigation.sessionHistory;
-          var entry = history.getEntryAtIndex( history.index, false );
+          var view;
           
-          var view = viewMap.getView( browser, entry );
-
           // If nothing in the history, were we explicitly passed a view?
-          if (!view && this._viewForPage) {
+          if (this._viewForPage) {
             view = this._viewForPage;  
+            
+            // We've consumed the view, so it is no longer a new load
+            this._isNewViewForPage = false;
           }
           
 
@@ -2128,30 +2083,8 @@
             // TODO change this
             Components.utils.reportError("setUpMediaListPage did not find a view!");
             
-           /**
-              // TODO: This code is from sbLibraryPage.xul.  Once
-              // the old querystring library loading method is 
-              // completely abolished we can add this code into 
-              // tab browser.
-
-                    // TODO: Move into the tab browser.  On media list page load, if no
-                    // list available, or the list is broken somehow, do the following
-
-                    // If something bad happens, freak out.
-                    try {
-                      // If possible, hit the back button if there's something to go back to.
-                      if ( history.previous ) {
-                        history.back();
-                        return;
-                      }
-                    } catch (e) {}
-                    // Otherwise, just show the main library?
-                    location.href =
-                              "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                              libraryManager.mainLibrary.guid;
-                    return;
-               
-            **/ 
+            // TODO, once we get rid of performLegacyInitialization we can
+            // do this.backWithDefault() here
             
           }
         }
@@ -2168,7 +2101,7 @@
         <body><![CDATA[
           dump("\nMATT: list removed!\n");
           this._viewForPage = null;
-          this.linkedBrowser.reload(); 
+          this.backWithDefault();
         ]]></body>
       </method>
 
@@ -2310,6 +2243,21 @@
           this._loadingURL = aLocation.spec;
           this.clearOuterPlaylist();
           this._shouldScan = true;
+          
+          
+          if (!this._isNewViewForPage) {
+
+            // Look for an existing view for this page using the browser history
+            var viewMap =
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                        .getService(Components.interfaces.sbIMediaListViewMap);
+
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            var entry = history.getEntryAtIndex( history.index, false );
+            
+            this._viewForPage = viewMap.getView( browser, entry );
+          }
           
           dump("MATT: onLocationChange + " + aLocation.spec + "\n");
         ]]></body>
@@ -2514,32 +2462,15 @@
           <![CDATA[
             var browser = this.linkedBrowser;
             var history = browser.webNavigation.sessionHistory;
-            var uriSpec;
 
             // Try going back in the history
-            try {
-              if (history.index > 0) {
-                uriSpec =
-                    history.getEntryAtIndex(history.index - 1, false).URI.spec;
-              }
-            } catch (e) { }
-
-            // TODO REMOVE THIS!!!!
-            // Use the main library as default
-            if (!uriSpec) {
-            
-              
-              var libraryManager =
-                  Components
-                        .classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-              uriSpec =
-                    "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                    libraryManager.mainLibrary.guid;
+            if (this.linkedBrowser.canGoBack) {
+              this.linkedBrowser.goBack();
+              return;
             }
 
-            // Go back
-            browser.loadURI(uriSpec, null, null);
+            // Going back failed.  Just go to the library.
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this);
           ]]>
         </body>
       </method>

@@ -239,18 +239,7 @@ function performLegacyInitialization()
       // Try to get the requested library
       library = libraryManager.getLibrary( libraryGUID );
     } catch(e) {
-      // If something bad happens, freak out.
-      try {
-        // If possible, hit the back button if there's something to go back to.
-        if ( history.previous ) {
-          history.back();
-          return;
-        }
-      } catch (e) {}
-      // Otherwise, just show the main library?
-      location.href =
-                "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                libraryManager.mainLibrary.guid;
+      Components.utils.reportError("playlist performLegacyInitialization failed to get library");
       return;
     }
 
@@ -261,18 +250,7 @@ function performLegacyInitialization()
     else try {
       mediaList = library.getMediaItem( mediaListGUID );
     } catch(e) {
-      // If something bad happens, freak out.
-      try {
-        // If possible, hit the back button if there's something to go back to.
-        if ( history.previous ) {
-          history.back();
-          return;
-        }
-      } catch (e) {}
-      // Otherwise, just show the mediaList's library?
-      location.href =
-                "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                library.guid;
+      Components.utils.reportError("playlist performLegacyInitialization failed to get list");
       return;
     }
       
@@ -337,6 +315,7 @@ function performLegacyInitialization()
     else
     {
       // Bad bad bad.
+      Components.utils.reportError("playlist performLegacyInitialization hit unhandled else");
     }
   }
 }
