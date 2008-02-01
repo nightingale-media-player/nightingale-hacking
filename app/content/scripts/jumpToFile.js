@@ -92,7 +92,6 @@ try
   var sync_sort = false;
   
   var search_widget;
-  var source_playlist;
   
   var string_searchedby = "Searched by";
   var string_filteredby = "Filtered by";
@@ -157,9 +156,9 @@ try
         window.arguments[0][0]) {
       window.arguments[0][0].__JUMPTO__ = document;
       search_widget = window.arguments[0][0].__SEARCHWIDGET__;
-      source_playlist = window.arguments[0][1]?window.arguments[0][1].currentPlaylist:null;
+      displayed_view = window.arguments[0][1]?window.arguments[0][1].currentMediaListView:null;
     } else {
-      source_playlist = null;
+      displayed_view = null;
     }
     document.syncJumpTo = syncJumpTo;
     var guid;
@@ -167,7 +166,6 @@ try
     var filters;
     var plsource;
     var libraryguid;
-    if (source_playlist) displayed_view = source_playlist.mediaListView;
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                .getService(Components.interfaces.sbIPlaylistPlayback);
     var view = gPPS.playingView;
@@ -176,18 +174,11 @@ try
       guid = view.mediaList.guid;
       libraryguid = view.mediaList.library.guid;
     } else {
-      if (source_playlist) {
+      if (displayed_view) {
         // nothing playing, but a playlist object is visible in the source window
-        displayed_view = source_playlist.mediaListView;
-        if (!displayed_view) {
-          // use main library
-          guid = libraryManager.mainLibrary.guid;
-          libraryguid = guid;
-        } else {
-          guid = displayed_view.mediaList.guid;
-          libraryguid = displayed_view.mediaList.library.guid;
-          view = displayed_view;
-        }
+        guid = displayed_view.mediaList.guid;
+        libraryguid = displayed_view.mediaList.library.guid;
+        view = displayed_view;
       } else {
         // nothing playing, no playlist object in source window, use the library
         guid = libraryManager.mainLibrary.guid;
@@ -232,7 +223,7 @@ try
     } else {
       view = gPPS.playingView;
       if (!view) 
-        view = source_playlist.mediaListView;
+        view = displayed_view;
       search = _getSearchString( view );
       filters = _getFilters( view );
       guid = view.mediaList.guid;
@@ -473,7 +464,7 @@ try
     var rowid;
     if (!play_own_view) {
       if (sync_sort) 
-        source_view.setSort(jumpto_view.getSort());
+        source_view.setSort(jumpto_view.currentSort);
       rowid = source_view.getIndexForItem( mediaItem );
     } else {
       rowid = first;

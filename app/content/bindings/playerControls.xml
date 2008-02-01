@@ -1577,17 +1577,16 @@
               var mediafound = SBString("faceplate.mediafound", "Media Found");
               var percent = Math.round(browser.mCurrentTab.scanProgress*100);
               displayValue = mediafound + ': ' + percent + '%';
-            } else if (browser.currentPlaylist != null &&
-                       browser.currentPlaylist.mediaListView != null) {
+            } else if (browser.currentMediaListView != null) {
+              var mediaListView = browser.currentMediaListView; 
               // HOORAY!!  It's okay for mediaListView.length to throw!
               var length = 0;
               try {
-                length = browser.currentPlaylist.mediaListView.length;
+                length = mediaListView.length;
               } catch(e) {
                 Components.utils.reportError(e);
                 length = 0;
               }
-
               if ( length > 0 ) {
                 // display media list length
                 var displayFormat = SBString("faceplate.itemsformat." + length,
