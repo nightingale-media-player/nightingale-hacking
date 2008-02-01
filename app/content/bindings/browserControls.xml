@@ -119,13 +119,9 @@
           // populate the ui with a little help from our servicepane
           var text = null;
           var props = "";
-      
-          var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
-                                      .getService(Components.interfaces.sbIServicePaneService);
-          servicePane.init();
-
-          var servicePaneNode = servicePane.getNodeForURL(val);
-
+          
+          var servicePaneNode = this.browser.selectedTab.servicePaneNode;
+          
           // The look of the tab may be controlled by
           // the service pane info
           if (servicePaneNode) {

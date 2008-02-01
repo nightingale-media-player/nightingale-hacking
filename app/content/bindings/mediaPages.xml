@@ -64,9 +64,28 @@
       -->
       <method name="onCommand">
         <parameter name="item"/>
+        <parameter name="event"/>
         <body>
         <![CDATA[
-          item.onCommand();
+          try {
+            if (item.mediaPage && gBrowser.currentMediaPage) {
+            
+              // Set the given media page as the default for the current list
+              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaListPageManager);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList, item.mediaPage);
+                      
+              // Reload using the new page
+              gBrowser.loadMediaList(
+                gBrowser.currentMediaListView.mediaList,  
+                event,
+                null, 
+                gBrowser.currentMediaListView, 
+                null);
+            }
+          } catch (e) { 
+            Components.utils.reportError(e);
+          }
         ]]>
         </body>
       </method>
@@ -92,15 +111,23 @@
 
           // Make a disabled menuitem to act as a label above the page items
           var item = document.createElement("menuitem");
-            item.setAttribute("label", ml.name);
-            item.setAttribute("name", "mediapage.item");
-            item.setAttribute("disabled", "true");
-            item.setAttribute("class", "mediapage-menu-selected-page-title");
+          item.setAttribute("label", ml.name);
+          item.setAttribute("name", "mediapage.item");
+          item.setAttribute("disabled", "true");
+          item.setAttribute("class", "mediapage-menu-selected-page-title");
           this._addToMenu(item);
           
           var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
                         .getService(Components.interfaces.sbIMediaListPageManager);
           var pages = mgr.getAvailablePages(ml);
+          
+          // Trim the media list GUID from the querystring so that we can
+          // match it to the list of pages.  The guid is added by the
+          // tab browser so that each page instance shows up in the history
+          // service. This is unfortunate.   
+          var currentPageURL = gBrowser.currentURI
+                                      .spec.replace(/[\?&]libraryGUID.*$/, "");
+
           
           // Attach a menuitem for each compatible layout
           while (pages.hasMoreElements()) {
@@ -109,7 +136,7 @@
             
             var item = this._makeMenuItem(page);
             
-            if (page.contentUrl == gBrowser.currentURI.spec) {
+            if (page.contentUrl == currentPageURL) {
               item.setAttribute("checked", "true");
             }
             else {
@@ -140,17 +167,8 @@
           var item = document.createElement("menuitem");
           item.setAttribute("label", page.contentTitle);
           item.setAttribute("name", "mediapage.item");
-          item.setAttribute("pageUrl", page.contentUrl);
           item.setAttribute("type", "radio");
-          
-          item.onCommand = function() {
-            gBrowser.loadURI(
-              page.contentUrl,
-              null, null, null,
-              '_top',
-              gBrowser.currentMediaPage.mediaListView
-            );
-          }
+          item.mediaPage = page;
           return item;
         ]]>
         </body>

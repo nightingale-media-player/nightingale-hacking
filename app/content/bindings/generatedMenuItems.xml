@@ -94,7 +94,7 @@
                 }
               break;
               case "command":
-                var handled = this.onCommand(event.target);
+                var handled = this.onCommand(event.target, event);
                 if (handled) {
                   event.stopPropagation();
                   event.preventDefault();

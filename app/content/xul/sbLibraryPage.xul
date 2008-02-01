@@ -114,31 +114,8 @@ window.mediaListPage = {
     // just run the original init functionality.
     if (!this._mediaListView) {
       performLegacyInitialization();
-    } else {
+    } 
     
-      // TODO Move this rule out into the page manager
-      // If we're a library, set our desired filterlists
-      if ( this._mediaListView.mediaList instanceof Ci.sbILibrary ) {
-        // Restore the last library filterset or set our defaults
-        var desiredFilterSet;
-        var defaultFilterSet = [
-          SBProperties.year,
-          SBProperties.artistName,
-          SBProperties.albumName
-        ];
-        var savedFilterSet = SBDataGetStringValue( "library.filterset" );
-        if ( savedFilterSet.length > 0 ) {
-          desiredFilterSet = savedFilterSet.split(";");
-        } else {
-          desiredFilterSet = defaultFilterSet;
-        }
-        var filter = this._mediaListView.cascadeFilterSet;
-        for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
-          filter.appendFilter(desiredFilterSet[i]);
-        }
-      }
-    }
-
     this._playlist = document.getElementById("sb-library-page-playlist");
 
     // TODO: Get cmds that are appropriate for the list    

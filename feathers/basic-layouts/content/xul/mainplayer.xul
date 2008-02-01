@@ -152,7 +152,6 @@
             <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
             <vbox id="appcontent" flex="1">
               <sb-tabbrowser id="content" flex="1"
-                             servicepane="servicepane"
                              contentcontextmenu="contentAreaContextMenu"
                              />
             </vbox>

@@ -207,23 +207,7 @@ Imported by bindings.css or directly into feathers.
   -moz-image-region: rect(16px 110px 24px 99px);
 }
 
-
-/* Toolbar: switch to webplaylist Button */
-#library_cmd_showwebplaylist
-{
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
-  -moz-image-region: rect(0px 132px 8px 121px);
-}
-#library_cmd_showwebplaylist:hover
-{
-  -moz-image-region: rect(8px 132px 16px 121px);
-}
-#library_cmd_showwebplaylist[disabled="true"]
-{
-  -moz-image-region: rect(16px 132px 24px 121px);
-}
-
-                        
+    
                         
 
 

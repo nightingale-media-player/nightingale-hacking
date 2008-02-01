@@ -311,6 +311,66 @@
           this.tabStateRestored = true;
         ]]></body>
       </method>
+      
+      
+      <!-- Override tabBrowser.setTabeTitle in order to support
+           service pane icons and titles for chrome URLs -->
+      <method name="setTabTitle">
+        <parameter name="aTab"/>
+        <body>
+          <![CDATA[
+            var browser = this.getBrowserForTab(aTab);
+            var crop = "end";
+            var title = browser.contentTitle;
+
+            if (!title) {
+              if (browser.currentURI.spec) {
+              
+                //XXXAus: Looks like we have a chrome URL. Let's try and see if it has 
+                //a pretty name registered with the service pane so that we can match what
+                //the location bar will have (ie, Library, not chrome://songbird[...]).
+                if (browser.currentURI.scheme == "chrome") {
+                  // If we have a servicepane node, use it for the title
+                  var servicePaneNode = aTab.servicePaneNode
+                  if (servicePaneNode && servicePaneNode.name) {
+                    title = servicePaneNode.name;
+                  }
+                }
+              
+                //XXXAus: Looks like the service pane didn't have a pretty name for 
+                //this chrome URI. Let's fallback to using the URI itself. This also
+                //works for all other types of schemes (http, ftp, etc).
+                if (!title) {
+                  try {
+                    title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
+                  } catch(ex) {
+                    title = browser.currentURI.spec;
+                  }
+                }
+              }
+
+              if (title && title != "about:blank") {
+                // At this point, we now have a URI.
+                // Let's try to unescape it using a character set
+                // in case the URI is not ASCII.
+                try {
+                  var characterSet = browser.contentDocument.characterSet;
+                  const textToSubURI = Components.classes["@mozilla.org/intl/texttosuburi;1"]
+                                                 .getService(Components.interfaces.nsITextToSubURI);
+                  title = textToSubURI.unEscapeNonAsciiURI(characterSet, title);
+                } catch(ex) { /* Do nothing. */ }
+
+                crop = "center";
+
+              } else // Still no title?  Fall back to our untitled string.
+                title = this.mStringBundle.getString("tabs.untitled");
+            }
+
+            aTab.label = title;
+            aTab.setAttribute("crop", crop);
+          ]]>
+        </body>
+      </method>
 
       <method name="_checkTarget">
         <parameter name="aTarget"/>
@@ -353,7 +413,7 @@
            and optionally an aEvent and aMediaListView.
 
            aMediaListView will be provided to the tab and used if a
-           playlist is loaded.
+           media page is loaded.
            -->
       <method name="loadURI">
         <parameter name="aURI"/>
@@ -379,16 +439,14 @@
               }
             }
 
-            // Policy goes here
-
             // Now, actually open the URI
             if (where == "_blank") {
               var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
-              tab.viewForNextPlaylist = aMediaListView;
+              tab._viewForPage = aMediaListView;
               retval = tab;
             } else if (where == "_top") {
               this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
-              this.mCurrentTab.viewForNextPlaylist = aMediaListView;
+              this.mCurrentTab._viewForPage = aMediaListView;
               retval = this.mCurrentTab;
             } else {
               // eek! unknown target
@@ -398,7 +456,8 @@
         </body>
       </method>
 
-      <!-- TODO: Comment -->
+      <!-- Use a Media Page to display the given list and
+           (optional) view. -->
       <method name="loadMediaList">
         <parameter name="aMediaList"/>
         <parameter name="aEvent"/>
@@ -430,12 +489,53 @@
               // TODO set somewhere using 
               // var valArray = searchTerm.split(" ");
               // filter.set(0, valArray, valArray.length);
+              
+              // If we're a library, set our desired filterlists
+              
+              // TODO this may need to be moved!
+              // Pages should inspect the filters applied to the view
+              // they are given and respond accordingly. 
+              
+              if ( aMediaListView.mediaList instanceof Ci.sbILibrary ) {
+                // Restore the last library filterset or set our defaults
+                var desiredFilterSet;
+                var defaultFilterSet = [
+                  SBProperties.year,
+                  SBProperties.artistName,
+                  SBProperties.albumName
+                ];
+                var savedFilterSet = SBDataGetStringValue( "library.filterset" );
+                if ( savedFilterSet.length > 0 ) {
+                  desiredFilterSet = savedFilterSet.split(";");
+                } else {
+                  desiredFilterSet = defaultFilterSet;
+                }
+                for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
+                  filter.appendFilter(desiredFilterSet[i]);
+                }
+              }
             }
 
-            // TODO figure out which url to load.  For now continue hardcoding
+            // If no URL was provided, get the default from the page manager
             if (!aPageURL) {
-              aPageURL = 'chrome://songbird/content/xul/sbLibraryPage.xul';
+              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaListPageManager);
+              var page = mgr.getPage(aMediaList);
+              aPageURL = page.contentUrl;
             }
+            
+            // Attach the guids to the querystring so that the page
+            // gets a unique browser history entry.  
+            // I would have preferred to use a # instead of a querystring, 
+            // but anchors are ignored in loadURI.
+            if (aPageURL.indexOf("?") != -1) {
+              aPageURL += "&";
+            } else {
+              aPageURL += "?"
+            }
+            aPageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
+                        "&listGUID=" + escape(aMediaList.guid);
+
                                     
             this.loadURI(aPageURL, null, null, aEvent, aDefaultLocation, aMediaListView);
           ]]>
@@ -443,7 +543,7 @@
       </method>
       
       
-      <!-- Use a MediaListPage to display the list with 
+      <!-- Use a Media Page to display the list with 
            the given library/list GUIDs -->
       <method name="loadMediaListGUID">
         <parameter name="aLibraryGUID"/>
@@ -478,38 +578,16 @@
         Components.classes["@mozilla.org/preferences-service;1"].
                 getService(Components.interfaces.nsIPrefBranch);
       </field>
+      
 
-      <field name="_servicepane">null</field>
-      <property name="servicepane">
-        <getter><![CDATA[
-          if (!this._servicepane) {
-            this._servicepane =
-                document.getElementById(this.getAttribute('servicepane'));
-          }
-          return this._servicepane;
-        ]]></getter>
-      </property>
-
-
+      <!-- TODO Remove the following once all media pages cleanup is finished -->
       <property name="playlist">
         <getter><![CDATA[
           return this.currentOuterPlaylist;
         ]]></getter>
       </property>
-
-
-      <!-- Get the playlist element from within the document in the current tab.
-           Returns null if no playlist element is available
-        -->
       <property name="currentInnerPlaylist" readonly="true"
                 onget="return this.mCurrentTab.innerPlaylist" />
-
-      <!-- get the web playlist for the current tab -->
-      <property name="currentOuterPlaylist" readonly="true"
-                onget="return this.mCurrentTab.outerPlaylist" />
-
-      <!-- get the current page playlist if one exists or the current web
-           playlist if that's all we have -->
       <property name="currentPlaylist" readonly="true">
         <getter><![CDATA[
           var pl = this.currentInnerPlaylist;
@@ -519,21 +597,6 @@
           return pl;
         ]]></getter>
       </property>
-      
-      <!-- Get the sbIMediaListPage for the current tab -->
-      <property name="currentMediaPage" readonly="true"
-                onget="return this.mCurrentTab.mediaListPage" />
-
-      <!-- Get the sbIMediaListView for the current tab.
-           May come from the web playlist or media list page. -->
-      <property name="currentMediaListView" readonly="true"
-                onget="return this.mCurrentTab.mediaListView" />
-
-      <!-- control the visibility of the web playlist on the current tab -->
-      <property name="currentOuterPlaylistShowing"
-                onget="return this.mCurrentTab.outerPlaylistShowing"
-                onset="this.mCurrentTab.outerPlaylistShowing = val" />
-
       <property name="playlistTree" readonly="true">
         <getter><![CDATA[
           var pl = this.currentPlaylist;
@@ -545,6 +608,25 @@
         ]]></getter>
       </property>
 
+
+
+      <!-- Get the web playlist for the current tab -->
+      <property name="currentOuterPlaylist" readonly="true"
+                onget="return this.mCurrentTab.outerPlaylist" />
+
+      <!-- control the visibility of the web playlist on the current tab -->
+      <property name="currentOuterPlaylistShowing"
+                onget="return this.mCurrentTab.outerPlaylistShowing"
+                onset="this.mCurrentTab.outerPlaylistShowing = val" />
+
+      <!-- Get the sbIMediaListPage for the current tab -->
+      <property name="currentMediaPage" readonly="true"
+                onget="return this.mCurrentTab.mediaListPage" />
+
+      <!-- Get the sbIMediaListView for the current tab.
+           May come from the web playlist or media list page. -->
+      <property name="currentMediaListView" readonly="true"
+                onget="return this.mCurrentTab.mediaListView" />
 
 
 
@@ -565,45 +647,6 @@
           var value = (val)?true:false;
           this.currentOuterPlaylistShowing = value;
         ]]></setter>
-      </property>
-
-      <!-- These should match the values in sbLibraryManager.h -->
-      <field name="PREF_WEB_LIBRARY">"songbird.library.web"</field>
-      <field name="PREF_DOWNLOAD_LIBRARY">"songbird.library.download"</field>
-
-      <field name="_downloadList">null</field>
-      <property name="downloadList">
-        <getter><![CDATA[
-          if (this._downloadList) {
-            return this._downloadList;
-          }
-
-          var guid = this._getUnicodeStringPref(this.PREF_DOWNLOAD_LIBRARY);
-
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-          var mainLibrary = libraryManager.mainLibrary;
-
-          return this._downloadList = mainLibrary.getMediaItem(guid);
-        ]]></getter>
-      </property>
-
-      <field name="_webLibrary">null</field>
-      <property name="webLibrary">
-        <getter><![CDATA[
-          if (this._webLibrary) {
-            return this._webLibrary;
-          }
-
-          var guid = this._getUnicodeStringPref(this.PREF_WEB_LIBRARY);
-
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-
-          return this._webLibrary = libraryManager.getLibrary(guid);
-        ]]></getter>
       </property>
 
       <method name="getTabForView">
@@ -663,14 +706,8 @@
 
               this.mCurrentBrowser.contextMenu = null;
               
-              // Since this is a chrome URL the service pane
-              // may have extra information about the location
-              var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
-                                          .getService(Components.interfaces.sbIServicePaneService);
-              servicePane.init();
-
-              var servicePaneNode = servicePane.getNodeForURL(aLocation.spec);
-
+              var servicePaneNode = this.mCurrentTab.servicePaneNode;
+              
               // The look of the tab may be controlled by
               // the service pane info
               if (servicePaneNode) {
@@ -805,6 +842,12 @@
         ]]></body>
       </method>
       
+      
+      
+      <!-- TODO rethink/remove these playback related methods as part
+           of the media pages playback task -->
+      
+      
 
       <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
            I'm not convinced they belong here, but till we refactor a couple
@@ -856,7 +899,9 @@
           // plays the library from that point on)
           // if the url is already in the lib, it is not added twice
           var item = SBImportURLIntoWebLibrary(aURL);
-          SBDisplayViewForListAndPlayItem(SBGetWebLibrary(), item);
+          
+          
+          SBDisplayViewForListAndPlayItem(LibraryUtils.webLibrary, item);
         ]]></body>
       </method>
 
@@ -890,7 +935,7 @@
                    scheme != "resource" &&
                    scheme != "chrome" &&
                    scheme != "jar" ) {
-                library = SBGetWebLibrary();
+                library = LibraryUtils.webLibrary;
               }
               else {
                 library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -1003,6 +1048,8 @@
           return retval;
         ]]></body>
       </method>
+
+
 
       <method name="onRemoteAPI">
         <parameter name="event" />
@@ -1148,7 +1195,6 @@
         <parameter name="aPriority"/>
         <parameter name="aButtons"/>
         <body><![CDATA[
-          debugger;
           var browser = aBrowser;
           if (aBrowser instanceof Document) {
             // given a document; find the containing <browser> instead
@@ -1363,37 +1409,7 @@
 
       <field name="theHTMLContextURL">null</field>
 
-      <!-- override navigation methods from tabbrowser for fun and profit -->
-      <!-- I'm not convinced these are actually required -->
-      <method name="goBack">
-        <body><![CDATA[
-          // Disable the "add to playlist" button until we see that there is anything to add.
-          SBDataSetBoolValue("browser.canplaylist", false);
-          this.showWebPlaylist = false;
-          return this.mCurrentBrowser.goBack();
-        ]]></body>
-      </method>
-      <method name="goForward">
-        <body><![CDATA[
-          // Disable the "add to playlist" button until we see that there is anything to add.
-          SBDataSetBoolValue("browser.canplaylist", false);
-          this.showWebPlaylist = false;
-          return this.mCurrentBrowser.goForward();
-        ]]></body>
-      </method>
-      <method name="reload">
-        <body><![CDATA[
-        
-          // TODO Reload + mediaListPage doesn't work so well
-          // need to highjack this somehow.
-          return this.mCurrentBrowser.reload();
-        ]]></body>
-      </method>
-      <method name="stop">
-        <body><![CDATA[
-          return this.mCurrentBrowser.stop();
-        ]]></body>
-      </method>
+      <!-- Override tabBrowser.xul homepage.  Uses mozilla.org by default -->
       <property name="homePage">
         <getter><![CDATA[
           return Application.prefs.get("browser.startup.homepage").value;
@@ -1405,15 +1421,6 @@
       <method name="goHome">
         <body><![CDATA[
           this.loadURI(this.homePage, null, null);
-        ]]></body>
-      </method>
-
-      <method name="_getUnicodeStringPref">
-        <parameter name="prefKey"/>
-        <body><![CDATA[
-          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch2);
-          return prefs.getComplexValue(prefKey, Components.interfaces.nsISupportsString);
         ]]></body>
       </method>
 
@@ -1555,38 +1562,12 @@
 
         SBDataSetStringValue( "faceplate.status.text", "");
       ]]></handler>
-      <handler event="unload" phase="capturing"><![CDATA[
-        // If we are about to unload a page that has a playlist, save its
-        // state
-        var contentDocument = event.target;
-        var playlist = contentDocument.getElementById("sb-library-page-playlist");
-        if (!(contentDocument.location.protocol == "chrome:" && playlist)) {
-          return;
-        }
-
-        // Since we got this playlist from untrusted content, we need to
-        // unwrap it
-        playlist = playlist.wrappedJSObject;
-        var tab = this.getTabForDocument(contentDocument);
-        if (!tab) {
-          // if the tab is being closed, the <tab> and <browser> go away from
-          // the DOM before the unload happens, so we can't get the tab
-          // fortunately, we also don't want to save the state in that case
-          return;
-        }
-
-        var browser = tab.linkedBrowser;
-        var history = browser.webNavigation.sessionHistory;
-        var entry = history.getEntryAtIndex( history.index, false );
-
-        // TODO this needs to be updated
-        var viewMap =
-          Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                    .getService(Components.interfaces.sbIMediaListViewMap);
-        viewMap.setView(browser, entry, playlist.getListView());
-      ]]></handler>
     </handlers>
   </binding>
+
+
+
+
 
 
   <!-- these are from globalBindings.xml -->
@@ -1610,6 +1591,8 @@
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._hrefLoop = null;
+        
+        // TODO destroy
         this._onplaylistplay = {
           _that: null,
           handleEvent: function( event ) { this._that.onPlaylistPlay(event); }
@@ -1622,6 +1605,19 @@
           Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
         
+        // Watch for page unloading so that we can store
+        // the MediaListView state in the history
+        this._onBrowserUnloadListener = function(e) {
+          if (e.target.wrappedJSObject && 
+            e.target.wrappedJSObject == self.linkedBrowser.contentDocument) 
+          {
+            self.onBrowserUnload(e);
+          }
+        }
+        window.addEventListener("unload", 
+              this._onBrowserUnloadListener, true);
+        
+        
         // Watch the inner medialist in case the tab needs to be closed                         
         this._mediaListRemovalMonitor = new LibraryUtils.RemovalMonitor(this);
         
@@ -1629,6 +1625,8 @@
      <destructor><![CDATA[
         dump("MATT: tab DESTRUCTOR\n");
         this.closeBalloonTip();
+        
+        // TODO remove once playlist widget and playback refactoring are complete
         if (this.previousInnerPlaylist) {
           this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
           this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
@@ -1644,6 +1642,9 @@
         this._progressFilter.removeProgressListener(this);
         this.linkedBrowser.removeProgressListener(this._progressFilter);
         
+        window.removeEventListener("unload", 
+              this._onBrowserUnloadListener, true);
+        
         if (this._mediaListRemovalMonitor) {
           this._mediaListRemovalMonitor.setMediaList(null);
           this._mediaListRemovalMonitor = null;
@@ -1654,48 +1655,6 @@
       
       <!-- LibraryUtils.RemovalMonitor -->
       <field name="_mediaListRemovalMonitor">null</field>
-
-      <field name="_webLibraryCache">null</field>
-      <property name="_webLibrary">
-        <getter><![CDATA[
-          if (this._webLibraryCache) {
-            return this._webLibraryCache;
-          }
-
-          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch2);
-          var guid = prefs.getComplexValue("songbird.library.web",
-                                           Components.interfaces.nsISupportsString);
-
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-
-          return (this._webLibraryCache = libraryManager.getLibrary(guid));
-        ]]></getter>
-      </property>
-
-      <field name="_downloadListCache">null</field>
-      <property name="_downloadList">
-        <getter><![CDATA[
-          if (this._downloadListCache) {
-            return this._downloadListCache;
-          }
-
-          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefBranch2);
-          var guid = prefs.getComplexValue("songbird.library.download",
-                                           Components.interfaces.nsISupportsString);
-
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-
-          var mainLibrary = libraryManager.mainLibrary;
-
-          return (this._downloadListCache = mainLibrary.getMediaItem(guid));
-        ]]></getter>
-      </property>
 
       <field name="_metrics">null</field>
 
@@ -1824,16 +1783,6 @@
         ]]></getter>
       </property>
 
-      <method name="getPlaylist">
-        <body><![CDATA[
-          if ( this.innerPlaylist ) {
-            return this.innerPlaylist;
-          } else {
-            return this._playlist;
-          }
-        ]]></body>
-      </method>
-
       <!-- sbITabBrowserTab -->
       <method name="hideOuterPlaylist">
         <body><![CDATA[
@@ -1877,7 +1826,16 @@
       </property>
 
 
-      <!-- sbITabBrowserTab -->
+      <!-- TODO remove once all media pages cleanup is complete -->
+      <method name="getPlaylist">
+        <body><![CDATA[
+          if ( this.innerPlaylist ) {
+            return this.innerPlaylist;
+          } else {
+            return this._playlist;
+          }
+        ]]></body>
+      </method>
       <property name="innerPlaylist" readonly="true">
         <getter><![CDATA[
           if (!this.linkedBrowser.currentURI) {
@@ -1940,12 +1898,11 @@
       <!-- sbITabBrowserTab -->
       <property name="mediaListView" readonly="true">
         <getter><![CDATA[
-          if (this.mediaListPage) {
+          if (this.mediaListPage && this.mediaListPage.mediaListView) {
             return this.mediaListPage.mediaListView;
           } 
-          // TODO rename
-          if (this.viewForNextPlaylist) {
-            return this.viewForNextPlaylist;
+          if (this._viewForPage) {
+            return this._viewForPage;
           } 
           if (this.outerPlaylist && this.outerPlaylist.mediaListView) {
             return this.outerPlaylist.mediaListView;
@@ -1983,6 +1940,32 @@
           this.scanProgress = -1;
         ]]></body>
       </method>
+      
+      <!-- The service pane node corresponding to this tab, 
+           if one exists. -->
+      <property name="servicePaneNode" readonly="true">
+        <getter><![CDATA[
+
+          // Since this is a chrome URL the service pane
+          // may have extra information about the location
+          var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+                                      .getService(Components.interfaces.sbIServicePaneService);
+          servicePane.init();
+          var servicePaneNode = servicePane.getNodeForURL(this.linkedBrowser.currentURI.spec); 
+
+          // If we couldnt find a node for the URL, try
+          // looking it up by media list
+          if (!servicePaneNode && this.mediaListView) {
+            var mediaList = this.mediaListView.mediaList;
+            var libraryServicePane = 
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+            servicePaneNode = libraryServicePane.getNodeForLibraryResource(mediaList);
+          }
+
+          return servicePaneNode;
+        ]]></getter>
+      </property>      
 
       <method name="scanWebPage">
         <body><![CDATA[
@@ -2076,13 +2059,22 @@
         ]]></body>
       </method>
 
-      <!-- TODO Rename -->
-      <field name="viewForNextPlaylist">null</field>
+      <!-- Holds an sbIMediaListView that is to be handed to the
+           window if it turns out to be a Media Page.  
+           Set when loadURI is passed a view, and cleared when
+           loading a non media page. -->
+      <field name="_viewForPage">null</field>
 
       <method name="setUpMediaListPage">
         <body><![CDATA[
         if (!this.mediaListPage) {
           dump("MATT: setUpMediaListPage - NO PAGE FOUND \n");
+          
+          // The loaded page is not a MediaPage, so we can't
+          // do anything with the view we were given.  
+          // Throw it away.
+          this._viewForPage = null;
+          
           return;
         }
         dump("MATT: setUpMediaListPage \n");
@@ -2090,7 +2082,7 @@
         try {          
           // For now we need to keep the playlist happy.
           // This should go away once the commands system is updated.
-          // TODO: Remove this
+          // TODO: Remove this once widget and playback refactoring is complete
           if (this.previousInnerPlaylist) {
             this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
             this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
@@ -2106,28 +2098,24 @@
           
           
           var page = this.mediaListPage;
-          var view;
 
-          // TODO Rewrite this old code.  Need a cleaner method of 
-          // passing in the new view
-          if (this.viewForNextPlaylist) {
-            view = this.viewForNextPlaylist;
-            this.viewForNextPlaylist = null;
-          } else {
-            // Is there something to restore?
+          // Look for an existing view using the browser history
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
 
-            // Look for an existing view using the browser history
-            var viewMap =
-              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                        .getService(Components.interfaces.sbIMediaListViewMap);
+          var browser = this.linkedBrowser;
+          var history = browser.webNavigation.sessionHistory;
+          var entry = history.getEntryAtIndex( history.index, false );
+          
+          var view = viewMap.getView( browser, entry );
 
-            var browser = this.linkedBrowser;
-            var history = browser.webNavigation.sessionHistory;
-            var entry = history.getEntryAtIndex( history.index, false );
-            
-            view = viewMap.getView( browser, entry );
+          // If nothing in the history, were we explicitly passed a view?
+          if (!view && this._viewForPage) {
+            view = this._viewForPage;  
           }
           
+
           if (view) {
             page.mediaListView = view;
 
@@ -2174,110 +2162,63 @@
       </method>
       
 
-      <!-- Called if the medialist in the inner playlist 
+      <!-- Called if the medialist in the browser
            is removed from the system -->
       <method name="onMediaListRemoved">
         <body><![CDATA[
           dump("\nMATT: list removed!\n");
+          this._viewForPage = null;
           this.linkedBrowser.reload(); 
         ]]></body>
       </method>
 
-      <field name="_swappedPlaylistView">null</field>
-
-      <method name="switchToWebPlaylistView">
+      <method name="_getWebMediaListForURL">
+        <parameter name="aURL"/>
+        <parameter name="aTitle"/>
         <body><![CDATA[
-          var view;
-          if (this._swappedPlaylistView) {
-            view = this._swappedPlaylistView;
-            this._swappedPlaylistView = null;
+          var listener = {
+            foundList: null,
+            onEnumerationBegin: function onEnumerationBegin(list) {
+            },
+            onEnumeratedItem: function onEnumeratedItem(list, item) {
+              if (!(item instanceof Components.interfaces.sbIMediaList)) {
+                throw new Error("Given an item, not a list!");
+              }
+              this.foundList = item;
+              return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+            },
+            onEnumerationEnd: function onEnumerationEnd(list) {
+            }
+          };
+
+          var propArray =
+            Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                      .createInstance(Components.interfaces.sbIMutablePropertyArray);
+          propArray.appendProperty(SBProperties.originPage, aURL);
+          propArray.appendProperty(SBProperties.isList, "1");
+
+          var webLibrary = LibraryUtils.webLibrary;
+          webLibrary.enumerateItemsByProperties(propArray, listener );
+
+          if (listener.foundList) {
+            return listener.foundList;
           }
-          else {
-            // This code should never run unless someone calls this function
-            // manually outside of the SBDownloadCommands object.
 
-            dump("*** WARNING: switchToWebPlaylistView called with no " +
-                 "swappedPlaylistView!\n");
+          var propArray = [
+              [SBProperties.originPage, aURL],
+              [SBProperties.originPageTitle, aTitle]
+            ];
 
-            var mediaList =
-              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec,
-                                          this.linkedBrowser.contentTitle);
-            view = mediaList.createView();
-          }
+          // Make a new list and set the originPage property.
+          var newList = webLibrary.createMediaList("simple", SBProperties.createArray(propArray));
 
-          var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
+          // XXXben Do this for now because the new AddToPlaylist code sweeps
+          //        all non-hidden media lists from *all* libraries.
+          newList.setProperty(SBProperties.hidden, "1");
 
-          this.outerPlaylist.bind(view, cmds/*SBWebPlaylistCommands*/,
-                                  SBDataGetIntValue("browser.playlist.height"),
-                                  SBDataGetBoolValue("browser.playlist.collapsed"));
+          return newList;
         ]]></body>
       </method>
-
-      <method name="switchToDownloadView">
-        <body><![CDATA[
-          // Make sure the download device has been added to the commands object.
-          var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST);
-
-          // Save this for later if we swap back.
-          this._swappedPlaylistView = this.outerPlaylist.mediaListView;
-
-          var view = this._downloadList.createView();
-
-          this.outerPlaylist.bind(view, cmds,
-                                  SBDataGetIntValue("browser.playlist.height"),
-                                  SBDataGetBoolValue("browser.playlist.collapsed"));
-        ]]></body>
-        </method>
-
-        <method name="_getWebMediaListForURL">
-          <parameter name="aURL"/>
-          <parameter name="aTitle"/>
-          <body><![CDATA[
-            var listener = {
-              foundList: null,
-              onEnumerationBegin: function onEnumerationBegin(list) {
-              },
-              onEnumeratedItem: function onEnumeratedItem(list, item) {
-                if (!(item instanceof Components.interfaces.sbIMediaList)) {
-                  throw new Error("Given an item, not a list!");
-                }
-                this.foundList = item;
-                return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-              },
-              onEnumerationEnd: function onEnumerationEnd(list) {
-              }
-            };
-
-            var propArray =
-              Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                        .createInstance(Components.interfaces.sbIMutablePropertyArray);
-            propArray.appendProperty(SBProperties.originPage, aURL);
-            propArray.appendProperty(SBProperties.isList, "1");
-
-            var webLibrary = this._webLibrary;
-            webLibrary.enumerateItemsByProperties(propArray, listener );
-
-            if (listener.foundList) {
-              return listener.foundList;
-            }
-
-            var propArray = [
-                [SBProperties.originPage, aURL],
-                [SBProperties.originPageTitle, aTitle]
-              ];
-
-            // Make a new list and set the originPage property.
-            var newList = webLibrary.createMediaList("simple", SBProperties.createArray(propArray));
-
-            // XXXben Do this for now because the new AddToPlaylist code sweeps
-            //        all non-hidden media lists from *all* libraries.
-            newList.setProperty(SBProperties.hidden, "1");
-
-            return newList;
-          ]]></body>
-        </method>
 
       <!-- Used to save the URL that is loading so that we can properly match
            the web progress messages -->
@@ -2300,7 +2241,9 @@
           if (document.tooltipNode) {
             // Optimise for the common case
             if (aWebProgress.DOMWindow == content) {
-              document.getElementById("aHTMLTooltip").hidePopup();
+              // TODO: Songbird does not have an aHTMLTooltip! 
+              // This needs to be copied from browser.xul!
+              //document.getElementById("aHTMLTooltip").hidePopup();
               document.tooltipNode = null;
             }
             else {
@@ -2309,7 +2252,9 @@
                     tooltipWindow != tooltipWindow.parent;
                     tooltipWindow = tooltipWindow.parent) {
                 if (tooltipWindow == aWebProgress.DOMWindow) {
-                  document.getElementById("aHTMLTooltip").hidePopup();
+                  // TODO: Songbird does not have an aHTMLTooltip! 
+                  // This needs to be copied from browser.xul!
+                  //document.getElementById("aHTMLTooltip").hidePopup();
                   document.tooltipNode = null;
                   break;
                 }
@@ -2426,6 +2371,33 @@
         <body><![CDATA[ ]]></body>
       </method>
 
+      <!-- Called when the page in the linked browser is unloaded -->
+      <method name="onBrowserUnload">
+        <parameter name="evt"/>
+        <body>
+        <![CDATA[
+          dump("MATT: tab.onBrowserUnload\n");                    
+           
+          // For now only save view history for chrome media list pages
+          if (!this.linkedBrowser.currentURI.schemeIs("chrome") ||
+              !this.mediaListPage) {
+            return;
+          }
+
+          var browser = this.linkedBrowser;
+          var history = browser.webNavigation.sessionHistory;
+          var entry = history.getEntryAtIndex( history.index, false );
+
+          // TODO why dont we care about saving view history for web pages?
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
+          viewMap.setView(browser, entry, this.mediaListPage.mediaListView);
+        ]]>
+        </body>
+      </method>
+
+      <!-- TODO should be removed as part of the playlist refactoring -->
       <method name="onPlaylistEditor">
         <parameter name="evt"/>
         <body>
@@ -2448,6 +2420,7 @@
         </body>
       </method>
 
+      <!-- TODO should be removed as part of the playback refactoring -->
       <method name="onPlaylistPlay">
         <parameter name="evt"/>
         <body>
@@ -2462,6 +2435,7 @@
         </body>
       </method>
 
+      <!-- TODO should be removed as part of the playback refactoring -->
       <method name="playPlaylistIndex">
         <parameter name="index"/>
         <parameter name="playlist"/>
@@ -2553,6 +2527,8 @@
             // TODO REMOVE THIS!!!!
             // Use the main library as default
             if (!uriSpec) {
+            
+              
               var libraryManager =
                   Components
                         .classes["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -2564,20 +2540,6 @@
 
             // Go back
             browser.loadURI(uriSpec, null, null);
-          ]]>
-        </body>
-      </method>
-
-      <method name="logStringMessage">
-        <parameter name="aString"/>
-        <body>
-          <![CDATA[
-            var message = "*** " + aString + "\n";
-            var consoleService =
-              Components.classes["@mozilla.org/consoleservice;1"]
-                        .getService(Components.interfaces.nsIConsoleService);
-            consoleService.logStringMessage(message);
-            dump(message);
           ]]>
         </body>
       </method>
@@ -2594,6 +2556,7 @@
                   .getService(Components.interfaces.sbIMediaListViewMap)
                   .releaseViews(event.target.linkedBrowser);
 
+        // TODO not needed?
         if (this._playlist) {
           this._playlist.destroy();
           this._playlist.parentNode.removeChild(this._playlist);
@@ -2611,6 +2574,8 @@
           this._mediaListRemovalMonitor.setMediaList(null);
           this._mediaListRemovalMonitor = null;
         }
+        
+        this._viewForPage = null;
 
         // save the tab state soon
         setTimeout("window.gBrowser.saveTabState();", 100);

@@ -423,18 +423,9 @@
             var url = this._browser.currentURI.spec;
             // TODO remove
             dump("MATT: servicepane.onBrowserTabChange: " + url + "\n");
-
-            // Does the service pane know about the current URL?
-            var node = this.mService.getNodeForURL(url);
-                        
-            // If not, look for a medialist attached to the current tab
-            if (!node && this._browser.currentMediaListView) {
-              var libraryServicePane = 
-                Components.classes['@songbirdnest.com/servicepane/library;1']
-                .getService(Components.interfaces.sbILibraryServicePaneService);
-              node = libraryServicePane.getNodeForLibraryResource( 
-                this._browser.currentMediaListView.mediaList);
-            }
+          
+            // Is there a servicepane node for the current tab?
+            var node = this._browser.selectedTab.servicePaneNode;
             
             if (node) {
               this.highlightNode(node);
