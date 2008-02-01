@@ -50,17 +50,20 @@
          Application menu.  These specific IDs are necessary.
          See http://developer.mozilla.org/en/docs/XUL:PopupGuide:PlatformMenus
 
-         menu_MacApplicationPopup itself doesn't actually appear in the UI,
-         but the app crashes when switching to mini mode if the menu items
-         are declared as direct children of the menubar.  -gse
+         mac-menu and menu_MacApplicationPopup themselves don't ever appear
+         in the UI, but there's code in FeathersManager._closePlayerWindow
+         that relies on a menu/menupop/menuitem structure for all menus. -gse
     -->
-    <menupopup id="menu_MacApplicationPopup">
-      <menuitem id="menu_mac_services" label="&menu.mac.services;"/>
-      <menuitem id="menu_mac_hide_app" label="&menu.mac.hide;" key="hide-mac-key"/>
-      <menuitem id="menu_mac_hide_others" label="&menu.mac.hideothers;" key="hideothers-mac-key"/>
-      <menuitem id="menu_mac_show_all" label="&menu.mac.showall;"/>
-    </menupopup>
+    <menu id="mac-menu">
+      <menupopup id="menu_MacApplicationPopup">
+        <menuitem id="menu_mac_services" label="&menu.mac.services;"/>
+        <menuitem id="menu_mac_hide_app" label="&menu.mac.hide;" key="hide-mac-key"/>
+        <menuitem id="menu_mac_hide_others" label="&menu.mac.hideothers;" key="hideothers-mac-key"/>
+        <menuitem id="menu_mac_show_all" label="&menu.mac.showall;"/>
+      </menupopup>
+    </menu>
   </menubar>
+
 
   <!-- Replace quit/prefs menu items with mac-specific ones. -->
   <menuitem id="menu_FileQuitItem" label="&menu.mac.exit;" key="exit-mac-key"/>
