@@ -1757,23 +1757,20 @@
           // Create a self-calling function to try to set the selection over time.
           function selectCurrentIndex( iterationCount ) {
             // Tell the view to select the item?  
-            // Steve says I need no context beyond what gPPS has.
             var currentIndex = gPPS.currentIndex;
-            if ( currentIndex > -1 ) {
-              try {
-                gPPS.playingView.treeView.selection.clearSelection();
-                gPPS.playingView.treeView.selection.select( currentIndex );
-                gPPS.playingView.treeView.selection.tree.ensureRowIsVisible( currentIndex );
-              } catch ( e ) { 
-                dump("\n************\ncurtrack-button::onCurrentTrack\n" + 
-                      "Steve says that this should work!\n\n" + e + 
-                      "\n\n************\n");
-                if ( iterationCount++ < 20 ) 
-                  setTimeout( selectCurrentIndex, 250, iterationCount );
+            if (currentIndex > -1) {
+              // is the page set up right yet?
+              if (browser.currentMediaPage && 
+                  browser.currentMediaPage.mediaListView == gPPS.playingView) {
+                browser.currentMediaPage.highlightItem(currentIndex);
+              } else {
+                if (iterationCount++ < 20) {
+                  setTimeout(selectCurrentIndex, 250, iterationCount);
+                }
               }
             }
           }
-          selectCurrentIndex( 0 );
+          selectCurrentIndex(0);
 
           var tab = browser.getTabForView(gPPS.playingView);          
           if (tab) {

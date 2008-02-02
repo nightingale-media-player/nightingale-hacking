@@ -62,12 +62,12 @@ interface sbIMediaListPage : nsISupports
   attribute sbIMediaListView mediaListView;
 
   /**
-   * \brief Tell the page to make the MediaItem at the given index visible.
+   * \brief Tell the page to make the MediaItem at the given index visible and highlighted.
    * \param aViewIndex Index into the MediaListView (needed, since 
    *        MediaItems may appear multiple times in a list)
    * \return True if the page is able to show the corresponding item
    */
-  PRBool ensureListItemVisible(in unsigned long aViewIndex);
+  PRBool highlightItem(in unsigned long aViewIndex);
   
   
   // TODO

@@ -3218,6 +3218,15 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         </body>
       </method>
 
+      <method name="highlightItem">
+        <parameter name="aIndex" />
+        <body><![CDATA[
+          this.treeView.selection.clearSelection();
+          this.treeView.selection.select(aIndex);
+          this.treeView.selection.tree.ensureRowIsVisible(aIndex);
+          ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>

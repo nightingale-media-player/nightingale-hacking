@@ -145,9 +145,8 @@ window.mediaListPage = {
     this._mediaListView = value;
   },
 
-  ensureListItemVisible: function(aIndex) {
-    // TODO expose this on the playlist binding
-    this._playlist.tree.treeBoxObject.ensureRowIsVisible(aIndex);
+  highlightItem: function(aIndex) {
+    this._playlist.highlightItem(aIndex);
   }
 
   // TODO Drag and drop
