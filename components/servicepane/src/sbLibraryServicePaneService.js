@@ -34,6 +34,7 @@ const Cr = Components.results;
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
@@ -243,7 +244,8 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
   // next
   if (!dropList &&
       !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) &&
-      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS) && 
+      !ExternalDropHandler.isSupported(aDragSession)) {
     return null;
   }
 
@@ -301,7 +303,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
 }
 
 sbLibraryServicePane.prototype.canDrop =
-function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
+function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
   dump('\n\n\ncanDrop:\n');
 
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
@@ -396,7 +398,7 @@ function sbLibraryServicePane__getDndData(aDragSession, aDataType, aInterface) {
 }
 
 sbLibraryServicePane.prototype.onDrop =
-function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
+function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) {
   dump('\n\n\nonDrop:\n');
 
   // where are we dropping?
@@ -454,6 +456,10 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
       }
       // just add the contents
       targetList.addAll(list);
+      // lone> this is fake, it assumes that all tracks have been copied, which
+      // is true if both the source and target are playlists, but could be false
+      // if the target is a library. better than nothing anyway.
+      ExternalDropHandler.reportAddedTracks(list.length, 0, targetList.name);
     }
     dump('added\n');
   } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
@@ -477,7 +483,7 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
         targetList.add(item);
       }
     });
-
+    ExternalDropHandler.reportAddedTracks(context.count, 0, targetList.name);
     dump('added\n');
 
   } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
@@ -490,12 +496,32 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     item.setProperty(SBProperties.downloadStatusTarget,
                      item.library.guid + "," + item.guid);
     targetList.add(item);
+    ExternalDropHandler.reportAddedTracks(1, 0, targetList.name);
 
     // Metrics!
     var fromtype = context.source.library.getProperty(SBProperties.customType);
     metrics.metricsAdd("app.servicepane.copy", fromtype, totype, 1);
 
     dump('added\n');
+  } else {
+
+    var dropHandlerListener = {
+      onDropComplete: function(aTargetList,
+                               aImportedInLibrary,
+                               aDuplicates,
+                               aInsertedInMediaList,
+                               aOtherDropsHandled) { 
+        // show the standard report on the status bar
+        return true; 
+      },
+      onFirstMediaItem: function(aTargetList, aFirstMediaItem) {}
+    };
+
+    ExternalDropHandler.dropOnList(aWindow, 
+                                   aDragSession, 
+                                   targetList, 
+                                   -1, 
+                                   dropHandlerListener);
   }
 }
 sbLibraryServicePane.prototype._nodeIsLibrary =

@@ -324,7 +324,6 @@ try
       textbox.focus();
     }
     playlist.addEventListener("playlist-play", onJumpToPlay, false);
-    playlist.addEventListener("playlist-esc", onExit, false);
     _applySearch();
     source_guid = guid;
     source_libraryguid = libraryguid;
@@ -401,6 +400,9 @@ try
     {
       switch ( evt.keyCode )
       {
+        case evt.DOM_VK_ESCAPE:
+          onExit();
+          break;
         case 13: // Enter
           // ignore
           evt.preventDefault();
@@ -487,7 +489,6 @@ try
     menulist.removeEventListener("playlist-menuitems-changed", _onMenuItemsChanged, true);
 
     var playlist = document.getElementById("jumpto.playlist");
-    playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
     window.arguments[0][0].__JUMPTO__ = null;
     

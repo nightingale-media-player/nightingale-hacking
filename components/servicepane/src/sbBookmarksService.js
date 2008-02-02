@@ -508,7 +508,7 @@ function sbBookmarks_onSelectionChanged(aNode, aContainer, aParentWindow) {
 }
 
 sbBookmarks.prototype.canDrop =
-function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
+function sbBookmarks_canDrop(aNode, aDragSession, aOrientation, aWindow) {
   if (aNode.isContainer) {
     if (aOrientation != 0) {
       // for folders you can only drop on the folder, not before or after
@@ -539,7 +539,7 @@ function sbBookmarks__getDragData(aDragSession, aDataType) {
   return data.toString();
 }
 sbBookmarks.prototype.onDrop =
-function sbBookmarks_onDrop(aNode, aDragSession, aOrientation) {
+function sbBookmarks_onDrop(aNode, aDragSession, aOrientation, aWindow, aWindow) {
   if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
     var data = this._getDragData(aDragSession, MOZ_URL_DRAG_TYPE).split('\n');
     var url = data[0];

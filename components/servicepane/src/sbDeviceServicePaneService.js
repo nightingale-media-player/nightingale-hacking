@@ -108,12 +108,12 @@ function sbDeviceServicePane_onSelectionChanged(aNode, aContainer, aParentWindow
 }
 
 sbDeviceServicePane.prototype.canDrop =
-function sbDeviceServicePane_canDrop(aNode, aDragSession, aOrientation) {
+function sbDeviceServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
   return false;
 }
 
 sbDeviceServicePane.prototype.onDrop =
-function sbDeviceServicePane_onDrop(aNode, aDragSession, aOrientation) {
+function sbDeviceServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) {
 }
 
 sbDeviceServicePane.prototype.onDragGesture =

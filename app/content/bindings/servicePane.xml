@@ -677,10 +677,10 @@
         var node = position.node;
         var orientation = position.orientation;
 
-        // make sure we're tracking the right element
+        // make sure we are tracking the right element
         if (this._dragOverElement != element) {
           if (this._dragOverElement) {
-            // we're now over another element - let's restore its properties
+            // we are now over another element - let us restore its properties
             this._dragOverElement.setAttribute('properties',
                 this._dragOverElement.getAttribute('savedproperties'));
             this._dragOverElement.removeAttribute('savedproperties');
@@ -704,10 +704,10 @@
           properties = 'dropOn';
         }
 
-        // ask the backend if we're allowed to drop here
+        // ask the backend if we are allowed to drop here
         if (!this.mService.canDrop(node.id,
-            this._dragService.getCurrentSession(), orientation)) {
-          // if not, don't set any visual properties
+            this._dragService.getCurrentSession(), orientation, window)) {
+          // if not, do not set any visual properties
           properties = '';
           this._dragService.canDrop = false;
         } else {
@@ -716,27 +716,35 @@
 
         element.setAttribute('properties',
             element.getAttribute('savedproperties') + ' ' + properties);
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
       ]]></handler>
       <handler event="dragenter"><![CDATA[
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
       ]]></handler>
       <handler event="dragexit"><![CDATA[
-        // if there's a highlighted element let's restore its state
+        // if there is a highlighted element let us restore its state
         if (this._dragOverElement) {
           this._dragOverElement.setAttribute('properties',
               this._dragOverElement.getAttribute('oldproperties'));
           this._dragOverElement.removeAttribute('savedproperties');
           this._dragOverElement = null;
         }
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
       ]]></handler>
       <handler event="dragdrop"><![CDATA[
         var position = this.computeEventPosition(event);
         var node = position.node;
         var orientation = position.orientation;
         var session = this._dragService.getCurrentSession();
-        if (this.mService.canDrop(node.id, session, orientation)) {
-          this.mService.onDrop(node.id, session, orientation);
+        if (this.mService.canDrop(node.id, session, orientation, window)) {
+          this.mService.onDrop(node.id, session, orientation, window);
         }
         this._dragService.endDragSession(true);
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
       ]]></handler>
     </handlers>
   </binding>

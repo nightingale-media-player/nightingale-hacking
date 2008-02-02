@@ -25,6 +25,7 @@
  */
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
@@ -536,7 +537,7 @@ addToPlaylistHelper.prototype = {
       medialist.addSome(unwrapper);
 
       var added = medialist.length - oldLength;
-      sourceplaylist._reportAddedTracks(added, 0, medialist.name);
+      ExternalDropHandler.reportAddedTracks(added, 0, medialist.name);
     }
   },
 

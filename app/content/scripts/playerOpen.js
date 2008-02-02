@@ -398,7 +398,6 @@ function SBScanMedia( parentWindow )
   {
     var media_scan_data = new Object();
     media_scan_data.URL = [fp.file.path];
-    media_scan_data.retval = "";
     // Open the modal dialog
     SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );
   }
@@ -952,6 +951,8 @@ function SBJumpToIndex(item, retryCount) {
   }
 }
 
+// lone> this does NOT actually display the view... just plays it,
+// is that on purpose ?
 function SBDisplayViewForListAndPlayItem(list, item) {
   var currentPlayListView = null;
   var indexOfItem = -1;

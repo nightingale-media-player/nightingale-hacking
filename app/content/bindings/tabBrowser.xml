@@ -1971,6 +1971,9 @@
           flavourSet.appendFlavour("text/x-moz-url");
           flavourSet.appendFlavour("text/unicode");
           flavourSet.appendFlavour("application/x-moz-file", "nsIFile");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-item");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-list");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-items");
           return flavourSet;
         ]]>
         </body>

@@ -24,6 +24,7 @@
 //
  */
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/ArrayConverter.jsm");
 
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                              .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -53,8 +54,14 @@ var CHUNK_SIZE = 200;
 var nextStartIndex = 0;
 var batchLoadsPending = 0;
 var closePending = false;
+var autoClose = false;
 var scanIsDone = false;
 var totalAdded = 0;
+var totalInserted = 0;
+var totalDups = 0;
+var scannedChunks = [];
+var firstItem = null;
+var onFirstItem = null;
 
 function onLoad()
 {
@@ -77,24 +84,19 @@ function onLoad()
         Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                   .getService(Components.interfaces.sbILibraryManager);
 
-      // Use the requested library, or use the main library as default      
-      var theTargetDatabase = window.arguments[0].target_db;
-      if (theTargetDatabase)
-      {
-        theTargetLibrary = libraryManager.getLibrary( theTargetDatabase );
-      }
-      else
-      {
+      theTargetPlaylist = window.arguments[0].target_pl;
+      if (theTargetPlaylist) {
+        theTargetLibrary = theTargetPlaylist.library; 
+      } else {
         theTargetLibrary = libraryManager.mainLibrary;
       }
-
-      theTargetPlaylist = window.arguments[0].target_pl;
       theTargetInsertIndex = window.arguments[0].target_pl_row;
       gDirectoriesToScan = window.arguments[0].URL;
-      if (("object" == typeof(opener)) && ("Array" in opener)) {
-        if (!(gDirectoriesToScan instanceof opener.Array)) {
-          gDirectoriesToScan = [gDirectoriesToScan];
-        }
+      if (typeof window.arguments[0].autoClose != "undefined")
+        autoClose = window.arguments[0].autoClose;
+      onFirstItem = window.arguments[0].onFirstItem;
+      if (!isinstance(gDirectoriesToScan, Array)) {
+        gDirectoriesToScan = [gDirectoriesToScan];
       }
       scanNextDirectory();
 
@@ -107,6 +109,17 @@ function onLoad()
   return true;
 }
 
+function isinstance(inst, base)
+{
+    /* Returns |true| if |inst| was constructed by |base|. Not 100% accurate,
+     * but better than instanceof when the two sides are from different windows
+     * copied from jsirc source (js/lib/utils.js)
+     */
+    return (inst && base &&
+            ((inst instanceof base) ||
+             (inst.constructor && (inst.constructor.name == base.name))));
+}
+
 function scanNextDirectory()
 {
   try {
@@ -115,7 +128,10 @@ function scanNextDirectory()
     {
       nextStartIndex = 0;
       scanIsDone = false;
-      var url = gDirectoriesToScan.pop();
+      // do not use pop(), that would scan the directories in reverse order,
+      // we want to maintain the order in which they were selected in the
+      // d&d source or the file picker
+      var url = gDirectoriesToScan.shift();
       aFileScanQuery.setDirectory(url);
       aFileScanQuery.setRecurse(true);
 
@@ -168,6 +184,12 @@ function onPollScan()
       propsArray.appendElement(props, false);
     }
 
+    // push all items on a fifo, so that each time the batch listener completes,
+    // we can grab the full list of items in the chunk again (not just those
+    // that were created), in order to be able to insert them in the target
+    // playlist regardless of whether they already existed or not
+    scannedChunks.push(array);
+
     // Asynchronously load the scanned chunk into the library
     var listener = new sbBatchCreateListener(array);
     batchLoadsPending++;
@@ -200,16 +222,27 @@ function onPollScan()
 
 var gMediaScanMetadataJob = null;
 function appendToMetadataQueue( aItemArray ) {
-  // If we need to, make a new job.
-  if ( gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
-    // Create and submit a metadata job for the new items
-    var metadataJobManager =
-      Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                .getService(Components.interfaces.sbIMetadataJobManager);
-    gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
-  } else {
-    // Otherwise, just append.
-    gMediaScanMetadataJob.append(aItemArray);
+  try {
+    
+    // xxxlone> reusing the previous job fails ! no idea why :( to try it out, 
+    // re-enable the test, then drop a few directories onto a empty library, and
+    // observe how the first job get processed, but the following ones, those
+    // added via append(), fail.
+    // see bug 7264
+    
+    // If we need to, make a new job.
+    if ( 1 ) { //gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
+      // Create and submit a metadata job for the new items
+      var metadataJobManager =
+        Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                  .getService(Components.interfaces.sbIMetadataJobManager);
+      gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
+    } else {
+      // Otherwise, just append.
+      gMediaScanMetadataJob.append(aItemArray);
+    }
+  } catch (e) {
+    Components.utils.reportError(e);
   }
 }
 
@@ -228,11 +261,106 @@ function sbBatchCreateListener_onComplete(aItemArray)
 {
   batchLoadsPending--;
   totalAdded += aItemArray.length;
+  
+  // get the original list of URIs corresponding to this batch chunk
+  var chunk = scannedChunks[0];
+  scannedChunks.splice(0, 1);
+  
+  // calculate number of items that were dropped because they already existed 
+  // in the library
+  totalDups += chunk.length - aItemArray.length;
+  
+  // find the first item via the original list, we want to notify with the first
+  // item, not necessarilly the first one that didnt exist in the target library
+  if (!firstItem && 
+      onFirstItem &&
+      chunk.length > 0) {
+    
+    var itemURI = chunk.enumerate().getNext();
+    itemURI = itemURI.QueryInterface(Components.interfaces.nsIURI);
+    if (itemURI) {
+      var listener = {
+        item: null,
+        onEnumerationBegin: function() {
+        },
+        onEnumeratedItem: function(list, item) {
+          this.item = item;
+          return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+        },
+        onEnumerationEnd: function() {
+        }
+      };
 
+      theTargetLibrary.enumerateItemsByProperty(SBProperties.contentURL,
+                                                itemURI.spec,
+                                                listener);
+      callFirstItemCallback(listener.item)
+    }
+  }
+
+
+  // if we are inserting into a list, there is more to do than just importing 
+  // the tracks into its library, we also need to insert all the items (even
+  // the ones that previously existed) into the list at the requested position
+  if (theTargetPlaylist && 
+      (theTargetPlaylist != theTargetLibrary)) {
+    try {
+      // make an array of contentURL properties, so we can search 
+      // for all tracks in one go
+      var propertyArray = SBProperties.createArray();
+      var enumerator = chunk.enumerate();
+      while (enumerator.hasMoreElements()) {
+        var itemURI = enumerator.getNext();
+        itemURI = itemURI.QueryInterface(Components.interfaces.nsIURI);
+        propertyArray.appendProperty(SBProperties.contentURL, itemURI.spec);
+      } 
+
+      // search all the items for this chunk, and build a list of mediaItems
+      var mediaItems = [];
+      var listener = {
+        onEnumerationBegin: function() {
+        },
+        onEnumeratedItem: function(list, item) {
+          mediaItems.push(item);
+        },
+        onEnumerationEnd: function() {
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) ||
+              iid.equals(Components.interfaces.nsISupports))
+            return this;
+          throw Components.results.NS_NOINTERFACE;
+        }
+      };
+
+      theTargetLibrary.
+        enumerateItemsByProperties(propertyArray,
+                                  listener);
+
+      if (mediaItems.length > 0) {
+        // if we need to insert, then do so
+        if ((theTargetPlaylist instanceof Components.interfaces.sbIOrderableMediaList) && 
+            (theTargetInsertIndex >= 0) && 
+            (theTargetInsertIndex < theTargetPlaylist.length)) {
+          theTargetPlaylist.insertSomeBefore(theTargetInsertIndex, ArrayConverter.enumerator(mediaItems));
+          theTargetInsertIndex += mediaItems.length;
+          totalInserted += mediaItems.length;
+        } else {
+          // otherwise, just add
+          theTargetPlaylist.addSome(ArrayConverter.enumerator(mediaItems));
+          totalInserted += mediaItems.length;
+        }
+      }
+    } catch (e) {
+      Components.utils.reportError(e);
+    }
+  }
+  
   // New items to be sent for metadata scanning.
   if (aItemArray.length > 0) {
     appendToMetadataQueue( aItemArray );
   }
+  
 
   if (batchLoadsPending == 0 && scanIsDone) {
 
@@ -250,12 +378,46 @@ function sbBatchCreateListener_onComplete(aItemArray)
     theLabel.value = SBString("media_scan.complete", "Complete");
     theProgress.removeAttribute( "mode" );
     document.documentElement.buttons = "accept";
+    
+    closePending = autoClose;
   }
 
   if (closePending && batchLoadsPending == 0) {
+    beforeClose();
     onExit();
   }
+}
 
+function callFirstItemCallback(aItem) {
+  firstItem = aItem;
+  var cb = onFirstItem;
+  if (cb) {
+    if (typeof cb == "function") {
+      cb(firstItem);
+    } else if ((typeof cb == "object") && 
+            cb.onFirstItem &&
+            (typeof cb.onFirstItem == "function")) {
+      cb.onFirstItem(firstItem);
+    } else if (isinstance(cb, String) || typeof(cb) == "string") {
+      var fn = new Function("item", cb);
+      fn(firstItem); 
+    }
+  }
+}
+
+function beforeClose() {
+  window.arguments[0].totalImportedToLibrary = totalAdded;
+  window.arguments[0].totalDups = totalDups;
+  if (theTargetPlaylist && 
+      (theTargetPlaylist != theTargetLibrary))
+    window.arguments[0].totalAddedToMediaList = totalInserted;
+  else
+    window.arguments[0].totalAddedToMediaList = totalAdded;
+  onFirstItem = null;
+  theTargetLibrary = null;
+  theTargetPlaylist = null;
+  aFileScanQuery = null;
+  gFileScan = null;
 }
 
 function doOK()
@@ -272,6 +434,7 @@ function doOK()
   // have a listener registered with the library.  Closing the window while
   // it has this reference causes that "Components not defined" error.
   if (batchLoadsPending == 0) {
+    beforeClose();
     return true;
   }
   else {
@@ -290,6 +453,7 @@ function doCancel()
 
   // See comment in doOk()
   if (batchLoadsPending == 0) {
+    beforeClose();
     return true;
   }
   else {

@@ -58,7 +58,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
   void onProgress(in unsigned long aIndex);
 
   /**
-   * \brief Called when batcvh operation is complete
+   * \brief Called when batch operation is complete
    * \param aMediaItems Array of the created sbIMediaItem objects.
    */
   void onComplete(in nsIArray aMediaItems);

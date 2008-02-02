@@ -36,6 +36,7 @@ Cu.import("resource://app/components/sbProperties.jsm");
 Cu.import("resource://app/components/kPlaylistCommands.jsm");
 Cu.import("resource://app/components/sbAddToPlaylist.jsm");
 Cu.import("resource://app/components/sbLibraryUtils.jsm");
+Cu.import("resource://app/components/ExternalDropHandler.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -923,9 +924,9 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   mediaList.addSome(unwrapper);
 
   var itemsAdded = mediaList.length - oldLength;
-  playlist._reportAddedTracks(itemsAdded,
-                              selectionCount - itemsAdded,
-                              mediaList.name);
+  ExternalDropHandler.reportAddedTracks(itemsAdded,
+                                         selectionCount - itemsAdded,
+                                         mediaList.name);
 }
 
 // Called when the "copy track location" action is triggered

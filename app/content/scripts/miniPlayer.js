@@ -348,7 +348,6 @@ var gMiniplayer = {
       // otherwise, fire off the media scan page.
       var media_scan_data = new Object();
       media_scan_data.URL = [path];
-      media_scan_data.retval = "";
       // Open the non-modal dialog
       SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );
       SBDataSetBoolValue( "media_scan.open", false );

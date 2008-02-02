@@ -37,9 +37,9 @@ if (typeof(Cc) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
-var firstDrop;
-var importingDrop = false;
-var dropInPlaylist = false;
+if (typeof(ExternalDropHandler) == "undefined")
+  Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
+
 
 // Module specific global for auto-init/deinit support
 var dndDefaultHandler_module = {};
@@ -71,282 +71,40 @@ window.addEventListener("unload", dndDefaultHandler_module.onUnload, false);
 var SBDropObserver = 
 {
   canHandleMultipleItems: true,
-  libraryServicePane: null,
-  
+ 
   getSupportedFlavours : function () 
   {
-    if(!libraryServicePane) {
-      var libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
-                              .getService(Components.interfaces.sbILibraryServicePaneService);
-    }
-    
     var flavours = new FlavourSet();
-    flavours.appendFlavour("application/x-moz-file","nsIFile");
-    flavours.appendFlavour("text/x-moz-url");
-    flavours.appendFlavour("text/unicode");
-    flavours.appendFlavour("text/plain");
+    ExternalDropHandler.addFlavours(flavours);
     return flavours;
   },
   
-  onDragOver: function ( evt, flavour, session )
-  {
-    //Figure out if we got dropped onto a playlist or library or just a generic element.  
-    if(!libraryServicePane) {
-      var libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
-                              .getService(Components.interfaces.sbILibraryServicePaneService);
-    }
-
-    if ( evt.target.localName == "sb-servicepane" ) {
-      var node = null;
-      try {
-        node = evt.target.mTreePane.computeEventPosition(evt);
-      }
-      catch(e) {
-        node = null;
-      }
-      
-      if(node && 
-         node.node instanceof Ci.sbIServicePaneNode) {
-        var libraryResource = libraryServicePane.getLibraryResourceForNode(node.node);
-        
-        if(libraryResource &&
-           SBIsWebLibrary(libraryResource)) {
-          throw Cr.NS_ERROR_INVALID_ARG;
-        }
-      }
-    }
-    
-    if ( evt.target.localName == "sb-playlist" ) {
-      var playlist = evt.target.QueryInterface(Ci.sbIPlaylistWidget);
-      
-      if(playlist.wrappedJSObject) {
-        playlist = playlist.wrappedJSObject;
-      }
-
-      if(playlist.mediaList &&
-         SBIsWebLibrary(playlist.mediaList)) {
-        throw Cr.NS_ERROR_INVALID_ARG;
-      }
-    }
-    
-    return false;
-  },
-  
+  onDragOver: function ( evt, flavour, session ) {},
   onDrop: function ( evt, dropdata, session )
   {
-    dropFiles(evt, dropdata, session, null, null);
+    var dropHandlerListener = {
+      observer: SBDropObserver,
+      onDropComplete: function(aTargetList,
+                               aImportedInLibrary,
+                               aDuplicates,
+                               aInsertedInMediaList,
+                               aOtherDropsHandled) {
+        // show the standard report on the status bar
+        return true;
+      },
+      onFirstMediaItem: function(aTargetList, aFirstMediaItem) {
+        this.observer.playFirstDrop(aFirstMediaItem);
+      },
+    };
+    ExternalDropHandler.drop(window, session, dropHandlerListener);
+  },
+  
+  playFirstDrop: function(firstDrop) {
+    SBDisplayViewForListAndPlayItem(
+      Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+        .getService(Components.interfaces.sbILibraryManager)
+        .mainLibrary, 
+      firstDrop);
   }
 };
 
-var _insert_index = -1;
-var _library_resource = null;
-var _drop_filelist = null;
-
-function dropFiles(evt, dropdata, session, targetdb, targetpl) {
-  var dataList = dropdata.dataList;
-  var dataListLength = dataList.length;
-  var lcase = 0;
-
-  //Figure out if we got dropped onto a playlist or library or just a generic element.  
-  var libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
-                          .getService(Components.interfaces.sbILibraryServicePaneService);
-
-  var libraryResource = null;
-
-  if ( evt.target.localName == "sb-servicepane" ) {
-    var node = null;
-    try {
-      node = evt.target.mTreePane.computeEventPosition(evt);
-    }
-    catch(e) {
-      node = null;
-    }
-    
-    if(node && 
-       node.node instanceof Ci.sbIServicePaneNode) {
-      libraryResource = libraryServicePane.getLibraryResourceForNode(node.node);
-    }
-  }
-  
-  if ( evt.target.localName == "sb-playlist" ) {
-    var playlist = evt.target;
-    
-    dropInPlaylist = true;
-  
-    if(playlist.wrappedJSObject) {
-      playlist = playlist.wrappedJSObject;
-    }
-
-    libraryResource = playlist.mediaList;
-    
-    //Figure out which row we are over so we can insert at that position later.
-    var tree = playlist.tree;
-
-    if(tree.wrappedJSObject) {
-      tree = tree.wrappedJSObject;
-    }
-
-    // what cell are we over?
-    var row = { }, col = { }, child = { };
-    tree.treeBoxObject.getCellAt(evt.pageX, evt.pageY, row, col, child);
-    
-    if(row.value != -1) {
-      _insert_index = row.value;
-    }
-  } else {
-    dropInPlaylist = false;
-  }
-  
-  _library_resource = libraryResource;
-  
-  if (getPlatformString() == "Windows_NT") lcase = 1;
-  
-  if (!_drop_filelist) _drop_filelist = Array();
-
-  for (var i = 0; i < dataListLength; i++) 
-  {
-    var item = dataList[i].first;
-    var prettyName;
-    var rawData = item.data;
-    
-    if (item.flavour.contentType == "application/x-moz-file")
-    {
-      var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                      .getService(Components.interfaces.nsIIOService);
-      var fileHandler = ioService.getProtocolHandler("file")
-                        .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-      rawData = fileHandler.getURLSpecFromFile(rawData);
-    } 
-    else
-    {
-      if (rawData.toLowerCase().indexOf("http://") < 0) continue;
-    }
-
-    var separator = rawData.indexOf("\n");
-    if (separator != -1) 
-    {
-      prettyName = rawData.substr(separator+1);
-      rawData = rawData.substr(0,separator);
-    }
-    
-    if (lcase) rawData = rawData.toLowerCase();
-    _drop_filelist.push(rawData);
-  }
-  
-  if (!importingDrop) {
-    firstDrop = true;
-    importingDrop = true;
-    setTimeout( SBDropped, 10 ); // Next frame
-    importingDrop = false;
-  }
-}
-
-function SBDropped() 
-{
-  var url;
-  try {
-    if (_drop_filelist.length > 0) {
-      url = _drop_filelist[0];
-      _drop_filelist.splice(0, 1);
-      if (url != "") {
-        var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                            .getService(Components.interfaces.nsIIOService);
-        var uri = ios.newURI(url, null, null);
-        theDropPath = uri.spec;
-        var fileUrl;
-        try {
-          fileUrl = uri.QueryInterface(Components.interfaces.nsIFileURL);
-        } catch (e) { 
-          fileUrl = null; 
-        }
-        if (fileUrl) {
-          if (fileUrl.file.isDirectory()) {
-            theDropPath = fileUrl.file.path;
-            _dropped_directories.push(theDropPath);
-            setTimeout( SBDropped, 10 ); // Next frame
-            return;
-          }
-        }
-        SBDroppedEntry(false);
-      }
-      setTimeout( SBDropped, 10 ); // Next frame
-    } else if (_dropped_directories.length > 0) {
-      SBDroppedEntry(true);
-      setTimeout( SBDropped, 10 ); // Check for more directories
-    }
-  } catch (e) {
-    dump(e);
-    setTimeout( SBDropped, 10 ); // Try next frame
-  }
-}
-
-var theDropPath = "";
-var _dropped_directories = [];
-
-function SBDroppedEntry(aIsDir)
-{
-  try {    
-    if ( aIsDir ) {
-      theFileScanIsOpen.boolValue = true;
-      
-      // otherwise, fire off the media scan page.
-      var media_scan_data = new Object();
-
-      media_scan_data.target_db =  null;
-      media_scan_data.target_pl = null;
-      media_scan_data.target_pl_row = -1;
-      
-      if(_library_resource instanceof Ci.sbILibrary &&
-         !SBIsWebLibrary(_library_resource.guid)) {
-        media_scan_data.target_db = _library_resource.guid;
-      }
-      else if(_library_resource instanceof Ci.sbIOrderableMediaList) {
-        media_scan_data.target_pl = _library_resource;
-        media_scan_data.target_pl_row = _insert_index;
-      }
-      
-      media_scan_data.URL = _dropped_directories;
-      media_scan_data.retval = "";
-      _dropped_directories = [];
-
-      // Open the modal dialog
-      SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
-      
-      theFileScanIsOpen.boolValue = false;
-      _insert_index = -1;
-    } 
-    else if (gPPS.isMediaURL( theDropPath )) {
-      if (dropInPlaylist) return;
-      if(firstDrop) {
-        firstDrop = false;
-
-        //Import the track into the main library.
-        var item = SBImportURLIntoMainLibrary(theDropPath);
-        
-        dump(_library_resource + "\n");
-        for(var prop in _library_resource) {
-          try {
-            dump(prop + ":" + _library_resource[prop] + "\n");
-          }catch(e) {}
-        }
-        
-        if(_library_resource) {
-          if(_library_resource.type == "simple" &&
-             !SBIsWebLibrary(_library_resource)) {
-            _library_resource.add(item);
-          }
-          
-          SBDisplayViewForListAndPlayItem(_library_resource, item);
-        }
-        else {
-          var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                 .getService(Ci.sbILibraryManager);
-
-          SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
-        }
-      }
-    } else if ( isXPI( theDropPath ) ) {
-      installXPI(theDropPath);
-    }
-  } catch(e) { alert( "SBDroppedEntry\n\n" + e ); listProperties( e ); }
-}

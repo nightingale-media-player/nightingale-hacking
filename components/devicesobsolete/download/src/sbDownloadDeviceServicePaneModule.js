@@ -87,14 +87,16 @@ function sbDownloadDeviceServicePaneModule_onSelectionChanged(aNode,
 sbDownloadDeviceServicePaneModule.prototype.canDrop =
 function sbDownloadDeviceServicePaneModule_canDrop(aNode,
                                                    aDragSession,
-                                                   aOrientation)
+                                                   aOrientation,
+                                                   aWindow)
 {
 }
 
 sbDownloadDeviceServicePaneModule.prototype.onDrop =
 function sbDownloadDeviceServicePaneModule_onDrop(aNode,
                                                   aDragSession,
-                                                  aOrientation)
+                                                  aOrientation,
+                                                  aWindow)
 {
 }
 

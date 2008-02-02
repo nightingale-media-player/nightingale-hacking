@@ -158,7 +158,7 @@ interface sbIServicePaneNodeInternal : sbIServicePaneNode {
 *
 * @halfbaked
 */
-[scriptable, uuid(2a0a84b7-be67-40fb-8443-6e77a969820e)]
+[scriptable, uuid(7dbc8193-4dc5-4bd4-bd9c-cef1552c216c)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -254,10 +254,14 @@ interface sbIServicePaneService : nsISupports
   /* drag and drop support */
   PRBool canDrop(in AString aID,
                  in nsIDragSession aDragSession,
-                 in PRInt32 aOrientation);
+                 in PRInt32 aOrientation,
+                 in nsIDOMWindow aWindow);
+                 
   void onDrop(in AString aID,
               in nsIDragSession aDragSession,
-              in PRInt32 aOrientation);
+              in PRInt32 aOrientation,
+              in nsIDOMWindow aWindow);
+              
   PRBool onDragGesture(in AString aID,
                        out nsITransferable aTransferable);
 
@@ -277,7 +281,7 @@ interface sbIServicePaneService : nsISupports
 * \interface sbIServicePaneModule
 * \brief The interface exposed by the service pane backends
 */
-[scriptable, uuid(9c87f9d3-164d-4786-b044-9f72472a95b2)]
+[scriptable, uuid(db05f541-6e70-4fad-98fc-e50820d36648)]
 interface sbIServicePaneModule : nsISupports
 {
   /* \brief Initialize this service pane module
@@ -310,10 +314,12 @@ interface sbIServicePaneModule : nsISupports
 
   PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
-                 in PRInt32 aOrientation);
+                 in PRInt32 aOrientation,
+                 in nsIDOMWindow aWindow);
   void onDrop(in sbIServicePaneNode aNode,
               in nsIDragSession aDragSession,
-              in PRInt32 aOrientation);
+              in PRInt32 aOrientation,
+              in nsIDOMWindow aWindow);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsITransferable aTransferable);
 

@@ -754,7 +754,7 @@ function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
   return null;
 }
 ServicePaneService.prototype.canDrop =
-function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
+function ServicePaneService_canDrop(aId, aDragSession, aOrientation, aWindow) {
   if (!this._initialized) { this.init(); }
   var node = this.getNode(aId);
   if (!node) {
@@ -770,13 +770,13 @@ function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
   if (node.contractid && Cc[node.contractid]) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
     if (module) {
-      return module.canDrop(node, aDragSession, aOrientation);
+      return module.canDrop(node, aDragSession, aOrientation, aWindow);
     }
   }
   return false;
 }
 ServicePaneService.prototype.onDrop =
-function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
+function ServicePaneService_onDrop(aId, aDragSession, aOrientation, aWindow) {
   if (!this._initialized) { this.init(); }
   var node = this.getNode(aId);
   if (!node) {
@@ -841,7 +841,7 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
   if (node.contractid) {
     var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
     if (module) {
-      module.onDrop(node, aDragSession, aOrientation);
+      module.onDrop(node, aDragSession, aOrientation, aWindow);
     }
   }
 }
