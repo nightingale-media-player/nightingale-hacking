@@ -390,7 +390,7 @@ case "$SB_PLATFORM" in
         AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
     fi
     if test "$_CC_MAJOR_VERSION" = "12"; then
-        _CC_SUITE=6s/songbird/trunk/
+        _CC_SUITE=6
     elif test "$_CC_MAJOR_VERSION" = "13"; then
         _CC_SUITE=7
     elif test "$_CC_MAJOR_VERSION" = "14"; then
