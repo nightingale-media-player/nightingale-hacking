@@ -58,34 +58,32 @@ Ci = Components.interfaces;
 Cc = Components.classes;
 
 // make a constructor
-function RDFHelper(rdf, datasource, resource, namespaces) {
+function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
   // this is a Crockfordian constructor with private methods.
   // see: http://www.crockford.com/javascript/private.html
   // the actual construction logic takes place after all these method def'ns.
   // this enables me to hide these methods from the outside world so that
   // users of the class can iterate over properties without seeing them.
   var that = this; // for use in private functions
-  this._rdf = rdf; 
-  this._datasource = datasource; 
-  this._resource = resource;
-  this.Value = resource.Value; // TODO: is this Good Enough?
-  this._namespaces = namespaces;
-  this._containerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"]
-                         .getService(Components.interfaces.nsIRDFContainerUtils);
+  this.Value = aResource.Value; // TODO: is this Good Enough?
+  
+  _containerUtils = Cc["@mozilla.org/rdf/container-utils;1"]
+                     .getService(Ci.nsIRDFContainerUtils);
+  
   var createProperties = function() {
     //dump("Resource "+that._resource.Value+" is a ")
-    if (that._containerUtils.IsContainer(that._datasource, that._resource)) {
+    if (_containerUtils.IsContainer(aDatasource, aResource)) {
       //dump("container.\n");
-      createContainerProperties(that._resource);
+      createContainerProperties(aResource);
     }
     else {
       //dump("normal resource.\n");
-      createStandardProperties(that._resource);
+      createStandardProperties(aResource);
     }
   };
   
   var createContainerProperties = function(resource) {
-    var container = that._containerUtils.MakeSeq(that._datasource, resource);
+    var container = _containerUtils.MakeSeq(aDatasource, resource);
     var contents = container.GetElements();
     
     // urgh, this doesn't actually mean "this" is an array 
@@ -93,12 +91,12 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
     var i = 0;
     while (contents.hasMoreElements()) {
       var resource = contents.getNext()
-      resource.QueryInterface(Components.interfaces.nsIRDFResource);
+      resource.QueryInterface(Ci.nsIRDFResource);
       that[i] = new RDFHelper(
-        that._rdf, 
-        that._datasource, 
+        aRdf, 
+        aDatasource, 
         resource, 
-        that._namespaces
+        aNamespaces
       ); 
       i++;
     }
@@ -106,7 +104,7 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
   };
   
   var createStandardProperties = function(resource) {
-    var labels = that._datasource.ArcLabelsOut(that._resource);
+    var labels = aDatasource.ArcLabelsOut(aResource);
     while(labels.hasMoreElements()) {
       var arc = labels.getNext().QueryInterface(Ci.nsIRDFResource)
       createStandardProperty(arc);
@@ -115,8 +113,8 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
   
   var createStandardProperty = function(arc) {
     var alias = arc.Value;
-    for (n in that._namespaces) {
-       alias = alias.replace(n, that._namespaces[n]);
+    for (n in aNamespaces) {
+       alias = alias.replace(n, aNamespaces[n]);
     }
     
     //dump("Arc "+arc.Value+" is a normal prop aliased to "+alias+".\n")
@@ -127,20 +125,20 @@ function RDFHelper(rdf, datasource, resource, namespaces) {
     // to depth-first search a cyclical graph or something
     var getResult = function() {
       ary = [];
-      var itr = that._datasource.GetTargets(that._resource, arc, true);
+      var itr = aDatasource.GetTargets(aResource, arc, true);
       while(itr.hasMoreElements()) {
         var resource = itr.getNext();
-        if (resource instanceof Components.interfaces.nsIRDFLiteral) {
+        if (resource instanceof Ci.nsIRDFLiteral) {
           //dump(resource.Value + "is a literal property for "+alias+".\n");
           ary.push(resource.Value);
         }
         else {
           //dump(resource.Value + " inserted an RDF property.\n");
           ary.push(new RDFHelper(
-            that._rdf, 
-            that._datasource, 
+            aRdf, 
+            aDatasource, 
             resource, 
-            that._namespaces
+            aNamespaces
           ));
         }
       } 
