@@ -250,15 +250,17 @@
           var urls = [];
           while (tab) {
             try {
-              // For media list pages, store the list GUIDs
+              // For media pages, store the list GUIDs
               // so that the page can be restored correctly
-              if (tab.mediaListPage) {
-                var mediaList = tab.mediaListPage.mediaListView.mediaList;
-                urls.push({
-                    listGUID: mediaList.guid,
-                    libraryGUID: mediaList.library.guid,
-                    pageURL: tab.linkedBrowser.currentURI.spec
-                  });
+              if (tab.mediaPage) {
+                if (tab.mediaPage.mediaListView) {
+                  var mediaList = tab.mediaPage.mediaListView.mediaList;
+                  urls.push({
+                      listGUID: mediaList.guid,
+                      libraryGUID: mediaList.library.guid,
+                      pageURL: tab.linkedBrowser.currentURI.spec
+                    });
+                }
               // For all other pages, just keep the URI
               } else {
                 urls.push(tab.linkedBrowser.currentURI.spec);
@@ -292,7 +294,7 @@
               var tab;
               for (var i=0; i<tabs.length; i++) {  
                 tab = tabs[i];             
-                // If the tab had a media list page, restore it by reloading
+                // If the tab had a media page, restore it by reloading
                 // the media list
                 if (tab.listGUID) {
                   this.loadMediaListGUID(tab.libraryGUID, tab.listGUID, null,
@@ -424,6 +426,22 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
+          
+            // If this is a request for the old sbLibaryPage
+            // redirect it to the new page showing the main library 
+            // TODO delete this post 0.5
+            if (aURI && aURI.indexOf &&
+                aURI.indexOf("chrome://songbird/content/xul/sbLibraryPage.xul") == 0)
+            {
+              Components.utils.reportError("TabBrowser.loadURI was called for" +
+                    " sbLibraryPage.xul! Use gBrowser.loadMediaList instead.");
+                    
+              this.loadMediaList(LibraryUtils.mainLibrary, aEvent, 
+                    aDefaultLocation);
+              return;
+            }
+
+          
             var retval = null;
             var where = this._checkTarget(aDefaultLocation, aEvent);
 
@@ -499,31 +517,6 @@
               // TODO set somewhere using 
               // var valArray = searchTerm.split(" ");
               // filter.set(0, valArray, valArray.length);
-              
-              // If we're a library, set our desired filterlists
-              
-              // TODO this may need to be moved!
-              // Pages should inspect the filters applied to the view
-              // they are given and respond accordingly. 
-              
-              if ( aMediaListView.mediaList instanceof Ci.sbILibrary ) {
-                // Restore the last library filterset or set our defaults
-                var desiredFilterSet;
-                var defaultFilterSet = [
-                  SBProperties.year,
-                  SBProperties.artistName,
-                  SBProperties.albumName
-                ];
-                var savedFilterSet = SBDataGetStringValue( "library.filterset" );
-                if ( savedFilterSet.length > 0 ) {
-                  desiredFilterSet = savedFilterSet.split(";");
-                } else {
-                  desiredFilterSet = defaultFilterSet;
-                }
-                for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
-                  filter.appendFilter(desiredFilterSet[i]);
-                }
-              }
             }
 
             // If no URL was provided, get the default from the page manager
@@ -534,19 +527,20 @@
               aPageURL = page.contentUrl;
             }
             
-            // Attach the guids to the querystring so that the page
-            // gets a unique browser history entry.  
+            // If not already present, attach the guids to the querystring 
+            // so that the page gets a unique browser history entry.  
             // I would have preferred to use a # instead of a querystring, 
             // but anchors are ignored in loadURI.
-            if (aPageURL.indexOf("?") != -1) {
-              aPageURL += "&";
-            } else {
-              aPageURL += "?"
+            if (aPageURL.indexOf("libraryGUID=") == -1) {
+              if (aPageURL.indexOf("?") != -1) {
+                aPageURL += "&";
+              } else {
+                aPageURL += "?";
+              }
+              aPageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
+                          "&listGUID=" + escape(aMediaList.guid);
             }
-            aPageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
-                        "&listGUID=" + escape(aMediaList.guid);
-
-                                    
+            
             this.loadURI(aPageURL, null, null, aEvent, aDefaultLocation, aMediaListView);
           ]]>
         </body>
@@ -629,12 +623,12 @@
                 onget="return this.mCurrentTab.outerPlaylistShowing"
                 onset="this.mCurrentTab.outerPlaylistShowing = val" />
 
-      <!-- Get the sbIMediaListPage for the current tab -->
+      <!-- Get the sbIMediaPage for the current tab -->
       <property name="currentMediaPage" readonly="true"
-                onget="return this.mCurrentTab.mediaListPage" />
+                onget="return this.mCurrentTab.mediaPage" />
 
       <!-- Get the sbIMediaListView for the current tab.
-           May come from the web playlist or media list page. -->
+           May come from the web playlist or media page. -->
       <property name="currentMediaListView" readonly="true"
                 onget="return this.mCurrentTab.mediaListView" />
 
@@ -854,19 +848,21 @@
       
       
       
-      <!-- TODO rethink/remove these playback related methods as part
-           of the media pages playback task -->
-      
-      
-
       <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
            I'm not convinced they belong here, but till we refactor a couple
            more things there's nowhere better for them to go. -->
-      <method name="playExternalUrl">
+           
+      <!-- Handles playing the given URL by adding it to the web
+           library, and if possible playing it from the current 
+           web playlist.
+        -->
+      <method name="_playExternalUrl">
         <parameter name="aURL" />
         <parameter name="aTryWeb" />
         <body>
             <![CDATA[
+            
+          // TODO get rid of currentPlaylist
           // figure out if the url is in the webplaylist
           var currentPlaylist = gBrowser.currentPlaylist;
           
@@ -915,7 +911,11 @@
         ]]></body>
       </method>
 
-      <method name="handleMediaURL">
+
+      <!-- Called when the user clicks on a media URL in a web page.
+           Handles playing from the web playlist, opening as a playlist, etc. 
+        -->
+      <method name="_handleMediaURL">
         <parameter name="aURL" />
         <parameter name="aShouldBeginPlayback" />
         <parameter name="forcePlaylist" />
@@ -1047,13 +1047,13 @@
             // Everything else gets played directly.
             else if ( gPPS.isMediaURL( aURL ) )
             {
-              this.playExternalUrl(aURL, true);
+              this._playExternalUrl(aURL, true);
               retval = true;
             }
           }
           catch ( err )
           {
-            alert("sb-tabbrowser::handleMediaURL(" + aURL + "); " + err );
+            alert("sb-tabbrowser::_handleMediaURL(" + aURL + "); " + err );
           }
           return retval;
         ]]></body>
@@ -1277,7 +1277,7 @@
               case "html.context.open":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
+                if ( !this._handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
                 {
                   this.loadURI(this._urlForHTMLContextMenu, this.currentURI.spec, null);
                 }
@@ -1285,7 +1285,7 @@
               case "html.context.opentab":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
+                if ( !this._handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
                 {
                   this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI.spec, null, null, null, null);
                 }
@@ -1302,14 +1302,14 @@
               break;
               case "html.context.play":
                 // can be track or playlist
-                this.handleMediaURL(this._urlForHTMLContextMenu, true, false);
+                this._handleMediaURL(this._urlForHTMLContextMenu, true, false);
               break;
               case "html.context.add":
                 gPPS.importURL(this._urlForHTMLContextMenu);
               break;
               case "html.context.playlist":
                 // Add playlists to the service pane (force it as a playlist)
-                this.handleMediaURL(this._urlForHTMLContextMenu, false, true);
+                this._handleMediaURL(this._urlForHTMLContextMenu, false, true);
               break;
               case "html.context.copytoclipboard":
                 var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
@@ -1505,7 +1505,7 @@
           // we need to handle playlists and media items specially
           if ( gPPS.isPlaylistURL(href) ||
                gPPS.isMediaURL(href) ) {
-            this.handleMediaURL(href, false, false, target, referrer);
+            this._handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
           } else {
@@ -1713,7 +1713,7 @@
             tabbrowser: this,
             handleEvent: function(event) {
               dump("MATT: tabBrowser.DOMContentLoaded\n");
-              this.tabbrowser.setUpMediaListPage();
+              this.tabbrowser.setUpMediaPage();
               this.tabbrowser.scanWebPage();
             }
           }
@@ -1826,7 +1826,7 @@
       </property>
       
       <!-- sbITabBrowserTab -->
-      <property name="mediaListPage" readonly="true">
+      <property name="mediaPage" readonly="true">
         <getter><![CDATA[
 
           if (!this.linkedBrowser.currentURI) {
@@ -1835,7 +1835,7 @@
           }
 
           if (!this.linkedBrowser.currentURI.schemeIs('chrome')) {
-            // only chrome urls can supply a media list page (for now)
+            // only chrome urls can supply a media page (for now)
             return null;
           }
 
@@ -1847,15 +1847,15 @@
             pageWindow = pageWindow.wrappedJSObject;          
           }
 
-          return pageWindow.mediaListPage;
+          return pageWindow.mediaPage;
         ]]></getter>
       </property>
 
       <!-- sbITabBrowserTab -->
       <property name="mediaListView" readonly="true">
         <getter><![CDATA[
-          if (this.mediaListPage && this.mediaListPage.mediaListView) {
-            return this.mediaListPage.mediaListView;
+          if (this.mediaPage && this.mediaPage.mediaListView) {
+            return this.mediaPage.mediaListView;
           } 
           if (this._viewForPage) {
             return this._viewForPage;
@@ -2027,10 +2027,10 @@
            when _viewForPage should be cleared. -->
       <field name="_isNewViewForPage">false</field>
 
-      <method name="setUpMediaListPage">
+      <method name="setUpMediaPage">
         <body><![CDATA[
-        if (!this.mediaListPage) {
-          dump("MATT: setUpMediaListPage - NO PAGE FOUND \n");
+        if (!this.mediaPage) {
+          dump("MATT: setUpMediaPage - NO PAGE FOUND \n");
           
           // The loaded page is not a MediaPage, so we can't
           // do anything with the view we were given.  
@@ -2039,7 +2039,7 @@
           this._isNewViewForPage = false;
           return;
         }
-        dump("MATT: setUpMediaListPage \n");
+        dump("MATT: setUpMediaPage \n");
         
         try {          
           // For now we need to keep the playlist happy.
@@ -2059,7 +2059,7 @@
           }
           
           
-          var page = this.mediaListPage;
+          var page = this.mediaPage;
           var view;
           
           // If nothing in the history, were we explicitly passed a view?
@@ -2070,22 +2070,19 @@
             this._isNewViewForPage = false;
           }
           
-
           if (view) {
             page.mediaListView = view;
 
             // Monitor the media list that the page is displaying.
             // If it dies, we need to close the tab.
             this._mediaListRemovalMonitor.setMediaList(view.mediaList);
+          
           } else {
-            // MUST PROVIDE A VIEW!  There should be 
-            // no way to call this function without a view
-            // TODO change this
-            Components.utils.reportError("setUpMediaListPage did not find a view!");
-            
-            // TODO, once we get rid of performLegacyInitialization we can
-            // do this.backWithDefault() here
-            
+          
+            // We did not get a view.  This may be an error, or may be 
+            // because the medialist has been removed.
+            Components.utils.reportError("sbTabBrowser.setUpMediaPage did not find a view!");
+            this.backWithDefault();           
           }
         }
         catch (e) {
@@ -2303,7 +2300,7 @@
             }
             this._loadingURL = "";
 
-            if (!this.mediaListPage) {
+            if (!this.mediaPage) {
               this._metrics.metricsInc("app.browser", "pageViews", "");
               this.scanWebPage();
             }
@@ -2326,9 +2323,9 @@
         <![CDATA[
           dump("MATT: tab.onBrowserUnload\n");                    
            
-          // For now only save view history for chrome media list pages
+          // For now only save view history for chrome media pages
           if (!this.linkedBrowser.currentURI.schemeIs("chrome") ||
-              !this.mediaListPage) {
+              !this.mediaPage) {
             return;
           }
 
@@ -2340,7 +2337,7 @@
           var viewMap =
             Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                       .getService(Components.interfaces.sbIMediaListViewMap);
-          viewMap.setView(browser, entry, this.mediaListPage.mediaListView);
+          viewMap.setView(browser, entry, this.mediaPage.mediaListView);
         ]]>
         </body>
       </method>

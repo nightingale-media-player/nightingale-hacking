@@ -913,15 +913,6 @@
         </body>
       </method>
 
-      <method name="loadLibrary">
-        <body>
-          <![CDATA[
-            // optional connection
-            if (window.gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?library" );
-          ]]>
-        </body>
-      </method>
-
       <method name="playbackPause">
         <body>
           <![CDATA[

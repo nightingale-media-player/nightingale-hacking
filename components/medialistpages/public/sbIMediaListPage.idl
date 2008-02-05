@@ -30,7 +30,7 @@ interface nsIDOMEvent;
 interface nsIDragSession;
 
 /**
- * \interface sbIMediaListPage
+ * \interface sbIMediaPage
  * \brief A generic interface for UI that renders a media list view
  *
  * Pages that display libraries or playlists must supply this interface
@@ -46,8 +46,8 @@ interface nsIDragSession;
  *
  * \sa sbIMediaListView, sbIMediaList
  */
-[scriptable, uuid(7b7cf120-c098-11dc-95ff-0800200c9a66)]
-interface sbIMediaListPage : nsISupports
+[scriptable, uuid(b9e3c190-d35e-11dc-95ff-0800200c9a66)]
+interface sbIMediaPage : nsISupports
 {
 
   /**

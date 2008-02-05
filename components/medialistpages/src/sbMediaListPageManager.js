@@ -45,18 +45,25 @@ MediaListPageManager.prototype = {
   
   _pageInfoArray: [],
   
+  // PageInfo objects for the fallback mediapages.  Set by _registerDefaults.
+  _defaultPlaylistPage:  null,
+  _defaultFilteredPlaylistPage: null,
+  
+  
   registerPage: function(aName, aURL, aMatchInterface) {
   
-    // Make a unique identifier
-    var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
-    aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
-    var aUUID = aUUIDGenerator.generateUUID();
-
-    // Make a pageInfo object
-    var pageInfo = {
-      get guid() {
-        return aUUID;
-      },
+    // Make sure we don't already have a page with
+    // the given url
+    var pageInfo;
+    
+    for each (pageInfo in this._pageInfoArray) {
+      if (pageInfo.contentUrl == aURL) {
+        throw new Error("Page URL already registered: " + aURL);
+      }
+    }
+    
+    // Make a PageInfo object
+    pageInfo = {
       get contentTitle() { 
         return aName;
       },
@@ -82,16 +89,26 @@ MediaListPageManager.prototype = {
   },
   
   unregisterPage: function(aPageInfo) {
+
+    // If unregistering the default pages, must remove shortcut pointers
+    if (this._defaultFilteredPlaylistPage && 
+        this._defaultFilteredPlaylistPage.contentUrl == aPageInfo.contentUrl) {
+      this._defaultFilteredPlaylistPage = null;
+    } else if (this._defaultPlaylistPage && 
+      this._defaultPlaylistPage.contentUrl == aPageInfo.contentUrl) {
+      this._defaultPlaylistPage = null;
+    }
+  
     // Search the array for the matching page
     for (var i in this._pageInfoArray) {
-      if (aPageInfo.guid == this._pageInfoArray[i].guid) {
+      if (aPageInfo.contentUrl == this._pageInfoArray[i].contentUrl) {
         // found, remove it and stop
         this._pageInfoArray.splice(i, 1);
         return;
       }
     }
     // Page not found, throw!
-    throw new Error("Page " + aPageInfo.guid + " not found in unregisterPage");
+    throw new Error("Page " + aPageInfo.contentTitle + " not found in unregisterPage");
   },
   
   getAvailablePages: function(aList) {
@@ -121,21 +138,21 @@ MediaListPageManager.prototype = {
     // Read the saved state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
-    remote.init("medialistpage." + aList.guid, null);
-    var page_saved_url = remote.stringValue;
-    if (page_saved_url && page_saved_url != "") {
+    remote.init("mediapages." + aList.guid, null);
+    var savedPageURL = remote.stringValue;
+    if (savedPageURL && savedPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
-      var pageInfo = this._checkPageForList(aList, page_saved_url);
+      var pageInfo = this._checkPageForList(aList, savedPageURL);
       if (pageInfo) return pageInfo;
     }
     
     // Read the list's default
-    var page_default_url = aList.getProperty(SBProperties.defaultMediaListPageURL);
-    if (page_default_url && page_default_url != "") {
+    var defaultPageURL = aList.getProperty(SBProperties.defaultMediaListPageURL);
+    if (defaultPageURL && defaultPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
-      var pageInfo = this._checkPageForList(aList, page_default_url);
+      var pageInfo = this._checkPageForList(aList, defaultPageURL);
       if (pageInfo) return pageInfo;
     }
     
@@ -143,26 +160,35 @@ MediaListPageManager.prototype = {
     // is shown, or its previous saved/default page isn't valid anymore, so
     // pick a new one
     
-    for (var i in this._pageInfoArray) {
-      var pageInfo = this._pageInfoArray[i];
-      if (pageInfo.matchInterface.match(aList)) {
-        return pageInfo;
+    // Hardcoded first run logic:
+    // Libraries get filter lists, playlists do not.
+    if (aList instanceof Ci.sbILibrary && this._defaultFilteredPlaylistPage) {
+      return this._defaultFilteredPlaylistPage;
+    } else if (this._defaultPlaylistPage)  {
+      return this._defaultPlaylistPage;
+    } else {
+      // No hardcoded defaults.  Look for anything
+      // that matches.
+      for (var i in this._pageInfoArray) {
+        var pageInfo = this._pageInfoArray[i];
+        if (pageInfo.matchInterface.match(aList)) {
+          return pageInfo;
+        }
       }
     }
     
-    // nothing matched ! what the hell ? at least one of the songbird pages
-    // should support everything, so something is very very wrong here.
-    throw new Error("No page found that matches list " + aList.guid);
+    // Oh crap.
+    throw new Error("MediaPageManager unable to determine a page for " + aList.guid);
 
     // keep js happy ?
     return null;
   },
   
   setPage: function(aList, aPageInfo) {
-    // Save the sate
+    // Save the state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
-    remote.init("medialistpage." + aList.guid, null);
+    remote.init("mediapages." + aList.guid, null);
     remote.stringValue = aPageInfo.contentUrl;
   },
   
@@ -188,27 +214,47 @@ MediaListPageManager.prototype = {
   },
   
   _registerDefaults: function() {
-    var string = "mediapages.standardview";
+    var playlistString = "mediapages.playlistpage";
+    var filteredPlaylistString = "mediapages.filteredplaylistpage";
     try {
       var stringBundleService =
           Components.classes["@mozilla.org/intl/stringbundle;1"]
                     .getService(Components.interfaces.nsIStringBundleService);
       var stringBundle = stringBundleService.createBundle(
            "chrome://songbird/locale/songbird.properties" );
-      string = stringBundle.GetStringFromName(string);
+      playlistString = stringBundle.GetStringFromName(playlistString);
+      filteredPlaylistString = stringBundle.GetStringFromName(
+                  filteredPlaylistString);
+      stringBundleService = null;
+      stringBundle = null;
     } catch (e) {
-      Component.utils.reportError("L10N: Couldn't localize default media page name.\n")
+      Component.utils.reportError("MediaPageManager: Couldn't localize default media page name.\n")
     }
-    
-    this.registerPage( string,
-                       "chrome://songbird/content/xul/sbLibraryPage.xul",
-                       {match: function(mediaList) { return(true); }} 
-                       // the default page matches everything
-                     );
+
+    // the default page matches everything    
+    var matchAll = {match: function(mediaList) { return(true); }};
+
+    // Register the playlist with filters
+    this._defaultFilteredPlaylistPage =
+        this.registerPage( filteredPlaylistString,
+        "chrome://songbird/content/xul/mediapages/playlistPage.xul?useFilters=true", 
+        matchAll);    
+
+    // And the playlist without filters
+    this._defaultPlaylistPage = 
+        this.registerPage( playlistString,
+        "chrome://songbird/content/xul/mediapages/playlistPage.xul",
+        matchAll);                       
   },
   
 } // MediaListPageManager.prototype
 
+
+
+/**
+ * MediaListPageMetadataReader
+ * Reads the Add-on Metadata RDF datasource for Media Page declarations.
+ */
 var MediaListPageMetadataReader = {
   loadMetadata: function(manager) {
     this._manager = manager;

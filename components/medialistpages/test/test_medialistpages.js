@@ -44,7 +44,8 @@ function runTest () {
   log("OK");
 }
 
-const DEFAULTPAGE = "chrome://songbird/content/xul/sbLibraryPage.xul"
+const DEFAULTPAGE1 = "chrome://songbird/content/xul/mediapages/playlistPage.xul?useFilters=true"
+const DEFAULTPAGE2 = "chrome://songbird/content/xul/mediapages/playlistPage.xul"
 const EXTENSIONPAGE = "chrome://songbird-test-media-page/content/testMediaPage.xul"
 const BADURL = "http://non/registered/url.xul";
 const URL1 = "http://fake/url1.xul";
@@ -63,12 +64,18 @@ function testMediaListPageManager() {
   // Create list of type "simple"
   var list1 = library1.createMediaList("simple");
 
-  // Verify that the built-in page has been registered
+  // Verify that the built-in pages have been registered
   // and that giving a list that has no default returns the global default 
   // page
-  var pageInfo = pageMgr.getPage(list1);
+  var pageInfo = pageMgr.getPage(library1);
   assertEqual(
-    pageInfo.contentUrl, DEFAULTPAGE, 
+    pageInfo.contentUrl, DEFAULTPAGE1, 
+    "built-in page not found (" + pageInfo.contentUrl + ")\n"
+  );
+  var defaultInfo1 = pageInfo;
+  pageInfo = pageMgr.getPage(list1);
+  assertEqual(
+    pageInfo.contentUrl, DEFAULTPAGE2, 
     "built-in page not found (" + pageInfo.contentUrl + ")\n"
   );
   
@@ -79,10 +86,10 @@ function testMediaListPageManager() {
   // global default page
   pageInfo = pageMgr.getPage(list1);
   assertEqual(
-    pageInfo.contentUrl, DEFAULTPAGE,
+    pageInfo.contentUrl, DEFAULTPAGE2,
     "setting a default page to a BADURL should give DEFAULT"
   );
-  var defaultInfo = pageInfo;
+  var defaultInfo2 = pageInfo;
   
   // test install.rdf loaded page from the test extension
   var rdfInfo = {};
@@ -98,8 +105,9 @@ function testMediaListPageManager() {
     "the extension page should be registered among the available pages"
   );
   
-  // unregister both and verify that no page remains
-  pageMgr.unregisterPage(defaultInfo);
+  // unregister default pages and verify that nothing remains
+  pageMgr.unregisterPage(defaultInfo1);
+  pageMgr.unregisterPage(defaultInfo2);
   pageMgr.unregisterPage(rdfInfo);
   var enumerator = pageMgr.getAvailablePages();
   assertEqual(enumerator.hasMoreElements(), false,

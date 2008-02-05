@@ -373,44 +373,6 @@
         ]]></body>
       </method>
 
-      <!-- TODO: What is all this?  Should all be removed!? -->
-      <method name="loadURL">
-        <parameter name="aURL" />
-        <parameter name="aEvent" />
-        <body><![CDATA[
-          dump('(loadURL?)\n');
-          if (!aURL ||
-            !aURL.indexOf ||
-            !aURL.length)
-          {
-            // if no URL was supplied there's nothing for us to do
-            return;
-          }
-
-          dump('loadURL: '+aURL+'\n');
-
-          if (this.browser) {
-            try {
-              if ( gPPS.isPlaylistURL(aURL) ||
-                   gPPS.isMediaURL(aURL) ) {
-                this.browser.handleMediaURL(aURL);
-              } else {
-                this.browser.stop();
-                this.browser.loadURI(aURL, null, null, aEvent);
-              }
-
-            }
-            catch (err) {
-              dump('error: '+err+'\n');
-              var err_url = "chrome://songbird/content/html/cannotLoad.html";
-              if (aURL != err_url) {
-                this.loadURL(err_url);
-              }
-            }
-          }
-        ]]></body>
-       </method>
-
 
       
       <!-- Called when the content of the current browser tab is changed.
@@ -521,7 +483,7 @@
 
           // If this node has a URL, just load it in the browser
           if (node.url) {
-            this.loadURL(node.url, event);
+            this.browser.loadURI(node.url, null, null, event);
             
             if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
 
