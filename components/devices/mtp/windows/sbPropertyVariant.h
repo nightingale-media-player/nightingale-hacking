@@ -33,12 +33,13 @@
  * This class wraps the Microsoft PROPVARIANT and provides
  * an nsIVariant interface to it.
  */
-class sbPropertyVariant : public nsIVariant, 
+class sbPropertyVariant : public nsIWritableVariant,
                           public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIVARIANT
+  NS_DECL_NSIWRITABLEVARIANT
   NS_DECL_NSICLASSINFO
   /**
    * Initializes the PROPVARIANT
@@ -54,6 +55,9 @@ public:
   {
     PropVariantCopy(&mPropVariant, &propVar);
   }
+  
+  /* shared */ PROPVARIANT* GetPropVariant();
+  
 protected:
   /**
    * Cleans up the variant. Only allow destruction from within

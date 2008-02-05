@@ -29,6 +29,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 #include <nsMemory.h>
 
@@ -51,9 +52,11 @@
 #include <atlbase.h>
 #include <wtypes.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyVariant,
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyVariant,
+                              nsIWritableVariant,
                               nsIVariant)
-NS_IMPL_CI_INTERFACE_GETTER1(sbPropertyVariant,
+NS_IMPL_CI_INTERFACE_GETTER2(sbPropertyVariant,
+                             nsIWritableVariant,
                              nsIVariant)
 NS_DECL_CLASSINFO(sbPropertyVariant)
 NS_IMPL_THREADSAFE_CI(sbPropertyVariant)
@@ -383,4 +386,325 @@ NS_IMETHODIMP sbPropertyVariant::GetAsStringWithSize(PRUint32 *size, char **str)
 NS_IMETHODIMP sbPropertyVariant::GetAsWStringWithSize(PRUint32 *size, PRUnichar **str)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+/*** nsIWritableVariant ***/
+
+
+#define SetValueByVal(type, field, value) \
+  PR_BEGIN_MACRO                          \
+  mPropVariant.vt = type;                 \
+  mPropVariant.field = value;             \
+  return NS_OK;                           \
+  PR_END_MACRO
+
+/* attribute PRBool writable; */
+NS_IMETHODIMP sbPropertyVariant::GetWritable(PRBool *aWritable)
+{
+  NS_ENSURE_ARG_POINTER(aWritable);
+  *aWritable = PR_TRUE;
+  return NS_OK;
+}
+NS_IMETHODIMP sbPropertyVariant::SetWritable(PRBool aWritable)
+{
+  /* we don't support *setting* it to not writable (I'm lazy) */
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setAsInt8 (in PRUint8 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsInt8(PRUint8 aValue)
+{
+  /* wtf, this is unsigned! */
+  SetValueByVal(VT_UI1, bVal, aValue);
+}
+
+/* void setAsInt16 (in PRInt16 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsInt16(PRInt16 aValue)
+{
+  SetValueByVal(VT_I2, iVal, aValue);
+}
+
+/* void setAsInt32 (in PRInt32 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsInt32(PRInt32 aValue)
+{
+  SetValueByVal(VT_I4, lVal, aValue);
+}
+
+/* void setAsInt64 (in PRInt64 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsInt64(PRInt64 aValue)
+{
+  SetValueByVal(VT_I8, hVal.QuadPart, aValue);
+}
+
+/* void setAsUint8 (in PRUint8 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsUint8(PRUint8 aValue)
+{
+  SetValueByVal(VT_UI1, bVal, aValue);
+}
+
+/* void setAsUint16 (in PRUint16 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsUint16(PRUint16 aValue)
+{
+  SetValueByVal(VT_UI2, uiVal, aValue);
+}
+
+/* void setAsUint32 (in PRUint32 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsUint32(PRUint32 aValue)
+{
+  SetValueByVal(VT_UI4, ulVal, aValue);
+}
+
+/* void setAsUint64 (in PRUint64 aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsUint64(PRUint64 aValue)
+{
+  SetValueByVal(VT_UI8, uhVal.QuadPart, aValue);
+}
+
+/* void setAsFloat (in float aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsFloat(float aValue)
+{
+  SetValueByVal(VT_R4, fltVal, aValue);
+}
+
+/* void setAsDouble (in double aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsDouble(double aValue)
+{
+  SetValueByVal(VT_R8, dblVal, aValue);
+}
+
+/* void setAsBool (in PRBool aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsBool(PRBool aValue)
+{
+  SetValueByVal(VT_BOOL, boolVal, aValue);
+}
+
+/* void setAsChar (in char aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsChar(char aValue)
+{
+  SetValueByVal(VT_I1, cVal, aValue);
+}
+
+/* void setAsWChar (in wchar aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsWChar(PRUnichar aValue)
+{
+  SetValueByVal(VT_UI2, uiVal, aValue);
+}
+
+/* void setAsID (in nsIDRef aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsID(const nsID & aValue)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  mPropVariant.puuid = (CLSID*)::CoTaskMemAlloc(sizeof(CLSID));
+  if (!mPropVariant.puuid)
+    return NS_ERROR_OUT_OF_MEMORY;
+  memcpy(mPropVariant.puuid, &aValue, sizeof(CLSID));
+  mPropVariant.vt = VT_CLSID;
+  return NS_OK;
+}
+
+/* void setAsAString (in AString aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsAString(const nsAString & aValue)
+{
+  return SetAsWStringWithSize(aValue.Length(), aValue.BeginReading());
+}
+
+/* void setAsDOMString (in DOMString aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsDOMString(const nsAString & aValue)
+{
+  return SetAsAString(aValue);
+}
+
+/* void setAsACString (in ACString aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsACString(const nsACString & aValue)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setAsAUTF8String (in AUTF8String aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsAUTF8String(const nsACString & aValue)
+{
+  return SetAsACString(aValue);
+}
+
+/* void setAsString (in string aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsString(const char *aValue)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  size_t len = strlen(aValue);
+  mPropVariant.pszVal = (LPSTR)::CoTaskMemAlloc(len);
+  if (!mPropVariant.pszVal)
+    return NS_ERROR_OUT_OF_MEMORY;
+  memcpy(mPropVariant.pszVal, aValue, len);
+  mPropVariant.vt = VT_LPSTR;
+  return NS_OK;
+}
+
+/* void setAsWString (in wstring aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsWString(const PRUnichar *aValue)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  size_t len = wcslen(aValue) * sizeof(PRUnichar);
+  mPropVariant.pwszVal = (LPWSTR)::CoTaskMemAlloc(len);
+  if (!mPropVariant.pwszVal)
+    return NS_ERROR_OUT_OF_MEMORY;
+  memcpy(mPropVariant.pwszVal, aValue, len);
+  mPropVariant.vt = VT_LPWSTR;
+  return NS_OK;
+}
+
+/* void setAsISupports (in nsISupports aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetAsISupports(nsISupports *aValue)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aValue);
+  NS_ENSURE_ARG_POINTER(aValue); // umm, you better QI to nsISupports
+  supports.forget((nsISupports**)&mPropVariant.punkVal);
+  mPropVariant.vt = VT_UNKNOWN;
+  return NS_OK;
+}
+
+/* void setAsInterface (in nsIIDRef iid, [iid_is (iid)] in nsQIResult iface); */
+NS_IMETHODIMP sbPropertyVariant::SetAsInterface(const nsIID & iid, void * iface)
+{
+  /* no equivalent (can't store the IID anywhere) */
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* [noscript] void setAsArray (in PRUint16 type, in nsIIDPtr iid, in PRUint32 count, in voidPtr ptr); */
+NS_IMETHODIMP sbPropertyVariant::SetAsArray(PRUint16 type, const nsIID * iid, PRUint32 count, void * ptr)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setAsStringWithSize (in PRUint32 size, [size_is (size)] in string str); */
+NS_IMETHODIMP sbPropertyVariant::SetAsStringWithSize(PRUint32 size, const char *str)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setAsWStringWithSize (in PRUint32 size, [size_is (size)] in wstring str); */
+NS_IMETHODIMP sbPropertyVariant::SetAsWStringWithSize(PRUint32 size, const PRUnichar *str)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  mPropVariant.bstrVal = ::SysAllocStringLen(str, size);
+  if (!mPropVariant.bstrVal)
+    return NS_ERROR_OUT_OF_MEMORY;
+  mPropVariant.vt = VT_BSTR;
+  return NS_OK;
+}
+
+/* void setAsVoid (); */
+NS_IMETHODIMP sbPropertyVariant::SetAsVoid()
+{
+  /* yeah, so VT_EMPTY is JS void, and VT_NULL is js NULL */
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  mPropVariant.vt = VT_EMPTY;
+  return NS_OK;
+}
+
+/* void setAsEmpty (); */
+NS_IMETHODIMP sbPropertyVariant::SetAsEmpty()
+{
+  /* see SetAsVoid - yes, we use VT_EMPTY for SetAsVoid
+     and VT_NULL for setAsEmpty (i.e. VT_EMPTY in SetEmpty is wrong) */
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  mPropVariant.vt = VT_NULL;
+  return NS_OK;
+}
+
+/* void setAsEmptyArray (); */
+NS_IMETHODIMP sbPropertyVariant::SetAsEmptyArray()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+#define GET_VARIANT_BYVAL(vtype, prtype, method) \
+  case nsIDataType::vtype: {                     \
+    prtype val;                                  \
+    rv = aOther->GetAs ## method(&val);          \
+    NS_ENSURE_SUCCESS(rv, rv);                   \
+    rv = SetAs ## method(val);                   \
+    NS_ENSURE_SUCCESS(rv, rv);                   \
+    break;                                       \
+  }
+
+#define GET_VARIANT_STRING(vtype, prtype, method) \
+  case nsIDataType::vtype: {                      \
+    prtype val;                                   \
+    rv = aOther->GetAs ## method(val);            \
+    NS_ENSURE_SUCCESS(rv, rv);                    \
+    rv = SetAs ## method(val);                    \
+    NS_ENSURE_SUCCESS(rv, rv);                    \
+    break;                                        \
+  }
+  
+
+/* void setFromVariant (in nsIVariant aValue); */
+NS_IMETHODIMP sbPropertyVariant::SetFromVariant(nsIVariant *aOther)
+{
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  /* *grumble* */
+  
+  PRUint16 otherType;
+  nsresult rv = aOther->GetDataType(&otherType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  switch(otherType) {
+    GET_VARIANT_BYVAL(VTYPE_INT8,             PRUint8,    Int8)
+    GET_VARIANT_BYVAL(VTYPE_INT16,            PRInt16,    Int16)
+    GET_VARIANT_BYVAL(VTYPE_INT32,            PRInt32,    Int32)
+    GET_VARIANT_BYVAL(VTYPE_INT64,            PRInt64,    Int64)
+    GET_VARIANT_BYVAL(VTYPE_UINT8,            PRUint8,    Uint8)
+    GET_VARIANT_BYVAL(VTYPE_UINT16,           PRUint16,   Uint16)
+    GET_VARIANT_BYVAL(VTYPE_UINT32,           PRUint32,   Uint32)
+    GET_VARIANT_BYVAL(VTYPE_UINT64,           PRUint64,   Uint64)
+    GET_VARIANT_BYVAL(VTYPE_FLOAT,            float,      Float)
+    GET_VARIANT_BYVAL(VTYPE_DOUBLE,           double,     Double)
+    GET_VARIANT_BYVAL(VTYPE_BOOL,             PRBool,     Bool)
+    GET_VARIANT_BYVAL(VTYPE_CHAR,             char,       Char)
+    GET_VARIANT_BYVAL(VTYPE_WCHAR,            PRUnichar,  WChar)
+    
+    case nsIDataType::VTYPE_VOID: {
+      rv = SetAsVoid();
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    
+    /* VTYPE_ID */
+
+    GET_VARIANT_STRING(VTYPE_DOMSTRING,       nsString,   DOMString)
+    GET_VARIANT_BYVAL(VTYPE_CHAR_STR,         char*,      String)
+    GET_VARIANT_BYVAL(VTYPE_WCHAR_STR,        PRUnichar*, WString)
+    GET_VARIANT_STRING(VTYPE_STRING_SIZE_IS,  nsCString,  ACString)
+    GET_VARIANT_STRING(VTYPE_WSTRING_SIZE_IS, nsString,   AString)
+    GET_VARIANT_STRING(VTYPE_UTF8STRING,      nsCString,  ACString)
+    GET_VARIANT_STRING(VTYPE_CSTRING,         nsCString,  ACString)
+    GET_VARIANT_STRING(VTYPE_ASTRING,         nsString,   AString)
+
+    default:
+      return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  return NS_OK;
+}
+
+/* Umm, yeah, shared, please don't clobber kthx */
+PROPVARIANT* sbPropertyVariant::GetPropVariant()
+{
+  return &mPropVariant;
 }
