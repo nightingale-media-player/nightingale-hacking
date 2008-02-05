@@ -31,7 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 JAR_MANIFEST = jar.mn
 
-# Everybody gets English for now...
+
+ifeq (default,$(SB_SEARCHPLUGINS))
 SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/hypemachine.xml \
                          $(srcdir)/en-US/searchplugins/google-lyrics.xml \
                          $(srcdir)/en-US/searchplugins/songbird-internal-search.xml \
@@ -39,5 +40,12 @@ SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/hypemachine.xml \
                          $(srcdir)/en-US/searchplugins/yahoo-lyrics.xml \
                          $(NULL)
 
+else
+comma:= ,
+empty:=
+space:= $(empty) $(empty)
+SONGBIRD_SEARCHPLUGINS = \
+  $(addprefix $(srcdir)/en-US/searchplugins/,$(subst $(comma),$(space),$(SB_SEARCHPLUGINS)))
+endif
 
 include $(topsrcdir)/build/rules.mk

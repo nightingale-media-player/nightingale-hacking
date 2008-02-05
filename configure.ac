@@ -390,13 +390,11 @@ case "$SB_PLATFORM" in
         AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
     fi
     if test "$_CC_MAJOR_VERSION" = "12"; then
-        _CC_SUITE=6
+        _CC_SUITE=6s/songbird/trunk/
     elif test "$_CC_MAJOR_VERSION" = "13"; then
         _CC_SUITE=7
     elif test "$_CC_MAJOR_VERSION" = "14"; then
         _CC_SUITE=8
-    elif test "$_CC_MAJOR_VERSION" = "15"; then
-        _CC_SUITE=9
     else
         AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
     fi
@@ -430,7 +428,7 @@ case "$SB_PLATFORM" in
 
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
 
-    if test "$_CC_SUITE" -ge "8"; then
+    if test "$_CC_SUITE" = "8"; then
       # MSVC 8+ use native wchar_t, but Mozilla builds without it
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
     fi
@@ -496,7 +494,6 @@ case "$SB_PLATFORM" in
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
-    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS -isysroot /Developer/SDKs/MacOSX10.4u.sdk -fobjc-exceptions -DUSE_COCOA"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
@@ -613,7 +610,6 @@ AC_SUBST(MACOSX_CONTENTS)
 AC_SUBST(MACOSX_FRAMEWORKS)
 AC_SUBST(MACOSX_RESOURCES)
 AC_SUBST(XULRUNNERDIR)
-AC_SUBST(CMMFLAGS)
 
 #
 # Check for --with-license-file
@@ -636,18 +632,13 @@ AC_ARG_WITH(user-eula-file,
                                        is displayed when the application is first launched.
                                        The user *must* accept this EULA for the application
                                        to continue. The file *must* reside within the source
-                                       tree. Using / means the root of the source tree. This file
-                                       also replaces the About dialog license!
+                                       tree. Using / means the root of the source tree.
                                        ],
             SB_USER_EULA_FILE=$withval)
 if test -z "$SB_USER_EULA_FILE"; then
   SB_USER_EULA_FILE=eula.html
-  SB_USER_ABOUT_FILE=about.html
-else
-  SB_USER_ABOUT_FILE=$SB_USER_EULA_FILE
 fi
 AC_SUBST(SB_USER_EULA_FILE)
-AC_SUBST(SB_USER_ABOUT_FILE)
 
 #
 # Check for --with-flash-redistributable
@@ -669,9 +660,9 @@ AC_ARG_WITH(dependencies-dir,
             SB_DEPENDENCIES_DIR=$withval)
 if test -z "$SB_DEPENDENCIES_DIR"; then
   DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
-  if test "$SB_PLATFORM" = "windows" -a "$_CC_SUITE" -ge "8" ; then
+  if test "$SB_PLATFORM" = "windows" -a "$_CC_SUITE" = "8" ; then
     # since the default dependencies for Windows are for MSVC 7.1,
-    # we need to special-case for MSVC 8+ to use its (incompatible) version instead
+    # we need to special-case for MSVC 8 to use its (incompatible) version instead
     DEPS_SUBDIR=$DEPS_SUBDIR-msvc8
   fi
   SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
@@ -755,6 +746,18 @@ AC_SUBST(FORCE_MEDIA_CORE_VLC)
 AC_SUBST(FORCE_MEDIA_CORE_WMP)
 AC_SUBST(FORCE_MEDIA_CORE_GST)
 AC_SUBST(FORCE_MEDIA_CORE_QT)
+
+#
+# Check for --with-searchplugins
+#
+
+SB_SEARCHPLUGINS=
+
+AC_ARG_WITH(searchplugins,
+            [  --with-searchplugins=<list of plugin files>,default   Searchplugins to include (from the locales)],
+            [ SB_SEARCHPLUGINS=$withval ],
+            [ SB_SEARCHPLUGINS=default ])
+AC_SUBST(SB_SEARCHPLUGINS)
 
 #
 # Check for extras.
