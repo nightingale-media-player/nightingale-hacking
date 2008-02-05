@@ -143,7 +143,8 @@ var OverlayLoader = {
     // the user if the load does not happen.  *sigh*
     var checkCompleted = function() {
       if (OverlayLoader.loadInProgress) {
-        alert("An extension overlay has failed to load.\n\n" +
+        Components.utils.reportError(
+              "An extension overlay has failed to load.\n\n" +
               "Known causes include: \n" +
               "  - a malformed overlay file\n" +
               "  - an overlay which is itself the target of an overlay.\n\n" +
