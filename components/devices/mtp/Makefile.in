@@ -30,8 +30,10 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifeq (windows,$(SB_PLATFORM))
+ifneq (,$(shell test $(_MSC_VER) -ge 1400 && echo 1))
 SUBDIRS = windows \
           $(NULL)
+endif
 endif
 
 include $(topsrcdir)/build/rules.mk
