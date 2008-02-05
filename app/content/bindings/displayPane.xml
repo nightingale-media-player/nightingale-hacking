@@ -443,9 +443,24 @@
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
           var enumerator = paneMgr.instantiatorsList;
           if (enumerator.hasMoreElements()) {
-            var sep = document.createElement("menuseparator");
-            this.parentNode.insertBefore(sep, this);
-            this._items.push(sep);
+          
+            // do we really need a separator?
+            var sib = this.previousSibling;
+            do {
+              if (sib == null || sib.localName == "menuseparator") {
+                // no separator required
+                break;
+              }
+              if (sib.localName == "menuitem") {
+                // insert a separator between elements
+                var sep = document.createElement("menuseparator");
+                this.parentNode.insertBefore(sep, this);
+                this._items.push(sep);
+                break;
+              
+              }
+            } while(sib = sib.previousSibling);
+            
           }
           while (enumerator.hasMoreElements()) {
             var instantiator = enumerator.getNext();

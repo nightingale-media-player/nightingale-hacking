@@ -239,52 +239,138 @@ var MediaListPageMetadataReader = {
    * Extract pane metadata and register it with the manager.
    */
   _registerMediaPage: function _registerMediaPage(addon, page) {
-    // create and validate our pane info
+    // create and validate our page info
+    var errorList = [];
+    var warningList = [];
+    
     var info = {};
     for (property in page) {
       if (page[property])
        info[property] = page[property][0];
     }
-    requiredProperties = ["contentTitle", "contentUrl"];
-    optionalProperties = ["match"];
     
-    var errorList = [];
-    var warningList = [];
+    this._validateProperties(info, errorList, warningList);
     
-    for (p in requiredProperties) { 
-      if (!info[requiredProperties[p]]) {
-        errorList.push("Missing required property " + requiredProperties[p] + ".\n")
-      }
+    // create a match function
+    var matchFunction;
+    if (page.match) {
+      var matchList = this._createMatchList(page, warningList);
+      matchFunction = this._createMatchFunction(matchList);
     }
-    for (p in info) {
-      if (!requiredProperties[p] && !optionalProperties[p]) {
-        //TODO: warningList.push("Unrecognized property " + p + ".\n")
-      }
-    } 
+    else {
+      matchFunction = this._createMatchAllFunction();
+    }
     
     // If errors were encountered, then do not submit
     if (warningList.length > 0){
       this._reportErrors(
-          "Warning media page addon in the install.rdf of extension " +
-          addon.Value + " reported these warning(s):\n", warningList);
+          "Warning: " + addon.Value + " install.rdf loading media page: " , warningList);
     } 
     if (errorList.length > 0) {
       this._reportErrors(
-          "Ignoring media page addon in the install.rdf of extension " +
-          addon.Value + " due to these error(s):\n", errorList);
+          "ERROR: " + addon.Value + " install.rdf IGNORED media page: ", errorList);
       return;
     }
-    
-    // TODO: write the parser for the info.match() part
     
     // Submit description
     this._manager.registerPage( info.contentTitle,
                                 info.contentUrl,
-                                {match: function(mediaList) { return(true); }}
+                                {match: matchFunction}
                                );
     
-    //dump("MediaPageMetadataReader: registered pane " + info.contentTitle
-    //     + " at " + info.contentUrl + " from addon " + addon.Value + " \n");
+    dump("MediaPageMetadataReader: registered pane " + info.contentTitle
+         + " at " + info.contentUrl + " from addon " + addon.Value + " \n");
+  },
+  
+  _validateProperties: function(info, errorList, warningList) {
+    var requiredProperties = ["contentTitle", "contentUrl"];
+    var optionalProperties = ["match"];
+    
+    // check for required properties
+    for (var p in requiredProperties) { 
+      if (!info[requiredProperties[p]]) {
+        errorList.push("Missing required property " + requiredProperties[p] + ".\n")
+      }
+    }
+    
+    // check for unused RDF nodes and warn about them.
+    var template = {};
+    for(var i in requiredProperties) {
+      template[requiredProperties[i]] = "required";
+    }
+    for(var i in optionalProperties) {
+      template[optionalProperties[i]] = "optional";
+    }
+    
+    for (var p in info) {
+      if (!template[p]) {
+        warningList.push("Unrecognized property " + p + ".\n")
+      }
+    }
+  },
+  
+  _createMatchList: function(page, warningList) {
+    // create a set of property-comparison objects
+    // one for each <match>. a mediapage will work for medialists which match
+    // all the properties in a hash.
+    var matchList = [];
+    
+    for (var i = 0; i < page.match.length; i++) {
+      var fields = page.match[i].split(/\s+/);
+      var properties = {}
+      for(var f in fields) {
+        var key; var value;
+        [key, value] = fields[f].split(":");
+        if(!value) { value = key; key = "type" };
+        
+        // TODO: quoted string values ala name:"My Funky List"
+        // TODO: check if the key is actually a legal key-type and warn if not
+        
+        if(properties[key]) {
+           warningList.push("Attempting to match two values for "
+                            +key+": "+properties[key]+" and "+value+".");
+        }
+        
+        properties[key] = value;
+      }
+      matchList.push(properties); 
+    }
+    
+    return matchList;
+  },
+  
+  _createMatchFunction: function(matchList) {
+    // create a match function that uses the match options
+    var matchFunction = function(mediaList) {
+      
+      // check each <match/>'s values
+      // if any one set works, this is a good media page for the list
+      for (var m in matchList) {
+        match = matchList[m];
+        
+        var thisListMatches = true;
+        for (var i in match) {
+          if (match[i] != mediaList[i]) {
+            thisListMatches = false;
+            break;
+          }
+        }
+        if (thisListMatches) {
+          return true;
+        }
+      }
+      
+      // arriving here means none of the <match>
+      // elements fit the medialist passed in
+      return false;
+    }
+    
+    return matchFunction;
+  },
+  
+  _createMatchAllFunction: function() {
+    var matchFunction = function(mediaList) { return(true); };;
+    return matchFunction;
   },
   
   /**
@@ -297,9 +383,7 @@ var MediaListPageMetadataReader = {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
          getService(Components.interfaces.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
-      consoleService.logStringMessage("Media Page Metadata Reader: " 
-                                       + contextMessage + errorList[i]);
-      dump("MediaPageMetadataReader: " + contextMessage + errorList[i] + "\n");
+      Components.utils.reportError("MediaPage Addon Metadata: " + contextMessage + errorList[i]);
     }
   }
 }
