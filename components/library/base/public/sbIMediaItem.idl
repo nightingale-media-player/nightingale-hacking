@@ -117,7 +117,8 @@ interface sbIMediaItem : sbILibraryResource
   /*
   Prop: contentSrc
 
-  The URI representing the location of the <MediaItem>.
+  The URI representing the location of the <MediaItem>.  If the URI is a URL, it
+  may be QI'ed to an nsIURL.
 
   Type:
     Number, in bytes.
