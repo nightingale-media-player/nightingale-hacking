@@ -130,6 +130,7 @@
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
       <menupopup id="menu_viewPopup">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
+        <menuseparator/>
         <sb-mediapages-menuitems id="menuitem_view_mediapages"/>
         <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
       </menupopup>
