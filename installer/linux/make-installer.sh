@@ -1,16 +1,23 @@
 #!/bin/bash
 
-if [ $# < 2 ]; then
-  echo usage: make-installer architecture readme
+if [[ $# < 3 ]]; then
+  echo usage: make-installer architecture version readme
   exit 1
 fi
 
 DEPTH=../../..
 CURRENT_DATE=`date +%Y%m%d`
-SONGBIRD_DIR=Songbird_${CURRENT_DATE}
 SONGBIRD_ARCH=$1
-SONGBIRD_FILENAME=${SONGBIRD_DIR}_${SONGBIRD_ARCH}
-README_FILE=$2
+SONGBIRD_VERSION=$2
+README_FILE=$3
+
+if [ ${README_FILE} = README_OFFICIAL.txt ]; then
+SONGBIRD_DIR=Songbird
+SONGBIRD_FILENAME=Songbird_${SONGBIRD_VERSION}_${SONGBIRD_ARCH}
+else
+SONGBIRD_DIR=Songbird_${CURRENT_DATE}
+SONGBIRD_FILENAME=Songbird_${SONGBIRD_VERSION}_${CURRENT_DATE}_${SONGBIRD_ARCH}
+fi
 
 cd ${DEPTH}/compiled
 
