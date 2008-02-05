@@ -105,7 +105,6 @@ PublicPlaylistCommands.prototype = {
   m_cmd_Remove                    : null, // remove the selected track(s)
   m_cmd_Edit                      : null, // edit the selected track(s)
   m_cmd_Download                  : null, // download the selected track(s)
-  m_cmd_AddToLibrary              : null, // add the selection to the library
   m_cmd_CopyTrackLocation         : null, // copy the select track(s) location(s)
   m_cmd_ShowDownloadPlaylist      : null, // switch the browser to show the download playlist
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
@@ -291,29 +290,6 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_Download.setCommandEnabledCallback(null,
                                                     "library_cmd_download",
                                                     plCmd_IsAnyTrackSelected);
-
-      // --------------------------------------------------------------------------
-      // The ADDTOLIBRARY button
-      // --------------------------------------------------------------------------
-
-      this.m_cmd_AddToLibrary = new PlaylistCommandsBuilder();
-
-      this.m_cmd_AddToLibrary.appendAction(null,
-                                           "library_cmd_addtolibrary",
-                                           "&command.addtolibrary",
-                                           "&command.tooltip.addtolibrary",
-                                           plCmd_AddToLibrary_TriggerCallback);
-
-      this.m_cmd_AddToLibrary.setCommandShortcut(null,
-                                                 "library_cmd_addtolibrary",
-                                                 "&command.shortcut.key.addtolibrary",
-                                                 "&command.shortcut.keycode.addtolibrary",
-                                                 "&command.shortcut.modifiers.addtolibrary",
-                                                 true);
-
-      this.m_cmd_AddToLibrary.setCommandEnabledCallback(null,
-                                                        "library_cmd_addtolibrary",
-                                                        plCmd_CanAddToLibrary);
 
       // --------------------------------------------------------------------------
       // The COPY TRACK LOCATION button
@@ -503,7 +479,6 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
-      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
@@ -554,9 +529,6 @@ PublicPlaylistCommands.prototype = {
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_addtoplaylist",
                                                         SBPlaylistCommand_AddToPlaylist);
-      this.m_webPlaylistCommands.appendPlaylistCommands(null,
-                                                        "library_cmdobj_addtolibrary",
-                                                        this.m_cmd_AddToLibrary);
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_copylocation",
                                                         this.m_cmd_CopyTrackLocation);
@@ -721,7 +693,6 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
@@ -793,7 +764,6 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Remove.shutdown();
     this.m_cmd_Edit.shutdown();
     this.m_cmd_Download.shutdown();
-    this.m_cmd_AddToLibrary.shutdown();
     this.m_cmd_CopyTrackLocation.shutdown();
     this.m_cmd_ShowDownloadPlaylist.shutdown();
     this.m_cmd_PauseResumeDownload.shutdown();
@@ -907,6 +877,10 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
   }
 }
 
+/*
+
+// mig dice: MUY DEPRACATADO!!!
+
 // Called when the "add to library" action is triggered
 function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var libraryManager =
@@ -928,6 +902,7 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
                                          selectionCount - itemsAdded,
                                          mediaList.name);
 }
+*/
 
 // Called when the "copy track location" action is triggered
 function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
