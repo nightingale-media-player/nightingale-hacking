@@ -26,7 +26,7 @@
 */
 
 #ifndef SBWPDDEVICECONTROLLER_H_
-#define 
+#define SBWPDDEVICECONTROLLER_H_
 
 #include "sbBaseDeviceController.h"
 #include "sbBaseDeviceEventTarget.h"
@@ -72,4 +72,4 @@ private:
 #define SB_WPDCONTROLLER_DESCRIPTION \
   "Windows Portable Device Controller"
 
-#endif
+#endif //SBWPDDEVICECONTROLLER_H_
