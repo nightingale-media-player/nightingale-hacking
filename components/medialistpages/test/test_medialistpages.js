@@ -47,6 +47,9 @@ function runTest () {
 const DEFAULTPAGE1 = "chrome://songbird/content/xul/mediapages/playlistPage.xul?useFilters=true"
 const DEFAULTPAGE2 = "chrome://songbird/content/xul/mediapages/playlistPage.xul"
 const EXTENSIONPAGE = "chrome://songbird-test-media-page/content/testMediaPage.xul"
+const EXTENSIONPAGEDOWNLOADS = "chrome://songbird-test-media-page/content/testMediaPage.xul?downloads"
+const EXTENSIONPAGELIBRARY = "chrome://songbird-test-media-page/content/testMediaPage.xul?library"
+
 const BADURL = "http://non/registered/url.xul";
 const URL1 = "http://fake/url1.xul";
 const URL2 = "http://fake/url2.xul";
@@ -91,24 +94,60 @@ function testMediaListPageManager() {
   );
   var defaultInfo2 = pageInfo;
   
-  // test install.rdf loaded page from the test extension
-  var rdfInfo = {};
-  var pages = pageMgr.getAvailablePages();
+  // there should be the default page, the match-all page, and the downloads-specific
+  // page but we should not find the library-only page
+  var defaultPage = {};
+  var rdfAll = {};
+  var rdfDownloads = {};
+  var rdfLibrary = {};
+  
+  list1.setProperty(SBProperties.customType, "download");
+  assertEqual(list1.getProperty(SBProperties.customType), "download", 
+    "customType should be set to download."
+  );
+  
+  var pages = pageMgr.getAvailablePages(list1);
   while (pages.hasMoreElements()) {
     var pageInfo = pages.getNext();
     pageInfo.QueryInterface(Components.interfaces.sbIMediaListPageInfo);
+    
     if (pageInfo.contentUrl == EXTENSIONPAGE) {
-      rdfInfo = pageInfo;
+      rdfAll = pageInfo;
+    }
+    if (pageInfo.contentUrl == EXTENSIONPAGEDOWNLOADS) {
+      rdfDownloads = pageInfo;
+    }
+    if (pageInfo.contentUrl == EXTENSIONPAGELIBRARY) {
+      rdfLibrary = pageInfo;
+    }
+    if (pageInfo.contentUrl == DEFAULTPAGE2) {
+      defaultPage = pageInfo;
     }
   }
-  assertEqual(rdfInfo.contentUrl, EXTENSIONPAGE,
+  
+  assertEqual(rdfAll.contentUrl, EXTENSIONPAGE,
     "the extension page should be registered among the available pages"
+  );
+  assertEqual(rdfDownloads.contentUrl, EXTENSIONPAGEDOWNLOADS,
+    "the extension page for downloads should be registered among the available pages"
+  );
+  assertEqual(rdfLibrary.contentUrl, null,
+    "the extension page for libraries should NOT be registered among the available pages"
+  );
+  assertEqual(defaultPage.contentUrl, DEFAULTPAGE2,
+    "the default page should be registered among the available pages"
   );
   
   // unregister default pages and verify that nothing remains
   pageMgr.unregisterPage(defaultInfo1);
   pageMgr.unregisterPage(defaultInfo2);
-  pageMgr.unregisterPage(rdfInfo);
+  pageMgr.unregisterPage(rdfAll);
+  pageMgr.unregisterPage(rdfDownloads);
+  
+  // manually make this one's pageinfo since it was deliberately excluded above
+  rdfLibrary.contentUrl = EXTENSIONPAGELIBRARY;
+  pageMgr.unregisterPage(rdfLibrary);
+  
   var enumerator = pageMgr.getAvailablePages();
   assertEqual(enumerator.hasMoreElements(), false,
     "after unregistering the one built-in page and the extension, the list should be empty"

@@ -25,9 +25,24 @@
     <!-- insert metadata here -->
     <songbird:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test</songbird:contentTitle>
+        <songbird:contentTitle>Media Page Test (All Match)</songbird:contentTitle>
         <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul</songbird:contentUrl>
-        <songbird:match>all</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Downloads Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?downloads</songbird:contentUrl>
+        <songbird:match>customType:download</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Library Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?library</songbird:contentUrl>
+        <songbird:match>library</songbird:match>
       </Description>
     </songbird:mediaPage>
 
