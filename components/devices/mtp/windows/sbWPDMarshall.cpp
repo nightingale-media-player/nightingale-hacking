@@ -51,10 +51,6 @@
 #include <nsCOMArray.h>
 #include "sbWPDDevice.h"
 
-// Dealing with Win32 macro mess
-#undef CreateDevice
-#undef CreateEvent
-
 typedef std::vector<nsString> StringArray;
 
 static char const * const HASH_PROPERTY_BAG_CONTRACTID = "@mozilla.org/hash-property-bag;1";
@@ -81,15 +77,15 @@ NS_IMPL_THREADSAFE_CI(sbWPDMarshall)
 inline
 HRESULT GetDeviceManager(IPortableDeviceManager ** deviceManager)
 {
-  CComPtr<IPortableDeviceManager> devMgr;
+  nsRefPtr<IPortableDeviceManager> devMgr;
   // CoCreate the IPortableDeviceManager interface to enumerate
   // portable devices and to get information about them.
   if (SUCCEEDED(CoCreateInstance(CLSID_PortableDeviceManager,
                         NULL,
                         CLSCTX_INPROC_SERVER,
                         IID_IPortableDeviceManager,
-                        (VOID**) &devMgr))) {
-    *deviceManager = devMgr.Detach();
+                        getter_AddRefs(devMgr)))) {
+    devMgr.forget(deviceManager);
     return NS_OK;
   }
   return NS_ERROR_FAILURE;
@@ -179,7 +175,7 @@ public:
     mCurrentBufferSize(0)
   {
     NS_ASSERTION(device, "Device is null");
-    sbWPDDevice::GetDeviceProperties(device, &mDeviceProperties);
+    sbWPDDevice::GetDeviceProperties(device, getter_AddRefs(mDeviceProperties));
   }
   /**
    * Release the buffer we were using
@@ -223,7 +219,7 @@ public:
 private:
   IPortableDeviceManager* mDeviceManager;
   IPortableDevice* mDevice;
-  CComPtr<IPortableDeviceProperties> mDeviceProperties;
+  nsRefPtr<IPortableDeviceProperties> mDeviceProperties;
   nsIWritablePropertyBag* mBag;
   WCHAR * mBuffer;
   DWORD mCurrentBufferSize;
@@ -286,6 +282,8 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
   // Set the device ID as a property
   writer.SetProperty(NS_LITERAL_STRING("DeviceID"),
                      nsString(deviceID));
+  writer.SetProperty(NS_LITERAL_STRING("DeviceType"),
+                     NS_LITERAL_STRING("WPD"));
   writer.SetPropertyFromDevice(WPD_DEVICE_SERIAL_NUMBER,
                                NS_LITERAL_STRING("SerialNo"));
   writer.SetPropertyFromDevice(WPD_DEVICE_MODEL,
@@ -303,16 +301,16 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
 static nsresult CreatePortableDevice(nsString const & deviceID,
                                      IPortableDevice** device)
 {
-  CComPtr<IPortableDeviceValues> clientInfo;
-  CComPtr<IPortableDevice> dev;
+  nsRefPtr<IPortableDeviceValues> clientInfo;
+  nsRefPtr<IPortableDevice> dev;
   if (SUCCEEDED(CoCreateInstance(CLSID_PortableDevice,
                                     NULL,
                                     CLSCTX_INPROC_SERVER,
                                     IID_IPortableDevice,
-                                    (VOID**) &dev)) && dev &&                                    
-      SUCCEEDED(sbWPDDevice::GetClientInfo(&clientInfo)) && clientInfo &&
+                                    getter_AddRefs(dev))) && dev &&                                    
+      SUCCEEDED(sbWPDDevice::GetClientInfo(getter_AddRefs(clientInfo))) && clientInfo &&
       SUCCEEDED(dev->Open(deviceID.get(), clientInfo))) {
-    *device = dev.Detach();
+    dev.forget(device);
     return NS_OK;
   }
   return NS_ERROR_FAILURE;
@@ -350,7 +348,7 @@ public:
 
 private:
   ULONG mRefCnt;
-  CComPtr<sbWPDMarshall> mMarshall;
+  nsRefPtr<sbWPDMarshall> mMarshall;
 };
 
 HRESULT sbDeviceMarshallListener::WMDMMessage(DWORD dwMessageType,
@@ -429,6 +427,7 @@ sbWPDMarshall::~sbWPDMarshall()
   PR_DestroyLock(mKnownDevicesLock);
 }
 
+
 nsresult sbWPDMarshall::BeginMonitoring()
 {
   // Create the secure client object
@@ -436,12 +435,12 @@ nsresult sbWPDMarshall::BeginMonitoring()
   { 0x00 };
   BYTE abCert[] =
   { 0x00 };
-  CComPtr<IComponentAuthenticate> pAuth;
+  nsRefPtr<IComponentAuthenticate> pAuth;
   HRESULT hr =:: CoCreateInstance(__uuidof(::MediaDevMgr),
       NULL,
       CLSCTX_INPROC_SERVER,
       __uuidof(IComponentAuthenticate),
-      reinterpret_cast<void**>(&pAuth));
+      getter_AddRefs(pAuth));
   if (FAILED(hr))
     return NS_ERROR_FAILURE;
 
@@ -460,9 +459,9 @@ nsresult sbWPDMarshall::BeginMonitoring()
     return NS_ERROR_FAILURE;
   
   // Create the Windows Media Device manager
-  CComPtr<IWMDeviceManager> devMgr;
+  nsRefPtr<IWMDeviceManager> devMgr;
 
-  hr = pAuth.QueryInterface(&devMgr);
+  hr = pAuth->QueryInterface(__uuidof(IWMDeviceManager), getter_AddRefs(devMgr));
   if (FAILED(hr))
     return NS_ERROR_FAILURE;
   
@@ -470,11 +469,11 @@ nsresult sbWPDMarshall::BeginMonitoring()
   DiscoverDevices();
   // Hook up the listener for device events
   sbDeviceMarshallListener * listener = new sbDeviceMarshallListener(this);
-  CComPtr<::IConnectionPointContainer> pConnectionPointContainer;
-  CComPtr<::IConnectionPoint> pConnectionPoint;
+  nsRefPtr<::IConnectionPointContainer> pConnectionPointContainer;
+  nsRefPtr<::IConnectionPoint> pConnectionPoint;
   DWORD cookie = 0;
-  if (SUCCEEDED(hr = devMgr.QueryInterface(&pConnectionPointContainer)) &&
-      SUCCEEDED(hr = pConnectionPointContainer->FindConnectionPoint(::IID_IWMDMNotification, &pConnectionPoint)) &&
+  if (SUCCEEDED(hr = devMgr->QueryInterface(__uuidof(IConnectionPointContainer), getter_AddRefs(pConnectionPointContainer))) &&
+      SUCCEEDED(hr = pConnectionPointContainer->FindConnectionPoint(::IID_IWMDMNotification, getter_AddRefs(pConnectionPoint))) &&
       SUCCEEDED(hr = pConnectionPoint->Advise(listener, &cookie))) {
     return NS_OK;
   }
@@ -520,8 +519,8 @@ nsresult sbWPDMarshall::DiscoverDevices()
   if (NS_SUCCEEDED(rv) && propBag)
   {
     // Create the WPD device manager
-    CComPtr<IPortableDeviceManager> deviceManager;
-    if (FAILED(GetDeviceManager(&deviceManager)) || !deviceManager)
+    nsRefPtr<IPortableDeviceManager> deviceManager;
+    if (FAILED(GetDeviceManager(getter_AddRefs(deviceManager))) || !deviceManager)
       return NS_ERROR_FAILURE;
     // Get the list of devices
     StringArray deviceIDs;
@@ -535,8 +534,8 @@ nsresult sbWPDMarshall::DiscoverDevices()
       nsAutoLock lock(mKnownDevicesLock);
       if (!mKnownDevices.Get(deviceID, nsnull)) {
         // Create the WPD device and get it's properties
-        CComPtr<IPortableDevice> device;
-        if (NS_SUCCEEDED(CreatePortableDevice(deviceID, &device)) &&  
+        nsRefPtr<IPortableDevice> device;
+        if (NS_SUCCEEDED(CreatePortableDevice(deviceID, getter_AddRefs(device))) &&  
             NS_SUCCEEDED(AddDevicePropertiesToPropertyBag(deviceManager,
                                                           device,
                                                           propBag))) {

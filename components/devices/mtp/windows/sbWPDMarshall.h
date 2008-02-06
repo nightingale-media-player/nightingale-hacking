@@ -94,6 +94,10 @@ private:
   nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
   PRLock* mKnownDevicesLock;
   nsresult BeginMonitoring();
+
+  // Prevent copying and assignment
+  sbWPDMarshall(sbWPDMarshall const &) : sbBaseDeviceMarshall(nsCString()) {}
+  sbWPDMarshall & operator= (sbWPDMarshall const &) { return *this; }
 };
 
 #define SB_WPDMARSHALL_CID \
