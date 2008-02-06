@@ -44,41 +44,47 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(7918d068-fb4c-49a6-a267-2f4af9e4d9a5)]
+[scriptable, uuid(a99bcdbf-166d-409a-8375-f617944397c2)]
 interface sbIMediaListListener : nsISupports
 {
   /**
    * \brief Called when a media item is added to the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The new media item.
+   * \param aIndex The index in the list where the new item was added
    * \return True if you do not want any further onItemAdded notifications for
    *         the current batch.  If there is no current batch, the return value
    *         is ignored.
    */
   boolean onItemAdded(in sbIMediaList aMediaList,
-                      in sbIMediaItem aMediaItem);
+                      in sbIMediaItem aMediaItem,
+                      in unsigned long aIndex);
 
   /**
    * \brief Called before a media item is removed from the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The media item to be removed
+   * \param aIndex The index of the item to be removed
    * \return True if you do not want any further onBeforeItemRemoved
    *         notifications for the current batch.  If there is no current batch,
    *         the return value is ignored.
    */
   boolean onBeforeItemRemoved(in sbIMediaList aMediaList,
-                              in sbIMediaItem aMediaItem);
+                              in sbIMediaItem aMediaItem,
+                              in unsigned long aIndex);
 
   /**
    * \brief Called after a media item is removed from the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The removed media item.
+   * \param aIndex Index from where the item was removed
    * \return True if you do not want any further onAfterItemRemoved for the
    *         current batch.  If there is no current batch, the return value is
    *         ignored.
    */
   boolean onAfterItemRemoved(in sbIMediaList aMediaList,
-                             in sbIMediaItem aMediaItem);
+                             in sbIMediaItem aMediaItem,
+                             in unsigned long aIndex);
 
   /**
    * \brief Called when a media item is changed.

@@ -336,12 +336,13 @@ LibraryUtils.RemovalMonitor.prototype = {
   /**
    * \sa sbIMediaListListener
    */
-  onItemAdded: function(aMediaList, aMediaItem) { return true; },
+  onItemAdded: function(aMediaList, aMediaItem, aIndex) { return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true },
   onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true },
-  onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
-  onAfterItemRemoved: function RemovalMonitor_onAfterItemRemoved(aMediaList, 
-                                                                 aMediaItem)
+  onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
+  onAfterItemRemoved: function RemovalMonitor_onAfterItemRemoved(aMediaList,
+                                                                 aMediaItem,
+                                                                 aIndex)
   {
     //dump("RemovalMonitor: RemovalMonitor.onAfterItemRemoved()\n");
     

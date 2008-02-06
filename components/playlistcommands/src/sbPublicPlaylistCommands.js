@@ -1236,9 +1236,13 @@ function plCmd_DownloadInit(aContext, aHost) {
       }
     },
 
-    onItemAdded: function(aMediaList, aMediaItem) { return true; },
-    onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
-    onItemUpdated: function(aMediaList, aMediaItem) { return true; },
+    onItemAdded: function(aMediaList, aMediaItem, aIndex) { return true; },
+    onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+      return true;
+    },
+    onItemUpdated: function(aMediaList, aMediaItem, aProperties) {
+      return true;
+    },
     onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
 
 

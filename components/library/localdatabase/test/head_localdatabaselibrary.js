@@ -278,8 +278,9 @@ function assertList(list, data) {
 function TestMediaListListener() {
 }
 TestMediaListListener.prototype = {
-  _addedItem: null,
-  _removedItem: null,
+  _added: [],
+  _removedBefore: [],
+  _removedAfter: [],
   _updatedItem: null,
   _updatedProperties: null,
   _movedItemFromIndex: [],
@@ -289,16 +290,16 @@ TestMediaListListener.prototype = {
   _listCleared: false,
   _retval: false,
 
-  get addedItem() {
-    return this._addedItem;
+  get added() {
+    return this._added;
   },
 
-  get removedItemBefore() {
-    return this._removedItemBefore;
+  get removedBefore() {
+    return this._removedBefore;
   },
 
-  get removedItemAfter() {
-    return this._removedItemAfter;
+  get removedAfter() {
+    return this._removedAfter;
   },
 
   get updatedItem() {
@@ -333,9 +334,9 @@ TestMediaListListener.prototype = {
     this._retval = value;
   },
   reset: function reset() {
-    this._addedItem = null;
-    this._removedItemBefore = null;
-    this._removedItemAfter = null;
+    this._added = [];
+    this._removedBefore = [];
+    this._removedAfter = [];
     this._updatedItem = null;
     this._updatedProperties = null;
     this._movedItemFromIndex = [];
@@ -346,18 +347,18 @@ TestMediaListListener.prototype = {
     this._retval = false;
   },
 
-  onItemAdded: function onItemAdded(list, item) {
-    this._addedItem = item;
+  onItemAdded: function onItemAdded(list, item, index) {
+    this._added.push({list: list, item: item, index: index});
     return this._retval;
   },
 
-  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
-    this._removedItemBefore = item;
+  onBeforeItemRemoved: function onBeforeItemRemoved(list, item, index) {
+    this._removedBefore.push({list: list, item: item, index: index});
     return this._retval;
   },
 
-  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
-    this._removedItemAfter = item;
+  onAfterItemRemoved: function onAfterItemRemoved(list, item, index) {
+    this._removedAfter.push({list: list, item: item, index: index});
     return this._retval;
   },
 

@@ -182,7 +182,7 @@ function sbAutoDownloader_observe(subject, topic, data) {
  // sbIMediaListListener //
 //////////////////////////
 sbAutoDownloader.prototype.onItemAdded =
-function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
+function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem, aIndex) {
   DEBUG();
   if ((aMediaItem.getProperty(SBProperties.enableAutoDownload) == "1") &&
       aMediaItem.contentSrc.scheme.match(/^http/)) {
@@ -196,11 +196,11 @@ function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem) {
   }
 }
 sbAutoDownloader.prototype.onBeforeItemRemoved =
-function sbAutoDownloader_onBeforeItemRemoved(aMediaList, aMediaItem) {
+function sbAutoDownloader_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {
   DEBUG();
 }
 sbAutoDownloader.prototype.onAfterItemRemoved =
-function sbAutoDownloader_onAfterItemRemoved(aMediaList, aMediaItem) {
+function sbAutoDownloader_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
   DEBUG();
 }
 sbAutoDownloader.prototype.onItemUpdated =

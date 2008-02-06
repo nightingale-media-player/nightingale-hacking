@@ -1426,7 +1426,7 @@ function sbLibraryServicePane_onLibraryUnregistered(aLibrary) {
 //////////////////////////
 
 sbLibraryServicePane.prototype.onItemAdded =
-function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
+function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem, aIndex) {
   //logcall(arguments);
   if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
@@ -1443,7 +1443,7 @@ function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
   }
 }
 sbLibraryServicePane.prototype.onBeforeItemRemoved =
-function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
+function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {
   //logcall(arguments);
   if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
@@ -1460,7 +1460,7 @@ function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
   }
 }
 sbLibraryServicePane.prototype.onAfterItemRemoved =
-function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem) {
+function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
 }
 sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList,

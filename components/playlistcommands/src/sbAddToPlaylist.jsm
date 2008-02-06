@@ -576,7 +576,7 @@ addToPlaylistHelper.prototype = {
     return this;
   },
 
-  onItemAdded: function onItemAdded(list, item) {
+  onItemAdded: function onItemAdded(list, item, index) {
     // If we are in a batch, ignore future notifications
     if (!this._inbatch) {
       this.onUpdateEvent(item);
@@ -584,11 +584,11 @@ addToPlaylistHelper.prototype = {
     return true;
   },
 
-  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
+  onBeforeItemRemoved: function onBeforeItemRemoved(list, item, index) {
     return true;
   },
 
-  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
+  onAfterItemRemoved: function onAfterItemRemoved(list, item, index) {
     // If we are in a batch, ignore future notifications
     if (!this._inbatch) {
       this.onUpdateEvent(item);

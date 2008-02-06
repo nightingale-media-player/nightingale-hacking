@@ -113,6 +113,15 @@ sbLocalDatabaseMediaListBase::GetNativeLibrary()
   return result;
 }
 
+already_AddRefed<sbILocalDatabaseGUIDArray>
+sbLocalDatabaseMediaListBase::GetArray()
+{
+  NS_ASSERTION(mFullArray, "mArray is null!");
+  sbILocalDatabaseGUIDArray* result = mFullArray;
+  NS_ADDREF(result);
+  return result;
+}
+
 /**
  * \brief Adds multiple filters to a GUID array.
  *

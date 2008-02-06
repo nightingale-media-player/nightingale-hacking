@@ -153,15 +153,18 @@ protected:
 
   // Enumerate listeners and call OnItemAdded
   void NotifyListenersItemAdded(sbIMediaList* aList,
-                                sbIMediaItem* aItem);
+                                sbIMediaItem* aItem,
+                                PRUint32 aIndex);
 
   // Enumerate listeners and call OnBeforeItemRemoved
   void NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
-                                        sbIMediaItem* aItem);
+                                        sbIMediaItem* aItem,
+                                        PRUint32 aIndex);
 
   // Enumerate listeners and call OnAfterItemRemoved
   void NotifyListenersAfterItemRemoved(sbIMediaList* aList,
-                                       sbIMediaItem* aItem);
+                                       sbIMediaItem* aItem,
+                                       PRUint32 aIndex);
 
   // Enumerate listeners and call OnItemUpdated
   void NotifyListenersItemUpdated(sbIMediaList* aList,

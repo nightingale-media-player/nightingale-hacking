@@ -1293,6 +1293,7 @@ sbLocalDatabaseMediaListView::ClearSort()
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
                                           sbIMediaItem* aMediaItem,
+                                          PRUint32 aIndex,
                                           PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1316,6 +1317,7 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                   sbIMediaItem* aMediaItem,
+                                                  PRUint32 aIndex,
                                                   PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1331,6 +1333,7 @@ sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                  sbIMediaItem* aMediaItem,
+                                                 PRUint32 aIndex,
                                                  PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

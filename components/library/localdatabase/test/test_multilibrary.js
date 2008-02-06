@@ -142,10 +142,10 @@ function runTest () {
   list1.name = "Test";
   libTwo.add(list1);
 
-  assertTrue(listener.addedItem instanceof Ci.sbIMediaList);
-  assertEqual(listener.addedItem.length, 0);
-  assertEqual(listener.addedItem.name, "Test");
-  assertNotEqual(listener.addedItem.guid, list1GUID);
+  assertTrue(listener.added[0].item instanceof Ci.sbIMediaList);
+  assertEqual(listener.added[0].item.length, 0);
+  assertEqual(listener.added[0].item.name, "Test");
+  assertNotEqual(listener.added[0].item.guid, list1GUID);
 
   // clean up the listener so we don't count a bogus leak
   listener.reset();

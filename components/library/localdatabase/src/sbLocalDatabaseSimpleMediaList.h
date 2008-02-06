@@ -155,7 +155,8 @@ public:
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
   sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
-  : mFriendList(aList)
+  : mFriendList(aList),
+    mOldLength(0)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
   }
@@ -175,6 +176,7 @@ private:
   nsCOMArray<sbIMediaItem> mItemList;
   nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
   nsCOMPtr<sbILibrary> mListLibrary;
+  PRUint32 mOldLength;
 };
 
 class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener
@@ -199,6 +201,7 @@ private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsCOMArray<sbIMediaItem> mNotificationList;
+  nsTArray<PRUint32> mNotificationIndexes;
   PRBool mItemEnumerated;
 };
 

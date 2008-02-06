@@ -149,6 +149,10 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* 
   nsresult rv = mFriendList->GetLibrary(getter_AddRefs(mListLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Stash the length for notifications
+  rv = mFriendList->GetLength(&mOldLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // All good for enumerating.
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
@@ -355,7 +359,9 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   // Notify our listeners if we have any
   if (mFriendList->ListenerCount() > 0) {
     for (PRUint32 index = 0; index < itemCount; index++) {
-      mFriendList->NotifyListenersItemAdded(mFriendList, mItemList[index]);
+      mFriendList->NotifyListenersItemAdded(mFriendList,
+                                            mItemList[index],
+                                            mOldLength + index);
     }
   }
 
@@ -440,7 +446,13 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMe
   PRBool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv;
+  PRUint32 index;
+  nsresult rv = mFriendList->IndexOf(aMediaItem, 0, &index);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32* added = mNotificationIndexes.AppendElement(index);
+  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
   nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
     do_QueryInterface(aMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -475,7 +487,8 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   if (mFriendList->ListenerCount() > 0) {
     for (PRUint32 i = 0; i < count; i++) {
       mFriendList->NotifyListenersBeforeItemRemoved(mFriendList,
-                                                    mNotificationList[i]);
+                                                    mNotificationList[i],
+                                                    mNotificationIndexes[i]);
     }
   }
 
@@ -497,7 +510,8 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   if (mFriendList->ListenerCount() > 0) {
     for (PRUint32 i = 0; i < count; i++) {
       mFriendList->NotifyListenersAfterItemRemoved(mFriendList,
-                                                   mNotificationList[i]);
+                                                   mNotificationList[i],
+                                                   mNotificationIndexes[i]);
     }
   }
   return NS_OK;
@@ -787,7 +801,7 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NotifyListenersItemAdded(this, aMediaItem);
+  NotifyListenersItemAdded(this, aMediaItem, aIndex);
 
   return NS_OK;
 }
@@ -946,7 +960,7 @@ sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < count; i++) {
-    NotifyListenersItemAdded(this, toNotify[i]);
+    NotifyListenersItemAdded(this, toNotify[i], aIndex + i);
   }
 
   return NS_OK;
@@ -1039,7 +1053,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 
   nsCOMPtr<sbIMediaItem> item;
   rv = GetItemByIndex(aIndex, getter_AddRefs(item));
-  NotifyListenersBeforeItemRemoved(this, item);
+  NotifyListenersBeforeItemRemoved(this, item, aIndex);
 
   nsCOMPtr<sbIDatabaseQuery> dbQuery;
   rv = MakeStandardQuery(getter_AddRefs(dbQuery));
@@ -1063,7 +1077,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NotifyListenersAfterItemRemoved(mediaList, item);
+  NotifyListenersAfterItemRemoved(mediaList, item, aIndex);
 
   return NS_OK;
 }
@@ -1256,6 +1270,7 @@ sbLocalDatabaseSimpleMediaList::Invalidate()
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyListenersItemUpdated(sbIMediaItem* aItem,
+                                                           PRUint32 aIndex,
                                                            sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aItem);
@@ -1273,25 +1288,29 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersItemUpdated(sbIMediaItem* aItem,
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
-                                                                 sbIMediaItem* aItem)
+                                                                 sbIMediaItem* aItem,
+                                                                 PRUint32 aIndex)
 {
   NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItem);
 
   sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(aList,
-                                                                     aItem);
+                                                                     aItem,
+                                                                     aIndex);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
-                                                                sbIMediaItem* aItem)
+                                                                sbIMediaItem* aItem,
+                                                                PRUint32 aIndex)
 {
   NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItem);
 
   sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(aList,
-                                                                    aItem);
+                                                                    aItem,
+                                                                    aIndex);
   return NS_OK;
 }
 

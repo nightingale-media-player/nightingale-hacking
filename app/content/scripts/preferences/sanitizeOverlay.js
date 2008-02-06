@@ -105,9 +105,9 @@ var gSongbirdSanitizeOverlay = {
   },
   
   // mediaListListener
-  onItemAdded: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
-  onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
-  onAfterItemRemoved: function(aMediaList, aMediaItem) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onItemAdded: function(aMediaList, aMediaItem, aIndex) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
+  onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true; },
   onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
   onListCleared: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },

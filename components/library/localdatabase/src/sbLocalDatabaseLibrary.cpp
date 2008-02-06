@@ -150,6 +150,10 @@ sbLibraryInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaLi
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
+  // Remember the length for notifications
+  nsresult rv = mFriendLibrary->GetLength(&mLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
   return NS_OK;
@@ -218,7 +222,8 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
     mFriendLibrary->NotifyListenersItemAdded(libraryList,
-                                             mNotificationList[i]);
+                                             mNotificationList[i],
+                                             mLength + i);
   }
 
   return NS_OK;
@@ -263,6 +268,13 @@ sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
   PRBool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
+  PRUint32 index;
+  nsresult rv = mFriendLibrary->IndexOf(aMediaItem, 0, &index);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32* added = mNotificationIndexes.AppendElement(index);
+  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
   mItemEnumerated = PR_TRUE;
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
@@ -296,8 +308,12 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   rv = mFriendLibrary->GetContainingLists(&mNotificationList, &lists, &map);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  sbListItemIndexMap itemIndexes;
+  success = itemIndexes.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsBeforeItemRemoved,
-                    libraryList);
+                    &itemIndexes);
 
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
@@ -305,7 +321,16 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify explicitly registered listeners for each item removal
-    mFriendLibrary->NotifyListenersBeforeItemRemoved(libraryList, item);
+    mFriendLibrary->NotifyListenersBeforeItemRemoved(libraryList,
+                                                     item,
+                                                     mNotificationIndexes[i]);
+
+    // Shift indexes of items that come after the deleted index
+    for (PRUint32 j = i + 1; j < count; j++) {
+      if (mNotificationIndexes[j] > mNotificationIndexes[i]) {
+        mNotificationIndexes[j]--;
+      }
+    }
 
     nsAutoString guid;
     rv = item->GetGuid(guid);
@@ -346,12 +371,13 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 
   // Notify simple media lists after removal
   map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved,
-                    libraryList);
+                    &itemIndexes);
 
   // Notify our listeners of after removal
   for (PRUint32 i = 0; i < count; i++) {
     mFriendLibrary->NotifyListenersAfterItemRemoved(libraryList,
-                                                    mNotificationList[i]);
+                                                    mNotificationList[i],
+                                                    mNotificationIndexes[i]);
   }
 
   return NS_OK;
@@ -2018,7 +2044,7 @@ sbLocalDatabaseLibrary::NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
       do_QueryInterface(aEntry->ObjectAt(i), &rv);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-    rv = simple->NotifyListenersItemUpdated(item, properties);
+    rv = simple->NotifyListenersItemUpdated(item, 0, properties);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
   }
 
@@ -2033,11 +2059,15 @@ sbLocalDatabaseLibrary::NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
 
-  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+  sbListItemIndexMap* indexMap = static_cast<sbListItemIndexMap*>(aUserData);
+  NS_ENSURE_TRUE(indexMap, PL_DHASH_STOP);
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  nsString itemGuid;
+  rv = item->GetGuid(itemGuid);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
   PRUint32 count = aEntry->Count();
@@ -2046,7 +2076,22 @@ sbLocalDatabaseLibrary::NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType
       do_QueryInterface(aEntry->ObjectAt(i), &rv);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-    rv = simple->NotifyListenersBeforeItemRemoved(list, item);
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(simple, &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    nsString listGuid;
+    rv = list->GetGuid(listGuid);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    PRUint32 index;
+    rv = list->IndexOf(item, 0, &index);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    listGuid.Append(itemGuid);
+    PRBool success = indexMap->Put(listGuid, index);
+    NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersBeforeItemRemoved(list, item, index);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
   }
 
@@ -2061,11 +2106,15 @@ sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType 
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
 
-  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+  sbListItemIndexMap* indexMap = static_cast<sbListItemIndexMap*>(aUserData);
+  NS_ENSURE_TRUE(indexMap, PL_DHASH_STOP);
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  nsString itemGuid;
+  rv = item->GetGuid(itemGuid);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
   PRUint32 count = aEntry->Count();
@@ -2074,7 +2123,19 @@ sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType 
       do_QueryInterface(aEntry->ObjectAt(i), &rv);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-    rv = simple->NotifyListenersAfterItemRemoved(list, item);
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(simple, &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    nsString listGuid;
+    rv = list->GetGuid(listGuid);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    PRUint32 index;
+    listGuid.Append(itemGuid);
+    PRBool success = indexMap->Get(listGuid, &index);
+    NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersAfterItemRemoved(list, item, index);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
   }
 
@@ -2187,7 +2248,6 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
          spec.get()));
 
-
   // If we don't allow duplicates, check to see if there is already a media
   // item with this uri.  If so, return it.
   if (!aAllowDuplicates) {
@@ -2219,6 +2279,11 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
       return NS_OK;
     }
   }
+
+  // Remember the length so we can use it in the notification
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));
@@ -2273,7 +2338,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 
   // Don't do this while we're receiving items through the Insertinglistener.
   if (!mPreventAddedNotification) {
-    NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem);
+    NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem, length);
   }
 
   NS_ADDREF(*_retval = mediaItem);
@@ -2315,6 +2380,11 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Remember the length for notification
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2344,7 +2414,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!mPreventAddedNotification) {
-    NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem);
+    NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem, length);
   }
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
@@ -2808,6 +2878,15 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   nsRefPtr<sbLocalDatabaseMediaListBase> viewMediaList =
     aView->GetNativeMediaList();
 
+  // Get the full guid array for the view.  This is needed to find the
+  // indexes for notifications
+  nsCOMPtr<sbILocalDatabaseGUIDArray> fullArray = viewMediaList->GetArray();
+
+  // Keep track of removed item's indexes for notifications
+  nsDataHashtable<nsISupportsHashKey, PRUint32> itemIndexes;
+  rv = itemIndexes.Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbILocalDatabaseGUIDArray* viewArray = aView->GetGUIDArray();
 
   // Figure out if we have a library or a simple media list
@@ -2931,6 +3010,19 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     // Finally, remember this media item so we can send notifications
     PRBool success = selectedItems.AppendObject(item);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    // Get the index of this item in the full array
+    PRUint64 rowid;
+    rv = viewArray->GetRowidByIndex(index, &rowid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 fullArrayIndex;
+    rv = fullArray->GetIndexByRowid(rowid, &fullArrayIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Stash the index for notifications
+    success = itemIndexes.Put(item, fullArrayIndex);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   // Add any left overs to the query
@@ -2966,11 +3058,20 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     sbAutoBatchHelper batchHelper(*this);
     sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
 
-    map.EnumerateRead(NotifyListsBeforeItemRemoved, SB_IMEDIALIST_CAST(this));
+    sbListItemIndexMap containedItemIndexes;
+    success = containedItemIndexes.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    map.EnumerateRead(NotifyListsBeforeItemRemoved, &containedItemIndexes);
 
     for (PRUint32 i = 0; i < count; i++) {
+
+      PRUint32 index;
+      PRBool success = itemIndexes.Get(selectedItems[i], &index);
+      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
       sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(SB_IMEDIALIST_CAST(this),
-                                                                         selectedItems[i]);
+                                                                         selectedItems[i],
+                                                                         index);
     }
 
     // Now actually delete the items
@@ -2993,12 +3094,17 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     }
 
     // Notify simple media lists after removal
-    map.EnumerateRead(NotifyListsAfterItemRemoved, SB_IMEDIALIST_CAST(this));
+    map.EnumerateRead(NotifyListsAfterItemRemoved, &containedItemIndexes);
 
     // Notify our listeners of after removal
     for (PRUint32 i = 0; i < count; i++) {
+      PRUint32 index;
+      PRBool success = itemIndexes.Get(selectedItems[i], &index);
+      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
       sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(SB_IMEDIALIST_CAST(this),
-                                                                        selectedItems[i]);
+                                                                        selectedItems[i],
+                                                                        index);
     }
   }
   else { // isLibrary
@@ -3010,8 +3116,13 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < count; i++) {
+      PRUint32 index;
+      PRBool success = itemIndexes.Get(selectedItems[i], &index);
+      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
       rv = simple->NotifyListenersBeforeItemRemoved(viewMediaList,
-                                                    selectedItems[i]);
+                                                    selectedItems[i],
+                                                    index);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -3025,8 +3136,13 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < count; i++) {
+      PRUint32 index;
+      PRBool success = itemIndexes.Get(selectedItems[i], &index);
+      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
       rv = simple->NotifyListenersAfterItemRemoved(viewMediaList,
-                                                   selectedItems[i]);
+                                                   selectedItems[i],
+                                                   index);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -3143,6 +3259,11 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
     return NS_OK;
   }
 
+  // Remember length for notification
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaItem> newMediaItem;
 
   // Import this item into this library
@@ -3154,7 +3275,7 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And let everyone know about it.
-  NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), newMediaItem);
+  NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), newMediaItem, length);
 
   return NS_OK;
 }
@@ -3680,7 +3801,8 @@ NS_IMPL_RELEASE(sbBatchCreateHelper)
 sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
                                          sbBatchCreateTimerCallback* aCallback) :
   mLibrary(aLibrary),
-  mCallback(aCallback)
+  mCallback(aCallback),
+  mLength(0)
 {
   NS_ASSERTION(aLibrary, "Null library!");
 }
@@ -3759,6 +3881,10 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   rv = aQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Remember length for notifications
+  rv = mLibrary->GetLength(&mLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -3831,7 +3957,8 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       NS_ENSURE_SUCCESS(rv, rv);
 
       mLibrary->NotifyListenersItemAdded(SB_IMEDIALIST_CAST(mLibrary),
-                                         mediaItem);
+                                         mediaItem,
+                                         mLength + i);
     }
 
     NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);

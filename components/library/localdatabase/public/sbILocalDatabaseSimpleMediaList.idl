@@ -79,6 +79,7 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    *        updated
    */
   void notifyListenersItemUpdated(in sbIMediaItem aItem,
+                                  in unsigned long aIndex,
                                   in sbIPropertyArray aProperties);
 
   /**
@@ -86,14 +87,16 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    *        be removed
    */
   void notifyListenersBeforeItemRemoved(in sbIMediaList aList,
-                                        in sbIMediaItem aItem);
+                                        in sbIMediaItem aItem,
+                                        in unsigned long aIndex);
 
   /**
    * \brief Notify this simple media list's listeners that an item has been
    *        removed
    */
   void notifyListenersAfterItemRemoved(in sbIMediaList aList,
-                                       in sbIMediaItem aItem);
+                                       in sbIMediaItem aItem,
+                                       in unsigned long aIndex);
 
   /**
    * \brief Notify the simple media list's listeners that it has been cleared

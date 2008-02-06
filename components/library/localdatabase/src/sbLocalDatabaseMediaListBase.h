@@ -100,6 +100,8 @@ public:
 
   already_AddRefed<sbLocalDatabaseLibrary> GetNativeLibrary();
 
+  already_AddRefed<sbILocalDatabaseGUIDArray> GetArray();
+
   nsresult AddListener(sbIMediaListListener* aListener,
                        PRBool aOwnsWeak = PR_FALSE,
                        PRUint32 aFlags = 0) {

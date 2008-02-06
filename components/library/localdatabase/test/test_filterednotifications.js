@@ -201,24 +201,24 @@ function doSomethingThatFiresAllEvents(library) {
 function assertFlagsMatch(flags, listener) {
 
   if (flags & Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED) {
-    assertNotEqual(listener.addedItem, null);
+    assertNotEqual(listener.added.length, 0);
   }
   else {
-    assertEqual(listener.addedItem, null);
+    assertEqual(listener.added.length, 0);
   }
 
   if (flags & Ci.sbIMediaList.LISTENER_FLAGS_BEFOREITEMREMOVED) {
-    assertNotEqual(listener.removedItemBefore, null);
+    assertNotEqual(listener.removedBefore.length, 0);
   }
   else {
-    assertEqual(listener.removedItemBefore, null);
+    assertEqual(listener.removedBefore.length, 0);
   }
 
   if (flags & Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED) {
-    assertNotEqual(listener.removedItemAfter, null);
+    assertNotEqual(listener.removedAfter.length, 0);
   }
   else {
-    assertEqual(listener.removedItemAfter, null);
+    assertEqual(listener.removedAfter.length, 0);
   }
 
   if (flags & Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED) {

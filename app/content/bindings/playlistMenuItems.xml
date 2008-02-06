@@ -64,9 +64,9 @@
             _onDeferredUpdate: function() {
               this.cb.rebuildItems();
             },
-            onItemAdded: function(aMediaList, aMediaItem) { this._deferredUpdate(); return true; },
-            onBeforeItemRemoved: function(aMediaList, aMediaItem) { return true; },
-            onAfterItemRemoved: function(aMediaList, aMediaItem) { this._deferredUpdate(); return true; },
+            onItemAdded: function(aMediaList, aMediaItem, aIndex) { this._deferredUpdate(); return true; },
+            onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
+            onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { this._deferredUpdate(); return true; },
             onItemUpdated: function(aMediaList, aMediaItem, aProperties) { this._deferredUpdate(); return true; },
             onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
             onListCleared: function(aMediaList) { this._deferredUpdate(); return true; },

@@ -1073,6 +1073,7 @@ sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
                                              sbIMediaItem* aMediaItem,
+                                             PRUint32 aIndex,
                                              PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1110,6 +1111,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                      sbIMediaItem* aMediaItem,
+                                                     PRUint32 aIndex,
                                                      PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1125,6 +1127,7 @@ sbLocalDatabaseCascadeFilterSet::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                     sbIMediaItem* aMediaItem,
+                                                    PRUint32 aIndex,
                                                     PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

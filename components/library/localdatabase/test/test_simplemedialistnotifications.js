@@ -30,12 +30,13 @@
 
 function runTest () {
 
+  Components.utils.import("resource://app/components/ArrayConverter.jsm");
+
   var databaseGUID = "test_simplemedialistnotifications";
   var library = createLibrary(databaseGUID, null, false);
 
   var item = library.createMediaItem(newURI("http://foo.com/"));
   var list = library.createMediaList("simple");
-  return;
 
   var libraryListener = new TestMediaListListener();
   library.addListener(libraryListener, false);
@@ -50,12 +51,60 @@ function runTest () {
 
   libraryListener.reset();
   listListener.reset();
+
+  // test onAdded
   list.add(item);
+  assertEqual(libraryListener.added.length, 0);
+  assertTrue(item.equals(listListener.added[0].item));
+  assertEqual(listListener.added[0].index, 0);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  var anotheritem = library.createMediaItem(newURI("http://foo.com/1"));
+  list.add(anotheritem);
+  assertTrue(anotheritem.equals(listListener.added[0].item));
+  assertEqual(listListener.added[0].index, 1);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  var otheritem2 = library.createMediaItem(newURI("http://foo.com/2"));
+  var otheritem3 = library.createMediaItem(newURI("http://foo.com/3"));
+  var e = ArrayConverter.enumerator([otheritem2, otheritem3]);
+  list.addSome(e);
+  assertTrue(otheritem2.equals(listListener.added[0].item));
+  assertEqual(listListener.added[0].index, 2);
+  assertTrue(otheritem3.equals(listListener.added[1].item));
+  assertEqual(listListener.added[1].index, 3);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  var otheritem4 = library.createMediaItem(newURI("http://foo.com/4"));
+  list.insertBefore(2, otheritem4);
+  assertTrue(otheritem4.equals(listListener.added[0].item));
+  assertEqual(listListener.added[0].index, 2);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  var otheritem5 = library.createMediaItem(newURI("http://foo.com/5"));
+  var otheritem6 = library.createMediaItem(newURI("http://foo.com/6"));
+  var e = ArrayConverter.enumerator([otheritem5, otheritem6]);
+  list.insertSomeBefore(3, e);
+  assertTrue(otheritem5.equals(listListener.added[0].item));
+  assertEqual(listListener.added[0].index, 3);
+  assertTrue(otheritem6.equals(listListener.added[1].item));
+  assertEqual(listListener.added[1].index, 4);
+
+  libraryListener.reset();
+  listListener.reset();
+
   item.setProperty(prop, "foo");
 
   assertTrue(item.equals(libraryListener.updatedItem));
   assertTrue(item.equals(listListener.updatedItem));
-
 
   // test moving
   list.clear();
@@ -141,33 +190,78 @@ function runTest () {
 
   // test onBeforeItemRemoved/onAfterItemRemoved
   library.remove(item);
-  assertTrue(item.equals(libraryListener.removedItemBefore));
-  assertTrue(item.equals(libraryListener.removedItemAfter));
-  assertEqual(listListener.removedItemBefore, null);
-  assertEqual(listListener.removedItemAfter, null);
+  assertTrue(item.equals(libraryListener.removedBefore[0].item));
+  assertTrue(item.equals(libraryListener.removedAfter[0].item));
+  assertEqual(listListener.removedBefore.length, 0);
+  assertEqual(listListener.removedAfter.length, 0);
 
   list.clear();
-  item = library.createMediaItem(newURI("http://foo.com/"));
-  list.add(item);
+  item1 = library.createMediaItem(newURI("http://foo.com/r1"));
+  item2 = library.createMediaItem(newURI("http://foo.com/r2"));
+  item3 = library.createMediaItem(newURI("http://foo.com/r3"));
+  item4 = library.createMediaItem(newURI("http://foo.com/r4"));
+  var item5 = library.createMediaItem(newURI("http://foo.com/r5"));
+  var item6 = library.createMediaItem(newURI("http://foo.com/r6"));
+  list.add(item1);
+  list.add(item2);
+  list.add(item3);
+  list.add(item4);
+  list.add(item5);
+  list.add(item6);
   libraryListener.reset();
   listListener.reset();
 
-  list.remove(item);
+  list.remove(item4);
 
-  assertEqual(libraryListener.removedItemBefore, null);
-  assertEqual(libraryListener.removedItemAfter, null);
-  assertTrue(item.equals(listListener.removedItemBefore));
-  assertTrue(item.equals(listListener.removedItemAfter));
+  assertEqual(libraryListener.removedBefore.length, 0);
+  assertEqual(libraryListener.removedAfter.length, 0);
+  assertTrue(item4.equals(listListener.removedBefore[0].item));
+  assertEqual(listListener.removedBefore[0].index, 3);
+  assertTrue(item4.equals(listListener.removedAfter[0].item));
+  assertEqual(listListener.removedAfter[0].index, 3);
 
   libraryListener.reset();
   listListener.reset();
-  list.add(item);
-  library.remove(item);
 
-  assertTrue(item.equals(libraryListener.removedItemBefore));
-  assertTrue(item.equals(libraryListener.removedItemAfter));
-  assertTrue(item.equals(listListener.removedItemBefore));
-  assertTrue(item.equals(listListener.removedItemAfter));
+  // Test that items removed from the library that are in a list are notified
+  // properly
+  var oldIndex = library.indexOf(item2, 0);
+  library.remove(item2);
+
+  assertTrue(item2.equals(libraryListener.removedBefore[0].item));
+  assertEqual(libraryListener.removedBefore[0].index, oldIndex);
+  assertTrue(item2.equals(libraryListener.removedAfter[0].item));
+  assertEqual(libraryListener.removedAfter[0].index, oldIndex);
+
+  assertTrue(item2.equals(listListener.removedBefore[0].item));
+  assertEqual(listListener.removedBefore[0].index, 1);
+  assertTrue(item2.equals(listListener.removedAfter[0].item));
+  assertEqual(listListener.removedAfter[0].index, 1);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  var e = ArrayConverter.enumerator([item5, item6]);
+  list.removeSome(e);
+
+  assertTrue(item5.equals(listListener.removedBefore[0].item));
+  assertEqual(listListener.removedBefore[0].index, 2);
+  assertTrue(item5.equals(listListener.removedAfter[0].item));
+  assertEqual(listListener.removedAfter[0].index, 2);
+
+  assertTrue(item6.equals(listListener.removedBefore[1].item));
+  assertEqual(listListener.removedBefore[1].index, 3);
+  assertTrue(item6.equals(listListener.removedAfter[1].item));
+  assertEqual(listListener.removedAfter[1].index, 3);
+
+  libraryListener.reset();
+  listListener.reset();
+
+  list.removeByIndex(1);
+  assertTrue(item3.equals(listListener.removedBefore[0].item));
+  assertEqual(listListener.removedBefore[0].index, 1);
+  assertTrue(item3.equals(listListener.removedAfter[0].item));
+  assertEqual(listListener.removedAfter[0].index, 1);
 
   // test clear
   item = library.createMediaItem(newURI("http://foo.com/"));
@@ -223,10 +317,10 @@ function runTest () {
 
   library2.add(item);
 
-  assertEqual(item.contentSrc.spec, libraryListener2.addedItem.contentSrc.spec);
-  assertFalse(item.equals(libraryListener2.addedItem));
+  assertEqual(item.contentSrc.spec, libraryListener2.added[0].item.contentSrc.spec);
+  assertFalse(item.equals(libraryListener2.added[0].item));
 
-  library2.remove(libraryListener2.addedItem);
+  library2.remove(libraryListener2.added[0].item);
   libraryListener2.reset();
 
   var listListener2 = new TestMediaListListener();
@@ -234,20 +328,18 @@ function runTest () {
 
   list2.add(item);
 
-  assertEqual(item.contentSrc.spec, libraryListener2.addedItem.contentSrc.spec);
-  assertFalse(item.equals(libraryListener2.addedItem));
-  assertEqual(item.contentSrc.spec, listListener2.addedItem.contentSrc.spec);
-  assertFalse(item.equals(listListener2.addedItem));
+  assertEqual(item.contentSrc.spec, libraryListener2.added[0].item.contentSrc.spec);
+  assertFalse(item.equals(libraryListener2.added[0].item));
+  assertEqual(item.contentSrc.spec, listListener2.added[0].item.contentSrc.spec);
+  assertFalse(item.equals(listListener2.added[0].item));
 
-  list2.remove(item);
   libraryListener2.reset();
   listListener2.reset();
 
   list2.add(item);
 
-  assertEqual(libraryListener2.addedItemm, null);
-  assertEqual(item.contentSrc.spec, listListener2.addedItem.contentSrc.spec);
-  assertFalse(item.equals(listListener2.addedItem));
+  assertEqual(item.contentSrc.spec, listListener2.added[0].item.contentSrc.spec);
+  assertFalse(item.equals(listListener2.added[0].item));
 
   library2.clear();
   libraryListener2.reset();

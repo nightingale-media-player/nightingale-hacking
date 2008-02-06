@@ -66,11 +66,11 @@ function runTest () {
   var uri2 = ios.newURI("file:///bar", null, null);
   var item3 = library.createMediaItem(uri2, null, true);
 
-  assertEqual(listListener.addedItem, item3);
+  assertTrue(item3.equals(listListener.added[0].item));
   
   library.remove(item1);
-  assertEqual(listListener.removedItemBefore, item1);
-  assertEqual(listListener.removedItemAfter, item1);
+  assertTrue(item1.equals(listListener.removedBefore[0].item));
+  assertTrue(item1.equals(listListener.removedAfter[0].item));
   
   // Test if removing items from the library also remove items from the
   // playlist.

@@ -450,7 +450,8 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryUnregistered(aLibrary)
 // sbIMediaListListener
 sbLocalDatabaseDynamicPlaylistService.prototype.onItemAdded =
 function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
-                                                           aMediaItem)
+                                                           aMediaItem,
+                                                           aIndex)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -477,7 +478,8 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onBeforeItemRemoved =
 function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
-                                                                   aMediaItem)
+                                                                   aMediaItem,
+                                                                   aIndex)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -494,7 +496,8 @@ function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onAfterItemRemoved =
 function sbLocalDatabaseDynamicPlaylistService_onAfterItemRemoved(aMediaList,
-                                                                  aMediaItem)
+                                                                  aMediaItem,
+                                                                  aIndex)
 {
   // do nothing
 }

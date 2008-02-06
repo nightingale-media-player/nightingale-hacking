@@ -1551,6 +1551,7 @@ NS_IMETHODIMP sbDownloadDevice::GetCompletedItemCount(
 NS_IMETHODIMP sbDownloadDevice::OnItemAdded(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
+    PRUint32                    aIndex,
     PRBool                      *_retval)
 {
     /* Validate parameters. */
@@ -1573,6 +1574,7 @@ NS_IMETHODIMP sbDownloadDevice::OnItemAdded(
 NS_IMETHODIMP sbDownloadDevice::OnBeforeItemRemoved(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
+    PRUint32                    aIndex,
     PRBool                      *_retval)
 {
     /* Validate parameters. */
@@ -1595,6 +1597,7 @@ NS_IMETHODIMP sbDownloadDevice::OnBeforeItemRemoved(
 NS_IMETHODIMP sbDownloadDevice::OnAfterItemRemoved(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
+    PRUint32                    aIndex,
     PRBool                      *_retval)
 {
     PRBool                      isEqual;

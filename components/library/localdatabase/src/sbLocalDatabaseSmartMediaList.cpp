@@ -2212,6 +2212,7 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemAdded(sbIMediaList* aMediaList,
                                            sbIMediaItem* aMediaItem,
+                                           PRUint32 aIndex,
                                            PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -2226,6 +2227,7 @@ sbLocalDatabaseSmartMediaList::OnItemAdded(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                    sbIMediaItem* aMediaItem,
+                                                   PRUint32 aIndex,
                                                    PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -2264,6 +2266,7 @@ sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                   sbIMediaItem* aMediaItem,
+                                                  PRUint32 aIndex,
                                                   PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

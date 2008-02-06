@@ -36,9 +36,9 @@ function runTest () {
 
   var listener = {
     properties: null,
-    onItemAdded: function(list, item) {},
-    onBeforeItemRemoved: function(list, item) {},
-    onAfterItemRemoved: function(list, item) {},
+    onItemAdded: function(list, item, index) {},
+    onBeforeItemRemoved: function(list, item, index) {},
+    onAfterItemRemoved: function(list, item, index) {},
     onItemUpdated: function(list, item, properties) {
       this.properties = properties;
     },

@@ -65,6 +65,7 @@ sbBaseDeviceLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
+                                         PRUint32 aIndex,
                                          PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -93,6 +94,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 NS_IMETHODIMP 
 sbBaseDeviceLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                  sbIMediaItem *aMediaItem,
+                                                 PRUint32 aIndex,
                                                  PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -106,6 +108,7 @@ sbBaseDeviceLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
 NS_IMETHODIMP 
 sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList, 
                                                 sbIMediaItem *aMediaItem,
+                                                PRUint32 aIndex,
                                                 PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

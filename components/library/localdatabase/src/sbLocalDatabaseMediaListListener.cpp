@@ -394,13 +394,14 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
  */
 void
 sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
-                                                           sbIMediaItem* aItem)
+                                                           sbIMediaItem* aItem,
+                                                           PRUint32 aIndex)
 {
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
   SB_NOTIFY_LISTENERS(NotifyListenersItemAdded,
-                      OnItemAdded(aList, aItem, &noMoreForBatch),
+                      OnItemAdded(aList, aItem, aIndex, &noMoreForBatch),
                       LISTENER_FLAGS_ITEMADDED);
 }
 
@@ -410,13 +411,17 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
  */
 void
 sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
-                                                                   sbIMediaItem* aItem)
+                                                                   sbIMediaItem* aItem,
+                                                                   PRUint32 aIndex)
 {
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
   SB_NOTIFY_LISTENERS(NotifyListenersBeforeItemRemoved,
-                      OnBeforeItemRemoved(aList, aItem, &noMoreForBatch),
+                      OnBeforeItemRemoved(aList,
+                                          aItem,
+                                          aIndex,
+                                          &noMoreForBatch),
                       LISTENER_FLAGS_BEFOREITEMREMOVED);
 }
 
@@ -425,13 +430,17 @@ sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(sbIMediaList*
  */
 void
 sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
-                                                                  sbIMediaItem* aItem)
+                                                                  sbIMediaItem* aItem,
+                                                                  PRUint32 aIndex)
 {
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
   SB_NOTIFY_LISTENERS(NotifyListenersAfterItemRemoved,
-                      OnAfterItemRemoved(aList, aItem, &noMoreForBatch),
+                      OnAfterItemRemoved(aList,
+                                         aItem,
+                                         aIndex,
+                                         &noMoreForBatch),
                       LISTENER_FLAGS_AFTERITEMREMOVED);
 }
 
@@ -455,14 +464,18 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
   nsAutoString props;
   aProperties->ToString(props);
   TRACE(("LocalDatabaseMediaListListener[0x%.8x] - "
-         "NotifyListenersItemUpdated %s %s %s", this,
+         "NotifyListenersItemUpdated %s %s %d %s", this,
          NS_LossyConvertUTF16toASCII(list).get(),
          NS_LossyConvertUTF16toASCII(item).get(),
+         aIndex,
          NS_LossyConvertUTF16toASCII(props).get()));
 #endif
 
   SB_NOTIFY_LISTENERS_PROPERTIES(NotifyListenersItemUpdated,
-                                 OnItemUpdated(aList, aItem, aProperties, &noMoreForBatch),
+                                 OnItemUpdated(aList,
+                                               aItem,
+                                               aProperties,
+                                               &noMoreForBatch),
                                  LISTENER_FLAGS_ITEMUPDATED);
 }
 
@@ -477,7 +490,10 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(sbIMediaList* aList,
   SB_ENSURE_TRUE_VOID(aList);
 
   SB_NOTIFY_LISTENERS(NotifyListenersItemMoved,
-                      OnItemMoved(aList, aFromIndex, aToIndex, &noMoreForBatch),
+                      OnItemMoved(aList,
+                                  aFromIndex,
+                                  aToIndex,
+                                  &noMoreForBatch),
                       LISTENER_FLAGS_ITEMMOVED);
 }
 
@@ -799,25 +815,34 @@ sbWeakMediaListListenerWrapper::GetListener()
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemAdded(sbIMediaList* aMediaList,
                                             sbIMediaItem* aMediaItem,
+                                            PRUint32 aIndex,
                                             PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnItemAdded(aMediaList, aMediaItem, aNoMoreForBatch))
+  SB_TRY_NOTIFY(OnItemAdded(aMediaList, aMediaItem, aIndex, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                     sbIMediaItem* aMediaItem,
+                                                    PRUint32 aIndex,
                                                     PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnBeforeItemRemoved(aMediaList, aMediaItem, aNoMoreForBatch))
+  SB_TRY_NOTIFY(OnBeforeItemRemoved(aMediaList,
+                                    aMediaItem,
+                                    aIndex,
+                                    aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                    sbIMediaItem* aMediaItem,
+                                                   PRUint32 aIndex,
                                                    PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnAfterItemRemoved(aMediaList, aMediaItem, aNoMoreForBatch))
+  SB_TRY_NOTIFY(OnAfterItemRemoved(aMediaList,
+                                   aMediaItem,
+                                   aIndex,
+                                   aNoMoreForBatch))
 }
 
 NS_IMETHODIMP

@@ -348,36 +348,44 @@ sbDeviceLibrary::OnBatchEnd(sbIMediaList* aMediaList)
 NS_IMETHODIMP
 sbDeviceLibrary::OnItemAdded(sbIMediaList* aMediaList,
                              sbIMediaItem* aMediaItem,
+                             PRUint32 aIndex,
                              PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemAdded", this));
   
-  SB_NOTIFY_LISTENERS(OnItemAdded(aMediaList, aMediaItem, aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS(OnItemAdded(aMediaList,
+                                  aMediaItem,
+                                  aIndex,
+                                  aNoMoreForBatch));
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                                    sbIMediaItem* aMediaItem,
-                                                    PRBool* aNoMoreForBatch)
+                                     sbIMediaItem* aMediaItem,
+                                     PRUint32 aIndex,
+                                     PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnBeforeItemRemoved", this));
 
   SB_NOTIFY_LISTENERS(OnBeforeItemRemoved(aMediaList,
                                           aMediaItem,
+                                          aIndex,
                                           aNoMoreForBatch));
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                   sbIMediaItem* aMediaItem,
-                                                   PRBool* aNoMoreForBatch)
+                                    sbIMediaItem* aMediaItem,
+                                    PRUint32 aIndex,
+                                    PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnAfterItemRemoved", this));
 
   SB_NOTIFY_LISTENERS(OnAfterItemRemoved(aMediaList,
                                          aMediaItem,
+                                         aIndex,
                                          aNoMoreForBatch));
   return NS_OK;
 }

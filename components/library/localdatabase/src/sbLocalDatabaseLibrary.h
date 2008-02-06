@@ -60,6 +60,7 @@ typedef nsCOMArray<sbIMediaItem> sbMediaItemArray;
 typedef nsCOMArray<sbIMediaList> sbMediaListArray;
 typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
         sbMediaItemToListsMap;
+typedef nsDataHashtable<nsStringHashKey, PRUint32> sbListItemIndexMap;
 
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
@@ -337,7 +338,8 @@ public:
 
   sbLibraryInsertingEnumerationListener(sbLocalDatabaseLibrary* aLibrary)
   : mFriendLibrary(aLibrary),
-    mShouldInvalidate(PR_FALSE)
+    mShouldInvalidate(PR_FALSE),
+    mLength(0)
   {
     NS_ASSERTION(mFriendLibrary, "Null pointer!");
   }
@@ -346,6 +348,7 @@ private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   PRBool mShouldInvalidate;
   sbMediaItemArray mNotificationList;
+  PRUint32 mLength;
 };
 
 /**
@@ -368,6 +371,7 @@ private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsCOMArray<sbIMediaItem> mNotificationList;
+  nsTArray<PRUint32> mNotificationIndexes;
   PRPackedBool mItemEnumerated;
 };
 
@@ -428,6 +432,7 @@ private:
   sbLocalDatabaseLibrary* mLibrary;
   sbBatchCreateTimerCallback* mCallback;
   nsTArray<nsString> mGuids;
+  PRUint32 mLength;
 };
 
 class sbAutoSimpleMediaListBatchHelper

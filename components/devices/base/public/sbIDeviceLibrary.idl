@@ -41,7 +41,7 @@ interface nsIURI;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(5a5d8652-d772-49da-b873-f63ced21b65c)]
+[scriptable, uuid(c2885733-72f8-4d1a-8143-d81f2ca446e3)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -74,36 +74,42 @@ interface sbIDeviceLibraryListener : nsISupports
    * \brief Called when a media item is added to a list, through add or addAll.
    * \param sbIMediaList aMediaList The list that has changed.
    * \param sbIMediaItem aMediaItem The new media item.
+   * \param unsigned long aIndex The index of the new media item
    * \return True if you do not want any further onItemAdded notifications for
    *         the current batch.  If there is no current batch, the return value
    *         is ignored.
    */
   boolean onItemAdded(in sbIMediaList aMediaList,
-                      in sbIMediaItem aMediaItem);
+                      in sbIMediaItem aMediaItem,
+                      in unsigned long aIndex);
 
   /**
    * \brief Called before a media item is removed from a list, through remove,
    *        removeAll or removeByIndex.
    * \param sbIMediaList sbIMediaList aMediaList The list that has changed.
    * \param sbIMediaItem sbIMediaItem aMediaItem The removed media item.
+   * \param unsigned long aIndex The index of the item to be removed
    * \return True if you do not want any further onItemRemoved for the
    *         current batch.  If there is no current batch, the return value is
    *         ignored.
    */
   boolean onBeforeItemRemoved(in sbIMediaList aMediaList,
-                              in sbIMediaItem aMediaItem);
+                              in sbIMediaItem aMediaItem,
+                              in unsigned long aIndex);
 
   /**
    * \brief Called after a media item has been removed from a list, through
    *        remove, removeAll or removeByIndex.
    * \param sbIMediaList aMediaList The list that has changed.
    * \param sbIMediaItem aMediaItem The removed media item.
+   * \param unsigned long aIndex The index of the removed item
    * \return True if you do not want any further onItemRemoved for the
    *         current batch.  If there is no current batch, the return value is
    *         ignored.
    */
   boolean onAfterItemRemoved(in sbIMediaList aMediaList,
-                             in sbIMediaItem aMediaItem);
+                             in sbIMediaItem aMediaItem,
+                             in unsigned long aIndex);
 
   /**
    * \brief Called when a media list is cleared.

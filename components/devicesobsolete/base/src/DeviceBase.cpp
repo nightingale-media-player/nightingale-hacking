@@ -193,6 +193,7 @@ sbDeviceBaseLibraryListener::SetManagePlaylists(PRBool aManagePlaylists)
 NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
+                                         PRUint32 aIndex,
                                          PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -310,6 +311,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                  sbIMediaItem *aMediaItem,
+                                                 PRUint32 aIndex,
                                                  PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -358,6 +360,7 @@ sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
 NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList, 
                                                 sbIMediaItem *aMediaItem,
+                                                PRUint32 aIndex,
                                                 PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
