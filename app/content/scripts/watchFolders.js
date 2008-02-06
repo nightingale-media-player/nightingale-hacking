@@ -58,9 +58,15 @@ function WFInit()
   if(!wfMediaLibrary)
     wfMediaLibrary = new MediaLibrary();
 
-  wfFileScan = new sbIFileScan();
-  wfFileScanQuery = new sbIFileScanQuery();
-  wfQuery = new sbIDatabaseQuery();
+  wfFileScan =
+    Components.classes["@songbirdnest.com/Songbird/FileScan;1"]
+              .createInstance(Components.interfaces.sbIFileScan);
+  wfFileScanQuery =
+    Components.classes["@songbirdnest.com/Songbird/FileScanQuery;1"]
+              .createInstance(Components.interfaces.sbIFileScanQuery);
+  wfQuery =
+    Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+              .createInstance(Components.interfaces.sbIDatabaseQuery);
   
   wfQuery.setAsyncQuery(true);
   wfQuery.setDatabaseGUID("songbird");
@@ -196,7 +202,9 @@ function onWFLibraryAdd()
 
 function CWatchFolderManager()
 {
-  this.m_queryObj = new sbIDatabaseQuery();
+  this.m_queryObj =
+    Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+              .createInstance(Components.interfaces.sbIDatabaseQuery);
   
   this.m_watchDBGUID = "watch_folders";
   this.m_watchFolderTable = "watch_folders";

@@ -69,30 +69,6 @@ function readCPPProps() {
   return true;
 }
 
-function checkJSProps() {
-  var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                         .getService(Components.interfaces.mozIJSSubScriptLoader);
-  var context = {};
-  loader.loadSubScript("chrome://songbird/content/scripts/songbirdInterfaces.js", context);
-  var props = {};
-  for (i in context) {
-    if (i == "SB_PROPERTY_PREFACE") {
-      // skip the prefix
-      continue;
-    }
-    if (!(/^SB_PROPERTY/.test(i))) {
-      // not a property
-      continue;
-    }
-    var prop = context[i].match(/http:\/\/songbirdnest.com\/data\/1.0#(\w+)/)[1];
-    assertTrue(prop in gProps, "property " + prop + " is only in JavaScript");
-    props[prop] = true;
-  }
-  for (prop in gProps) {
-    assertTrue(prop in props, "property " + prop + " is only in C++");
-  }
-}
-
 function checkJSMProps() {
   Components.utils.import("resource://app/components/sbProperties.jsm");
   var props = {};
@@ -112,7 +88,6 @@ function checkJSMProps() {
 
 function runTest() {
   if (readCPPProps()) {
-    checkJSProps();
     checkJSMProps();
   }
 }

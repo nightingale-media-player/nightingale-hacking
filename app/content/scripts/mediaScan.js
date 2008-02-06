@@ -78,7 +78,9 @@ function onLoad()
   {
     try
     {
-      gFileScan = new sbIFileScan();
+      gFileScan =
+        Components.classes["@songbirdnest.com/Songbird/FileScan;1"]
+                  .createInstance(Components.interfaces.sbIFileScan);
 
       var libraryManager =
         Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -123,7 +125,9 @@ function isinstance(inst, base)
 function scanNextDirectory()
 {
   try {
-    aFileScanQuery = new sbIFileScanQuery();
+    aFileScanQuery = 
+      Components.classes["@songbirdnest.com/Songbird/FileScanQuery;1"]
+                .createInstance(Components.interfaces.sbIFileScanQuery);
     if (gFileScan && aFileScanQuery)
     {
       nextStartIndex = 0;

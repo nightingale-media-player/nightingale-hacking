@@ -54,8 +54,6 @@
 
   <!-- Scripts needed by the inline js that loads/runs before onload() -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
-  <script type="application/x-javascript" 
     src="chrome://global/content/globalOverlay.js"/>  
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/windowUtils.js"/>
@@ -115,8 +113,6 @@
    src="chrome://songbird/content/scripts/coreBase.js"/>
 
   <!-- XXXX TODO: Migrate the "background scripts" -->
-  <!--script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dynamicPlaylistUpdater.js"/-->
   <!--script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/watchFolders.js"/-->
 

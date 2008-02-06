@@ -105,7 +105,6 @@ window.mediaPage = {
   _playlist: null, 
 
 
-
   /** 
    * Gets the sbIMediaListView that this page is displaying
    */
@@ -159,7 +158,9 @@ window.mediaPage = {
 
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
-    var mgr = new sbIPlaylistCommandsManager();
+    var mgr =
+      Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
     
     // Set up the playlist widget

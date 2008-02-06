@@ -1971,7 +1971,9 @@
           // Bind the Web Playlist UI element to the subscribed playlist
           //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
 
-          var mgr = new sbIPlaylistCommandsManager();
+          var mgr =
+            Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                      .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
           var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
 
           this.outerPlaylist.outerWindow = window;

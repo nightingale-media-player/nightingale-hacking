@@ -70,8 +70,6 @@
   </grid>  
   
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
-  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" 
     src="chrome://global/content/globalOverlay.js"/>    
