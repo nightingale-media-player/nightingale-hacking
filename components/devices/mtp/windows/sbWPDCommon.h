@@ -27,37 +27,29 @@
 #ifndef SBWPDCOMMON_H_
 #define SBWPDCOMMON_H_
 
-// The following is placed below the other includes to avoid win32 macro 
-// madness
-#ifndef WINVER              // Allow use of features specific to Windows 95 and Windows NT 4 or later.
-#define WINVER 0x0600       // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINNT        // Allow use of features specific to Windows NT 4 or later.
-#define _WIN32_WINNT 0x0600     // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINDOWS      // Allow use of features specific to Windows 98 or later.
-#define _WIN32_WINDOWS 0x0600 // Change this to the appropriate value to target Windows Me or later.
-#endif
-
-#ifndef _WIN32_IE           // Allow use of features specific to IE 4.0 or later.
-#define _WIN32_IE 0x0400    // Change this to the appropriate value to target IE 5.0 or later.
-#endif
-
 #include <stdio.h>
 #include <tchar.h>
 #include <PortableDeviceApi.h>
 #include <PortableDevice.h>
-#include <atlbase.h>
-#include <atlstr.h>
+
+// Dealing with Win32 macro mess
+#undef CreateDevice
+#undef CreateEvent
+
 #include <nscore.h>
+#include <nsStringGlue.h>
 
 class sbIDeviceManager2;
 class sbIDeviceMarshall;
 class sbIDevice;
 class sbIDeviceEventTarget;
 class sbIDeviceEvent;
+
+  /**
+   * This is the property on the sbIMediaItem that contains the device's
+   * content identifier
+   */
+#define SB_WPD_ITEM_OBJECT_NAME "WPD_OBJECT_ID"
 
 /**
  * Retreives the WPD device manager
@@ -90,4 +82,11 @@ nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
                            PRUint32 eventID,
                            PRBool async = PR_FALSE);
 
+/**
+ * Returns a PROVARIANT built from the incoming string
+ * It's the callers responsibility to ensure proper cleanup of the PROPVARIANT's
+ * resources
+ */
+nsresult sbStringToPropVariant(nsAString const & str,
+                               PROPVARIANT & var);
 #endif /*SBWPDCOMMON_H_*/

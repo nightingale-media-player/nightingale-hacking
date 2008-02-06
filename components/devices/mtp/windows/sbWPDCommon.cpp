@@ -78,3 +78,18 @@ nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
   // Dispatch the event
   return target->DispatchEvent(event, async, &dispatched);
 }
+
+nsresult sbStringToPropVariant(nsAString const & str,
+                               PROPVARIANT & var)
+{
+  PRInt32 const length = str.Length();
+  var.vt = VT_LPWSTR;
+  var.pwszVal = reinterpret_cast<LPWSTR>(CoTaskMemAlloc((length + 1 ) * sizeof(PRUnichar)));
+  if (!var.pwszVal)
+    return NS_ERROR_OUT_OF_MEMORY;
+  
+  memcpy(var.pwszVal, nsString(str).get(), length);
+  var.pwszVal[length] = 0;
+  return NS_OK;
+}
+  
