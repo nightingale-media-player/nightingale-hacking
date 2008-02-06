@@ -1488,8 +1488,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
           }
         }
         
-        // Easy there, throttle slightly.
-        PR_Sleep(PR_MillisecondsToInterval(1));
+        // Throttle slightly.
+        // XXXAus: Not in use for the time being.
+        // PR_Sleep(PR_MillisecondsToInterval(0));
       }
       while(retDB == SQLITE_ROW &&
             !pQuery->m_IsAborting &&
