@@ -41,12 +41,12 @@ interface sbIDeviceCompatibility;
 interface sbIDeviceController : nsISupports
 {
   /**
-   * Unique identifier for the controller
+   * Unique identifier for the controller.
    */
   readonly attribute nsIDPtr id;
 
   /**
-   * A human readable name, optional?
+   * A human readable name.
    */
   readonly attribute AString name;
 

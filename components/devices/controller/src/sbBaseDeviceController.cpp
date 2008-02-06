@@ -25,11 +25,73 @@
 //
 */
 
-#include <nsAutoLock.h>
 #include "sbBaseDeviceController.h"
+
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+
+template<class T>
+PLDHashOperator sbBaseDeviceController::EnumerateIntoArray(const nsID& aKey,
+                                                           T* aData,
+                                                           void* aArray)
+{
+  nsIMutableArray *array = (nsIMutableArray*)aArray;
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = array->AppendElement(aData, false);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+template<class T>
+PLDHashOperator sbBaseDeviceController::EnumerateConnectAll(const nsID& aKey,
+                                                            T* aData,
+                                                            void* aArray)
+{
+  nsIMutableArray *array = (nsIMutableArray*)aArray;
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = aData->Connect();
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = array->AppendElement(aData, false);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+template<class T>
+PLDHashOperator sbBaseDeviceController::EnumerateDisconnectAll(const nsID& aKey,
+                                                               T* aData,
+                                                               void* aArray)
+{
+  nsIMutableArray *array = (nsIMutableArray*)aArray;
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = aData->Disconnect();
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = array->AppendElement(aData, false);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
 
 sbBaseDeviceController::sbBaseDeviceController()
 : mMonitor(nsnull) {
+  mMonitor = 
+    nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
+  NS_ASSERTION(mMonitor, "Failed to create monitor");
+
+  PRBool succeeded = mDevices.Init();
+  NS_ASSERTION(succeeded, "Failed to initialize hashtable");
 }
 
 sbBaseDeviceController::~sbBaseDeviceController() {
@@ -38,51 +100,47 @@ sbBaseDeviceController::~sbBaseDeviceController() {
   }
 }
 
-nsresult sbBaseDeviceController::Init() {
-  mMonitor = 
-    nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  PRBool succeeded = mDevices.Init();
-  NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
-}
-
-nsresult sbBaseDeviceController::GetControllerIDInternal(nsID &aID) {
+nsresult 
+sbBaseDeviceController::GetControllerIDInternal(nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   aID = mControllerID;
   return NS_OK;
 }
-nsresult sbBaseDeviceController::SetControllerIDInternal(const nsID &aID) {
+nsresult 
+sbBaseDeviceController::SetControllerIDInternal(const nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   mControllerID = aID;
   return NS_OK;
 }
 
-nsresult sbBaseDeviceController::GetControllerNameInternal(nsString &aName) {
+nsresult 
+sbBaseDeviceController::GetControllerNameInternal(nsString &aName) {
   nsAutoMonitor mon(mMonitor);
   aName = mControllerName ;
   return NS_OK;
 }
-nsresult sbBaseDeviceController::SetControllerNameInternal(const nsString &aName) {
+nsresult 
+sbBaseDeviceController::SetControllerNameInternal(const nsString &aName) {
   nsAutoMonitor mon(mMonitor);
   mControllerName = aName;
   return NS_OK;
 }
 
-nsresult sbBaseDeviceController::GetMarshallIDInternal(nsID &aID) {
+nsresult 
+sbBaseDeviceController::GetMarshallIDInternal(nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   aID = mMarshallID;
   return NS_OK;
 }
-nsresult sbBaseDeviceController::SetMarshallIDInternal(const nsID &aID) {
+nsresult 
+sbBaseDeviceController::SetMarshallIDInternal(const nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   mMarshallID = aID;
   return NS_OK;
 }
 
-nsresult sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
+nsresult 
+sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv;
@@ -94,11 +152,14 @@ nsresult sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
   nsAutoMonitor mon(mMonitor);
   
   PRBool succeeded = mDevices.Put(*id, aDevice);
+  mon.Exit();
+
   NS_Free(id);
-  
+
   return succeeded ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
-nsresult sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
+nsresult 
+sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv;
@@ -108,9 +169,145 @@ nsresult sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
   NS_ENSURE_ARG_POINTER(id);
 
   nsAutoMonitor mon(mMonitor);
-
   mDevices.Remove(*id);
+  mon.Exit();
+
   NS_Free(id);
 
+  return NS_OK;
+}
+
+nsresult
+sbBaseDeviceController::GetDeviceInternal(const nsID * aID,
+                                          sbIDevice* *aDevice) {
+  NS_ENSURE_ARG_POINTER(aID);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsAutoMonitor mon(mMonitor);
+
+  PRBool succeeded = mDevices.Get(*aID, aDevice);
+  mon.Exit();
+
+  return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult 
+sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
+  NS_ENSURE_ARG_POINTER(aDevices);
+
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+
+  PRUint32 count;
+  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateIntoArray,
+                                 array.get());
+
+  mon.Exit();
+
+  // we can't trust the count returned from EnumerateRead because that won't
+  // tell us about erroring on the last element
+  rv = array->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (count < mDevices.Count()) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return CallQueryInterface(array, aDevices);
+}
+
+nsresult 
+sbBaseDeviceController::ControlsDeviceInternal(sbIDevice *aDevice, 
+                                               PRBool *_retval) {
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsID *id = nsnull;
+  nsresult rv = aDevice->GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDeviceInternal(id, getter_AddRefs(device));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_Free(id);
+  *_retval = (device != nsnull) ? PR_TRUE : PR_FALSE;
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceController::ConnectDevicesInternal() {
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count;
+  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateConnectAll,
+                                 array.get());
+
+  mon.Exit();
+
+  // we can't trust the count returned from EnumerateRead because that won't
+  // tell us about erroring on the last element
+  rv = array->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (count < mDevices.Count()) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceController::DisconnectDevicesInternal() {
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count;
+  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateDisconnectAll,
+                                 array.get());
+
+  mon.Exit();
+
+  // we can't trust the count returned from EnumerateRead because that won't
+  // tell us about erroring on the last element
+  rv = array->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (count < mDevices.Count()) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice) {
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsID *id = nsnull;
+  nsresult rv = aDevice->GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+  mDevices.Remove(*id);
+  mon.Exit();
+
+  NS_Free(id);
+  
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceController::ReleaseDevicesInternal() {
+  nsAutoMonitor mon(mMonitor);
+  mDevices.Clear();
   return NS_OK;
 }

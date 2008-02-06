@@ -63,6 +63,7 @@ protected:
   // our stack of states (holds *pointers* to DispatchStates)
   nsDeque mStates;
   friend class sbDeviceEventTargetRemovalHelper;
-  
+
+private:
   PRMonitor* mMonitor;
 };

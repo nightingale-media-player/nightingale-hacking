@@ -687,6 +687,8 @@ xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
 $(xpidl_headers): %.h: %.idl
 	$(CYGWIN_WRAPPER) $(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 	$(CHMOD) -x $@
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_SDKINCLUDEDIR)
+	$(CYGWIN_WRAPPER) $(CP) -f $@ $(SONGBIRD_SDKINCLUDEDIR)
 
 xpidl_clean_headers:
 	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_headers)

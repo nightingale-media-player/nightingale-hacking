@@ -74,9 +74,9 @@ protected:
 
 protected:
   PRMonitor* mMonitor;
-  nsInterfaceHashtable<nsIDHashKey, sbIDeviceController> mControllers;
-  nsInterfaceHashtable<nsIDHashKey, sbIDevice> mDevices;
-  nsInterfaceHashtable<nsIDHashKey, sbIDeviceMarshall> mMarshalls;
+  nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceController> mControllers;
+  nsInterfaceHashtableMT<nsIDHashKey, sbIDevice> mDevices;
+  nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceMarshall> mMarshalls;
 };
 
 #define SONGBIRD_DEVICEMANAGER2_DESCRIPTION                \

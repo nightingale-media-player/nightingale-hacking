@@ -37,14 +37,16 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbWPDCommon.cpp \
            sbPropertyVariant.cpp \
            sbWPDDevice.cpp \
+           sbWPDDeviceController.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/device/public \
                $(topsrcdir)/components/devices/device/src \
-			   $(DEPTH)/components/devices/marshall/public \
-			   $(topsrcdir)/components/devices/marshall/src \
+               $(DEPTH)/components/devices/marshall/public \
+               $(topsrcdir)/components/devices/marshall/src \
                $(DEPTH)/components/devices/controller/public \
+               $(topsrcdir)/components/devices/controller/src \
                $(DEPTH)/components/devices/base/public \
                $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
@@ -84,6 +86,7 @@ DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/MSWMSDK/release
 endif
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceMarshall$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceController$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
                               $(NULL)

@@ -110,7 +110,7 @@ NS_IMETHODIMP sbDeviceManager::GetMarshalls(nsIArray * *aMarshalls)
   
   PRUint32 count;
   count = mMarshalls.EnumerateRead(sbDeviceManager::EnumerateIntoArray,
-                                  array.get());
+                                   array.get());
   
   // we can't trust the count returned from EnumerateRead because that won't
   // tell us about erroring on the last element
@@ -381,8 +381,8 @@ NS_IMETHODIMP sbDeviceManager::GetDevice(const nsID * aDeviceId,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool succeded = mDevices.Get(*aDeviceId, _retval);
-  return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+  PRBool succeeded = mDevices.Get(*aDeviceId, _retval);
+  return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 /* void nsIObserver::observe (in nsISupports aSubject, in string aTopic, in wstring aData); */

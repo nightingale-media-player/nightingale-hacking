@@ -168,7 +168,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
                                 NS_PROXY_SYNC,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
-	}
+    }
     
     // XXX Mook: consider wrapping the listener in a proxy
     

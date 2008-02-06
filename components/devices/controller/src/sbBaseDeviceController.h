@@ -33,19 +33,32 @@
 
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIMutableArray.h>
 #include <nsStringGlue.h>
 
 class sbBaseDeviceController
 {
 public:
   sbBaseDeviceController();
+
+protected:
   virtual ~sbBaseDeviceController();
 
 protected:
-  /** 
-   * 
-   */
-  nsresult Init();
+  // copies the given hash table into the given mutable array
+  template<class T>
+  static NS_HIDDEN_(PLDHashOperator) EnumerateIntoArray(const nsID& aKey,
+                                                        T* aData,
+                                                        void* aArray);
+  template<class T>
+  static NS_HIDDEN_(PLDHashOperator) EnumerateConnectAll(const nsID& aKey,
+                                                         T* aData,
+                                                         void* aArray);
+
+  template<class T>
+  static NS_HIDDEN_(PLDHashOperator) EnumerateDisconnectAll(const nsID& aKey,
+                                                            T* aData,
+                                                            void* aArray);
 
   /**
    * 
@@ -83,7 +96,42 @@ protected:
    */
   nsresult RemoveDeviceInternal(sbIDevice *aDevice);
 
-protected:
+  /**
+   * 
+   */
+  nsresult GetDeviceInternal(const nsID * aID, sbIDevice* *aDevice);
+
+  /**
+   * 
+   */
+  nsresult GetDevicesInternal(nsIArray* *aDevices);
+
+  /**
+   * 
+   */
+  nsresult ControlsDeviceInternal(sbIDevice *aDevice, PRBool *_retval);
+
+  /**
+   * 
+   */
+  nsresult ConnectDevicesInternal();
+  
+  /**
+   * 
+   */
+  nsresult DisconnectDevicesInternal();
+
+  /**
+   * 
+   */
+  nsresult ReleaseDeviceInternal(sbIDevice *aDevice);
+
+  /**
+   * 
+   */
+  nsresult ReleaseDevicesInternal();
+
+private:
   /** 
    *
    */

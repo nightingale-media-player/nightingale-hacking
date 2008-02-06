@@ -77,7 +77,6 @@
 #define USE_SQLITE_SHARED_CACHE
 
 #define SQLITE_MAX_RETRIES            666
-#define QUERY_PROCESSOR_THREAD_COUNT  2
 
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
@@ -769,7 +768,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 #if defined(USE_SQLITE_LARGE_PAGE_SIZE)
   {
     char *strErr = nsnull;
-    sqlite3_exec(pHandle, "PRAGMA page_size = 4096", nsnull, nsnull, &strErr);
+    sqlite3_exec(pHandle, "PRAGMA page_size = 16384", nsnull, nsnull, &strErr);
     if(strErr) {
       NS_WARNING(strErr);
       sqlite3_free(strErr);
@@ -791,7 +790,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 #if defined(USE_SQLITE_LARGE_CACHE_SIZE)
   {
     char *strErr = nsnull;
-    sqlite3_exec(pHandle, "PRAGMA cache_size = 6000", nsnull, nsnull, &strErr);
+    sqlite3_exec(pHandle, "PRAGMA cache_size = 16000", nsnull, nsnull, &strErr);
     if(strErr) {
       NS_WARNING(strErr);
       sqlite3_free(strErr);
@@ -822,7 +821,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 #endif
 
 #if defined(USE_SQLITE_BUSY_TIMEOUT)
-  sqlite3_busy_timeout(pHandle, 60000);
+  sqlite3_busy_timeout(pHandle, 120000);
 #endif
 
   *ppHandle = pHandle;
@@ -1415,7 +1414,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
             pQuery->SetLastError(SQLITE_OK);
             TRACE(("Query complete, %d rows", totalRows));
           }
-          break;
+        break;
 
         case SQLITE_MISUSE:
           {
@@ -1452,11 +1451,11 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
             NS_WARNING(log.get());
 #endif
             sqlite3_reset(pStmt);
-            sqlite3_sleep(25);
+            sqlite3_sleep(50);
 
             retDB = SQLITE_ROW;
           }
-          break;
+        break;
 
         default:
           {
@@ -1488,6 +1487,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 #endif
           }
         }
+        
+        // Easy there, throttle slightly.
+        PR_Sleep(PR_MillisecondsToInterval(1));
       }
       while(retDB == SQLITE_ROW &&
             !pQuery->m_IsAborting &&

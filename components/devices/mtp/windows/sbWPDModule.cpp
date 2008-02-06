@@ -35,9 +35,14 @@
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
+
 #include "sbWPDMarshall.h"
+#include "sbWPDDeviceController.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDMarshall);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDDeviceController);
+
+SB_DEVICE_CONTROLLER_REGISTERSELF(sbWPDDeviceController);
 
 // Registration functions for becoming a startup observer
 static NS_METHOD sbDeviceMarshallRegisterSelf(nsIComponentManager* aCompMgr,
@@ -83,6 +88,14 @@ static nsModuleComponentInfo sbDeviceMarshallComponents[] =
     sbWPDMarshallConstructor,
     sbDeviceMarshallRegisterSelf,
     sbDeviceMarshallUnregisterSelf
+  },
+  {
+    SB_WPDCONTROLLER_CLASSNAME,
+    SB_WPDCONTROLLER_CID,
+    SB_WPDCONTROLLER_CONTRACTID,
+    sbWPDDeviceControllerConstructor,
+    sbWPDDeviceControllerRegisterSelf,
+    sbWPDDeviceControllerUnregisterSelf
   }
 };
 

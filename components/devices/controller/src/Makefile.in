@@ -31,8 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbDeviceController$(DEBUG:%=_d)
 
-CPP_SRCS = sbDeviceControllerModule.cpp \
-           sbBaseDeviceController.cpp \
+CPP_SRCS = sbBaseDeviceController.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
@@ -48,22 +47,8 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+STATIC_LIB = sbDeviceController$(DEBUG:%=_d)$(LIB_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(NULL)
-
-LIBSONGBIRD_COMPONENT = SongbirdDeviceController
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk
