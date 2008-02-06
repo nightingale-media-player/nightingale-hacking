@@ -125,7 +125,7 @@ public:
     mIsModeSet = PR_TRUE;
   }
 
-  PRUint32 GetTotal()
+  PRUint64 GetTotal()
   {
     if (!mIsTotalSet) {
       nsresult rv;
@@ -139,14 +139,14 @@ public:
     return mTotal;
   }
 
-  void SetTotal(PRUint32 aTotal)
+  void SetTotal(PRUint64 aTotal)
   {
     mTotal      = aTotal;
     mIsTotalSet = PR_TRUE;
     mIsDirty    = PR_TRUE;
   }
 
-  PRUint32 GetCurrent()
+  PRUint64 GetCurrent()
   {
     if (!mIsCurrentSet) {
       nsresult rv;
@@ -159,7 +159,7 @@ public:
     return mCurrent;
   }
 
-  void SetCurrent(PRUint32 aCurrent)
+  void SetCurrent(PRUint64 aCurrent)
   {
     mCurrent      = aCurrent;
     mIsCurrentSet = PR_TRUE;
@@ -187,8 +187,8 @@ private:
   nsString mValue;
 
   Mode mMode;
-  PRUint32 mTotal;
-  PRUint32 mCurrent;
+  PRUint64 mTotal;
+  PRUint64 mCurrent;
 
   PRPackedBool mIsDirty;
   PRPackedBool mIsModeSet;
