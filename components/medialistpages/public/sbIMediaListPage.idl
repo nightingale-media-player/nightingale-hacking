@@ -33,33 +33,34 @@ interface nsIDragSession;
  * \interface sbIMediaPage
  * \brief A generic interface for UI that renders a media list view
  *
- * Pages that display libraries or playlists must supply this interface
+ * Pages that display libraries or other media lists must supply this interface
  * in order for browser history, playback, find current track, and other 
  * external functionality to work as expected.
  *
- * The primary purpose of the interface is to facilitate getting the underlying
- * media list view that the page is displaying, and setting the view on page
- * load.  
+ * The primary purpose of the interface is to facilitate setting the
+ * sbIMediaListView that the page is to display.   
  *
  * For sample code and more information, see 
  *    http://developer.songbirdnest.com/add-on-api/
  *
- * \sa sbIMediaListView, sbIMediaList
+ * \sa sbIMediaListView, sbIMediaList, playlistPage.xul
  */
 [scriptable, uuid(b9e3c190-d35e-11dc-95ff-0800200c9a66)]
 interface sbIMediaPage : nsISupports
 {
 
   /**
-   * \brief A filtered, sorted view of the media list that the page is rendering.
+   * \brief A filtered, sorted view of the media list that the page 
+   *        is supposed to render.
    * 
    * The mediaListView will be set by the browser during the capturing phase 
-   * of the window load event, and may then be set again at any time.
+   * of the window load event, meaning that it should be available
+   * by standard onLoad time.
    *
-   * When set, pages should immediately update themselves to display
-   * the given view.
+   * Note that the mediaListView should not be set again after load.
    */
   attribute sbIMediaListView mediaListView;
+
 
   /**
    * \brief Tell the page to make the MediaItem at the given index visible and highlighted.
@@ -70,7 +71,10 @@ interface sbIMediaPage : nsISupports
   PRBool highlightItem(in unsigned long aViewIndex);
   
   
-  // TODO
+  // TODO Playback
+  
+  // TODO Drag and Drop
+  
   // Exact drag/drop requirements TBD in http://bugzilla.songbirdnest.com/show_bug.cgi?id=6812
   // when drag and drop handling is moved from dndDefaultHandler.js and sbTabBrowser.xml
   // into playlist.xml

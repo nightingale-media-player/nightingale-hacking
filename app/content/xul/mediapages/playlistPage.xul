@@ -29,19 +29,49 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
-<window
-  id="sb-library-page"
+<!DOCTYPE page SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!-- Import the standard scripts and overlays for all media pages.
+     Required for the playlist and other widgets to function correctly. -->
+<?xul-overlay href="chrome://songbird/content/xul/mediaPageOverlay.xul"?>
+
+
+<!--
+ 
+  Playlist Media Page 
+  
+  The default viewer for sbIMediaListViews.  
+  
+  Shows a media list as a plain table using the sb-playlist XBL widget, 
+  and optionally includes year/artist/album filters with the 
+  sb-filterlist widget.
+
+  This page is registered with sbIMediaPageManager and loaded by the
+  sbTabBrowser widget.
+  
+  For more information see http://developer.songbirdnest.com/add-on-api/
+  
+  -->
+<page
+  id="sb-playlist-media-page"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="window.mediaPage.onLoad();"
   onunload="window.mediaPage.onUnload();"
-  windowtype="Songbird:Library"
+  windowtype="Songbird:MediaPage"
 >
 
-  <sb-playlist id="sb-library-page-playlist" 
+  <!-- Songbird Playlist tree/table widget.
+  
+       Contains:
+         * Playlist commands (keyboard shortcuts, context menus, toolbars)
+         * Filtering UI (Used to manipulate sbIMediaListView.cascadeFilterSets)
+         * A tree widget that displays the contents of the sbIMediaListView
+         * Drag and drop support
+    -->
+  <sb-playlist id="playlist" 
       flex="1"
       enableColumnDrag="true"
       persist="column-list column-widths"
@@ -50,99 +80,147 @@
   />
 
 
-  <!-- TODO: Rename sb-library-page etc. to sb-playlist-page -->
-  <!-- TODO: Remove as many of these as possible? --> 
-  
-  <!-- Extension Overlay Support -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/overlayLoader.js" />
-
-  <!-- Load the sbPlaylistsource helper -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/metrics.js"/>
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js"/> 
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/playerOpen.js"/> 
-
-  <!-- Local hardcoded sample js -->
   <script type="application/x-javascript">
   <![CDATA[
-if (typeof(Cc) == "undefined")
- const Cc = Components.classes;
-if (typeof(Ci) == "undefined")
- const Ci = Components.interfaces;
-
-if (typeof(SBProperties) == "undefined") {
-  Components.utils.import("resource://app/components/sbProperties.jsm");
-  if (!SBProperties)
-    throw new Error("Import of sbProperties module failed!");
-}
-
-if (typeof(LibraryUtils) == "undefined") {
-  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
-  if (!LibraryUtils)
-    throw new Error("Import of sbLibraryUtils module failed!");
-}
-
-if (typeof(kPlaylistCommands) == "undefined") {
-  Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
-  if (!kPlaylistCommands)
-    throw new Error("Import of kPlaylistCommands module failed!");
-}
 
 
-// TODO Comment
-// TODO Make the playlist widget implement sbIMediaPage and then delegate
-// everything to it.  window.mediaPage = document.getElementById('playlist');
+/**
+ * Media Page Controller
+ *
+ * In order to display the contents of a library or list, pages
+ * must provide a "window.mediaPage" object implementing
+ * the Songbird sbIMediaPage interface. This interface allows
+ * the rest of Songbird to talk to the page without knowledge 
+ * of what the page looks like.
+ *
+ * In this particular page most functionality is simply 
+ * delegated to the sb-playlist widget.
+ */
 window.mediaPage = {
 
-  onLoad:  function(e) {
-    dump("MATT: mediaPage.onLoad()!\n");
-    
-    if (!this._mediaListView) {
-      Components.utils.reportError("Playlist.xul did not receive a medialist " + 
-          " before the onload event!");
-      return;
-    } 
-    
-    this._playlist = document.getElementById("sb-library-page-playlist");
-    
-    this._updateFilterLists();
-
-    // TODO: Get cmds that are appropriate for the list?
-    var mgr = new sbIPlaylistCommandsManager();
-    var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
-    
-    // Set up the playlist
-    this._playlist.bind(this._mediaListView, cmds);
-  },
-
-  onUnload:  function(e) {
-    dump("MATT: mediaPage.onUnload()!\n");
-    // TODO: This should be good, right?
-    // this._playlist.destroy()
-  },
-
+  // The sbIMediaListView that this page is to display
   _mediaListView: null,
   
+  // The sb-playlist XBL binding
   _playlist: null, 
 
 
+
+  /** 
+   * Gets the sbIMediaListView that this page is displaying
+   */
+  get mediaListView()  {
+    return this._mediaListView;
+  },
+
+
+  /** 
+   * Set the sbIMediaListView that this page is to display.
+   * Called in the capturing phase of window load by the Songbird browser.
+   * Note that to simplify page creation mediaListView may only be set once.
+   */
+  set mediaListView(value)  {
+    dump("MATT: mediaListPage.set mediaListView!\n");
+    
+    if (!this._mediaListView) {
+      this._mediaListView = value;
+    } else {
+      throw new Error("mediaListView may only be set once.  Please reload the page");
+    }
+  },
+
+
+  /** 
+   * Called when the page finishes loading.  
+   * By this time window.mediaPage.mediaListView should have 
+   * been externally set.  
+   */
+  onLoad:  function(e) {
+    dump("MATT: mediaPage.onLoad()!\n");
+
+    // Make sure we have the javascript modules we're going to use
+    if (!window.SBProperties) 
+      Cu.import("resource://app/components/sbProperties.jsm");
+    if (!window.LibraryUtils) 
+      Cu.import("resource://app/components/sbLibraryUtils.jsm");
+    if (!window.kPlaylistCommands) 
+      Cu.import("resource://app/components/kPlaylistCommands.jsm");
+    
+    if (!this._mediaListView) {
+      Components.utils.reportError("playlistPage.xul did not receive  " + 
+          "a mediaListView before the onload event!");
+      return;
+    } 
+
+    this._playlist = document.getElementById("playlist");
+
+    // Configure the playlist filters based on the querystring
+    this._updateFilterLists();
+
+    // Get playlist commands (context menu, keyboard shortcuts, toolbar)
+    // Note: playlist commands currently depend on the playlist widget.
+    var mgr = new sbIPlaylistCommandsManager();
+    var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
+    
+    // Set up the playlist widget
+    this._playlist.bind(this._mediaListView, cmds);
+  },
+
+
+  /** 
+   * Called as the window is about to unload
+   */
+  onUnload:  function(e) {
+    dump("MATT: mediaPage.onUnload()!\n");
+    if (this._playlist) {
+      this._playlist.destroy();
+      this._playlist = null;
+    }
+  },
+
+
+  /** 
+   * Show/highlight the MediaItem at the given MediaListView index.
+   * Called by the Find Current Track button.
+   */
+  highlightItem: function(aIndex) {
+    this._playlist.highlightItem(aIndex);
+  },
+
+  
+  // TODO Playback - coming from matt
+  
+  // TODO Drag and drop - coming from francis
+  
+    
+  /** 
+   * Helper function to parse and unescape the query string. 
+   * Returns a object mapping key->value
+   */
+  _parseQueryString: function() {
+    var queryString = (location.search || "?").substr(1).split("&");
+    var queryObject = {};
+    var key, value;
+    for each (var pair in queryString) {
+      [key, value] = pair.split("=");
+      queryObject[key] = unescape(value);
+    }
+    return queryObject;
+  },
+  
+  
   /**
-   * Configure the playlist filter lists.
+   * Configure the playlist filter lists
    */
   _updateFilterLists: function() {
+  
     // This URL is registered as two different media pages. 
     // One with filters, one without. 
     // Use the querystring to determine what to show.
-    var queryString = parseQueryString();
+    var queryString = this._parseQueryString();
     var useFilters = queryString["useFilters"] == "true";
     var filters = this._mediaListView.cascadeFilterSet;
+    
     if (useFilters && filters) {
       this._playlist.setAttribute("hidefilters", false);
       
@@ -167,41 +245,9 @@ window.mediaPage = {
       }
     }
   },
-
-  get mediaListView()  {
-    return this._mediaListView;
-  },
-
-  set mediaListView(value)  {
-    dump("MATT: mediaListPage.set mediaListView!\n");
-    this._mediaListView = value;
-  },
-
-  highlightItem: function(aIndex) {
-    this._playlist.highlightItem(aIndex);
-  }
-
-  // TODO Drag and drop
-}
-
-
-
-// Helper function to parse and unescape query string. 
-// Returns a object mapping key->value
-function parseQueryString() {
-  var queryString = (location.search || "?").substr(1).split("&");
-  var queryObject = {};
-  var key, value;
-  for each (var pair in queryString) {
-    [key, value] = pair.split("=");
-    queryObject[key] = unescape(value);
-  }
-  return queryObject;
-}
-
-
+} // End window.mediaPage 
 
   ]]>
   </script>
 
-</window>
+</page>

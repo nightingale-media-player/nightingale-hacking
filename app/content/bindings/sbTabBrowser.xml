@@ -1811,7 +1811,7 @@
 
           // Get the playlist element from within the current tab
           // TODO change this
-          var playlist = playlistDocument.getElementById("sb-library-page-playlist");
+          var playlist = playlistDocument.getElementById("playlist");
           if (playlist == null) {
             return null;
           }
@@ -1819,6 +1819,12 @@
           // Remove security wrappers
           if (playlist.wrappedJSObject) {
             playlist = playlist.wrappedJSObject;
+          }
+
+          // TODO remove completely
+          try { throw new Error("tab.innerPlaylist is going away in the next few days!"); }
+          catch (e) {
+            Components.utils.reportError(e);
           }
 
           return playlist;

@@ -56,6 +56,17 @@ var gPrefs   = Components.classes["@mozilla.org/preferences-service;1"]
                       .getService(Components.interfaces.nsIPrefBranch);
 var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
                       .getService(Components.interfaces.nsIConsoleService);
+                      
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+
+
 
 // Strings are cool.
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
