@@ -36,10 +36,10 @@
 NS_IMPL_THREADSAFE_ADDREF(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_RELEASE(sbWPDDeviceController)
 
-NS_IMPL_QUERY_INTERFACE3_CI(sbWPDDeviceController,
-                            sbIDeviceController,
-                            sbIDeviceEventTarget,
-                            nsIClassInfo)
+NS_IMPL_THREADSAFE_QUERY_INTERFACE3(sbWPDDeviceController,
+                                    sbIDeviceController,
+                                    sbIDeviceEventTarget,
+                                    nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER2(sbWPDDeviceController,
                              sbIDeviceController,
@@ -48,7 +48,7 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbWPDDeviceController,
 NS_DECL_CLASSINFO(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_CI(sbWPDDeviceController)
 
-sbWPDDeviceController::sbMTPDeviceController() 
+sbWPDDeviceController::sbWPDDeviceController() 
 : mMonitor(nsnull) 
 {
   
@@ -64,7 +64,7 @@ sbWPDDeviceController::sbMTPDeviceController()
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller name");
 }
 
-sbWPDDeviceController::~sbMTPDeviceController() 
+sbWPDDeviceController::~sbWPDDeviceController() 
 {
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
