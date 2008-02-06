@@ -38,6 +38,10 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbPropertyVariant.cpp \
            sbWPDDevice.cpp \
            sbWPDDeviceController.cpp \
+           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceCompatibility.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
@@ -51,6 +55,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
@@ -64,7 +69,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \

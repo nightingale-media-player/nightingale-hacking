@@ -31,11 +31,11 @@ include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbContentTypeFormat.cpp \
+           sbDeviceBaseModule.cpp \
+           sbDeviceContent.cpp \
+           sbDeviceCompatibility.cpp \
            sbDeviceEvent.cpp \
            sbDeviceLibrary.cpp \
-           sbDeviceCompatibility.cpp \
-           sbDeviceContent.cpp \
-           sbDeviceBaseModule.cpp \
            $(topsrcdir)/components/moz/strings/src/sbTArrayStringEnumerator.cpp \
            $(NULL)
 
