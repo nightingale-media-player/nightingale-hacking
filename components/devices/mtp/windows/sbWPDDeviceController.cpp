@@ -52,7 +52,8 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbWPDDeviceController,
 NS_DECL_CLASSINFO(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_CI(sbWPDDeviceController)
 
-SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbWPDDeviceController, SB_WPDCONTROLLER_DESCRIPTION)
+SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbWPDDeviceController, 
+                                       SB_WPDCONTROLLER_DESCRIPTION)
 
 sbWPDDeviceController::sbWPDDeviceController() 
 : mMonitor(nsnull) 

@@ -86,7 +86,7 @@ DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/MSWMSDK/release
 endif
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceMarshall$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceController$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/devices/controller/src/sbDeviceController$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
                               $(NULL)
