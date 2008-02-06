@@ -134,4 +134,6 @@ function runTest () {
   assertTrue(libraryListener.removedAfter[2].list.equals(library));
   assertTrue(libraryListener.removedAfter[2].item.equals(item8));
   assertEqual(libraryListener.removedAfter[2].index, 7);
+
+  library.removeListener(libraryListener);
 }

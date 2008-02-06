@@ -149,4 +149,6 @@ function runTest () {
 
   // clean up the listener so we don't count a bogus leak
   listener.reset();
+  libTwo.removeListener(listener);
+
 }
