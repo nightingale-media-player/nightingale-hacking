@@ -63,29 +63,29 @@ protected:
   /**
    * 
    */
-  nsresult GetControllerIDInternal(nsID &aID);
+  nsresult GetControllerIdInternal(nsID &aID);
   /**
    * 
    */
-  nsresult SetControllerIDInternal(const nsID &aID);
+  nsresult SetControllerIdInternal(const nsID &aID);
 
   /**
    * 
    */
-  nsresult GetControllerNameInternal(nsString &aName);
+  nsresult GetControllerNameInternal(nsAString &aName);
   /**
    * 
    */
-  nsresult SetControllerNameInternal(const nsString &aName);
+  nsresult SetControllerNameInternal(const nsAString &aName);
 
   /**
    * 
    */
-  nsresult GetMarshallIDInternal(nsID &aID);
+  nsresult GetMarshallIdInternal(nsID &aID);
   /**
    * 
    */
-  nsresult SetMarshallIDInternal(const nsID &aID);
+  nsresult SetMarshallIdInternal(const nsID &aID);
 
   /**
    * 

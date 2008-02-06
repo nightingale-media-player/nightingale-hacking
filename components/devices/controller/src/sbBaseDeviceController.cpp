@@ -101,39 +101,39 @@ sbBaseDeviceController::~sbBaseDeviceController() {
 }
 
 nsresult 
-sbBaseDeviceController::GetControllerIDInternal(nsID &aID) {
+sbBaseDeviceController::GetControllerIdInternal(nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   aID = mControllerID;
   return NS_OK;
 }
 nsresult 
-sbBaseDeviceController::SetControllerIDInternal(const nsID &aID) {
+sbBaseDeviceController::SetControllerIdInternal(const nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   mControllerID = aID;
   return NS_OK;
 }
 
 nsresult 
-sbBaseDeviceController::GetControllerNameInternal(nsString &aName) {
+sbBaseDeviceController::GetControllerNameInternal(nsAString &aName) {
   nsAutoMonitor mon(mMonitor);
-  aName = mControllerName ;
+  aName = mControllerName;
   return NS_OK;
 }
 nsresult 
-sbBaseDeviceController::SetControllerNameInternal(const nsString &aName) {
+sbBaseDeviceController::SetControllerNameInternal(const nsAString &aName) {
   nsAutoMonitor mon(mMonitor);
   mControllerName = aName;
   return NS_OK;
 }
 
 nsresult 
-sbBaseDeviceController::GetMarshallIDInternal(nsID &aID) {
+sbBaseDeviceController::GetMarshallIdInternal(nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   aID = mMarshallID;
   return NS_OK;
 }
 nsresult 
-sbBaseDeviceController::SetMarshallIDInternal(const nsID &aID) {
+sbBaseDeviceController::SetMarshallIdInternal(const nsID &aID) {
   nsAutoMonitor mon(mMonitor);
   mMarshallID = aID;
   return NS_OK;

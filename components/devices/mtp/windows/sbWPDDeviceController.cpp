@@ -25,13 +25,17 @@
 //
 */
 
-#include "sbMTPDeviceController.h"
+#include "sbWPDDeviceController.h"
 #include "sbDeviceCompatibility.h"
 
 #include <nsAutoLock.h>
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
+#include <nsIGenericFactory.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
 
 NS_IMPL_THREADSAFE_ADDREF(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_RELEASE(sbWPDDeviceController)
@@ -48,7 +52,7 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbWPDDeviceController,
 NS_DECL_CLASSINFO(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_CI(sbWPDDeviceController)
 
-SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbWPDDeviceController)
+SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbWPDDeviceController, SB_WPDCONTROLLER_DESCRIPTION)
 
 sbWPDDeviceController::sbWPDDeviceController() 
 : mMonitor(nsnull) 
@@ -58,7 +62,7 @@ sbWPDDeviceController::sbWPDDeviceController()
   NS_ASSERTION(mMonitor, "Failed to create monitor");
 
   static nsID const id = SB_WPDCONTROLLER_CID;
-  nsresult rv = SetControllerIDInternal(id);
+  nsresult rv = SetControllerIdInternal(id);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller id");
 
   rv = 
@@ -82,9 +86,7 @@ sbWPDDeviceController::GetId(nsID * *aId)
   *aId = nsnull;
 
   *aId = static_cast<nsID*>(NS_Alloc(sizeof(nsID)));
-  **aId = id;
-
-  nsresult rv = GetControllerIdInternal(*aId);
+  nsresult rv = GetControllerIdInternal(**aId);
   
   if(NS_FAILED(rv)) {
     NS_Free(*aId);
@@ -105,7 +107,19 @@ sbWPDDeviceController::GetName(nsAString & aName)
 NS_IMETHODIMP 
 sbWPDDeviceController::GetMarshallId(nsID * *aMarshallId)
 {
-  return GetMarshallIDInternal(aMarshallId);
+  NS_ENSURE_ARG_POINTER(aMarshallId);
+
+  *aMarshallId = nsnull;
+
+  *aMarshallId = static_cast<nsID*>(NS_Alloc(sizeof(nsID)));
+  nsresult rv = GetMarshallIdInternal(**aMarshallId);
+
+  if(NS_FAILED(rv)) {
+    NS_Free(*aMarshallId);
+    *aMarshallId = nsnull;
+  }
+
+  return rv;
 }
 
 /* readonly attribute nsIArray devices; */

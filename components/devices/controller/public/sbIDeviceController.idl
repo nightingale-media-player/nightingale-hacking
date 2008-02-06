@@ -136,13 +136,13 @@ struct nsModuleComponentInfo;
  */
 #define SB_DEVICE_CONTROLLER_REGISTERSELF(_name)                               \
                                                                                \
-  static NS_METHOD _name##RegisterSelf(nsIComponentManager* aCompMgr,          \
-                                       nsIFile* aPath,                         \
-                                       const char* registryLocation,           \
-                                       const char* componentType,              \
-                                       const nsModuleComponentInfo* info);     \
+  NS_METHOD _name##RegisterSelf(nsIComponentManager* aCompMgr,                 \
+                                nsIFile* aPath,                                \
+                                const char* registryLocation,                  \
+                                const char* componentType,                     \
+                                const nsModuleComponentInfo* info);            \
                                                                                \
-  static NS_METHOD _name##UnregisterSelf(nsIComponentManager* aCompMgr,        \
+  NS_METHOD _name##UnregisterSelf(nsIComponentManager* aCompMgr,               \
                                          nsIFile* aPath,                       \
                                          const char* registryLocation,         \
                                          const nsModuleComponentInfo* info)
@@ -150,7 +150,7 @@ struct nsModuleComponentInfo;
 /**
  * Stick this in your implementation file. Give your class name.
  */
-#define SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(_name)                          \
+#define SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(_name, _desc)                   \
                                                                                \
   NS_METHOD                                                                    \
   _name##RegisterSelf(nsIComponentManager* aCompMgr,                           \
@@ -163,14 +163,9 @@ struct nsModuleComponentInfo;
     nsCOMPtr<nsICategoryManager> catMan =                                      \
       do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
     NS_ENSURE_SUCCESS(rv, rv);                                                 \
-    nsID id;                                                                   \
-    rv = this->GetIdInPlace(&id);                                              \
-    NS_ENSURE_SUCCESS(rv, rv);                                                 \
-    nsCAutoString idString(id.ToString());                                     \
-    NS_ENSURE_STATE(!idString.IsEmpty());                                      \
-    nsXPIDLCString prevEntry;                                                  \
+    nsCAutoString prevEntry;                                                   \
     rv = catMan->AddCategoryEntry(SB_DEVICE_CONTROLLER_CATEGORY,               \
-                                  idString.get(),                              \
+                                  _desc,                                       \
                                   info->mContractID,                           \
                                   PR_TRUE, PR_TRUE,                            \
                                   getter_Copies(prevEntry));                   \
@@ -190,13 +185,8 @@ struct nsModuleComponentInfo;
     nsCOMPtr<nsICategoryManager> catMan =                                      \
       do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
     NS_ENSURE_SUCCESS(rv, rv);                                                 \
-    nsID id;                                                                   \
-    rv = this->GetIdInPlace(&id);                                              \
-    NS_ENSURE_SUCCESS(rv, rv);                                                 \
-    nsCAutoString idString(id.ToString());                                     \
-    NS_ENSURE_STATE(!idString.IsEmpty());                                      \
     rv = catMan->DeleteCategoryEntry(SB_DEVICE_CONTROLLER_CATEGORY,            \
-                                     idString.get(),                           \
+                                     _desc,                                    \
                                      PR_TRUE);                                 \
     NS_ENSURE_SUCCESS(rv, rv);                                                 \
     return NS_OK;                                                              \
