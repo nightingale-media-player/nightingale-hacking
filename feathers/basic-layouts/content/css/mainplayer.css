@@ -114,6 +114,7 @@ Contains the Main Playback Controls and the Dashboard.
 #faceplate
 {
   min-width: 420px;
+  max-width: 420px;
 }
 
 /*

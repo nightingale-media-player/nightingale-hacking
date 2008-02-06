@@ -87,9 +87,17 @@ Imported by bindings.css or directly into feathers.
   margin: 0;
 }
 
+/* 
+   Due to https://bugzilla.mozilla.org/show_bug.cgi?id=414711 the artist text
+   spills over its boundaries a little bit and clips.  Adding a few pixels of 
+   L/R margin "fixes" it well enough until the moz bug is fixed. -gse 
+*/
 sb-player-artist-label.faceplate-text
 {
-  font-size: 14px !important;
+  font-size: 14px !important; 
+  text-align: center;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .faceplate-album-box,

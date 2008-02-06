@@ -473,19 +473,33 @@
     <content>
         <xul:vbox flex="1" pack="center">
           <xul:sb-player-curtrack-box class="faceplate-curtrack-box" orient="vertical" pack="center" align="center">
-            <!-- SONG ARTIST DISPLAY -->
-            <xul:hbox class="faceplate-artist-box" pack="center" align="center">
-              <xul:sb-player-artist-label crop="end" class="faceplate-text" />
+            <!-- ARTIST DISPLAY -->
+            <!-- Note that due to https://bugzilla.mozilla.org/show_bug.cgi?id=414711 the artist
+                 text spills over its boundaries a little bit and clips.  Adding a few pixels of
+                 margin "fixes" it well enough until the moz bug is fixed. -->
+            <xul:hbox id="sb-faceplate-artist-box" flex="1" class="faceplate-artist-box" pack="center">
+              <xul:sb-player-artist-label flex="1" crop="center" class="faceplate-text"/>
             </xul:hbox>
-            <!-- SONG ALBUM DISPLAY -->
-            <xul:hbox class="faceplate-album-box" pack="center" align="center" >
-              <xul:sb-player-title-label align="center"  crop="end"  class="faceplate-text" />
-              <xul:hbox align="center" class="faceplate-text">
-                <xul:label anonid="slash_label" value=" / "  crop="end" hidden="true"  class="faceplate-text"  />
-              </xul:hbox>
-              <xul:sb-player-album-label align="center" value=""  crop="end"  class="faceplate-text" />
-            </xul:hbox>
-          </xul:sb-player-curtrack-box>            
+
+            <!-- SONG/ALBUM DISPLAY -->
+            <xul:sb-autoscroll id="sb-faceplate-autoscroll-box"
+                               class="faceplate-autoscroll-box"
+                               fitalign="center" flex="1" mousethrough="always">
+              <!-- song title -->
+              <xul:sb-player-title-label id="sb-faceplate-title"
+                                         class="faceplate-text"
+                                         autotip="1" mousethrough="always"/>
+              <xul:label anonid="dash_label"
+                         class="faceplate-text"
+                         value="  &#x2014;  "  crop="end" hidden="true" mousethrough="always"/>
+              <!-- album title -->
+              <xul:sb-player-album-label id="sb-faceplate-album"
+                                         class="faceplate-text"
+                                         autotip="1" mousethrough="always" />
+            </xul:sb-autoscroll>
+           
+          </xul:sb-player-curtrack-box>
+          
           <!-- SEEK BAR -->
           <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
             <xul:sb-player-shuffle-button class="faceplate-shuffle" />
@@ -526,8 +540,8 @@
        ]]>
       </destructor>
 
-      <field name="_slashLabel">document.getAnonymousElementByAttribute(this,
-          "anonid", "slash_label");</field>
+      <field name="_dashLabel">document.getAnonymousElementByAttribute(this,
+          "anonid", "dash_label");</field>
       
       <method name="_onMetadataChange">
         <body>
@@ -535,7 +549,7 @@
           var title = this._titleDataremote.stringValue;
           var album = this._albumDataremote.stringValue;          
 
-          this._slashLabel.hidden = !(album && title);
+          this._dashLabel.hidden = !(album && title);
          ]]>
         </body>
       </method>
