@@ -381,11 +381,6 @@
           <![CDATA[
             var returnValue = aTarget;
             
-            if (aTarget == undefined ||
-                aTarget == null) {
-              returnValue = '_top';
-            }
-
             if (aEvent) {
               // if an event as supplied infer where we want to load this URI
               //
@@ -444,6 +439,9 @@
           
             var retval = null;
             var where = this._checkTarget(aDefaultLocation, aEvent);
+            if (where == null || where == undefined) {
+              where= '_top';
+            }
 
             // make sure the referrer is an nsIURI
             if (aReferrerURI == '') {
@@ -1509,7 +1507,9 @@
             event.stopPropagation();
             event.preventDefault();
           } else {
-            if (this.loadURI(href, referrer, null, event, target)) {
+            var where = this._checkTarget(target, event);
+            if (where &&
+                this.loadURI(href, referrer, null, event, target)) {
               event.stopPropagation();
               event.preventDefault();
             }
