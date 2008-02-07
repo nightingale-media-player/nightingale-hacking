@@ -26,3 +26,164 @@
 //
  */
 -->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<!-- Summary window. -->
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="mtp-device-summary"
+        onload="DeviceSummary.onLoad();">
+
+  <!--
+   * Broadcaster set.
+   *
+   *   deviceIDBroadcaster      Sets value to the device identifier.
+   -->
+
+  <broadcasterset>
+    <broadcaster id="deviceIDBroadcaster"/>
+  </broadcasterset>
+
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <vbox id="main_box" flex="1">
+
+    <hbox id="info_progress_box" flex="1">
+
+      <!-- Device information. -->
+      <sb-device-info observes="deviceIDBroadcaster"
+                      devicespecs="model_capacity"
+                      flex="1"/>
+
+      <!-- Device progress.
+      <sb-device-progress id="sb-device-progress"
+                          flex="1"
+                          observes="deviceIDBroadcaster"/>
+      -->
+
+    </hbox> <!-- End of "info_progress_box" -->
+
+    <!-- Device capacity. -->
+    <sb-device-capacity id="device_capacity"
+                        flex="1"
+                        observes="deviceIDBroadcaster"/>
+
+  </vbox> <!-- End of "main_box" -->
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Songbird services. -->  
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <!-- Device summary services. -->
+  <script><![CDATA[
+
+    //
+    // Defs.
+    //
+
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    //
+    // Device summary services object.
+    //
+
+    var DeviceSummary = {
+      //
+      // Object fields.
+      //
+      //   _deviceID            Device ID.
+      //   _device              sbIDevice object.
+      //
+
+      _deviceID: null,
+      _device: null,
+
+
+      //------------------------------------------------------------------------
+      //
+      // Public functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * \brief Handle load events.
+       */
+
+      onLoad: function DeviceSummary_onLoad() {
+        // Get the device identifier from the chrome URL.
+        var url = window.location.href;
+        var pos = url.indexOf("=");
+        if (pos < 0)
+          return;
+        this._deviceID = url.substr(pos + 1);
+
+        // Get the device object.
+        this._device = this._getDevice(this._deviceID);
+
+        // Go back to previous page and return if device is not available.
+        if (!this._device) {
+            var browser = SBGetBrowser();
+            browser.getTabForDocument(document).backWithDefault();
+            return;
+        }
+
+        // Set the device ID broadcaster.
+        document.getElementById("deviceIDBroadcaster").setAttribute
+                                                         ("device-id",
+                                                          this._deviceID);
+      },
+
+
+      //------------------------------------------------------------------------
+      //
+      // Internal functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * \brief Get the device object for the device ID specified by aDeviceID.
+       *
+       * \param aDeviceID       Device identifier.
+       *
+       * \return sbIDevice device object.
+       */
+
+      _getDevice: function DeviceSummary__getDevice(aDeviceID) {
+        // Just return the device ID for now.
+        return aDeviceID;
+      }
+    };
+
+  ]]></script>
+
+</window>
+

@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device info widget.
+   *
+   *   This widget displays information about the device.
+   *   The set of information displayed is specified by the CSV "devicespecs"
+   * attribute.  This attribute specifies both the displayed information and the
+   * ordering.
+   *   In addition to the device specs, this widget displays a device icon and
+   * friendly name.
+   *   This widget also provides a device eject button.
+   *
+   * Device specs:
+   *   model                    Model name.
+   *   capacity                 Model capacity.
+   *   model_capacity           Model name and capacity.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-info">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:hbox align="center">
+
+        <!-- Device image. -->
+        <xul:image sbid="device_image"
+                   class="device-image"
+                   alt="Generic device icon"/>
+
+        <!-- Device info. -->
+        <xul:vbox sbid="summary_box">
+
+          <!-- Device name and eject button. -->
+          <xul:hbox sbid="name_box" align="center">
+            <xul:label sbid="device_name_label"
+                       class="device-name-label"
+                       crop="end"/>
+              <xul:button sbid="eject_button"
+                          class="eject-button"
+                          action="eject"
+                          oncommand="DIW.handleAction(event);"/>
+          </xul:hbox>
+
+          <!-- Device specs. -->
+          <xul:grid sbid="device_specs_grid">
+
+            <!-- Grid columns. -->
+            <xul:columns>
+              <xul:column sbid="device_specs_label_column"/>
+              <xul:column sbid="device_specs_value_column"/>
+            </xul:columns>
+
+            <!-- Grid rows. -->
+            <xul:rows sbid="device_spec_rows">
+
+              <!-- Model row. -->
+              <xul:row devicespec="model">
+                <xul:label sbid="model_header_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.model.label;"/>
+                <xul:label sbid="model_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Capacity row. -->
+              <xul:row devicespec="capacity">
+                <xul:label sbid="capacity_header_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.capacity.label;"/>
+                <xul:label sbid="capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Model/capacity row. -->
+              <xul:row devicespec="model_capacity">
+                <xul:label sbid="model_capacity_header_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.model.label;"/>
+                <xul:label sbid="model_capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+            </xul:rows>
+
+          </xul:grid> <!-- End of "device_specs_grid". -->
+
+        </xul:vbox> <!-- End of "summary_box". -->
+
+      </xul:hbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget fields.
+       *
+       *   deviceID                 Bound device identifier.
+       -->
+
+      <field name="deviceID"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+
+        /* Bind to the device. */
+        this.bind();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device info services. */
+        DIW.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device info services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device capacity services. */
+        if (typeof(DIW) == "undefined") {
+          jsLoader.loadSubScript
+                     ("chrome://songbird/content/scripts/device/deviceInfo.js",
+                      null);
+        }
+      ]]></body></method>
+
+
+      <!--
+       * bind
+       *
+       *   This function binds the device capacity widget to a specific device.
+       -->
+
+      <method name="bind"><body><![CDATA[
+        var                       deviceID;
+
+        /* Get the device ID.  Do nothing if device has not changed. */
+        deviceID = this.getAttribute("device-id");
+        if ((deviceID == this.deviceID) || (!deviceID))
+          return;
+        this.deviceID = deviceID;
+
+        /* Re-initialize the device info services. */
+        DIW.finalize(this);
+        DIW.initialize(this);
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="DOMAttrModified" action="this.bind();"/>
+    </handlers>
+
+
+  </binding>
+
+</bindings>

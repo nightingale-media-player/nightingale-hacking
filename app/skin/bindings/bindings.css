@@ -53,6 +53,8 @@ For more information, see:
 @import url(chrome://global/skin/toolbar.css); 
 
 @import url(browsertoolbar.css);
+@import url(device/deviceCapacity.css);
+@import url(device/deviceInfo.css);
 @import url(displayPane.css);
 @import url(drawer.css); 
 @import url(faceplate.css); 

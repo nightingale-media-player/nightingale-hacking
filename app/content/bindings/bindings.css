@@ -441,3 +441,21 @@ resizer {
 sb-playlist-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/playlistMenuItems.xml#sb-playlist-menuitems") !important;
 }
+
+/* Device bindings */
+
+sb-device-capacity
+{
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
+}
+
+sb-device-capacity-legend
+{
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
+}
+
+sb-device-info
+{
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
+}
+

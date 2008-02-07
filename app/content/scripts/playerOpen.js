@@ -404,26 +404,6 @@ function SBScanMedia( parentWindow )
   theFileScanIsOpen.boolValue = false;
 }
 
-function SBGetBrowser()
-{
-  if ( typeof gBrowser != 'undefined' ) {
-    return gBrowser;
-  }
-
-  var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                    .getInterface(Components.interfaces.nsIWebNavigation)
-                    .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
-                    .rootTreeItem
-                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                    .getInterface(Components.interfaces.nsIDOMWindow);
-
-  if ( mainWindow.gBrowser ) {
-    return mainWindow.gBrowser;
-  }
-
-  return null;
-}
-
 /** Legacy function **/
 function SBNewPlaylist()
 {

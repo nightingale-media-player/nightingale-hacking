@@ -401,3 +401,11 @@
 
 <!ENTITY menu.windowpopup.alwaysontop  "Always On Top" >
 <!ENTITY menu.windowpopup.alwaysontop.accesskey  "" >
+
+<!-- Device entities -->
+<!ENTITY device.info.model.label        "Model">
+<!ENTITY device.info.capacity.label     "Capacity">
+
+<!ENTITY device.capacity.music.label    "Music">
+<!ENTITY device.capacity.other.label    "Other">
+<!ENTITY device.capacity.free.label     "Free">

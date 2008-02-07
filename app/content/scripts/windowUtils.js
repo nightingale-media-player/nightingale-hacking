@@ -761,3 +761,35 @@ function onLayoutLoad(event) {
 
 }
 window.addEventListener('load', onLayoutLoad, false);
+
+
+/**
+ * \brief Get the main window browser.
+ *
+ * \return Main window browser.
+ */
+
+function SBGetBrowser() 
+{
+  // Return global browser if defined.
+  if (typeof gBrowser != 'undefined') {
+    return gBrowser;
+  }
+
+  // Get the main window.
+  var mainWindow = window
+                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                    .getInterface(Components.interfaces.nsIWebNavigation)
+                    .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+                    .rootTreeItem
+                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                    .getInterface(Components.interfaces.nsIDOMWindow);
+
+  // Return the main window browser.
+  if (typeof mainWindow.gBrowser != 'undefined') {
+    return mainWindow.gBrowser;
+  }
+
+  return null;
+}
+
