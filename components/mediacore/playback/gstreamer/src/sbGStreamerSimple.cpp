@@ -907,7 +907,7 @@ NS_IMETHODIMP
 sbGStreamerSimple::ShowHelperPage(void)
 {
   nsresult rv;
-  PRBool skipNotify = PR_TRUE;
+  PRBool skipNotify = PR_FALSE;
   nsCOMPtr<nsIPrefBranch> prefService =
          do_GetService( "@mozilla.org/preferences-service;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv);
