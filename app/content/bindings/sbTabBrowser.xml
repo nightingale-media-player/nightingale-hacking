@@ -1585,7 +1585,6 @@
         // TODO remove once playlist widget and playback refactoring are complete
         if (this.previousInnerPlaylist) {
           this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
-          this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = null;
         }
 
@@ -1705,7 +1704,6 @@
 
           // add some events, eh?
           this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
-          this._playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           // FIXME: remove the event listener on the destructor, I guess
 
           // Start the first scan as soon as the browser DOM has loaded
@@ -2055,14 +2053,12 @@
           // TODO: Remove this once widget and playback refactoring is complete
           if (this.previousInnerPlaylist) {
             this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
-            this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
             this.previousInnerPlaylist = null;
           }
           var playlist = this.innerPlaylist;
           if (playlist) {
             playlist.outerWindow = window;
             playlist.addEventListener("playlist-play", this._onplaylistplay, true);
-            playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
             this.previousInnerPlaylist = playlist;
           }
           
@@ -2350,29 +2346,6 @@
         </body>
       </method>
 
-      <!-- TODO should be removed as part of the playlist refactoring -->
-      <method name="onPlaylistEditor">
-        <parameter name="evt"/>
-        <body>
-        <![CDATA[
-          var playlist = evt.target;
-          if ( playlist.wrappedJSObject )
-            playlist = playlist.wrappedJSObject;
-
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                              .getService(Components.interfaces.nsIWindowMediator);
-            var theTE = wm.getMostRecentWindow("track_editor");
-            if (theTE) {
-              theTE.focus();
-            } else {
-              const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-              const TEFEATURES = "chrome,dialog=no,resizable=no";
-              SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist);
-            }
-        ]]>
-        </body>
-      </method>
-
       <!-- TODO should be removed as part of the playback refactoring -->
       <method name="onPlaylistPlay">
         <parameter name="evt"/>
@@ -2449,12 +2422,9 @@
         <parameter name="session"></parameter>
         <body><![CDATA[
           var canDrop = false;
-
-          var playlist = this.innerPlaylist;
-          if (playlist) {
-            canDrop = playlist.canDrop(event, session);
-          } else {
-            canDrop = false;
+          var mediaListPage = this.mediaListPage;
+          if (mediaListPage) {
+            canDrop = mediaListPage.canDrop(event, session);
           }
           return canDrop;
         ]]></body>
@@ -2565,9 +2535,10 @@
         var session = dragService.getCurrentSession();
 
         if (this.canDrop(event, session)) {
-          var playlist = this.innerPlaylist;
-          playlist._dropOnTree(playlist.mediaListView.length,
-                               Components.interfaces.sbIMediaListViewTreeViewObserver.DROP_AFTER);
+          var mediaListPage = this.mediaListPage;
+          if (mediaListPage) {
+            mediaListPage.onDrop(event, session);
+          }
         }
       ]]></handler>
     </handlers>

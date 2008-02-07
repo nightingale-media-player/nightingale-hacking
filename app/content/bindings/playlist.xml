@@ -1573,20 +1573,21 @@
         </body>
       </method>
 
-      <method name="sendEditorEvent">
+      <method name="onPlaylistEditor">
+        <parameter name="evt"/>
         <body>
-          <![CDATA[
-          try
-          {
-            var e = document.createEvent("Events");
-            e.initEvent("playlist-editor", false, true);
-            this.dispatchEvent(e);
+        <![CDATA[
+          var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                            .getService(Components.interfaces.nsIWindowMediator);
+          var theTE = wm.getMostRecentWindow("track_editor");
+          if (theTE) {
+            theTE.focus();
+          } else {
+            const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
+            const TEFEATURES = "chrome,dialog=no,resizable=no";
+            SBOpenWindow(TEURL, "track_editor", TEFEATURES, this);
           }
-          catch( err )
-          {
-            alert( "playlist.xml - sendEditorEvent - " + err )
-          }
-          ]]>
+        ]]>
         </body>
       </method>
 

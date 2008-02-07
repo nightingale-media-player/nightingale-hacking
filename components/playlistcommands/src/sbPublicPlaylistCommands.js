@@ -825,9 +825,8 @@ function plCmd_Edit_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
     var playlist = unwrap(aContext.playlist);
     if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) ||
         playlist.mediaListView.treeView.selectionCount > 1 ) {
-      // Trigger the edit event on the playlist, this will spawn
-      // the multiple tracks editor
-      playlist.sendEditorEvent();
+      // Open the multiple tracks editor for this playlist and its selection
+      playlist.onPlaylistEditor();
     } else {
       // Edit the context cell
       playlist.startCellEditing();
