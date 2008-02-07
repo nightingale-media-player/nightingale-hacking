@@ -26,3 +26,14 @@
 //
  */
 -->
+
+<overlay id="mtp_device" 
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- Import the iPod device Javascript code. -->  
+  <script type="application/x-javascript"
+          src="chrome://ipod/content/scripts/IPodDeviceUtils.js"/>	
+  <script type="application/x-javascript"
+          src="chrome://ipod/content/scripts/IPodDevice.js"/>	
+
+</overlay>

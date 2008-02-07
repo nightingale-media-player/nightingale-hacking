@@ -1,4 +1,8 @@
 mtp.jar:
-% content  mtp  %content/ipod/
+% content  mtp  %content/mtp/
 % overlay windowtype:Songbird:Main chrome://mtp/content/overlay/mtpDeviceOverlay.xul
 % skin mtp classic/1.0 %skin/mtp/
+  content/mtp/overlay/mtpDeviceOverlay.xul            (chrome/content/overlay/mtpDeviceOverlay.xul)
+  content/mtp/scripts/mtpDevice.js                    (chrome/content/scripts/mtpDevice.js)
+  content/mtp/scripts/mtpDeviceServicePaneService.js  (chrome/content/scripts/mtpDeviceServicePaneService.js)
+  

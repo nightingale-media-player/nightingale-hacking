@@ -26,6 +26,8 @@
 */
 
 #include "sbWPDDeviceController.h"
+#include "sbWPDMarshall.h"
+
 #include "sbDeviceCompatibility.h"
 
 #include <nsAutoLock.h>
@@ -66,8 +68,11 @@ sbWPDDeviceController::sbWPDDeviceController()
   nsresult rv = SetControllerIdInternal(id);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller id");
 
-  rv = 
-    SetControllerNameInternal(NS_LITERAL_STRING("sbWPDDeviceController"));
+  static nsID const marshallId = SB_WPDMARSHALL_CID;
+  rv = SetMarshallIdInternal(marshallId);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller id");
+
+  rv = SetControllerNameInternal(NS_LITERAL_STRING("sbWPDDeviceController"));
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller name");
 }
 

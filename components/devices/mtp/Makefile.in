@@ -33,6 +33,10 @@ ifeq (windows,$(SB_PLATFORM))
 ifneq (,$(shell test $(_MSC_VER) -ge 1400 && echo 1))
 SUBDIRS = windows \
           $(NULL)
+          
+JAR_MANIFEST = jar.mn
+JAR_TARGET_DIR = $(SONGBIRD_CHROMEDIR)
+
 endif
 endif
 
