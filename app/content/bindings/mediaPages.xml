@@ -81,8 +81,8 @@
             if (item.mediaPage && gBrowser.currentMediaPage) {
             
               // Set the given media page as the default for the current list
-              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaListPageManager);
+              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaPageManager);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList, item.mediaPage);
                       
               // Reload using the new page
@@ -112,7 +112,7 @@
       <method name="generateMenuItems">
         <body>
         <![CDATA[
-          // bail out if we don't have a mediaListPage
+          // bail out if we don't have a mediaPage
           if (!gBrowser.currentMediaPage) {
             return;
           }
@@ -127,8 +127,8 @@
           item.setAttribute("class", "mediapage-menu-selected-page-title");
           this._addToMenu(item);
           
-          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
-                        .getService(Components.interfaces.sbIMediaListPageManager);
+          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                        .getService(Components.interfaces.sbIMediaPageManager);
           var pages = mgr.getAvailablePages(ml);
           
           // Trim the media list GUID from the querystring so that we can
@@ -142,7 +142,7 @@
           // Attach a menuitem for each compatible layout
           while (pages.hasMoreElements()) {
             var page = pages.getNext()
-            page.QueryInterface(Components.interfaces.sbIMediaListPageInfo);
+            page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
             
             var item = this._makeMenuItem(page);
             

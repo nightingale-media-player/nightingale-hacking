@@ -34,14 +34,14 @@ Cu.import("resource://app/components/ArrayConverter.jsm");
 Cu.import("resource://app/components/RDFHelper.jsm");
 Cu.import("resource://app/components/sbProperties.jsm");
 
-function MediaListPageManager() {
+function MediaPageManager() {
 }
 
-MediaListPageManager.prototype = {
-  classDescription: "Songbird MediaListPage Manager",
+MediaPageManager.prototype = {
+  classDescription: "Songbird MediaPage Manager",
   classID:          Components.ID("{e63463d0-357c-4035-af33-db670ee1b7f2}"),
-  contractID:       "@songbirdnest.com/Songbird/MediaListPageManager;1",
-  QueryInterface:   XPCOMUtils.generateQI([Ci.sbIMediaListPageManager]),
+  contractID:       "@songbirdnest.com/Songbird/MediaPageManager;1",
+  QueryInterface:   XPCOMUtils.generateQI([Ci.sbIMediaPageManager]),
   
   _pageInfoArray: [],
   
@@ -74,7 +74,7 @@ MediaListPageManager.prototype = {
         return aMatchInterface;
       },
       QueryInterface: function(iid) {
-        if (!iid.equals(Ci.sbIMediaListPageInfo) &&
+        if (!iid.equals(Ci.sbIMediaPageInfo) &&
             !iid.equals(Ci.nsISupports))
           throw Cr.NS_ERROR_NO_INTERFACE;
         return this;
@@ -147,7 +147,7 @@ MediaListPageManager.prototype = {
     }
     
     // Read the list's default
-    var defaultPageURL = aList.getProperty(SBProperties.defaultMediaListPageURL);
+    var defaultPageURL = aList.getProperty(SBProperties.defaultMediaPageURL);
     if (defaultPageURL && defaultPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
@@ -207,7 +207,7 @@ MediaListPageManager.prototype = {
     if(this._registrationComplete) { return };
     
     this._registerDefaults();
-    MediaListPageMetadataReader.loadMetadata(this);
+    MediaPageMetadataReader.loadMetadata(this);
     
     this._registrationComplete = true;
   },
@@ -246,15 +246,15 @@ MediaListPageManager.prototype = {
         matchAll);                       
   },
   
-} // MediaListPageManager.prototype
+} // MediaPageManager.prototype
 
 
 
 /**
- * MediaListPageMetadataReader
+ * MediaPageMetadataReader
  * Reads the Add-on Metadata RDF datasource for Media Page declarations.
  */
-var MediaListPageMetadataReader = {
+var MediaPageMetadataReader = {
   loadMetadata: function(manager) {
     this._manager = manager;
     
@@ -463,6 +463,6 @@ var MediaListPageMetadataReader = {
 }
 
 function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([MediaListPageManager]);
+  return XPCOMUtils.generateModule([MediaPageManager]);
 }
 

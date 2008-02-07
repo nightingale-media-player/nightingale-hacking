@@ -25,7 +25,7 @@
 */
 
 /**
- * \brief Medialistpage Unit Test File
+ * \brief MediaPage Unit Test File
  */
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
@@ -34,12 +34,12 @@ var pageMgr = null;
 
 function runTest () {
 
-  log("Testing MediaListPageManager Service:");
+  log("Testing MediaPageManager Service:");
 
-  pageMgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
-                      .getService(Components.interfaces.sbIMediaListPageManager);
+  pageMgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                      .getService(Components.interfaces.sbIMediaPageManager);
 
-  testMediaListPageManager();
+  testMediaPageManager();
 
   log("OK");
 }
@@ -55,13 +55,13 @@ const URL1 = "http://fake/url1.xul";
 const URL2 = "http://fake/url2.xul";
 const URL3 = "http://fake/url3.xul";
 
-function testMediaListPageManager() {
+function testMediaPageManager() {
   if (!pageMgr) {
     fail("Manager service could not be retrieved!");
   }
 
   // Create our temp library
-  var library1 = createLibrary("test_medialistpages", null);
+  var library1 = createLibrary("test_MediaPages", null);
   library1.clear();
   
   // Create list of type "simple"
@@ -83,7 +83,7 @@ function testMediaListPageManager() {
   );
   
   // Set a default for the list
-  list1.setProperty(SBProperties.defaultMediaListPageURL, BADURL);
+  list1.setProperty(SBProperties.defaultMediaPageURL, BADURL);
   
   // Verify that giving a list that has an obsolete default returns the 
   // global default page
@@ -109,7 +109,7 @@ function testMediaListPageManager() {
   var pages = pageMgr.getAvailablePages(list1);
   while (pages.hasMoreElements()) {
     var pageInfo = pages.getNext();
-    pageInfo.QueryInterface(Components.interfaces.sbIMediaListPageInfo);
+    pageInfo.QueryInterface(Components.interfaces.sbIMediaPageInfo);
     
     if (pageInfo.contentUrl == EXTENSIONPAGE) {
       rdfAll = pageInfo;
@@ -196,7 +196,7 @@ function testMediaListPageManager() {
   assertEqual(pageInfo.contentUrl, URL1);
   
   // Set the default for the smart list to the smart page
-  list2.setProperty(SBProperties.defaultMediaListPageURL, URL3);
+  list2.setProperty(SBProperties.defaultMediaPageURL, URL3);
   
   // Verify that matching works:
   // Step 5, bypass search, use list default, check that its match works
@@ -205,7 +205,7 @@ function testMediaListPageManager() {
 
   // Set the default for the smart list to the simple page (non-matching page 
   // on purpose)
-  list2.setProperty(SBProperties.defaultMediaListPageURL, URL2);
+  list2.setProperty(SBProperties.defaultMediaPageURL, URL2);
 
   // Verify that matching works:
   // Step 6, check that list default is dropped when it does not match

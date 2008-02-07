@@ -119,7 +119,7 @@ window.mediaPage = {
    * Note that to simplify page creation mediaListView may only be set once.
    */
   set mediaListView(value)  {
-    dump("MATT: mediaListPage.set mediaListView!\n");
+    dump("MATT: mediaPage.set mediaListView!\n");
     
     if (!this._mediaListView) {
       this._mediaListView = value;

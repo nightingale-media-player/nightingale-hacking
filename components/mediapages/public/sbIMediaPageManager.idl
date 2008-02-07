@@ -27,17 +27,17 @@
 #include "nsISupports.idl"
 
 interface sbIMediaList; 
-interface sbIMediaListPageInfo;
+interface sbIMediaPageInfo;
 interface sbIMediaListMatch;
 interface nsISimpleEnumerator;
 
 /**
-* \interface sbIMediaListPageManager sbIMediaListPageManager.h
+* \interface sbIMediaPageManager sbIMediaPageManager.h
 * \brief The medialist page manager, used to register, unregister,
 * enumerate, set and retrieve page/medialists associations
 */
 [scriptable, uuid(c41af2f6-8716-4e9e-bc5a-cf8dd8d67a41)]
-interface sbIMediaListPageManager : nsISupports
+interface sbIMediaPageManager : nsISupports
 {
   /**
    * \brief Register a medialist page.
@@ -47,21 +47,21 @@ interface sbIMediaListPageManager : nsISupports
    * \param aMatch The interface or js function used to determine whether this page matches a particular medialist
    * \return An sbMediaListIPageInfo interface describing the page
    */
-  sbIMediaListPageInfo registerPage(in AString aName, in AString aURL, in sbIMediaListMatch aMatch);
+  sbIMediaPageInfo registerPage(in AString aName, in AString aURL, in sbIMediaListMatch aMatch);
 
   /**
    * \brief Unregister a medialist page.
    *
-   * \param aPageInfo a sbIMediaListPageInfo interface as previously returned by registerPage
+   * \param aPageInfo a sbIMediaPageInfo interface as previously returned by registerPage
    */
-  void unregisterPage(in sbIMediaListPageInfo aPageInfo);
+  void unregisterPage(in sbIMediaPageInfo aPageInfo);
 
   /**
    * \brief Get the list of available pages. The list parameter is optional, if 
    * not specified, the entire list of registered pages is returned.
    *
    * \param aList (optional) The medialist for which the list of available matching pages is being requested
-   * \return An nsISimpleEnumerator containing a list of sbIMediaListPageInfo interfaces
+   * \return An nsISimpleEnumerator containing a list of sbIMediaPageInfo interfaces
    */
   nsISimpleEnumerator getAvailablePages([optional] in sbIMediaList aList);
 
@@ -76,14 +76,14 @@ interface sbIMediaListPageManager : nsISupports
    * a matching list is bypassed, and that page is returned again, unless it no
    * longer exists or no longer matches the medialist.
    *
-   * If a medialist has a defaultMediaListPageURL property set to a particular
+   * If a medialist has a defaultMediaPageURL property set to a particular
    * page, and has not been set to a different one via the setPage method, the 
    * search is also bypassed, and that page is returned, unless it no longer 
    * exists or no longer matches the medialist.
    *
    * \param aList The medialist for which the active page is being requested
    */
-  sbIMediaListPageInfo getPage(in sbIMediaList aList); 
+  sbIMediaPageInfo getPage(in sbIMediaList aList); 
 
   /**
    * \brief Set the active page for a medialist
@@ -91,16 +91,16 @@ interface sbIMediaListPageManager : nsISupports
    * \param aList The medialist for which the page is being set
    * \param aPageInfo The page that is being set to the medialist
    */
-  void setPage(in sbIMediaList aList, in sbIMediaListPageInfo aPageInfo); 
+  void setPage(in sbIMediaList aList, in sbIMediaPageInfo aPageInfo); 
 };
 
 
 /**
-* \interface sbIMediaListPageInfo sbIMediaListPageInfo.h
+* \interface sbIMediaPageInfo sbIMediaPageInfo.h
 * \brief This interface is used to describe a medialist page.
 */
 [scriptable, uuid(c9673d60-d36b-11dc-95ff-0800200c9a66)]
-interface sbIMediaListPageInfo: nsISupports
+interface sbIMediaPageInfo: nsISupports
 {
   /**
    * \brief The localized name of the page.

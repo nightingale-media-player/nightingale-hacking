@@ -519,8 +519,8 @@
 
             // If no URL was provided, get the default from the page manager
             if (!aPageURL) {
-              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaListPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaListPageManager);
+              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaPageManager);
               var page = mgr.getPage(aMediaList);
               aPageURL = page.contentUrl;
             }

@@ -36,8 +36,8 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  onload="window.mediaListPage.onLoad();"
-  onunload="window.mediaListPage.onUnload();"
+  onload="window.mediaPage.onLoad();"
+  onunload="window.mediaPage.onUnload();"
   windowtype="Songbird:Library"
 >
 <script><![CDATA[
@@ -64,12 +64,12 @@ if (typeof(kPlaylistCommands) == "undefined") {
     throw new Error("Import of kPlaylistCommands module failed!");
 }
 // TODO Comment
-// TODO Make the playlist widget implement sbIMediaListPage and then delegate
-// everything to it.  window.mediaListPage = document.getElementById('playlist');
-window.mediaListPage = {
+// TODO Make the playlist widget implement sbIMediaPage and then delegate
+// everything to it.  window.mediaPage = document.getElementById('playlist');
+window.mediaPage = {
 
   onLoad:  function(e) {
-    dump("MATT: mediaListPage.onLoad()!\n");
+    dump("MATT: mediaPage.onLoad()!\n");
     
     // TODO Move this rule out into the page manager
     // If we're a library, set our desired filterlists
@@ -102,7 +102,7 @@ window.mediaListPage = {
   },
 
   onUnload:  function(e) {
-    dump("MATT: mediaListPage.onUnload()!\n");
+    dump("MATT: mediaPage.onUnload()!\n");
   },
 
   _mediaListView: null,
@@ -114,7 +114,7 @@ window.mediaListPage = {
   },
 
   set mediaListView(value)  {
-    dump("MATT: mediaListPage.set mediaListView!\n");
+    dump("MATT: mediaPage.set mediaListView!\n");
     this._mediaListView = value;
   },
 

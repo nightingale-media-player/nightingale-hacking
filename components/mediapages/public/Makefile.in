@@ -29,17 +29,15 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = medialistpages
+XPIDL_SRCS = sbIMediaPage.idl \
+             sbIMediaPageManager.idl \
+             $(NULL)
 
-SONGBIRD_TESTS = $(srcdir)/test_medialistpages.js \
-                 $(NULL)
+XPIDL_MODULE = sbMediaPages.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-# If tests are enabled, build a stub extension in order
-# to verify the install.rdf reader.
-ifneq (,$(SB_ENABLE_TESTS))
-SUBDIRS = test-extension \
-          $(NULL)
-endif
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
+
+GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk
-

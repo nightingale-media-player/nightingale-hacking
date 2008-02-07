@@ -59,7 +59,7 @@ SUBDIRS = addonmetadata \
           state \
           sqlbuilder \
           parsererror \
-          medialistpages \
+          mediapages \
           $(NULL)
 
 # XXX make me a configure option
