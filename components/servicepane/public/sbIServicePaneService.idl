@@ -150,6 +150,22 @@ interface sbIServicePaneNodeInternal : sbIServicePaneNode {
 };
 
 /**
+ * \interface sbIServicePaneListener
+ * \brief Listen for changes on service pane nodes.
+ */
+[scriptable, uuid(0c86331b-6767-4595-95e7-80f775ab1770)]
+interface sbIServicePaneListener : nsISupports {
+  /**
+   * \brief A node attribute has changed.
+   * \param aNode the id of the node whose attribute changed
+   * \param aAttributeName the full namespaced name of the attribute
+   */
+  void nodePropertyChanged(in string aNodeId, in string aAttributeName);
+};
+
+
+
+/**
 * \interface sbIServicePaneService
 * \brief The interface exposed by the service pane service
 *
@@ -274,6 +290,15 @@ interface sbIServicePaneService : nsISupports
   void onRename(in AString aID,
                 in AString aNewName);
 
+  /* \brief Add a service pane listener
+   * \param aListener the listener to add
+   */
+  void addListener(in sbIServicePaneListener aListener);
+
+  /* \brief Remove a service pane listener
+   * \param aListener the listener to remove
+   */
+  void removeListener(in sbIServicePaneListener aListener);
 };
 
 

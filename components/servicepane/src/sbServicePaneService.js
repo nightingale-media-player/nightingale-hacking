@@ -432,6 +432,12 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   this._dataSourceWrapped = new dsTranslator(this._dataSource, this);
   this._dsSaver = new dsSaver(this._dataSource, 30*1000); // try to save every thirty seconds
 
+  // listen to changes in the datasource
+  this._dataSource.AddObserver(this);
+
+  // track service pane listeners
+  this._listeners = [];
+
   // the root of the tree
   this._root = this.getNode('SB:Root');
   if (!this._root) {
@@ -532,6 +538,9 @@ ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
     this._modules[i] = null;
   }
 
+  // remove ourselves as an RDF observer
+  this._dataSource.RemoveObserver(this);
+
   this._dataSource = null;
   this._dataSourceWrapped = null;
   this._root = null;
@@ -556,6 +565,7 @@ ServicePaneService.prototype.__defineGetter__('root', function () {
 ServicePaneService.prototype.QueryInterface =
 function ServicePaneService_QueryInterface(iid) {
   if (!iid.equals(Ci.sbIServicePaneService) &&
+    !iid.equals(Ci.nsIRDFObserver) &&
     !iid.equals(Ci.nsIObserver) &&
     !iid.equals(Ci.nsISupports)) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -915,6 +925,54 @@ function ServicePaneService_onRename(aID, aNewName) {
     }
   }
 }
+
+ServicePaneService.prototype.addListener =
+function ServicePaneService_addListener(aListener) {
+  this._listeners.push(aListener);
+}
+
+ServicePaneService.prototype.removeListener =
+function ServicePaneService_removeListener(aListener) {
+  for (var i=0; i<this._listeners.length; i++) {
+    if (this._listeners[i] == aListener) {
+      this._listeners.splice(i,1);
+    }
+  }
+}
+
+/* nsIRDFObserver -> sbIServicePaneListener */
+ServicePaneService.prototype._notifyListeners =
+function ServicePaneService__notifyListeners(aSource, aProperty) {
+  DEBUG('_notifyListeners aSource='+aSource.Value+' aProperty='+aProperty.Value);
+  var nodeid = aSource.Value;
+  var property = aProperty.Value;
+  for (var i=0; i<this._listeners.length; i++) {
+    this._listeners[i].nodePropertyChanged(nodeid, property);
+  }
+}
+
+ServicePaneService.prototype.onAssert =
+function ServicePaneService_onAssert(aDataSource, aSource, aProperty, aTarget) {
+  this._notifyListeners(aSource, aProperty);
+},
+ServicePaneService.prototype.onUnassert =
+function ServicePaneService_onUnassert(aDataSource, aSource, aProperty, aTarget) {
+  this._notifyListeners(aSource, aProperty);
+},
+ServicePaneService.prototype.onChange =
+function ServicePaneService_onChange(aDataSource, aSource, aProperty, aOldTarget, aNewTarget) {
+  this._notifyListeners(aSource, aProperty);
+},
+ServicePaneService.prototype.onMove =
+function ServicePaneService_onMove(aDataSource, aOldSource, aNewSource, aProperty, aTarget) {
+  this._notifyListeners(aOldSource, aProperty);
+  this._notifyListeners(aNewSource, aProperty);
+},
+ServicePaneService.prototype.onBeginUpdateBatch =
+function ServicePaneService_onBeginUpdateBatch(a) { },
+ServicePaneService.prototype.onEndUpdateBatch =
+function ServicePaneService_onEndUpdateBatch(a) { }
+
 
 /* this is a wrapper for the nsIRDFDataSource that will translate some of the
   properties via stringbundles */

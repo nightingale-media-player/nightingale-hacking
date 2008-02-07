@@ -107,7 +107,71 @@ function testInsertBefore (SPS) {
 }
 
 
-function runTest () {
+function testListeners (SPS) {
+  var test_node_id = 'SB:ListenerTest';
+  // if our test node already exists, let's throw it away
+  removeIfExists(SPS, [test_node_id]);
+
+
+  // define a listener
+  var listener = { };
+  // what calls has the listener recieved
+  listener.calls = [];
+  // the listener callback which collects the calls is receives
+  listener.nodePropertyChanged = 
+    function nodePropertyChanged(aNodeId, aPropertyName) {
+      log('nodePropertyChanged('+aNodeId+', '+aPropertyName+')');
+      this.calls.push([aNodeId, aPropertyName]);
+    }
+
+
+  // add our listener
+  SPS.addListener(listener);
+  // it should have no calls
+  assertEqual(listener.calls.length, 0);
+
+  // create a new node
+  var test_node = SPS.addNode(test_node_id, SPS.root, false);
+  // it should have six calls:
+  //  http://songbirdnest.com/rdf/servicepane#Hidden)
+  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#nextVal)
+  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#nextVal)
+  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#_24)
+  //  http://songbirdnest.com/rdf/servicepane#Editable)
+  //  http://songbirdnest.com/rdf/servicepane#Weight)
+  assertEqual(listener.calls.length, 6);
+
+  // reset the listener call list
+  listener.calls = []
+
+  // set a property
+  test_node.setAttributeNS('http://example.com/ns/','property', 'value');
+  // it should have one call
+  assertEqual(listener.calls.length, 1);
+  // it should be on our node
+  assertEqual(listener.calls[0][0], test_node_id);
+  // it should be our test property
+  assertEqual(listener.calls[0][1], 'http://example.com/ns/property');
+
+  // reset the listener call list
+  listener.calls = [];
+
+  // remove the listener
+  SPS.removeListener(listener);
+  // it should have no calls
+  assertEqual(listener.calls.length, 0);
+
+  // manipulate our node
+  test_node.setAttributeNS('http://example.com/ns/','otherproperty', 'value');
+  // the listener should have no calls
+  assertEqual(listener.calls.length, 0);
+
+  // remove our test node
+  SPS.root.removeChild(test_node);
+}
+
+
+function runTest (SPS) {
   var SPS = Components.classes['@songbirdnest.com/servicepane/service;1'].getService(Components.interfaces.sbIServicePaneService);
   
   // okay, did we get it?
@@ -235,9 +299,11 @@ function runTest () {
   assertEqual(test_node.nextSibling, null);
   assertEqual(SPS.getNode(test_node_2_id), null);
 
+  // test the listeners
+  testListeners(SPS);
 
   // clean up 
-  log ('cleaning up unit test nodes\n');
+  log('cleaning up unit test nodes\n');
   test_root.parentNode.removeChild(test_root);
   test_container.parentNode.removeChild(test_container);
 
