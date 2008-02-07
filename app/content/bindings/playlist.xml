@@ -1225,7 +1225,7 @@
 
   // Sanity check, don't write a bad string.
   try {
-    var parsedColumns = ColumnSpecParser.parseColumnSpec(columnSpec);
+    var columns = ColumnSpecParser.parseColumnSpec(columnSpec);
   }
   catch (e) {
     this._reportError('Almost wrote bad columnSpec: "' + columnSpec + '"', e);

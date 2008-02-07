@@ -48,9 +48,9 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
   //      6: XUL "columnSpec" attribute
   //      7: Our last-ditch hardcoded list
 
-  var columnMap = [];
+  var columns;
 
-  columnMap =
+  columns =
     this._getColumnMap(aMediaList.getProperty(SBProperties.columnSpec),
                        this.ORIGIN_PROPERTY);
 
@@ -68,31 +68,31 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
     } catch (e) {}
   }
 
-  if (!columnMap.length) {
-    columnMap =
+  if (!columns.columnMap.length) {
+    columns =
       this._getColumnMap(aMediaList.getProperty(SBProperties.defaultColumnSpec),
                          this.ORIGIN_MEDIALISTDEFAULT);
   }
 
-  if (!columnMap.length) {
-    columnMap =
+  if (!columns.columnMap.length) {
+    columns =
       this._getColumnMap(aMediaList.library.getProperty(SBProperties.defaultColumnSpec),
                          this.ORIGIN_LIBRARYDEFAULT);
   }
 
-  if (!columnMap.length) {
-    columnMap =
+  if (!columns.columnMap.length) {
+    columns =
       this._getColumnMap(aMediaList.library.getProperty(SBProperties.columnSpec),
                          this.ORIGIN_LIBRARY);
   }
 
-  if (!columnMap.length && aPlaylist) {
-    columnMap = this._getColumnMap(aPlaylist.getAttribute("columnSpec"),
-                                   this.ORIGIN_ATTRIBUTE);
+  if (!columns.columnMap.length && aPlaylist) {
+    columns = this._getColumnMap(aPlaylist.getAttribute("columnSpec"),
+                                 this.ORIGIN_ATTRIBUTE);
   }
 
-  if (!columnMap.length) {
-    columnMap =
+  if (!columns.columnMap.length) {
+    columns =
       ColumnSpecParser.parseColumnSpec(SBProperties.trackName + " 265 " +
                                        SBProperties.duration + " 43 " +
                                        SBProperties.artistName + " 177 a " +
@@ -102,19 +102,17 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
     this._columnSpecOrigin = this.ORIGIN_DEFAULT;
   }
 
-  if (!columnMap.length) {
+  if (!columns.columnMap.length) {
     throw new Error("Couldn't get columnMap!");
   }
 
-  this._columnMap = columnMap;
+  this._columns = columns;
 }
 
 ColumnSpecParser.prototype = {
 
-  _columnMap: null,
+  _columns: null,
   _columnSpecOrigin: null,
-  _sortID: null,
-  _sortIsAscending: null,
 
   ORIGIN_PROPERTY: 1,
   ORIGIN_PREFERENCES: 2,
@@ -125,7 +123,7 @@ ColumnSpecParser.prototype = {
   ORIGIN_DEFAULT: 7,
 
   get columnMap() {
-    return this._columnMap;
+    return this._columns.columnMap;
   },
 
   get origin() {
@@ -133,19 +131,23 @@ ColumnSpecParser.prototype = {
   },
 
   get sortID() {
-    return this._sortID;
+    return this._columns.sortID;
   },
 
   get sortIsAscending() {
-    return this._sortIsAscending;
+    return this._columns.sortIsAscending;
   },
 
   _getColumnMap: function(columnSpec, columnSpecOrigin) {
-    var columnMap = [];
+    var columns = {
+      columnMap: null,
+      sortID: null,
+      sortIsAscending: null
+    }
 
     if (columnSpec) {
       try {
-        columnMap = ColumnSpecParser.parseColumnSpec(columnSpec);
+        columns = ColumnSpecParser.parseColumnSpec(columnSpec);
         this._columnSpecOrigin = columnSpecOrigin;
       }
       catch (e) {
@@ -153,12 +155,16 @@ ColumnSpecParser.prototype = {
       }
     }
 
-    return columnMap;
+    return columns;
   }
 
 }
 
 ColumnSpecParser.parseColumnSpec = function(spec) {
+
+  var sortID;
+  var sortIsAscending;
+
   // strip leading and trailing whitespace.
   var strippedSpec = spec.match(/^\s*(.*?)\s*$/);
   if (!strippedSpec.length > 0)
@@ -187,9 +193,8 @@ ColumnSpecParser.parseColumnSpec = function(spec) {
           var column = columns[columnIndex];
           column.sort = token == "a" ? "ascending" : "descending";
           seenSort = true;
-
-          this._sortID = column.property;
-          this._sortIsAscending = token == "a";
+          sortID = column.property;
+          sortIsAscending = token == "a";
         }
       }
       else {
@@ -206,5 +211,12 @@ ColumnSpecParser.parseColumnSpec = function(spec) {
       column.width = token;
     }
   }
-  return columns;
+
+  var result = {
+    columnMap: columns,
+    sortID: sortID,
+    sortIsAscending: sortIsAscending
+  }
+
+  return result;
 }

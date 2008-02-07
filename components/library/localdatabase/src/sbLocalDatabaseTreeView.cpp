@@ -1117,72 +1117,11 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   if (mListType != eDistinct) {
     NS_ENSURE_STATE(mMediaListView);
 
-    nsCOMPtr<sbIPropertyInfo> propertyInfo;
-    rv = mPropMan->GetPropertyInfo(sortProperty, getter_AddRefs(propertyInfo));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIPropertyArray> sortProfile;
-    rv = propertyInfo->GetSortProfile(getter_AddRefs(sortProfile));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsCOMPtr<sbIPropertyArray> sort;
-    if (sortProfile) {
-      if (aDirection) {
-        sort = sortProfile;
-      }
-      else {
-        // If this is a descending sort, create a new sort profile with the
-        // directions reversed
-        nsCOMPtr<sbIMutablePropertyArray> newSort =
-          do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = newSort->SetStrict(PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRUint32 propertyCount;
-        rv = sortProfile->GetLength(&propertyCount);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        for (PRUint32 i = 0; i < propertyCount; i++) {
-          nsCOMPtr<sbIProperty> property;
-          rv = sortProfile->GetPropertyAt(i, getter_AddRefs(property));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsString propertyID;
-          rv = property->GetId(propertyID);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsString value;
-          rv = property->GetValue(value);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = newSort->AppendProperty(propertyID,
-                                       value.EqualsLiteral("a") ?
-                                         NS_LITERAL_STRING("d") :
-                                         NS_LITERAL_STRING("a"));
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-        sort = newSort;
-      }
-    }
-    else {
-      nsCOMPtr<sbIMutablePropertyArray> newSort =
-        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = newSort->SetStrict(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = newSort->AppendProperty(sortProperty,
-                                   aDirection ?
-                                     NS_LITERAL_STRING("a") :
-                                     NS_LITERAL_STRING("d"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      sort = newSort;
-    }
+    rv = mPropMan->GetPropertySort(sortProperty,
+                                   aDirection,
+                                   getter_AddRefs(sort));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISortableMediaListView> sortable =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbISortableMediaListView*, mMediaListView), &rv);

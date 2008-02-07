@@ -920,32 +920,10 @@
                   var pm =
                     Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                               .getService(Components.interfaces.sbIPropertyManager);
-                  var info = pm.getPropertyInfo(parser.sortID);
-                  var sortProfile = info.sortProfile;
-                  var sort;
-                  if (sortProfile) {
-                    // If this is a descending sort, create a new property array for the sort
-                    // and reverse everything
-                    if (parser.sortIsAscending) {
-                      sort = sortProfile;
-                    }
-                    else {
-                      var a = [];
-                      for (var i = 0; i < sortProfile.length; i++) {
-                        var prop = sortProfile.getPropertyAt(i);
-                        a.push([prop.id, prop.value == "a" ? "d" : "a"]);
-                      }
-                      sort = SBProperties.createArray(a, false);
-                    }
-                  }
-                  else {
-                    sort = SBProperties.createArray([[parser.sortID,
-                                                      parser.sortIsAscending ? "a" : "d"]],
-                                                    false);
-                  }
+                  var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
+                  view.setSort(sort);
                 }
 
-                view.setSort(sort);
                 this.gPPS.playView(view, 0);
               }
             }

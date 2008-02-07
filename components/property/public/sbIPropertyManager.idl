@@ -47,7 +47,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(fe64ee8a-7df6-4046-85da-97ee1742ac21)]
+[scriptable, uuid(fa691a34-5739-427e-afd6-d8d55ea0f3d0)]
 interface sbIPropertyManager : nsISupports
 {
   /**
@@ -88,6 +88,12 @@ interface sbIPropertyManager : nsISupports
    */
   AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
 
+  /**
+   * \brief Gets a sort for the given property based on the property's
+   * sort profile.  The array returned is suitable for passing to a view's
+   * setSort() method.
+   */
+  sbIPropertyArray getPropertySort(in AString aID, in boolean aIsAscending);
 };
 
 /**

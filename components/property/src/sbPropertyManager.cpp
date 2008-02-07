@@ -218,6 +218,84 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
   return NS_OK;
 }
 
+NS_IMETHODIMP sbPropertyManager::GetPropertySort(const nsAString & aId,
+                                                 PRBool aIsAscending,
+                                                 sbIPropertyArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbIPropertyInfo> propertyInfo;
+  nsresult rv = GetPropertyInfo(aId, getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyArray> sortProfile;
+  rv = propertyInfo->GetSortProfile(getter_AddRefs(sortProfile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyArray> sort;
+  if (sortProfile) {
+    if (aIsAscending) {
+      sort = sortProfile;
+    }
+    else {
+      // If this is a descending sort, create a new sort profile with the
+      // directions reversed
+      nsCOMPtr<sbIMutablePropertyArray> newSort =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = newSort->SetStrict(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 propertyCount;
+      rv = sortProfile->GetLength(&propertyCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < propertyCount; i++) {
+        nsCOMPtr<sbIProperty> property;
+        rv = sortProfile->GetPropertyAt(i, getter_AddRefs(property));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString propertyID;
+        rv = property->GetId(propertyID);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString value;
+        rv = property->GetValue(value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = newSort->AppendProperty(propertyID,
+                                     value.EqualsLiteral("a") ?
+                                       NS_LITERAL_STRING("d") :
+                                       NS_LITERAL_STRING("a"));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      sort = newSort;
+    }
+  }
+  else {
+    nsCOMPtr<sbIMutablePropertyArray> newSort =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = newSort->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = newSort->AppendProperty(aId,
+                                 aIsAscending ?
+                                   NS_LITERAL_STRING("a") :
+                                   NS_LITERAL_STRING("d"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sort = newSort;
+  }
+
+  NS_ADDREF(*_retval = sort);
+
+  return NS_OK;
+}
+
 NS_METHOD sbPropertyManager::CreateSystemProperties()
 {
   nsresult rv;
