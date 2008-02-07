@@ -133,6 +133,12 @@ mtpServicePaneService.prototype = {
   observe: function mtpServicePaneService_observe(aSubject, 
                                                   aTopic, 
                                                   aData) {
+    switch (aTopic) {
+      case this._cfg.appQuitTopic :
+        this._shutdown();
+      break;
+    }
+
   },
 
   // ************************************
