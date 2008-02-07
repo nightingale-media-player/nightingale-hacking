@@ -441,52 +441,6 @@
         .getService(this._Ci.sbIPropertyManager)
       </field>
 
-      <!-- Helper property to get and set the search query that is
-           filtering this playlist.
-        -->
-      <property name="searchFilter" >
-        <getter>
-<![CDATA[
-  // XXXsteve We need a better way to discover the actual search terms
-  // rather than reverse engineer it from the search constaint
-  if (this.mediaListView && this.mediaListView.searchConstraint) {
-    var search = this.mediaListView.searchConstraint;
-    var terms = [];
-    var groupCount = search.groupCount;
-    for (var i = 0; i < groupCount; i++) {
-      var group = search.getGroup(i);
-      var property = group.properties.getNext();
-      terms.push(group.getValues(property).getNext());
-    }
-    return terms.join(" ");
-  }
-  return "";
-]]>
-        </getter>
-        <setter>
-<![CDATA[
-  if (!this.mediaListView || !this.mediaListView.cascadeFilterSet)
-  {
-    throw("Playlist: Unable to set searchFilter. No mediaListView or cascadeFilterSet.");
-  }
-
-  // Attempt to set the search filter on the playlist
-  var filters = this.mediaListView.cascadeFilterSet;
-
-  // The search is always the first filter in the cascade set
-  if (val == "" || val == null) {
-    filters.set(0, [], 0);
-  }
-  else {
-    var valArray = val.split(" ");
-    filters.set(0, valArray, valArray.length);
-  }
-  return val;
-]]>
-        </setter>
-      </property>
-
-
       <!-- Expose the human readable name of this playlist
            Note: mediaList.name always returns "" at the moment?
         -->

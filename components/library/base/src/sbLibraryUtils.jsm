@@ -129,6 +129,34 @@ var LibraryUtils = {
       }
     }
     return builder.get();
+  },
+
+  createStandardMediaListView: function(aMediaList, aSearchString) {
+    mediaListView = aMediaList.createView();
+    
+    // By default, we never want to show lists and hidden 
+    // things in the playlist
+    mediaListView.filterConstraint = LibraryUtils.standardFilterConstraint;
+    
+    // Set up a standard search filter.  
+    // It can always be replaced later.
+    var filter = mediaListView.cascadeFilterSet;
+    filter.appendSearch([
+      SBProperties.artistName,
+      SBProperties.albumName,
+      SBProperties.trackName
+    ], 3);
+   
+    if (aSearchString) {
+      // Set the search 
+      var searchArray = aSearchString.split(" ");
+      filter.set(0, searchArray, searchArray.length);
+    } else { 
+      // Or not.
+      filter.set(0, [], 0);
+    }
+
+    return mediaListView;
   }
 }
 

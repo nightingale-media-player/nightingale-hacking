@@ -71,17 +71,11 @@ const gSearchHandler = {
                               function (event) { gSearchHandler.onLinkAdded(event); }, 
                               false);
     
-    // Listen for page loads in order to update the search box content
-    gBrowser.addEventListener("load", 
-                              function (event) { gSearchHandler.onBrowserLoad(event); }, 
-                              false);                              
-                                                        
-    // Listen for location and state changes in order to update the
-    // selected search engine and list of available engines
-    var nsIWebProgress = Components.interfaces.nsIWebProgress;
-    gBrowser.addProgressListener(this.webProgressListener,
-            nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_ALL);
-
+    // Listen for tab change events
+    gBrowser.addEventListener('TabContentChanged', 
+                              function (event) { gSearchHandler.onTabChanged(event); },
+                              false);
+    
     // Listen for search events
     document.addEventListener("search", 
                               function (event) { gSearchHandler.onSearchEvent(event); }, 
@@ -190,20 +184,6 @@ const gSearchHandler = {
   },
 
 
-  /**
-   * Called whenever something loads in gBrowser.
-   * Used to detect when a playlist has fully loaded.
-   */
-  onBrowserLoad: function SearchHandler_onBrowserLoad(evt) {
-    // If a media list is open in the current tab,
-    // then we may need to update the contents of the search box
-    var playlist = this._getCurrentPlaylist();
-    if (playlist && playlist.mediaListView) 
-    {
-      this._syncSearchBarToPlaylist();
-    }
-  },
-
 
   /**
    * Called when a "search" event is received. 
@@ -244,53 +224,21 @@ const gSearchHandler = {
   },
 
 
-  /**
-   * nsIWebProgressListener to monitor browser changes 
-   * and notify gSearchHandler
-   */  
-  webProgressListener:
-  {
-  
-    onLocationChange: function SearchHandler_onLocationChange(aWebProgress, aRequest, aLocation) 
-    {
-    
-      // Update search button to reflect available engines.
-      // Note: In firefox this is called by browser.js asyncUpdateUI()
-      BrowserSearch.updateSearchButton();
-      
-      // Update mode depending on location
-      // (Library vs Website)
-      BrowserSearch.updateSearchMode();
-    },
+  onTabChanged: function SearchHandler_onTabChanged(event) {
+    // Update search button to reflect available engines.
+    // Note: In firefox this is called by browser.js asyncUpdateUI()
+    BrowserSearch.updateSearchButton();
 
-    onStateChange: function SearchHandler_onStateChange(aWebProgress, aRequest, aStateFlags, aStatus){     
-      // Figure out if this is a new network request
-      var networkStartingFlags = Ci.nsIWebProgressListener.STATE_START 
-                                 | Ci.nsIWebProgressListener.STATE_IS_NETWORK;        
-      var isStarting = (networkStartingFlags & aStateFlags) == networkStartingFlags;
-     
-      // When loading new page, reset search engine list 
-      if (isStarting && aRequest && aWebProgress.DOMWindow == content) {
-        BrowserSearch.resetFoundEngineList();        
-      }
-    },
-    
-    onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress,
-                               aMaxSelfProgress, aCurTotalProgress,
-                               aMaxTotalProgress) {},
-    onStatusChange: function(aWebProgress, aRequest, aStatus, aMessage) {},
-    onSecurityChange: function(aWebProgress, aRequest, state) {},
+    // Update mode depending on location
+    // (Library vs Website)
+    BrowserSearch.updateSearchMode();
 
-    QueryInterface: function SearchHandler_QueryInterface(aIID)
+    // If we're looking at a media page sync the search bar contents
+    if (this._getCurrentMediaListView())
     {
-      if (aIID.equals(Components.interfaces.nsIWebProgressListener)
-          || aIID.equals(Components.interfaces.nsISupports)
-          || aIID.equals(Components.interfaces.nsISupportsWeakReference))
-      {
-          return this;
-      }
-      throw Components.results.NS_NOINTERFACE;
+      this._syncSearchBarToMediaPage();
     }
+
   },
 
  
@@ -417,21 +365,6 @@ const gSearchHandler = {
   },
 
 
-  /**
-   * Get rid of the engine lists on the current browser.
-   * Note: In Firefox this is done by nsBrowserStatusHandler.onStateChange
-   */
-  resetFoundEngineList: function SearchHandler_resetFoundEngineList() {
-    
-    // Clear out engine list
-    gBrowser.mCurrentBrowser.engines = null;  
-    
-    // Why don't we have to clear hiddenEngines? 
-  },
-  
-
-
-
   /////////////////////////////////////////////////////////////////////////////
   // Songbird Search Mode Support /////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
@@ -443,9 +376,9 @@ const gSearchHandler = {
    */
   updateSearchMode: function SearchHandler_updateSearchMode() {
  
-    // If a media list is open in the current tab,
+    // If a media page is open in the current tab,
     // then we will need to restore the search filter state
-    if (this._isPlaylistShowing()) 
+    if (this._isMediaPageShowing()) 
     {
       this._switchToInternalSearch();
     }
@@ -459,9 +392,9 @@ const gSearchHandler = {
   
   
   /**
-   * Set up the search box to act as a filter for the current media list
-   * Note that some final setup cannot be completed until the playlist
-   * fully loads.  See also this.onBrowserLoad.
+   * Set up the search box to act as a filter for the current media page
+   * Note that some final setup cannot be completed until the media page
+   * fully loads.
    */
   _switchToInternalSearch: function SearchHandler__switchToInternalSearch() {
     var searchBar = this.getSearchBar();
@@ -490,8 +423,8 @@ const gSearchHandler = {
       searchBar.currentEngine = songbirdEngine;
     }
 
-    // Set the query to match the state of the media list
-    this._syncSearchBarToPlaylist();
+    // Set the query to match the state of the media page
+    this._syncSearchBarToMediaPage();
   },
   
   
@@ -537,43 +470,30 @@ const gSearchHandler = {
     
   
   /**
-   * Return true if the active tab is displaying a songbird media list.
-   * Note: The playlist may not be initialized.
+   * Return true if the active tab is displaying a songbird media page.
+   * Note: The media page may not be initialized.
    */
-  _isPlaylistShowing: function SearchHandler__isPlaylistShowing() {
-    if (!gBrowser.mCurrentBrowser.currentURI) {
-      // about:blank pages have no playlist (about:blank causes currentURI = null)
-      return false;
-    }
-    
-    var url = gBrowser.mCurrentBrowser.currentURI.spec;
-    return url.indexOf("sbLibraryPage") >= 0;
+  _isMediaPageShowing: function SearchHandler__isMediaPageShowing() {
+    return gBrowser.currentMediaPage != null;
   },  
    
    
   /**
-   * If there is a media list in the current tab, set the current search
+   * If there is a media page in the current tab, set the current search
    * to the given query.  If not, then open the default library
    * with the given query.
    */
   _doSongbirdSearch: function SearchHandler__doSongbirdSearch(query) {    
-    // If we aren't showing a playlist, then load the library
-    if ( !this._isPlaylistShowing() )
-    {
-      // Load the main library
-      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                     .getService(Components.interfaces.sbILibraryManager);
-      // TODO make a const or helper function?
-      var url = "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
-                libraryManager.mainLibrary.guid + 
-                "&search=" + 
-                escape(query);
-      gBrowser.loadURI(url);
-    }
-    // If we are showing a media list, then just set the query directly 
-    else 
-    {
-      this._setPlaylistSearch(query);
+    if (!this._isMediaPageShowing()) {
+      // create a view into the main library with the requested search
+      var library = LibraryUtils.mainLibrary;
+      var view = LibraryUtils.createStandardMediaListView(library, query);
+
+      // load that view
+      gBrowser.loadMediaList(library, null, null, view);
+    } else {
+    // If we are showing a media page, then just set the query directly 
+      this._setMediaPageSearch(query);
     }
   },
   
@@ -613,82 +533,91 @@ const gSearchHandler = {
 
 
   /**
-   * Attempt to ask the current playlist what
-   * search it is currently using.
-   * Returns "" if the playlist is unavailable.
+   * Attempt to ask the current media page what search it is currently using.
+   * Returns "" if the media page is unavailable.
    */
-  _getPlaylistSearch: function SearchHandler__getPlaylistSearch() {
+  _getMediaPageSearch: function SearchHandler__getMediaPageSearch() {
+    // Get the currently displayed sbIMediaListView
+    var mediaListView = this._getCurrentMediaListView();
 
-    // Get the playlist element from within the current tab      
-    var playlist = this._getCurrentPlaylist();
-    if (playlist == null) {
-      return "";
+    // XXXsteve We need a better way to discover the actual search terms
+    // rather than reverse engineer it from the search constaint
+    if (mediaListView && mediaListView.searchConstraint) {
+      var search = mediaListView.searchConstraint;
+      var terms = [];
+      var groupCount = search.groupCount;
+      for (var i = 0; i < groupCount; i++) {
+        var group = search.getGroup(i);
+        var property = group.properties.getNext();
+        terms.push(group.getValues(property).getNext());
+      }
+      return terms.join(" ");
     }
-    
-    return playlist.searchFilter;
+    return "";
   },
 
 
   /**
-   * Attempt to set a search filter on the playlist 
-   * in the current tab.
+   * Attempt to set a search filter on the media page in the current tab.
    * Returns true on success.
    */
-  _setPlaylistSearch: function SearchHandler__setPlaylistSearch(query) {
+  _setMediaPageSearch: function SearchHandler__setMediaPageSearch(query) {
+    // Get the currently displayed sbIMediaListView
+    var mediaListView = this._getCurrentMediaListView();
 
-    // Get the playlist element from within the current tab      
-    var playlist = this._getCurrentPlaylist();
-    if (playlist == null) {
-      dump("SearchHandler__setPlaylistSearch: NO PLAYLIST!\n");
-      return false;
+    /* we need an sbIMediaListView with a cascadeFilterSet whose first
+     * filter is a search */
+    if (!mediaListView || !mediaListView.cascadeFilterSet ||
+        mediaListView.cascadeFilterSet.length < 1 ||
+        !mediaListView.cascadeFilterSet.isSearch(0)) {
+      return;
     }
-    
-    var success = false;
-    
-    try { 
-      playlist.searchFilter = query;
-      success = true;
 
-      // TODO Remove this legacy functionality.  The jump-to should be self contained.
-      if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
-    } catch(e) {
-      dump("SearchHandler__setPlaylistSearch: Unable to set the search query.\n");
-      dump(e + "\n");
+    // Attempt to set the search filter on the media list view
+    var filters = mediaListView.cascadeFilterSet;
+
+    // The search is always the first filter in the cascade set
+    if (query == "" || query == null) {
+      filters.set(0, [], 0);
+    } else {
+      var valArray = query.split(" ");
+      filters.set(0, valArray, valArray.length);
     }
-    return success;
   },
 
   
   /**
-   * Try to get a human readable name for the playlist 
+   * Try to get a human readable name for the media page
    * in the current tab
    */
-  _getPlaylistDisplayName: function SearchHandler__getPlaylistDisplayName() {
+  _getMediaPageDisplayName: function SearchHandler__getMediaPageDisplayName() {
   
-    // Get the playlist element from within the current tab      
-    var playlist = this._getCurrentPlaylist();
+    // Get the currently displayed sbIMediaListView
+    var mediaListView = this._getCurrentMediaListView();
 
-    // Attempt to get the name of the playlist
-    if (playlist) {
-      return playlist.displayName;
-    } 
-    return "";
+    // Return the mediaListView's mediaList's name
+    return mediaListView.mediaList.name;
   },  
     
 
   /**
-   * Get the playlist that is currently showing in the browser
+   * Get the media list view that is currently showing in the media page 
+   * in the browser
    */
-  _getCurrentPlaylist: function SearchHandler__getCurrentPlaylist() {
-    return gBrowser.currentPlaylist;
+  _getCurrentMediaListView: function SearchHandler__getCurrentMediaListView() {
+    if (gBrowser.currentMediaPage && gBrowser.currentMediaPage.mediaListView) {
+      return gBrowser.currentMediaPage.mediaListView;
+    } else {
+      return null;
+    }
   },  
   
   
   /**
    * Update the Songbird search to reflect
-   * the state of the current playlist
+   * the state of the current media list view
    */
-  _syncSearchBarToPlaylist: function SearchHandler__syncSearchBarToPlaylist() {
+  _syncSearchBarToMediaPage: function SearchHandler__syncSearchBarToMediaPage() {
     
     // Get the search box element
     var searchBar = this.getSearchBar();
@@ -698,14 +627,14 @@ const gSearchHandler = {
       
     // Change the text displayed on empty query to reflect
     // the current search context.
-    var playlistName = this._getPlaylistDisplayName();
-    if (playlistName != "") {
+    var mediaPageName = this._getMediaPageDisplayName();
+    if (mediaPageName != "") {
       var songbirdEngine = this.getSongbirdSearchEngine();
-      searchBar.setEngineDisplayText(songbirdEngine, playlistName);
+      searchBar.setEngineDisplayText(songbirdEngine, mediaPageName);
     }
 
     // Find out what search is filtering this medialist
-    var queryString = this._getPlaylistSearch();    
+    var queryString = this._getMediaPageSearch();    
     searchBar.value = queryString;
   }
 }  // End of gSearchHandler
