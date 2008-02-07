@@ -459,3 +459,8 @@ sb-device-info
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
 }
 
+sb-device-progress
+{
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
+}
+

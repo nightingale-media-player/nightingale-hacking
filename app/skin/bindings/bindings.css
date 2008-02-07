@@ -55,6 +55,7 @@ For more information, see:
 @import url(browsertoolbar.css);
 @import url(device/deviceCapacity.css);
 @import url(device/deviceInfo.css);
+@import url(device/deviceProgress.css);
 @import url(displayPane.css);
 @import url(drawer.css); 
 @import url(faceplate.css); 

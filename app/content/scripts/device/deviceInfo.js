@@ -336,7 +336,8 @@ var DIW = {
   //
   //   These services provide an interface to the device object.
   //   These services register for any pertinent device notifications and call
-  // _update to update the UI accordingly.
+  // _update to update the UI accordingly.  These include notifications for
+  // changes to the device friendly name.
   //
   //----------------------------------------------------------------------------
 

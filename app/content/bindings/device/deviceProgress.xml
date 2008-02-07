@@ -38,25 +38,16 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * Device info widget.
+   * Device operation progress widget.
    *
-   *   This widget displays information about the device.
-   *   The set of information displayed is specified by the CSV "devicespecs"
-   * attribute.  This attribute specifies both the displayed information and the
-   * ordering.
-   *   In addition to the device specs, this widget displays a device icon and
-   * friendly name.
-   *   This widget also provides a device eject button.
-   *
-   * Device specs:
-   *   model                    Model name.
-   *   capacity                 Model capacity.
-   *   model_capacity           Model name and capacity.
+   *   This widget displays progress for device operations.  It displays two
+   * lines of progress text and a progress meter.  It also provides a button for
+   * cancelling device operations.
    *
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-device-info">
+  <binding id="sb-device-progress">
 
     <!-- ***********************************************************************
      *
@@ -66,73 +57,53 @@
 
     <content>
 
-      <xul:hbox align="center">
+      <xul:groupbox sbid="device_progress_box" class="device-progress-groupbox"
+                    flex="1"
+                    orient="horizontal">
 
-        <!-- Device image. -->
-        <xul:image sbid="device_image"
-                   class="device-image"
-                   alt="Generic device icon"/>
+        <!-- Device operation progress box. -->
+        <xul:vbox flex="1" pack="center">
 
-        <!-- Device info. -->
-        <xul:vbox sbid="summary_box">
+          <!-- Progress text 1 label. -->
+          <xul:label observestarget="true"
+                     observeskey="text1"
+                     observesattribute="value"
+                     class="dev-progress-text1-label"/>
 
-          <!-- Device name and eject button. -->
-          <xul:hbox sbid="name_box" align="center">
-            <xul:label sbid="device_name_label"
-                       class="device-name-label"
-                       crop="end"/>
-              <xul:button sbid="eject_button"
-                          class="eject-button"
-                          action="eject"
-                          oncommand="DIW.handleAction(event);"/>
-          </xul:hbox>
+          <!-- Operation progress meter. -->
+          <xul:progressmeter class="device-progressmeter"
+                                mode="determined"
+                                observestarget="true"
+                                observeskey="progress"
+                                observesattribute="value"/>
 
-          <!-- Device specs. -->
-          <xul:grid sbid="device_specs_grid">
+          <!-- Progress text 2 label. -->
+          <xul:label observestarget="true"
+                     observeskey="text2"
+                     observesattribute="value"
+                     class="dev-progress-text2-label"/>
 
-            <!-- Grid columns. -->
-            <xul:columns>
-              <xul:column sbid="device_specs_label_column"/>
-              <xul:column sbid="device_specs_value_column"/>
-            </xul:columns>
+        </xul:vbox>
 
-            <!-- Grid rows. -->
-            <xul:rows sbid="device_spec_rows">
+        <!-- Cancel device operation button. -->
+        <xul:vbox pack="center">
+          <xul:button sbid="cancel_operation_button"
+                      class="device-progress-button"
+                      label="&window.cancel;"
+                      action="cancel"
+                      oncommand="DPW.onAction(event);"/>
+        </xul:vbox>
 
-              <!-- Model row. -->
-              <xul:row devicespec="model">
-                <xul:label sbid="model_header_label"
-                           class="device-specs-grid-label"
-                           value="&device.info.model.label;"/>
-                <xul:label sbid="model_value_label"
-                           class="device-specs-grid-label"/>
-              </xul:row>
+        <!-- Finish progress button. -->
+        <xul:vbox pack="center">
+          <xul:button sbid="finish_progress_button"
+                      class="device-progress-button"
+                      label="&window.ok;"
+                      action="finish"
+                      oncommand="DPW.onAction(event);"/>
+        </xul:vbox>
 
-              <!-- Capacity row. -->
-              <xul:row devicespec="capacity">
-                <xul:label sbid="capacity_header_label"
-                           class="device-specs-grid-label"
-                           value="&device.info.capacity.label;"/>
-                <xul:label sbid="capacity_value_label"
-                           class="device-specs-grid-label"/>
-              </xul:row>
-
-              <!-- Model/capacity row. -->
-              <xul:row devicespec="model_capacity">
-                <xul:label sbid="model_capacity_header_label"
-                           class="device-specs-grid-label"
-                           value="&device.info.model.label;"/>
-                <xul:label sbid="model_capacity_value_label"
-                           class="device-specs-grid-label"/>
-              </xul:row>
-
-            </xul:rows>
-
-          </xul:grid> <!-- End of "device_specs_grid". -->
-
-        </xul:vbox> <!-- End of "summary_box". -->
-
-      </xul:hbox>
+      </xul:groupbox>
 
     </content>
 
@@ -177,13 +148,13 @@
 
       <destructor> <![CDATA[
         /* Finalize the device info services. */
-        DIW.finalize(this);
+        DPW.finalize(this);
       ]]></destructor>
 
 
       <!-- *********************************************************************
        *
-       * Internal device info services.
+       * Internal device progress services.
        *
        ********************************************************************* -->
 
@@ -201,11 +172,11 @@
                              .getService
                                 (Components.interfaces.mozIJSSubScriptLoader);
 
-        /* Import the device info services. */
-        if (typeof(DIW) == "undefined") {
+        /* Import the device progress services. */
+        if (typeof(DPW) == "undefined") {
           jsLoader.loadSubScript
-                     ("chrome://songbird/content/scripts/device/deviceInfo.js",
-                      null);
+                 ("chrome://songbird/content/scripts/device/deviceProgress.js",
+                  null);
         }
       ]]></body></method>
 
@@ -213,7 +184,7 @@
       <!--
        * bind
        *
-       *   This function binds the device info widget to a specific device.
+       *   This function binds the device progress widget to a specific device.
        -->
 
       <method name="bind"><body><![CDATA[
@@ -226,8 +197,8 @@
         this.deviceID = deviceID;
 
         /* Re-initialize the device info services. */
-        DIW.finalize(this);
-        DIW.initialize(this);
+        DPW.finalize(this);
+        DPW.initialize(this);
       ]]></body></method>
 
     </implementation>
@@ -247,3 +218,4 @@
   </binding>
 
 </bindings>
+

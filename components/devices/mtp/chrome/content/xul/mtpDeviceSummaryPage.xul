@@ -66,11 +66,10 @@
                       devicespecs="model_capacity"
                       flex="1"/>
 
-      <!-- Device progress.
+      <!-- Device progress. -->
       <sb-device-progress id="sb-device-progress"
                           flex="1"
                           observes="deviceIDBroadcaster"/>
-      -->
 
     </hbox> <!-- End of "info_progress_box" -->
 
