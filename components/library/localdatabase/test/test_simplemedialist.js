@@ -300,6 +300,10 @@ function runTest () {
   assertEqual(list.contains(item), false);
   assertEqual(list.length, oldlength - 1);
 
+  // Remove an item that is not in the list should do nothing
+  var notinlist = library.createMediaItem(newURI("http://foo.com/blah"));
+  list.remove(notinlist);
+
   // test bad index
   try {
     list.removeByIndex(list.length);

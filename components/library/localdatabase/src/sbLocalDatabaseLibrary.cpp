@@ -264,13 +264,17 @@ sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  PRUint32 index;
+  nsresult rv = mFriendLibrary->IndexOf(aMediaItem, 0, &index);
+  // If the item is not in the list, ignore it
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Remember this media item for later so we can notify with it
   PRBool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  PRUint32 index;
-  nsresult rv = mFriendLibrary->IndexOf(aMediaItem, 0, &index);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32* added = mNotificationIndexes.AppendElement(index);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);

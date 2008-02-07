@@ -823,7 +823,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Do some sanity checking.
-  NS_ENSURE_TRUE(count > 0, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(count > 0, NS_ERROR_NOT_AVAILABLE);
   NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
 
   nsAutoString testGUID;

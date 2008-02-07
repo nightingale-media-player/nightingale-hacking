@@ -176,6 +176,9 @@ function runTest () {
     exceptionResult = e.result;
   }
   assertEqual(exceptionResult, Cr.NS_ERROR_NOT_AVAILABLE);
+
+  // Removing a removed item should do nothing
+  library.remove(newItem);
 }
 
 function createPropertyArray() {
