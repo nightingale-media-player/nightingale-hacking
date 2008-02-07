@@ -27,3 +27,22 @@
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+  
+var mtpCore = {
+  deviceManager: null,
+  
+  initialize: function mtpCore_initialize() {
+  
+  },
+  
+  shutdown: function mtpCore_shutdown() {
+  
+  }
+};
