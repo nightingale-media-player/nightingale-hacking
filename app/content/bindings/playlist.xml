@@ -142,6 +142,11 @@
     if (!ExternalDropHandler)
       throw new Error("Import of ExternalDropHandler module failed");
   }
+  if (typeof(ColumnSpecParser) == "undefined") {
+    Components.utils.import("resource://app/components/sbColumnSpecParser.jsm");
+    if (!ColumnSpecParser)
+      throw new Error("Import of ColumnSpecParser module failed");
+  }
 
   // Attach event handler closures
   var self = this;
@@ -737,87 +742,18 @@
       <method name="_setupColumns">
         <body>
 <![CDATA[
-  // Make sure this is set back to our default (undefined) value.
-  this._columnSpecOrigin = 0;
-
-  // Our new "column spec" is a whitespace separated string that looks like
-  // this:
-  //
-  // "propertyID [20] [a] propertyID [40] [d]"
-  //
-  // The width and sort direction are optional.
-
-  // Try to get this info from the following places:
-  //      1: "columnSpec" property on the medialist
-  //      2: Preference indicated by XUL "useColumnSpecPreference" attribute
-  //      3: "defaultColumnSpec" property on the medialist
-  //      4: "defaultColumnSpec" property on the medialist library
-  //      5: "columnSpec" property on the medialist library
-  //      6: XUL "columnSpec" attribute
-  //      7: Our last-ditch hardcoded list
-
-  var columnMap = [];
   var medialist = this.mediaListView.mediaList;
- 
-  columnMap =
-    this._getColumnMap(medialist.getProperty(SBProperties.columnSpec), 1);
+  var parser = new ColumnSpecParser(medialist, this);
 
-  if (!columnMap.length && this.hasAttribute("useColumnSpecPreference") ) {
-    var pref = this.getAttribute("useColumnSpecPreference");
-    
-    try {
-      if (Application.prefs.has(pref)) {
-        columnMap =
-            this._getColumnMap(Application.prefs.get(pref).value,
-                               2);
-      }
-    } catch (e) {}
-  }
-    
-  if (!columnMap.length) {
-    columnMap =
-      this._getColumnMap(medialist.getProperty(SBProperties.defaultColumnSpec),
-                         3);
-  }
-
-  if (!columnMap.length) {
-    columnMap =
-      this._getColumnMap(medialist.library.getProperty(SBProperties.defaultColumnSpec),
-                         4);
-  }
-
-  if (!columnMap.length) {
-    columnMap =
-      this._getColumnMap(medialist.library.getProperty(SBProperties.columnSpec),
-                         5);
-  }
-
-  if (!columnMap.length) {
-    columnMap = this._getColumnMap(this.getAttribute("columnSpec"), 6);
-  }
-
-  if (!columnMap.length) {
-    columnMap =
-      this._parseColumnSpec(SBProperties.trackName + " 265 " +
-                            SBProperties.duration + " 43 " +
-                            SBProperties.artistName + " 177 a " +
-                            SBProperties.albumName + " 159 " +
-                            SBProperties.genre + " 53 " +
-                            SBProperties.rating + " 80");
-    this._columnSpecOrigin = 7;
-  }
-
-  if (!columnMap.length) {
-    throw new Error("Couldn't get columnMap!");
-  }
+  var columnMap = parser.columnMap;
+  this._columnSpecOrigin = parser.origin;
 
   this._removeAllChildren(this._treecols);
 
-
   // If the columns were initialized from some defaults..
-  if ( this._columnSpecOrigin != 1 && 
-       this._columnSpecOrigin != 2 &&
-       this._columnSpecOrigin != 6 )
+  if ( this._columnSpecOrigin != parser.ORIGIN_PROPERTY && 
+       this._columnSpecOrigin != parser.ORIGIN_PREFERENCES &&
+       this._columnSpecOrigin != parser.ORIGIN_ATTRIBUTE )
   {
 
     // Make sure we save the spec for this playlist.
@@ -940,84 +876,6 @@
   this._suppressSaveAsDefaultColumnSpec = false;  
   this._setupColumns();
 ]]>
-        </body>
-      </method>
-
-
-      <method name="_getColumnMap">
-        <parameter name="columnSpec"/>
-        <parameter name="columnSpecOrigin"/>
-        <body>
-          <![CDATA[
-            var columnMap = [];
-
-            if (columnSpec) {
-              try {
-                columnMap = this._parseColumnSpec(columnSpec);
-                this._columnSpecOrigin = columnSpecOrigin;
-              }
-              catch (e) {
-                this._reportError("Failed to parse columnSpec(" + columnSpecOrigin + "): \"" + columnSpec + "\"", e);
-              }
-            }
-
-            return columnMap;
-          ]]>
-        </body>
-      </method>
-
-      <method name="_parseColumnSpec">
-        <parameter name="spec"/>
-        <body>
-          <![CDATA[
-
-            // strip leading and trailing whitespace.
-            var strippedSpec = spec.match(/^\s*(.*?)\s*$/);
-            if (!strippedSpec.length > 0)
-              throw new Error("RegEx failed to match string");
-
-            // split based on whitespace.
-            var tokens = strippedSpec[1].split(/\s+/);
-
-            var columns = [];
-            var columnIndex = -1;
-            var seenSort = false;
-
-            for (var index = 0; index < tokens.length; index++) {
-              var token = tokens[index];
-              if (!token)
-                throw new Error("Zero-length token");
-
-              if (isNaN(parseInt(token))) {
-                if (token.length == 1 && (token == "a" || token == "d")) {
-                  // This is a sort specifier
-                  if (columnIndex < 0) {
-                    throw new Error("You passed in a bunk string!");
-                  }
-                  // Multiple sorts will be ignored!
-                  if (!seenSort) {
-                    var column = columns[columnIndex];
-                    column.sort = token == "a" ? "ascending" : "descending";
-                    seenSort = true;
-                  }
-                }
-                else {
-                  // This is a property name.
-                  columns[++columnIndex] = { property: token, sort: null };
-                }
-              }
-              else {
-                // This is a width specifier
-                if (columnIndex < 0) {
-                  throw new Error("You passed in a bunk string!");
-                }
-                var column = columns[columnIndex];
-                column.width = token;
-              }
-            }
-
-            return columns;
-          ]]>
         </body>
       </method>
 
@@ -1413,7 +1271,7 @@
 
   // Sanity check, don't write a bad string.
   try {
-    var parsedColumns = this._parseColumnSpec(columnSpec);
+    var parsedColumns = ColumnSpecParser.parseColumnSpec(columnSpec);
   }
   catch (e) {
     this._reportError('Almost wrote bad columnSpec: "' + columnSpec + '"', e);

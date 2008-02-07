@@ -865,6 +865,11 @@
           if (!SBProperties)
             throw new Error("Import of sbProperties module failed");
         }
+        if (typeof(ColumnSpecParser) == "undefined") {
+          Components.utils.import("resource://app/components/sbColumnSpecParser.jsm");
+          if (!ColumnSpecParser)
+            throw new Error("Import of sbColumnSpecParser module failed");
+        }
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
         // Create and bind data remotes
@@ -906,6 +911,41 @@
               // if this library actually has anything playable in it
               view.filterConstraint = LibraryUtils.standardFilterConstraint;
               if (view.length > 0) {
+
+                // Get the sort for this list by parsing the list's column spec.  Then hit
+                // the property manager to see if there is a special sort profile for this
+                // ID
+                var parser = new ColumnSpecParser(libraryManager.mainLibrary, null);
+                if (parser.sortID) {
+                  var pm =
+                    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                              .getService(Components.interfaces.sbIPropertyManager);
+                  var info = pm.getPropertyInfo(parser.sortID);
+                  var sortProfile = info.sortProfile;
+                  var sort;
+                  if (sortProfile) {
+                    // If this is a descending sort, create a new property array for the sort
+                    // and reverse everything
+                    if (parser.sortIsAscending) {
+                      sort = sortProfile;
+                    }
+                    else {
+                      var a = [];
+                      for (var i = 0; i < sortProfile.length; i++) {
+                        var prop = sortProfile.getPropertyAt(i);
+                        a.push([prop.id, prop.value == "a" ? "d" : "a"]);
+                      }
+                      sort = SBProperties.createArray(a, false);
+                    }
+                  }
+                  else {
+                    sort = SBProperties.createArray([[parser.sortID,
+                                                      parser.sortIsAscending ? "a" : "d"]],
+                                                    false);
+                  }
+                }
+
+                view.setSort(sort);
                 this.gPPS.playView(view, 0);
               }
             }
