@@ -38,7 +38,7 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
-    <implementation implements="nsIWebProgressListener,sbITabBrowser">
+    <implementation implements="nsIWebProgressListener,sbITabBrowser,sbIServicePaneListener">
       <constructor><![CDATA[
         window.gBrowser = this;
 
@@ -205,10 +205,20 @@
 	  splitter.restoreLastState(true);
 	}
 
+        // add a service pane listener
+        this._servicePaneService = 
+            Components.classes['@songbirdnest.com/servicepane/service;1']
+            .getService(Components.interfaces.sbIServicePaneService);
+        this._servicePaneService.init();
+        this._servicePaneService.addListener(this);
       ]]></constructor>
       <destructor><![CDATA[
         dump("MATT: tab browser destructor\n");
-              
+
+        // remove service pane listener        
+        this._servicePaneService.removeListener(this);
+        this._servicePaneService = null;
+
         this.removeProgressListener(this);
         if (this.tabChangeEventListener) {
           if (this.tabChangeEventListener.timer) {
@@ -675,10 +685,6 @@
               aLocation = "about:blank";
             }
             
-            // Extra tags to be applied to the tab.
-            // Used for CSS styling.
-            var properties = "";
-             
             // set the context-menu based on the chromeyness of the location
             if (aLocation.scheme == 'chrome') {
 
@@ -687,19 +693,6 @@
               SBDataSetBoolValue('browser.canbookmark', false);
 
               this.mCurrentBrowser.contextMenu = null;
-              
-              var servicePaneNode = this.mCurrentTab.servicePaneNode;
-              
-              // The look of the tab may be controlled by
-              // the service pane info
-              if (servicePaneNode) {
-                if (servicePaneNode.image) {
-                  this.setIcon(this.mCurrentTab, servicePaneNode.image);
-                } 
-                if (servicePaneNode.properties) {
-                  properties = servicePaneNode.properties;
-                }  
-              }
 
             } else {
 
@@ -710,11 +703,6 @@
               this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
 
             }
-
-
-            // Reflect the service pane properties for this URL (if any) onto the 
-            // tab so that it can by styled with CSS.
-            this.mCurrentTab.setAttribute("properties", properties);
 
             SBDataSetBoolValue('browser.cansubscription',
                                this.mCurrentTab.outerPlaylistShowing);
@@ -1388,6 +1376,32 @@
         ]]></body>
       </method>
 
+      <!-- implement sbIServicePaneListener -->
+      <method name="nodePropertyChanged">
+        <parameter name="aNodeId" />
+        <parameter name="aPropertyName" />
+        <body><![CDATA[
+          var SP_NS = 'http://songbirdnest.com/rdf/servicepane#'
+          if (aPropertyName != SP_NS+'Properties' &&
+              aPropertyName != SP_NS+'Image') {
+            // we only care about Properties and Image changing
+            return;
+          }
+
+          // go through the tabs
+          var tab = this.tabContainer.firstChild;
+          while(tab) {
+            // looking for one associated with the node that changed
+            if (tab.servicePaneNode && 
+                tab.servicePaneNode.id == aNodeId) {
+              // and apply its properties
+              tab.applyPropertiesFromServicePaneNode();
+            }
+            tab = tab.nextSibling;
+          }
+          ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
@@ -1883,8 +1897,8 @@
       
       <!-- The service pane node corresponding to this tab, 
            if one exists. -->
-      <property name="servicePaneNode" readonly="true">
-        <getter><![CDATA[
+      <method name="_findServicePaneNode">
+        <body><![CDATA[
 
           // Since this is a chrome URL the service pane
           // may have extra information about the location
@@ -1904,8 +1918,34 @@
           }
 
           return servicePaneNode;
-        ]]></getter>
-      </property>      
+        ]]></body>
+      </method>
+
+      <method name="applyPropertiesFromServicePaneNode">
+        <body><![CDATA[
+            // Extra tags to be applied to the tab.
+            // Used for CSS styling.
+            var properties = "";
+
+            var servicePaneNode = this.servicePaneNode;
+            
+            // The look of the tab may be controlled by
+            // the service pane info
+            if (servicePaneNode) {
+              if (servicePaneNode.image) {
+                this.setIcon(this.mCurrentTab, servicePaneNode.image);
+              } 
+              if (servicePaneNode.properties) {
+                properties = servicePaneNode.properties;
+              }  
+            }
+
+            // Reflect the service pane properties for this URL (if any) onto the 
+            // tab so that it can by styled with CSS.
+            this.setAttribute("properties", properties);
+
+          ]]></body>
+      </method>
 
       <method name="scanWebPage">
         <body><![CDATA[
@@ -2242,6 +2282,10 @@
             
             this._viewForPage = viewMap.getView( browser, entry );
           }
+
+          this.servicePaneNode = this._findServicePaneNode();
+
+          this.applyPropertiesFromServicePaneNode();
           
           dump("MATT: onLocationChange + " + aLocation.spec + "\n");
         ]]></body>

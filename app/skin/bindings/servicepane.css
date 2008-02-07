@@ -96,7 +96,9 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( download downloading )
+.servicepane-tree > treechildren::-moz-tree-image( download downloading ),
+.locationbar-image[properties~="download"][properties~="downloading"],
+.tabbrowser-tab[properties~="download"][properties~="downloading"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads-progress.png) ;
 }
@@ -177,3 +179,4 @@ window[platform="Darwin"] #menu_FilePopup #menuitem_file_remote
 {
   list-style-image: none;
 }
+
