@@ -38,10 +38,8 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbPropertyVariant.cpp \
            sbWPDDevice.cpp \
            sbWPDDeviceController.cpp \
-           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
+           sbWPDDeviceThread.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceCompatibility.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
@@ -52,6 +50,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/controller/public \
                $(topsrcdir)/components/devices/controller/src \
                $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/mtp/public \
                $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/library/base/public \
@@ -60,6 +59,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
@@ -78,10 +78,12 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             mssachlp \
                             PortableDeviceGuids \
                             propsys \
+                            sbDeviceBase$(DEBUG:%=_d) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(DEPS_DIR)/wpdsdk/Lib/x86/ \
+                           $(DEPTH)/components/devices/base/src/
                            $(NULL)
 
 ifdef DEBUG
@@ -93,7 +95,6 @@ endif
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/marshall/src/sbDeviceMarshall$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/controller/src/sbDeviceController$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/devices/base/src/sbDeviceBase$(DEBUG:%=_d) \
                               $(NULL)
 
 LIBSONGBIRD_COMPONENT = sbMTPWin32

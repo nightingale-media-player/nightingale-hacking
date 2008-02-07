@@ -26,30 +26,11 @@
 #ifndef SBWPDDEVICE_H_
 #define SBWPDDEVICE_H_
 
-// The following is placed below the other includes to avoid win32 macro 
-// madness
-#ifndef WINVER              // Allow use of features specific to Windows 95 and Windows NT 4 or later.
-#define WINVER 0x0600       // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINNT        // Allow use of features specific to Windows NT 4 or later.
-#define _WIN32_WINNT 0x0600     // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINDOWS      // Allow use of features specific to Windows 98 or later.
-#define _WIN32_WINDOWS 0x0600 // Change this to the appropriate value to target Windows Me or later.
-#endif
-
-#ifndef _WIN32_IE           // Allow use of features specific to IE 4.0 or later.
-#define _WIN32_IE 0x0400    // Change this to the appropriate value to target IE 5.0 or later.
-#endif
-
+#include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <PortableDeviceApi.h>
 #include <PortableDevice.h>
-#include <atlbase.h>
-#include <atlstr.h>
 #include <nsStringAPI.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -58,10 +39,18 @@
 #include <nsIClassInfo.h>
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
+#include <nsIThread.h>
 
 struct IPortableDevice;
 struct IPortableDeviceValues;
+class sbIDeviceEvent;
+class sbWPDDeviceThread;
+class sbDeviceStatus;
 
+/**
+ * This class represents a WPD device and is used to communicate with the WPD
+ * device
+ */
 class sbWPDDevice : public sbBaseDevice,
                      public nsIClassInfo
 {
@@ -70,20 +59,40 @@ class sbWPDDevice : public sbBaseDevice,
   NS_DECL_NSICLASSINFO
 
 public:
+  /**
+   * TODO: These may be deprecated or otherwise replaced with constants elsewhere
+   */
   static nsString const DEVICE_ID_PROP;
   static nsString const DEVICE_FRIENDLY_NAME_PROP;
   static nsString const DEVICE_DESCRIPTION_PROP;
   static nsString const DEVICE_MANUFACTURER_PROP;
-
+  /**
+   * The key to the property on the Songbird media item that holds
+   * the persistent unique ID to the corresponding object on the 
+   * device
+   */
+  static nsString const PUID_SBIMEDIAITEM_PROPERTY;
+  
   /**
    * Initializse the device with the creating controller's ID
    * device properties and optionally the Portable Device object
+   * The optional parameter is if there's an existing instance this
+   * will eliminate the need to recreate the device and open it. If
+   * the caller passes a device it MUST be open.
    */
   sbWPDDevice(nsID const & controllerID,
               nsIPropertyBag2 * deviceProperties,
               IPortableDevice * device = 0);
   virtual ~sbWPDDevice();
   virtual nsresult ProcessRequest();
+  IPortableDevice* PortableDevice()
+  {
+    return mPortableDevice;
+  }
+  nsIPropertyBag2* DeviceProperties()
+  {
+    return mDeviceProperties;
+  }
   /**
    * Creates the WPD client info needed to open the device
    */
@@ -113,13 +122,55 @@ public:
   static nsresult GetProperty(IPortableDeviceProperties * properties,
                               nsAString const & key,
                               nsIVariant ** value);
+  /**
+   * Creates an event for the device
+   */
+  nsresult CreateAndDispatchEvent(PRUint32 aType,
+                                  nsIVariant *aData);
+  /**
+   * This returns the MTP persistent unique ID for the corresponding object on
+   * the device
+   */
+  nsString GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem);
+
+  /**
+   * Returns the PnP device ID for the device
+   */
+  static nsString GetDeviceID(IPortableDevice * device);
+  /**
+   * This is called by the worker thread (sbWPDDeviceThread) to do work. It 
+   * returns PR_FALSE if there is no more work
+   */
+  PRBool ProcessThreadsRequest();
 private:
-  CComPtr<IPortableDevice> mPortableDevice;
+  nsRefPtr<IPortableDevice> mPortableDevice;
   nsCOMPtr<nsIPropertyBag2> mDeviceProperties;
   nsString mPnPDeviceID;
   nsID mControllerID;
   PRUint32 mState;
-  nsString GetDeviceID() const;
+  sbWPDDeviceThread * mDeviceThread;
+  nsCOMPtr<nsIThread> mThreadObject;
+  
+  HANDLE mRequestsPendingEvent;
+ 
+  nsresult GetPropertiesFromItem(IPortableDeviceContent * content,
+                                 sbIMediaItem * item,
+                                 sbIMediaList * list,
+                                 IPortableDeviceValues ** itemProperties);
+  nsresult CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
+                                           sbIMediaItem * item,
+                                           sbIMediaList * list);
+  /**
+   * Process the write request
+   */
+  nsresult WriteRequest(TransferRequest * request);
+  /**
+   * Process the read request
+   */
+  nsresult ReadRequest(TransferRequest * request);
+  // Prevent copying and assignment
+  sbWPDDevice(sbWPDDevice const &) {}
+  sbWPDDevice & operator= (sbWPDDevice const &) { return *this; }
 };
 
 #define SB_WPDDEVICE_CID \

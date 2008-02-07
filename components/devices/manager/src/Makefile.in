@@ -33,8 +33,6 @@ target_name = sbDeviceManager2$(DEBUG:%=_d)
 
 CPP_SRCS = sbDeviceManagerModule.cpp \
            sbDeviceManager.cpp \
-           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
@@ -62,9 +60,11 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcom \
                             xpcomglue_s \
+                            sbDeviceBase$(DEBUG:%=_d) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+						   $(SONGBIRD_OBJDIR)/components/devices/base/src
                            $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDeviceManager

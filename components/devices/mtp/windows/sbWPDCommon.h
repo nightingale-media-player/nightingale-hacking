@@ -46,12 +46,7 @@ class sbIDeviceMarshall;
 class sbIDevice;
 class sbIDeviceEventTarget;
 class sbIDeviceEvent;
-
-  /**
-   * This is the property on the sbIMediaItem that contains the device's
-   * content identifier
-   */
-#define SB_WPD_ITEM_OBJECT_NAME "WPD_OBJECT_ID"
+struct IPortableDeviceContent;
 
 /**
  * Retreives the WPD device manager
@@ -91,4 +86,11 @@ nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
  */
 nsresult sbStringToPropVariant(nsAString const & str,
                                PROPVARIANT & var);
+
+/**
+ * Returns the object ID from a PUID
+ */
+nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
+                            nsAString const & PUID,
+                            nsAString & objectID);
 #endif /*SBWPDCOMMON_H_*/

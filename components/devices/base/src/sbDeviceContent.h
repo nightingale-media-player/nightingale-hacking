@@ -33,8 +33,9 @@
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIMutableArray.h>
+#include "sbBaseDeviceAPI.h"
 
-class sbDeviceContent : public sbIDeviceContent
+class SB_API sbDeviceContent : public sbIDeviceContent
 {
 public:
   NS_DECL_ISUPPORTS

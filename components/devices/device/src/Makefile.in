@@ -34,12 +34,15 @@ target_name = sbDeviceCore$(DEBUG:%=_d)
 CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceUtils.cpp \
            sbLibraryListenerHelpers.cpp \
+           sbDeviceStatus.cpp \
+           sbDeviceUtils.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \

@@ -59,6 +59,18 @@ HRESULT __stdcall sbPortableDeviceEventsCallback::QueryInterface(
   return hr;
 }
 
+static nsString GetStringProperty(IPortableDeviceValues * pEventParameters,
+                                  PROPERTYKEY const & key)
+{
+  nsString result;
+  LPWSTR value = NULL;
+  if (SUCCEEDED(pEventParameters->GetStringValue(key, &value))) {
+    result = value;
+    ::CoTaskMemFree(value);
+  }
+  return result;
+}
+
 HRESULT __stdcall sbPortableDeviceEventsCallback::OnEvent(
     IPortableDeviceValues* pEventParameters)
 {

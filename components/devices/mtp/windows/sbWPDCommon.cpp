@@ -25,6 +25,7 @@
  */
 
 #include "sbWPDCommon.h"
+#include <nsAutoPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <sbIDeviceMarshall.h>
@@ -92,4 +93,34 @@ nsresult sbStringToPropVariant(nsAString const & str,
   var.pwszVal[length] = 0;
   return NS_OK;
 }
+
+nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
+                            nsAString const & PUID,
+                            nsAString & objectID)
+{
+  nsRefPtr<IPortableDevicePropVariantCollection> persistentUniqueIDs;
+  HRESULT hr = CoCreateInstance(CLSID_PortableDevicePropVariantCollection,
+                                NULL,
+                                CLSCTX_INPROC_SERVER,
+                                IID_IPortableDevicePropVariantCollection,
+                                getter_AddRefs(persistentUniqueIDs));
+  PROPVARIANT var;
+  if (FAILED(sbStringToPropVariant(PUID,
+                                   var)) || 
+      FAILED(persistentUniqueIDs->Add(&var)))
+    return NS_ERROR_FAILURE;
+  PropVariantClear(&var);
+  nsRefPtr<IPortableDevicePropVariantCollection> pObjectIDs;
+  if (FAILED(content->GetObjectIDsFromPersistentUniqueIDs(persistentUniqueIDs,
+                                                          getter_AddRefs(pObjectIDs))))
+    return NS_ERROR_FAILURE;
   
+  DWORD count = 0;
+  if (FAILED(pObjectIDs->GetCount(&count)) || !count ||
+      FAILED(pObjectIDs->GetAt(0, &var)) || var.vt != VT_LPWSTR)
+    return NS_ERROR_FAILURE;
+  
+  objectID = var.pwszVal;
+  PropVariantClear(&var);
+  return NS_OK;
+}

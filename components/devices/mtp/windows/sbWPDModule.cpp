@@ -38,9 +38,12 @@
 
 #include "sbWPDMarshall.h"
 #include "sbWPDDeviceController.h"
+#include "sbWPDDeviceThread.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDMarshall);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDDeviceController);
+// TODO reinstate once sbWPDDeviceThread no longer needs a constructor
+//NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDDeviceThread);
 
 SB_DEVICE_CONTROLLER_REGISTERSELF(sbWPDDeviceController);
 
@@ -96,7 +99,17 @@ static nsModuleComponentInfo sbDeviceMarshallComponents[] =
     sbWPDDeviceControllerConstructor,
     sbWPDDeviceControllerRegisterSelf,
     sbWPDDeviceControllerUnregisterSelf
+  },
+  /* TODO put this back in when sbWPDDeviceThread is fixed
+  {
+    SB_WPDDEVICETHREAD_CLASSNAME,
+    SB_WPDDEVICETHREAD_CID,
+    SB_WPDDEVICETHREAD_CONTRACTID,
+    sbWPDDeviceThreadConstructor,
+    sbWPDDeviceThreadRegisterSelf,
+    sbWPDDeviceThreadUnregisterSelf  
   }
+    */
 };
 
 NS_IMPL_NSGETMODULE(SongbirdDeviceMarshall, sbDeviceMarshallComponents)

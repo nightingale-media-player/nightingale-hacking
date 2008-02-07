@@ -50,6 +50,8 @@
 #include <mswmdm_i.c>
 #include <nsCOMArray.h>
 #include "sbWPDDevice.h"
+#include "sbWPDDeviceController.h"
+#include "sbWPDDeviceController.h"
 
 typedef std::vector<nsString> StringArray;
 
@@ -68,8 +70,6 @@ NS_IMPL_CI_INTERFACE_GETTER1(sbWPDMarshall,
 
 NS_DECL_CLASSINFO(sbWPDMarshall)
 NS_IMPL_THREADSAFE_CI(sbWPDMarshall)
-
-#define WMDM_MARSHALL_CATEGORY NS_LITERAL_CSTRING("WMDMMarshallCategory")
 
 /**
  * Retreives the WPD device manager
@@ -127,14 +127,14 @@ static nsresult CreateDeviceListener(sbWPDMarshall * marshall,
                                      sbIDevice * sbDevice)
 {
   LPWSTR cookie;
-  LPWSTR deviceID;
-  if (SUCCEEDED(device->GetPnPDeviceID(&deviceID)) &&
+  nsAString const & deviceID = sbWPDDevice::GetDeviceID(device);
+  if (!deviceID.IsEmpty() &&
       SUCCEEDED(device->Advise(0,
                                new sbPortableDeviceEventsCallback(marshall,
                                                                   sbDevice,
-                                                                  nsString(deviceID)),
-                                    nsnull,
-                                    &cookie)))
+                                                                  deviceID),
+                               nsnull,
+                               &cookie)))
     return NS_OK;
   return NS_ERROR_FAILURE;
 }
@@ -201,7 +201,7 @@ public:
                        nsAString const & value)
   {
     nsCOMPtr<nsIVariant> var;
-    nsresult rv = CreateVariant(nsString(propKey), getter_AddRefs(var));
+    nsresult rv = CreateVariant(nsString(value), getter_AddRefs(var));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mBag->SetProperty(nsString(propKey), var);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -265,30 +265,31 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
                                           IPortableDevice * device,
                                           nsIWritablePropertyBag * propertyBag)
 {
-  LPWSTR deviceID;
-  if (FAILED(device->GetPnPDeviceID(&deviceID)))
+  nsString const & deviceID = sbWPDDevice::GetDeviceID(device);
+  if (deviceID.IsEmpty())
     return NS_ERROR_FAILURE;
   PropertyBagWriter writer(deviceManager, device, propertyBag);
   // If any of these properties fail, they just don't get assigned
+  // TODO: there is are constants coming in from erikstaats that
+  // this should use instead.
   writer.SetProperty(&IPortableDeviceManager::GetDeviceFriendlyName, 
                      NS_LITERAL_STRING("DeviceFriendlyName"),
-                     deviceID);
+                     deviceID.get());
   writer.SetProperty(&IPortableDeviceManager::GetDeviceDescription, 
                      NS_LITERAL_STRING("DeviceDescription"), 
-                     deviceID);
+                     deviceID.get());
   writer.SetProperty(&IPortableDeviceManager::GetDeviceManufacturer,
                      NS_LITERAL_STRING("DeviceManufacturer"),
-                     deviceID);
+                     deviceID.get());
   // Set the device ID as a property
   writer.SetProperty(NS_LITERAL_STRING("DeviceID"),
-                     nsString(deviceID));
+                     deviceID);
   writer.SetProperty(NS_LITERAL_STRING("DeviceType"),
                      NS_LITERAL_STRING("WPD"));
   writer.SetPropertyFromDevice(WPD_DEVICE_SERIAL_NUMBER,
                                NS_LITERAL_STRING("SerialNo"));
   writer.SetPropertyFromDevice(WPD_DEVICE_MODEL,
                                NS_LITERAL_STRING("ModelNo"));
-  CoTaskMemFree(deviceID);
   return NS_OK;
 }
 
@@ -415,7 +416,7 @@ ULONG STDMETHODCALLTYPE sbDeviceMarshallListener::Release()
  * sbWPDMarshall Implementation
  */
 sbWPDMarshall::sbWPDMarshall() :
-  sbBaseDeviceMarshall(WMDM_MARSHALL_CATEGORY),
+  sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY)),
   mKnownDevicesLock(PR_NewLock())
 {
   mKnownDevices.Init(8);

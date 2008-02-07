@@ -92,7 +92,8 @@ static nsresult CopyCategoriesToArray(nsCOMPtr<nsISimpleEnumerator> & enumerator
   while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
     nsCOMPtr<nsISupports> ptr;
     if (NS_SUCCEEDED(enumerator->GetNext(getter_AddRefs(ptr))) && ptr) {
-      rv = controllers->AppendElement(ptr, PR_FALSE);
+      AppendDeviceController(ptr,
+                             controllers);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -125,17 +126,17 @@ nsresult sbBaseDeviceMarshall::GetCategoryManagerEnumerator(nsCOMPtr<nsISimpleEn
 }
 
 /**
- * Returns true if comp2 is not incompatible and is "more" compatibile than comp1
+ * Returns true if comp2 is not incompatible and is "more" compatible than comp1
  */
 inline
 PRBool CompareCompatibility(sbIDeviceCompatibility * comp1,
                             sbIDeviceCompatibility * comp2)
 {
-  PRUint32 compVal1;
-  PRUint32 compVal2;
-  return NS_SUCCEEDED(comp1->GetCompatibility(&compVal1))
-      && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2)) && compVal2
-      > compVal1 && compVal2 != sbIDeviceCompatibility::INCOMPATIBLE;
+  PRUint32 compVal1 = sbIDeviceCompatibility::INCOMPATIBLE;
+  PRUint32 compVal2 = sbIDeviceCompatibility::INCOMPATIBLE;
+  return (comp1 && NS_SUCCEEDED(comp1->GetCompatibility(&compVal1))) &&
+         (comp2 && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2))) && 
+          compVal2 > compVal1 && compVal2 != sbIDeviceCompatibility::INCOMPATIBLE;
 }
 
 PRBool sbBaseDeviceMarshall::CompatibilityComparer::Compare(sbIDeviceController * controller,

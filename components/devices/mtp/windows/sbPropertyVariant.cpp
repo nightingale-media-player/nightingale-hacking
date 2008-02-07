@@ -26,6 +26,7 @@
 */
 
 #include "sbPropertyVariant.h"
+#include "sbWPDCommon.h"
 #include <nsIClassInfoImpl.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIProgrammingLanguage.h>
@@ -33,24 +34,6 @@
 #include <nsStringAPI.h>
 #include <nsMemory.h>
 
-#ifndef WINVER              // Allow use of features specific to Windows 95 and Windows NT 4 or later.
-#define WINVER 0x0600       // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINNT        // Allow use of features specific to Windows NT 4 or later.
-#define _WIN32_WINNT 0x0600     // Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-#endif
-
-#ifndef _WIN32_WINDOWS      // Allow use of features specific to Windows 98 or later.
-#define _WIN32_WINDOWS 0x0600 // Change this to the appropriate value to target Windows Me or later.
-#endif
-
-#ifndef _WIN32_IE           // Allow use of features specific to IE 4.0 or later.
-#define _WIN32_IE 0x0400    // Change this to the appropriate value to target IE 5.0 or later.
-#endif
-
-#include <atlbase.h>
-#include <wtypes.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyVariant,
                               nsIWritableVariant,
@@ -203,7 +186,7 @@ NS_IMETHODIMP sbPropertyVariant::GetAsInt8(PRUint8 *retval)
 /* [noscript] PRInt16 getAsInt16 (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsInt16(PRInt16 *retval)
 {
-    ReturnValue(nsIDataType::VTYPE_INT16, iVal);
+  ReturnValue(nsIDataType::VTYPE_INT16, iVal);
 }
 
 /* [noscript] PRInt32 getAsInt32 (); */
@@ -290,8 +273,8 @@ NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
       {
         case VT_BSTR:
         {
-          CComBSTR temp(mPropVariant.bstrVal);
-          retval = nsString(mPropVariant.bstrVal, temp.Length());
+          PRUint32 const length = ::SysStringLen(mPropVariant.bstrVal);
+          retval = nsString(mPropVariant.bstrVal, length);
         }
         break;
         case VT_LPWSTR:
@@ -306,8 +289,8 @@ NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
       {
         case VT_BSTR:
         {
-          CComBSTR temp(*(mPropVariant.pbstrVal));
-          retval = nsString(*(mPropVariant.pbstrVal), temp.Length());
+          PRUint32 length = SysStringLen(*(mPropVariant.pbstrVal));
+          retval = nsString(*(mPropVariant.pbstrVal), length);
         }
         break;
         case VT_LPWSTR:

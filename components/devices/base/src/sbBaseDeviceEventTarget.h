@@ -24,12 +24,15 @@
 // END SONGBIRD GPL
 //
 */
+#ifndef SBBASEDEVICEEVENTTARGET_H
+#define SBBASEDEVICEEVENTTARGET_H
 
 #include "sbIDeviceEventTarget.h"
 
 #include <nsCOMArray.h>
 #include <nsDeque.h>
 #include <prmon.h>
+#include "sbBaseDeviceAPI.h"
 
 class sbIDeviceEventListener;
 
@@ -39,7 +42,7 @@ class sbIDeviceEventListener;
  * dispatched there.
  */
 
-class sbBaseDeviceEventTarget : public sbIDeviceEventTarget
+class SB_API sbBaseDeviceEventTarget : public sbIDeviceEventTarget
 {
 public:
   NS_DECL_SBIDEVICEEVENTTARGET;
@@ -67,3 +70,5 @@ protected:
 private:
   PRMonitor* mMonitor;
 };
+
+#endif

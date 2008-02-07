@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+CFLAGS   += -DSB_EXPORT_BASE_DEVICE_API=1
+CXXFLAGS += -DSB_EXPORT_BASE_DEVICE_API=1
+
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbContentTypeFormat.cpp \
            sbDeviceBaseModule.cpp \

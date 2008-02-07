@@ -32,10 +32,11 @@
 
 #include <nsTArray.h>
 #include <nsStringGlue.h>
+#include "sbBaseDeviceAPI.h"
 
 struct PRLock;
 
-class sbContentTypeFormat : public sbIContentTypeFormat
+class SB_API sbContentTypeFormat : public sbIContentTypeFormat
 {
 public:
   NS_DECL_ISUPPORTS
