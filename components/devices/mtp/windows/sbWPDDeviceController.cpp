@@ -27,6 +27,7 @@
 
 #include "sbWPDDeviceController.h"
 #include "sbWPDMarshall.h"
+#include "sbWPDDevice.h"
 
 #include "sbDeviceCompatibility.h"
 
@@ -36,6 +37,8 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIPropertyBag.h>
+#include <nsIVariant.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 
@@ -55,7 +58,7 @@ NS_DECL_CLASSINFO(sbWPDDeviceController)
 NS_IMPL_THREADSAFE_CI(sbWPDDeviceController)
 
 SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbWPDDeviceController, 
-                                       SB_WPDCONTROLLER_DESCRIPTION)
+                                       SB_WPDCONTROLLER_CONTRACTID)
 
 sbWPDDeviceController::sbWPDDeviceController() 
 : mMonitor(nsnull) 
@@ -148,13 +151,27 @@ sbWPDDeviceController::GetCompatibility(nsIPropertyBag *aParams,
   NS_NEWXPCOM(deviceCompatibility, sbDeviceCompatibility);
   NS_ENSURE_TRUE(deviceCompatibility, NS_ERROR_OUT_OF_MEMORY);
 
-  //XXXAus: Verify params here, ensure it's a WPD device.
+  nsCOMPtr<nsIVariant> value;
+  nsresult rv = aParams->GetProperty(NS_LITERAL_STRING("DeviceType"), getter_AddRefs(value));
 
-  nsresult rv = 
-    deviceCompatibility->Init(sbIDeviceCompatibility::INCOMPATIBLE, 
-                              sbIDeviceCompatibility::PREFERENCE_UNKNOWN);
+  nsString strValue;
+  rv = value->GetAsAString(strValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if(strValue.EqualsLiteral("WPD")) {
+    // Should be reading pref from prefs service.
+    rv = 
+      deviceCompatibility->Init(sbIDeviceCompatibility::COMPATIBLE_ENHANCED_SUPPORT, 
+                                sbIDeviceCompatibility::PREFERENCE_SELECTED);
+  }
+  else {
+    // Should be reading pref from prefs service.
+    rv = 
+      deviceCompatibility->Init(sbIDeviceCompatibility::INCOMPATIBLE, 
+                                sbIDeviceCompatibility::PREFERENCE_UNKNOWN);
+  }
+
+  NS_ENSURE_SUCCESS(rv, rv);
   NS_ADDREF(*_retval = deviceCompatibility);
 
   return NS_OK;
@@ -165,14 +182,14 @@ NS_IMETHODIMP
 sbWPDDeviceController::CreateDevice(nsIPropertyBag *aParams, 
                                     sbIDevice **_retval) 
 {
-  //XXXAus: 
-  //  If we are compatible
-  //    Find device that has our controller id.
-  //    Check it's params.
-  //    If params close enough, instantiate and return
-  //  Endif
-  
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsRefPtr<sbWPDDevice> device;
+
+  NS_NEWXPCOM(device, sbWPDDevice);
+  NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = device);
+
+  return NS_OK;
 }
 
 /* boolean controlsDevice (in sbIDevice aDevice); */
