@@ -448,8 +448,22 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
                                          getter_AddRefs(playingItem));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = OnTrackChange(playingItem, playingView, playingIndex);
+        // XXXsteve It is possible that the item at the currently playing index
+        // is not actually the playing item if the item has been removed from
+        // the view.  Double check this before lighting up the indicator.
+        // This should be removed when bug 7409 is fixed.
+        nsString playingItemGUID;
+        rv = playingItem->GetGuid(playingItemGUID);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString actuallyPlayingGUID;
+        rv = mPlaylistPlayback->GetCurrentGUID(actuallyPlayingGUID);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (playingItemGUID.Equals(actuallyPlayingGUID)) {
+          rv = OnTrackChange(playingItem, playingView, playingIndex);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
   }
@@ -900,18 +914,35 @@ sbLocalDatabaseTreeView::GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId)
 {
   nsresult rv;
 
-  // For distinct lists, the sort key works as a unique id, otherwise we can
-  // use the rowid
+  aId.Truncate();
+
+  // For distinct lists, the sort key works as a unique id
   if (mListType == eDistinct) {
     rv = mArray->GetSortPropertyValueByIndex(aIndex, aId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    // For regular lists, the unique identifer is composed of the lists' guid
+    // appended to the item's guid appeneded to the item's database rowid.
+    nsCOMPtr<sbIMediaList> list;
+    rv = mMediaListView->GetMediaList(getter_AddRefs(list));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString guid;
+    rv = list->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    aId.Append(guid);
+    aId.Append('|');
+
+    guid.Truncate();
+    rv = mArray->GetGuidByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    aId.Append(guid);
+    aId.Append('|');
+
     PRUint64 rowid;
     rv = mArray->GetRowidByIndex(aIndex, &rowid);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    aId.Truncate();
     AppendInt(aId, rowid);
   }
 
