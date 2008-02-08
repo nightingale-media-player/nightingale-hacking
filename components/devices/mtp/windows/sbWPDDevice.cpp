@@ -345,7 +345,7 @@ nsresult sbWPDDevice::ProcessRequest()
 PRBool sbWPDDevice::ProcessThreadsRequest()
 {
   sbWPDDevice::TransferRequest * request;
-  if (FAILED(PopRequest(&request)) || request)
+  if (FAILED(PopRequest(&request)) || !request)
       return PR_FALSE;
   // Determine request type and dispatch the correct function
   switch (request->type) {
