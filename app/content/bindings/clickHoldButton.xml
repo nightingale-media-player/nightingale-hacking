@@ -120,21 +120,11 @@
        // If the menupopup does not contain any items, then we should not show it.
        // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
        // because some menus only add their menuitems in onpopupshowing.
-       try {
-         // Ugh, dig into menupopup > arrowscrollbox > scrollbox > box to count children
-         if (target.childNodes[0].childNodes[1].childNodes[0].length == 0) {
-           this.popup.hidePopup();
-         }
-       } catch (e) {}
+       const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+       if (target.getElementsByTagNameNS(XUL_NS, "menuitem").length == 0) {
+         this.popup.hidePopup();
+       }
 
-       // Centered?
-       // If we want to use anchoring (which we do) then we can only
-       // position via css.
-       
-       //var offset = (this.button.boxObject.width - this.popup.boxObject.width) / 2;
-       //this.popup.style.marginLeft = offset + "px";
-       //this.popup.style.visibility = "visible";
-       
        // While the popup is showing we want to disable the tooltiptext
        // on the clickhold button.  If we don't then the tooltip will
        // appear beside each menu item.
