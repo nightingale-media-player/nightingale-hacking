@@ -178,6 +178,9 @@ mtpServicePaneService.prototype = {
     this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                                .getService(Ci.sbIDeviceManager2);
     
+    // Remove all stale nodes.
+    this._removeDeviceNodes(this._servicePaneSvc.root);
+    
     var deviceEventListener = {
       mtpDeviceServicePaneSvc: this,
       
@@ -189,6 +192,8 @@ mtpServicePaneService.prototype = {
     this._deviceEventListener = deviceEventListener;
     this._deviceManagerSvc.addEventListener(deviceEventListener);
 
+    this._createConnectedDevices();
+
     var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
     this._stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
   },
@@ -198,6 +203,12 @@ mtpServicePaneService.prototype = {
 
     this._deviceManagerSvc.removeEventListener(this._deviceEventListener);
     this._deviceEventListener = null;
+    
+    // Purge all device nodes before shutdown.
+    this._removeDeviceNodes();
+    
+    // Remove all references to nodes
+    this._deviceInfoList = [];
     
     this._deviceManagerSvc = null;
     this._deviceServicePaneSvc = null;
@@ -317,6 +328,21 @@ mtpServicePaneService.prototype = {
   _getDeviceForId: function mtpServicePaneService_getDeviceForId(aDeviceId) {
     // todo: return device whose id matches aDeviceId
     return { id: "fakeid" };
+  },
+  
+  _removeDeviceNodes: function mtpServicePaneService_removeDeviceNodes(aNode) {
+    // Remove child device nodes.
+    if (aNode.isContainer) {
+      var childEnum = aNode.childNodes;
+      while (childEnum.hasMoreElements()) {
+        var child = childEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
+        this._removeDeviceNodes(child);
+      }
+    }
+
+    // Remove device nodes.
+    if (aNode.contractid == this._cfg.contractID)
+      this._servicePaneSvc.removeNode(aNode);
   },
   
   /**
