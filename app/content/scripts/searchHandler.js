@@ -233,11 +233,8 @@ const gSearchHandler = {
     // (Library vs Website)
     BrowserSearch.updateSearchMode();
 
-    // If we're looking at a media page sync the search bar contents
-    if (this._getCurrentMediaListView())
-    {
-      this._syncSearchBarToMediaPage();
-    }
+    // Sync the search bar contents
+    BrowserSearch._syncSearchBarToMediaPage();
 
   },
 
@@ -596,7 +593,7 @@ const gSearchHandler = {
     var mediaListView = this._getCurrentMediaListView();
 
     // Return the mediaListView's mediaList's name
-    return mediaListView.mediaList.name;
+    return mediaListView?mediaListView.mediaList.name:"";
   },  
     
 
