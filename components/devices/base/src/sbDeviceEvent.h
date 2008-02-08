@@ -58,6 +58,14 @@ public:
   PRBool WasDispatched() { return mWasDispatched; }
   nsresult SetTarget(sbIDeviceEventTarget* aTarget);
   
+  // XXXAus: This static CreateEvent method is necessary
+  // to accommodate our static linking of the CRT. Otherwise
+  // the event would get deallocated with the wrong allocator.
+  static nsresult CreateEvent(PRUint32 aType,
+                              nsIVariant *aData,
+                              nsISupports *aOrigin,
+                              sbIDeviceEvent **_retval);
+
 protected:
   PRUint32 mType;
   nsCOMPtr<nsIVariant> mData;

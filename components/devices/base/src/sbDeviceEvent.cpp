@@ -98,3 +98,17 @@ NS_IMETHODIMP sbDeviceEvent::GetOrigin(nsISupports * *aOrigin)
   NS_IF_ADDREF(*aOrigin = mOrigin);
   return NS_OK;
 }
+
+nsresult sbDeviceEvent::CreateEvent(PRUint32 aType,
+                                    nsIVariant *aData,
+                                    nsISupports *aOrigin,
+                                    sbIDeviceEvent **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsCOMPtr<sbDeviceEvent> event = new sbDeviceEvent();
+  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = event->InitEvent(aType, aData, aOrigin);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return CallQueryInterface(event, _retval);
+}
