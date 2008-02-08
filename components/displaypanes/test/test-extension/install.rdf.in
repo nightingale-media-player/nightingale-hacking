@@ -22,21 +22,17 @@
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <songbird:displayPanes>
+    <songbird:displayPane>
       <Description>
-        <songbird:displayPane>
-          <Description>
-            <songbird:contentTitle>Display Pane Test</songbird:contentTitle>
-            <songbird:contentUrl>chrome://songbird-test-display-pane/content/testDisplayPane.html</songbird:contentUrl>
-            <songbird:contentIcon>http://www.songbirdnest.com/favicon.ico</songbird:contentIcon>
-            <songbird:defaultWidth>180</songbird:defaultWidth>
-            <songbird:defaultHeight>2</songbird:defaultHeight>
-            <songbird:suggestedContentGroups>test-content-group</songbird:suggestedContentGroups>
-            <songbird:showOnInstall>false</songbird:showOnInstall>
-          </Description>
-        </songbird:displayPane>
+        <songbird:contentTitle>Display Pane Test</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-display-pane/content/testDisplayPane.html</songbird:contentUrl>
+        <songbird:contentIcon>http://www.songbirdnest.com/favicon.ico</songbird:contentIcon>
+        <songbird:defaultWidth>180</songbird:defaultWidth>
+        <songbird:defaultHeight>2</songbird:defaultHeight>
+        <songbird:suggestedContentGroups>test-content-group</songbird:suggestedContentGroups>
+        <songbird:showOnInstall>false</songbird:showOnInstall>
       </Description>
-    </songbird:displayPanes>
+    </songbird:displayPane>
 
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>

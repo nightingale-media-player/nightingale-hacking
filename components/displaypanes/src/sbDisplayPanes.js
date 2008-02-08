@@ -89,14 +89,26 @@ DisplayPaneMetadataReader.prototype = {
     var addons = RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.DEFAULT_RDF_NAMESPACES);
     
     for (var i = 0; i < addons.length; i++) {
-    	// skip addons with no panes.
-      if (! (addons[i].displayPanes && addons[i].displayPanes[0].displayPane)) 
+      // skip addons with no panes.
+      var panes;
+      if (addons[i].displayPanes) {
+        // TODO: remove this some time post 0.5 and before 1.0
+        Components.utils.reportError(
+          "DisplayPanes: Use of the ²displayPanes> element in install.rdf " +
+          "is deprecated. Remove that element and leave the contents as-is."
+        );
+        panes = addons[i].displayPanes[0].displayPane;
+      }
+      else {
+        panes = addons[i].displayPane;
+      }
+      
+      if (!panes) {
+        // no display panes in this addon.
         continue;
-      // NB: this assumes only one displayPanes element. 
-      //     this could have some additional checking added to it.
-      //     or better yet, the wholly unnecessary displayPanes could be removed.
+      }
+      
       try {
-        var panes = addons[i].displayPanes[0].displayPane;
         for (var j = 0; j < panes.length; j++) {
           this._registerDisplayPane(addons[i], panes[j]) 
         }

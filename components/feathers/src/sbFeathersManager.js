@@ -253,10 +253,22 @@ AddonMetadataReader.prototype = {
       var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
       //debug("AddonMetadataReader.loadFeathers: - processing " + addon.Value + "\n");
       try {
-      
+        var items;
         if (this._datasource.hasArcOut(addon, this._resources.feathers)) {
+          Components.utils.reportError(
+            "FeathersManager: The <feathers> element is deprecated. Remove the element "+
+            "and leave its contents unmodified."
+          );
+          
           var feathersTarget = this._datasource.GetTarget(addon, this._resources.feathers, true)
                                    .QueryInterface(Components.interfaces.nsIRDFResource);
+          items = this._datasource.GetTargets(feathersTarget, this._resources.skin, true);
+        }
+        else {
+          items = this._datasource.GetTargets(addon, this._resources.skin);
+        }
+        
+        if (items) {
           
           // Process all skin metadata
           var items = this._datasource.GetTargets(feathersTarget, this._resources.skin, true)
