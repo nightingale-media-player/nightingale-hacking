@@ -79,8 +79,8 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_STATIC_IMPORTS += \
-                          $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/libz \
-                          $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag
+                          $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag \
+                          $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/libz
 endif
 
 ifeq (windows,$(SB_PLATFORM))

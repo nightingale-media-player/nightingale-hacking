@@ -61,11 +61,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcomglue_s \
                             $(NULL)
 
+DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
+                          $(NULL)
+
 CPP_SRCS = ../WindowCloak.cpp \
            ../WindowDragger.cpp \
            ../IntegrationComponent.cpp \
-					 ../NativeWindowFromNode.cpp \
-					 sbNativeWindowManager.cpp \
+           ../NativeWindowFromNode.cpp \
+           sbNativeWindowManager.cpp \
            $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

@@ -313,7 +313,7 @@ case "$SB_PLATFORM" in
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
   ;;
   *)
-    AC_CHECK_PROG(LD, ${CC}, ${CC})
+    AC_CHECK_PROG(LD, ${CXX}, ${CXX})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AR, ar, ar)
     if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
@@ -535,6 +535,7 @@ case "$SB_PLATFORM" in
     GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
     AC_SUBST(GSTREAMER_LIBS)
     AC_SUBST(GTK_CFLAGS)
+    AC_SUBST(GTK_LIBS)
 
     # The iPod support needs dbus and hal.
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
@@ -557,7 +558,7 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS="-Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"

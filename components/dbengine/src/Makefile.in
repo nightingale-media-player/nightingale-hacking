@@ -125,7 +125,8 @@ ifeq (macosx,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
+                               pthread
   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver
 endif
 
