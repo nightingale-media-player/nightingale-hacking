@@ -41,12 +41,20 @@
 #include <nscore.h>
 #include <nsStringGlue.h>
 
+#include <sbStandardDeviceProperties.h>
+
 class sbIDeviceManager2;
 class sbIDeviceMarshall;
 class sbIDevice;
 class sbIDeviceEventTarget;
 class sbIDeviceEvent;
 struct IPortableDeviceContent;
+
+typedef struct  
+{
+  char * mStandardProperty;
+  PROPERTYKEY mPropertyKey;
+} wpdPropertyKeymapEntry_t;
 
 /**
  * Retreives the WPD device manager
@@ -93,4 +101,12 @@ nsresult sbStringToPropVariant(nsAString const & str,
 nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
                             nsAString const & PUID,
                             nsAString & objectID);
+
+/**
+ * Returns the PROPERTYKEY associated with the Standard Device Property
+ */
+PRBool 
+sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
+                                          PROPERTYKEY &aPropertyKey);
+
 #endif /*SBWPDCOMMON_H_*/

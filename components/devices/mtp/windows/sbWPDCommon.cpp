@@ -124,3 +124,34 @@ nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
   PropVariantClear(&var);
   return NS_OK;
 }
+
+PRBool 
+sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
+                                          PROPERTYKEY &aPropertyKey)
+{
+  static wpdPropertyKeymapEntry_t map[] = {
+    { SB_DEVICE_PROPERTY_BATTERY_LEVEL,     WPD_DEVICE_POWER_LEVEL },
+    { SB_DEVICE_PROPERTY_CAPACITY,          WPD_STORAGE_CAPACITY },
+    { SB_DEVICE_PROPERTY_FIRMWARE_VERSION,  WPD_DEVICE_FIRMWARE_VERSION},
+    { SB_DEVICE_PROPERTY_MANUFACTURER,      WPD_DEVICE_MANUFACTURER },
+    { SB_DEVICE_PROPERTY_MODEL,             WPD_DEVICE_MODEL },
+    { SB_DEVICE_PROPERTY_NAME,              WPD_DEVICE_FRIENDLY_NAME },
+    { SB_DEVICE_PROPERTY_SERIAL_NUMBER,     WPD_DEVICE_SERIAL_NUMBER },
+    { SB_DEVICE_PROPERTY_POWER_SOURCE,      WPD_DEVICE_POWER_SOURCE },
+  };
+
+  static PRUint32 mapSize = sizeof(map) / sizeof(wpdPropertyKeymapEntry_t);
+
+  if(aStandardProp == nsnull) {
+    return PR_FALSE;
+  }
+
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if(!strcmp(map[current].mStandardProperty, aStandardProp)) {
+      aPropertyKey = map[current].mPropertyKey;
+      return PR_TRUE;
+    }
+  }
+  
+  return PR_FALSE;
+}
