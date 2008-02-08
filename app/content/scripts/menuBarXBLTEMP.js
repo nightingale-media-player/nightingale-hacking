@@ -82,7 +82,25 @@ function doMenu( command ) {
       quitApp();
     break;
     case "menuitem_control_play":
-      gPPS.playing ? ( gPPS.paused ? gPPS.play() : gPPS.pause() ) : gPPS.play();
+      // If we are already playing something just pause/unpause playback
+      if (gPPS.playing) {
+        // if we're playing already then play / pause
+        if (gPPS.paused) {
+          gPPS.play();
+        } else {
+          gPPS.pause();
+        }
+      // Otherwise dispatch a play event.  Someone should catch this
+      // and intelligently initiate playback.  If not, just have
+      // the playback service play the default.
+      } else {
+        var event = document.createEvent("Events");
+        event.initEvent("Play", true, true);
+        var notHandled = this.dispatchEvent(event);
+        if (notHandled) {
+          gPPS.play();
+        }
+      }
     break;
     case "menuitem_control_next":
       gPPS.next();

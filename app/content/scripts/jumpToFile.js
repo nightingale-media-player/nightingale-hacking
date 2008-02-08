@@ -323,7 +323,7 @@ try
       window.focus();
       textbox.focus();
     }
-    playlist.addEventListener("playlist-play", onJumpToPlay, false);
+    playlist.addEventListener("Play", onJumpToPlay, true);
     _applySearch();
     source_guid = guid;
     source_libraryguid = libraryguid;
@@ -489,7 +489,7 @@ try
     menulist.removeEventListener("playlist-menuitems-changed", _onMenuItemsChanged, true);
 
     var playlist = document.getElementById("jumpto.playlist");
-    playlist.removeEventListener("playlist-play", onJumpToPlay, false);
+    playlist.removeEventListener("Play", onJumpToPlay, true);
     window.arguments[0][0].__JUMPTO__ = null;
     
     playingUrl_remote.unbind();

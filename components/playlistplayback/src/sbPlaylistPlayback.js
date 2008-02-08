@@ -26,6 +26,7 @@
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/components/sbColumnSpecParser.jsm");
 
 /**
  * ----------------------------------------------------------------------------
@@ -1817,7 +1818,21 @@ PlaylistPlayback.prototype = {
     // Filter the view as if it is being shown in the UI to determine
     // if this library actually has anything playable in it
     view.filterConstraint = LibraryUtils.standardFilterConstraint;
+    
     if (view.length > 0) {
+
+      // Get the sort for this list by parsing the list's column spec.  Then hit
+      // the property manager to see if there is a special sort profile for this
+      // ID
+      var parser = new ColumnSpecParser(libraryManager.mainLibrary, null);
+      if (parser.sortID) {
+        var pm =
+          Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                    .getService(Components.interfaces.sbIPropertyManager);
+        var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
+        view.setSort(sort);
+      }
+
       this.playView(view, 0);
     }
   },

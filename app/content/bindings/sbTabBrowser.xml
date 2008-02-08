@@ -42,21 +42,12 @@
       <constructor><![CDATA[
         window.gBrowser = this;
 
-        if (typeof(SBProperties) == "undefined") {
+        if (!window.SBProperties)
           Components.utils.import("resource://app/components/sbProperties.jsm");
-          if (!SBProperties)
-            throw new Error("Import of sbProperties module failed");
-        }
-        if (typeof(kPlaylistCommands) == "undefined") {
+        if (!window.kPlaylistCommands) 
           Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
-          if (!kPlaylistCommands)
-            throw new Error("Import of kPlaylistCommands module failed!");
-        }
-        if (typeof(LibraryUtils) == "undefined") {
+        if (!window.LibraryUtils) 
           Components.utils.import("resource://app/components/LibraryUtils.jsm");
-          if (!LibraryUtils)
-            throw new Error("Import of LibraryUtils module failed!");
-        }
 
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
@@ -493,7 +484,8 @@
       </method>
 
       <!-- Use a Media Page to display the given list and
-           (optional) view. -->
+           (optional) view. 
+        -->
       <method name="loadMediaList">
         <parameter name="aMediaList"/>
         <parameter name="aEvent"/>
@@ -529,14 +521,16 @@
                           "&listGUID=" + escape(aMediaList.guid);
             }
             
-            this.loadURI(aPageURL, null, null, aEvent, aDefaultLocation, aMediaListView);
+            return this.loadURI(aPageURL, null, null, aEvent, 
+                                   aDefaultLocation, aMediaListView);
           ]]>
         </body>
       </method>
       
       
       <!-- Use a Media Page to display the list with 
-           the given library/list GUIDs -->
+           the given library/list GUIDs 
+        -->
       <method name="loadMediaListGUID">
         <parameter name="aLibraryGUID"/>
         <parameter name="aListGUID"/>
@@ -559,8 +553,45 @@
               mediaList = mediaList.getMediaItem( aListGUID );            
             }
             
-            this.loadMediaList(mediaList, aEvent, aDefaultLocation, 
+            return this.loadMediaList(mediaList, aEvent, aDefaultLocation, 
                                null, aPageURL);
+          ]]>
+        </body>
+      </method>
+      
+      
+
+      <!-- Reveal the given index in the given sbIMediaListView  -->
+      <method name="showIndexInView">
+        <parameter name="aMediaListView"/>
+        <parameter name="aHighlightIndex"/>
+        <body>
+          <![CDATA[
+            if (!(aMediaListView instanceof Ci.sbIMediaListView) ||
+                !(aHighlightIndex >= 0)) {
+              throw new Error("showIndexInView requires a media list view and index");
+            }
+              
+            // If we already have a tab for this view, show it there
+            var tab = this.getTabForView(aMediaListView);          
+            if (tab) {
+              this.selectedTab = tab;
+              if (tab.mediaPage) {
+                tab.mediaPage.highlightItem(aHighlightIndex);
+              } else if (tab.outerPlaylist) {
+                var tree = tab.outerPlaylist.tree;
+                tree.treeBoxObject.ensureRowIsVisible(aHighlightIndex);
+                tree.view.selection.select(aHighlightIndex);
+              }
+            
+            // Not already visible.  Load and highlight.
+            } else {
+              this.loadMediaList(gPPS.playingView.mediaList, null, null, 
+                                    gPPS.playingView);
+              var tab = this.loadMediaList(aMediaListView.mediaList, null, 
+                                           null, aMediaListView);
+              tab._highlightViewIndexOnLoad = aHighlightIndex;
+            }
           ]]>
         </body>
       </method>
@@ -571,36 +602,6 @@
                 getService(Components.interfaces.nsIPrefBranch);
       </field>
       
-
-      <!-- TODO Remove the following once all media pages cleanup is finished -->
-      <property name="playlist">
-        <getter><![CDATA[
-          return this.currentOuterPlaylist;
-        ]]></getter>
-      </property>
-      <property name="currentInnerPlaylist" readonly="true"
-                onget="return this.mCurrentTab.innerPlaylist" />
-      <property name="currentPlaylist" readonly="true">
-        <getter><![CDATA[
-          var pl = this.currentInnerPlaylist;
-          if (!pl && this.currentOuterPlaylistShowing) {
-            pl = this.currentOuterPlaylist;
-          }
-          return pl;
-        ]]></getter>
-      </property>
-      <property name="playlistTree" readonly="true">
-        <getter><![CDATA[
-          var pl = this.currentPlaylist;
-          if (pl) {
-            return pl.tree;
-          } else {
-            return null;
-          }
-        ]]></getter>
-      </property>
-
-
 
       <!-- Get the web playlist for the current tab -->
       <property name="currentOuterPlaylist" readonly="true"
@@ -827,10 +828,9 @@
         <parameter name="aTryWeb" />
         <body>
             <![CDATA[
-            
-          // TODO get rid of currentPlaylist
+
           // figure out if the url is in the webplaylist
-          var currentPlaylist = gBrowser.currentPlaylist;
+          var currentPlaylist = this.outerPlaylist;
           
           if (aTryWeb && currentPlaylist)
           {
@@ -872,8 +872,30 @@
           // if the url is already in the lib, it is not added twice
           var item = SBImportURLIntoWebLibrary(aURL);
           
+          var view = LibraryUtils.createStandardMediaListView(LibraryUtils.webLibrary);
+
+          // Get the sort for this list by parsing the list's column spec.  Then hit
+          // the property manager to see if there is a special sort profile for this
+          // ID
+          var parser = new ColumnSpecParser(LibraryUtils.webLibrary, null);
+          if (parser.sortID) {
+            var pm =
+              Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                        .getService(Components.interfaces.sbIPropertyManager);
+            var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
+            view.setSort(sort);
+          }
+
+          var index = view.getIndexForItem(item);
           
-          SBDisplayViewForListAndPlayItem(LibraryUtils.webLibrary, item);
+          // If we have a browser, try to show the view
+          if (window.gBrowser) {
+            gBrowser.showIndexInView(view, index);
+          }
+          
+          // Play the item
+          gPPS.playView(view, index);
+          
         ]]></body>
       </method>
 
@@ -1541,12 +1563,6 @@
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._hrefLoop = null;
-        
-        // TODO destroy
-        this._onplaylistplay = {
-          _that: null,
-          handleEvent: function( event ) { this._that.onPlaylistPlay(event); }
-        }; this._onplaylistplay._that = this;
 
         this._progressFilter =
           Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
@@ -1576,12 +1592,6 @@
         dump("MATT: tab DESTRUCTOR\n");
         this.closeBalloonTip();
         
-        // TODO remove once playlist widget and playback refactoring are complete
-        if (this.previousInnerPlaylist) {
-          this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
-          this.previousInnerPlaylist = null;
-        }
-
         // Remove the browser DOM loaded event listener.
         this.linkedBrowser.removeEventListener("DOMContentLoaded",
                                                this.browserDOMLoadedEventListener,
@@ -1696,10 +1706,6 @@
           this._playlist.setAttribute('useColumnSpecPreference', 
                                       'songbird.webplaylist.columnspec');
 
-          // add some events, eh?
-          this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
-          // FIXME: remove the event listener on the destructor, I guess
-
           // Start the first scan as soon as the browser DOM has loaded
           this.browserDOMLoadedEventListener = {
             tabbrowser: this,
@@ -1730,6 +1736,17 @@
           return this._playlist;
         ]]></getter>
       </property>
+      
+      <!-- sbITabBrowserTab 
+           TODO: Redundant, but needed for the remote API.  
+           Remote API can't get the outerplaylist attribute
+           for some stupid XPConnect reason.  Ask redfive.
+        -->
+      <method name="getPlaylist">
+        <body><![CDATA[
+          return this._playlist;
+        ]]></body>
+      </method>
 
       <!-- sbITabBrowserTab -->
       <method name="hideOuterPlaylist">
@@ -1773,55 +1790,6 @@
         ]]></setter>
       </property>
 
-
-      <!-- TODO remove once all media pages cleanup is complete -->
-      <method name="getPlaylist">
-        <body><![CDATA[
-          if ( this.innerPlaylist ) {
-            return this.innerPlaylist;
-          } else {
-            return this._playlist;
-          }
-        ]]></body>
-      </method>
-      <property name="innerPlaylist" readonly="true">
-        <getter><![CDATA[
-          if (!this.linkedBrowser.currentURI) {
-            // guard against null currentURI that can be caused by about:blank
-            return null;
-          }
-
-          if (!this.linkedBrowser.currentURI.schemeIs('chrome')) {
-            // only chrome urls can supply a playlist
-            return null;
-          }
-          // Get the document from the current browser tab
-          var playlistDocument = this.linkedBrowser.contentDocument;
-          if (playlistDocument == null) {
-            return null;
-          }
-
-          // Get the playlist element from within the current tab
-          // TODO change this
-          var playlist = playlistDocument.getElementById("playlist");
-          if (playlist == null) {
-            return null;
-          }
-
-          // Remove security wrappers
-          if (playlist.wrappedJSObject) {
-            playlist = playlist.wrappedJSObject;
-          }
-
-          // TODO remove completely
-          try { throw new Error("tab.innerPlaylist is going away in the next few days!"); }
-          catch (e) {
-            Components.utils.reportError(e);
-          }
-
-          return playlist;
-        ]]></getter>
-      </property>
       
       <!-- sbITabBrowserTab -->
       <property name="mediaPage" readonly="true">
@@ -1841,10 +1809,14 @@
           var pageWindow = this.linkedBrowser.contentWindow;
           if (pageWindow == null) {
             return null;
-          } else {
+          } 
+          else {
             pageWindow = pageWindow.wrappedJSObject;          
           }
-
+          if (!("mediaPage" in pageWindow)) {
+            return null;
+          } 
+          
           return pageWindow.mediaPage;
         ]]></getter>
       </property>
@@ -2052,6 +2024,13 @@
            first time in setUpMediaPage.  Used to determine
            when _viewForPage should be cleared. -->
       <field name="_isNewViewForPage">false</field>
+      
+      <!-- A media list view index that the mediapage should 
+           highlight on load.   
+           Set by gBrowser.showIndexInView and consumed
+           by tab.setUpMediaPage. -->
+      <field name="_highlightViewIndexOnLoad">null</field>
+      
 
       <method name="setUpMediaPage">
         <body><![CDATA[
@@ -2063,25 +2042,12 @@
           // Throw it away.
           this._viewForPage = null;
           this._isNewViewForPage = false;
+          this._highlightViewIndexOnLoad = null;
           return;
         }
         dump("MATT: setUpMediaPage \n");
         
         try {          
-          // For now we need to keep the playlist happy.
-          // This should go away once the commands system is updated.
-          // TODO: Remove this once widget and playback refactoring is complete
-          if (this.previousInnerPlaylist) {
-            this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
-            this.previousInnerPlaylist = null;
-          }
-          var playlist = this.innerPlaylist;
-          if (playlist) {
-            playlist.outerWindow = window;
-            playlist.addEventListener("playlist-play", this._onplaylistplay, true);
-            this.previousInnerPlaylist = playlist;
-          }
-          
           
           var page = this.mediaPage;
           var view;
@@ -2091,7 +2057,7 @@
             view = this._viewForPage;  
             
             // We've consumed the view, so it is no longer a new load
-            this._isNewViewForPage = false;
+            this._isNewViewForPage = false;            
           }
           
           if (view) {
@@ -2331,7 +2297,24 @@
             }
             this._loadingURL = "";
 
-            if (!this.mediaPage) {
+            if (this.mediaPage) {
+
+              // If we have to highlight something, now is
+              // probably a good time
+              if (this._highlightViewIndexOnLoad !== null && 
+                  this.mediaPage.mediaListView) 
+              {
+                var index = this._highlightViewIndexOnLoad;
+                var page = this.mediaPage;
+                this._highlightViewIndexOnLoad = null;
+                
+                // XXX Whhhhhy do I have to use a timeout? 
+                // The playlist sets the selection correctly, but then 
+                // immediately clears it.
+                setTimeout(function() { page.highlightItem(index); }, 500);
+              }
+
+            } else {
               this._metrics.metricsInc("app.browser", "pageViews", "");
               this.scanWebPage();
             }
@@ -2373,49 +2356,6 @@
         </body>
       </method>
 
-      <!-- TODO should be removed as part of the playback refactoring -->
-      <method name="onPlaylistPlay">
-        <parameter name="evt"/>
-        <body>
-        <![CDATA[
-          var target = evt.target;
-          if ( target.wrappedJSObject )
-          {
-            target = target.wrappedJSObject;
-          }
-          this.playPlaylistIndex( target.tree.currentIndex, target );
-        ]]>
-        </body>
-      </method>
-
-      <!-- TODO should be removed as part of the playback refactoring -->
-      <method name="playPlaylistIndex">
-        <parameter name="index"/>
-        <parameter name="playlist"/>
-        <body>
-        <![CDATA[
-          try
-          {
-            if (!playlist) playlist = gBrowser.currentPlaylist;
-            if (!playlist) return;
-
-            if (index < 0) {
-              // if no track is selected start playing from the first one
-              index = 0;
-            }
-
-            if (index < playlist.mediaListView.length) {
-              gPPS.playView(playlist.mediaListView, index);
-            }
-          }
-          catch ( err )
-          {
-            alert( err );
-          }
-        ]]>
-        </body>
-      </method>
-
       <method name="openBalloonTip">
         <body><![CDATA[
           if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
@@ -2449,9 +2389,9 @@
         <parameter name="session"></parameter>
         <body><![CDATA[
           var canDrop = false;
-          var mediaListPage = this.mediaListPage;
-          if (mediaListPage) {
-            canDrop = mediaListPage.canDrop(event, session);
+          var mediaPage = this.mediaPage;
+          if (mediaPage) {
+            canDrop = mediaPage.canDrop(event, session);
           }
           return canDrop;
         ]]></body>
@@ -2489,7 +2429,6 @@
                   .getService(Components.interfaces.sbIMediaListViewMap)
                   .releaseViews(event.target.linkedBrowser);
 
-        // TODO not needed?
         if (this._playlist) {
           this._playlist.destroy();
           this._playlist.parentNode.removeChild(this._playlist);
@@ -2562,9 +2501,9 @@
         var session = dragService.getCurrentSession();
 
         if (this.canDrop(event, session)) {
-          var mediaListPage = this.mediaListPage;
-          if (mediaListPage) {
-            mediaListPage.onDrop(event, session);
+          var mediaPage = this.mediaPage;
+          if (mediaPage) {
+            mediaPage.onDrop(event, session);
           }
         }
       ]]></handler>

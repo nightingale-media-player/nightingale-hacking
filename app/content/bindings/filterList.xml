@@ -241,12 +241,10 @@
       <method name="_onFilterListDblClick">
         <body>
           <![CDATA[
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                .getService(Components.interfaces.nsIWindowMediator);
-            var mainWin = wm.getMostRecentWindow("Songbird:Main");
-            if (mainWin && mainWin.window && mainWin.window.gBrowser) {
-              mainWin.window.gBrowser.currentPlaylist.sendPlayEvent();
-            }
+           // Send a play event and hope someone cares
+           var event = document.createEvent("Events");
+           event.initEvent("Play", true, true);
+           this.dispatchEvent(event);
           ]]>
         </body>
       </method>

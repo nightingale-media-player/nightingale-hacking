@@ -222,6 +222,19 @@
       <property name="outerWindow">
         <getter>
           <![CDATA[
+            // If we weren't supplied with an outer window, brute force it
+            if (!this._outerWindow) {
+              this._outerWindow = 
+                window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                      .getInterface(Components.interfaces.nsIWebNavigation)
+                      .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+                      .rootTreeItem
+                      .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                      .getInterface(Components.interfaces.nsIDOMWindow) 
+              if (!this._outerWindow) {
+                Components.utils.reportError("Playlist.xml failed to get the outer window");
+              }
+            }          
             return this._outerWindow;
           ]]>
         </getter>
@@ -491,9 +504,9 @@
   // Create whatever filters we think we need.
   this._generateFilters();
 
-  if (this._toolbar) this._toolbar.outerWindow = this._outerWindow;
-  if (this._commandmenuitems) this._commandmenuitems.outerWindow = this._outerWindow;
-  if (this._shortcuts) this._shortcuts.outerWindow = this._outerWindow;
+  if (this._toolbar) this._toolbar.outerWindow = this.outerWindow;
+  if (this._commandmenuitems) this._commandmenuitems.outerWindow = this.outerWindow;
+  if (this._shortcuts) this._shortcuts.outerWindow = this.outerWindow;
 
   // Clear out the old commands and add the new ones
   this._toolbar.hidden = true;
@@ -1259,9 +1272,9 @@
         <parameter name="stateonly"/>
         <body>
 <![CDATA[
-  this._toolbar.outerWindow = this._outerWindow;
-  this._commandmenuitems.outerWindow = this._outerWindow;
-  this._shortcuts.outerWindow = this._outerWindow;
+  this._toolbar.outerWindow = this.outerWindow;
+  this._commandmenuitems.outerWindow = this.outerWindow;
+  this._shortcuts.outerWindow = this.outerWindow;
   this._toolbar.refreshCommands(stateonly);
   this._commandmenuitems.refreshCommands(stateonly);
   this._shortcuts.refreshCommands(stateonly);
@@ -1349,39 +1362,44 @@
         </body>
       </method>
 
-      <!-- Event yellers -->
 
+      <!-- Event yellers -->
+   
       <method name="sendPlayEvent">
         <body>
           <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-play", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendPlayEvent - " + err )
-      }
-      ]]>
+           var event = document.createEvent("Events");
+           event.initEvent("Play", true, true);
+           var notHandled = this.dispatchEvent(event);
+           
+           // If nobody handled the event, just 
+           // initiate playback manually.
+           if (notHandled) {
+             var playbackService = 
+                Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                          .getService(Components.interfaces.sbIPlaylistPlayback);
+             playbackService.playView(this.mediaListView, 
+                Math.max(this.mediaListView.treeView.selection.currentIndex, 0));
+           }
+         ]]>
         </body>
       </method>
 
       <method name="sendSelChangeEvent">
         <body>
-          <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-selchange", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendPlayEvent - " + err )
-      }
-      ]]>
+        <![CDATA[
+          var e = document.createEvent("Events");
+          e.initEvent("playlist-selchange", false, true);
+          this.dispatchEvent(e);
+        ]]>
+        </body>
+      </method>
+
+      <method name="sendBurnToCDEvent">
+        <body>
+        <![CDATA[
+          // One day...
+        ]]>
         </body>
       </method>
 
@@ -1403,23 +1421,6 @@
         </body>
       </method>
 
-      <method name="sendBurnToCDEvent">
-        <body>
-          <![CDATA[
-          try
-          {
-            var e = document.createEvent("Events");
-            e.initEvent("playlist-burntocd", false, true);
-            this.dispatchEvent(e);
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - sendBurnToCDEvent - " + err )
-          }
-          ]]>
-        </body>
-      </method>
-
       <!-- Tree event listeners -->
 
       <method name="_onPlaylistDblClick">
@@ -1437,35 +1438,6 @@
             this.sendPlayEvent();
           }
          ]]>
-        </body>
-      </method>
-
-      <method name="onFilterDblClick">
-        <parameter name="evt"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            if( this.pointInTreeRows( evt.target.tree, evt.clientX, evt.clientY ) )
-            {
-              var playlist = evt.target.playlist;
-
-              if ( playlist )
-              {
-                document.__PlaylistXBL_DragObjectDown__ = playlist; // YUCK YUCK YUCK YUCK (note the absence of "f")
-                var txt = "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.currentIndex = 0;"
-                txt += "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.select( 0 );"
-                txt += "document.__PlaylistXBL_DragObjectDown__.sendPlayEvent();"
-                // Play it in awhile, after the tree updates.
-                setTimeout( txt, 250 );
-              }
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onFilterDblClick - " + err );
-          }
-        ]]>
         </body>
       </method>
 

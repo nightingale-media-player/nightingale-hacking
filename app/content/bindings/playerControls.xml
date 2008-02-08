@@ -888,6 +888,7 @@
         <parameter name="nopause"/>
         <body>
           <![CDATA[
+            // If we are already playing something just pause/unpause playback
             if (this.gPPS.playing) {
               // if we're playing already then play / pause
               if (this.gPPS.paused || nopause) {
@@ -895,36 +896,15 @@
               } else {
                 this.gPPS.pause();
               }
-            } else if (window.gBrowser && window.gBrowser.currentPlaylist) {
-              // if there's a browser and a playlist active, tell the playlist
-              // to play itself
-              gBrowser.currentPlaylist.sendPlayEvent();
+            // Otherwise dispatch a play event.  Someone should catch this
+            // and intelligently initiate playback.  If not, just have
+            // the playback service play the default.
             } else {
-
-              // otherwise go get the library and play it
-              var libraryManager =
-                Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                          .getService(Components.interfaces.sbILibraryManager);
-              var view = libraryManager.mainLibrary.createView();
-
-              // Filter the view as if it is being shown in the UI to determine
-              // if this library actually has anything playable in it
-              view.filterConstraint = LibraryUtils.standardFilterConstraint;
-              if (view.length > 0) {
-
-                // Get the sort for this list by parsing the list's column spec.  Then hit
-                // the property manager to see if there is a special sort profile for this
-                // ID
-                var parser = new ColumnSpecParser(libraryManager.mainLibrary, null);
-                if (parser.sortID) {
-                  var pm =
-                    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                              .getService(Components.interfaces.sbIPropertyManager);
-                  var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
-                  view.setSort(sort);
-                }
-
-                this.gPPS.playView(view, 0);
+              var event = document.createEvent("Events");
+              event.initEvent("Play", true, true);
+              var notHandled = this.dispatchEvent(event);
+              if (notHandled) {
+                this.gPPS.play();
               }
             }
           ]]>
@@ -950,7 +930,6 @@
       </method>
       
     </implementation>
-
   </binding>
 
 
@@ -1553,7 +1532,7 @@
       <method name="setInterval">
         <body>
           <![CDATA[
-            this._interval = setInterval( this.onInterval, 500, this );
+            this._interval = setInterval( this.onInterval, 1000, this );
           ]]>
         </body>
       </method>
@@ -1758,35 +1737,7 @@
             return;
           }
           
-          // We do not perform selectCurrentIndex if there is no gBrowser, 
-          // because there is no guarantee that the custom code actually wants 
-          // to select the track on the playing view, maybe the user wants to 
-          // select it on a cloned view (ie, jumptofeathers)
-
-          // Create a self-calling function to try to set the selection over time.
-          function selectCurrentIndex( iterationCount ) {
-            // Tell the view to select the item?  
-            var currentIndex = gPPS.currentIndex;
-            if (currentIndex > -1) {
-              // is the page set up right yet?
-              if (browser.currentMediaPage && 
-                  browser.currentMediaPage.mediaListView == gPPS.playingView) {
-                browser.currentMediaPage.highlightItem(currentIndex);
-              } else {
-                if (iterationCount++ < 20) {
-                  setTimeout(selectCurrentIndex, 250, iterationCount);
-                }
-              }
-            }
-          }
-          selectCurrentIndex(0);
-
-          var tab = browser.getTabForView(gPPS.playingView);          
-          if (tab) {
-            browser.selectedTab = tab;
-          } else {
-            browser.loadMediaList(gPPS.playingView.mediaList, null, null, gPPS.playingView);
-          }
+          browser.showIndexInView(gPPS.playingView, gPPS.currentIndex);
           ]]>
         </body>
       </method>

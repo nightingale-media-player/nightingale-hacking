@@ -28,8 +28,6 @@
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
-const SBJUMPTOINDEXRETRYCOUNT = 3;    // Retries for highlighting new item
-const SBJUMPTOINDEXDELAY      = 500;  // Delay in milliseconds to hightlight
 
 // Open functions
 //
@@ -37,9 +35,6 @@ const SBJUMPTOINDEXDELAY      = 500;  // Delay in milliseconds to hightlight
 
 try
 {
-  // TODO: Remove this
-  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
-
   function SBFileOpen( )
   {
     var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
@@ -140,7 +135,7 @@ try
     SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow );
     if ( url_open_data.retval == "ok" )
     {
-      var library = SBGetWebLibrary();
+      var library = LibraryUtils.webLibrary;
       var item = SBImportURLIntoWebLibrary(url_open_data.URL);
 
       // And if we're good, play it.
@@ -228,13 +223,7 @@ try
 
           // Give the new media list focus
           if (typeof gBrowser != 'undefined') {
-            var librarySPS =
-              Components.classes['@songbirdnest.com/servicepane/library;1']
-                        .getService(Components.interfaces.sbILibraryServicePaneService);
-            var node = librarySPS.getNodeForLibraryResource(mediaList);
-            if (node) {
-              gBrowser.loadURI(node.url);
-            }
+            gBrowser.loadMediaList(mediaList);
           }
         }
 
@@ -485,15 +474,6 @@ function makeNewPlaylist(mediaListType) {
 }
 
 
-function SBKoshiOpen( parentWindow )
-{
-  // Make a magic data object to get passed to the dialog
-  var koshi_data = new Object();
-  koshi_data.retval = "";
-  // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/koshiTest.xul", "", "chrome,centerscreen", koshi_data, parentWindow );
-}
-
 function SBExtensionsManagerOpen( parentWindow )
 {
   if (!parentWindow) parentWindow = window;
@@ -522,7 +502,18 @@ function SBTrackEditorOpen( parentWindow, playlist )
   } else {
     const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist ? playlist : gBrowser.currentPlaylist, parentWindow);
+    
+    // HAAAAAAAAAACK. The track editor is a) broken and b) depends on the playlist
+    if (playlist) {
+      playlist = gBrowser.currentOuterPlaylist;
+    }
+    if (playlist) {
+      if (gBrowser.mediaPage && gBrowser.mediaPage._playlist) {
+        playlist = gBrowser.mediaPage._playlist;
+      }
+    }
+    
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist, parentWindow);
   }
 }
 
@@ -739,54 +730,7 @@ function installXPI(localFilename)
   InstallTrigger.install( inst );  // "InstallTrigger" is a Moz Global.  Don't grep for it.
   // http://developer.mozilla.org/en/docs/XPInstall_API_Reference:InstallTrigger_Object
 }
-// Library Utilities
 
-/**
- * \brief Get the web library from the library manager.
- */
-function SBGetWebLibrary() {
-  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                  .getService(Components.interfaces.sbILibraryManager);
-
-  var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefService);
-
-  var prefBranch = prefsService.getBranch("songbird.library.")
-                      .QueryInterface(Components.interfaces.nsIPrefBranch);
-
-  var webLibrary = prefBranch.getCharPref("web");
-
-  return libraryManager.getLibrary(webLibrary);
-}
-
-/**
- * \brief Verify to see if the library resource is the web library.
- */
-function SBIsWebLibrary(aLibraryResource) {
-  if(!(aLibraryResource instanceof Components.interfaces.sbILibraryResource)) {
-    return Components.results.NS_ERROR_INVALID_ARG;
-  }
-
-  if(!(aLibraryResource instanceof Components.interfaces.sbILibrary)) {
-    return false;
-  }
-
-  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                  .getService(Components.interfaces.sbILibraryManager);
-
-  var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefService);
-
-  var prefBranch = prefsService.getBranch("songbird.library.")
-                      .QueryInterface(Components.interfaces.nsIPrefBranch);
-
-  var webLibraryGuid = prefBranch.getCharPref("web");
-
-  var webLibrary = libraryManager.getLibrary(webLibraryGuid);
-  var library = libraryManager.getLibrary(aLibraryResource.guid);
-
-  return webLibrary.guid == library.guid;
-}
 
 /**
  * \brief Import a URL into the main library.
@@ -855,7 +799,7 @@ function SBImportURLIntoMainLibrary(url) {
 }
 
 function SBImportURLIntoWebLibrary(url) {
-  var library = SBGetWebLibrary();
+  var library = LibraryUtils.webLibrary;
   var ioService = Components.classes["@mozilla.org/network/io-service;1"]
     .getService(Components.interfaces.nsIIOService);
 
@@ -902,75 +846,6 @@ function SBImportURLIntoWebLibrary(url) {
   return mediaItem;
 }
 
-function SBJumpToIndex(item, retryCount) {
-  // Adjust retry counts
-  if (!retryCount) {
-    retryCount = SBJUMPTOINDEXRETRYCOUNT;
-  }
-  retryCount--;
-
-  // Grab the currentPlayList in view
-  if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
-    var currentPlayList = gBrowser.currentPlaylist;
-    if (currentPlayList) {
-      var currentMediaListView = currentPlayList.mediaListView;
-      var playTree = currentPlayList.tree;
-
-      try {
-        var indexOfItem = currentMediaListView.getIndexForItem(item);
-        playTree.treeBoxObject.ensureRowIsVisible(indexOfItem);
-        playTree.view.selection.select(indexOfItem);
-      } catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
-        // NS_ERROR_NOT_AVAILABLE (Item is not in the current list)
-        // Retry if we have failed (but not more than a couple times)
-        if (retryCount > 0) {
-          setTimeout(function () { SBJumpToIndex(item, retryCount); }, SBJUMPTOINDEXDELAY);
-        }
-      }
-    }
-  }
-}
-
-// lone> this does NOT actually display the view... just plays it,
-// is that on purpose ?
-function SBDisplayViewForListAndPlayItem(list, item) {
-  var currentPlayListView = null;
-  var indexOfItem = -1;
-
-  // First we want to try and play from the current view
-  // Grab the currentPlayList in view
-  if ( typeof gBrowser != 'undefined' ) {  // if (!gBrowser) causes javascript error
-    var currentPlayList = gBrowser.currentPlaylist;
-    if (currentPlayList) {
-      currentPlayListView = currentPlayList.mediaListView;
-      try {
-        indexOfItem = currentPlayListView.getIndexForItem(item);
-        // Focus item.
-        setTimeout(function () { SBJumpToIndex(item, SBJUMPTOINDEXRETRYCOUNT); }, SBJUMPTOINDEXDELAY);
-      } catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
-        indexOfItem = -1;
-      }
-    }
-  }
-
-  // We did not find the item in the current view, so create our own.
-  if (indexOfItem < 0) {
-    // Create a view from the list
-    currentPlayListView = list.createView();
-
-    // filter the view to just the single item
-    var filter = LibraryUtils.createConstraint([
-      [
-        [SBProperties.GUID, [item.guid]]
-      ]
-    ]);
-    currentPlayListView.filterConstraint = filter;
-    indexOfItem = currentPlayListView.getIndexForItem(item);
-  }
-
-  // Now play the item.
-  gPPS.playView(currentPlayListView, indexOfItem);
-}
 
 function getFirstItemByProperty(aMediaList, aProperty, aValue) {
 

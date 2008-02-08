@@ -100,11 +100,29 @@ var SBDropObserver =
   },
   
   playFirstDrop: function(firstDrop) {
-    SBDisplayViewForListAndPlayItem(
-      Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-        .getService(Components.interfaces.sbILibraryManager)
-        .mainLibrary, 
-      firstDrop);
+    var view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+
+    // Get the sort for this list by parsing the list's column spec.  Then hit
+    // the property manager to see if there is a special sort profile for this
+    // ID
+    var parser = new ColumnSpecParser(LibraryUtils.mainLibrary, null);
+    if (parser.sortID) {
+      var pm =
+        Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                  .getService(Components.interfaces.sbIPropertyManager);
+      var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
+      view.setSort(sort);
+    }
+    
+    var index = view.getIndexForItem(firstDrop);
+    
+    // If we have a browser, try to show the view
+    if (window.gBrowser) {
+      gBrowser.showIndexInView(view, index);
+    }
+    
+    // Play the item
+    gPPS.playView(view, index);
   }
 };
 

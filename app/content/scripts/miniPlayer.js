@@ -116,26 +116,26 @@ var gMiniplayer = {
     switch ( evt.keyCode )
     {
       case 37: // Arrow Left
-        onBack( );
+        gPPS.previous();
         break;
       case 39: // Arrow Right
-        onFwd( );
+        gPPS.next();
         break;
       case 40: // Arrow Down
       case 13: // Return
         if ( gPPS.playing )
-          onPause( );
+          gPPS.pause();
         else
-          onPlay( );
+          gPPS.play();
         break;
     }
     switch ( evt.charCode )
     {
       case 32: // Space
         if ( gPPS.playing )
-          onPause( );
+          gPPS.pause();
         else
-          onPlay( );
+          gPPS.play();
         break;
     }
   },

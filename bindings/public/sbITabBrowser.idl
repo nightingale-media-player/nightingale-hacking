@@ -55,10 +55,9 @@ interface sbITabBrowser : nsISupports
  * \brief 
  * \sa sbITabBrowser
  */
-[scriptable, uuid(06d63380-d35e-11dc-95ff-0800200c9a66)]
+[scriptable, uuid(9f6d5d80-d5d4-11dc-95ff-0800200c9a66)]
 interface sbITabBrowserTab : nsISupports
 {
-  readonly attribute nsIDOMElement innerPlaylist;
   readonly attribute nsIDOMElement outerPlaylist;
   readonly attribute sbIMediaPage mediaPage;
   readonly attribute sbIMediaListView mediaListView;

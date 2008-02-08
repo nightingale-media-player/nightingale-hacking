@@ -83,6 +83,16 @@
   <script type="application/x-javascript">
   <![CDATA[
 
+                    
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+
 
 /**
  * Media Page Controller
@@ -188,10 +198,24 @@ window.mediaPage = {
     this._playlist.highlightItem(aIndex);
   },
 
+
+  /** 
+   * Called when something is dragged over the tabbrowser tab for this window
+   */
+  canDrop: function(aEvent, aSession) {
+    return this._playlist.canDrop(aEvent, aSession);
+  },
+
+
+  /** 
+   * Called when something is dropped on the tabbrowser tab for this window
+   */
+  onDrop: function(aEvent, aSession) {
+    return this._playlist.
+             _dropOnTree(this._playlist.mediaListView.length,
+                         Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER);
+  },
   
-  // TODO Playback - coming from matt
-  
-  // TODO Drag and drop - coming from francis
   
     
   /** 
@@ -246,7 +270,17 @@ window.mediaPage = {
       }
     }
   },
+  
+  // TODO CONFIRM THAT THIS IS NEEDED!
+  QueryInterface: function(iid) {
+    if (iid.equals(Ci.sbIMediaPage) || 
+        iid.equals(Ci.nsISupports))
+      return this;
+    throw Cr.NS_ERROR_NO_INTERFACE;
+  }
+
 } // End window.mediaPage 
+
 
   ]]>
   </script>

@@ -132,7 +132,7 @@ var LibraryUtils = {
   },
 
   createStandardMediaListView: function(aMediaList, aSearchString) {
-    mediaListView = aMediaList.createView();
+    var mediaListView = aMediaList.createView();
     
     // By default, we never want to show lists and hidden 
     // things in the playlist

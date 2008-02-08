@@ -344,12 +344,33 @@ var playbackHotkeyActions = {
   },
 
   _hotkey_playPause: function() {
-    // If paused or stopped, then start playing
-    if (this._gPPS.paused == this._gPPS.playing) {
-      this._gPPS.play(); 
-    // Otherwise pause
-    } else {
-      this._gPPS.pause();  
+    try {
+      // If we are already playing something just pause/unpause playback
+      if (this._gPPS.playing) {
+        if (this._gPPS.paused) {
+          this._gPPS.play();
+        } else {
+          this._gPPS.pause();
+        }
+      // Otherwise dispatch a play event to the top window. 
+      // Someone should catch this and intelligently initiate playback.  
+      // If not, just have the playback service play the default.
+      } else {
+        var notHandled = true;
+        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                           .getService(Components.interfaces.nsIWindowMediator);
+        var topWindow = wm.getMostRecentWindow(null);
+        if (topWindow) {
+          var event = topWindow.document.createEvent("Events");
+          event.initEvent("Play", true, true);
+          notHandled = topWindow.document.dispatchEvent(event);
+        }
+        if (notHandled) {
+          this._gPPS.play();
+        }
+      } 
+    } catch (e) {
+      Components.utils.reportError(e);
     }
   },
 
