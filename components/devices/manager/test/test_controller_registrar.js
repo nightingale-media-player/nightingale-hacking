@@ -45,6 +45,14 @@ function runTest () {
                           .getService(Components.interfaces.sbIDeviceManager2);
 
   var params = [];
+
+  var defaultControllers = ArrayConverter.JSArray(manager.controllers);
+  var defaultControllerCount = defaultControllers.length;
+
+  for each (defaultController in defaultControllers) {
+    defaultController.QueryInterface(Components.interfaces.sbIDeviceController);
+    params.push(defaultController.name);
+  }
   
   // register some dummy controllers
   for (var i = 0; i < 1000; ++i) {
