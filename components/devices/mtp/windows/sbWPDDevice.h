@@ -174,6 +174,13 @@ private:
   // Prevent copying and assignment
   sbWPDDevice(sbWPDDevice const &) {}
   sbWPDDevice & operator= (sbWPDDevice const &) { return *this; }
+
+protected:
+  /* create a property key from a string of form "{guid} int"
+   * @see PSPropertyKeyFromString (propsys.h)
+   */
+  static nsresult PropertyKeyFromString(const nsAString & aString,
+                                        PROPERTYKEY* aPropKey);
 };
 
 #define SB_WPDDEVICE_CID \

@@ -86,7 +86,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             mssachlp \
                             PortableDeviceGuids \
-                            propsys \
                             sbDeviceBase$(DEBUG:%=_d) \
                             $(NULL)
 

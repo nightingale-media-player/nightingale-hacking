@@ -37,12 +37,12 @@
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <nsIURL.h>
+#include <nsID.h>
 #include <sbIDevice.h>
 #include <sbDeviceEvent.h>
 #include <sbDeviceStatus.h>
 #include "sbWPDCommon.h"
 #include "sbPropertyVariant.h"
-#include <propvarutil.h>
 #include <sbDeviceContent.h>
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
@@ -489,9 +489,8 @@ nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
                                   nsIVariant * value)
 {
   PROPERTYKEY propKey;
-  NS_ENSURE_TRUE(SUCCEEDED(PSPropertyKeyFromString(nsString(key).get(), 
-                                                   &propKey)),
-                 NS_ERROR_FAILURE);
+  nsresult rv;
+  rv = PropertyKeyFromString(key, &propKey);
   
   nsRefPtr<IPortableDeviceValues> propValues;
   NS_ENSURE_TRUE(CoCreateInstance(CLSID_PortableDeviceValues,
@@ -502,7 +501,7 @@ nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
                  NS_ERROR_FAILURE);
   PROPVARIANT pv = {0};
   PropVariantInit(&pv);
-  nsresult rv = nsIVariantToPROPVARIANT(value, pv);
+  rv = nsIVariantToPROPVARIANT(value, pv);
   NS_ENSURE_SUCCESS(rv, rv);
   propValues->SetValue(propKey, &pv);
   nsRefPtr<IPortableDeviceValues> results;
@@ -549,9 +548,8 @@ nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
                                   nsIVariant ** value)
 {
   PROPERTYKEY propKey;
-  NS_ENSURE_TRUE(SUCCEEDED(PSPropertyKeyFromString(nsString(key).get(), 
-                                                   &propKey)),
-                 NS_ERROR_FAILURE);
+  nsresult rv = PropertyKeyFromString(key, &propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
   return GetProperty(properties, propKey, value);
 }
 
@@ -931,5 +929,28 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED,
                            var);      }
   NS_RELEASE(request);
+  return NS_OK;
+}
+
+#ifndef NSID_LENGTH
+#define NSID_LENGTH 39
+#pragma message(" XXX Mook Remove this junk when we get new xulrunners!")
+#endif
+nsresult sbWPDDevice::PropertyKeyFromString(const nsAString & aString,
+                                            PROPERTYKEY* aPropKey)
+{
+  NS_ENSURE_ARG_POINTER(aPropKey);
+  
+  NS_ENSURE_TRUE(aString.Length() > NSID_LENGTH + 2, NS_ERROR_INVALID_ARG);
+  nsID id;
+  PRBool success;
+  success = id.Parse(NS_LossyConvertUTF16toASCII(aString).BeginReading());
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  aPropKey->fmtid = *(GUID*)&id;
+  
+  nsresult rv;
+  aPropKey->pid = nsDependentSubstring(aString, NSID_LENGTH + 2).ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
