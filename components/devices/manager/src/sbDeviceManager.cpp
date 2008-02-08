@@ -172,13 +172,7 @@ NS_IMETHODIMP sbDeviceManager::CreateEvent(PRUint32 aType,
                                            nsISupports *aOrigin,
                                            sbIDeviceEvent **_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
-  nsCOMPtr<sbDeviceEvent> event = new sbDeviceEvent();
-  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
-  
-  nsresult rv = event->InitEvent(aType, aData, aOrigin);
-  NS_ENSURE_SUCCESS(rv, rv);
-  return CallQueryInterface(event, _retval);
+  return sbDeviceEvent::CreateEvent(aType, aData, aOrigin, _retval);
 }
 
 /* readonly attribute nsIArray sbIDeviceControllerRegistrar::controllers; */
