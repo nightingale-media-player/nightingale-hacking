@@ -54,14 +54,14 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
     this._getColumnMap(aMediaList.getProperty(SBProperties.columnSpec),
                        this.ORIGIN_PROPERTY);
 
-  if (!columnMap.length &&
+  if (!columns.columnMap.length &&
       aPlaylist &&
       aPlaylist.hasAttribute("useColumnSpecPreference") ) {
     var pref = aPlaylist.getAttribute("useColumnSpecPreference");
 
     try {
       if (Application.prefs.has(pref)) {
-        columnMap =
+        columns =
             this._getColumnMap(Application.prefs.get(pref).value,
                                this.ORIGIN_PREFERENCES);
       }
@@ -140,7 +140,7 @@ ColumnSpecParser.prototype = {
 
   _getColumnMap: function(columnSpec, columnSpecOrigin) {
     var columns = {
-      columnMap: null,
+      columnMap: [],
       sortID: null,
       sortIsAscending: null
     }
