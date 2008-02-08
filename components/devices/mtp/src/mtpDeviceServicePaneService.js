@@ -27,6 +27,7 @@
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/components/ArrayConverter.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
