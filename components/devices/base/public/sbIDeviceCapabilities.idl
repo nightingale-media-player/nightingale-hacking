@@ -26,16 +26,64 @@
 
 #include "nsISupports.idl"
 
-interface nsISimpleEnumerator;
+interface nsIArray;
+interface sbIDevice;
 
 /**
  * \interface sbIDeviceCapabilities
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(193121e6-51a6-40ea-b63d-701ed240a953)]
+[scriptable, uuid(54d42a87-9031-4928-991e-e66f4916a90b)]
 interface sbIDeviceCapabilities : nsISupports
 {
+
+  /**
+   * \brief Sets an array of function types
+   * \param aFunctionTypes and array of function types
+   * \param aFunctionTypesCount length of aFunctionTypes array
+   */
+  void setFunctionTypes([array, size_is(aFunctionTypesCount)]
+                         in PRUint32 aFunctionTypes,
+                        in unsigned long aFunctionTypesCount);
+
+  /**
+   * \brief Sets an array of event types
+   * \param aEventTypes an array of event types
+   * \param aEventCount length of aEventTypes array
+   */
+  void setEventTypes([array, size_is(aEventTypesCount)]
+                      in unsigned long aEventTypes,
+                     in unsigned long aEventTypesCount);
+
+  /**
+   * \brief Add an array of content types for a function type
+   * \param aFunctionType Function type these content types fall under
+   * \param aContentTypes an array of content types for aFunctionType
+   * \param aContentTypesCount length of aContentTypes array
+   */
+  void addContentTypes(in PRUint32 aFunctionType,
+                [array, size_is(aContentTypesCount)] in PRUint32 aContentTypes,
+                in unsigned long aContentTypesCount);
+  
+  /**
+   * \brief Add an array of formats for a content type
+   * \param aContentType Content type these formats fall under
+   * \param aFormats an array of formats for aContentType
+   * \param aFormatsCount length of aFormats array
+   */
+  void addFormats(in PRUint32 aContentType,
+                  [array, size_is(aFormatsCount)] in PRUint32 aFormats,
+                  in unsigned long aFormatsCount);
+
+  /**
+   * \brief Indicates that the initialization is complete, the add and set
+   *        functions above will no longer affect the data.
+   */
+  void initDone();
+
+
+  
   /**
    *
    */
@@ -51,12 +99,15 @@ interface sbIDeviceCapabilities : nsISupports
   /**
    * 
    */
-  const PRUint32 FUNCTION_CLIENT_DEFINED = 0x800000000;
+  const PRUint32 FUNCTION_CLIENT_DEFINED = 0x80000000;
 
   /**
-   * An enumeration of nsISupportsPRUint32 values defined above.
+   * An array of nsISupportsPRUint32 values defined above.
    */
-  nsISimpleEnumerator getSupportedFunctionTypes();
+  // 
+  void getSupportedFunctionTypes(out unsigned long aArrayCount,
+                                 [retval, array, size_is(aArrayCount)]
+                                  out PRUint32 aFunctionTypes);
 
   /**
    * 
@@ -73,20 +124,28 @@ interface sbIDeviceCapabilities : nsISupports
   /**
    * 
    */
-  const PRUint32 CONTENT_CLIENT_DEFINED = 0x800000000;
+  const PRUint32 CONTENT_CLIENT_DEFINED = 0x80000000;
 
   /**
-   * An enumeration of nsISupportsPRUint32 values defined above.
+   * An array of nsISupportsPRUint32 values defined above.
    */
-  nsISimpleEnumerator getSupportedContentTypes(in PRUint32 aFunctionType);
+  void getSupportedContentTypes(in PRUint32 aFunctionType,
+                                out unsigned long aArrayCount,
+                                [retval, array, size_is(aArrayCount)]
+                                  out PRUint32 aContentTypes);
 
   /**
-   * Returns an enumeration of sbIContentTypeFormat objects.
+   * Returns an array of sbIContentTypeFormat objects.
    */
-  nsISimpleEnumerator getSupportedFormats(in PRUint32 aContentType);
+  void getSupportedFormats(in PRUint32 aContentType,
+                           out unsigned long aArrayCount,
+                           [retval, array, size_is(aArrayCount)]
+                            out PRUint32 aSuportedFormats);
 
   /**
-   * An enumeration of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl
+   * An array of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl
    */
-  nsISimpleEnumerator getSupportedEvents();
+  void getSupportedEvents(out unsigned long aArrayCount,
+                          [retval, array, size_is(aArrayCount)]
+                           out unsigned long aSupportedEvents);
 };

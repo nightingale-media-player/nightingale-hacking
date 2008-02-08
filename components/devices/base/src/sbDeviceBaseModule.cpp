@@ -37,16 +37,36 @@
 #include <nsIGenericFactory.h>
 
 #include "sbContentTypeFormat.h"
+#include "sbDeviceProperties.h"
+#include "sbDeviceCapabilities.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbContentTypeFormat);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
 
 static nsModuleComponentInfo sbDeviceBaseComponents[] =
 {
   {
+    SONGBIRD_DEVICEPROPERTIES_CLASSNAME,
+    SONGBIRD_DEVICEPROPERTIES_CID,
+    SONGBIRD_DEVICEPROPERTIES_CONTRACTID,
+    sbDevicePropertiesConstructor
+  },
+
+  {
+    SONGBIRD_DEVICECAPABILITIES_CLASSNAME,
+    SONGBIRD_DEVICECAPABILITIES_CID,
+    SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
+    sbDeviceCapabilitiesConstructor
+  },
+
+  {
     SONGBIRD_CONTENTTYPEFORMAT_CLASSNAME,
     SONGBIRD_CONTENTTYPEFORMAT_CID,
     SONGBIRD_CONTENTTYPEFORMAT_CONTRACTID,
-    sbContentTypeFormatConstructor  }
+    sbContentTypeFormatConstructor
+  }
 };
 
 NS_IMPL_NSGETMODULE(SongbirdDeviceBaseComps, sbDeviceBaseComponents)
+

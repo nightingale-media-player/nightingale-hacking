@@ -36,6 +36,8 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceCompatibility.cpp \
            sbDeviceEvent.cpp \
            sbDeviceLibrary.cpp \
+           sbDeviceProperties.cpp \
+           sbDeviceCapabilities.cpp \
            $(topsrcdir)/components/moz/strings/src/sbTArrayStringEnumerator.cpp \
            $(NULL)
 
