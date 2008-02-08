@@ -50,7 +50,7 @@ NS_IMETHODIMP sbWPDDeviceThread::Run()
   do
   {
     // Check the device for work
-    while (mDevice->ProcessRequest()) ;
+    while (mDevice->ProcessThreadsRequest()) ;
     // Wait on the event, will get set when there are items on the queue
     ::WaitForSingleObject(mEvent, INFINITE);
   } while (!mTimeToDie);
