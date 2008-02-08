@@ -522,6 +522,12 @@ case "$SB_PLATFORM" in
   linux)
     XULRUNNERDIR="/xulrunner"
 
+    _SAVE_LIBS=$LIBS
+    LIBS=
+    AC_SEARCH_LIBS([pthread_create], [pthread])
+    AC_SUBST(PTHREAD_LIBS, $LIBS)
+    LIBS=$_SAVE_LIBS
+
     # Our GStreamer component needs GTK headers (we don't link, so we only
     #   take the flags). We only check for gtk2 right now, if we _really_
     #    need gtk1 support we can add it later but we should resist at all costs.

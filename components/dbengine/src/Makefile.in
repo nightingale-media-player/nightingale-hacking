@@ -125,9 +125,10 @@ ifeq (macosx,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               pthread
-  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script -Wl,$(srcdir)/hide-sqlite.ver
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
+  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver \
+                             $(PTHREAD_LIBS) \
+                             $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
