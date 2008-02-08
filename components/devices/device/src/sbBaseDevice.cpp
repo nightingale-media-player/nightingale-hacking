@@ -61,6 +61,8 @@ sbBaseDevice::sbBaseDevice()
   NS_ASSERTION(deallocator, "Failed to create queue deallocator");
   mRequests.SetDeallocator(deallocator);
   /* the deque owns the deallocator */
+  
+  mRequestLock = nsAutoLock::NewLock(__FILE__ "::mRequestLock");
 }
 
 sbBaseDevice::~sbBaseDevice()
@@ -72,6 +74,7 @@ nsresult sbBaseDevice::PushRequest(const int aType,
                                    sbIMediaItem* aItem,
                                    sbIMediaList* aList)
 {
+  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(aType != TransferRequest::REQUEST_RESERVED,
                  NS_ERROR_INVALID_ARG);
 
@@ -136,6 +139,7 @@ nsresult sbBaseDevice::PushRequest(const int aType,
 nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoLock lock(mRequestLock);
   for(;;) {
@@ -159,6 +163,7 @@ nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
 nsresult sbBaseDevice::PeekRequest(sbBaseDevice::TransferRequest** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   nsAutoLock lock(mRequestLock);
 
   for(;;) {
@@ -196,6 +201,7 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
                                      sbIMediaItem* aItem,
                                      sbIMediaList* aList)
 {
+  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   nsAutoLock lock(mRequestLock);
   
   for (int index = 0; index < mRequests.GetSize(); ++index) {
@@ -217,6 +223,7 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
 
 nsresult sbBaseDevice::ClearRequests()
 {
+  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   nsAutoLock lock(mRequestLock);
   mRequests.Erase();
   return NS_OK;
