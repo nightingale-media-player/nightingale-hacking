@@ -39,7 +39,13 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbWPDDevice.cpp \
            sbWPDDeviceController.cpp \
            sbWPDDeviceThread.cpp \
+           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
+           $(topsrcdir)/components/devices/base/src/sbContentTypeFormat.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceCompatibility.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceLibrary.cpp \
+           $(topsrcdir)/components/moz/strings/src/sbTArrayStringEnumerator.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
@@ -54,7 +60,10 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
