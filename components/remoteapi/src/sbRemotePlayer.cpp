@@ -1611,6 +1611,9 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     //      from the preferences panel
     //   2) The target was a XUL Element, happens when the event comes from
     //      the notification box.
+    // The prefPanel event goes to all tabs since it is general information
+    //   that could impact any page. The notification event only goes to the
+    //   page that caused the notification.
 
     // Get the original target
     nsresult rv;
@@ -1624,18 +1627,42 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
 
     PRBool allow = PR_FALSE;
     if ( SameCOMIdentity( originalEventTarget, mChromeDoc ) ) {
-      LOG(( "sbRemotePlayer::HandleEvent() - target IS this chromeDoc - ALLOWING " ));
+      LOG(( "    - target IS this chromeDoc - ALLOWING " ));
       allow = PR_TRUE;
     }
 
-    nsCOMPtr<nsIDOMXULElement> domXULElement = do_QueryInterface(originalEventTarget, &rv);
+    nsCOMPtr<nsIDOMXULElement> domXULElement (
+      do_QueryInterface(originalEventTarget) );
     if (domXULElement) {
-      // XXXredfive - when the rapi service comes online and we can map between
-      //              a tab and the songbird object we will be able to look up
-      //              to see if this notification box was ours. For now always
-      //              fire an event.
-      LOG(( "sbRemotePlayer::HandleEvent() - is a DOMXULElement - ALLOWING" ));
-      allow = PR_TRUE;
+      // this is the notifcation box sending us an event. make sure it is ours
+
+      // Get the notifcation box for the notification that is the target
+      nsCOMPtr<nsIDOMNode> targetNotification (
+        do_QueryInterface(originalEventTarget) );
+      NS_ENSURE_TRUE( targetNotification, NS_ERROR_OUT_OF_MEMORY );
+
+      nsCOMPtr<nsIDOMNode> targetNotificationBox;
+      rv = targetNotification->GetParentNode(
+        getter_AddRefs(targetNotificationBox) );
+      NS_ENSURE_SUCCESS( rv, rv );
+
+      // Get the notification associated with our tab/browser
+      nsCOMPtr<nsIDOMElement> selfBrowser;
+      rv = GetBrowser( getter_AddRefs(selfBrowser) );
+      NS_ENSURE_SUCCESS( rv, rv );
+
+      nsCOMPtr<nsIDOMNode> selfBrowserNode ( do_QueryInterface( selfBrowser ) );
+      NS_ENSURE_TRUE( selfBrowserNode, NS_ERROR_OUT_OF_MEMORY );
+
+      nsCOMPtr<nsIDOMNode> selfNotificationBox;
+      rv = selfBrowserNode->GetParentNode(
+        getter_AddRefs(selfNotificationBox) );
+      NS_ENSURE_SUCCESS( rv, rv );
+
+      if ( SameCOMIdentity( selfNotificationBox, targetNotificationBox ) ) {
+        LOG(( "    - target IS this notificationbox - ALLOWING " ));
+        allow = PR_TRUE;
+      }
     }
 
     if ( allow ) {

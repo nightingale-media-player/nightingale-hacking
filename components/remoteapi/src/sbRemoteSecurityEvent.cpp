@@ -213,6 +213,7 @@ sbRemoteSecurityEvent::InitSecurityEvent(nsIDOMDocument *aDoc,
   docEvent->CreateEvent( RAPI_EVENT_CLASS, getter_AddRefs(event) );
   NS_ENSURE_STATE(event);
 
+  // XXXredfive - this looks suspect, if access we say permission changed?
   rv = event->InitEvent( aHasAccess ? SB_EVENT_RAPI_PERMISSION_CHANGED : SB_EVENT_RAPI_PERMISSION_DENIED, 
                          PR_TRUE, 
                          PR_TRUE );

@@ -1117,6 +1117,7 @@
             var editEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
                         .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
 
+            // this causes an access denied event to be sent to the page
             editEvt.initSecurityEvent( document,
                                        closure.siteScope,
                                        closure.category,
@@ -1792,7 +1793,6 @@
         ]]></setter>
       </property>
 
-      
       <!-- sbITabBrowserTab -->
       <property name="mediaPage" readonly="true">
         <getter><![CDATA[
