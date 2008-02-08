@@ -1403,8 +1403,10 @@
         <parameter name="aNodeId" />
         <parameter name="aPropertyName" />
         <body><![CDATA[
-          var SP_NS = 'http://songbirdnest.com/rdf/servicepane#'
+          var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
+          var NC_NS = 'http://home.netscape.com/NC-rdf#';
           if (aPropertyName != SP_NS+'Properties' &&
+              aPropertyName != NC_NS+'Name' &&
               aPropertyName != SP_NS+'Image') {
             // we only care about Properties and Image changing
             return;
@@ -1915,6 +1917,12 @@
             // Reflect the service pane properties for this URL (if any) onto the 
             // tab so that it can by styled with CSS.
             this.setAttribute("properties", properties);
+
+            if (this.selected) {
+              var event = document.createEvent('Events');
+              event.initEvent('TabPropertyChange', true, false);
+              this.dispatchEvent(event);
+            }
 
           ]]></body>
       </method>
