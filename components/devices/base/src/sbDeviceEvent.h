@@ -29,7 +29,6 @@
 #include "sbIDeviceEvent.h"
 
 #include <nsCOMPtr.h>
-#include "sbBaseDeviceAPI.h"
 #include "sbIDeviceEventTarget.h"
 
 class nsIVariant;
@@ -38,7 +37,7 @@ class nsIVariant;
   {0xad7c89b5, 0x52f8, 0x487f, \
     { 0x90, 0xf7, 0x2f, 0x79, 0xab, 0x8a, 0x84, 0x6b } }
 
-class SB_API sbDeviceEvent : public sbIDeviceEvent
+class sbDeviceEvent : public sbIDeviceEvent
 {
 public:
   NS_DECL_ISUPPORTS

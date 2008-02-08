@@ -32,7 +32,6 @@
 #include <nsCOMArray.h>
 #include <nsDeque.h>
 #include <prmon.h>
-#include "sbBaseDeviceAPI.h"
 
 class sbIDeviceEventListener;
 
@@ -42,7 +41,7 @@ class sbIDeviceEventListener;
  * dispatched there.
  */
 
-class SB_API sbBaseDeviceEventTarget : public sbIDeviceEventTarget
+class sbBaseDeviceEventTarget : public sbIDeviceEventTarget
 {
 public:
   NS_DECL_SBIDEVICEEVENTTARGET;
@@ -72,3 +71,4 @@ private:
 };
 
 #endif
+
