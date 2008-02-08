@@ -34,6 +34,8 @@
 #include <nsAutoLock.h>
 
 class nsIPropertyBag;
+class sbIDeviceManager2;
+
 struct IWMDeviceManager;
 
 /**
@@ -42,7 +44,7 @@ struct IWMDeviceManager;
  * sbIDevicManager service
  */
 class sbWPDMarshall : public sbBaseDeviceMarshall,
-                       public nsIClassInfo
+                      public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
@@ -63,7 +65,7 @@ public:
   void AddDevice(nsAString const & name, 
                  sbIDevice * device)
   {
-    nsAutoLock lock(mKnownDevicesLock);
+    nsAutoMonitor mon(mKnownDevicesLock);
     mKnownDevices.Put(name, device);
   }
   /**
@@ -73,7 +75,7 @@ public:
                  sbIDevice ** device)
   {
     nsCOMPtr<nsISupports> ptr;
-    nsAutoLock lock(mKnownDevicesLock);
+    nsAutoMonitor mon(mKnownDevicesLock);
     if (NS_SUCCEEDED(mKnownDevices.Get(name, getter_AddRefs(ptr))) && ptr) {
       nsCOMPtr<sbIDevice> devicePtr = do_QueryInterface(ptr);
       devicePtr.forget(device);
@@ -86,14 +88,13 @@ public:
    */
   void RemoveDevice(nsAString const & name)
   {
-    nsAutoLock lock(mKnownDevicesLock);
+    nsAutoMonitor mon(mKnownDevicesLock);
     mKnownDevices.Remove(name);
   }
   nsresult DiscoverDevices();
 private:
   nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
-  PRLock* mKnownDevicesLock;
-  nsresult BeginMonitoring();
+  PRMonitor* mKnownDevicesLock;
 
   // Prevent copying and assignment
   sbWPDMarshall(sbWPDMarshall const &) : sbBaseDeviceMarshall(nsCString()) {}

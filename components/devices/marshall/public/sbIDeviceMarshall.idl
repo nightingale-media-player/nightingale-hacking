@@ -31,7 +31,7 @@ interface sbIDeviceControllerRegistrar;
 /**
  * \interface sbIDeviceMarshall
  */
-[scriptable, uuid(8e7daa39-f4d2-4366-8841-a76de3cff7be)]
+[scriptable, uuid(3dc4e74e-104e-416f-ba1b-9c6685bc416f)]
 interface sbIDeviceMarshall : nsISupports
 {
   /**
@@ -49,6 +49,8 @@ interface sbIDeviceMarshall : nsISupports
    * each one with the registrar given.
    */
   void loadControllers(in sbIDeviceControllerRegistrar aRegistrar);
+
+  void beginMonitoring();
 
   /**
    * After calling this method, the marshall will stop monitoring for any new

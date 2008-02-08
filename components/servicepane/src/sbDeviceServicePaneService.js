@@ -158,6 +158,28 @@ function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
   return node;
 }
 
+sbDeviceServicePane.prototype.createNodeForDevice2 =
+function sbDeviceServicePane_createNodeForDevice2(aDevice) {
+  // Get the Node.
+  var id = this._deviceURN2(aDevice);
+  
+  var node = this._servicePane.getNode(id);
+  if (!node) {
+    // Create the node
+    node = this._servicePane.addNode(id, this._servicePane.root, true);
+  }
+
+  // Refresh the information just in case it is supposed to change
+  node.contractid = CONTRACTID;
+  node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
+  node.contractid = CONTRACTID;
+  node.editable = false;
+
+  // Sort node into position.
+  this._servicePane.sortNode(node);
+
+  return node;
+}
 
 /////////////////////
 // Private Methods //
@@ -171,6 +193,18 @@ function sbDeviceServicePane__deviceURN(aDevice, aDeviceIdentifier) {
   return URN_PREFIX_DEVICE + aDevice.deviceCategory + ":" + aDeviceIdentifier;
 }
 
+sbDeviceServicePane.prototype._deviceURN2 =
+function sbDeviceServicePane__deviceURN2(aDevice) {
+  var id = "" + aDevice.id;
+  
+  if(id.charAt(0) == "{" &&
+     id.charAt(-1) == "}") {
+    id = id.substring(1, -1);
+  }
+  
+  
+  return URN_PREFIX_DEVICE + id;
+}
 
 ///////////
 // XPCOM //

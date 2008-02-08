@@ -217,6 +217,13 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     }
     mPortableDevice = portableDevice;
   }
+
+  if (!mDeviceThread) {
+    mDeviceThread = new sbWPDDeviceThread(this, mRequestsPendingEvent);
+    NS_NewThread(getter_AddRefs(mThreadObject), mDeviceThread);
+    NS_IF_ADDREF(mDeviceThread);
+  }
+
   return NS_OK; 
 }
 
@@ -224,10 +231,17 @@ NS_IMETHODIMP sbWPDDevice::Connect()
 NS_IMETHODIMP sbWPDDevice::Disconnect()
 {
   if (mPortableDevice) {
-    if (SUCCEEDED(mPortableDevice->Close()))
-      return NS_ERROR_FAILURE;
+    if (FAILED(mPortableDevice->Close()))
+      NS_WARNING("Failed to close PortableDevice instance!");
     mPortableDevice = nsnull;
   }
+
+  if (mDeviceThread) {
+    mDeviceThread->Die();
+    mThreadObject->Shutdown();
+  }
+
+  NS_IF_RELEASE(mDeviceThread);
 
   return NS_OK;
 }

@@ -182,14 +182,24 @@ NS_IMETHODIMP
 sbWPDDeviceController::CreateDevice(nsIPropertyBag *aParams, 
                                     sbIDevice **_retval) 
 {
-  //nsRefPtr<sbWPDDevice> device;
+  nsRefPtr<sbWPDDevice> device;
 
-  //NS_NEWXPCOM(device, sbWPDDevice);
-  //NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
+  nsID id;
+  nsresult rv = GetControllerIdInternal(id);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  //NS_ADDREF(*_retval = device);
+  nsCOMPtr<nsIPropertyBag2> properties = do_QueryInterface(aParams, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  device = new sbWPDDevice(id, properties);
+  NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = device);
+
+  rv = AddDeviceInternal(device);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /* boolean controlsDevice (in sbIDevice aDevice); */

@@ -45,6 +45,7 @@ struct IPortableDevice;
 struct IPortableDeviceValues;
 class sbIDeviceEvent;
 class sbWPDDeviceThread;
+class sbWPDMarshall;
 class sbDeviceStatus;
 
 /**
@@ -52,8 +53,10 @@ class sbDeviceStatus;
  * device
  */
 class sbWPDDevice : public sbBaseDevice,
-                     public nsIClassInfo
+                    public nsIClassInfo
 {
+  friend class sbWPDMarshall;
+
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICE
   NS_DECL_NSICLASSINFO

@@ -39,6 +39,7 @@
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceManager.h>
+#include <sbIDeviceRegistrar.h>
 #include <nsIVariant.h>
 #include "sbPortableDeviceEventsCallback.h"
 #include "sbWPDCommon.h"
@@ -56,7 +57,7 @@
 typedef std::vector<nsString> StringArray;
 
 static char const * const HASH_PROPERTY_BAG_CONTRACTID = "@mozilla.org/hash-property-bag;1";
-
+static char const * const SONGBIRD_DEVICEMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/DeviceManager;2";
 /**
  * sbWMDMarshall framework installation
  */
@@ -417,20 +418,24 @@ ULONG STDMETHODCALLTYPE sbDeviceMarshallListener::Release()
  */
 sbWPDMarshall::sbWPDMarshall() :
   sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY)),
-  mKnownDevicesLock(PR_NewLock())
+  mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbWPDMarshall.mKnownDevicesLock"))
 {
   mKnownDevices.Init(8);
-  BeginMonitoring();
 }
 
 sbWPDMarshall::~sbWPDMarshall()
 {
-  PR_DestroyLock(mKnownDevicesLock);
+  nsAutoMonitor mon(mKnownDevicesLock);
+  mon.Exit();
+
+  nsAutoMonitor::DestroyMonitor(mKnownDevicesLock);
 }
 
 
-nsresult sbWPDMarshall::BeginMonitoring()
+NS_IMETHODIMP sbWPDMarshall::BeginMonitoring()
 {
+  nsAutoMonitor mon(mKnownDevicesLock);
+
   // Create the secure client object
   BYTE abPVK[] =
   { 0x00 };
@@ -515,8 +520,17 @@ NS_IMETHODIMP sbWPDMarshall::StopMonitoring()
 nsresult sbWPDMarshall::DiscoverDevices()
 {
   nsresult rv = NS_OK;
+  
   // Create the property bad to pass to the control
   nsCOMPtr<nsIWritablePropertyBag> propBag = do_CreateInstance(HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Grab the device manager service instance
+  nsCOMPtr<sbIDeviceManager2> deviceManager = do_GetService(SONGBIRD_DEVICEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Grab the device registrar from the device manager instance
+  nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar = do_QueryInterface(deviceManager, &rv);
   if (NS_SUCCEEDED(rv) && propBag)
   {
     // Create the WPD device manager
@@ -532,7 +546,7 @@ nsresult sbWPDMarshall::DiscoverDevices()
     {
       nsString const & deviceID = deviceIDs[index];
       // If we don't know this device, set it up
-      nsAutoLock lock(mKnownDevicesLock);
+      nsAutoMonitor mon(mKnownDevicesLock);
       if (!mKnownDevices.Get(deviceID, nsnull)) {
         // Create the WPD device and get it's properties
         nsRefPtr<IPortableDevice> device;
@@ -547,14 +561,25 @@ nsresult sbWPDMarshall::DiscoverDevices()
             nsCOMPtr<sbIDevice> sbDevice;
             if (NS_SUCCEEDED(controller->CreateDevice(propBag,
                                                       getter_AddRefs(sbDevice))) && sbDevice) {
+
+              // XXXAus: This is bad to have to do this. 
+              // But I have to reuse the IPortableDeviceInstance.
+              sbWPDDevice *wpdDevice = static_cast<sbWPDDevice *>(sbDevice.get());
+              wpdDevice->mPortableDevice = device;
+
               // Create the listener for this device
               CreateDeviceListener(this, device, sbDevice);
+
               // Record this device so we know we've created it
               AddDevice(deviceID, sbDevice);
-              lock.unlock();
+              
+              // Register the device with the device registrar.
+              rv = deviceRegistrar->RegisterDevice(sbDevice);
+              NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to register device");
+
               rv = sbWPDCreateAndDispatchEvent(this,
-                                          sbDevice,
-                                          sbIDeviceEvent::EVENT_DEVICE_ADDED);
+                                               sbDevice,
+                                               sbIDeviceEvent::EVENT_DEVICE_ADDED);
               NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create device add event");
             }
           }

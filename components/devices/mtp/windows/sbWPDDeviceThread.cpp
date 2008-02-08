@@ -42,6 +42,7 @@ sbWPDDeviceThread::sbWPDDeviceThread(sbWPDDevice * device,
 
 sbWPDDeviceThread::~sbWPDDeviceThread()
 {
+  Die();
 }
 
 NS_IMETHODIMP sbWPDDeviceThread::Run()

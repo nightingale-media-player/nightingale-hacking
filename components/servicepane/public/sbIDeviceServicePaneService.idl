@@ -33,12 +33,13 @@
 
 interface sbIServicePaneNode;
 interface sbIDeviceBase;
+interface sbIDevice;
 
 /**
  * \interface sbIDeviceServicePaneService
  * \brief Provides information about devices needed by the service pane
  */
-[scriptable, uuid(fa08bcaa-0fed-4d10-b2da-a52cf33e8948)]
+[scriptable, uuid(315cfa2e-9199-45d9-bdab-dafac4a87125)]
 interface sbIDeviceServicePaneService : nsISupports {
   /* \brief Attempts to create a service pane node for a given device. Will
    *        group similar devices together in the service pane.
@@ -49,4 +50,13 @@ interface sbIDeviceServicePaneService : nsISupports {
    */
   sbIServicePaneNode createNodeForDevice (in sbIDeviceBase aDevice,
                                           in AString aDeviceIdentifier);
+
+  /* \brief Attempts to create a service pane node for a given device. Will
+   *        group similar devices together in the service pane.
+   *
+   * \param aDevice an sbIDevice.
+   * \return a service pane node that represents the given device
+   * \note This method is designed for the new Device API.
+   */
+  sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice);
 };

@@ -51,9 +51,9 @@ nsresult sbWPDCreateDeviceManager(sbIDeviceManager2 ** deviceManager)
  * This creates an event for the device and dispatches it to the manager
  */
 nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
-                                         sbIDevice * device,
-                                         PRUint32 eventID,
-                                         PRBool async)
+                                     sbIDevice * device,
+                                     PRUint32 eventID,
+                                     PRBool async)
 {  
   // Create the device manager
   nsCOMPtr<sbIDeviceManager2> manager;

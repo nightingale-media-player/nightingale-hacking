@@ -80,6 +80,7 @@ mtpServicePaneService.prototype = {
   _cfg: mtpServicePaneServiceConfig,
   _xpcom_categories: mtpServicePaneServiceConfig.categoryList,
   
+  _deviceInfoList: [],
   _deviceManagerSvc:      null,
   _deviceServicePaneSvc:  null,
   _observerSvc:           null,
@@ -180,7 +181,7 @@ mtpServicePaneService.prototype = {
       mtpDeviceServicePaneSvc: this,
       
       onDeviceEvent: function deviceEventListener_onDeviceEvent(aDeviceEvent) {
-        dump(aDeviceEvent);
+        this.mtpDeviceServicePaneSvc._processDeviceEvent(aDeviceEvent);
       }
     };
     
@@ -200,16 +201,17 @@ mtpServicePaneService.prototype = {
     this._deviceManagerSvc = null;
     this._deviceServicePaneSvc = null;
     this._libServicePaneSvc = null;
+    this._servicePaneSvc = null;
     this._observerSvc = null;
     this._stringBundle = null;
   },
   
   _processDeviceEvent: function mtpServicePaneService_processDeviceEvent(aDeviceEvent) {
-    dump(aDeviceEvent);
+    dump("XXXAus: " + aDeviceEvent + "\n\n");
     
     switch(aDeviceEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
-        this._addDevice();
+        this._addDeviceFromEvent(aDeviceEvent);
       }
       break;
       // maintain a table of sync states per deviceid, and call our local
@@ -222,18 +224,95 @@ mtpServicePaneService.prototype = {
           (aDeviceEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START);
         this._callLocalSyncListeners(deviceId);
       }
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED: {
+        this._removeDeviceFromEvent(aDeviceEvent);
+      }
+      break;
+      
       default:
     }
   },
   
-  _addDevice: function mtpServicePaneService_addDevice() {
+  _addDeviceFromEvent: function mtpServicePaneService_addDeviceFromEvent(aDeviceEvent) {
+    var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    try {
+      this._addDevice(device);
+    }
+    catch(e) {
+      Components.utils.reportError(e);
+    }
+  },
+  
+  _removeDeviceFromEvent: function mtpServicePaneService_removeDeviceFromEvent(aDeviceEvent) {
+    var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    try {
+      this._removeDevice(device);
+    }
+    catch(e) {
+      Components.utils.reportError(e);
+    }
+  },
+  
+  _addDevice: function mtpServicePaneService_addDevice(aDevice) {
     dump("XXXAus: addDevice!!!\n\n");
+    
+    var device = aDevice.QueryInterface(Ci.sbIDevice);
+    var devId = device.id;
+
+    this._deviceInfoList[devId] = {};
+    
+    // Add a device node in the service pane.
+    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
+    devNode.setAttributeNS(MTPNS, "DeviceId", devId);
+    devNode.contractid = this._cfg.contractID;
+    devNode.image = this._cfg.devImgURL;
+    devNode.url = this._cfg.devMgrURL + "?deviceIdentifier=" + devId;
+    devNode.editable = true;
+    devNode.name = device.parameters.getProperty("DeviceFriendlyName");
+
+    devNode.hidden = false;
+
+    this._deviceInfoList[devId].svcPaneNode = devNode;
+
+    // Add the device library.
+    // Update the device playlists.
+    // Update the device state.
   },
   
-  _removeDevice: function mtpServicePaneService_removeDevice() {
-  
+  _removeDevice: function mtpServicePaneService_removeDevice(aDevice) {
+    dump("XXXAus: removeDevice!!!\n\n");
+    
+    var device = aDevice.QueryInterface(Ci.sbIDevice);
+    var devId = device.id;
+    
+    var devInfo = this._deviceInfoList[devId];
+    if (!devInfo)
+      return;
+
+    // Remove the device library.
+
+    // Remove the device node.
+    this._servicePaneSvc.removeNode(devInfo.svcPaneNode);
+
+    // Remove device info list entry.
+    delete this._deviceInfoList[devId];
   },
-  
+
+  _createConnectedDevices: function mtpServicePaneService_createConnectedDevices() {
+    var devices = ArrayConverter.JSArray(this._deviceManagerSvc.devices);
+    dump("XXXAus: createConnectedDevices!!!\n\n");
+    dump("XXXAus: creating " + devices.length + " devices!!!\n\n");
+    
+    for each (device in devices) {
+      try {
+        this._addDevice(device);
+      }
+      catch(e) {
+        Components.utils.reportError(e);
+      }
+    }
+  },
+
   _getDeviceForId: function mtpServicePaneService_getDeviceForId(aDeviceId) {
     // todo: return device whose id matches aDeviceId
     return { id: "fakeid" };
