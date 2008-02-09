@@ -102,12 +102,10 @@ mtpServicePaneService.prototype = {
   fillContextMenu: function mtpServicePaneService_fillContextMenu(aNode,
                                                                   aContextMenu,
                                                                   aParentWindow) {
-    var mtpDeviceId = aNode.getAttributeNS(MTPNS, 'DeviceId');
-    
-    if ( /*1 ||*/ mtpDeviceId ) {
-      var mtpDevice = this._getDeviceForId(mtpDeviceId);
-      this._appendDeviceCommands(aContextMenu, mtpDevice, aParentWindow);
-    }
+    var mtpDevice = this._getMtpDeviceFromNode(aNode);
+    if (mtpDevice)
+      this._appendDeviceCommands(aNode, aContextMenu, mtpDevice, aParentWindow);
+
   },
 
   fillNewItemMenu: function mtpServicePaneService_fillNewItemMenu(aNode,
@@ -139,6 +137,10 @@ mtpServicePaneService.prototype = {
 
   onRename: function mtpServicePaneService_onRename(aNode, 
                                                     aNewName) {
+    var mtpDevice = this._getMtpDeviceFromNode(aNode);
+    if (mtpDevice) {
+      // todo: do the renaming
+    }
   },
 
   // ************************************
@@ -285,7 +287,8 @@ mtpServicePaneService.prototype = {
     devNode.hidden = false;
 
     this._deviceInfoList[devId].svcPaneNode = devNode;
-
+    this._deviceInfoList[devId].device = device;
+    
     // Add the device library.
     // Update the device playlists.
     // Update the device state.
@@ -324,10 +327,27 @@ mtpServicePaneService.prototype = {
       }
     }
   },
+  
+  /**
+   * Attempt to extract a servicepane node into a corresponding mtp device
+   * (returns null if not a device node, or not an mtp device)
+   */
+  _getMtpDeviceFromNode: function 
+    mtpServicePaneService_getMtpDeviceFromNode(aNode) {
+    var mtpDeviceId = aNode.getAttributeNS(MTPNS, 'DeviceId');
+    if ( mtpDeviceId ) {
+      return this._getDeviceForId(mtpDeviceId);
+    }
+    return null;
+  },
 
+  /**
+   * Convert a deviceId into its corresponding sbIDevice
+   */
   _getDeviceForId: function mtpServicePaneService_getDeviceForId(aDeviceId) {
-    // todo: return device whose id matches aDeviceId
-    return { id: "fakeid" };
+    if (typeof(this._deviceInfoList[aDeviceId]) != 'undefined')
+      return this._deviceInfoList[aDeviceId].device;
+    return null;
   },
   
   _removeDeviceNodes: function mtpServicePaneService_removeDeviceNodes(aNode) {
@@ -376,7 +396,9 @@ mtpServicePaneService.prototype = {
    * Handles the "Get Info" context menu command for a device
    */
   _commandHandler_getDeviceInfo: function 
-    mtpServicePaneService_commandHandler_getDeviceInfo(aDevice, aParentWindow) {
+    mtpServicePaneService_commandHandler_getDeviceInfo(aNode,
+                                                       aDevice, 
+                                                       aParentWindow) {
     // todo: show the info dialog for this device
     aParentWindow.alert("Get Device Info");
   },
@@ -385,16 +407,24 @@ mtpServicePaneService.prototype = {
    * Handles the "Rename Device" context menu command for a device
    */
   _commandHandler_renameDevice: function 
-    mtpServicePaneService_commandHandler_renameDevice(aDevice, aParentWindow) {
+    mtpServicePaneService_commandHandler_renameDevice(aNode,
+                                                      aDevice, 
+                                                      aParentWindow) {
     // todo: start node edition
-    aParentWindow.alert("Begin Editing Device Name");
+    //aParentWindow.alert("Begin Editing Device Name");
+    var servicePane = aParentWindow.gServicePane;
+    if (servicePane) {
+      servicePane.startEditingNode(aNode);
+    }
   },
   
   /**
    * Handles the "Eject Device" context menu command for a device
    */
   _commandHandler_ejectDevice: function 
-    mtpServicePaneService_commandHandler_ejectDevice(aDevice, aParentWindow) {
+    mtpServicePaneService_commandHandler_ejectDevice(aNode,
+                                                     aDevice, 
+                                                     aParentWindow) {
     // todo: eject the device
     aParentWindow.alert("Eject Device");
   },
@@ -403,7 +433,9 @@ mtpServicePaneService.prototype = {
    * Handles the "Cancel Sync" context menu command for a device
    */
   _commandHandler_cancelDeviceSync: function 
-    mtpServicePaneService_commandHandler_cancelDeviceSync(aDevice, aParentWindow) {
+    mtpServicePaneService_commandHandler_cancelDeviceSync(aNode,
+                                                          aDevice, 
+                                                          aParentWindow) {
     // todo: cancel the device syncing
     aParentWindow.alert("Cancel Device Sync");
   },
@@ -429,7 +461,8 @@ mtpServicePaneService.prototype = {
    * Appends all commands for a device node
    */
   _appendDeviceCommands: function 
-    mtpServicePaneService_appendCommands(aContextMenu, 
+    mtpServicePaneService_appendCommands(aNode,
+                                         aContextMenu, 
                                          aDevice, 
                                          aParentWindow) {
 
@@ -465,11 +498,12 @@ mtpServicePaneService.prototype = {
     // creates a command handler that calls the specified method on the service
     function makeCommandHandler(handlerMethod) {
       var handler = {
+        _node         : aNode,
         _service      : service, 
         _device       : aDevice,
         _parentWindow : aParentWindow,
         handleEvent   : function mtpServicePaneService_commandHandler( event ) {
-          this._service[handlerMethod](this._device, this._parentWindow);
+          this._service[handlerMethod](this._node, this._device, this._parentWindow);
         }
       };
       return handler;
@@ -499,10 +533,15 @@ mtpServicePaneService.prototype = {
       service._sync_listeners.push(syncChangeListener);
     };
 
-    // todo: change into real device descriptor
-    var device_descriptor = "Device ID (XGB)";
+    var device_friendly_name = 
+      aDevice.parameters.getProperty("DeviceFriendlyName");
+    
+    // todo: get actual device capacity
+    var device_capacity = "?GB";
 
-    // "Device ID (XGB)"
+    var device_descriptor = device_friendly_name + " (" + device_capacity + ")";
+
+    // "Device Name (XGB)"
     addItem('command_mtp_devicedescriptor', 
             device_descriptor, 
             null, 
@@ -532,7 +571,7 @@ mtpServicePaneService.prototype = {
     // "------------------"
     addSeparator();
 
-    // "Rename
+    // "Rename"
     addItem('command_mtp_renamedevice', 
             this._localizeString('command.mtp.renamedevice', 'Rename'), 
             this._localizeString('command.mtp.renamedevice.accesskey', 'R'), 
@@ -541,7 +580,7 @@ mtpServicePaneService.prototype = {
     // "------------------"
     addSeparator();
 
-    // "Eject
+    // "Eject"
     addSyncListener(addItem('command_mtp_ejectdevice', 
                            this._localizeString('command.mtp.ejectdevice', 
                                                 'Eject'), 
