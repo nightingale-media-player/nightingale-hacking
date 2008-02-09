@@ -723,8 +723,7 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   rv = variant->GetAsAString(puid);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = aPlaylist->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_ITEM_ID),
-                              puid);
+  rv = aPlaylist->SetProperty(sbWPDDevice::DEVICE_ID_PROP, puid);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
