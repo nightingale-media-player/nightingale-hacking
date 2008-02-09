@@ -145,6 +145,45 @@ public:
    * returns PR_FALSE if there is no more work
    */
   PRBool ProcessThreadsRequest();
+
+protected:
+  /** create a new playlist
+     \@param aName the name of the playlist
+     \@param aParent (ObjId) the media list to create the playlist in
+     \@return (ObjId) The newly created media list
+  */
+  nsresult CreatePlaylist(nsAString const &aName,
+                          nsAString const &aParent,
+                          /*out*/nsAString &aObjId);
+
+  /** the songbird-friendly form
+   * note that the playlist already exists in the library
+   */
+  nsresult CreatePlaylist(sbIMediaList* aPlaylist);
+
+  /** remove a given media item
+   * \@param aObjId the objId of the item/playlist to remove
+   */
+  nsresult RemoveItem(nsAString const &aObjId);
+  nsresult RemoveItem(sbIMediaItem* aItem);
+
+  nsresult AddItemToPlaylist(sbIMediaItem* aItem, /* the item to add */
+                             sbIMediaList* aList, /* the playlist to add to */
+                             PRUint32 aIndex);    /* the index to add to */
+
+  nsresult MoveItemInPlaylist(sbIMediaList* aList, /* the list in which to move */
+                              PRUint32 aFromIndex, /* the index to move from */
+                              PRUint32 aToIndex);  /* the index to move to */
+
+  nsresult RemoveItemFromPlaylist(sbIMediaList* aList, /* the list to remove from */
+                                  PRUint32 aIndex);    /* the item to remove */
+
+  /* playlist utility methods */
+  nsresult GetPlaylistReferences(sbIMediaList* aList,
+                                 /* out */ IPortableDevicePropVariantCollection** aItems);
+  nsresult SetPlaylistReferences(sbIMediaList* aList,
+                                 IPortableDevicePropVariantCollection* aItems);
+
 private:
   nsRefPtr<IPortableDevice> mPortableDevice;
   nsCOMPtr<nsIPropertyBag2> mDeviceProperties;

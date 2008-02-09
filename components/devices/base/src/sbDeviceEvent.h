@@ -43,12 +43,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICEEVENT
 
-  sbDeviceEvent();
   nsresult InitEvent(PRUint32 aType,
                      nsIVariant *aData,
                      nsISupports *aOrigin);
+  static sbDeviceEvent* CreateEvent();
 
 protected:
+  sbDeviceEvent();
   ~sbDeviceEvent();
 
 public:

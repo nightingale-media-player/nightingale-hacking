@@ -37,6 +37,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceEvent,
                               sbDeviceEvent,
                               sbIDeviceEvent)
 
+sbDeviceEvent* sbDeviceEvent::CreateEvent() {
+  return new sbDeviceEvent();
+}
+
 sbDeviceEvent::sbDeviceEvent()
  : mWasDispatched(PR_FALSE),
    mType(0)

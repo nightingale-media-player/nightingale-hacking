@@ -80,6 +80,7 @@ public:
     nsCOMPtr<sbIMediaItem> item;       /* the item this request pertains to */
     nsCOMPtr<sbIMediaList> list;       /* the list this request is to act on */
     PRUint32 index;                    /* the index in the list for this action */
+    PRUint32 otherIndex;               /* any secondary index needed */
 
     PRUint32 batchCount;        /* the number of items in this batch
                                    (batch = run of requests of the same type) */
@@ -96,7 +97,9 @@ public:
   /* add a transfer/action request to the request queue */
   nsresult  PushRequest(const int aType,
                         sbIMediaItem* aItem = nsnull,
-                        sbIMediaList* aList = nsnull);
+                        sbIMediaList* aList = nsnull,
+                        PRUint32 aIndex = PR_UINT32_MAX,
+                        PRUint32 aOtherIndex = PR_UINT32_MAX);
 
   /* remove the next request to be processed; note that _retval will be null
      if there are no requests left */

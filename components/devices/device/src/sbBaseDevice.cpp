@@ -72,7 +72,9 @@ sbBaseDevice::~sbBaseDevice()
 
 nsresult sbBaseDevice::PushRequest(const int aType,
                                    sbIMediaItem* aItem,
-                                   sbIMediaList* aList)
+                                   sbIMediaList* aList,
+                                   PRUint32 aIndex,
+                                   PRUint32 aOtherIndex)
 {
   NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(aType != TransferRequest::REQUEST_RESERVED,
@@ -83,6 +85,8 @@ nsresult sbBaseDevice::PushRequest(const int aType,
   req->type = aType;
   req->item = aItem;
   req->list = aList;
+  req->index = aIndex;
+  req->otherIndex = aOtherIndex;
   req->batchCount = 1;
 
   { /* scope for request lock */

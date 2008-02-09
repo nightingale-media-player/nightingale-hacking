@@ -85,7 +85,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   //containing this item.
   
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
-                            aMediaItem, aMediaList);
+                            aMediaItem, aMediaList, aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -124,7 +124,7 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   nsresult rv;
   
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_DELETE,
-                            aMediaItem, aMediaList);
+                            aMediaItem, aMediaList, aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -152,6 +152,28 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
                             aMediaItem, aMediaList);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
+                                                       PRUint32 aFromIndex,
+                                                       PRUint32 aToIndex,
+                                                       PRBool *aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+  
+  *aNoMoreForBatch = PR_FALSE;
+  
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,
+                            nsnull, aMediaList, aFromIndex, aToIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
