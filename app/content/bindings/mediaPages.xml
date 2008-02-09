@@ -238,10 +238,10 @@
             button.setAttribute("disabled", "true");
           }
         };
-        gBrowser.addEventListener('TabContentChanged', this.disabler, false); 
+        gBrowser.addEventListener('TabContentChange', this.disabler, false); 
       ]]></constructor>
       <destructor><![CDATA[
-        gBrowser.removeEventListener('TabContentChanged', this.disabler, false);
+        gBrowser.removeEventListener('TabContentChange', this.disabler, false);
       ]]></destructor>
     </implementation>
   </binding>

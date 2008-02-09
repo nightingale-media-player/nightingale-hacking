@@ -217,7 +217,7 @@
             sp.onBrowserTabChange(e);
           }
           function windowOnLoad() {
-            sp.browser.addEventListener("TabContentChanged", 
+            sp.browser.addEventListener("TabContentChange", 
                   sp._onBrowserTabChangeListener, false);            
 
             gServicePane.doneInit = true;
@@ -242,7 +242,7 @@
 
         // Remove the browser event listener
         if (this.browser) {
-          this.browser.removeEventListener("TabContentChanged",
+          this.browser.removeEventListener("TabContentChange",
             this._onBrowserTabChangeListener, false);
         }
 
@@ -383,8 +383,6 @@
         <body><![CDATA[
           try {
             var url = this._browser.currentURI.spec;
-            // TODO remove
-            dump("MATT: servicepane.onBrowserTabChange: " + url + "\n");
           
             // Is there a servicepane node for the current tab?
             var node = this._browser.selectedTab.servicePaneNode;

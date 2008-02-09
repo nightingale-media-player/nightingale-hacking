@@ -69,7 +69,6 @@ if (typeof(kPlaylistCommands) == "undefined") {
 window.mediaPage = {
 
   onLoad:  function(e) {
-    dump("MATT: mediaPage.onLoad()!\n");
     
     // TODO Move this rule out into the page manager
     // If we're a library, set our desired filterlists
@@ -102,7 +101,6 @@ window.mediaPage = {
   },
 
   onUnload:  function(e) {
-    dump("MATT: mediaPage.onUnload()!\n");
   },
 
   _mediaListView: null,
@@ -114,7 +112,6 @@ window.mediaPage = {
   },
 
   set mediaListView(value)  {
-    dump("MATT: mediaPage.set mediaListView!\n");
     this._mediaListView = value;
   },
 

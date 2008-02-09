@@ -72,7 +72,10 @@ const gSearchHandler = {
                               false);
     
     // Listen for tab change events
-    gBrowser.addEventListener('TabContentChanged', 
+    gBrowser.addEventListener('TabContentChange', 
+                              function (event) { gSearchHandler.onTabChanged(event); },
+                              false);
+    gBrowser.addEventListener('TabPropertyChange', 
                               function (event) { gSearchHandler.onTabChanged(event); },
                               false);
     

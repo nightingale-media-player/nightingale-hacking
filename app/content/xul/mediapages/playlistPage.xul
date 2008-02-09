@@ -129,7 +129,6 @@ window.mediaPage = {
    * Note that to simplify page creation mediaListView may only be set once.
    */
   set mediaListView(value)  {
-    dump("MATT: mediaPage.set mediaListView!\n");
     
     if (!this._mediaListView) {
       this._mediaListView = value;
@@ -145,7 +144,6 @@ window.mediaPage = {
    * been externally set.  
    */
   onLoad:  function(e) {
-    dump("MATT: mediaPage.onLoad()!\n");
 
     // Make sure we have the javascript modules we're going to use
     if (!window.SBProperties) 
@@ -182,7 +180,6 @@ window.mediaPage = {
    * Called as the window is about to unload
    */
   onUnload:  function(e) {
-    dump("MATT: mediaPage.onUnload()!\n");
     if (this._playlist) {
       this._playlist.destroy();
       this._playlist = null;

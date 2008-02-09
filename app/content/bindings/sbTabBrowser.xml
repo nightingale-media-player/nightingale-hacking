@@ -204,7 +204,6 @@
         this._servicePaneService.addListener(this);
       ]]></constructor>
       <destructor><![CDATA[
-        dump("MATT: tab browser destructor\n");
 
         // remove service pane listener        
         this._servicePaneService.removeListener(this);
@@ -245,7 +244,6 @@
       </method>
       <method name="saveTabState">
         <body><![CDATA[
-          dump('MATT: tabBrowser.saveTabState\n');
 
           var tab = this.mTabContainer.firstChild;
           var urls = [];
@@ -272,8 +270,6 @@
             tab = tab.nextSibling;
           }
           
-          // TODO remove
-          dump("MATT: tabBrowser.saveTabState = " + urls.toSource() + "\n");
           this._tabState = urls;
         ]]></body>
       </method>
@@ -316,7 +312,7 @@
       </method>
       
       
-      <!-- Override tabBrowser.setTabeTitle in order to support
+      <!-- Override tabBrowser.setTabTitle in order to support
            service pane icons and titles for chrome URLs -->
       <method name="setTabTitle">
         <parameter name="aTab"/>
@@ -539,8 +535,6 @@
         <parameter name="aPageURL"/>
         <body>
           <![CDATA[
-            dump("MATT: tabBrowser.loadMediaListGUID " + aLibraryGUID
-                    + " -  " + aListGUID + "\n");
             var libraryManager = 
               Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Components.interfaces.sbILibraryManager);
@@ -586,8 +580,6 @@
             
             // Not already visible.  Load and highlight.
             } else {
-              this.loadMediaList(gPPS.playingView.mediaList, null, null, 
-                                    gPPS.playingView);
               var tab = this.loadMediaList(aMediaListView.mediaList, null, 
                                            null, aMediaListView);
               tab._highlightViewIndexOnLoad = aHighlightIndex;
@@ -708,11 +700,8 @@
             SBDataSetBoolValue('browser.cansubscription',
                                this.mCurrentTab.outerPlaylistShowing);
                                
-            // TODO remove dump
-            dump("MATT: browser.onLocationChange - sending TabContentChanged\n");
-
             // Let listeners know that the tab location has changed
-            this.notifyTabContentChanged();                            
+            this.notifyTabContentChange();                            
           }
           catch ( err )
           {
@@ -764,12 +753,9 @@
           else if (aState & nsIWebProgressListener.STATE_STOP) {
             // Stop the spinner if necessary
             this.loading = false;
-            
-            // TODO remove dump
-            dump("MATT: browser.onStateChange - sending TabContentChanged\n");
-            
+                        
             // Let listeners know that the tab has finished loading
-            this.notifyTabContentChanged();
+            this.notifyTabContentChange();
             
             // Save the tab state after every page load, just in case we crash
             if (this.tabStateRestored) {
@@ -790,7 +776,7 @@
       </method>
 
 
-      <!-- Sends a "TabContentChanged" event from the current tab. 
+      <!-- Sends a "TabContentChange" event from the current tab. 
            Called when the user switches tabs, and before and after
            a new page is loaded in the current tab.
            
@@ -804,11 +790,11 @@
              * "TabSelect" is dispatched only on tab change, not on 
                 new content
        -->
-      <method name="notifyTabContentChanged">
+      <method name="notifyTabContentChange">
         <body>
         <![CDATA[
           var event = document.createEvent("Events");
-          event.initEvent("TabContentChanged", true, false);
+          event.initEvent("TabContentChange", true, false);
           this.dispatchEvent(event);
         ]]></body>
       </method>
@@ -830,7 +816,7 @@
             <![CDATA[
 
           // figure out if the url is in the webplaylist
-          var currentPlaylist = this.outerPlaylist;
+          var currentPlaylist = this.currentOuterPlaylist;
           
           if (aTryWeb && currentPlaylist)
           {
@@ -1430,7 +1416,7 @@
     </implementation>
 
     <handlers>
-      <handler event="click"><![CDATA[
+      <handler event="click" phase="capturing" ><![CDATA[
         // inspired by contentAreaClick in ffox browser.js
         if (!event.isTrusted || event.getPreventDefault()) {
           return true;
@@ -1561,7 +1547,6 @@
     </content>
     <implementation implements="nsIWebProgressListener,sbITabBrowserTab">
       <constructor><![CDATA[
-        dump("MATT: tab CONSTRUCTOR\n");
         // right after all the constructors run...
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
@@ -1592,7 +1577,6 @@
         
       ]]></constructor>
      <destructor><![CDATA[
-        dump("MATT: tab DESTRUCTOR\n");
         this.closeBalloonTip();
         
         // Remove the browser DOM loaded event listener.
@@ -1713,7 +1697,6 @@
           this.browserDOMLoadedEventListener = {
             tabbrowser: this,
             handleEvent: function(event) {
-              dump("MATT: tabBrowser.DOMContentLoaded\n");
               this.tabbrowser.setUpMediaPage();
               this.tabbrowser.scanWebPage();
             }
@@ -1907,11 +1890,14 @@
             // the service pane info
             if (servicePaneNode) {
               if (servicePaneNode.image) {
-                this.setIcon(this.mCurrentTab, servicePaneNode.image);
+                gBrowser.setIcon(this, servicePaneNode.image);
               } 
               if (servicePaneNode.properties) {
                 properties = servicePaneNode.properties;
-              }  
+              }
+              if (servicePaneNode.name) {
+                this.label = servicePaneNode.name;
+              }
             }
 
             // Reflect the service pane properties for this URL (if any) onto the 
@@ -2043,7 +2029,6 @@
       <method name="setUpMediaPage">
         <body><![CDATA[
         if (!this.mediaPage) {
-          dump("MATT: setUpMediaPage - NO PAGE FOUND \n");
           
           // The loaded page is not a MediaPage, so we can't
           // do anything with the view we were given.  
@@ -2053,7 +2038,6 @@
           this._highlightViewIndexOnLoad = null;
           return;
         }
-        dump("MATT: setUpMediaPage \n");
         
         try {          
           
@@ -2094,7 +2078,6 @@
            is removed from the system -->
       <method name="onMediaListRemoved">
         <body><![CDATA[
-          dump("\nMATT: list removed!\n");
           this._viewForPage = null;
           this.backWithDefault();
         ]]></body>
@@ -2261,7 +2244,6 @@
 
           this.applyPropertiesFromServicePaneNode();
           
-          dump("MATT: onLocationChange + " + aLocation.spec + "\n");
         ]]></body>
       </method>
 
@@ -2293,8 +2275,6 @@
               !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
             return;
           }
-
-          dump("MATT: tab.onStateChange\n");
 
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
@@ -2343,7 +2323,6 @@
         <parameter name="evt"/>
         <body>
         <![CDATA[
-          dump("MATT: tab.onBrowserUnload\n");                    
            
           // For now only save view history for chrome media pages
           if (!this.linkedBrowser.currentURI.schemeIs("chrome") ||
