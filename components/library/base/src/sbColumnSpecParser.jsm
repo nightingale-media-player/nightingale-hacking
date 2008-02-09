@@ -30,11 +30,15 @@ EXPORTED_SYMBOLS = ["ColumnSpecParser"];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-// XXXsteve FUEL is not available in jsm
-const Application = Cc["@mozilla.org/fuel/application;1"]
-                      .getService(Ci.fuelIApplication);
+var Application = null;
 
 function ColumnSpecParser(aMediaList, aPlaylist) {
+
+  if (!Application) {
+    // XXXsteve FUEL is not available in jsm
+    Application = Cc["@mozilla.org/fuel/application;1"]
+                    .getService(Ci.fuelIApplication);
+  }
 
   // Our new "column spec" is a whitespace separated string that looks like
   // this:
