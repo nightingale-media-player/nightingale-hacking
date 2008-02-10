@@ -1,0 +1,17 @@
+Index: js/src/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/js/src/Makefile.in,v
+retrieving revision 3.117
+diff -p -u -3 -r3.117 Makefile.in
+--- js/src/Makefile.in	2008-02-09 22:59:59.000000000 -0800	3.117
++++ js/src/Makefile.in	2008-02-09 22:59:59.000000000 -0800
+@@ -57,6 +57,9 @@ MODULE_OPTIMIZE_FLAGS = -O
+ endif
+ ifeq ($(OS_ARCH),WINNT)
+ MODULE_OPTIMIZE_FLAGS = -O2 -GL
++ifneq (,$(shell test $(_MSC_VER) -lt 1400 && echo 1))
++MODULE_OPTIMIZE_FLAGS += -Oi
++endif # _MSC_VER < 1400
+ endif
+ endif
+ 
