@@ -311,6 +311,9 @@ mtpServicePaneService.prototype = {
 
     // Remove device info list entry.
     delete this._deviceInfoList[devId];
+    
+    // Also remove it from our table of sync states
+    delete this._sync_table[devId];
   },
 
   _createConnectedDevices: function mtpServicePaneService_createConnectedDevices() {
@@ -430,8 +433,9 @@ mtpServicePaneService.prototype = {
     mtpServicePaneService_commandHandler_ejectDevice(aNode,
                                                      aDevice, 
                                                      aParentWindow) {
-    // todo: eject the device
-    aParentWindow.alert("Eject Device");
+    // No actual need for an Eject function on MTP, 
+    // so simply remove the node :D
+    this._removeDevice(aDevice);
   },
   
   /**
