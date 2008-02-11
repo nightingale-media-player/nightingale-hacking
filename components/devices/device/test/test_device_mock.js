@@ -29,10 +29,6 @@
  * \brief Device tests - Mock device
  */
 
-if (typeof(IO) == "undefined") {
-  var IO = Components.classes["@mozilla.org/io/scriptable-io;1"].getService();
-}
-
 function runTest () {
   var device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
                          .createInstance(Components.interfaces.sbIDevice);

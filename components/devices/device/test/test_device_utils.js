@@ -30,14 +30,16 @@
  */
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
-if (typeof(IO) == "undefined") {
-  var IO = Components.classes["@mozilla.org/io/scriptable-io;1"].getService();
-}
 
 function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
-  var file = IO.getFile("TmpD", ".");
+  var file = Components.classes["@mozilla.org/file/directory_service;1"]
+                       .getService(Components.interfaces.nsIProperties)
+                       .get("TmpD", Components.interfaces.nsIFile);
+  var oldFile = file.clone();
   var spec = "http://0/not/a/valid/file.mp3";
-  var uri = IO.newURI(spec);
+  var uri = Components.classes["@mozilla.org/network/io-service;1"]
+                      .getService(Components.interfaces.nsIIOService)
+                      .newURI(spec, null, null);
   var item = aLibrary.createMediaItem(uri);
 
   var artist = "Some Artist *", album = "Some Album /";
@@ -63,14 +65,17 @@ function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
   assertEqual(result.leafName, "file.mp3");
   assertEqual(result.parent.leafName, album);
   assertEqual(result.parent.parent.leafName, artist);
-  assertTrue(result.parent.parent.parent.equals(IO.getFile("TmpD", ".")));
+  assertTrue(result.parent.parent.parent.equals(oldFile));
 }
 
 function runTest () {
   var utils = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1"]
                         .createInstance(Components.interfaces.sbIDeviceDeviceTesterUtils);
 
-  var libraryFile = IO.getFile("ProfD", "db");
+  var libraryFile = Components.classes["@mozilla.org/file/directory_service;1"]
+                              .getService(Components.interfaces.nsIProperties)
+                              .get("ProfD", Components.interfaces.nsIFile);
+  libraryFile.append("db");
   libraryFile.append("test_devicedevice.db");
   var libraryFactory =
     Components.classes["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
