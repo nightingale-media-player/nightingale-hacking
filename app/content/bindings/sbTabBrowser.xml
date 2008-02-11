@@ -1279,8 +1279,44 @@
                 // can be track or playlist
                 this._handleMediaURL(this._urlForHTMLContextMenu, true, false);
               break;
-              case "html.context.add":
-                gPPS.importURL(this._urlForHTMLContextMenu);
+              case "html.context.download":
+                // figure out the media item for the url
+                var currentPlaylist = this.currentOuterPlaylist;
+                if (currentPlaylist)
+                {
+                  var currentView = currentPlaylist.getListView();
+                  // Try to see if we've already found and scanned this url
+                  var listener = {
+                    item: null,
+                    onEnumerationBegin: function onEnumerationBegin() {
+                      if (this.item) {
+                        return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                      }
+                      else {
+                        return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                      }
+                    },
+                    onEnumeratedItem: function onEnumeratedItem(list, item) {
+                      this.item = item;
+                      return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                    },
+                    onEnumerationEnd: function onEnumerationEnd() {
+                    }
+                  };
+
+                  var currentMediaList = currentView.mediaList;
+                  
+                  currentMediaList.enumerateItemsByProperty(SBProperties.originURL, this._urlForHTMLContextMenu, listener );
+                  if (!listener.item)
+                    currentMediaList.enumerateItemsByProperty(SBProperties.contentURL, this._urlForHTMLContextMenu, listener );
+
+                  if (listener.item) {
+                    var ddh =
+                      Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                                .getService(Components.interfaces.sbIDownloadDeviceHelper);
+                    ddh.downloadItem(listener.item);
+                  }
+                }
               break;
               case "html.context.playlist":
                 // Add playlists to the service pane (force it as a playlist)
@@ -1350,7 +1386,7 @@
 
           if (this._urlForHTMLContextMenu) {
             // Disable "Add" if the url isn't media or is already there.
-            document.getElementById("html.context.add").setAttribute("disabled",
+            document.getElementById("html.context.download").setAttribute("disabled",
               SBUrlExistsInDatabase(this._urlForHTMLContextMenu) ||
               !gPPS.isMediaURL(this._urlForHTMLContextMenu));
             // allow the popup to be shown

@@ -34,13 +34,19 @@ const ADDTOPLAYLIST_MENU_TOOLTIP   = "&command.tooltip.addtoplaylist";
 const ADDTOPLAYLIST_MENU_KEY       = "&command.shortcut.key.addtoplaylist";
 const ADDTOPLAYLIST_MENU_KEYCODE   = "&command.shortcut.keycode.addtoplaylist";
 const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist";
+const DOWNLOADTOPLAYLIST_MENU_NAME      = "&command.downloadtoplaylist";
+const DOWNLOADTOPLAYLIST_MENU_TOOLTIP   = "&command.tooltip.downloadtoplaylist";
+const DOWNLOADTOPLAYLIST_MENU_KEY       = "&command.shortcut.key.downloadtoplaylist";
+const DOWNLOADTOPLAYLIST_MENU_KEYCODE   = "&command.shortcut.keycode.downloadtoplaylist";
+const DOWNLOADTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.downloadtoplaylist";
 
 
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
 const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
 
 EXPORTED_SYMBOLS = [ "addToPlaylistHelper",
-                     "SBPlaylistCommand_AddToPlaylist" ];
+                     "SBPlaylistCommand_AddToPlaylist",
+                     "SBPlaylistCommand_DownloadToPlaylist" ];
 
 // ----------------------------------------------------------------------------
 // The "Add to playlist" dynamic command object
@@ -298,6 +304,50 @@ var SBPlaylistCommand_AddToPlaylist =
     return this;
   }
 }; // SBPlaylistCommand_AddToPlaylist declaration
+
+// Same object, different display text.
+var SBPlaylistCommand_DownloadToPlaylist = SBPlaylistCommand_AddToPlaylist.duplicate();
+SBPlaylistCommand_DownloadToPlaylist.m_root_commands = {
+  m_Types: new Array
+  (
+    ADDTOPLAYLIST_MENU_TYPE
+  ),
+
+  m_Ids: new Array
+  (
+    ADDTOPLAYLIST_MENU_ID
+  ),
+
+  m_Names: new Array
+  (
+    DOWNLOADTOPLAYLIST_MENU_NAME
+  ),
+
+  m_Tooltips: new Array
+  (
+    DOWNLOADTOPLAYLIST_MENU_TOOLTIP
+  ),
+
+  m_Keys: new Array
+  (
+    DOWNLOADTOPLAYLIST_MENU_KEY
+  ),
+
+  m_Keycodes: new Array
+  (
+    DOWNLOADTOPLAYLIST_MENU_KEYCODE
+  ),
+
+  m_Modifiers: new Array
+  (
+    DOWNLOADTOPLAYLIST_MENU_MODIFIERS
+  ),
+
+  m_PlaylistCommands: new Array
+  (
+    null
+  )
+};
 
 
 function addToPlaylistHelper() {

@@ -526,9 +526,12 @@ PublicPlaylistCommands.prototype = {
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_download",
                                                         this.m_cmd_Download);
+                                                        
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_addtoplaylist",
-                                                        SBPlaylistCommand_AddToPlaylist);
+//                                                        SBPlaylistCommand_AddToPlaylist);
+                                                        SBPlaylistCommand_DownloadToPlaylist);
+
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_copylocation",
                                                         this.m_cmd_CopyTrackLocation);

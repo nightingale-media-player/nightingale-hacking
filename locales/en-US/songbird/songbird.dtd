@@ -109,6 +109,7 @@
 <!ENTITY html.context.openexternal  "Open with Default Browser" >
 <!ENTITY html.context.play  "Play" >
 <!ENTITY html.context.add   "Add to library" >
+<!ENTITY html.context.download   "Download to library" >
 <!ENTITY html.context.playlist   "Open as Playlist" >
 <!ENTITY html.context.copytoclipboard "Copy Link Location" >
 <!ENTITY playlist.context.remove  "Remove" >

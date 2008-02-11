@@ -252,7 +252,7 @@
         <menuitem id="html.context.opentab" label="&html.context.opentab;" />
         <menuitem id="html.context.openexternal" label="&html.context.openexternal;"/>
         <menuitem id="html.context.play" label="&html.context.play;"/>
-        <menuitem id="html.context.add"  label="&html.context.add;"/>
+        <menuitem id="html.context.download"  label="&html.context.download;"/>
         <menuitem id="html.context.playlist"  label="&html.context.playlist;"/>
         <menuseparator/>
         <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
