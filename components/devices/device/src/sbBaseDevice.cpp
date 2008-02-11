@@ -55,9 +55,14 @@ public:
   }
 };
 
+sbBaseDevice::TransferRequest * sbBaseDevice::TransferRequest::New()
+{
+  return new TransferRequest();
+}
+
 sbBaseDevice::sbBaseDevice()
 {
-  nsDequeFunctor* deallocator = new RequestDeallocator();
+  nsDequeFunctor* deallocator = new RequestDeallocator;
   NS_ASSERTION(deallocator, "Failed to create queue deallocator");
   mRequests.SetDeallocator(deallocator);
   /* the deque owns the deallocator */
@@ -80,7 +85,7 @@ nsresult sbBaseDevice::PushRequest(const int aType,
   NS_ENSURE_TRUE(aType != TransferRequest::REQUEST_RESERVED,
                  NS_ERROR_INVALID_ARG);
 
-  TransferRequest* req = new TransferRequest();
+  TransferRequest* req = TransferRequest::New();
   NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
   req->type = aType;
   req->item = aItem;

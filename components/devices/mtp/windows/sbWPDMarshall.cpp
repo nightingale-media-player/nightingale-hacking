@@ -131,7 +131,7 @@ static nsresult CreateDeviceListener(sbWPDMarshall * marshall,
   nsAString const & deviceID = sbWPDDevice::GetDeviceID(device);
   if (!deviceID.IsEmpty() &&
       SUCCEEDED(device->Advise(0,
-                               new sbPortableDeviceEventsCallback(marshall,
+                               sbPortableDeviceEventsCallback::New(marshall,
                                                                   sbDevice,
                                                                   deviceID),
                                nsnull,

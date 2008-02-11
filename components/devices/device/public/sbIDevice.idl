@@ -112,6 +112,10 @@ interface sbIDevice : nsISupports
   readonly attribute nsIPropertyBag2 parameters;
   
   /**
+   * The device's properties.
+   */
+  readonly attribute sbIDeviceProperties properties;
+  /**
    * Whether the device is busy, etc.
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*

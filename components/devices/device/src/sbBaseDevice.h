@@ -86,7 +86,9 @@ public:
                                    (batch = run of requests of the same type) */
 
     NS_DECL_ISUPPORTS
+    static TransferRequest * New();
   private:
+    TransferRequest() {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
   

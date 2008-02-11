@@ -40,12 +40,11 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICECONTENT
 
+  nsresult Init();
+  static sbDeviceContent * New();
+private:
   sbDeviceContent();
   virtual ~sbDeviceContent();
-
-  nsresult Init();
-
-private:
   nsresult FindLibrary(sbIDeviceLibrary *aLibrary, PRUint32* _retval);
 
   PRLock* mDeviceLibrariesLock;

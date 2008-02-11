@@ -48,6 +48,7 @@ class sbWPDDeviceThread;
 class sbWPDMarshall;
 class sbDeviceStatus;
 
+#define SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
 /**
  * This class represents a WPD device and is used to communicate with the WPD
  * device
@@ -76,17 +77,9 @@ public:
    */
   static nsString const PUID_SBIMEDIAITEM_PROPERTY;
   
-  /**
-   * Initializse the device with the creating controller's ID
-   * device properties and optionally the Portable Device object
-   * The optional parameter is if there's an existing instance this
-   * will eliminate the need to recreate the device and open it. If
-   * the caller passes a device it MUST be open.
-   */
-  sbWPDDevice(nsID const & controllerID,
-              nsIPropertyBag2 * deviceProperties,
-              IPortableDevice * device = 0);
-  virtual ~sbWPDDevice();
+  static sbWPDDevice * New(nsID const & controllerID,
+                           nsIPropertyBag2 * deviceProperties,
+                           IPortableDevice * device = 0);
   virtual nsresult ProcessRequest();
   IPortableDevice* PortableDevice()
   {
@@ -111,6 +104,12 @@ public:
   static nsresult SetProperty(IPortableDeviceProperties * properties,
                               nsAString const & key,
                               nsIVariant * value);
+  static nsresult SetProperty(IPortableDeviceProperties * properties,
+                              PROPERTYKEY const & key,
+                              nsIVariant * value);
+  static nsresult SetProperty(IPortableDeviceProperties * properties,
+                              PROPERTYKEY const & key,
+                              PROPVARIANT const & var);
   /**
    * Returns the property on the device
    */
@@ -147,6 +146,17 @@ public:
   PRBool ProcessThreadsRequest();
 
 protected:
+  /**
+   * Initializse the device with the creating controller's ID
+   * device properties and optionally the Portable Device object
+   * The optional parameter is if there's an existing instance this
+   * will eliminate the need to recreate the device and open it. If
+   * the caller passes a device it MUST be open.
+   */
+  sbWPDDevice(nsID const & controllerID,
+              nsIPropertyBag2 * deviceProperties,
+              IPortableDevice * device = 0);
+  virtual ~sbWPDDevice();
   /** create a new playlist
      \@param aName the name of the playlist
      \@param aParent (ObjId) the media list to create the playlist in
@@ -195,10 +205,16 @@ private:
   
   HANDLE mRequestsPendingEvent;
  
+  /**
+   * This returns the WPD properties for a sbMediaItem
+   */
   nsresult GetPropertiesFromItem(IPortableDeviceContent * content,
                                  sbIMediaItem * item,
                                  sbIMediaList * list,
                                  IPortableDeviceValues ** itemProperties);
+  /**
+   * Creates a media item from the Songbird item and list
+   */
   nsresult CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
                                            sbIMediaItem * item,
                                            sbIMediaList * list);

@@ -289,6 +289,10 @@ NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;  
+}
 nsresult sbMockDevice::ProcessRequest()
 {
   nsRefPtr<TransferRequest> request;

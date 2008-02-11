@@ -44,6 +44,14 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbPropertyVariant,
 NS_DECL_CLASSINFO(sbPropertyVariant)
 NS_IMPL_THREADSAFE_CI(sbPropertyVariant)
 
+sbPropertyVariant * sbPropertyVariant::New()
+{
+  return new sbPropertyVariant;
+}
+sbPropertyVariant * sbPropertyVariant::New(PROPVARIANT const & propVar)
+{
+  return new sbPropertyVariant(propVar);
+}
 
 sbPropertyVariant::~sbPropertyVariant()
 {

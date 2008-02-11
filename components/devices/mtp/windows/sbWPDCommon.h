@@ -48,6 +48,7 @@ class sbIDeviceMarshall;
 class sbIDevice;
 class sbIDeviceEventTarget;
 class sbIDeviceEvent;
+class nsIVariant;
 struct IPortableDeviceContent;
 
 typedef struct  
@@ -60,7 +61,7 @@ typedef struct
  * Retreives the WPD device manager
  */
 inline
-HRESULT sbGetPortableDeviceManager(IPortableDeviceManager ** deviceManager)
+HRESULT sbWPDGetPortableDeviceManager(IPortableDeviceManager ** deviceManager)
 {
   // CoCreate the IPortableDeviceManager interface to enumerate
   // portable devices and to get information about them.
@@ -92,13 +93,13 @@ nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
  * It's the callers responsibility to ensure proper cleanup of the PROPVARIANT's
  * resources
  */
-nsresult sbStringToPropVariant(nsAString const & str,
+nsresult sbWPDStringToPropVariant(nsAString const & str,
                                PROPVARIANT & var);
 
 /**
  * Returns the object ID from a PUID
  */
-nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
+nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
                             nsAString const & PUID,
                             nsAString & objectID);
 
@@ -108,5 +109,19 @@ nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
 PRBool 
 sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
                                           PROPERTYKEY &aPropertyKey);
+
+
+/**
+ * This function creates a property key collection from a single key
+ */
+nsresult sbWPDCreatePropertyKeyCollection(PROPERTYKEY const & key,
+                                          IPortableDeviceKeyCollection ** propertyKeys);
+
+/**
+ * Converts an nsIVariant to a PROPVARIANT. Call is responsible for releasing
+ * resources allocated to the PROPVARIANT via PropVariantClear
+ */
+nsresult sbWPDnsIVariantToPROPVARIANT(nsIVariant * aValue,
+                                 PROPVARIANT & prop);
 
 #endif /*SBWPDCOMMON_H_*/

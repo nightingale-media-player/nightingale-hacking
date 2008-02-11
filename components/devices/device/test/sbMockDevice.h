@@ -46,7 +46,8 @@ public:
   NS_IMETHOD GetCapabilities(sbIDeviceCapabilities * *aCapabilities);
   NS_IMETHOD GetContent(sbIDeviceContent * *aContent);
   NS_IMETHOD GetParameters(nsIPropertyBag2 * *aParameters);
-
+  NS_IMETHOD GetProperties(sbIDeviceProperties * *theProperties);
+  
 public:
   nsresult ProcessRequest();
 

@@ -25,6 +25,7 @@
  */
 
 #include "sbWPDDevice.h"
+#include <set>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsComponentManagerUtils.h>
@@ -33,7 +34,6 @@
 #include <nsStringAPI.h>
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
-#include <propvarutil.h>
 #include <nsIVariant.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
@@ -49,6 +49,8 @@
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
 #include "sbWPDDeviceThread.h"
+#include "sbWPDPropertyAdapter.h"
+#include <sbDeviceCapabilities.h>
 /* damn you microsoft */
 #undef CreateEvent
 #include <sbIDeviceManager.h>
@@ -122,6 +124,15 @@ nsString const sbWPDDevice::DEVICE_DESCRIPTION_PROP(NS_LITERAL_STRING("DeviceDes
 nsString const sbWPDDevice::DEVICE_MANUFACTURER_PROP(NS_LITERAL_STRING("DeviceManufacturer"));
 nsString const sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY(NS_LITERAL_STRING("WPDPUID"));
 
+sbWPDDevice * sbWPDDevice::New(nsID const & controllerID,
+                               nsIPropertyBag2 * deviceProperties,
+                               IPortableDevice * device)
+{
+  return new sbWPDDevice(controllerID,
+                         deviceProperties,
+                         device);
+}
+
 sbWPDDevice::sbWPDDevice(nsID const & controllerID,
                          nsIPropertyBag2 * deviceProperties,
                          IPortableDevice * device) :
@@ -156,7 +167,7 @@ NS_IMETHODIMP sbWPDDevice::GetName(nsAString & aName)
 {
   nsString const & deviceID = GetDeviceID(mPortableDevice);
   nsRefPtr<IPortableDeviceManager> deviceManager;
-  nsresult rv = sbGetPortableDeviceManager(getter_AddRefs(deviceManager));
+  nsresult rv = sbWPDGetPortableDeviceManager(getter_AddRefs(deviceManager));
   NS_ENSURE_SUCCESS(rv, rv);
   
   DWORD bufferSize = 0;
@@ -266,22 +277,6 @@ NS_IMETHODIMP sbWPDDevice::GetThreaded(PRBool *aThreaded)
   return NS_OK;
 }
 
-nsresult CreatePropertyKeyCollection(PROPERTYKEY const & key,
-                                     IPortableDeviceKeyCollection ** propertyKeys)
-{
-  NS_ENSURE_ARG(propertyKeys);
-  nsRefPtr<IPortableDeviceKeyCollection> propKeys;
-  
-  NS_ENSURE_TRUE(SUCCEEDED(CoCreateInstance(CLSID_PortableDeviceKeyCollection,
-                                            NULL,
-                                            CLSCTX_INPROC_SERVER,
-                                            IID_IPortableDeviceKeyCollection,
-                                            (VOID**) &propKeys)),
-                 NS_ERROR_FAILURE);
-  propKeys.forget(propertyKeys);
-  return (*propertyKeys)->Add(key);
-
-}
 /* nsIVariant getPreference (in AString aPrefName); */
 NS_IMETHODIMP sbWPDDevice::GetPreference(const nsAString & aPrefName,
                                         nsIVariant **retval)
@@ -306,15 +301,25 @@ NS_IMETHODIMP sbWPDDevice::SetPreference(const nsAString & aPrefName,
 }
 
 /* readonly attribute sbIDeviceCapabilities capabilities; */
-NS_IMETHODIMP sbWPDDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabilities)
+NS_IMETHODIMP sbWPDDevice::GetCapabilities(sbIDeviceCapabilities * *theCapabilities)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  nsCOMPtr<sbIDeviceCapabilities> capabilities = do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
+                                                                   &rv);
+  nsRefPtr<IPortableDeviceCapabilities> deviceCaps;
+  if (FAILED(mPortableDevice->Capabilities(getter_AddRefs(deviceCaps))))
+    return NS_ERROR_FAILURE;
+  //rv = SetFunctionalTypes(deviceCaps,
+  //                        capabilities);
+  NS_ENSURE_SUCCESS(rv, rv);
+  capabilities.forget(theCapabilities);
+  return NS_OK;
 }
 
 /* readonly attribute sbIDeviceContent content; */
 NS_IMETHODIMP sbWPDDevice::GetContent(sbIDeviceContent * *aContent)
 {
-  sbDeviceContent* deviceContent = new sbDeviceContent;
+  sbDeviceContent* deviceContent = sbDeviceContent::New();
   NS_ENSURE_TRUE(deviceContent, NS_ERROR_OUT_OF_MEMORY);
   NS_ADDREF(deviceContent);
   nsresult const rv = deviceContent->Init();
@@ -335,6 +340,14 @@ NS_IMETHODIMP sbWPDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
   return NS_OK;
 }
 
+/* readonly attribute nsIDeviceProperties device properties; */
+NS_IMETHODIMP sbWPDDevice::GetProperties(sbIDeviceProperties * *theProperties)
+{
+  NS_ENSURE_ARG(theProperties);
+  *theProperties = sbWPDPropertyAdapter::New(this);
+  return *theProperties ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
+}
+
 NS_IMETHODIMP sbWPDDevice::GetState(PRUint32 *aState)
 {
   return sbBaseDevice::GetState(aState);
@@ -353,70 +366,69 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
   nsRefPtr<TransferRequest> request;
   nsRefPtr<TransferRequest> nextRequest;
 
-  rv = PopRequest(getter_AddRefs(request));
-  if (NS_FAILED(rv) || !request)
-    return PR_FALSE;
-
-  // PeekRequest returns NS_OK+nsnull if there is no next request
-  rv = PeekRequest(getter_AddRefs(nextRequest));
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
-
-  nsCOMPtr<sbILibrary> lib;
-  if (request->list) {
-    lib = do_QueryInterface(request->list);
-  }
-
-  switch (request->type) {
-    case TransferRequest::REQUEST_EJECT:
-    case TransferRequest::REQUEST_MOUNT:
-      // MTP devices can't be mounted or ejected
-      return NS_ERROR_NOT_IMPLEMENTED;
-    case TransferRequest::REQUEST_READ:
-      return ReadRequest(request);
-    case TransferRequest::REQUEST_SUSPEND:
-      break;
-    case TransferRequest::REQUEST_WRITE: {
-      if (lib) {
-        // add item to library
-        return WriteRequest(request);
-      } else {
-        // add item to playlist
-        rv = AddItemToPlaylist(request->item, request->list, request->index);
+  while (NS_SUCCEEDED(rv = PopRequest(getter_AddRefs(request))) && request) {
+    
+    // PeekRequest returns NS_OK+nsnull if there is no next request
+    rv = PeekRequest(getter_AddRefs(nextRequest));
+    // Something bad happened terminate the thread
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  
+    nsCOMPtr<sbILibrary> lib;
+    if (request->list) {
+      lib = do_QueryInterface(request->list);
+    }
+  
+    switch (request->type) {
+      case TransferRequest::REQUEST_EJECT:
+      case TransferRequest::REQUEST_MOUNT:
+        // MTP devices can't be mounted or ejected
+        return NS_ERROR_NOT_IMPLEMENTED;
+      case TransferRequest::REQUEST_READ:
+        return ReadRequest(request);
+      case TransferRequest::REQUEST_SUSPEND:
+        break;
+      case TransferRequest::REQUEST_WRITE: {
+        if (lib) {
+          // add item to library
+          return WriteRequest(request);
+        } else {
+          // add item to playlist
+          rv = AddItemToPlaylist(request->item, request->list, request->index);
+          return NS_SUCCEEDED(rv);
+        }
+      }
+      case TransferRequest::REQUEST_DELETE: {
+        if (lib) {
+          // remove item from library
+          return RemoveItem(request->item);
+        } else {
+          // remove item from list
+          rv = RemoveItemFromPlaylist(request->list, request->index);
+          return NS_SUCCEEDED(rv);
+        }
+      }
+      case TransferRequest::REQUEST_SYNC:
+      case TransferRequest::REQUEST_WIPE:                    /* delete all files */
+        break;
+      case TransferRequest::REQUEST_MOVE: {                  /* move an item in one playlist */
+        /* note that we can't quite batch things, since at this point the
+           media list we're given may be from the future (other non-move actions
+           might have been applied to it).  So we can't just rebuild the whole
+           thing, we need to be dumb. */
+        rv = MoveItemInPlaylist(request->list, request->index, request->otherIndex);
+        return NS_SUCCEEDED(rv);
+      }
+      case TransferRequest::REQUEST_UPDATE:
+        break;
+      case TransferRequest::REQUEST_NEW_PLAYLIST: {
+        nsCOMPtr<sbIMediaList> list = do_QueryInterface(request->item, &rv);
+        NS_ENSURE_SUCCESS(rv, PR_FALSE);
+        rv = CreatePlaylist(list);
         return NS_SUCCEEDED(rv);
       }
     }
-    case TransferRequest::REQUEST_DELETE: {
-      if (lib) {
-        // remove item from library
-        return RemoveItem(request->item);
-      } else {
-        // remove item from list
-        rv = RemoveItemFromPlaylist(request->list, request->index);
-        return NS_SUCCEEDED(rv);
-      }
-    }
-    case TransferRequest::REQUEST_SYNC:
-    case TransferRequest::REQUEST_WIPE:                    /* delete all files */
-      break;
-    case TransferRequest::REQUEST_MOVE: {                  /* move an item in one playlist */
-      /* note that we can't quite batch things, since at this point the
-         media list we're given may be from the future (other non-move actions
-         might have been applied to it).  So we can't just rebuild the whole
-         thing, we need to be dumb. */
-      rv = MoveItemInPlaylist(request->list, request->index, request->otherIndex);
-      return NS_SUCCEEDED(rv);
-    }
-    case TransferRequest::REQUEST_UPDATE:
-      break;
-    case TransferRequest::REQUEST_NEW_PLAYLIST: {
-      nsCOMPtr<sbIMediaList> list = do_QueryInterface(request->item, &rv);
-      NS_ENSURE_SUCCESS(rv, PR_FALSE);
-      rv = CreatePlaylist(list);
-      return NS_SUCCEEDED(rv);
-    }
+    // Let the worker thread know there's work to be done.
   }
-  // Let the worker thread know there's work to be done.
-  ::SetEvent(mRequestsPendingEvent);
   return PR_TRUE;
 }
 
@@ -473,69 +485,6 @@ nsresult sbWPDDevice::GetDeviceProperties(IPortableDevice * device,
   return NS_OK;
 }
 
-nsresult nsIVariantToPROPVARIANT(nsIVariant * aValue,
-                                 PROPVARIANT & prop)
-{
-  PRUint16 dataType;
-  nsresult rv = aValue->GetDataType(&dataType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  switch (dataType) {
-    case nsIDataType::VTYPE_INT8:
-    case nsIDataType::VTYPE_UINT8:
-    case nsIDataType::VTYPE_INT16:
-    case nsIDataType::VTYPE_UINT16:
-    case nsIDataType::VTYPE_INT32:
-    case nsIDataType::VTYPE_UINT32:
-    case nsIDataType::VTYPE_BOOL: {
-      PRInt32 valueInt;
-      rv = aValue->GetAsInt32(&valueInt);
-      if (NS_SUCCEEDED(rv)) {  // fall through PRInt64 case otherwise
-        NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromInt32(valueInt, &prop)),
-                       NS_ERROR_FAILURE);
-        return NS_OK;
-      }
-    }
-    case nsIDataType::VTYPE_INT64:
-    case nsIDataType::VTYPE_UINT64: {
-      PRInt64 valueLong;
-      rv = aValue->GetAsInt64(&valueLong);
-      if (NS_SUCCEEDED(rv)) {  // fall through double case otherwise
-        NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromInt64(valueLong, &prop)),
-                       NS_ERROR_FAILURE);
-        return NS_OK;
-      }
-    }
-    case nsIDataType::VTYPE_FLOAT:
-    case nsIDataType::VTYPE_DOUBLE: {
-      double valueDouble;
-      rv = aValue->GetAsDouble(&valueDouble);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromDouble(valueDouble, &prop)),
-                     NS_ERROR_FAILURE);
-      return NS_OK;
-    }
-    case nsIDataType::VTYPE_CHAR:
-    case nsIDataType::VTYPE_WCHAR:
-    case nsIDataType::VTYPE_DOMSTRING:
-    case nsIDataType::VTYPE_CHAR_STR:
-    case nsIDataType::VTYPE_WCHAR_STR:
-    case nsIDataType::VTYPE_STRING_SIZE_IS:
-    case nsIDataType::VTYPE_WSTRING_SIZE_IS:
-    case nsIDataType::VTYPE_UTF8STRING:
-    case nsIDataType::VTYPE_CSTRING:
-    case nsIDataType::VTYPE_ASTRING: {
-      nsAutoString stringValue;
-      rv = aValue->GetAsAString(stringValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(SUCCEEDED(sbStringToPropVariant(stringValue, prop)),
-                     NS_ERROR_FAILURE);
-      return NS_OK;
-    }
-  }
-  return NS_ERROR_FAILURE;
-}
-
 nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
                                   nsAString const & key,
                                   nsIVariant * value)
@@ -543,25 +492,46 @@ nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
   PROPERTYKEY propKey;
   nsresult rv;
   rv = PropertyKeyFromString(key, &propKey);
-  
+  NS_ENSURE_SUCCESS(rv, rv);
+  return SetProperty(properties,
+                     propKey,
+                     value);
+}
+
+nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
+                                  PROPERTYKEY const & key,
+                                  nsIVariant * value)
+{
   nsRefPtr<IPortableDeviceValues> propValues;
-  NS_ENSURE_TRUE(CoCreateInstance(CLSID_PortableDeviceValues,
-                                  NULL,
-                                  CLSCTX_INPROC_SERVER,
-                                  IID_IPortableDeviceValues,
-                                  getter_AddRefs(propValues)),
-                 NS_ERROR_FAILURE);
   PROPVARIANT pv = {0};
   PropVariantInit(&pv);
-  rv = nsIVariantToPROPVARIANT(value, pv);
+  nsresult rv = sbWPDnsIVariantToPROPVARIANT(value, pv);
   NS_ENSURE_SUCCESS(rv, rv);
-  propValues->SetValue(propKey, &pv);
+  rv = SetProperty(properties,
+                   key,
+                   pv);
+  PropVariantClear(&pv);
+  return rv;  
+}
+nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
+                                  PROPERTYKEY const & key,
+                                  PROPVARIANT const & value)
+{
+  
+  nsRefPtr<IPortableDeviceValues> propValues;
+  NS_ENSURE_TRUE(SUCCEEDED(CoCreateInstance(CLSID_PortableDeviceValues,
+                                            NULL,
+                                            CLSCTX_INPROC_SERVER,
+                                            IID_IPortableDeviceValues,
+                                            getter_AddRefs(propValues))),
+                 NS_ERROR_FAILURE);
+  propValues->SetValue(key, &value);
   nsRefPtr<IPortableDeviceValues> results;
-  rv = properties->SetValues(WPD_DEVICE_OBJECT_ID, propValues , getter_AddRefs(results));
+  nsresult rv = properties->SetValues(WPD_DEVICE_OBJECT_ID, propValues , getter_AddRefs(results));
   NS_ENSURE_SUCCESS(rv, rv);
   
   HRESULT error;
-  NS_ENSURE_TRUE(SUCCEEDED(results->GetErrorValue(propKey, &error)) && SUCCEEDED(error),
+  NS_ENSURE_TRUE(SUCCEEDED(results->GetErrorValue(key, &error)) && SUCCEEDED(error),
                  NS_ERROR_FAILURE);
   PROPVARIANT propVal = {0};
   PropVariantInit(&propVal);
@@ -576,7 +546,7 @@ nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
                                   nsIVariant ** retval)
 {
   nsRefPtr<IPortableDeviceKeyCollection> propertyKeys;
-  nsresult rv = CreatePropertyKeyCollection(propKey, getter_AddRefs(propertyKeys));
+  nsresult rv = sbWPDCreatePropertyKeyCollection(propKey, getter_AddRefs(propertyKeys));
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsRefPtr<IPortableDeviceValues> propValues;
@@ -588,7 +558,7 @@ nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
   
   NS_ENSURE_TRUE(SUCCEEDED(propValues->GetAt(0, 0, &propVal)), 
                  NS_ERROR_FAILURE);
-  *retval = new sbPropertyVariant(propVal);
+  *retval = sbPropertyVariant::New(propVal);
   if (!*retval)
     return NS_ERROR_OUT_OF_MEMORY;
   NS_ADDREF(*retval);
@@ -716,7 +686,7 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   hr = properties->GetValues(objid.BeginReading(), keys, getter_AddRefs(values));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
-  nsRefPtr<sbPropertyVariant> variant = new sbPropertyVariant();
+  nsRefPtr<sbPropertyVariant> variant = sbPropertyVariant::New();
   hr = values->GetAt(0, NULL, variant->GetPropVariant());
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
@@ -748,7 +718,7 @@ nsresult sbWPDDevice::RemoveItem(nsAString const &aObjId)
   hr = objIdList->ChangeType(VT_LPWSTR);
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
-  nsRefPtr<sbPropertyVariant> variant = new sbPropertyVariant();
+  nsRefPtr<sbPropertyVariant> variant = sbPropertyVariant::New();
   rv = variant->SetAsWString(aObjId.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -813,7 +783,7 @@ nsresult sbWPDDevice::AddItemToPlaylist(sbIMediaItem* aItem, /* the item to add 
                         getter_AddRefs(newItems));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
-  nsRefPtr<sbPropertyVariant> item = new sbPropertyVariant();
+  nsRefPtr<sbPropertyVariant> item = sbPropertyVariant::New();
   NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
   for (PRUint32 i = 0; i < aIndex; ++i) {
@@ -862,7 +832,7 @@ nsresult sbWPDDevice::MoveItemInPlaylist(sbIMediaList* aList,
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(aFromIndex < itemCount, NS_ERROR_UNEXPECTED);
 
-  nsRefPtr<sbPropertyVariant> item = new sbPropertyVariant();
+  nsRefPtr<sbPropertyVariant> item = sbPropertyVariant::New();
   NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
   
   hr = items->GetAt(aFromIndex, item->GetPropVariant());
@@ -1086,7 +1056,7 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
   if (!mediaID.IsEmpty()) {
     nsRefPtr<IPortableDeviceContent> content;
     if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))) && content) {
-      sbObjectIDFromPUID(content,
+      sbWPDObjectIDFromPUID(content,
                          mediaID,
                          result);
     }
@@ -1210,7 +1180,7 @@ static nsresult SetParentProperty(IPortableDeviceContent * content,
   list->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
                     puid);
   nsString objectID;
-  if (puid.IsEmpty() || NS_FAILED(sbObjectIDFromPUID(content,
+  if (puid.IsEmpty() || NS_FAILED(sbWPDObjectIDFromPUID(content,
                                                      puid,
                                                      objectID)))
     return NS_ERROR_FAILURE;
@@ -1227,7 +1197,8 @@ static nsresult SetContentLength(sbIMediaItem * item,
   
   if (FAILED(properties->SetUnsignedLargeIntegerValue(WPD_OBJECT_SIZE, length)))
     return NS_ERROR_FAILURE;
-
+  
+  return NS_OK;
 }
 
 static nsresult SetContentName(sbIMediaItem * item,
@@ -1245,6 +1216,13 @@ static nsresult SetContentName(sbIMediaItem * item,
     return NS_ERROR_FAILURE;
   
   return rv;
+}
+
+inline nsString GetItemID(sbIMediaItem * item)
+{
+  nsString guid;
+  item->GetGuid(guid);
+  return guid;
 }
 
 nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
@@ -1282,7 +1260,15 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
                                         WPDFormatType)))
       return NS_ERROR_FAILURE;
   }
-
+  else {
+    nsCOMPtr<nsIWritableVariant> var =
+      do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    var->SetAsAString(GetItemID(item));
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE,
+                           var);    
+    return SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED;
+  }
   rv = SetParentProperty(content, list, properties);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -1351,17 +1337,9 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
                       sizeof(buffer));
       item->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, nsString(buffer));
     }
-      
     ::CoTaskMemFree(newObjectID);
   }
-
-}
-
-static nsString GetItemID(sbIMediaItem * item)
-{
-  nsString guid;
-  item->GetGuid(guid);
-  return guid;
+  return NS_OK;
 }
 
 nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
@@ -1397,13 +1375,13 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
 
 static nsresult GetStreamFromDevice(IPortableDeviceContent * content,
                                     nsAString const & objectID,
-                                    IStream ** stream)
+                                    IStream ** stream,
+                                    DWORD & optimalBufferSize)
 {
   
   nsRefPtr<IPortableDeviceResources> resources;
   if (FAILED(content->Transfer(getter_AddRefs(resources))))
     return NS_ERROR_FAILURE;
-  DWORD optimalBufferSize = 0;
   if (FAILED(resources->GetStream(nsString(objectID).get(),            // Identifier of the object we want to transfer
                                  WPD_RESOURCE_DEFAULT,    // We are transferring the default resource (which is the entire object's data)
                                  STGM_READ,               // Opening a stream in READ mode, because we are reading data from the device.
@@ -1424,8 +1402,30 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
                          var);
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                          var);
+  nsRefPtr<IPortableDeviceContent> content;
+  rv = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsString objectID = GetWPDDeviceIDFromMediaItem(request->item);
+  DWORD optimalBufferSize = 0;
+  nsRefPtr<IStream> inputStream;
+  rv = GetStreamFromDevice(content,
+                           objectID,
+                           getter_AddRefs(inputStream),
+                           optimalBufferSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+  STATSTG stat;
+  if (FAILED(inputStream->Stat(&stat, STATFLAG_DEFAULT)))
+    return NS_ERROR_FAILURE;
+  
+  nsCOMPtr<nsIOutputStream> outputStream;
+  rv = request->item->OpenOutputStream(getter_AddRefs(outputStream));
+  NS_ENSURE_SUCCESS(rv, rv);
   sbDeviceStatus status(GetDeviceID(mPortableDevice));
-  // TODO: Implementation
+  rv = CopyIStream2nsIStream(status,
+                             this,
+                             inputStream,
+                             outputStream,
+                             optimalBufferSize); 
   if (NS_SUCCEEDED(rv)) {
     status.StateMessage(NS_LITERAL_STRING("Completed"));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,

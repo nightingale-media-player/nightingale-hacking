@@ -39,6 +39,7 @@ CPP_SRCS = sbWPDMarshall.cpp \
            sbWPDDevice.cpp \
            sbWPDDeviceController.cpp \
            sbWPDDeviceThread.cpp \
+           sbWPDPropertyAdapter.cpp \
            $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
            $(topsrcdir)/components/devices/base/src/sbContentTypeFormat.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceCompatibility.cpp \

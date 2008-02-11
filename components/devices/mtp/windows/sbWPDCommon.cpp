@@ -34,6 +34,7 @@
 #include <sbIDevice.h>
 #include <nsIVariant.h>
 #include <sbIDeviceEvent.h>
+#include <propvarutil.h>
 
 /**
  * Create the Songbird Device manager and return it
@@ -80,7 +81,7 @@ nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
   return target->DispatchEvent(event, async, &dispatched);
 }
 
-nsresult sbStringToPropVariant(nsAString const & str,
+nsresult sbWPDStringToPropVariant(nsAString const & str,
                                PROPVARIANT & var)
 {
   PRInt32 const length = str.Length();
@@ -94,7 +95,7 @@ nsresult sbStringToPropVariant(nsAString const & str,
   return NS_OK;
 }
 
-nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
+nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
                             nsAString const & PUID,
                             nsAString & objectID)
 {
@@ -105,7 +106,7 @@ nsresult sbObjectIDFromPUID(IPortableDeviceContent * content,
                                 IID_IPortableDevicePropVariantCollection,
                                 getter_AddRefs(persistentUniqueIDs));
   PROPVARIANT var;
-  if (FAILED(sbStringToPropVariant(PUID,
+  if (FAILED(sbWPDStringToPropVariant(PUID,
                                    var)) || 
       FAILED(persistentUniqueIDs->Add(&var)))
     return NS_ERROR_FAILURE;
@@ -154,4 +155,84 @@ sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
   }
   
   return PR_FALSE;
+}
+
+nsresult sbWPDnsIVariantToPROPVARIANT(nsIVariant * aValue,
+                                 PROPVARIANT & prop)
+{
+  PRUint16 dataType;
+  nsresult rv = aValue->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  switch (dataType) {
+    case nsIDataType::VTYPE_INT8:
+    case nsIDataType::VTYPE_UINT8:
+    case nsIDataType::VTYPE_INT16:
+    case nsIDataType::VTYPE_UINT16:
+    case nsIDataType::VTYPE_INT32:
+    case nsIDataType::VTYPE_UINT32:
+    case nsIDataType::VTYPE_BOOL: {
+      PRInt32 valueInt;
+      rv = aValue->GetAsInt32(&valueInt);
+      if (NS_SUCCEEDED(rv)) {  // fall through PRInt64 case otherwise
+        NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromInt32(valueInt, &prop)),
+                       NS_ERROR_FAILURE);
+        return NS_OK;
+      }
+    }
+    case nsIDataType::VTYPE_INT64:
+    case nsIDataType::VTYPE_UINT64: {
+      PRInt64 valueLong;
+      rv = aValue->GetAsInt64(&valueLong);
+      if (NS_SUCCEEDED(rv)) {  // fall through double case otherwise
+        NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromInt64(valueLong, &prop)),
+                       NS_ERROR_FAILURE);
+        return NS_OK;
+      }
+    }
+    case nsIDataType::VTYPE_FLOAT:
+    case nsIDataType::VTYPE_DOUBLE: {
+      double valueDouble;
+      rv = aValue->GetAsDouble(&valueDouble);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      NS_ENSURE_TRUE(SUCCEEDED(InitPropVariantFromDouble(valueDouble, &prop)),
+                     NS_ERROR_FAILURE);
+      return NS_OK;
+    }
+    case nsIDataType::VTYPE_CHAR:
+    case nsIDataType::VTYPE_WCHAR:
+    case nsIDataType::VTYPE_DOMSTRING:
+    case nsIDataType::VTYPE_CHAR_STR:
+    case nsIDataType::VTYPE_WCHAR_STR:
+    case nsIDataType::VTYPE_STRING_SIZE_IS:
+    case nsIDataType::VTYPE_WSTRING_SIZE_IS:
+    case nsIDataType::VTYPE_UTF8STRING:
+    case nsIDataType::VTYPE_CSTRING:
+    case nsIDataType::VTYPE_ASTRING: {
+      nsAutoString stringValue;
+      rv = aValue->GetAsAString(stringValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(SUCCEEDED(sbWPDStringToPropVariant(stringValue, prop)),
+                     NS_ERROR_FAILURE);
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_FAILURE;
+}
+
+nsresult sbWPDCreatePropertyKeyCollection(PROPERTYKEY const & key,
+                                          IPortableDeviceKeyCollection ** propertyKeys)
+{
+  NS_ENSURE_ARG(propertyKeys);
+  nsRefPtr<IPortableDeviceKeyCollection> propKeys;
+  
+  NS_ENSURE_TRUE(SUCCEEDED(CoCreateInstance(CLSID_PortableDeviceKeyCollection,
+                                            NULL,
+                                            CLSCTX_INPROC_SERVER,
+                                            IID_IPortableDeviceKeyCollection,
+                                            (VOID**) &propKeys)),
+                 NS_ERROR_FAILURE);
+  propKeys.forget(propertyKeys);
+  return (*propertyKeys)->Add(key);
+
 }

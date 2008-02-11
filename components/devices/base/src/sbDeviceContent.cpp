@@ -67,6 +67,11 @@ sbDeviceContent::~sbDeviceContent()
   TRACE(("DeviceContent[0x%.8x] - Destructed", this));
 }
 
+sbDeviceContent * sbDeviceContent::New()
+{
+  return new sbDeviceContent;
+}
+
 nsresult
 sbDeviceContent::Init()
 {

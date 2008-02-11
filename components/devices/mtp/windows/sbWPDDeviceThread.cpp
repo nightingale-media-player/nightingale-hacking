@@ -49,8 +49,10 @@ NS_IMETHODIMP sbWPDDeviceThread::Run()
 {
   do
   {
-    // Check the device for work
-    while (mDevice->ProcessThreadsRequest()) ;
+    // If PRocessThreadsRequest returns true it means it's it's time to die.
+    // This may be due to a catostrophic error or normal shutdown while requests
+    // are being processed.
+    mTimeToDie = !mDevice->ProcessThreadsRequest();
     // Wait on the event, will get set when there are items on the queue
     ::WaitForSingleObject(mEvent, INFINITE);
   } while (!mTimeToDie);

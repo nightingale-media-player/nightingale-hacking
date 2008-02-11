@@ -191,7 +191,7 @@ sbWPDDeviceController::CreateDevice(nsIPropertyBag *aParams,
   nsCOMPtr<nsIPropertyBag2> properties = do_QueryInterface(aParams, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  device = new sbWPDDevice(id, properties);
+  device = sbWPDDevice::New(id, properties);
   NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
 
   NS_ADDREF(*_retval = device);

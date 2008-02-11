@@ -41,6 +41,11 @@ public:
   NS_DECL_NSIVARIANT
   NS_DECL_NSIWRITABLEVARIANT
   NS_DECL_NSICLASSINFO
+  
+  /* shared */ PROPVARIANT* GetPropVariant();
+  static sbPropertyVariant * New();
+  static sbPropertyVariant * New(PROPVARIANT const & propVar);
+protected:
   /**
    * Initializes the PROPVARIANT
    */
@@ -55,14 +60,10 @@ public:
   {
     PropVariantCopy(&mPropVariant, &propVar);
   }
-  
-  /* shared */ PROPVARIANT* GetPropVariant();
-  
-protected:
   /**
    * Cleans up the variant. Only allow destruction from within
    */
-  ~sbPropertyVariant();
+  virtual ~sbPropertyVariant();
 private:
   PROPVARIANT mPropVariant;
   

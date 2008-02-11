@@ -29,6 +29,15 @@
 #include "sbWPDCommon.h"
 #include "sbWPDMarshall.h"
 
+sbPortableDeviceEventsCallback * sbPortableDeviceEventsCallback::New(sbWPDMarshall * marshall,
+                                                                     sbIDevice * device,
+                                                                     nsAString const & deviceID)
+{
+  return new sbPortableDeviceEventsCallback(marshall,
+                                            device,
+                                            deviceID);
+}
+
 sbPortableDeviceEventsCallback::~sbPortableDeviceEventsCallback()
 {
   NS_ASSERTION(mRefCnt == 0, "sbPortableDeviceEventsCallback being deleted with live references");

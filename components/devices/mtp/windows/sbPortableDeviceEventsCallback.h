@@ -43,21 +43,9 @@ public:
   /**
    * Initialize the listener with the marshaller object and device
    */
-  sbPortableDeviceEventsCallback(sbWPDMarshall * marshall,
-                                 sbIDevice * device,
-                                 nsAString const & deviceID) :
-    mRefCnt(0),
-    mMarshall(marshall),
-    mSBDevice(device),
-    mDeviceID(deviceID)
-  {
-    NS_ASSERTION(marshall, "marshall cannot be null");
-    NS_ASSERTION(device, "device cannot be null");
-  }
-  /**
-   * Release our reference to the marshaller and the device (implict)
-   */
-  ~sbPortableDeviceEventsCallback();
+  static sbPortableDeviceEventsCallback * New(sbWPDMarshall * marshall,
+                                              sbIDevice * device,
+                                              nsAString const & deviceID);  
   /**
    * Basic QI implementation
    */
@@ -89,6 +77,25 @@ public:
    * Man event implementation. This dispatches into the Songbird device manager
    */
   HRESULT __stdcall OnEvent(IPortableDeviceValues* pEventParameters);
+protected:
+  /**
+   * Initialize the listener with the marshaller object and device
+   */
+  sbPortableDeviceEventsCallback(sbWPDMarshall * marshall,
+                                 sbIDevice * device,
+                                 nsAString const & deviceID) :
+    mRefCnt(0),
+    mMarshall(marshall),
+    mSBDevice(device),
+    mDeviceID(deviceID)
+  {
+    NS_ASSERTION(marshall, "marshall cannot be null");
+    NS_ASSERTION(device, "device cannot be null");
+  }
+  /**
+   * Release our reference to the marshaller and the device (implict)
+   */
+  ~sbPortableDeviceEventsCallback();
 private:
   ULONG mRefCnt;
   // We need access to the concrete class so we'll
