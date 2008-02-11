@@ -128,8 +128,8 @@ function scanNextDirectory()
   try {
     if ( typeof(aFileScanQuery) != "undefined" && aFileScanQuery && aFileScanQuery.isScanning() ) {
 /*
-*/  
       alert("CRAP!!  MULTIPLE FILE SCANS AT ONCE!");
+*/  
       return;
     }
   
@@ -286,8 +286,10 @@ function appendToMetadataQueue( aItemArray ) {
         Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                   .getService(Components.interfaces.sbIMetadataJobManager);
       gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
+/*      
       if (freakout)
         alert("FREAKOUT!");
+*/  
     }
   } catch (e) {
     Components.utils.reportError(e);
