@@ -399,8 +399,13 @@ mtpServicePaneService.prototype = {
     mtpServicePaneService_commandHandler_getDeviceInfo(aNode,
                                                        aDevice, 
                                                        aParentWindow) {
-    // todo: show the info dialog for this device
-    aParentWindow.alert("Get Device Info");
+    aParentWindow.SBWindow.openModalDialog
+      (aParentWindow,
+       "chrome://songbird/content/xul/device/deviceInfoDialog.xul",
+       "",
+       "chrome,centerscreen",
+       [ aDevice ],
+       null);
   },
 
   /**
