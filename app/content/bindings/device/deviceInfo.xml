@@ -44,14 +44,25 @@
    *   The set of information displayed is specified by the CSV "devicespecs"
    * attribute.  This attribute specifies both the displayed information and the
    * ordering.
-   *   In addition to the device specs, this widget displays a device icon and
-   * friendly name.
-   *   This widget also provides a device eject button.
+   *   In addition various elements may be shows such as a device image or an
+   * eject button.  The shown elements are specified by the CVS "showlist"
+   * attribute.
    *
    * Device specs:
    *   model                    Model name.
    *   capacity                 Model capacity.
    *   model_capacity           Model name and capacity.
+   *   friendly_name            User set device friendly name.
+   *   serial_number            Serial number.
+   *   vendor                   Vendor name.
+   *   access                   Access compatibility.
+   *   playback_formats         Playback formats.
+   *
+   * Show elements:
+   *   image                    Device image.
+   *   name                     User set device friendly name.
+   *   eject                    Eject button.
+   *   moreinfo                 More device info dialog button.
    *
    *****************************************************************************
    ************************************************************************* -->
@@ -71,20 +82,32 @@
         <!-- Device image. -->
         <xul:image sbid="device_image"
                    class="device-image"
-                   alt="Generic device icon"/>
+                   showid="image"
+                   alt="Generic device icon"
+                   hidden="true"/>
 
         <!-- Device info. -->
         <xul:vbox sbid="summary_box">
 
-          <!-- Device name and eject button. -->
+          <!-- Device name and eject and more info buttons. -->
           <xul:hbox sbid="name_box" align="center">
             <xul:label sbid="device_name_label"
                        class="device-name-label"
-                       crop="end"/>
-              <xul:button sbid="eject_button"
-                          class="eject-button"
-                          action="eject"
-                          oncommand="DIW.handleAction(event);"/>
+                       showid="name"
+                       crop="end"
+                       hidden="true"/>
+            <xul:button sbid="eject_button"
+                        class="eject-button"
+                        showid="eject"
+                        action="eject"
+                        oncommand="DIW.onAction(event);"
+                        hidden="true"/>
+            <xul:button sbid="more_info_button"
+                        class="more-info-button"
+                        showid="moreinfo"
+                        action="more_info"
+                        oncommand="DIW.onAction(event);"
+                        hidden="true"/>
           </xul:hbox>
 
           <!-- Device specs. -->
@@ -101,7 +124,7 @@
 
               <!-- Model row. -->
               <xul:row devicespec="model">
-                <xul:label sbid="model_header_label"
+                <xul:label sbid="model_label"
                            class="device-specs-grid-label"
                            value="&device.info.model.label;"/>
                 <xul:label sbid="model_value_label"
@@ -110,7 +133,7 @@
 
               <!-- Capacity row. -->
               <xul:row devicespec="capacity">
-                <xul:label sbid="capacity_header_label"
+                <xul:label sbid="capacity_label"
                            class="device-specs-grid-label"
                            value="&device.info.capacity.label;"/>
                 <xul:label sbid="capacity_value_label"
@@ -119,10 +142,55 @@
 
               <!-- Model/capacity row. -->
               <xul:row devicespec="model_capacity">
-                <xul:label sbid="model_capacity_header_label"
+                <xul:label sbid="model_capacity_label"
                            class="device-specs-grid-label"
                            value="&device.info.model.label;"/>
                 <xul:label sbid="model_capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Friendly name row. -->
+              <xul:row devicespec="friendly_name">
+                <xul:label sbid="friendly_name_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.friendly_name.label;"/>
+                <xul:label sbid="friendly_name_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Serial number row. -->
+              <xul:row devicespec="serial_number">
+                <xul:label sbid="serial_number_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.serial_number.label;"/>
+                <xul:label sbid="serial_number_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Vendor row. -->
+              <xul:row devicespec="vendor">
+                <xul:label sbid="vendor_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.vendor.label;"/>
+                <xul:label sbid="vendor_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Access compatibility row. -->
+              <xul:row devicespec="access">
+                <xul:label sbid="access_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.access.label;"/>
+                <xul:label sbid="access_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Playback formats row. -->
+              <xul:row devicespec="playback_formats">
+                <xul:label sbid="playback_formats_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.playback_formats.label;"/>
+                <xul:label sbid="playback_formats_value_label"
                            class="device-specs-grid-label"/>
               </xul:row>
 

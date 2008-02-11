@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /*
- //
+//
 // BEGIN SONGBIRD GPL
 //
 // This file is part of the Songbird web player.
@@ -35,21 +35,19 @@
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
 
-<!-- Summary window. -->
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        id="mtp-device-summary"
-        onload="DeviceSummary.onLoad();">
-
-  <!--
-   * Broadcaster set.
-   *
-   *   deviceIDBroadcaster      Sets value to the device identifier.
-   -->
-
-  <broadcasterset>
-    <broadcaster id="deviceIDBroadcaster"/>
-  </broadcasterset>
-
+<!-- Device info dialog box. -->
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="device_info_dialog"
+ hidechrome="true"
+ flex="1"
+ type="songbird"
+ buttons="accept"
+ onload="DeviceInfoDlg.onLoad();"
+ ondialogaccept="onExit();"
+>
 
   <!-- *************************************************************************
    *
@@ -57,29 +55,14 @@
    *
    ************************************************************************* -->
 
-  <vbox id="main_box" flex="1">
+  <!-- Use Songbird window region. -->
+  <windowregion/>
 
-    <hbox id="info_progress_box" flex="1">
-
-      <!-- Device information. -->
-      <sb-device-info observes="deviceIDBroadcaster"
-                      devicespecs="model_capacity"
-                      showlist="image,name,eject,moreinfo"
-                      flex="1"/>
-
-      <!-- Device progress. -->
-      <sb-device-progress id="sb-device-progress"
-                          flex="1"
-                          observes="deviceIDBroadcaster"/>
-
-    </hbox> <!-- End of "info_progress_box" -->
-
-    <!-- Device capacity. -->
-    <sb-device-capacity id="device_capacity"
-                        flex="1"
-                        observes="deviceIDBroadcaster"/>
-
-  </vbox> <!-- End of "main_box" -->
+  <!-- Device info. -->
+  <sb-device-info
+    id="device_info"
+    devicespecs="friendly_name,serial_number,vendor,model,capacity,access,playback_formats"
+    flex="1"/>
 
 
   <!-- *************************************************************************
@@ -96,7 +79,7 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
-  <!-- Device summary services. -->
+  <!-- Device info dialog services. -->
   <script><![CDATA[
 
     //
@@ -109,22 +92,19 @@
       var Ci = Components.interfaces;
     if (typeof(Cr) == "undefined")
       var Cr = Components.results;
-    if (typeof(Cu) == "undefined")
-      var Cu = Components.utils;
+
 
     //
-    // Device summary services object.
+    // Device info dialog services object.
     //
 
-    var DeviceSummary = {
+    var DeviceInfoDlg = {
       //
       // Object fields.
       //
-      //   _deviceID            Device ID.
       //   _device              sbIDevice object.
       //
 
-      _deviceID: null,
       _device: null,
 
 
@@ -138,28 +118,29 @@
        * \brief Handle load events.
        */
 
-      onLoad: function DeviceSummary_onLoad() {
-        // Get the device identifier from the chrome URL.
-        var url = window.location.href;
-        var pos = url.indexOf("=");
-        if (pos < 0)
-          return;
-        this._deviceID = url.substr(pos + 1);
+      onLoad: function DeviceInfoDlg_onLoad() {
+        // Get the dialog parameters.
+        var dialogPB = window.arguments[0].QueryInterface
+                                             (Ci.nsIDialogParamBlock);
+        this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
 
-        // Get the device object.
-        this._device = this._getDevice(this._deviceID);
+        // Get the device ID.
+        var deviceID = this._device.id;
 
-        // Go back to previous page and return if device is not available.
-        if (!this._device) {
-            var browser = SBGetBrowser();
-            browser.getTabForDocument(document).backWithDefault();
-            return;
-        }
+        // Set the device info element device ID.
+        var deviceInfoElem = document.getElementById("device_info");
+        deviceInfoElem.setAttribute("device-id", deviceID);
 
-        // Set the device ID broadcaster.
-        document.getElementById("deviceIDBroadcaster").setAttribute
-                                                         ("device-id",
-                                                          this._deviceID);
+        // Construct the dialog title.
+        var dialog = document.getElementById("device_info_dialog");
+        var title = SBFormattedString("device.info.dialog.title",
+                                      [ this._getDeviceFriendlyName() ]);
+
+        // Set the dialog title.  Setting the title on the dialog widget from
+        // onload does not result in the UI updating.  It must be done more
+        // directly.
+        var dialogTitlebar = document.getElementById("dialog-titlebar");
+        dialogTitlebar.title = title;
       },
 
 
@@ -170,20 +151,16 @@
       //------------------------------------------------------------------------
 
       /**
-       * \brief Get the device object for the device ID specified by aDeviceID.
+       * \brief Return the device friendly name.
        *
-       * \param aDeviceID       Device identifier.
-       *
-       * \return sbIDevice device object.
+       * \return Device friendly name.
        */
 
-      _getDevice: function DeviceSummary__getDevice(aDeviceID) {
-        // Just return the device ID for now.
-        return aDeviceID;
+      _getDeviceFriendlyName: function DeviceInfoDlg__getDeviceFriendlyName() {
+        return this._device.name;
       }
     };
 
   ]]></script>
 
-</window>
-
+</dialog>

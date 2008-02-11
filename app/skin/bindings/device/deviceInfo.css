@@ -70,6 +70,17 @@ Imported by bindings.css or directly into feathers.
   background-position:center top;
 }
 
+.more-info-button {
+  min-width:20px;
+  height:20px;
+  margin:0 0 0 4px;
+  padding:0;
+  /*XXXeps use this icon for testing until a better one is created. */
+  background-image:url("chrome://songbird/skin/icons/info.png");
+  background-repeat:no-repeat;
+  background-position:center top;
+}
+
 .eject-button:hover {
   background-position:center bottom;
 }

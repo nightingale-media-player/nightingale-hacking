@@ -91,6 +91,9 @@ var DIW = {
     // Initialize the device services.
     this._deviceInitialize();
 
+    // Show specified elements.
+    this._showElements();
+
     // Update the UI.
     this._update();
   },
@@ -172,15 +175,42 @@ var DIW = {
     // Dispatch updating.
     switch (aDeviceSpec) {
       case "model" :
-        this._deviceSpecUpdateModel();
+        this._deviceSpecUpdateValue("model_value_label",
+                                    this._getDeviceModel());
         break;
 
       case "capacity" :
-        this._deviceSpecUpdateCapacity();
+        this._deviceSpecUpdateValue("capacity_value_label",
+                                    this._getDeviceModelSize());
         break;
 
       case "model_capacity" :
         this._deviceSpecUpdateModelCapacity();
+        break;
+
+      case "friendly_name" :
+        this._deviceSpecUpdateValue("friendly_name_value_label",
+                                    this._getDeviceFriendlyName());
+        break;
+
+      case "serial_number" :
+        this._deviceSpecUpdateValue("serial_number_value_label",
+                                    this._getDeviceSerialNumber());
+        break;
+
+      case "vendor" :
+        this._deviceSpecUpdateValue("vendor_value_label",
+                                    this._getDeviceVendor());
+        break;
+
+      case "access" :
+        this._deviceSpecUpdateValue("access_value_label",
+                                    this._getDeviceAccessCompatibility());
+        break;
+
+      case "playback_formats" :
+        this._deviceSpecUpdateValue("playback_formats_value_label",
+                                    this._getDevicePlaybackFormats());
         break;
 
       default :
@@ -194,28 +224,19 @@ var DIW = {
 
 
   /**
-   * \brief Update the device spec model row.
+   * \brief Update the device spec value of the label specified by aLabelID with
+   *        the value specified by aValue.
+   *
+   * \param aLabelID            ID of label to update.
+   * \param aValue              Value with which to update label.
    */
 
-  _deviceSpecUpdateModel: function DIW__deviceSpecUpdateModel() {
-    // Set the device model label.
-    var devModelLabel = this._getElement("model_value_label");
-    var devModelValue = this._getDeviceModel();
-    if (devModelValue != devModelLabel.getAttribute("value"))
-      devModelLabel.setAttribute("value", devModelValue);
-  },
-
-
-  /**
-   * \brief Update the device spec capacity row.
-   */
-
-  _deviceSpecUpdateCapacity: function DIW__deviceSpecUpdateCapacity() {
-    // Set the device model capacity.
-    var devCapLabel = this._getElement("capacity_value_label");
-    var devCapValue = this._getDeviceModelSize();
-    if (devCapValue != devCapLabel.getAttribute("value"))
-      devCapLabel.setAttribute("value", devCapValue);
+  _deviceSpecUpdateValue: function DIW__deviceSpecUpdateValue(aLabelID,
+                                                              aValue) {
+    // Set the value label.
+    var labelElem = this._getElement(aLabelID);
+    if (labelElem.getAttribute("value") != aValue)
+      labelElem.setAttribute("value", aValue);
   },
 
 
@@ -230,10 +251,8 @@ var DIW = {
     var devCapValue = this._getDeviceModelSize();
     var devModelCapValue = devModelValue + " (" + devCapValue + ")";
 
-    // Set the device model/capacity.
-    var devModelCapLabel = this._getElement("model_capacity_value_label");
-    if (devModelCapValue != devModelCapLabel.getAttribute("value"))
-      devModelCapLabel.setAttribute("value", devModelCapValue);
+    // Upate the device model/capacity.
+    this._deviceSpecUpdateValue("model_capacity_value_label", devModelCapValue);
   },
 
 
@@ -250,11 +269,15 @@ var DIW = {
    * \param aEvent              Event to handle.
    */
 
-  handleAction: function DIW_handleAction(aEvent) {
+  onAction: function DIW_onAction(aEvent) {
     // Dispatch processing of action.
     switch (aEvent.target.getAttribute("action")) {
       case "eject" :
         this._eject();
+        break;
+
+      case "more_info" :
+        this._presentMoreInfo();
         break;
 
       default :
@@ -301,11 +324,45 @@ var DIW = {
   },
 
 
+  /**
+   * \brief Return the show element with the show ID specified by aShowID.
+   *
+   * \param aShowID             Element show ID.
+   *
+   * \return Show element.
+   */
+
+  _getShowElement: function DIW__getShowElement(aShowID) {
+    return document.getAnonymousElementByAttribute(this._widget,
+                                                   "showid",
+                                                   aShowID);
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Internal device info services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * \brief Show the elements specified by the "showlist" attribute".
+   */
+
+  _showElements: function DIW__showElements() {
+    // Get the list of elements to show.
+    var showListAttr = this._widget.getAttribute("showlist");
+    if (!showListAttr)
+      return;
+    var showList = this._widget.getAttribute("showlist").split(",");
+
+    // Show the specified elements.
+    for (var i = 0; i < showList.length; i++) {
+      var element = this._getShowElement(showList[i]);
+      element.hidden = false;
+    }
+  },
+
 
   /**
    * \brief Update the device info UI.  Read the device info, and if anything
@@ -327,6 +384,21 @@ var DIW = {
 
     // Update the device specs.
     this._deviceSpecUpdateAll();
+  },
+
+
+  /**
+   * \brief Present the more info dialog.
+   */
+
+  _presentMoreInfo: function DIW__presentMoreInfo() {
+    SBWindow.openModalDialog
+               (window,
+                "chrome://songbird/content/xul/device/deviceInfoDialog.xul",
+                "",
+                "chrome,centerscreen",
+                [ this._device ],
+                null);
   },
 
 
@@ -404,6 +476,51 @@ var DIW = {
 
 
   /**
+   * \brief Return the device serial number.
+   *
+   * \return Device serial number.
+   */
+
+  _getDeviceSerialNumber: function DIW__getDeviceSerialNumber() {
+    return "1234567890ABC";
+  },
+
+
+  /**
+   * \brief Return the device vendor.
+   *
+   * \return Device vendor.
+   */
+
+  _getDeviceVendor: function DIW__getDeviceVendor() {
+    return "Sony";
+  },
+
+
+  /**
+   * \brief Return the device access compatibility.
+   *
+   * \return Device access compatibility.
+   */
+
+  _getDeviceAccessCompatibility: function DIW__getDeviceAccessCompatibility() {
+    return "Read-only without deletion";
+  },
+
+
+  /**
+   * \brief Return the device playback formats.
+   *
+   * \return Device playback formats.
+   */
+
+  _getDevicePlaybackFormats: function DIW__getDevicePlaybackFormats() {
+    return "MP3, AVI, MPEG, ASF, BMP, PICT, WAV, TIFF, OGG, AAC, FLAC, WMV, " +
+           "MP2, Microsoft Word Document";
+  },
+
+
+  /**
    * \brief Return the device icon URL.
    *
    * \return Device icon URL.
@@ -432,8 +549,11 @@ var DIW = {
    */
 
   _getDevice: function DIW__getDevice(aDeviceID) {
-    // Just return the device ID for now.
-    return aDeviceID;
+    // Use the mock device for now.
+    var device =
+          Cc["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+            .createInstance(Ci.sbIDevice);
+    return device;
   }
 };
 
