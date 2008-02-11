@@ -314,6 +314,9 @@ mtpServicePaneService.prototype = {
     
     // Also remove it from our table of sync states
     delete this._sync_table[devId];
+    
+    // Unload any page from the browser that might be related to this device
+    this._unloadDevicePages(aDevice);
   },
 
   _createConnectedDevices: function mtpServicePaneService_createConnectedDevices() {
@@ -371,7 +374,6 @@ mtpServicePaneService.prototype = {
   /**
    * Call our local listeners with the sync state for the deviceid 
    * that is currently being watched.
-   * 
    */
   _callLocalSyncListeners: function 
     mtpServicePaneService_callLocalSyncListeners(aDeviceId) {
@@ -389,6 +391,64 @@ mtpServicePaneService.prototype = {
         listener.onSyncStateChanged(isSyncing);
       }
     }
+  },
+  
+  
+  /**
+   * Unload any page that may be loaded that belong to the specified device,
+   * that is, device library views, device playlist views, and device summary
+   * pages.
+   */
+  _unloadDevicePages: function 
+    mtpServicePaneService_unloadDevicePages(aDevice) {
+
+    // get gBrowser for the main window
+    var window;
+    var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
+                                  .getService(Ci.nsIWindowMediator);
+    window = windowManager.getMostRecentWindow("Songbird:Main");
+    var gBrowser = window.gBrowser;
+    
+    if (gBrowser) {
+      var devUrl = this._cfg.devMgrURL + "?device-id=" + aDevice.id;
+      // get all browser tabs
+      var tabs = gBrowser.mTabs;
+      for (var i=0;i<tabs.length;i++) {
+        var tab = tabs[i];
+        // is this a library/playlist view ?
+        if (tab.mediaListView) {
+          // does it belong to this device ?
+          if (this._viewBelongsToDevice(tab.mediaListView, aDevice)) {
+            // unload it
+            tab.backWithDefault(); 
+          }
+        } else {
+          var document = tab.linkedBrowser.contentDocument;
+          // is this the summary page for the device ?
+          if (document.documentURI == devUrl) {
+            // unload it
+            tab.backWithDefault();
+          }
+        }
+      }
+    }
+  },
+  
+  /**
+   * Returns true if the view belongs to the given device
+   */
+  _viewBelongsToDevice: function 
+    mtpServicePaneService_viewBelongsToDevice(aMediaListView, aDevice) {
+    // get the parent library
+    var mediaList = aMediaListView.mediaList;
+    var viewLibrary = mediaList.library;
+    
+    // compare it to all the libraries for the device
+    for (var i=0;i<aDevice.content.libraries.length;i++) {
+      var devLib = aDevice.content.libraries[i];
+      if (devLib == viewLibrary) return true;
+    }
+    return false;
   },
   
   // ************************************
