@@ -1720,14 +1720,18 @@
             return;
           }
 
-          // In addition to showing the current track, we trigger
+          // Before showing the current track we trigger
           // a custom event, so that if this object is used wihout
           // a gBrowser object, the current window may still perform
           // its own custom action.
           
           var e = document.createEvent("Events");
-          e.initEvent("current-track", false, true);
-          this.dispatchEvent(e);
+          e.initEvent("ShowCurrentTrack", false, true);
+          var handled = !this.dispatchEvent(e);
+          if (handled) { 
+            return;
+          }
+          
           
           // Find a gBrowser in the window hierarchy chain (for display panels, etc)
           var browser = this.getBrowser();
