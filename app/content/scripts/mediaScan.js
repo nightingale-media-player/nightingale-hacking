@@ -41,6 +41,7 @@ theProgress.value = 0;
 
 var gFileScan = null;
 var gDirectoriesToScan = [];
+var gOldJobs = [];
 var aFileScanQuery = null;
 
 var theTargetLibrary = null;
@@ -125,6 +126,13 @@ function isinstance(inst, base)
 function scanNextDirectory()
 {
   try {
+    if ( typeof(aFileScanQuery) != "undefined" && aFileScanQuery && aFileScanQuery.isScanning() ) {
+/*
+*/  
+      alert("CRAP!!  MULTIPLE FILE SCANS AT ONCE!");
+      return;
+    }
+  
     aFileScanQuery = 
       Components.classes["@songbirdnest.com/Songbird/FileScanQuery;1"]
                 .createInstance(Components.interfaces.sbIFileScanQuery);
@@ -146,9 +154,12 @@ function scanNextDirectory()
 
       gFileScan.submitQuery(aFileScanQuery);
       
-      polling_interval = setInterval( onPollScan, 333 );
+      polling_interval = setInterval( onPollScan, 133 );
       
       theTitle.value = SBString("media_scan.scanning", "Scanning") + " -- " + url;
+    } else {
+      // ??? Awww, crap.
+      throw "Something's wrong with the filescanner, dude";
     }
   }
   catch (err)
@@ -157,6 +168,8 @@ function scanNextDirectory()
   }
 }
 
+var accumulatorArray = Components.classes["@mozilla.org/array;1"]
+  .createInstance(Components.interfaces.nsIMutableArray);
 function onPollScan()
 {
   // Check to see if the scan is complete or if it has progressed past our
@@ -172,37 +185,53 @@ function onPollScan()
     }
 
     var array = aFileScanQuery.getResultRangeAsURIs(nextStartIndex, endIndex);
-    nextStartIndex = endIndex + 1;
+    if (!scanIsDone)
+      nextStartIndex = endIndex + 1;
 
-    // Create a temporary track nane for all of the found tracks
-    var propsArray =
-      Components.classes["@mozilla.org/array;1"]
-                .createInstance(Components.interfaces.nsIMutableArray);
+    // Append the new array to the last array
     for (let i = 0; i < array.length; i++) {
-      let uri = array.queryElementAt(i, Components.interfaces.nsIURI);
-      let props =
-        Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
-      props.appendProperty(SBProperties.trackName,
-                           createDefaultTitle(uri));
-      propsArray.appendElement(props, false);
+      accumulatorArray.appendElement( 
+        array.queryElementAt(i, Components.interfaces.nsIURI), false );
     }
 
-    // push all items on a fifo, so that each time the batch listener completes,
-    // we can grab the full list of items in the chunk again (not just those
-    // that were created), in order to be able to insert them in the target
-    // playlist regardless of whether they already existed or not
-    scannedChunks.push(array);
+    // We don't have a full chunk, and there's still more directories to go...
+    if (accumulatorArray.length < CHUNK_SIZE && scanIsDone && gDirectoriesToScan.length > 0) {
+      // Ooops, NOP.
+    } else {
+      // Create a temporary track nane for all of the found tracks
+      var propsArray =
+        Components.classes["@mozilla.org/array;1"]
+                  .createInstance(Components.interfaces.nsIMutableArray);
+      for (let i = 0; i < accumulatorArray.length; i++) {
+        let uri = accumulatorArray.queryElementAt(i, Components.interfaces.nsIURI);
+        let props =
+          Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                    .createInstance(Components.interfaces.sbIMutablePropertyArray);
+        props.appendProperty(SBProperties.trackName,
+                            createDefaultTitle(uri));
+        propsArray.appendElement(props, false);
+      }
 
-    // Asynchronously load the scanned chunk into the library
-    var listener = new sbBatchCreateListener(array);
-    batchLoadsPending++;
-    theTargetLibrary.batchCreateMediaItemsAsync(listener, array, propsArray);
+      // push all items on a fifo, so that each time the batch listener completes,
+      // we can grab the full list of items in the chunk again (not just those
+      // that were created), in order to be able to insert them in the target
+      // playlist regardless of whether they already existed or not
+      scannedChunks.push(accumulatorArray);
+
+      // Asynchronously load the scanned chunk into the library
+      var listener = new sbBatchCreateListener(accumulatorArray);
+      batchLoadsPending++;
+      theTargetLibrary.batchCreateMediaItemsAsync(listener, accumulatorArray, propsArray);
+      
+      // Make a new accumulator.
+      accumulatorArray = Components.classes["@mozilla.org/array;1"]
+        .createInstance(Components.interfaces.nsIMutableArray);    
+    }
   }
 
   if (scanIsDone) {
     clearInterval(polling_interval);
-    
+
     // if we have more things to look at, do that
     if (gDirectoriesToScan.length > 0) {
       scanNextDirectory();
@@ -227,7 +256,6 @@ function onPollScan()
 var gMediaScanMetadataJob = null;
 function appendToMetadataQueue( aItemArray ) {
   try {
-    
     // xxxlone> reusing the previous job fails ! no idea why :( to try it out, 
     // re-enable the test, then drop a few directories onto a empty library, and
     // observe how the first job get processed, but the following ones, those
@@ -235,15 +263,31 @@ function appendToMetadataQueue( aItemArray ) {
     // see bug 7264
     
     // If we need to, make a new job.
-    if ( 1 ) { //gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
-      // Create and submit a metadata job for the new items
+    var createNewJob = false;
+    var freakout = false;
+    if ( typeof gMediaScanMetadataJob == 'unknown' || gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
+      createNewJob = true;
+    } else {
+      try {
+        // Otherwise, try to append.
+        gMediaScanMetadataJob.append(aItemArray);
+      } catch(e) {
+        // Sometimes, there might be a race condition, yea?
+        Components.utils.reportError(e);
+        freakout = true;
+        createNewJob = true;
+      }
+    }
+    
+    // Create and submit a metadata job for the new items
+    if ( createNewJob ) {
+      gOldJobs.push( gMediaScanMetadataJob ); // Just in case?  Keep a reference on it?  This seems odd.
       var metadataJobManager =
         Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                   .getService(Components.interfaces.sbIMetadataJobManager);
       gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
-    } else {
-      // Otherwise, just append.
-      gMediaScanMetadataJob.append(aItemArray);
+      if (freakout)
+        alert("FREAKOUT!");
     }
   } catch (e) {
     Components.utils.reportError(e);
