@@ -38,7 +38,7 @@
 <!-- Summary window. -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="mtp-device-summary"
-        onload="DeviceSummary.onLoad();">
+        onload="deviceSummary.onLoad();">
 
   <!--
    * Broadcaster set.
@@ -116,7 +116,7 @@
     // Device summary services object.
     //
 
-    var DeviceSummary = {
+    var deviceSummary = {
       //
       // Object fields.
       //
@@ -138,7 +138,7 @@
        * \brief Handle load events.
        */
 
-      onLoad: function DeviceSummary_onLoad() {
+      onLoad: function deviceSummary_onLoad() {
         // Get the device identifier from the chrome URL.
         var url = window.location.href;
         var pos = url.indexOf("=");
@@ -177,9 +177,10 @@
        * \return sbIDevice device object.
        */
 
-      _getDevice: function DeviceSummary__getDevice(aDeviceID) {
-        // Just return the device ID for now.
-        return aDeviceID;
+      _getDevice: function deviceSummary_getDevice(aDeviceID) {
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        return deviceManager.getDevice(Components.ID(aDeviceID));
       }
     };
 

@@ -280,7 +280,7 @@ mtpServicePaneService.prototype = {
     devNode.setAttributeNS(MTPNS, "DeviceId", devId);
     devNode.contractid = this._cfg.contractID;
     devNode.image = this._cfg.devImgURL;
-    devNode.url = this._cfg.devMgrURL + "?deviceIdentifier=" + devId;
+    devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
     devNode.editable = true;
     devNode.name = device.parameters.getProperty("DeviceFriendlyName");
 
