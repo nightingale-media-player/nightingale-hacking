@@ -41,19 +41,14 @@
 NS_IMPL_THREADSAFE_ADDREF(sbWPDPropertyAdapter)
 NS_IMPL_THREADSAFE_RELEASE(sbWPDPropertyAdapter)
 
-NS_IMPL_THREADSAFE_QUERY_INTERFACE4(sbWPDPropertyAdapter,
-                                    sbIDeviceProperties,
-                                    nsIWritablePropertyBag,
-                                    nsIWritablePropertyBag2,
-                                    nsIClassInfo)
-
-NS_IMPL_CI_INTERFACE_GETTER3(sbWPDPropertyAdapter,
-                             sbIDeviceProperties,
-                             nsIWritablePropertyBag,
-                             nsIWritablePropertyBag2)
-
-NS_DECL_CLASSINFO(sbWPDPropertyAdapter)
-NS_IMPL_THREADSAFE_CI(sbWPDPropertyAdapter)
+NS_INTERFACE_MAP_BEGIN(sbWPDPropertyAdapter)
+  NS_INTERFACE_MAP_ENTRY(sbIDeviceProperties)
+  NS_INTERFACE_MAP_ENTRY(nsIWritablePropertyBag)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsIPropertyBag, nsIWritablePropertyBag)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDeviceProperties)
+  NS_INTERFACE_MAP_ENTRY(nsIPropertyBag2)
+  NS_INTERFACE_MAP_ENTRY(nsIWritablePropertyBag2)
+NS_INTERFACE_MAP_END
 
 sbWPDPropertyAdapter::sbWPDPropertyAdapter(sbWPDDevice * device)
 {
@@ -128,8 +123,8 @@ nsresult sbWPDPropertyAdapter::GetPropertyString(PROPERTYKEY const & key,
 {
   NS_ENSURE_TRUE(mDeviceProperties, NS_ERROR_NULL_POINTER);
   return sbWPDDevice::GetProperty(mDeviceProperties,
-                                 WPD_DEVICE_FRIENDLY_NAME,
-                                 var);
+                                  key,
+                                  var);
 }
 
 nsresult sbWPDPropertyAdapter::GetPropertyString(PROPERTYKEY const & key,
@@ -137,7 +132,7 @@ nsresult sbWPDPropertyAdapter::GetPropertyString(PROPERTYKEY const & key,
 {
   NS_ENSURE_TRUE(mDeviceProperties, NS_ERROR_NULL_POINTER);
   nsCOMPtr<nsIVariant> var;
-  nsresult rv = GetPropertyString(WPD_DEVICE_FRIENDLY_NAME,
+  nsresult rv = GetPropertyString(key,
                                   getter_AddRefs(var));
   NS_ENSURE_SUCCESS(rv, rv);
   return var->GetAsAString(value);
@@ -151,8 +146,8 @@ nsresult sbWPDPropertyAdapter::SetPropertyString(PROPERTYKEY const & key,
   nsresult rv = sbWPDStringToPropVariant(value, var);
   NS_ENSURE_SUCCESS(rv, rv);  
   rv = sbWPDDevice::SetProperty(mDeviceProperties,
-                               WPD_DEVICE_FRIENDLY_NAME,
-                               var);
+                                key,
+                                var);
   PropVariantClear(&var);
   return rv;
 }

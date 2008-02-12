@@ -51,8 +51,7 @@ class nsIWritableVariant;
  */
 class sbWPDPropertyAdapter : public sbIDeviceProperties,
                              public nsIWritablePropertyBag,
-                             public nsIWritablePropertyBag2,
-                             public nsIClassInfo
+                             public nsIWritablePropertyBag2
 {
 public:
   NS_DECL_ISUPPORTS
@@ -61,7 +60,6 @@ public:
   NS_DECL_NSIPROPERTYBAG2
   NS_DECL_NSIWRITABLEPROPERTYBAG
   NS_DECL_NSIWRITABLEPROPERTYBAG2
-  NS_DECL_NSICLASSINFO
   
 	/**
 	 * ALWAY use this method to create an instance of the sbWPDPropertyAdapter. Else you'll
