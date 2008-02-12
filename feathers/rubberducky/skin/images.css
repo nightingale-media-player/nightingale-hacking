@@ -71,11 +71,16 @@ dialog
   -moz-background-clip: padding;
 }
 
-splitter,
-splitter[orient="vertical"],
-sb-smart-splitter
+/* No images for splitter grippies on the main window*/
+#control_pane_splitter,
+#servicepane_splitter,
+#filter_splitter,
+#displaypane_contentpane_bottom_splitter,
+#displaypane_right_sidebar_splitter,
+#search-splitter,
+#sb-playlist-splitter
 {
-  background: none;
+  background: none !important;
 }
 
 

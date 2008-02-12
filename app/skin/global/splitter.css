@@ -47,7 +47,7 @@
 splitter {
   -moz-box-align: center;
   -moz-box-pack: center;
-  cursor: ew-resize;
+  cursor: col-resize;
   min-width: 3px;
   min-height: 2px;
   background: url("chrome://global/skin/splitter/dimple.png") transparent no-repeat center;  
@@ -56,7 +56,7 @@ splitter {
 /* ::::: splitter (horizontal) ::::: */
 
 splitter[orient="vertical"] {
-  cursor: ns-resize;
+  cursor: row-resize;
   min-width: 0px;
   min-height: 2px;
   min-width: 3px;  
@@ -66,13 +66,14 @@ splitter[orient="vertical"] {
 /* ::::: splitter grippy ::::: */
   
 grippy {
-  cursor: pointer;
+  cursor: col-resize;
   margin: 0;
   min-width: 3px;
   min-height: 42px;
 }
 
 splitter[orient="vertical"] > grippy {
+  cursor: row-resize;
   margin: 0;
   min-width: 42px;
   min-height: 2px;
