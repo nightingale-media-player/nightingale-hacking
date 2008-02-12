@@ -528,6 +528,25 @@ function getWebNavigation()
   }
 }
 
+// From browser.js
+function toOpenWindowByType(inType, uri, features)
+{
+  const WM_CID = "@mozilla.org/appshell/window-mediator;1";
+  const nsIWM = Components.interfaces.nsIWindowMediator;
+
+  var windowManager = Components.classes[WM_CID].getService();
+  var windowManagerInterface = windowManager.QueryInterface(nsIWM);
+  var topWindow = windowManagerInterface.getMostRecentWindow(inType);
+  var winFeatures = features ? features : "chrome,extrachrome,menubar," +
+                                          "resizable,scrollbars,status," +
+                                          "toolbar";
+
+  if (topWindow)
+      topWindow.focus();
+  else
+      window.open(uri, "_blank", winFeatures);
+}
+
 
 
 
