@@ -85,9 +85,12 @@ Imported by bindings.css or directly into feathers.
   background-position:center bottom;
 }
 
-.device-specs-grid-label
-{
+.device-specs-grid-label {
   margin-top:0;
   margin-bottom:4px;
+}
+
+.device-battery-image {
+  list-style-image:url("chrome://songbird/skin/device/battery.png");
 }
 

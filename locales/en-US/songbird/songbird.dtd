@@ -411,6 +411,7 @@
 <!ENTITY device.info.vendor.label           "Manufacturer">
 <!ENTITY device.info.access.label           "Access Compatibility">
 <!ENTITY device.info.playback_formats.label "Playback Formats">
+<!ENTITY device.info.battery.label          "Battery">
 
 <!ENTITY device.capacity.music.label    "Music">
 <!ENTITY device.capacity.other.label    "Other">

@@ -57,6 +57,7 @@
    *   vendor                   Vendor name.
    *   access                   Access compatibility.
    *   playback_formats         Playback formats.
+   *   battery                  Battery status.
    *
    * Show elements:
    *   image                    Device image.
@@ -194,6 +195,14 @@
                            class="device-specs-grid-label"/>
               </xul:row>
 
+              <!-- Battery status row. -->
+              <xul:row devicespec="battery" align="center">
+                <xul:label sbid="battery_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.battery.label;"/>
+                <xul:sb-device-battery sbid="battery_status"/>
+              </xul:row>
+
             </xul:rows>
 
           </xul:grid> <!-- End of "device_specs_grid". -->
@@ -314,4 +323,104 @@
 
   </binding>
 
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device battery status widget.
+   *
+   *   This widget displays device battery status.  It displays a battery icon
+   * indicating whether the device is running off of battery power or charging
+   * the battery and how much charge the battery has.  It also displays text
+   * indicating the percentage amount of charge in the battery.
+   *
+   * Attributes:
+   *
+   *   status                   Battery status.
+   *     "battery-powered"      Running off of battery power.
+   *     "charged"              Battery fully charged.
+   *     "charging"             Battery charging.
+   *   level                    Percentage level of battery power (0-100).
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-battery">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+      <xul:hbox>
+        <xul:image xbl:inherits="status" class="device-battery-image"/>
+        <xul:label sbid="level_label"/>
+      </xul:hbox>
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Update the widget.
+        this._update();
+      ]]></constructor>
+
+
+      <!--
+       * _update
+       *
+       *   This function updates the widget.
+       -->
+
+      <method name="_update"><body><![CDATA[
+        // Update the battery level label.
+        var levelLabel = document.getAnonymousElementByAttribute(this,
+                                                                 "sbid",
+                                                                 "level_label");
+        var level = this.getAttribute("level");
+        levelLabel.value = SBFormattedString("device.info.battery.value",
+                                             [ level ]);
+      ]]></body></method>
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <!--
+       * DOMAttrModified
+       *
+       *   This function handles modifications to the DOM attributes.
+       -->
+
+      <handler event="DOMAttrModified"><![CDATA[
+        // Update the widget on changes to the "level" attribute.
+        if (event.attrName == "level")
+          this._update();
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
 </bindings>
+

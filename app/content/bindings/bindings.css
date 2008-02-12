@@ -444,23 +444,23 @@ sb-playlist-menuitems {
 
 /* Device bindings */
 
-sb-device-capacity
-{
+sb-device-battery {
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
+}
+
+sb-device-capacity {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
 }
 
-sb-device-capacity-legend
-{
+sb-device-capacity-legend {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
 }
 
-sb-device-info
-{
+sb-device-info {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
 }
 
-sb-device-progress
-{
+sb-device-progress {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
 }
 

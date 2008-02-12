@@ -63,7 +63,7 @@
 
       <!-- Device information. -->
       <sb-device-info observes="deviceIDBroadcaster"
-                      devicespecs="model_capacity"
+                      devicespecs="model_capacity,battery"
                       showlist="image,name,eject,moreinfo"
                       flex="1"/>
 

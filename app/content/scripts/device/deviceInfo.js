@@ -41,7 +41,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Device info defs.
+// Device capacity imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -55,6 +55,9 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+// Songbird imports.
+Cu.import("resource://app/components/SBTimer.jsm");
+
 
 //------------------------------------------------------------------------------
 //
@@ -63,6 +66,16 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 
 var DIW = {
+  //
+  // Device info configuration.
+  //
+  //   _pollPeriodTable         Table of polling periods for device information
+  //                            that needs to be polled.
+  //
+
+  _pollPeriodTable: { "battery": 60000 },
+
+
   //
   // Device info object fields.
   //
@@ -94,6 +107,9 @@ var DIW = {
     // Show specified elements.
     this._showElements();
 
+    // Initialize the device spec rows.
+    this._deviceSpecInitialize();
+
     // Update the UI.
     this._update();
   },
@@ -104,6 +120,9 @@ var DIW = {
    */
 
   finalize: function DIW_finalize() {
+    // Finalize the pollsing services.
+    this._pollingFinalize();
+
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -124,11 +143,11 @@ var DIW = {
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Update all device spec rows according to the "devicespecs"
+   * \brief Initialize all device spec rows according to the "devicespecs"
    *        attribute.
    */
 
-  _deviceSpecUpdateAll: function DIW__deviceSpecUpdateAll() {
+  _deviceSpecInitialize: function DIW__deviceSpecInitialize() {
     // Get the list of device specs to present.
     var deviceSpecs = this._widget.getAttribute("devicespecs");
     var deviceSpecList = deviceSpecs.split(",");
@@ -144,12 +163,18 @@ var DIW = {
       deviceSpecRowList[i].hidden = true;
     }
 
-    // Move and update specified device spec rows into position.
+    // Move and update specified device spec rows into position.  Also determine
+    // the device info polling period.
+    var pollPeriod = Number.POSITIVE_INFINITY;
     var refDeviceSpecRow = deviceSpecRows.firstChild;
     for (var i = 0; i < deviceSpecList.length; i++) {
       // Get the device spec and row.
       var deviceSpec = deviceSpecList[i];
       var deviceSpecRow = this._getDeviceSpecRow(deviceSpec);
+
+      // Skip device spec if it's not supported.
+      if (!this._supportsDeviceSpec(deviceSpec))
+        continue;
 
       // Move the device spec row into position.
       if (deviceSpecRow != refDeviceSpecRow) {
@@ -157,23 +182,49 @@ var DIW = {
       }
       refDeviceSpecRow = deviceSpecRow.nextSibling;
 
-      // Update the device spec row.
-      this._deviceSpecUpdate(deviceSpecRow, deviceSpec);
+      // Show the device spec row.
+      deviceSpecRow.hidden = false;
+
+      // Check the device spec polling period.
+      var specPollPeriod = this._pollPeriodTable[deviceSpec];
+      if (specPollPeriod && (specPollPeriod < pollPeriod))
+        pollPeriod = specPollPeriod;
+    }
+
+    // Start polling if needed.
+    if (pollPeriod != Number.POSITIVE_INFINITY)
+      this._pollingInitialize(pollPeriod);
+  },
+
+
+  /**
+   * \brief Update all device spec rows.
+   */
+
+  _deviceSpecUpdateAll: function DIW__deviceSpecUpdateAll() {
+    // Update all of the shown device spec rows.
+    var deviceSpecRows = this._getElement("device_spec_rows");
+    var deviceSpecRowList = deviceSpecRows.getElementsByTagNameNS
+              ("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+               "row");
+    for (var i = 0; i < deviceSpecRowList.length; i++) {
+      var deviceSpecRow = deviceSpecRowList[i];
+      if (!deviceSpecRow.hidden)
+        this._deviceSpecUpdate(deviceSpecRow);
     }
   },
 
 
   /**
-   * \brief Update the device spec row specified by aRow with the device spec
-   *        specified by aDeviceSpec.
+   * \brief Update the device spec row specified by aRow.
    *
    * \param aRow                Device spec row to update.
-   * \param aDeviceSpec         Device spec to update.
    */
 
-  _deviceSpecUpdate: function DIW__deviceSpecUpdate(aRow, aDeviceSpec) {
+  _deviceSpecUpdate: function DIW__deviceSpecUpdate(aRow) {
     // Dispatch updating.
-    switch (aDeviceSpec) {
+    var deviceSpec = aRow.getAttribute("devicespec");
+    switch (deviceSpec) {
       case "model" :
         this._deviceSpecUpdateValue("model_value_label",
                                     this._getDeviceModel());
@@ -213,13 +264,13 @@ var DIW = {
                                     this._getDevicePlaybackFormats());
         break;
 
-      default :
-        aRow.hidden = true;
-        return;
-    }
+      case "battery" :
+        this._deviceSpecUpdateBattery();
+        break;
 
-    // Show the row.
-    aRow.hidden = false;
+      default :
+        break;
+    }
   },
 
 
@@ -253,6 +304,35 @@ var DIW = {
 
     // Upate the device model/capacity.
     this._deviceSpecUpdateValue("model_capacity_value_label", devModelCapValue);
+  },
+
+
+  /**
+   * \brief Update the device spec battery row.
+   */
+
+  _deviceSpecUpdateBattery: function DIW__deviceSpecUpdateBattery() {
+    // Get the battery status.
+    var batteryLevel = {};
+    var onBatteryPower = {};
+    this._getDeviceBatteryStatus(batteryLevel, onBatteryPower);
+    batteryLevel = batteryLevel.value;
+    onBatteryPower = onBatteryPower.value;
+    var batteryStatus;
+    if (onBatteryPower)
+      batteryStatus = "battery-powered";
+    else if (batteryLevel == 100)
+      batteryStatus = "charged";
+    else
+      batteryStatus = "charging";
+
+    // Update the battery status and level.
+    var batteryElem = this._getElement("battery_status");
+    if ((batteryElem.getAttribute("status") != batteryStatus) ||
+        (batteryElem.getAttribute("level") != batteryLevel)) {
+      batteryElem.setAttribute("status", batteryStatus);
+      batteryElem.setAttribute("level", batteryLevel);
+    }
   },
 
 
@@ -336,6 +416,50 @@ var DIW = {
     return document.getAnonymousElementByAttribute(this._widget,
                                                    "showid",
                                                    aShowID);
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device info polling services.
+  //
+  //----------------------------------------------------------------------------
+
+  //
+  // Device info polling services fields.
+  //
+  //   _pollingTimer            Timer used for polling device info.
+  //
+
+  _pollingTimer: null,
+
+
+  /**
+   * \brief Initialize the polling services to poll with the period specified by
+   *        aPollPeriod.
+   *
+   * \param aPollPeriod         Polling time period in milliseconds.
+   */
+
+  _pollingInitialize: function DIW__pollingInitialize(aPollPeriod) {
+    // Start a timing interval to poll for device info UI updates.
+    var _this = this;
+    var func = function() { _this._update(); }
+    this._pollingTimer = new SBTimer(func,
+                                     aPollPeriod,
+                                     Ci.nsITimer.TYPE_REPEATING_PRECISE);
+  },
+
+
+  /**
+   * \brief Finalize the polling services.
+   */
+
+  _pollingFinalize: function DIW__pollingFinalize() {
+    if (this._pollingTimer) {
+      this._pollingTimer.cancel();
+      this._pollingTimer = null;
+    }
   },
 
 
@@ -517,6 +641,54 @@ var DIW = {
   _getDevicePlaybackFormats: function DIW__getDevicePlaybackFormats() {
     return "MP3, AVI, MPEG, ASF, BMP, PICT, WAV, TIFF, OGG, AAC, FLAC, WMV, " +
            "MP2, Microsoft Word Document";
+  },
+
+
+  /**
+   * \brief Return the device battery status.  Return the battery power level in
+   *        aBatteryLevel.value.  If the device is running off of battery power,
+   *        return true in aOnBatteryPower.value; otherwise, return false.
+   *
+   * \param aBatteryLevel       Returned battery power level.
+   * \param aOnBatteryPower     True if running on battery power.
+   */
+
+  _batteryPower: 100, /*XXXeps mock battery power for testing. */
+  _getDeviceBatteryStatus: function DIW__getDeviceBatteryStatus
+                                      (aBatteryLevel,
+                                       aOnBatteryPower) {
+    aBatteryLevel.value = this._batteryPower;
+    aOnBatteryPower.value = true;
+    if (this._batteryPower > 0)
+      this._batteryPower--;
+  },
+
+
+  /**
+   * \brief Return true if device supports device spec specified by aDeviceSpec.
+   *
+   * \return True if device supports device spec; false otherwise.
+   */
+
+  _supportsDeviceSpec: function DIW__supportsDeviceSpec(aDeviceSpec) {
+    // Check if device supports device spec.
+    switch (aDeviceSpec) {
+      case "model" :
+      case "capacity" :
+      case "model_capacity" :
+      case "friendly_name" :
+      case "serial_number" :
+      case "vendor" :
+      case "access" :
+      case "playback_formats" :
+      case "battery" :
+        return true;
+
+      default :
+        break;
+    }
+
+    return false;
   },
 
 
