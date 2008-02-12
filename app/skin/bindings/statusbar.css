@@ -80,5 +80,13 @@ sb-status-progressmeter
   height:12px;
 }
 
+/*
+  hiding the resizer statusbar panel (instead of removing the item) because 
+  someone might want to overlay based on it
 
-
+  resizer icon for Mac OS is handled elsewhere
+*/
+statusbarpanel.statusbar-resizerpanel
+{
+  display: none;
+}
