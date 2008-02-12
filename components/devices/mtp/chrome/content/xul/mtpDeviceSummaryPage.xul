@@ -156,6 +156,20 @@
             return;
         }
 
+        // Notify user if device is read-only.
+        if (this._isReadOnly()) {
+          var priority = document.createElement("notificationbox")
+                                 .PRIORITY_INFO_MEDIUM;
+          var browser = SBGetBrowser();
+          browser.showNotification
+                    (document,
+                     "read-only-device",
+                     SBString("device.summary.read_only.notification"),
+                     null,
+                     priority,
+                     null);
+        }
+
         // Set the device ID broadcaster.
         document.getElementById("deviceIDBroadcaster").setAttribute
                                                          ("device-id",
@@ -170,6 +184,18 @@
       //------------------------------------------------------------------------
 
       /**
+       * \brief Return true if device is read-only.
+       *
+       * \return True if device is read-only.
+       */
+
+      _isReadOnly: function deviceSummary__isReadOnly() {
+        /*XXXeps return true for now for testing. */
+        return true;
+      },
+
+
+      /**
        * \brief Get the device object for the device ID specified by aDeviceID.
        *
        * \param aDeviceID       Device identifier.
@@ -177,10 +203,14 @@
        * \return sbIDevice device object.
        */
 
-      _getDevice: function deviceSummary_getDevice(aDeviceID) {
+      _getDevice: function deviceSummary__getDevice(aDeviceID) {
         var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                               .getService(Ci.sbIDeviceManager2);
-        return deviceManager.getDevice(Components.ID(aDeviceID));
+        try {
+          return deviceManager.getDevice(Components.ID(aDeviceID));
+        } catch (ex) {}
+
+        return null;
       }
     };
 
