@@ -43,7 +43,15 @@
                      anonid="textbox" class="locationbar-textbox"
                      type="autocomplete"
                      autocompletesearch="history"
+                     autocompletepopup="PopupAutoComplete"
                      enablehistory="true"
+                     completeselectedindex="true"
+                     tabscrolling="true"
+                     showcommentcolumn="true"
+                     showimagecolumn="true"
+                     timeout="100"
+                     maxrows="10"
+                     newlines="stripsurroundingwhitespace"
                      flex="1" align="center">
           <children/>
           <xul:image id="sb-locationbar-textbox-image" anonid="image" class="locationbar-image"

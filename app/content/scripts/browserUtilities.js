@@ -483,8 +483,7 @@ function openNewTabWith(aURL, aDocument, aPostData, aEvent,
 
   // open link in new tab
   var referrerURI = aDocument ? aDocument.documentURIObject : null;
-  //var browser = top.document.getElementById("content");
-  if (typeof(browser) == "undefined") {
+  if (typeof(gBrowser) == "undefined") {
     dump("\n\n\nbrowserUtilities.openNewTabWith() Error: no browser available!\n\n\n");  
     return;
   }
@@ -501,7 +500,7 @@ function openNewWindowWith(aURL, aDocument, aPostData, aAllowThirdPartyFixup)
 // From browser.js
 function getBrowser()
 {
-  return gBrowser;
+  return window.gBrowser;
 }
 
 // From browser.js
