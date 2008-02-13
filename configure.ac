@@ -397,6 +397,7 @@ case "$SB_PLATFORM" in
         _CC_SUITE=7
     elif test "$_CC_MAJOR_VERSION" = "14"; then
         _CC_SUITE=8
+        SB_ARCH=$SB_ARCH-msvc8
     else
         AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
     fi
@@ -671,11 +672,6 @@ AC_ARG_WITH(dependencies-dir,
             SB_DEPENDENCIES_DIR=$withval)
 if test -z "$SB_DEPENDENCIES_DIR"; then
   DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
-  if test "$SB_PLATFORM" = "windows" -a "$_CC_SUITE" = "8" ; then
-    # since the default dependencies for Windows are for MSVC 7.1,
-    # we need to special-case for MSVC 8 to use its (incompatible) version instead
-    DEPS_SUBDIR=$DEPS_SUBDIR-msvc8
-  fi
   SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
 fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
