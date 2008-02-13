@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(f2474d9a-3dc5-4376-8cb3-9df6b78bfd39)]
+[scriptable, uuid(bfc2d51d-5836-47e2-abd5-b782ea28bdd3)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -98,9 +98,15 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 12;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 13;
 
+  // device transfer errors
   const unsigned long EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 14;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 15;
   
+  // device general errors
+  const unsigned long EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 16;
+  const unsigned long EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 17;
+  const unsigned long EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 18;
+
   /**
    * 
    */

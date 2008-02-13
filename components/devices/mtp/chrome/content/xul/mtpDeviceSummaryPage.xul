@@ -208,7 +208,9 @@
                               .getService(Ci.sbIDeviceManager2);
         try {
           return deviceManager.getDevice(Components.ID(aDeviceID));
-        } catch (ex) {}
+        } catch (ex) {
+          Cu.reportError(ex);
+        }
 
         return null;
       }
