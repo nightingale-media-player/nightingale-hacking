@@ -27,14 +27,21 @@
 #include "sbLocalDatabaseLibraryLoader.h"
 
 #include <nsICategoryManager.h>
+#include <nsIAppStartup.h>
 #include <nsIFile.h>
 #include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
+#include <nsIObserverService.h>
+#include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsIPromptService.h>
+#include <nsIProperties.h>
 #include <nsIPropertyBag2.h>
+#include <nsIStringBundle.h>
 #include <nsISupportsPrimitives.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
+#include <sbIMetrics.h>
 
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -43,6 +50,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
 #include <nsXPCOMCID.h>
+#include <nsXPFEComponentsCID.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
 #include "sbLocalDatabaseCID.h"
@@ -121,9 +129,9 @@ private:
   T mArray;
 };
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryLoader, sbILibraryLoader)
-
+NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
 sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
+: m_DeleteLibrariesAtShutdown(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!sLibraryLoaderLog)
@@ -146,6 +154,16 @@ sbLocalDatabaseLibraryLoader::Init()
   TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Init", this));
 
   nsresult rv;
+
+  // Observe library shutdown.
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
+                                      PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<nsIPrefService> prefService =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -213,22 +231,45 @@ sbLocalDatabaseLibraryLoader::Init()
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 {
+  PRBool databasesOkay = PR_TRUE;
+  nsresult retval = NS_OK;
+  
   nsresult rv =
     EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_MAIN_LIBRARY),
                          NS_LITERAL_STRING(DBENGINE_GUID_MAIN_LIBRARY),
                          NS_LITERAL_STRING(SB_NAMEKEY_MAIN_LIBRARY),
                          NS_LITERAL_STRING(SB_CUSTOMTYPE_MAIN_LIBRARY),
                          EmptyString());
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    databasesOkay = PR_FALSE;
+    retval = rv;
+  }
 
   rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_WEB_LIBRARY),
                             NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_CUSTOMTYPE_WEB_LIBRARY),
                             NS_LITERAL_STRING(DEFAULT_COLUMNSPEC_WEB_LIBRARY));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    databasesOkay = PR_FALSE;
+    retval = rv;
+  }
 
-  return NS_OK;
+  if (! databasesOkay) {
+    // bad database problem.  phone home, then tell the user things are broken.
+    nsCOMPtr<sbIMetrics> metrics =
+      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+
+    nsString metricsCategory = NS_LITERAL_STRING("app");
+    nsString metricsId = NS_LITERAL_STRING("library.error");
+    rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+
+    PromptToDeleteLibraries();
+  }
+  
+  return retval;
 }
 
 nsresult
@@ -459,6 +500,87 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
   return newLibraryInfo.forget();
 }
 
+
+/*
+ * Something bad has happened to the user's database(s).  Prompt to
+ * tell them that we need to delete their libraries.  If the user says
+ * OK, set a flag and shut down the app; the actual deletion is done
+ * in the Observe() method at shutdown time.
+ */
+nsresult
+sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries() 
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 buttons = nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
+                     nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
+                     nsIPromptService::BUTTON_POS_1_DEFAULT;
+
+  PRInt32 promptResult;
+
+  nsCOMPtr<nsIStringBundleService> stringBundleService =
+    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get dialog strings
+  nsCOMPtr<nsIStringBundle> bundle;
+  rv = stringBundleService->CreateBundle("chrome://songbird/locale/songbird.properties", 
+                                         getter_AddRefs(bundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString dialogTitle;
+  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.title").get(),
+                                 getter_Copies(dialogTitle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString dialogText;
+  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.text").get(),
+                                 getter_Copies(dialogText));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString deleteText;
+  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.delete").get(),
+                                 getter_Copies(deleteText));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString cancelText;
+  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.cancel").get(),
+                                 getter_Copies(cancelText));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+
+  // prompt
+  rv = promptService->ConfirmEx(nsnull,
+                                dialogTitle.BeginReading(),
+                                dialogText.BeginReading(),
+                                buttons,            
+                                deleteText.BeginReading(), // button 0
+                                cancelText.BeginReading(), // button 1
+                                nsnull,             // button 2
+                                nsnull,             // no checkbox
+                                nsnull,             // no check value
+                                &promptResult);     
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (promptResult == 0) { 
+    m_DeleteLibrariesAtShutdown = PR_TRUE;
+
+    // now attempt to restart.
+    nsCOMPtr<nsIAppStartup> appStartup = 
+      (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
+  }
+
+  return NS_OK;
+}
+
+
 /* static */ void
 sbLocalDatabaseLibraryLoader::RemovePrefBranch(const nsACString& aPrefBranch)
 {
@@ -672,6 +794,68 @@ sbLocalDatabaseLibraryLoader::OnLibraryStartupModified(sbILibrary* aLibrary,
 
   return NS_OK;
 }
+
+
+NS_IMETHODIMP 
+sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
+                                      const char *aTopic,
+                                      const PRUnichar *aData)
+{
+  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
+     return NS_OK;
+
+   if (m_DeleteLibrariesAtShutdown) {
+     // By now, databases should all be closed so it is safe to delete the 
+     // db diretory.
+
+     nsresult rv;
+
+     // Phone home.
+     nsCOMPtr<sbIMetrics> metrics =
+       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+     
+     nsString metricsCategory = NS_LITERAL_STRING("app");
+     nsString metricsId = NS_LITERAL_STRING("library.error.reset");
+     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+
+     // get profile directory
+     nsCOMPtr<nsIProperties> directoryService(
+       do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
+     NS_ENSURE_SUCCESS(rv, rv);
+     
+     nsCOMPtr<nsIFile> siteDBDir;
+     rv = directoryService->Get("ProfD", NS_GET_IID(nsIFile),
+                                getter_AddRefs(siteDBDir));
+     NS_ENSURE_SUCCESS(rv, rv);
+     
+     // append the database dir name
+     siteDBDir->Append(NS_LITERAL_STRING("db"));
+     
+     // Recursively delete the database directory.
+     rv = siteDBDir->Remove(true);
+     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Unable to delete directory");
+
+     // We want to prompt the user to rescan on restart.
+     nsCAutoString scancompleteBranch("songbird.firstrun.scancomplete");
+     sbLocalDatabaseLibraryLoader::RemovePrefBranch(scancompleteBranch);
+
+     // TELLME: Are there any other prefs we should touch?  -gse
+
+     // And delete all the library prefs, so they get recreated on
+     // startup.  (It would be nice to not need to do this, so that
+     // users could delete their db directory by hand and restart, but
+     // bad things happen due to prefs and it's not worth putting time
+     // into.)
+     nsCAutoString prefBranch(PREFBRANCH_LOADER);
+     sbLocalDatabaseLibraryLoader::RemovePrefBranch(prefBranch);
+  }
+
+   return NS_OK;
+}
+
+
 
 /**
  * sbLibraryLoaderInfo implementation

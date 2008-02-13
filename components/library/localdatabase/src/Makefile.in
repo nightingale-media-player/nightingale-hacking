@@ -53,20 +53,17 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbDatabaseResultStringEnumerator.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
-               $(topsrcdir)/components/library/localdatabase/src \
+CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/library/base/public \
-               $(topsrcdir)/components/library/base/src \
-               $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/property/src \
-               $(DEPTH)/components/dbengine/public \
-               $(topsrcdir)/components/dbengine/src \
-               $(DEPTH)/components/sqlbuilder/public \
-               $(topsrcdir)/components/sqlbuilder/src \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/strings/src \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/metrics/public \
                $(DEPTH)/components/playlistplayback/public \
+               $(DEPTH)/components/property/public \
+               $(DEPTH)/components/sqlbuilder/public \
+               $(MOZSDK_IDL_DIR) \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/appcomps \
+               $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/gfx \
                $(MOZSDK_INCLUDE_DIR)/intl \
@@ -76,10 +73,16 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/content \
                $(SQLITE_DIR)/include \
-               $(MOZSDK_IDL_DIR) \
+               $(topsrcdir)/components/dbengine/src \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/base/src \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/property/src \
+               $(topsrcdir)/components/sqlbuilder/src \
                $(NULL)
 
 ifdef DEBUG

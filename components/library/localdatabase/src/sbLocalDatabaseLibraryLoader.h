@@ -31,6 +31,7 @@
 
 #include <nsClassHashtable.h>
 #include <nsHashKeys.h>
+#include <nsIObserver.h>
 #include <nsIPrefBranch.h>
 #include <nsStringGlue.h>
 
@@ -44,7 +45,8 @@ class sbLocalDatabaseLibraryFactory;
 
 struct nsModuleComponentInfo;
 
-class sbLocalDatabaseLibraryLoader : public sbILibraryLoader
+class sbLocalDatabaseLibraryLoader : public sbILibraryLoader,
+                                     public nsIObserver
 {
   struct sbLoaderInfo
   {
@@ -72,6 +74,7 @@ class sbLocalDatabaseLibraryLoader : public sbILibraryLoader
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYLOADER
+  NS_DECL_NSIOBSERVER
 
   sbLocalDatabaseLibraryLoader();
 
@@ -96,6 +99,8 @@ private:
                              nsILocalFile* aDatabaseFile = nsnull,
                              const nsAString& aLibraryNameKey = EmptyString());
 
+  nsresult PromptToDeleteLibraries();
+
   PRUint32 GetNextLibraryIndex();
 
   static void RemovePrefBranch(const nsACString& aPrefBranch);
@@ -115,10 +120,14 @@ private:
                           nsAutoPtr<sbLibraryLoaderInfo>& aEntry,
                           void* aUserData);
 
+  PRBool m_DeleteLibrariesAtShutdown;
+
 private:
   nsClassHashtable<nsUint32HashKey, sbLibraryLoaderInfo> mLibraryInfoTable;
   nsCOMPtr<nsIPrefBranch> mRootBranch;
 };
+
+
 
 class sbLibraryLoaderInfo
 {
