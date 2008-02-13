@@ -79,9 +79,6 @@
 
   <script>
   <![CDATA[
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 const SB_NS = "http://songbirdnest.com/data/1.0#";
 const SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
 const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
