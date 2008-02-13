@@ -345,6 +345,7 @@ NS_IMETHODIMP sbWPDDevice::GetProperties(sbIDeviceProperties * *theProperties)
 {
   NS_ENSURE_ARG(theProperties);
   *theProperties = sbWPDPropertyAdapter::New(this);
+  NS_IF_ADDREF(*theProperties);
   return *theProperties ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
 
