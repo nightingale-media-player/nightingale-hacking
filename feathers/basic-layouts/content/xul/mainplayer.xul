@@ -72,8 +72,8 @@
     <sb-sys-titlebar>
     
       <!-- Note: This menu must have the id "main-menubar", as it is the overlay
-           target of menuOverlay.xul.  This cannot be put inside of a binding
-           as that would break OSX menu handling. 
+           target of layoutWithBrowserOverlay.xul.  This cannot be put inside of
+           a binding as that would break OSX menu handling. 
            See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
         -->
       <menubar id="main-menubar" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
@@ -118,7 +118,7 @@
         <sb-player-faceplate id="faceplate" flex="1" />            
 
         <stack id="control_right_toolbar_stack" flex="7">
-          <!-- CONTROL PANE TOOLBOX.  Filled via overlay by controlToolbarOverlay.xul -->
+          <!-- CONTROL PANE TOOLBOX.  Filled via overlay by layoutWithBrowserOverlay.xul -->
           <toolbox id="control_pane_toolbox"/>
         </stack>
 
@@ -144,7 +144,7 @@
           <!-- MAIN CONTENT PANE -->
           <vbox flex="1" id="content_pane_box">
                                         
-            <!-- BROWSER TOOLBAR.  Filled via overlay by browserToolbarOverlay.xul and others. 
+            <!-- BROWSER TOOLBAR.  Filled via overlay by layoutWithBrowserOverlay.xul and others. 
                   Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
             -->
             <toolbox id="navigator-toolbox"/>
@@ -167,7 +167,7 @@
         </hbox>
       </vbox>
       
-      <!-- STATUS BAR.  Filled via overlay by statusBarOverlay.xul. 
+      <!-- STATUS BAR.  Filled via overlay by layoutWithBrowserOverlay.xul. 
             Note: this item must have id="status-bar" for Firefox 
             extension compatibility.
       -->

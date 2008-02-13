@@ -123,16 +123,18 @@ Contains the Main Playback Controls and the Dashboard.
  */
 #control_pane_toolbar
 {
-  display: block;
-  width: 0px;
+  height:55px;
+  width:0px;
   border: none;
   background-color: transparent;
-  white-space: nowrap;
-  text-align: right;
+  display: -moz-box;
+  -moz-box-pack: end;
+  -moz-box-align: center;
 }
 
-#control_right_spacer > toolbox
+/** Prevent the toolbar buttons from overlapping the faceplate **/
+#control_pane_toolbox
 {
-  -moz-box-pack: center;
+  overflow: hidden;
 }
 
