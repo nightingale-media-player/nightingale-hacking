@@ -353,9 +353,18 @@
      *********************************************************************** -->
 
     <content>
-      <xul:hbox>
-        <xul:image xbl:inherits="status" class="device-battery-image"/>
-        <xul:label sbid="level_label"/>
+      <xul:hbox align="center">
+        <xul:hbox class="device-battery-box">
+          <xul:image class="device-battery-left"/>
+          <xul:box sbid="device_battery_level_box"
+                   class="device-battery-status"
+                   xbl:inherits="status"/>
+          <xul:box sbid="device_battery_empty_box"
+                   class="device-battery-empty"
+                   flex="1"/>
+          <xul:image class="device-battery-right"/>
+        </xul:hbox>
+        <xul:label sbid="device_battery_level_label"/>
       </xul:hbox>
     </content>
 
@@ -369,9 +378,9 @@
     <implementation>
 
       <!--
-       * constructor
-       *
-       *   This method constructs the widget.
+      /**
+       * \brief Construct the widget.
+       */
        -->
 
       <constructor> <![CDATA[
@@ -381,20 +390,53 @@
 
 
       <!--
-       * _update
-       *
-       *   This function updates the widget.
+      /**
+       * \brief Update the widget.
+       */
        -->
 
       <method name="_update"><body><![CDATA[
+        // Get the battery level.  Ensure it's set to a valid number from 0-100.
+        var level = Number(this.getAttribute("level"));
+        if (level > 100)
+          level = 100;
+        else if (!(level > 0))
+          level = 0;
+
+        // Update the battery level box.
+        var levelBox = this._getElement("device_battery_level_box");
+        levelBox.flex = level;
+
+        // Update the battery empty box.
+        var emptyBox = this._getElement("device_battery_empty_box");
+        emptyBox.flex = 100 - level;
+
         // Update the battery level label.
-        var levelLabel = document.getAnonymousElementByAttribute(this,
-                                                                 "sbid",
-                                                                 "level_label");
-        var level = this.getAttribute("level");
+        var levelLabel = this._getElement("device_battery_level_label");
         levelLabel.value = SBFormattedString("device.info.battery.value",
                                              [ level ]);
       ]]></body></method>
+
+
+    <!--
+    /**
+     * \brief Return the XUL element with the ID specified by aElementID.  Use
+     *        the element "sbid" attribute as the ID.
+     *
+     * \param aElementID          ID of element to get.
+     *
+     * \return Element.
+     */
+     -->
+
+    <method name="_getElement">
+      <parameter name="aElementID"/>
+      <body><![CDATA[
+        return document.getAnonymousElementByAttribute(this,
+                                                       "sbid",
+                                                       aElementID);
+      ]]></body></method>
+
     </implementation>
 
 
@@ -407,9 +449,9 @@
     <handlers>
 
       <!--
-       * DOMAttrModified
-       *
-       *   This function handles modifications to the DOM attributes.
+      /**
+       * \brief Handle modifications to the DOM attributes.
+       */
        -->
 
       <handler event="DOMAttrModified"><![CDATA[
