@@ -1262,7 +1262,7 @@
                 // try dealing with media, might just be web content.
                 if ( !this._handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
                 {
-                  this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI.spec, null, null, null, null);
+                  this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI, null, null, null, null);
                 }
                 break;
               case "html.context.openexternal":
