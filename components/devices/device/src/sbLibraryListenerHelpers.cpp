@@ -32,7 +32,7 @@
 #include "sbBaseDevice.h"
 
 //sbBaseDeviceLibraryListener class.
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceLibraryListener, 
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener, 
                               sbIMediaListListener,
                               nsISupportsWeakreference);
 
