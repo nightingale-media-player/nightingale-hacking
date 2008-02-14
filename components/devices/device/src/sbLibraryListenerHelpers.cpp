@@ -34,7 +34,7 @@
 //sbBaseDeviceLibraryListener class.
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener, 
                               sbIMediaListListener,
-                              nsISupportsWeakreference);
+                              nsISupportsWeakReference);
 
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener() 
 : mDevice(nsnull),
