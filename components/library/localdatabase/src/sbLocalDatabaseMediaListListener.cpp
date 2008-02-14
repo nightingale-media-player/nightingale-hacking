@@ -282,7 +282,6 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
   nsAutoLock lock(mListenerArrayLock);
 
   PRUint32 numStopNotifying = aStopNotifying.Length();
-  PRUint32 numListeners     = mListenerArray.Length();
 
   // The aStopNotifying array tells us what listeners are "gone" (weak
   // listeners that have gone away) as well as which listeners should no
@@ -291,7 +290,9 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
 
   for (PRInt32 i = numStopNotifying - 1; i >= 0; i--) {
     const StopNotifyFlags& stop = aStopNotifying[i];
-    for (PRInt32 j = numListeners - 1; j >= 0; j--) {
+    // Don't cache the length of mListenerArray because it can change between
+    // iterations of the outer loop
+    for (PRInt32 j = mListenerArray.Length() - 1; j >= 0; j--) {
       if (stop.listener == mListenerArray[j]->mProxy) {
         if (stop.isGone) {
           mListenerArray.RemoveElementAt(j);
