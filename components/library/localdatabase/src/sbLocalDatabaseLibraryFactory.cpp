@@ -59,6 +59,8 @@
 #define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
 #define SCHEMA_URL "chrome://songbird/content/library/localdatabase/schema.sql"
+#define SB_NAMEKEY_LIBRARY                            \
+  "&chrome://songbird/locale/songbird.properties#servicesource.library"
 
 #define PERMISSIONS_FILE      0644
 #define PERMISSIONS_DIRECTORY 0755
@@ -205,6 +207,10 @@ sbLocalDatabaseLibraryFactory::CreateLibrary(nsIPropertyBag2* aCreationParameter
 
   rv = CreateLibraryFromDatabase(file, _retval, aCreationParameters);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // set a default name
+  rv = (*_retval)->SetName(NS_LITERAL_STRING(SB_NAMEKEY_LIBRARY));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -222,32 +228,9 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   // Get a unique value for this database file.
   nsCOMPtr<nsIHashable> hashable = do_QueryInterface(aDatabase, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // See if we've already created this library. If we have (and it is still
-  // alive) just return it.
-  nsCOMPtr<nsIWeakReference> weakRef;
-  if (mCreatedLibraries.Get(hashable, getter_AddRefs(weakRef))) {
-    nsCOMPtr<sbILibrary> existingLibrary = do_QueryReferent(weakRef, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (existingLibrary) {
-      existingLibrary.swap(*_retval);
-      return NS_OK;
-    }
-
-    mCreatedLibraries.Remove(hashable);
-  }
-
-  // If the database file does not exist, create and initalize it
-  PRBool exists;
-  rv = aDatabase->Exists(&exists);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!exists) {
-    rv = InitalizeLibrary(aDatabase);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
+  
+  // We have to copy the file name escaping logic from when we actually create
+  // the database, otherwise we end up re-initizliaing the database over and over.
   nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -265,6 +248,45 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   nsCOMPtr<nsIFile> databaseParent;
   rv = aDatabase->GetParent(getter_AddRefs(databaseParent));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString fileName;
+  rv = databaseURL->GetFileName(fileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIFile> escapedFile;
+  rv = databaseParent->Clone(getter_AddRefs(escapedFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = escapedFile->Append(NS_ConvertUTF8toUTF16(fileName));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // On Windows, if the file does not exist, its hashcode is different from when it does.
+  // If we ever attempt to get the hash code while it doesn't exist, the
+  // nsLocalFile caches the hash code and stays incorrect.
+  PRBool exists;
+  rv = escapedFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if we've already created this library. If we have (and it is still
+  // alive) just return it.
+  nsCOMPtr<nsIWeakReference> weakRef;
+  if (exists && mCreatedLibraries.Get(hashable, getter_AddRefs(weakRef))) {
+    nsCOMPtr<sbILibrary> existingLibrary = do_QueryReferent(weakRef, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (existingLibrary) {
+      existingLibrary.swap(*_retval);
+      return NS_OK;
+    }
+
+    mCreatedLibraries.Remove(hashable);
+  }
+  
+  // If the database file does not exist, create and initalize it
+  if (!exists) {
+    rv = InitalizeLibrary(aDatabase);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsIURI> databaseLocation;
   rv = NS_NewFileURI(getter_AddRefs(databaseLocation), databaseParent,

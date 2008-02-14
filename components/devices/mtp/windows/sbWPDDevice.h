@@ -40,6 +40,7 @@
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIThread.h>
+#include "sbDeviceContent.h"
 
 struct IPortableDevice;
 struct IPortableDeviceValues;
@@ -202,6 +203,7 @@ protected:
 private:
   nsRefPtr<IPortableDevice> mPortableDevice;
   nsCOMPtr<nsIPropertyBag2> mDeviceProperties;
+  nsCOMPtr<sbDeviceContent> mDeviceContent;
   nsString mPnPDeviceID;
   nsID mControllerID;
   PRUint32 mState;

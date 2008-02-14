@@ -39,6 +39,7 @@
 
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
+class sbIDeviceLibrary;
 
 class sbBaseDevice : public sbIDevice,
                      public sbBaseDeviceEventTarget
@@ -129,6 +130,20 @@ public:
   /* sbIDevice */
   /* note to device implementors: just set mState directly. */
   NS_IMETHOD GetState(PRUint32 *aState);
+  
+  /* attach a weak listener to the library which will notify this device of
+     things happening to the library */
+  nsresult AttachListeners(sbILibrary *aLibrary);
+  
+  /**
+   * Create a local database library for the device
+   * @param aId the ID for the library
+   * @param aLibraryLocation the file to name the library, or null to use some default
+   * @return the library created (or re-used if it exists)
+   */
+  nsresult CreateDeviceLibrary(const nsAString& aId,
+                               nsIURI* aLibraryLocation,
+                               sbIDeviceLibrary** _retval);
 
 protected:
   PRLock *mRequestLock;

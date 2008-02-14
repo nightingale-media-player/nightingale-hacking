@@ -27,11 +27,12 @@
 
 #include "sbBaseDevice.h"
 
-#include <new>
-
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
 
+#include "sbDeviceLibrary.h"
+#include "sbILibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbLibraryListenerHelpers.h"
@@ -243,5 +244,44 @@ NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
   *aState = mState;
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::AttachListeners(sbILibrary *aLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  
+  nsresult rv;
+  
+  nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
+  NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
+  
+  rv = aLibrary->AddListener(libListener,
+                             PR_TRUE, /* weak */
+                             sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                             sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                             sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                             sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                             nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
+                                           nsIURI* aLibraryLocation,
+                                           sbIDeviceLibrary** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary();
+  NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = devLib->Init(aId);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),
+                              reinterpret_cast<void**>(_retval));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }

@@ -35,12 +35,14 @@
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
 #include <nsIVariant.h>
+#include <nsCRT.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <nsIURL.h>
 #include <nsID.h>
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
+#include "sbIDeviceLibrary.h"
 #include <sbILibrary.h>
 #include <sbDeviceStatus.h>
 #include "sbWPDCommon.h"
@@ -48,9 +50,12 @@
 #include <sbDeviceContent.h>
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
+#include "sbStringUtils.h"
 #include "sbWPDDeviceThread.h"
 #include "sbWPDPropertyAdapter.h"
 #include <sbDeviceCapabilities.h>
+#include <nsIPrefService.h>
+#include <nsIPrefBranch.h>
 /* damn you microsoft */
 #undef CreateEvent
 #include <sbIDeviceManager.h>
@@ -234,6 +239,8 @@ NS_IMETHODIMP sbWPDDevice::GetId(nsID * *aId)
 /* void connect (); */
 NS_IMETHODIMP sbWPDDevice::Connect()
 {
+  nsresult rv;
+  
   // If the pointer is set then it's already opened
   if (!mPortableDevice) {
     nsRefPtr<IPortableDevice> portableDevice;
@@ -262,6 +269,69 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     mDeviceThread = new sbWPDDeviceThread(this, mRequestsPendingEvent);
     NS_NewThread(getter_AddRefs(mThreadObject), mDeviceThread);
     NS_IF_ADDREF(mDeviceThread);
+  }
+  
+  // get the libraries on the device
+  HRESULT hr;
+  nsRefPtr<IPortableDeviceContent> content;
+  hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IEnumPortableDeviceObjectIDs> it;
+  hr = content->EnumObjects(0, WPD_DEVICE_OBJECT_ID, NULL, getter_AddRefs(it));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDeviceKeyCollection> propertiesToRead;
+  hr = CoCreateInstance(CLSID_PortableDeviceKeyCollection, 
+                        NULL,
+                        CLSCTX_INPROC_SERVER,
+                        IID_IPortableDeviceKeyCollection,
+                        getter_AddRefs(propertiesToRead));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  hr = propertiesToRead->Add(WPD_OBJECT_PERSISTENT_UNIQUE_ID);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  char idBuffer[NSID_LENGTH];
+  nsID *id;
+  rv = GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+  id->ToProvidedString(idBuffer);
+  NS_Free(id);
+  
+  LPWSTR objId;
+  ULONG fetchCount;
+  while (S_OK == it->Next(1, &objId, &fetchCount)) {
+    // get the PUID of the object...
+    nsRefPtr<IPortableDeviceValues> values;
+    hr = properties->GetValues(objId, propertiesToRead, getter_AddRefs(values));
+    CoTaskMemFree(objId);
+    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    
+    LPWSTR puid;
+    hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &puid);
+    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    
+    nsString libId = NS_ConvertASCIItoUTF16(idBuffer);
+    libId.AppendLiteral("@");
+    libId.Append(nsDependentString(puid));
+    
+    // now we have to make it into a file-name compatible string. sigh.
+    nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS), '_');
+    nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_PATH_SEPARATOR), '_');
+
+    nsCOMPtr<sbIDeviceLibrary> devLib;
+    rv = CreateDeviceLibrary(libId, nsnull, getter_AddRefs(devLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbIDeviceContent> sbContent;
+    rv = GetContent(getter_AddRefs(sbContent));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbContent->AddLibrary(devLib);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK; 
@@ -343,15 +413,16 @@ NS_IMETHODIMP sbWPDDevice::GetCapabilities(sbIDeviceCapabilities * *theCapabilit
 /* readonly attribute sbIDeviceContent content; */
 NS_IMETHODIMP sbWPDDevice::GetContent(sbIDeviceContent * *aContent)
 {
-  sbDeviceContent* deviceContent = sbDeviceContent::New();
-  NS_ENSURE_TRUE(deviceContent, NS_ERROR_OUT_OF_MEMORY);
-  NS_ADDREF(deviceContent);
-  nsresult const rv = deviceContent->Init();
-  if (NS_SUCCEEDED(rv))
-    *aContent = deviceContent;
-  else
-    NS_RELEASE(deviceContent);
-  return rv;
+  nsresult rv;
+  if (!mDeviceContent) {
+    nsRefPtr<sbDeviceContent> deviceContent = sbDeviceContent::New();
+    NS_ENSURE_TRUE(deviceContent, NS_ERROR_OUT_OF_MEMORY);
+    rv = deviceContent->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    mDeviceContent = deviceContent;
+  }
+  NS_ADDREF(*aContent = mDeviceContent.get());
+  return NS_OK;
 }
 
 /* readonly attribute nsIPropertyBag2 parameters; */
@@ -1544,10 +1615,6 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
   return NS_OK;
 }
 
-#ifndef NSID_LENGTH
-#define NSID_LENGTH 39
-#pragma message(" XXX Mook Remove this junk when we get new xulrunners!")
-#endif
 nsresult sbWPDDevice::PropertyKeyFromString(const nsAString & aString,
                                             PROPERTYKEY* aPropKey)
 {

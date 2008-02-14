@@ -607,33 +607,54 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   if (!this._libraryManager || !this._servicePane) {
     throw Components.results.NS_ERROR_NOT_INITIALIZED;
   }
-
-  // Move up the tree looking for libraries that support the
-  // given media list type.
-  while (aNode && aNode != this._servicePane.root) {
-
+  
+  function checkNode(aNode, aLibServicePane) {
     // If this node is visible and belongs to the library
     // service pane service...
     if (aNode.contractid == CONTRACTID && !aNode.hidden) {
       // If this is a playlist and the playlist belongs
       // to a library that supports the given type,
       // then suggest that library
-      var mediaItem = this._getItemForURN(aNode.id);
+      var mediaItem = aLibServicePane._getItemForURN(aNode.id);
       if (mediaItem && mediaItem instanceof Ci.sbIMediaList &&
-          this._doesLibrarySupportListType(mediaItem.library, aMediaListType))
+          aLibServicePane._doesLibrarySupportListType(mediaItem.library, aMediaListType))
       {
         return mediaItem.library;
       }
 
       // If this is a library that supports the given type,
       // then suggest the library
-      var library = this._getLibraryForURN(aNode.id);
+      var library = aLibServicePane._getLibraryForURN(aNode.id);
       if (library && library instanceof Ci.sbILibrary &&
-          this._doesLibrarySupportListType(library, aMediaListType))
+          aLibServicePane._doesLibrarySupportListType(library, aMediaListType))
       {
         return library;
       }
     }
+
+    return null;
+  }
+  
+  // first, check if the given node is useable as a library...
+  var lib = checkNode(aNode, this);
+  if (lib)
+    return lib;
+  
+  // check the children of the node (but not recursively) for a usable library
+  for (var child = aNode.firstChild; child; child = child.nextSibling) {
+    lib = checkNode(child, this);
+    if (lib)
+      return lib;
+  }
+
+  // Move up the tree looking for libraries that support the
+  // given media list type.
+  aNode = aNode.parentNode;
+  while (aNode && aNode != this._servicePane.root) {
+
+    lib = checkNode(aNode, this);
+    if (lib)
+      return lib;
 
     // Move up the tree
     aNode = aNode.parentNode;

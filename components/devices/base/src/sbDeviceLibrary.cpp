@@ -47,7 +47,14 @@
 #include <prprf.h>
 #include <prtime.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceLibrary, sbIDeviceLibrary)
+NS_IMPL_THREADSAFE_ISUPPORTS7(sbDeviceLibrary,
+                              sbIMediaListListener,
+                              sbILocalDatabaseMediaListCopyListener,
+                              sbIDeviceLibrary,
+                              sbILibrary,
+                              sbIMediaList,
+                              sbIMediaItem,
+                              sbILibraryResource)
 
 /**
  * To log this module, set the following environment variable:
@@ -86,6 +93,11 @@ sbDeviceLibrary::~sbDeviceLibrary()
 nsresult
 sbDeviceLibrary::Init(const nsAString& aDeviceIdentifier)
 {
+  NS_ENSURE_FALSE(mLock, NS_ERROR_ALREADY_INITIALIZED);
+  mLock = nsAutoLock::NewLock(__FILE__ "sbDeviceLibrary::mLock");
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  if (!mListeners.Init())
+    return NS_ERROR_FAILURE;
   return CreateDeviceLibrary(aDeviceIdentifier, nsnull);
 }
 

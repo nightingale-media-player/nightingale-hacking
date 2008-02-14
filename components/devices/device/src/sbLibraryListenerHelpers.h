@@ -29,11 +29,13 @@
 #include "sbILocalDatabaseSimpleMediaList.h"
 
 #include <nsCOMPtr.h>
+#include <nsWeakReference.h>
 
 class sbBaseDevice;
 class sbIDevice;
 
-class sbBaseDeviceLibraryListener : public sbIMediaListListener
+class sbBaseDeviceLibraryListener : public sbIMediaListListener,
+                                    public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

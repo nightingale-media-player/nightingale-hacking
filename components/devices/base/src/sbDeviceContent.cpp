@@ -49,7 +49,7 @@ static PRLogModuleInfo* gDeviceContentLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceContent::sbDeviceContent()
-: mDeviceLibrariesLock(nsnull)
+: mDeviceLibrariesMonitor(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gDeviceContentLog) {
@@ -61,8 +61,8 @@ sbDeviceContent::sbDeviceContent()
 
 sbDeviceContent::~sbDeviceContent()
 {
-  if(mDeviceLibrariesLock) {
-    nsAutoLock::DestroyLock(mDeviceLibrariesLock);
+  if(mDeviceLibrariesMonitor) {
+    nsAutoMonitor::DestroyMonitor(mDeviceLibrariesMonitor);
   }
   TRACE(("DeviceContent[0x%.8x] - Destructed", this));
 }
@@ -75,8 +75,8 @@ sbDeviceContent * sbDeviceContent::New()
 nsresult
 sbDeviceContent::Init()
 {
-  mDeviceLibrariesLock = nsAutoLock::NewLock("sbDeviceContent::mDeviceLibrariesLock");
-  NS_ENSURE_TRUE(mDeviceLibrariesLock, NS_ERROR_OUT_OF_MEMORY);
+  mDeviceLibrariesMonitor = nsAutoMonitor::NewMonitor("sbDeviceContent::mDeviceLibrariesMonitor");
+  NS_ENSURE_TRUE(mDeviceLibrariesMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
   mDeviceLibraries = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
@@ -90,7 +90,7 @@ sbDeviceContent::GetLibraries(nsIArray** aLibraries)
 {
   NS_ENSURE_ARG_POINTER(aLibraries);
 
-  nsAutoLock lock(mDeviceLibrariesLock);
+  nsAutoMonitor mon(mDeviceLibrariesMonitor);
   *aLibraries = mDeviceLibraries;
   NS_ADDREF(*aLibraries);
   return NS_OK;
@@ -108,7 +108,7 @@ sbDeviceContent::AddLibrary(sbIDeviceLibrary* aLibrary)
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   nsresult rv;
-  nsAutoLock lock(mDeviceLibrariesLock);
+  nsAutoMonitor mon(mDeviceLibrariesMonitor);
   PRUint32 existingIndex;
   rv = FindLibrary(aLibrary, &existingIndex);
   if (NS_FAILED(rv)) {
@@ -131,7 +131,7 @@ sbDeviceContent::RemoveLibrary(sbIDeviceLibrary* aLibrary)
     return rv;
   }
 
-  nsAutoLock lock(mDeviceLibrariesLock);
+  nsAutoMonitor mon(mDeviceLibrariesMonitor);
   rv = mDeviceLibraries->RemoveElementAt(itemIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -144,7 +144,7 @@ sbDeviceContent::FindLibrary(sbIDeviceLibrary* aLibrary, PRUint32* _retval)
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mDeviceLibrariesLock);
+  nsAutoMonitor mon(mDeviceLibrariesMonitor);
   nsresult rv;
   PRUint32 index;
   rv = mDeviceLibraries->IndexOf(0, aLibrary, &index);

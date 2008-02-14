@@ -207,7 +207,7 @@ mtpServicePaneService.prototype = {
     this._deviceEventListener = null;
     
     // Purge all device nodes before shutdown.
-    this._removeDeviceNodes();
+    this._removeDeviceNodes(this._servicePaneSvc.root);
     
     // Remove all references to nodes
     this._deviceInfoList = [];
@@ -290,6 +290,18 @@ mtpServicePaneService.prototype = {
     this._deviceInfoList[devId].device = device;
     
     // Add the device library.
+    var libraries = device.content.libraries;
+    if (libraries.length < 1) {
+      // Oh no, we have no libraries
+      Components.utils.reportError("Device " + devId + "(" + device.name + ") has no libraries!");
+      return;
+    }
+    var lib = libraries.queryElementAt(0, Components.interfaces.sbILibrary);
+    var devLibNode = this._libServicePaneSvc.createNodeForLibrary(lib);
+    devNode.appendChild(devLibNode);
+    devLibNode.hidden = false;
+    devLibNode.name = lib.name || device.name || devId;
+
     // Update the device playlists.
     // Update the device state.
   },
@@ -470,6 +482,16 @@ mtpServicePaneService.prototype = {
        [ aDevice ],
        null);
   },
+  
+  /**
+   * Handles the "New Playlist" context menu command for a device
+   */
+  _commandHandler_newPlaylist: function 
+    mtpServicePaneService_commandHandler_getDeviceInfo(aNode,
+                                                       aDevice,
+                                                       aParentWindow) {
+    return aParentWindow.SBNewPlaylist();
+  },
 
   /**
    * Handles the "Rename Device" context menu command for a device
@@ -636,6 +658,15 @@ mtpServicePaneService.prototype = {
                      "hidden",
                      null,
                      "true");
+
+    // "------------------"
+    addSeparator();
+    
+    // "New Playlist"
+    addItem('command_mtp_newplaylist', 
+            this._localizeString('menu.file.new', "New Playlist"), 
+            this._localizeString('menu.file.new.accesskey', 'P'), 
+            makeCommandHandler("_commandHandler_newPlaylist"));
 
     // "------------------"
     addSeparator();

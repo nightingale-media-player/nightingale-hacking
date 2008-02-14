@@ -619,10 +619,10 @@ addToPlaylistHelper.prototype = {
   },
 
   QueryInterface: function QueryInterface(iid) {
-    if (!iid.equals(Ci.sbIMediaListListener) &&
-        !iid.equals(Ci.sbILibraryManagerListener) &&
-        !iid.equals(Ci.nsISupports))
-      throw Cr.NS_ERROR_NO_INTERFACE;
+    if (!iid.equals(Components.interfaces.sbIMediaListListener) &&
+        !iid.equals(Components.interfaces.sbILibraryManagerListener) &&
+        !iid.equals(Components.interfaces.nsISupports))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   },
 

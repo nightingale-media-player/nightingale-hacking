@@ -40,31 +40,16 @@ if (typeof(Cu) == "undefined")
 var mtpCore = {
   _deviceEventListener: null,
   _deviceManager:       null,
-  _observerSvc:         null,
   _promptSvc:           null,
   _stringBundle:        null,
   _stringBundleSvc:     null,
   
   // ************************************
-  // nsIObserver implementation
-  // ************************************
-  observe: function mtpCore_observe(aSubject, 
-                                    aTopic, 
-                                    aData) {
-    switch (aTopic) {
-      case this._cfg.appQuitTopic :
-        this._shutdown();
-      break;
-    }
-  },
-  
-  // ************************************
   // Internal methods
   // ************************************
   _initialize: function mtpCore_initialize() {
-    this._observerSvc = Cc["@mozilla.org/observer-service;1"]
-                          .getService(Ci.nsIObserverService);
-    this._observerSvc.addObserver(this, "quit-application", false);
+    var self = this;
+    window.addEventListener("unload", function() {self._shutdown()}, false);
 
     this._deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                             .getService(Ci.sbIDeviceManager2);
@@ -91,12 +76,11 @@ var mtpCore = {
   },
   
   _shutdown: function mtpCore_shutdown() {
-    this._observerSvc.removeObserver(this, "quit-application");
+    window.removeEventListener("unload", arguments.callee, false);
     
-    this._deviceManagerSvc.removeEventListener(this._deviceEventListener);
+    this._deviceManager.removeEventListener(this._deviceEventListener);
     this._deviceEventListener = null;
 
-    this._observerSvc = null;
     this._deviceManager = null;
     this._promptSvc = null;
     

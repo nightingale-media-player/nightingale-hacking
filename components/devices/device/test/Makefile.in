@@ -45,16 +45,19 @@ CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbMockDevice.cpp \
            $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceLibrary.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public/ \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
@@ -71,8 +74,8 @@ DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
-                            xpcom \
                             xpcomglue_s \
+                            xpcom \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

@@ -47,7 +47,7 @@ private:
   virtual ~sbDeviceContent();
   nsresult FindLibrary(sbIDeviceLibrary *aLibrary, PRUint32* _retval);
 
-  PRLock* mDeviceLibrariesLock;
+  PRMonitor* mDeviceLibrariesMonitor;
   nsCOMPtr<nsIMutableArray> mDeviceLibraries;
 };
 
