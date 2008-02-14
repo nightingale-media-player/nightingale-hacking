@@ -261,10 +261,12 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name, nsIVaria
 }
 
 #define GET_PROPERTY(prop, retval, type) \
-  nsCOMPtr<nsIVariant> var; \
-  nsresult rv = GetProperty(prop, getter_AddRefs(var)); \
-  NS_ENSURE_SUCCESS(rv, rv); \
-  var->GetAs##type(retval)
+  PR_BEGIN_MACRO \
+    nsCOMPtr<nsIVariant> var; \
+    nsresult rv = GetProperty(prop, getter_AddRefs(var)); \
+    NS_ENSURE_SUCCESS(rv, rv); \
+    return var->GetAs##type(retval); \
+  PR_END_MACRO
   
 /* PRInt32 getPropertyAsInt32 (in AString prop); */
 NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInt32(const nsAString & prop, PRInt32 *retval)
@@ -386,17 +388,19 @@ NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
 }
 
 #define SET_PROPERTY(name, val, type) \
-  nsresult rv; \
-  PROPERTYKEY key; \
-  if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) { \
-    rv = mWorkerVariant->SetAs##type(val); \
-    NS_ENSURE_SUCCESS(rv, rv); \
-    return sbWPDDevice::SetProperty(mDeviceProperties, \
-                                    prop, \
-                                    mWorkerVariant); \
-  } \
-  return NS_ERROR_FAILURE;
-
+  PR_BEGIN_MACRO \
+    nsresult rv; \
+    PROPERTYKEY key; \
+    if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) { \
+      rv = mWorkerVariant->SetAs##type(val); \
+      NS_ENSURE_SUCCESS(rv, rv); \
+      return sbWPDDevice::SetProperty(mDeviceProperties, \
+                                      prop, \
+                                      mWorkerVariant); \
+    } \
+    return NS_ERROR_FAILURE; \
+  PR_END_MACRO
+  
 /* void setPropertyAsInt32 (in AString prop, in PRInt32 value); */
 NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInt32(const nsAString & prop, PRInt32 value)
 {
