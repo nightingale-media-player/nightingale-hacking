@@ -266,7 +266,8 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
 
-    PromptToDeleteLibraries();
+    rv = PromptToDeleteLibraries();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   return retval;
@@ -547,35 +548,40 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
                                  getter_Copies(deleteText));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString cancelText;
+  nsAutoString quitText;
   rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.cancel").get(),
-                                 getter_Copies(cancelText));
+                                 getter_Copies(quitText));
   NS_ENSURE_SUCCESS(rv, rv);
 
 
-  // prompt
+  // prompt.
   rv = promptService->ConfirmEx(nsnull,
                                 dialogTitle.BeginReading(),
                                 dialogText.BeginReading(),
                                 buttons,            
                                 deleteText.BeginReading(), // button 0
-                                cancelText.BeginReading(), // button 1
-                                nsnull,             // button 2
-                                nsnull,             // no checkbox
-                                nsnull,             // no check value
+                                quitText.BeginReading(),   // button 1
+                                nsnull,                    // button 2
+                                nsnull,                    // no checkbox
+                                nsnull,                    // no check value
                                 &promptResult);     
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // "Delete" means delete & restart.  "Cancel" means quit now.
+  // i.e. there is no way to continue using the app from here.
+  PRUint32 quitFlags = nsIAppStartup::eForceQuit;
+
   if (promptResult == 0) { 
     m_DeleteLibrariesAtShutdown = PR_TRUE;
-
-    // now attempt to restart.
-    nsCOMPtr<nsIAppStartup> appStartup = 
-      (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
+    quitFlags = nsIAppStartup::eForceQuit | nsIAppStartup::eRestart;
   }
+
+  // now attempt to quit/restart.
+  nsCOMPtr<nsIAppStartup> appStartup = 
+    (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  appStartup->Quit(quitFlags); 
 
   return NS_OK;
 }
@@ -840,8 +846,6 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
      // We want to prompt the user to rescan on restart.
      nsCAutoString scancompleteBranch("songbird.firstrun.scancomplete");
      sbLocalDatabaseLibraryLoader::RemovePrefBranch(scancompleteBranch);
-
-     // TELLME: Are there any other prefs we should touch?  -gse
 
      // And delete all the library prefs, so they get recreated on
      // startup.  (It would be nice to not need to do this, so that
