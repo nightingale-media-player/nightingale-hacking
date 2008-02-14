@@ -72,13 +72,11 @@ SUBDIRDEPS2 = playlistreader : library
 SUBDIRDEPS3 = devicesobsolete : library
 SUBDIRDEPS4 = devicesobsolete : mediacore
 SUBDIRDEPS5 = integration : devicesobsolete
-SUBDIRDEPS6 = library : sqlbuilder
-SUBDIRDEPS7 = library : moz
-SUBDIRDEPS8 = library : property
-SUBDIRDEPS9 = remoteapi : library
-SUBDIRDEPS10 = remoteapi : moz
-SUBDIRDEPS11 = contenthandling : playlistplayback
-SUBDIRDEPS12 = devices : library property
+SUBDIRDEPS6 = library : sqlbuilder moz property metrics
+SUBDIRDEPS7 = remoteapi : library
+SUBDIRDEPS8 = remoteapi : moz
+SUBDIRDEPS9 = contenthandling : playlistplayback
+SUBDIRDEPS10 = devices : library property
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static
