@@ -76,11 +76,13 @@ dialog
 #servicepane_splitter,
 #filter_splitter,
 #displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter,
 #displaypane_right_sidebar_splitter,
 #search-splitter,
-#sb-playlist-splitter
+#sb-playlist-splitter,
+.playlist-web-splitter
 {
-  background: none !important;
+  background-image: none !important;
 }
 
 
