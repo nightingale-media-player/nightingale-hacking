@@ -273,16 +273,25 @@ NS_IMETHODIMP sbWPDDevice::Connect()
   
   // get the libraries on the device
   HRESULT hr;
+  nsRefPtr<IPortableDeviceCapabilities> capabilities;
+  hr = mPortableDevice->Capabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDevicePropVariantCollection> storageObjs;
+  hr = capabilities->GetFunctionalObjects(WPD_FUNCTIONAL_CATEGORY_STORAGE,
+                                          getter_AddRefs(storageObjs));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  DWORD storageObjCount;
+  hr = storageObjs->GetCount(&storageObjCount);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
   nsRefPtr<IPortableDeviceContent> content;
   hr = mPortableDevice->Content(getter_AddRefs(content));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   nsRefPtr<IPortableDeviceProperties> properties;
   hr = content->Properties(getter_AddRefs(properties));
-  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
-  
-  nsRefPtr<IEnumPortableDeviceObjectIDs> it;
-  hr = content->EnumObjects(0, WPD_DEVICE_OBJECT_ID, NULL, getter_AddRefs(it));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   nsRefPtr<IPortableDeviceKeyCollection> propertiesToRead;
@@ -302,13 +311,20 @@ NS_IMETHODIMP sbWPDDevice::Connect()
   id->ToProvidedString(idBuffer);
   NS_Free(id);
   
-  LPWSTR objId;
-  ULONG fetchCount;
-  while (S_OK == it->Next(1, &objId, &fetchCount)) {
+  for (DWORD objIdx = 0; objIdx < storageObjCount; ++objIdx) {
+    nsRefPtr<sbPropertyVariant> variant = sbPropertyVariant::New();
+    hr = storageObjs->GetAt(objIdx, variant->GetPropVariant());
+    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    
+    nsString objId;
+    rv = variant->GetAsAString(objId);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     // get the PUID of the object...
     nsRefPtr<IPortableDeviceValues> values;
-    hr = properties->GetValues(objId, propertiesToRead, getter_AddRefs(values));
-    CoTaskMemFree(objId);
+    hr = properties->GetValues(objId.BeginReading(),
+                               propertiesToRead,
+                               getter_AddRefs(values));
     NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
     
     LPWSTR puid;
@@ -318,6 +334,7 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     nsString libId = NS_ConvertASCIItoUTF16(idBuffer);
     libId.AppendLiteral("@");
     libId.Append(nsDependentString(puid));
+    ::CoTaskMemFree(puid);
     
     // now we have to make it into a file-name compatible string. sigh.
     nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS), '_');
