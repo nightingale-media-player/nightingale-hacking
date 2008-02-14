@@ -31,6 +31,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsStringAPI.h>
+#include <nsNetUtil.h>
 #include <nsIURI.h>
 #include "sbWPDCommon.h"
 #include "sbWPDDevice.h"
@@ -197,21 +198,41 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetIconUri(nsIURI * *aIconUri)
   nsRefPtr<IPortableDeviceManager> manager;
   nsresult rv = sbWPDGetPortableDeviceManager(getter_AddRefs(manager));
   NS_ENSURE_SUCCESS(rv, rv);
+  // Retrieve the icon path from the device's properties, first query the length
   DWORD bytes = 0;
   DWORD type;
-  manager->GetDeviceProperty(mDeviceID.get(),
-                             PORTABLE_DEVICE_ICON,
-                             0,
-                             &bytes,
-                             &type);
+  if (FAILED(manager->GetDeviceProperty(mDeviceID.get(),
+                                        PORTABLE_DEVICE_ICON,
+                                        0,
+                                        &bytes,
+                                        &type)))
+    return NS_ERROR_FAILURE;
   BYTE * buffer = new BYTE[bytes];
-  manager->GetDeviceProperty(mDeviceID.get(),
-                             PORTABLE_DEVICE_ICON,
-                             buffer,
-                             &bytes,
-                             &type);
-  nsCOMPtr<nsIURI> uri = do_CreateInstance(NS_SIMPLEURI_CONTRACTID, &rv);
-  rv = uri->SetSpec(NS_LossyConvertUTF16toASCII(nsString(reinterpret_cast<WCHAR*>(buffer))));
+  // Retrieve the actual iconURI string
+  HRESULT hr = manager->GetDeviceProperty(mDeviceID.get(),
+                                          PORTABLE_DEVICE_ICON,
+                                          buffer,
+                                          &bytes,
+                                          &type);
+  // Save off the file name if successful
+  nsString fileName;
+  if (SUCCEEDED(hr)) {
+    fileName = reinterpret_cast<WCHAR const *>(buffer);
+  }
+  // Cleanup the buffer
+  delete [] buffer;
+  // If we couldn't retrieve the icon path return failure
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+  // Create a local file object and initialize it with the icon path
+  nsCOMPtr<nsILocalFile> file = 
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = file->InitWithPath(fileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Create the URI object to return, initializing it with the file object
+  nsCOMPtr<nsIURI> uri;
+  rv = NS_NewFileURI(getter_AddRefs(uri), file);
   NS_ENSURE_SUCCESS(rv, rv);
   uri.forget(aIconUri);
   return NS_OK;

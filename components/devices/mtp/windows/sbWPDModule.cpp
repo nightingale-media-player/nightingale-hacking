@@ -39,9 +39,12 @@
 #include "sbWPDMarshall.h"
 #include "sbWPDDeviceController.h"
 #include "sbWPDDeviceThread.h"
+#include "sbPropertyVariant.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDMarshall);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDDeviceController);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyVariant)
+
 // TODO reinstate once sbWPDDeviceThread no longer needs a constructor
 //NS_GENERIC_FACTORY_CONSTRUCTOR(sbWPDDeviceThread);
 
@@ -100,6 +103,12 @@ static nsModuleComponentInfo sbDeviceMarshallComponents[] =
     sbWPDDeviceControllerRegisterSelf,
     sbWPDDeviceControllerUnregisterSelf
   },
+  {
+    SB_PROPERTYVARIANT_CLASSNAME,
+    SB_PROPERTYVARIANT_CID,
+    SB_PROPERTYVARIANT_CONTRACTID,
+    sbPropertyVariantConstructor,
+  }
   /* TODO put this back in when sbWPDDeviceThread is fixed
   {
     SB_WPDDEVICETHREAD_CLASSNAME,

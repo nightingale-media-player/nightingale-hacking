@@ -33,7 +33,9 @@
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 #include <nsMemory.h>
-
+#include <string>
+#include <sstream>
+#include <limits>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyVariant,
                               nsIWritableVariant,
@@ -241,10 +243,95 @@ NS_IMETHODIMP sbPropertyVariant::GetAsFloat(float *retval)
   ReturnValue(nsIDataType::VTYPE_FLOAT, fltVal);
 }
 
+#define GET_VALUE(v) (byRef ? *(mPropVariant.p##v) : mPropVariant.v) 
+
 /* [noscript] double getAsDouble (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsDouble(double *retval)
 {
-  ReturnValue(nsIDataType::VTYPE_DOUBLE, dblVal);
+  PRBool const byRef = mPropVariant.vt & VT_BYREF ? PR_TRUE : PR_FALSE;
+  switch (mPropVariant.vt & VT_TYPEMASK)
+  {
+  case VT_EMPTY:
+    *retval = std::numeric_limits<double>::quiet_NaN();
+    break;
+  case VT_NULL:
+    *retval = std::numeric_limits<double>::quiet_NaN();
+    break;
+  case VT_I1:
+    *retval = static_cast<double>(GET_VALUE(cVal));
+    break;
+  case VT_UI1:
+    *retval = static_cast<double>(GET_VALUE(bVal));
+    break;
+  case VT_I2:
+    *retval = static_cast<double>(GET_VALUE(iVal));
+    break;
+  case VT_UI2:
+    *retval = static_cast<double>(GET_VALUE(uiVal));
+    break;
+  case VT_I4:
+  case VT_INT:
+    *retval = static_cast<double>(GET_VALUE(lVal));
+    break;
+  case VT_UI4:
+  case VT_UINT:
+    *retval = static_cast<double>(GET_VALUE(ulVal));
+    break;
+  case VT_I8:
+    *retval = static_cast<double>(mPropVariant.hVal.QuadPart);
+    break;
+  case VT_UI8:
+    *retval = static_cast<double>(mPropVariant.uhVal.QuadPart);
+    break;
+  case VT_R4:
+    *retval = static_cast<double>(GET_VALUE(fltVal));
+    break;
+  case VT_R8:
+    *retval = static_cast<double>(GET_VALUE(dblVal));
+    break;
+  case VT_BOOL:
+    *retval = static_cast<double>(GET_VALUE(boolVal));
+    break;
+  case VT_ERROR:
+    *retval = static_cast<double>(GET_VALUE(scode));
+    break;
+  case VT_DATE:
+    *retval = static_cast<double>(GET_VALUE(date));
+    break;
+  case VT_FILETIME:
+    NS_ERROR("Cannot convert file times to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CLSID:
+    NS_ERROR("Cannot convert UUID's to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_BSTR:
+  {
+    NS_ERROR("Cannot convert BSTR to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  break;
+  case VT_LPWSTR:
+    NS_ERROR("Cannot convert strings to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CY:
+  case VT_CF:
+  case VT_BSTR_BLOB:
+  case VT_BLOB:
+//  case VT_BLOBOBJECT:
+  case VT_UNKNOWN:
+  case VT_DISPATCH:
+  case VT_STREAM:
+  case VT_STREAMED_OBJECT:
+  case VT_STORAGE:
+  case VT_STORED_OBJECT:
+  case VT_VERSIONED_STREAM:
+  case VT_DECIMAL:
+  case VT_VECTOR:
+  default:
+    NS_ERROR("Unable to convert COM type to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  return NS_OK;
 }
 
 /* [noscript] PRBool getAsBool (); */
@@ -262,7 +349,7 @@ NS_IMETHODIMP sbPropertyVariant::GetAsChar(char *retval)
 /* [noscript] wchar getAsWChar (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsWChar(PRUnichar *retval)
 {
-  ReturnValue(nsIDataType::VTYPE_INT32, lVal);
+  ReturnValue(nsIDataType::VTYPE_INT16, lVal);
 }
 
 /* [notxpcom] nsresult getAsID (out nsID retval); */
@@ -271,82 +358,174 @@ NS_IMETHODIMP_(nsresult) sbPropertyVariant::GetAsID(nsID *retval)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+template <class T>
+nsString ConvertTonsString(T val)
+{
+  std::wostringstream buffer;
+  buffer << val;
+  return nsString(buffer.str().c_str());
+}
+
+template <class T>
+nsString ConvertTonsString(__int64 val)
+{
+  PRUinchar buffer[128];
+  _snwprintf_s(buffer, sizeof(buffer), 1, "%I64i", val);
+  return nsString(buffer);
+}
+
+template <class T>
+nsString ConvertTonsString(unsigned __int64 val)
+{
+  PRUinchar buffer[128];
+  _snwprintf_s(buffer, sizeof(buffer), 1, "%I64u", val);
+  return nsString(buffer);
+}
+
 /* [noscript] AString getAsAString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
 {
-  switch (AssertSupportedType(nsIDataType::VTYPE_ASTRING))
+  PRBool const byRef = mPropVariant.vt & VT_BYREF ? PR_TRUE : PR_FALSE;
+  switch (mPropVariant.vt & VT_TYPEMASK)
   {
-    case ByVal:
-      switch (mPropVariant.vt & VT_TYPEMASK)
-      {
-        case VT_BSTR:
-        {
-          PRUint32 const length = ::SysStringLen(mPropVariant.bstrVal);
-          retval = nsString(mPropVariant.bstrVal, length);
-        }
-        break;
-        case VT_LPWSTR:
-          retval = mPropVariant.pwszVal;
-          break;
-        default:
-          return NS_ERROR_NOT_IMPLEMENTED;
-      }
-      return NS_OK;
-    case ByRef:
-      switch (mPropVariant.vt & VT_TYPEMASK)
-      {
-        case VT_BSTR:
-        {
-          PRUint32 length = SysStringLen(*(mPropVariant.pbstrVal));
-          retval = nsString(*(mPropVariant.pbstrVal), length);
-        }
-        break;
-        case VT_LPWSTR:
-        default:
-          return NS_ERROR_NOT_IMPLEMENTED;
-      }
-      return NS_OK;
-    default:
-      return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_EMPTY:
+    retval = nsString();
+    break;
+  case VT_NULL:
+    retval.Truncate();
+    retval.SetIsVoid(PR_TRUE);
+    break;
+  case VT_I1:
+    retval = ConvertTonsString(GET_VALUE(cVal));
+    break;
+  case VT_UI1:
+    retval = ConvertTonsString(GET_VALUE(bVal));
+    break;
+  case VT_I2:
+    retval = ConvertTonsString(GET_VALUE(iVal));
+    break;
+  case VT_UI2:
+    retval = ConvertTonsString(GET_VALUE(uiVal));
+    break;
+  case VT_I4:
+  case VT_INT:
+    retval = ConvertTonsString(GET_VALUE(lVal));
+    break;
+  case VT_UI4:
+  case VT_UINT:
+    retval = ConvertTonsString(GET_VALUE(ulVal));
+    break;
+  case VT_I8:
+    retval = ConvertTonsString(mPropVariant.hVal.QuadPart);
+    break;
+  case VT_UI8:
+    retval = ConvertTonsString(mPropVariant.uhVal.QuadPart);
+    break;
+  case VT_R4:
+    retval = ConvertTonsString(GET_VALUE(fltVal));
+    break;
+  case VT_R8:
+    retval = ConvertTonsString(GET_VALUE(dblVal));
+    break;
+  case VT_BOOL:
+    retval = ConvertTonsString(GET_VALUE(boolVal));
+    break;
+  case VT_ERROR:
+    retval = ConvertTonsString(GET_VALUE(scode));
+    break;
+  case VT_DATE:
+    retval = ConvertTonsString(GET_VALUE(date));
+    break;
+  case VT_FILETIME:
+    NS_ERROR("Cannot convert file times to string");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CLSID:
+    NS_ERROR("Cannot convert UUID's to string");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_BSTR:
+  {
+    PRUint32 const length = ::SysStringLen(GET_VALUE(bstrVal));
+    retval = nsString(GET_VALUE(bstrVal), length);
   }
+  break;
+  case VT_LPWSTR:
+    NS_ASSERTION(!byRef, "LPWSTR can't be passed by reference");
+    retval = mPropVariant.pwszVal;
+    break;
+  case VT_CY:
+  case VT_CF:
+  case VT_BSTR_BLOB:
+  case VT_BLOB:
+//  case VT_BLOBOBJECT:
+  case VT_UNKNOWN:
+  case VT_DISPATCH:
+  case VT_STREAM:
+  case VT_STREAMED_OBJECT:
+  case VT_STORAGE:
+  case VT_STORED_OBJECT:
+  case VT_VERSIONED_STREAM:
+  case VT_DECIMAL:
+  case VT_VECTOR:
+  default:
+    NS_ERROR("Unable to convert COM type to string");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  return NS_OK;
 }
 /* [noscript] DOMString getAsDOMString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsDOMString(nsAString & retval)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+    return GetAsAString(retval);
 }
 
 /* [noscript] ACString getAsACString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsACString(nsACString & retval)
 {
-  switch (AssertSupportedType(nsIDataType::VTYPE_CSTRING))
-  {
-    case ByVal:
-      retval = mPropVariant.pszVal;
-      break;
-    case ByRef:
-    default:
-      return NS_ERROR_NOT_IMPLEMENTED;
-  }
+  nsString str;
+  nsresult rv = GetAsAString(str);
+  NS_ENSURE_SUCCESS(rv, rv);
+  retval = NS_LossyConvertUTF16toASCII(str);
   return NS_OK;
 }
 
 /* [noscript] AUTF8String getAsAUTF8String (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsAUTF8String(nsACString & retval)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  nsString str;
+  nsresult rv = GetAsAString(str);
+  NS_ENSURE_SUCCESS(rv,rv);
+  retval = NS_ConvertUTF16toUTF8 (str);
+  return NS_OK;
 }
 
 /* [noscript] string getAsString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsString(char **retval)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  nsCString str;
+  nsresult rv = GetAsACString(str);
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 const length = str.Length();
+  *retval = reinterpret_cast<char*>(NS_Alloc(length + 1));
+  if (!*retval)
+    return NS_ERROR_OUT_OF_MEMORY;
+  memcpy(*retval, str.get(), length);
+  (*retval)[length] = 0;
+  return NS_OK;
 }
 
 /* [noscript] wstring getAsWString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsWString(PRUnichar **retval)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  nsString str;
+  nsresult rv = GetAsAString(str);
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 const length = str.Length();
+  *retval = reinterpret_cast<PRUnichar*>(NS_Alloc((length + 1)* sizeof(PRUnichar)));
+  if (!*retval)
+    return NS_ERROR_OUT_OF_MEMORY;
+  memcpy(*retval, str.get(), length * sizeof(PRUnichar));
+  (*retval)[length] = 0;
+  return NS_OK;
 }
 
 /* [noscript] nsISupports getAsISupports (); */
@@ -511,13 +690,13 @@ NS_IMETHODIMP sbPropertyVariant::SetAsDOMString(const nsAString & aValue)
 /* void setAsACString (in ACString aValue); */
 NS_IMETHODIMP sbPropertyVariant::SetAsACString(const nsACString & aValue)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return SetAsAString(NS_ConvertASCIItoUTF16(aValue));
 }
 
 /* void setAsAUTF8String (in AUTF8String aValue); */
 NS_IMETHODIMP sbPropertyVariant::SetAsAUTF8String(const nsACString & aValue)
 {
-  return SetAsACString(aValue);
+  return SetAsAString(NS_ConvertUTF8toUTF16(aValue));
 }
 
 /* void setAsString (in string aValue); */
@@ -541,11 +720,12 @@ NS_IMETHODIMP sbPropertyVariant::SetAsWString(const PRUnichar *aValue)
   HRESULT hr = PropVariantClear(&mPropVariant);
   if (FAILED(hr))
     return NS_ERROR_FAILURE;
-  size_t len = wcslen(aValue) * sizeof(PRUnichar);
-  mPropVariant.pwszVal = (LPWSTR)::CoTaskMemAlloc(len);
+  size_t const len = wcslen(aValue);
+  size_t const bytes = (len + 1) * sizeof(PRUnichar);
+  mPropVariant.pwszVal = reinterpret_cast<LPWSTR>(::CoTaskMemAlloc(bytes));
   if (!mPropVariant.pwszVal)
     return NS_ERROR_OUT_OF_MEMORY;
-  memcpy(mPropVariant.pwszVal, aValue, len);
+  memcpy(mPropVariant.pwszVal, aValue, bytes);
   mPropVariant.vt = VT_LPWSTR;
   return NS_OK;
 }

@@ -41,11 +41,10 @@ public:
   NS_DECL_NSIVARIANT
   NS_DECL_NSIWRITABLEVARIANT
   NS_DECL_NSICLASSINFO
-  
-  /* shared */ PROPVARIANT* GetPropVariant();
+ 
   static sbPropertyVariant * New();
   static sbPropertyVariant * New(PROPVARIANT const & propVar);
-protected:
+
   /**
    * Initializes the PROPVARIANT
    */
@@ -53,6 +52,8 @@ protected:
   {
     PropVariantInit(&mPropVariant);
   }
+  /* shared */ PROPVARIANT* GetPropVariant();
+protected:
   /**
    * Initializes the object with the given PROPVARIANT
    */
