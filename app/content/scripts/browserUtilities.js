@@ -31,7 +31,6 @@
 
 /*
  * Songbird Dependencies:
- *    getPlatformString() from windowUtils.js
  *    gBrowser
  *    About() in playerOpen.js
  */
@@ -162,8 +161,12 @@ function whereToOpenLink( e, ignoreButton, ignoreAlt )
   var middleUsesTabs = getBoolPref("browser.tabs.opentabfor.middleclick", true);
 
   // Don't do anything special with right-mouse clicks.  They're probably clicks on context menu items.
+  var sysInfo =
+    Components.classes["@mozilla.org/system-info;1"]
+              .getService(Components.interfaces.nsIPropertyBag2);
+  var os = sysInfo.getProperty("name");
 
-  var modifier = (getPlatformString() == "Darwin") ? meta : ctrl;
+  var modifier = (os == "Darwin") ? meta : ctrl;
   if (modifier || (middle && middleUsesTabs)) {
     if (shift)
       return "tabshifted";

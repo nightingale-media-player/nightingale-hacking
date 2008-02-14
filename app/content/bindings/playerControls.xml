@@ -1680,17 +1680,6 @@
   <binding id="curtrack-base">
     
     <implementation>
-    
-      <constructor>
-        this.interval = null;
-      </constructor>
-      
-      <destructor>
-        if (this.interval) {
-          clearInterval(this.interval);
-          this.interval = null;
-        }
-      </destructor>
       
       <method name="getBrowser">
         <body>
@@ -1741,7 +1730,9 @@
             return;
           }
           
-          browser.showIndexInView(gPPS.playingView, gPPS.currentIndex);
+          if (gPPS.currentIndex >= 0) {
+            browser.showIndexInView(gPPS.playingView, gPPS.currentIndex);
+          }
           ]]>
         </body>
       </method>

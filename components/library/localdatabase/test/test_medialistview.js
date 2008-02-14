@@ -196,6 +196,16 @@ function runTest () {
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
+  
+  try {
+    var uid = view.getViewItemUIDForIndex(2);
+    var listIndex = view.getUnfilteredIndex(2);
+    view.mediaList.removeByIndex(listIndex);
+    view.getIndexForViewItemUID(uid);
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  }
 }
 
 function forceCache(view) {
