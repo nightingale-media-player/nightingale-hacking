@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(bfc2d51d-5836-47e2-abd5-b782ea28bdd3)]
+[scriptable, uuid(7c528717-fc8e-41e7-b473-8f1f31885841)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -106,6 +106,9 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 16;
   const unsigned long EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 17;
   const unsigned long EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 18;
+
+  // device generic catch-all error
+  const unsigned long EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 19;
 
   /**
    * 

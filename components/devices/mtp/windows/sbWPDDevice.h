@@ -130,6 +130,11 @@ public:
   nsresult CreateAndDispatchEvent(PRUint32 aType,
                                   nsIVariant *aData);
   /**
+   * Creates an event from an HRESULT and dispatches it.
+   */
+  nsresult CreateAndDispatchEventFromHRESULT(HRESULT hr, 
+                                             nsIVariant *aData);
+  /**
    * This returns the MTP persistent unique ID for the corresponding object on
    * the device
    */

@@ -160,6 +160,19 @@ var mtpCore = {
         this._promptSvc.alert(mainWindow, errorTitle, errorMsg);
       }
       break;
+      
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ERROR_UNEXPECTED: {
+        errorTitle = 
+          this._stringBundle
+              .getStringFromName("device.error.generic.title");
+        errorMsg = 
+          this._stringBundle
+              .formatStringFromName("device.error.generic.message",
+                                    [applicationName, device.name],
+                                    2);
+        this._promptSvc.alert(mainWindow, errorTitle, errorMsg);
+      }
+      break;
     }
   },
 };

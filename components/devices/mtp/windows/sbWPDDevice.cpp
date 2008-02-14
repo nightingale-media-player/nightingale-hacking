@@ -58,6 +58,30 @@
 /* Implementation file */
 
 /**
+ * Macros
+ */
+static inline 
+nsresult CreateAndDispatchGenericDeviceErrorEvent(sbWPDDevice *aDevice) {
+  nsresult rv;
+  
+  nsCOMPtr<nsIWritableVariant> var = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  var->SetAsISupports(NS_ISUPPORTS_CAST(sbIDevice *, aDevice));
+
+  rv = aDevice->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED, var);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+#define SB_ENSURE_NO_DEVICE_ERROR_GENERIC(_result, _device)    \
+  PR_BEGIN_MACRO                                               \
+  if(NS_FAILED(_result)) {                                     \
+    CreateAndDispatchGenericDeviceErrorEvent(_device);         \
+  }                                                            \
+  PR_END_MACRO
+
+/**
  * Helper functions
  */
 /**
@@ -1047,6 +1071,52 @@ nsresult sbWPDDevice::CreateAndDispatchEvent(PRUint32 aType,
   return DispatchEvent(deviceEvent, PR_TRUE, nsnull);
 }
 
+nsresult sbWPDDevice::CreateAndDispatchEventFromHRESULT(HRESULT hr, 
+                                                        nsIVariant *aData)
+{
+  NS_ENSURE_ARG_POINTER(aData);
+
+  nsresult rv;
+  PRUint32 eventType = 0;
+
+  nsCOMPtr<sbIDeviceManager2> manager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  switch(hr) {
+    case STG_E_ACCESSDENIED:
+      eventType = sbIDeviceEvent::EVENT_DEVICE_ACCESS_DENIED;
+    break;
+
+    case STG_E_CANTSAVE:
+    case STG_E_MEDIUMFULL:
+      eventType = sbIDeviceEvent::EVENT_DEVICE_NOT_ENOUGH_FREESPACE;
+    break;
+
+    case E_PENDING:
+    case STG_E_INVALIDPOINTER:
+    case STG_E_REVERTED:
+      eventType = sbIDeviceEvent::EVENT_DEVICE_NOT_AVAILABLE;
+    break;
+
+    case STG_E_WRITEFAULT:
+      eventType = sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_FAILED;
+    break;
+    
+    // No event to dispatch for unknown HRESULT values.
+    default:
+      return NS_OK;
+  }
+
+  nsCOMPtr<sbIDeviceEvent> deviceEvent;
+  rv = manager->CreateEvent(eventType, aData, static_cast<sbIDevice*>(this),
+    getter_AddRefs(deviceEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return DispatchEvent(deviceEvent, PR_TRUE, nsnull);
+}
+
+
 nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
 {
   nsString result;
@@ -1078,6 +1148,7 @@ static nsresult CopynsIStream2IStream(sbDeviceStatus & status,
                                       PRInt64 contentLength,
                                       nsIInputStream * input,
                                       IStream * output,
+                                      HRESULT * hr,
                                       PRUint32 bufferSize = 64 * 1024)
 {
   double const length = contentLength;
@@ -1089,19 +1160,22 @@ static nsresult CopynsIStream2IStream(sbDeviceStatus & status,
        NS_SUCCEEDED(rv) && bytesRead != 0;
        rv = input->Read(buffer, bufferSize, &bytesRead)) {
     ULONG bytesWritten;
-    HRESULT hr = output->Write(buffer, bytesRead, &bytesWritten);
-    if (FAILED(hr) || bytesWritten < bytesRead) {
+    HRESULT _hr = output->Write(buffer, bytesRead, &bytesWritten);
+
+    if (FAILED(_hr) || bytesWritten < bytesRead) {
       rv = NS_ERROR_FAILURE;
       output->Revert();
+      *hr = _hr;
       break;
     }
+
     current += bytesWritten;
     double const progress = current / length * 100.0;
     nsCOMPtr<nsIWritableVariant> var =
       do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     var->SetAsDouble(progress);
-    device->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
+    device->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                                    var);
     status.Progress(progress);
     
@@ -1296,6 +1370,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
   status.StateMessage(NS_LITERAL_STRING("Starting"));
   nsRefPtr<IPortableDeviceContent> content;
   rv = mPortableDevice->Content(getter_AddRefs(content));
+  CreateAndDispatchGenericDeviceErrorEvent(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<IPortableDeviceValues> properties;
@@ -1303,6 +1378,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
                              item,
                              list,
                              getter_AddRefs(properties));
+  SB_ENSURE_NO_DEVICE_ERROR_GENERIC(rv, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<IStream> streamWriter;
@@ -1310,22 +1386,47 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
   if (FAILED(content->CreateObjectWithPropertiesAndData(properties,
                                                         getter_AddRefs(streamWriter),
                                                         &optimalBufferSize,
-                                                        NULL)))
+                                                        NULL))) {
+    SB_ENSURE_NO_DEVICE_ERROR_GENERIC(NS_ERROR_FAILURE, this);
     return NS_ERROR_FAILURE;
+  }
+
   nsCOMPtr<nsIInputStream> inputStream;
   rv = item->OpenInputStream(getter_AddRefs(inputStream));
   nsRefPtr<IPortableDeviceDataStream> portableDataStream;
-  if (FAILED(streamWriter->QueryInterface(__uuidof(IPortableDeviceDataStream), getter_AddRefs(portableDataStream))))
-      return NS_ERROR_FAILURE;
+  if (FAILED(streamWriter->QueryInterface(__uuidof(IPortableDeviceDataStream), getter_AddRefs(portableDataStream)))) {
+    SB_ENSURE_NO_DEVICE_ERROR_GENERIC(NS_ERROR_FAILURE, this);
+    return NS_ERROR_FAILURE;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
+
   status.StateMessage(NS_LITERAL_STRING("InProgress"));
+
+  // This function handles firing it's own error events.
+  HRESULT hr = S_FALSE;
   rv = CopynsIStream2IStream(status,
                              this,
                              contentLength,
                              inputStream,
                              streamWriter,
+                             &hr,
                              optimalBufferSize);
+
   streamWriter->Commit(STGC_DEFAULT);
+
+  if(NS_FAILED(rv)) {
+    nsresult rv2;
+    nsCOMPtr<nsIWritableVariant> var = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv2);
+    NS_ENSURE_SUCCESS(rv2, rv2);
+
+    rv2 = var->SetAsISupports(item);
+    NS_ENSURE_SUCCESS(rv2, rv2);
+    
+    CreateAndDispatchEventFromHRESULT(hr, var);
+  }
+
+  NS_ENSURE_SUCCESS(rv, rv);
+
   LPWSTR newObjectID = NULL;
   if (SUCCEEDED(portableDataStream->GetObjectID(&newObjectID)))
   {
@@ -1340,6 +1441,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
     }
     ::CoTaskMemFree(newObjectID);
   }
+
   return NS_OK;
 }
 
@@ -1366,10 +1468,10 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
                            var);      
   }
-  else {
-    status.StateMessage(NS_LITERAL_STRING("Failed"));
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_FAILED,
-                           var);      }
+
+  // XXXAus: Failures are handled within 
+  // CreateDeviceObjectFromMediaItem() and methods it calls.
+
   NS_RELEASE(request);
   return rv;
 }
