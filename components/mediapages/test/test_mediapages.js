@@ -107,9 +107,12 @@ function testMediaPageManager() {
   );
   
   var pages = pageMgr.getAvailablePages(list1);
+  var count = 0;
   while (pages.hasMoreElements()) {
     var pageInfo = pages.getNext();
     pageInfo.QueryInterface(Components.interfaces.sbIMediaPageInfo);
+    
+    count++;
     
     if (pageInfo.contentUrl == EXTENSIONPAGE) {
       rdfAll = pageInfo;
@@ -125,6 +128,10 @@ function testMediaPageManager() {
     }
   }
   
+  assertEqual(count, 4,
+    "there should be four media pages registered for this list"
+  );
+  
   assertEqual(rdfAll.contentUrl, EXTENSIONPAGE,
     "the extension page should be registered among the available pages"
   );
@@ -138,14 +145,37 @@ function testMediaPageManager() {
     "the default page should be registered among the available pages"
   );
   
+  // now test that setting the opt-out works
+  // TODO: FIXME --- THIS PROPERTY IS A TEXT PROPERTY RIGHT NOW
+  list1.setProperty(SBProperties.onlyCustomMediaPages, "true");
+  var pages = pageMgr.getAvailablePages(list1);
+  var count = 0;
+  var theOne;
+  while (pages.hasMoreElements()) {
+    var pageInfo = pages.getNext();
+    pageInfo.QueryInterface(Components.interfaces.sbIMediaPageInfo);
+    count++;
+    if (pageInfo.contentUrl == EXTENSIONPAGEDOWNLOADS) {
+      theOne = pageInfo;
+    }
+  }
+  assertEqual(
+    count, 3,
+    "only the download specific page and the global defaults should match now"
+  )
+  assertEqual(
+    theOne.contentUrl, EXTENSIONPAGEDOWNLOADS,
+    "we should find the download specific page"
+  )
+  
   // unregister default pages and verify that nothing remains
+  // first, manually make this one's pageinfo since it was deliberately excluded above
+  rdfLibrary.contentUrl = EXTENSIONPAGELIBRARY;
+  
   pageMgr.unregisterPage(defaultInfo1);
   pageMgr.unregisterPage(defaultInfo2);
   pageMgr.unregisterPage(rdfAll);
   pageMgr.unregisterPage(rdfDownloads);
-  
-  // manually make this one's pageinfo since it was deliberately excluded above
-  rdfLibrary.contentUrl = EXTENSIONPAGELIBRARY;
   pageMgr.unregisterPage(rdfLibrary);
   
   var enumerator = pageMgr.getAvailablePages();

@@ -25,7 +25,7 @@
     <!-- insert metadata here -->
     <songbird:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test (All Match)</songbird:contentTitle>
+        <songbird:contentTitle>Media Page Test (Match All)</songbird:contentTitle>
         <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul</songbird:contentUrl>
       </Description>
     </songbird:mediaPage>

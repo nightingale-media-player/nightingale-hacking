@@ -77,5 +77,6 @@
 #define SB_PROPERTY_ENABLE_AUTO_DOWNLOAD      "http://songbirdnest.com/data/1.0#enableAutoDownload"
 #define SB_PROPERTY_TRANSFER_POLICY           "http://songbirdnest.com/data/1.0#transferPolicy"
 #define SB_PROPERTY_DEFAULT_MEDIAPAGE_URL     "http://songbirdnest.com/data/1.0#defaultMediaPageURL"
+#define SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES    "http://songbirdnest.com/data/1.0#onlyCustomMediaPages"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

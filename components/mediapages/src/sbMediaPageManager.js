@@ -117,7 +117,6 @@ MediaPageManager.prototype = {
     if (!aList) {
       return ArrayConverter.enumerator(this._pageInfoArray); 
     }
-    
     // Otherwise, make a list of what matches the list
     var tempArray = [];
     for (var i in this._pageInfoArray) {
@@ -379,14 +378,6 @@ var MediaPageMetadataReader = {
         properties[key] = value;
       }
       
-      // this is our definition of an opt-out-able list
-      // one that is so unspecific as to only target by type
-      // or to target "all". (see below)
-      if (fields.length == 1 && properties.type) {
-        //properties.onlyCustomMediaPages = undefined; 
-        // null instead of false so that comparing to unset is true
-      }
-      
       matchList.push(properties); 
     }
     
@@ -406,11 +397,28 @@ var MediaPageMetadataReader = {
       for (var m in matchList) {
         match = matchList[m];
         
+        // first, see if we just want to opt out of this match
+        // our definition of an opt-out-able list is:
+        // one that is so unspecific as to only target by "type"
+        // or to target everything. (see below)
+        // (this is a bit natty)
+        var numProperties = 0;
+        for (var i in match) {
+          numProperties++
+        }
+        // if we *only* target the "type" of the list
+        // and the list wants to opt out
+        if (numProperties == 1 && match["type"]) {
+          if (mediaList.getProperty(SBProperties.onlyCustomMediaPages) == "true") {
+            return false;
+          }
+        }
+        
         var thisListMatches = true;
         for (var i in match) {
           // Use getProperty notation if the desired field is not
           // specified as a true JS property on the object.
-          // TODO: This should be fixed.
+          // TODO: This should be improved.
           var comparisonValue;
           if (mediaList[i] == undefined) {
             comparisonValue = mediaList.getProperty(SBProperties[i]);
@@ -440,9 +448,9 @@ var MediaPageMetadataReader = {
   
   _createMatchAllFunction: function() {
     var matchFunction = function(mediaList) {
-      // allow lists to opt out of matching "all".
-      // this detail must be clearly communicated to the end users!
-      return(mediaList /* && mediaList.onlyCustomMediaPages == false */); 
+      // opt-out lists will also exclude completely generic pages
+      // this detail must be clearly communicated to the MP dev'rs!
+      return(mediaList && mediaList.getProperty(SBProperties.onlyCustomMediaPages) != "true");
     };
     return matchFunction;
   },
