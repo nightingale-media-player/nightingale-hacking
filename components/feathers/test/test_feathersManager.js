@@ -109,7 +109,7 @@ FeathersDescription.prototype = {
  * support in FeathersManager
  */
 var feathersChangeListener = {
-  
+
   // Count update notifications so that they can be confirmed
   // with an assert.
   updateCounter: 0,
@@ -124,8 +124,13 @@ var feathersChangeListener = {
   onFeathersSelectRequest: function(layoutDesc, skinDesc) {
     assertEqual(layoutDesc.wrappedJSObject, this.expectLayout);
     assertEqual(skinDesc.wrappedJSObject, this.expectSkin);
+  },
+  onFeathersSelectComplete: function(layoutDesc, skinDesc) {
+    assertEqual(layoutDesc.wrappedJSObject, this.expectLayout);
+    assertEqual(skinDesc.wrappedJSObject, this.expectSkin);
     this.expectLayout = null;
     this.expectSkin = null;
+    testFinished();
   },
   
   QueryInterface: function(iid) {
@@ -230,14 +235,18 @@ function testDefaultRevert() {
   // Confirm that revert switches us to the primary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
-  sleep(800); // switchFeathers is now async
+
+  testPending();
+
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
   
   // Now revert again, taking us to the secondary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
-  sleep(800); // switchFeathers is now async
+
+  testPending();
+
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
 }
@@ -248,9 +257,6 @@ function testDefaultRevert() {
  */
 function submitFeathers()
 {
-  // Register for change callbacks
-  feathersManager.addListener(feathersChangeListener);
-
   // Make some skins
   var skin = new FeathersDescription();
   skin.name = "Blue Skin";
@@ -331,6 +337,8 @@ function runTest () {
   previousLayoutDataRemote.stringValue = "";
   previousSkinDataRemote.stringValue = "";
   
+  // Register for change callbacks
+  feathersManager.addListener(feathersChangeListener);
   
   ///////////////////////////////////////////////////
   // Test skins/layouts registered via extensions  //
@@ -353,6 +361,8 @@ function runTest () {
   //////////////////////////////////
   // Test registration functions  //
   //////////////////////////////////
+
+  feathersChangeListener.updateCounter = 0;
 
   submitFeathers();
   
@@ -428,7 +438,9 @@ function runTest () {
   feathersChangeListener.expectSkin = skins[0];
   feathersChangeListener.expectLayout = layouts[1];
   feathersManager.switchFeathers(layouts[1].url, skins[0].internalName);
-  sleep(800); // switchFeathers is now async
+
+  testPending();
+
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);
@@ -439,7 +451,9 @@ function runTest () {
   feathersChangeListener.expectLayout = layouts[0];
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
-  sleep(800); // switchFeathers is now async
+
+  testPending();
+
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);

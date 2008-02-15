@@ -40,7 +40,7 @@ interface sbISkinDescription;
 *
 * \sa sbIFeathersManager
 */
-[scriptable, uuid(989ca002-eea7-4eff-ae93-2615f89b5581)]
+[scriptable, uuid(441f3fae-8276-4cf2-ab83-6f32e2a8eb92)]
 interface sbIFeathersManagerListener : nsISupports
 {
   /**
@@ -55,4 +55,13 @@ interface sbIFeathersManagerListener : nsISupports
    */  
   void onFeathersSelectRequest(in sbILayoutDescription aLayout, 
                                in sbISkinDescription aSkin);
+
+  /**
+   * \brief Called after the feathers manager is about to switch feathers
+   * \param aLayout Description of the layout to be selected
+   * \param aSkin Description of the skin to be selected
+   */  
+  void onFeathersSelectComplete(in sbILayoutDescription aLayout,
+                                in sbISkinDescription aSkin);
 };
+

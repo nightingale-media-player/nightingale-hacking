@@ -253,23 +253,10 @@ AddonMetadataReader.prototype = {
       var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
       //debug("AddonMetadataReader.loadFeathers: - processing " + addon.Value + "\n");
       try {
-        var items;
         if (this._datasource.hasArcOut(addon, this._resources.feathers)) {
-          Components.utils.reportError(
-            "FeathersManager: The <feathers> element is deprecated. Remove the element "+
-            "and leave its contents unmodified."
-          );
-          
           var feathersTarget = this._datasource.GetTarget(addon, this._resources.feathers, true)
                                    .QueryInterface(Components.interfaces.nsIRDFResource);
-          items = this._datasource.GetTargets(feathersTarget, this._resources.skin, true);
-        }
-        else {
-          items = this._datasource.GetTargets(addon, this._resources.skin);
-        }
-        
-        if (items) {
-          
+
           // Process all skin metadata
           var items = this._datasource.GetTargets(feathersTarget, this._resources.skin, true)
           while (items.hasMoreElements()) {
@@ -284,7 +271,7 @@ AddonMetadataReader.prototype = {
             this._processLayout(addon, item);
           }
         }
-        
+
       } catch (e) {
         this._reportErrors("", [  "An error occurred while processing " +
                     "extension " + addon.Value + ".  Exception: " + e  ]);
@@ -1274,6 +1261,16 @@ FeathersManager.prototype = {
     });
   },
 
+  _onSelectComplete: function onSelectComplete() {
+    var layoutDescription = this.getLayoutDescription(this.currentLayoutURL);
+    var skinDescription = this.getSkinDescription(this.currentSkinName);
+
+    // Broadcast notification
+    this._listeners.forEach( function (listener) {
+      listener.onFeathersSelectComplete(layoutDescription, skinDescription);
+    });
+  },
+
   _flushXULPrototypeCache: function flushXULPrototypeCache() {
     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefBranch);
@@ -1346,6 +1343,7 @@ FeathersManager_switchFeathers_callback.prototype = {
     this.feathersManager._flushXULPrototypeCache();
     this.feathersManager.openPlayerWindow();
     this.feathersManager._switching = false;
+    this.feathersManager._onSelectComplete();
     this.feathersManager = null;
   }
 }; // FeathersManager_switchFeathers_callback.prototype
