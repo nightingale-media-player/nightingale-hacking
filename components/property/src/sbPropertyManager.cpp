@@ -527,9 +527,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Album art url
-  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTURL),
-                   NS_LITERAL_STRING("property.album_art_url"),
+  //Primary image url
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                   NS_LITERAL_STRING("property.primary_image_url"),
                    stringBundle, PR_TRUE, PR_TRUE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -49,7 +49,7 @@
 #define SB_PROPERTY_LYRICISTNAME              "http://songbirdnest.com/data/1.0#lyricistName"
 #define SB_PROPERTY_LYRICS                    "http://songbirdnest.com/data/1.0#lyrics"
 #define SB_PROPERTY_RECORDLABELNAME           "http://songbirdnest.com/data/1.0#recordLabelName"
-#define SB_PROPERTY_ALBUMARTURL               "http://songbirdnest.com/data/1.0#albumArtURL"
+#define SB_PROPERTY_PRIMARYIMAGEURL           "http://songbirdnest.com/data/1.0#primaryImageURL"
 #define SB_PROPERTY_LASTPLAYTIME              "http://songbirdnest.com/data/1.0#lastPlayTime"
 #define SB_PROPERTY_PLAYCOUNT                 "http://songbirdnest.com/data/1.0#playCount"
 #define SB_PROPERTY_LASTSKIPTIME              "http://songbirdnest.com/data/1.0#lastSkipTime"
