@@ -68,6 +68,7 @@
                     class="device-capacity-bar-box"
                     flex="1">
             <xul:hbox type="music" class="device-capacity-music"/>
+            <xul:hbox type="video" class="device-capacity-video"/>
             <xul:hbox type="other" class="device-capacity-other"/>
             <xul:hbox type="free" class="device-capacity-free"/>
           </xul:hbox>
@@ -94,6 +95,9 @@
           <xul:sb-device-capacity-legend type="music"
                                          class="device-capacity-legend-music"
                                          label="&device.capacity.music.label;"/>
+          <xul:sb-device-capacity-legend type="video"
+                                         class="device-capacity-legend-video"
+                                         label="&device.capacity.video.label;"/>
           <xul:sb-device-capacity-legend type="other"
                                          class="device-capacity-legend-other"
                                          label="&device.capacity.other.label;"/>

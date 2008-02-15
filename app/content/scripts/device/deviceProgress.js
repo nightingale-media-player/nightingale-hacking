@@ -253,14 +253,6 @@ var DPW = {
   _deviceInitialize: function DPW__deviceInitialize() {
     // Get the device object.
     this._device = this._getDevice(this._deviceID);
-
-    // Set up progress status for testing.
-    var statusDRPrefix = this._deviceGetStatusDRPrefix();
-    SBDataSetStringValue(statusDRPrefix + ".text1",
-                         "Syncing Device - Copying 4 of 20 files");
-    SBDataSetStringValue(statusDRPrefix + ".text2",
-                         "Copying: Global News: 8 Nov 07 AM");
-    SBDataSetIntValue(statusDRPrefix + ".progress", 40);
   },
 
 
@@ -302,6 +294,7 @@ var DPW = {
 
   _deviceIsIdle: function DPW__deviceIsIdle() {
     // Return non-idle device for testing.
+    // STEVO TODO: we need to get status from the device.
     return false;
   },
 
@@ -315,8 +308,13 @@ var DPW = {
    */
 
   _getDevice: function DPW__getDevice(aDeviceID) {
-    // Just return the device ID for now.
-    return aDeviceID;
+    try {
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      return deviceManager.getDevice(Components.ID(aDeviceID));
+    } catch (err) {
+      return null;
+    }
   }
 };
 

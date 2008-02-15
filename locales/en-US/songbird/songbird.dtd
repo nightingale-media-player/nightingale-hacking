@@ -414,5 +414,6 @@
 <!ENTITY device.info.battery.label          "Battery">
 
 <!ENTITY device.capacity.music.label    "Music">
+<!ENTITY device.capacity.video.label    "Video">
 <!ENTITY device.capacity.other.label    "Other">
 <!ENTITY device.capacity.free.label     "Free">

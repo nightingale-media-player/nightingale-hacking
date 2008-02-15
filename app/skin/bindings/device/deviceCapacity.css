@@ -69,6 +69,11 @@ Imported by bindings.css or directly into feathers.
   background-color: rgb(40,200,40);
 }
 
+.device-capacity-video,
+.device-capacity-legend-color-box[type="video"] {
+  background-color: rgb(255,51,204);
+}
+
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
   background-color: rgb(40,40,200);

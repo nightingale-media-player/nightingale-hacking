@@ -157,7 +157,11 @@
        */
 
       _getDeviceFriendlyName: function DeviceInfoDlg__getDeviceFriendlyName() {
-        return this._device.name;
+        try {
+          return this._device.properties.friendlyName;
+        } catch (err) {
+          return SBString("device.info.unknown");
+        }
       }
     };
 

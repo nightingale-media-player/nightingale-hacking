@@ -190,8 +190,7 @@
        */
 
       _isReadOnly: function deviceSummary__isReadOnly() {
-        /*XXXeps return true for now for testing. */
-        return true;
+        return false;
       },
 
 

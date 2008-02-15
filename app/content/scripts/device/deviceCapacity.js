@@ -265,45 +265,55 @@ var DCW = {
   //----------------------------------------------------------------------------
 
   /**
+   * \brief Get a device property if available
+   *
+   * \param aPropertyName name of the property to get
+   * \param aDefault default to return if property not found
+   * 
+   * \return string value of the property or the default if not found.
+   * 
+   * \sa sbStandardDeviceProperties.h
+   */
+  
+  _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
+    try {
+      return this._device.properties.properties.getPropertyAsAString(aPropertyName);
+    } catch (err) {
+      return aDefault;
+    }
+  },
+
+  /**
    * \brief Return a table of device capacities.
    *
    * \return Table object of device capacities.
    *           total            Total device capacity.
    *           free             Free device capacity.
    *           music            Device capacity used for music.
+   *           video            Device capacity used for video.
    *           other            Device capacity used for all other storage.
    */
 
-  //XXXeps fabricate device capacities.
-  _totalSpace: 8 * 1024 * 1024 * 1024,
-  _otherSpace: 100 * 1024 * 1024,
-  _freeSpace: 8 * 1024 * 1024 * 1024 - 100 * 1024 * 1024,
-  _musicSpace: 0,
-  _usedSpace: 100 * 1024 * 1024,
-
   _getDeviceCapacity: function DCW__getDeviceCapacity() {
     // Get the storage statistics from the device.
-    //XXXeps fabricate something for now.
-    var freeSpace = this._freeSpace;
-    var musicSpace = this._musicSpace;
-    var usedSpace = this._usedSpace;
+    var freeSpace = parseInt(this.
+        _getDeviceProperty("http://songbirdnest.com/device/1.0#freeSpace", 0));
+    var musicSpace = parseInt(this.
+        _getDeviceProperty("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
+    var videoSpace = parseInt(this.
+        _getDeviceProperty("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
+    var usedSpace = parseInt(this.
+        _getDeviceProperty("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
     var totalSpace = usedSpace + freeSpace;
-    var otherSpace = usedSpace - musicSpace;
-    this._usedSpace += 10 * 1024 * 1024;
-    this._freeSpace -= 10 * 1024 * 1024;
-    if (this._freeSpace < 0)
-      this._freeSpace = 0;
-    this._musicSpace = this._totalSpace - this._freeSpace - this._otherSpace;
-    if (this._musicSpace < 0)
-      this._musicSpace = 0;
+    var otherSpace = usedSpace - musicSpace - videoSpace;
 
     // Set up the device capacity table.
     var capTable = {};
     capTable.total = totalSpace;
     capTable.free = freeSpace;
     capTable.music = musicSpace;
+    capTable.video = videoSpace;
     capTable.other = otherSpace;
-
     return capTable;
   },
 
@@ -317,8 +327,13 @@ var DCW = {
    */
 
   _getDevice: function DCW__getDevice(aDeviceID) {
-    // Just return the device ID for now.
-    return aDeviceID;
+    try {
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      return deviceManager.getDevice(Components.ID(aDeviceID));
+    } catch (err) {
+      return null;
+    }
   }
 };
 

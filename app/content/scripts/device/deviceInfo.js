@@ -67,6 +67,12 @@ Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 var DIW = {
   //
+  // Default device image url
+  //
+  
+  _devImgURL:      "chrome://songbird/skin/icons/icon-device.png",
+  
+  //
   // Device info configuration.
   //
   //   _pollPeriodTable         Table of polling periods for device information
@@ -335,7 +341,6 @@ var DIW = {
     }
   },
 
-
   //----------------------------------------------------------------------------
   //
   // Device info event handler services.
@@ -565,6 +570,24 @@ var DIW = {
     this._device = null;
   },
 
+  /**
+   * \brief Get a device property if available
+   *
+   * \param aPropertyName name of the property to get
+   * \param aDefault default to return if property not found
+   * 
+   * \return string value of the property or the default if not found.
+   * 
+   * \sa sbStandardDeviceProperties.h
+   */
+  
+  _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
+    try {
+      return this._device.properties.properties.getPropertyAsAString(aPropertyName);
+    } catch (err) {
+      return aDefault;
+    }
+  },
 
   /**
    * \brief Return the device model name.
@@ -573,7 +596,11 @@ var DIW = {
    */
 
   _getDeviceModel: function DIW__getDeviceModel() {
-    return "Generic 2000";
+    try {
+      return this._device.properties.modelNumber;
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
   },
 
 
@@ -584,7 +611,27 @@ var DIW = {
    */
 
   _getDeviceModelSize: function DIW__getDeviceModelSize() {
-    return "2 GB";
+    try {
+      // These should match the "storageformatter.*" in songbird.properties
+      var sFormats = [ "B", "KB", "MB", "GB" ];
+      //var modelSize = this._device.properties.properties
+      //                    .getPropertyAsUint64("http://songbirdnest.com/device/1.0#capacity");
+      var modelSize = this._getDeviceProperty("http://songbirdnest.com/device/1.0#capacity");
+      modelSize = parseInt(modelSize);
+      if (modelSize < 0) {
+        return SBString("device.info.unknown");
+      }
+      
+      var storageFormatter = 0;
+      while (modelSize > 1024 && storageFormatter < (sFormats.length - 1)) {
+        modelSize = modelSize / 1024;
+        storageFormatter++;
+      }
+      
+      return modelSize + " " + SBString("storageformatter." + sFormats[storageFormatter]);
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
   },
 
 
@@ -595,7 +642,11 @@ var DIW = {
    */
 
   _getDeviceFriendlyName: function DIW__getDeviceFriendlyName() {
-    return "My Device";
+    try {
+      return this._device.properties.friendlyName;
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
   },
 
 
@@ -606,7 +657,11 @@ var DIW = {
    */
 
   _getDeviceSerialNumber: function DIW__getDeviceSerialNumber() {
-    return "1234567890ABC";
+    try {
+      return this._device.properties.serialNumber;
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
   },
 
 
@@ -617,7 +672,11 @@ var DIW = {
    */
 
   _getDeviceVendor: function DIW__getDeviceVendor() {
-    return "Sony";
+    try {
+      return this._device.properties.vendorName;
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
   },
 
 
@@ -628,7 +687,8 @@ var DIW = {
    */
 
   _getDeviceAccessCompatibility: function DIW__getDeviceAccessCompatibility() {
-    return "Read-only without deletion";
+    return this._getDeviceProperty("http://songbirdnest.com/device/1.0#accessCompatibility",
+                                   SBString("device.info.unknown"));
   },
 
 
@@ -639,8 +699,20 @@ var DIW = {
    */
 
   _getDevicePlaybackFormats: function DIW__getDevicePlaybackFormats() {
-    return "MP3, AVI, MPEG, ASF, BMP, PICT, WAV, TIFF, OGG, AAC, FLAC, WMV, " +
-           "MP2, Microsoft Word Document";
+    // STEVO TODO format this properly with songbird.properties.
+    var retFormats = [];
+    try {
+      var deviceCapabilities = this._device.capabilities;
+      var functionArray = deviceCapabilities.getSupportedFunctionTypes({});
+      for (var functionCounter = 0; functionCounter < functionArray.length; functionCounter++) {
+        var contentArray = deviceCapabilities.getSupportedContentTypes(functionArray[functionCounter], {});
+        for (var contentCounter = 0; contentCounter < contentArray.length; contentCounter++) {
+          var formatArray = deviceCapabilities.getSupportedFormats(contentArray[contentCounter], {});
+          retFormats.concat(formatArray);
+        }
+      }
+    } catch (err) { }
+    return retFormats.join(", ") || SBString("device.info.unknown");
   },
 
 
@@ -653,14 +725,11 @@ var DIW = {
    * \param aOnBatteryPower     True if running on battery power.
    */
 
-  _batteryPower: 100, /*XXXeps mock battery power for testing. */
   _getDeviceBatteryStatus: function DIW__getDeviceBatteryStatus
                                       (aBatteryLevel,
                                        aOnBatteryPower) {
-    aBatteryLevel.value = this._batteryPower;
-    aOnBatteryPower.value = true;
-    if (this._batteryPower > 0)
-      this._batteryPower--;
+    aBatteryLevel.value = this._getDeviceProperty("http://songbirdnest.com/device/1.0#batteryLevel", 0);
+    aOnBatteryPower.value = this._getDeviceProperty("http://songbirdnest.com/device/1.0#powerSource", 0);
   },
 
 
@@ -699,7 +768,11 @@ var DIW = {
    */
 
   _getDeviceIcon: function DIW__getDeviceIcon() {
-    return null;
+    try {
+      return this._device.properties.iconUri.spec;
+    } catch (err) {
+      return this._devImgURL;
+    }
   },
 
 
@@ -721,11 +794,13 @@ var DIW = {
    */
 
   _getDevice: function DIW__getDevice(aDeviceID) {
-    // Use the mock device for now.
-    var device =
-          Cc["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
-            .createInstance(Ci.sbIDevice);
-    return device;
+    try {
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      return deviceManager.getDevice(Components.ID(aDeviceID));
+    } catch (err) {
+      return null;
+    }
   }
 };
 
