@@ -53,6 +53,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotemedialist_page.html \
                  $(srcdir)/test_remoteplayer.js \
                  $(srcdir)/test_remoteplayer_page.html \
+                 $(srcdir)/test_remoteplayerlisteners.js \
+                 $(srcdir)/test_remoteplayerlisteners_page.html \
                  $(srcdir)/test_siteID.js \
                  $(srcdir)/test_siteID_page.html \
                  $(srcdir)/test_privileged.js \

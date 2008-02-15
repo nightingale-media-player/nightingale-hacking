@@ -15,9 +15,6 @@ ListenerTopic: metadata.album
 ListenerTopic: metadata.genre
   The genre of the currenly playing media.
 
-ListenerTopic: metadata.url
-  The URL of the currently playing media.
-
 ListenerTopic: metadata.position
   The current position in the media, as the number of milliseconds offset from
   the start of the media.
