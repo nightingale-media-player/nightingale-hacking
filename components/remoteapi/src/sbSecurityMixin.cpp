@@ -98,8 +98,9 @@ SB_IMPL_CLASSINFO( sbSecurityMixin,
                    0,
                    kSecurityMixinCID );
 
-sbSecurityMixin::sbSecurityMixin() 
-: mInterfacesCount(0),
+sbSecurityMixin::sbSecurityMixin()
+: mOuter(nsnull),
+  mInterfacesCount(0),
   mPrivileged(PR_FALSE)
 {
 #ifdef PR_LOGGING
