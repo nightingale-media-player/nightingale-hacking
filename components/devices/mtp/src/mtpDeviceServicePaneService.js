@@ -139,7 +139,14 @@ mtpServicePaneService.prototype = {
                                                     aNewName) {
     var mtpDevice = this._getMtpDeviceFromNode(aNode);
     if (mtpDevice) {
-      // todo: do the renaming
+      try {
+        mtpDevice.properties.friendlyName = aNewName;
+        aNode.name = aNewName;
+      }
+      catch (e) {
+        dump("Error: " + e);
+        Components.utils.reportError("Unable to rename device");
+      }
     }
   },
 

@@ -90,7 +90,7 @@ nsresult sbWPDStringToPropVariant(nsAString const & str,
   if (!var.pwszVal)
     return NS_ERROR_OUT_OF_MEMORY;
   
-  memcpy(var.pwszVal, nsString(str).get(), length);
+  memcpy(var.pwszVal, nsString(str).get(), length * sizeof(PRUnichar));
   var.pwszVal[length] = 0;
   return NS_OK;
 }
