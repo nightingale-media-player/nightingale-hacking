@@ -277,7 +277,7 @@ PlaylistPlayback.prototype = {
    */
   _shuffle: false,
   _shuffleWasTriggered: false,
-  _shuffleData: { shuffleView: null, indexes: [], availableIndexes: [], position: 0 },
+  _shuffleData: { shuffleView: null, indexes: [], availableIndexes: [], position: 0, initialized: false },
 
   /**
    * An array of cores to use
@@ -884,12 +884,11 @@ PlaylistPlayback.prototype = {
 
     if (aIndex < 0) {
       aIndex = 0;
-      // See if we should shuffle on it
-      if ( this._shuffle.boolValue ) {
+      if (this._shuffle.boolValue) {
         aIndex = this._shufflerGetNextTrack();
       }
     }
-
+    
     // pull metadata and filters from aSourceRef
     this._updateCurrentInfoFromView(aView, aIndex);
 
@@ -1913,7 +1912,7 @@ PlaylistPlayback.prototype = {
   _shufflerGetPreviousTrack: function sbPlaylistPlayback_shufflerGetPreviousTrack(aIncrement) {
 
     // Check if our view is still the playing view.
-    if(this._playingView != this._shuffleData.shuffleView) {
+    if(this._playingView != this._shuffleData.shuffleView ) {
       this._shufflerResetData();
     }
 
@@ -1931,7 +1930,8 @@ PlaylistPlayback.prototype = {
   _shufflerGetNextTrack: function sbPlaylistPlayback_shufflerGetNextTrack() {
     
     // Check if our view is still the playing view.
-    if(this._playingView != this._shuffleData.shuffleView) {
+    if(this._playingView != this._shuffleData.shuffleView ||
+       this._playingView.length != this._shuffleData.shuffleView.length) {
       this._shufflerResetData();
     }
     
@@ -2006,6 +2006,7 @@ PlaylistPlayback.prototype = {
     }
     
     this._shuffleData.position = 0;
+    this._shuffleData.initialized = true;
   },
 
   _restartApp: function() {

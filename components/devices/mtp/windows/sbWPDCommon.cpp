@@ -236,3 +236,95 @@ nsresult sbWPDCreatePropertyKeyCollection(PROPERTYKEY const & key,
   return (*propertyKeys)->Add(key);
 
 }
+
+nsresult sbWPDObjectFormatToContentTypeString(const GUID &aObjectFormat,
+                                              nsACString &aContentType,
+                                              PRBool &aIsContainerFormat,
+                                              PRBool &aIsPlaylistFormat)
+{
+  static wpdObjectFormatKeymapEntry_t map[] = {
+    { WPD_OBJECT_FORMAT_3GP,                    "video/3gpp",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_AAC,                    "audio/aac",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_AIFF,                   "audio/x-aiff",                   PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_ASF,                    "video/x-ms-asf",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_ASXPLAYLIST,            "application/asx",                PR_FALSE, PR_TRUE },
+    { WPD_OBJECT_FORMAT_AUDIBLE,                "audio/audible ",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_AVI,                    "video/x-msvideo",                PR_TRUE,  PR_FALSE },
+    { WPD_OBJECT_FORMAT_BMP,                    "image/bmp",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_EXECUTABLE,             "application/octet-stream",       PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_EXIF,                   "image/x-raw",                    PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_FLAC,                   "audio/x-flac",                   PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_FLASHPIX,               "application/vnd.netfpx",         PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_GIF,                    "image/gif",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_HTML,                   "text/html",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_ICON,                   "image/x-icon",                   PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_JFIF,                   "image/jpeg",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_JP2,                    "image/jp2",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_JPX,                    "image/jpx",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_M3UPLAYLIST,            "audio/x-mpegurl",                PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MHT_COMPILED_HTML,      "message/rfc822",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MICROSOFT_EXCEL,        "application/vnd.ms-excel",       PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MICROSOFT_POWERPOINT,   "application/vnd.ms-powerpoint",  PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MICROSOFT_WORD,         "application/msword",             PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MP2,                    "video/mpeg2",                    PR_FALSE, PR_FALSE},
+    { WPD_OBJECT_FORMAT_MP3,                    "audio/mpeg",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MP4,                    "video/mp4",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_MPEG,                   "video/mpeg",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_OGG,                    "application/ogg",                PR_TRUE,  PR_FALSE },
+    { WPD_OBJECT_FORMAT_PCD,                    "image/x-photo-cd",               PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_PICT,                   "image/pict",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_PLSPLAYLIST,            "audio/scpls",                    PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_PNG,                    "image/png",                      PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_TEXT,                   "text/plain",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_TIFF,                   "image/tiff",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_TIFFEP,                 "image/tiff",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_TIFFIT,                 "image/tiff",                     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_UNSPECIFIED,            "application/octet-stream",       PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_VCALENDAR1,             "text/calendar",                  PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_VCARD2,                 "text/x-vcard",                   PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_VCARD3,                 "text/x-vcard",                   PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_WAVE,                   "audio/x-wav",                    PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_WINDOWSIMAGEFORMAT,     "image/x-ms-bmp",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_WMA,                    "audio/x-ms-wma",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_WMV,                    "video/x-ms-wmv",                 PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_WPLPLAYLIST,            "application/vnd.ms-wpl",         PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_X509V3CERTIFICATE,      "application/x-x509-ca-cert",     PR_FALSE, PR_FALSE },
+    { WPD_OBJECT_FORMAT_XML,                    "application/xml",                PR_FALSE, PR_FALSE }
+
+    /* XXXAus: No idea, this is for CIFF (Canon Camera Image File Format) */
+    /*{ WPD_OBJECT_FORMAT_CIFF,                   "",PR_FALSE, PR_FALSE },*/
+
+    /* XXXAus: No idea, this is for the Digital Print Order File Format.*/
+    /*{ WPD_OBJECT_FORMAT_DPOF,                   "",PR_FALSE, PR_FALSE },*/
+
+    /* XXXAus: No idea, this is the Windows Connect Now File Format */
+    /*{ WPD_OBJECT_FORMAT_MICROSOFT_WFC,          "",PR_FALSE, PR_FALSE },*/
+    
+    /* XXXAus: No idea, this is a playlist format used with AVCHD files.
+    /*{ WPD_OBJECT_FORMAT_MPLPLAYLIST,            "",PR_FALSE, PR_TRUE },*/
+    
+    /* XXXAus: No idea, this is for Network Association Files.*/
+    /* { WPD_OBJECT_FORMAT_NETWORK_ASSOCIATION,    "",PR_FALSE, PR_FALSE },*/
+
+    /* XXXAus: No idea what to do with this one, it's for objects that are made up of properties only.
+    /*{ WPD_OBJECT_FORMAT_PROPERTIES_ONLY,      "", PR_FALSE, PR_FALSE } */
+
+    /* XXXAus: No idea what to do with this one, it's for a script file that is specific to the device model in use.
+    /*{ WPD_OBJECT_FORMAT_SCRIPT,               "", PR_FALSE, PR_FALSE },*/
+  };
+
+  static PRUint32 mapSize = sizeof(map) / sizeof(wpdObjectFormatKeymapEntry_t);
+
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if( IsEqualGUID(map[current].mObjectFormat, aObjectFormat)) {
+      
+      aContentType = map[current].mContentType;
+      aIsContainerFormat = map[current].mIsContainerFormat;
+      aIsPlaylistFormat = map[current].mIsPlaylistFormat;
+      
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}

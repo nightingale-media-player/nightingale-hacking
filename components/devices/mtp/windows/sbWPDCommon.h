@@ -51,14 +51,31 @@ class sbIDeviceEvent;
 class nsIVariant;
 struct IPortableDeviceContent;
 
+/**
+ * Map entry to convert a standard property to PROPERTYKEY.
+ * This is used by sbWPPDStandardDevicePropertyToPropertyKey.
+ */
 typedef struct  
 {
-  char * mStandardProperty;
-  PROPERTYKEY mPropertyKey;
+  char *        mStandardProperty;
+  PROPERTYKEY   mPropertyKey;
 } wpdPropertyKeymapEntry_t;
 
 /**
+ * Map entry to convert a WPD Object Format GUID to a
+ * content type string (ie, GUID to "application/ogg").
+ */
+typedef struct  
+{
+  GUID    mObjectFormat;
+  char *  mContentType;
+  PRBool  mIsContainerFormat;
+  PRBool  mIsPlaylistFormat;
+} wpdObjectFormatKeymapEntry_t;
+
+/**
  * Retreives the WPD device manager
+ * \param deviceManager 
  */
 inline
 HRESULT sbWPDGetPortableDeviceManager(IPortableDeviceManager ** deviceManager)
@@ -74,34 +91,37 @@ HRESULT sbWPDGetPortableDeviceManager(IPortableDeviceManager ** deviceManager)
 
 /**
  * Create the Songbird Device manager and return it
- * @param deviceManager the newly created device manager
+ * \param deviceManager the newly created device manager
  */
 nsresult sbWPDCreateDeviceManager(sbIDeviceManager2 ** deviceManager);
-/**
- * This creates an event for the device and dispatches it to the manager
- * @param marshall The marshaller for this device of this event
- * @param device the Songbird device this event is related to
- * @param eventID the ID of the event
- */
-nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
-                           sbIDevice * device,
-                           PRUint32 eventID,
-                           PRBool async = PR_FALSE);
 
 /**
- * Returns a PROVARIANT built from the incoming string
+ * This creates an event for the device and dispatches it to the manager
+ * \param marshall The marshaller for this device of this event
+ * \param device the Songbird device this event is related to
+ * \param eventID the ID of the event
+ */
+nsresult sbWPDCreateAndDispatchEvent(sbIDeviceMarshall * marshall,
+                                     sbIDevice * device,
+                                     PRUint32 eventID,
+                                     PRBool async = PR_FALSE);
+
+/**
+ * Returns a PROVARIANT built from the incoming string.
  * It's the callers responsibility to ensure proper cleanup of the PROPVARIANT's
  * resources
+ * \param str String to convert to PROPVARIANT.
+ * \param var PROPVARIANT that will recieve the converted string.
  */
 nsresult sbWPDStringToPropVariant(nsAString const & str,
-                               PROPVARIANT & var);
+                                  PROPVARIANT & var);
 
 /**
  * Returns the object ID from a PUID
  */
 nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
-                            nsAString const & PUID,
-                            nsAString & objectID);
+                               nsAString const & PUID,
+                               nsAString & objectID);
 
 /**
  * Returns the PROPERTYKEY associated with the Standard Device Property
@@ -109,7 +129,6 @@ nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
 PRBool 
 sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
                                           PROPERTYKEY &aPropertyKey);
-
 
 /**
  * This function creates a property key collection from a single key
@@ -122,6 +141,22 @@ nsresult sbWPDCreatePropertyKeyCollection(PROPERTYKEY const & key,
  * resources allocated to the PROPVARIANT via PropVariantClear
  */
 nsresult sbWPDnsIVariantToPROPVARIANT(nsIVariant * aValue,
-                                 PROPVARIANT & prop);
+                                      PROPVARIANT & prop);
+
+/**
+ * Convert a WPD Object Format GUID to a sbIContentType encoding, 
+ * decoding or container format value.
+ * \param aObjectFormat The WPD Object Format GUID to convert.
+ * \param aContenType This will hold the content type string.
+ * \param aIsContainerFormat Indicates whether the returned content type string
+ *                           is a container format.
+ * \return The content type string and container format flag as well as NS_OK.
+ * \retval NS_OK The Object Format has a content type string available.
+ * \retval NS_ERROR_NOT_AVAILABLE The Object Format has _no_ content type string available.
+ */
+nsresult sbWPDObjectFormatToContentTypeString(const GUID &aObjectFormat,
+                                              nsACString &aContentType,
+                                              PRBool &aIsContainerFormat,
+                                              PRBool &aIsPlaylistFormat);
 
 #endif /*SBWPDCOMMON_H_*/
