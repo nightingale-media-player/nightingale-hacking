@@ -1,0 +1,111 @@
+/*
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// For information about the licensing and copyright of this Add-On please
+// contact POTI, Inc. at customer@songbirdnest.com.
+//
+*/
+
+/*******************************************************************************
+ *
+ * Baseline.
+ *
+ ******************************************************************************/
+
+window
+{
+  background-image:none;
+}
+
+groupbox,
+progressmeter,
+.device-capacity-legend-label,
+.dev-progress-text1-label,
+.dev-progress-text2-label {
+  margin:0;
+  padding:0;
+}
+
+radiogroup radiogroup
+{
+  margin-left:20px;
+}
+
+.device-name-label,
+.content-management-header-label
+{
+  font-size:160%;
+}
+
+.content-management-header-info
+{
+  font-size:120%;
+}
+
+.device-specs-grid-label,
+.dev-progress-text1-label,
+.capacity_header_label
+{
+  font-size:110%;
+}
+
+.dev-progress-text2-label
+{
+  font-size:90%;
+}
+
+.capacity_value_label
+{
+  font-size:80%;
+}
+
+
+/*******************************************************************************
+ *
+ * Content management panel.
+ *
+ ******************************************************************************/
+
+.content-management-header-box
+{
+  margin-bottom:10px;
+}
+
+#info_progress_box
+{
+  max-height:100px;
+}
+
+/*******************************************************************************
+ *
+ * Control Box
+ *
+ ******************************************************************************/
+
+#main_box
+{
+  margin:20px 40px;
+}
+
+.device-specs-grid-label
+{
+  margin-top:0;
+  margin-bottom:4px;
+}
+
+.dev-progress-text2-label
+{
+  margin-bottom:3px;
+}
+
+.operation_progressmeter
+{
+  margin:4px 4px 3px 0;
+}
+
+#progress_and_sync_box button
+{
+  font-size:110%;
+}

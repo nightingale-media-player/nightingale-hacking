@@ -5,4 +5,5 @@ mtp.jar:
   content/mtp/overlay/mtpDeviceOverlay.xul            (chrome/content/overlay/mtpDeviceOverlay.xul)
   content/mtp/scripts/mtpDevice.js                    (chrome/content/scripts/mtpDevice.js)
   content/mtp/xul/mtpDeviceSummaryPage.xul            (chrome/content/xul/mtpDeviceSummaryPage.xul)
+  skin/mtp/mtp.css                                    (skin/mtp.css)
   

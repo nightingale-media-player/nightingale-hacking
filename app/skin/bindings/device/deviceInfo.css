@@ -57,7 +57,7 @@ Imported by bindings.css or directly into feathers.
 {
   height:64px;
   width:64px;
-  list-style-image:url("chrome://songbird/skin/device/icon-device.png");
+  list-style-image:url("chrome://songbird/skin/device/icon-device-64x64.png");
 }
 
 .eject-button {
@@ -65,9 +65,8 @@ Imported by bindings.css or directly into feathers.
   height:20px;
   margin:0 0 0 4px;
   padding:0;
-  background-image:url("chrome://songbird/skin/buttons/eject-button.png");
-  background-repeat:no-repeat;
-  background-position:center top;
+  list-style-image:url("chrome://songbird/skin/buttons/eject-button.png");
+  -moz-image-region: rect(0px, 18px, 18px, 0px);
 }
 
 .more-info-button {
@@ -75,14 +74,18 @@ Imported by bindings.css or directly into feathers.
   height:20px;
   margin:0 0 0 4px;
   padding:0;
-  /*XXXeps use this icon for testing until a better one is created. */
-  background-image:url("chrome://songbird/skin/icons/info.png");
-  background-repeat:no-repeat;
-  background-position:center top;
+  list-style-image:url("chrome://songbird/skin/buttons/info-button.png");
+  -moz-image-region: rect(0px, 18px, 18px, 0px);
 }
 
-.eject-button:hover {
-  background-position:center bottom;
+.eject-button:hover,
+.more-info-button:hover {
+  -moz-image-region: rect(18px, 18px, 36px, 0px);  
+}
+
+.eject-button > .button-box > label,
+.more-info-button > .button-box > label {
+  display:none;
 }
 
 .device-specs-grid-label {
