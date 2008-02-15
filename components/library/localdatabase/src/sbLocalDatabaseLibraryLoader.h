@@ -120,6 +120,7 @@ private:
                           nsAutoPtr<sbLibraryLoaderInfo>& aEntry,
                           void* aUserData);
 
+  PRBool m_DetectedCorruptLibrary;
   PRBool m_DeleteLibrariesAtShutdown;
 
 private:

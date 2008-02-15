@@ -76,6 +76,7 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #endif
 
 #define NS_APPSTARTUP_CATEGORY         "app-startup"
+#define NS_FINAL_UI_STARTUP_CATEGORY   "final-ui-startup"
 
 #define PREFBRANCH_LOADER SB_PREFBRANCH_LIBRARY "loader."
 
@@ -131,7 +132,8 @@ private:
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
 sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
-: m_DeleteLibrariesAtShutdown(PR_FALSE)
+: m_DetectedCorruptLibrary(PR_FALSE)
+, m_DeleteLibrariesAtShutdown(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!sLibraryLoaderLog)
@@ -155,10 +157,12 @@ sbLocalDatabaseLibraryLoader::Init()
 
   nsresult rv;
 
-  // Observe library shutdown.
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   if (NS_SUCCEEDED(rv)) {
+    rv = observerService->AddObserver(this, NS_FINAL_UI_STARTUP_CATEGORY,
+                                      PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
                                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -256,7 +260,13 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
   }
 
   if (! databasesOkay) {
-    // bad database problem.  phone home, then tell the user things are broken.
+    // Bad database problem.  Later we'll prompt the user.  Now is so early
+    // that they would see the prompt again after a silent restart, like
+    // the ones that happen on firstrun - component registration, etc.
+    // (see Observe() for the prompt call.)
+    m_DetectedCorruptLibrary = PR_TRUE;
+
+    // metric: corrupt database at startup
     nsCOMPtr<sbIMetrics> metrics =
       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
@@ -265,9 +275,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
     nsString metricsId = NS_LITERAL_STRING("library.error");
     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
-
-    rv = PromptToDeleteLibraries();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   return retval;
@@ -548,9 +555,9 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
                                  getter_Copies(deleteText));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString quitText;
+  nsAutoString continueText;
   rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.cancel").get(),
-                                 getter_Copies(quitText));
+                                 getter_Copies(continueText));
   NS_ENSURE_SUCCESS(rv, rv);
 
 
@@ -559,29 +566,36 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
                                 dialogTitle.BeginReading(),
                                 dialogText.BeginReading(),
                                 buttons,            
-                                deleteText.BeginReading(), // button 0
-                                quitText.BeginReading(),   // button 1
-                                nsnull,                    // button 2
-                                nsnull,                    // no checkbox
-                                nsnull,                    // no check value
+                                deleteText.BeginReading(),   // button 0
+                                continueText.BeginReading(), // button 1
+                                nsnull,                      // button 2
+                                nsnull,                      // no checkbox
+                                nsnull,                      // no check value
                                 &promptResult);     
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // "Delete" means delete & restart.  "Cancel" means quit now.
-  // i.e. there is no way to continue using the app from here.
-  PRUint32 quitFlags = nsIAppStartup::eForceQuit;
-
+  // "Delete" means delete & restart.  "Continue" means let the app
+  // start anyway.
   if (promptResult == 0) { 
     m_DeleteLibrariesAtShutdown = PR_TRUE;
-    quitFlags = nsIAppStartup::eForceQuit | nsIAppStartup::eRestart;
-  }
 
-  // now attempt to quit/restart.
-  nsCOMPtr<nsIAppStartup> appStartup = 
-    (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
+     // metric: user chose to delete corrupt library
+     nsCOMPtr<sbIMetrics> metrics =
+       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+     
+     nsString metricsCategory = NS_LITERAL_STRING("app");
+     nsString metricsId = NS_LITERAL_STRING("library.error.reset");
+     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+
+     // now attempt to quit/restart.
+     nsCOMPtr<nsIAppStartup> appStartup = 
+       (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+     NS_ENSURE_SUCCESS(rv, rv);
   
-  appStartup->Quit(quitFlags); 
+     appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
+  }
 
   return NS_OK;
 }
@@ -807,53 +821,72 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
                                       const char *aTopic,
                                       const PRUnichar *aData)
 {
-  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
-     return NS_OK;
+  nsresult rv;
 
-   if (m_DeleteLibrariesAtShutdown) {
-     // By now, databases should all be closed so it is safe to delete the 
-     // db diretory.
-
-     nsresult rv;
-
-     // Phone home.
-     nsCOMPtr<sbIMetrics> metrics =
-       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
-     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+  if (strcmp(aTopic, NS_FINAL_UI_STARTUP_CATEGORY) == 0) {
+    if (m_DetectedCorruptLibrary) {
+      rv = PromptToDeleteLibraries();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  } else if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
+    // By now, databases should all be closed so it is safe to delete
+    // the db directory.
+    if (m_DeleteLibrariesAtShutdown) {
+      // get profile directory
+      nsCOMPtr<nsIProperties> directoryService(
+        do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
+      NS_ENSURE_SUCCESS(rv, rv);
      
-     nsString metricsCategory = NS_LITERAL_STRING("app");
-     nsString metricsId = NS_LITERAL_STRING("library.error.reset");
-     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
-     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
-
-     // get profile directory
-     nsCOMPtr<nsIProperties> directoryService(
-       do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
-     NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<nsIFile> siteDBDir;
+      rv = directoryService->Get("ProfD", NS_GET_IID(nsIFile),
+                                 getter_AddRefs(siteDBDir));
+      NS_ENSURE_SUCCESS(rv, rv);
      
-     nsCOMPtr<nsIFile> siteDBDir;
-     rv = directoryService->Get("ProfD", NS_GET_IID(nsIFile),
-                                getter_AddRefs(siteDBDir));
-     NS_ENSURE_SUCCESS(rv, rv);
+      // append the database dir name
+      siteDBDir->Append(NS_LITERAL_STRING("db"));
      
-     // append the database dir name
-     siteDBDir->Append(NS_LITERAL_STRING("db"));
-     
-     // Recursively delete the database directory.
-     rv = siteDBDir->Remove(true);
-     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Unable to delete directory");
 
-     // We want to prompt the user to rescan on restart.
-     nsCAutoString scancompleteBranch("songbird.firstrun.scancomplete");
-     sbLocalDatabaseLibraryLoader::RemovePrefBranch(scancompleteBranch);
+      // Delete all the databases but the metrics DB. (which hopefully
+      // is not corrupt)
+      nsCOMPtr<nsISimpleEnumerator> dirEnumerator;
+      rv = siteDBDir->GetDirectoryEntries(getter_AddRefs(dirEnumerator));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-     // And delete all the library prefs, so they get recreated on
-     // startup.  (It would be nice to not need to do this, so that
-     // users could delete their db directory by hand and restart, but
-     // bad things happen due to prefs and it's not worth putting time
-     // into.)
-     nsCAutoString prefBranch(PREFBRANCH_LOADER);
-     sbLocalDatabaseLibraryLoader::RemovePrefBranch(prefBranch);
+      nsString metricsdb = NS_LITERAL_STRING("metrics.db");
+
+      PRBool hasMore;
+      dirEnumerator->HasMoreElements(&hasMore);
+      while (hasMore && NS_SUCCEEDED(rv)) {
+        nsCOMPtr<nsISupports> aSupport;
+        rv = dirEnumerator->GetNext(getter_AddRefs(aSupport));
+        if (NS_FAILED(rv)) break;
+        nsCOMPtr<nsIFile> curFile(do_QueryInterface(aSupport, &rv));
+        if (NS_FAILED(rv)) break;
+
+        nsString leafName;
+        rv = curFile->GetLeafName(leafName);
+        if (NS_FAILED(rv)) break;
+       
+        if (leafName.Compare(metricsdb) != 0) {
+          rv = curFile->Remove(false);
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Unable to delete file");
+        }
+       
+        dirEnumerator->HasMoreElements(&hasMore);
+      }
+
+      // We want to prompt the user to rescan on restart.
+      nsCAutoString scancompleteBranch("songbird.firstrun.scancomplete");
+      sbLocalDatabaseLibraryLoader::RemovePrefBranch(scancompleteBranch);
+
+      // And delete all the library prefs, so they get recreated on
+      // startup.  (It would be nice to not need to do this, so that
+      // users could delete their db directory by hand and restart, but
+      // bad things happen due to prefs and it's not worth putting time
+      // into.)
+      nsCAutoString prefBranch(PREFBRANCH_LOADER);
+      sbLocalDatabaseLibraryLoader::RemovePrefBranch(prefBranch);
+    }
   }
 
    return NS_OK;
