@@ -1,6 +1,6 @@
-<!ENTITY window.main.title  "Songbird 0.4rc2pre" >
-<!ENTITY window.dev.title   "Songbird 0.4rc2pre" >
-<!ENTITY songbird           "Songbird" >
+<!ENTITY window.main.title  "&brandShortName; 0.4rc2pre" >
+<!ENTITY window.dev.title   "&brandShortName; 0.4rc2pre" >
+<!ENTITY songbird           "&brandShortName;" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok          "OK" >
@@ -42,7 +42,7 @@
 <!ENTITY menu.file.skin     "Alternate Skin" >
 <!ENTITY menu.file.window   "Open Main Window" >
 <!ENTITY menu.file.mini     "Open Mini Player" >
-<!ENTITY menu.file.about    "About Songbird..." >
+<!ENTITY menu.file.about    "About &brandShortName;..." >
 <!ENTITY menu.file.exit     "Exit" >
 
 <!ENTITY menu.edit          "Edit" >
@@ -91,10 +91,10 @@
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.bugz.url "&bugzillaURL;" >
 <!ENTITY menu.help.topics   "Help Topics" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.about    "About Songbird..." >
+<!ENTITY menu.help.topics.url "&supportURL;" >
+<!ENTITY menu.help.about    "About &brandShortName;..." >
 
 <!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-Ons..." >
@@ -222,21 +222,21 @@
 <!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
 
-<!ENTITY setup.title              "Songbird Setup Options" >
+<!ENTITY setup.title              "&brandShortName; Setup Options" >
 <!ENTITY setup.retrievingxpilist  "Retrieving add-ons list. Please wait...">
 <!ENTITY setup.networkerror1      "Unable to retrieve add-ons list.  Please change your ">
 <!ENTITY setup.networkerror2      "Connection Settings">
-<!ENTITY setup.networkerror3      " or continue Songbird Setup by clicking 'OK'.">
+<!ENTITY setup.networkerror3      " or continue &brandShortName; Setup by clicking 'OK'.">
 <!ENTITY setup.metrics.optin      "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info       "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected.">
+<!ENTITY setup.metrics.info       "Help us make &brandShortName; better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected.">
 <!ENTITY setup.optionalextensions "Recommended Add-Ons">
 <!ENTITY setup.defaultlanguage    "Default Language">
 <!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 <!ENTITY setupprogress.cancel     "Cancel">
 
-<!ENTITY setup.noupdate.header "This version of Songbird is not compatible with your existing media library.">
-<!ENTITY setup.noupdate.description "Songbird has created a new, empty media library.  Your existing library has not been deleted, but it cannot be imported into or used by this version of Songbird.">
+<!ENTITY setup.noupdate.header "This version of &brandShortName; is not compatible with your existing media library.">
+<!ENTITY setup.noupdate.description "&brandShortName; has created a new, empty media library.  Your existing library has not been deleted, but it cannot be imported into or used by this version of &brandShortName;.">
 <!ENTITY setup.noupdate.link_label "Details">
 
 <!ENTITY setup.groupbox.width "386">
@@ -320,7 +320,7 @@
 
 <!ENTITY rapi.prefpane.title             "Web Integration" >
 <!ENTITY rapi.prefpane.access.caption    "Web Integration Permissions" >
-<!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with Songbird to create a tighter coupling between the Web and your media. Please configure Songbird to allow or block the following points of integration." > 
+<!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with &brandShortName; to create a tighter coupling between the Web and your media. Please configure &brandShortName; to allow or block the following points of integration." > 
 <!ENTITY rapi.whitelist.label            "Exceptions..." >
 <!ENTITY rapi.restore_defaults.label      "Restore to Default" >
 <!ENTITY rapi.playback_control_disable.label "Block websites from controlling media playback" >
@@ -364,9 +364,9 @@
 
 <!ENTITY menu.updateCmd.label          "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey      "o">
-<!ENTITY trackeditor.disclaimer        "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well.">
+<!ENTITY trackeditor.disclaimer        "The Track Editor feature is not yet complete.  Edited metadata is saved only in &brandShortName;'s database.  In a future version, metadata edited here will be saved to your media files as well.">
 
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks.">
+<!ENTITY callout.firstwebplaylist "&brandShortName; has found the following playable tracks.">
 
 <!ENTITY menu.file.new.key             "N" >
 <!ENTITY menu.file.open.key            "O" >
@@ -391,7 +391,7 @@
 <!ENTITY tabs.enabled.label "Enable tabs">
 
 <!ENTITY window.browser.titledefault       "" >
-<!ENTITY window.browser.titlemodifier      "Songbird" >
+<!ENTITY window.browser.titlemodifier      "&brandShortName;" >
 <!ENTITY window.browser.titlemenuseparator " - " >
 <!ENTITY window.browser.titlepreface       "" >
 
