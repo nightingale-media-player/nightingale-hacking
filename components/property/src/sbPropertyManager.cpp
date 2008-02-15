@@ -40,6 +40,7 @@
 #include "sbStandardProperties.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
+#include "sbImagePropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
@@ -528,9 +529,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Primary image url
-  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                   NS_LITERAL_STRING("property.primary_image_url"),
-                   stringBundle, PR_TRUE, PR_TRUE, PR_TRUE, PR_TRUE);
+  rv = RegisterImage(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                     NS_LITERAL_STRING("property.primary_image_url"),
+                     stringBundle, PR_TRUE, PR_TRUE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Last played time
@@ -912,6 +913,37 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
+                                 const nsAString& aDisplayKey,
+                                 nsIStringBundle* aStringBundle,
+                                 PRBool aUserViewable,
+                                 PRBool aUserEditable,
+                                 PRBool aRemoteReadable,
+                                 PRBool aRemoteWritable)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+  nsresult rv;
+
+  // translate the display name
+  nsAutoString displayName(aDisplayKey);
+  if (!aDisplayKey.IsEmpty()) {
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayName);
+  }
+
+  // create the image property
+  nsRefPtr<sbImagePropertyInfo> imageProperty(
+      new sbImagePropertyInfo(aPropertyID, displayName,
+        aRemoteReadable, aRemoteWritable, aUserViewable,
+        aUserEditable));
+  NS_ENSURE_TRUE(imageProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = AddPropertyInfo(imageProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

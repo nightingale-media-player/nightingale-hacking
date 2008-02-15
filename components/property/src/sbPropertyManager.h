@@ -103,6 +103,14 @@ private:
                        PRBool aRemoteReadable,
                        PRBool aRemoteWritable);
 
+  nsresult RegisterImage(const nsAString& aPropertyID,
+                         const nsAString& aDisplayKey,
+                         nsIStringBundle* aStringBundle,
+                         PRBool aUserViewable,
+                         PRBool aUserEditable,
+                         PRBool aRemoteReadable,
+                         PRBool aRemoteWritable);
+
   nsresult SetRemoteAccess(sbIPropertyInfo* aProperty,
                            PRBool aRemoteReadable,
                            PRBool aRemoteWritable);
