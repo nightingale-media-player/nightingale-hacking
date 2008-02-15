@@ -137,10 +137,10 @@
     if (!SBProperties)
       throw new Error("Import of sbProperties module failed");
   }
-  if (typeof(ExternalDropHandler) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
-    if (!ExternalDropHandler)
-      throw new Error("Import of ExternalDropHandler module failed");
+  if (typeof(DNDUtils) == "undefined") {
+    Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+    if (!DNDUtils)
+      throw new Error("Import of DropHelper module failed");
   }
   if (typeof(ColumnSpecParser) == "undefined") {
     Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
@@ -2039,9 +2039,9 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     }
 
     var added = ml.length - oldLength;
-    ExternalDropHandler.reportAddedTracks(added, 
-                                          1 - added, 
-                                          this.mediaList.name);
+    DNDUtils.reportAddedTracks(added, 
+                               1 - added, 
+                               this.mediaList.name);
   }
 ]]>
       </body>
@@ -2147,9 +2147,9 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     }
 
     var added = ml.length - oldLength;
-    ExternalDropHandler.reportAddedTracks(added, 
-                                          count - added, 
-                                          this.mediaList.name);
+    DNDUtils.reportAddedTracks(added, 
+                               count - added, 
+                               this.mediaList.name);
   }
 ]]>
       </body>
@@ -2286,7 +2286,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 
   // handle mediaitem drops
   
-  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbISingleItemTransferContext);
@@ -2294,7 +2294,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     return;
   }
 
-  data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbISingleListTransferContext);
@@ -2302,7 +2302,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     return;
   }
 
-  data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
@@ -2376,39 +2376,6 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
                                  position, 
                                  dropHandlerListener);
 
-]]>
-        </body>
-      </method>
-
-      <method name="_getTransferDataForFlavor">
-        <parameter name="flavor"/>
-        <parameter name="array"/>
-        <body>
-<![CDATA[
-  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                            .getService(this._Ci.nsIDragService);
-  var session = dragService.getCurrentSession();
-
-  var nitems = session.numDropItems;
-  var r = null;
-
-  if (session.isDataFlavorSupported(flavor)) {
-
-    for (var i=0;i<nitems;i++) {
-      var transfer = this._Cc["@mozilla.org/widget/transferable;1"]
-                            .createInstance(this._Ci.nsITransferable);
-
-      transfer.addDataFlavor(flavor);
-      session.getData(transfer, i);
-      var data = {};
-      var length = {};
-      transfer.getTransferData(flavor, data, length);
-      if (!r) r = data.value;
-      if (array) array.push([data.value, length.value]);
-    }
-  }
-
-  return r;
 ]]>
         </body>
       </method>
@@ -2578,10 +2545,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
   if (session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
       session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
       session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS) ||
-      session.isDataFlavorSupported("application/x-moz-file") ||
-      session.isDataFlavorSupported("text/unicode") ||
-      session.isDataFlavorSupported("text/plain") ||
-      session.isDataFlavorSupported("text/x-moz-url")) {
+      ExternalDropHandler.isSupported(session)) {
     return true;
   }
   else {
@@ -2740,17 +2704,17 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
                     .getService(this._Ci.sbIDndSourceTracker);
 
   var context;
-  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
   if (data) {
     context = dnd.getSourceSupports(data)
                  .QueryInterface(this._Ci.sbISingleItemTransferContext);
   } else {
-    data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
     if (data) {
       context = dnd.getSourceSupports(data)
                   .QueryInterface(this._Ci.sbISingleListTransferContext);
     } else {
-      data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+      data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
       if (data) {
         context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMultipleItemTransferContext);

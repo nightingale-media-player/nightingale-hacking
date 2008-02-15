@@ -34,7 +34,7 @@ const Cr = Components.results;
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
+Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
@@ -231,170 +231,256 @@ function sbLibraryServicePane__destroyShortcuts(aContainer, aWindow) {
   }
 }
 
+sbLibraryServicePane.prototype._canDownloadDrop =
+function sbLibraryServicePane__canDownloadDrop(aDragSession) {
+  // bail out if the drag session does not contain internal items.
+  // We may eventually add a handler to add an external media URL drop on 
+  // the download playlist.
+  if (!InternalDropHandler.isSupported(aDragSession)) 
+    return false;
+    
+  var IOS = Cc["@mozilla.org/network/io-service;1"]
+              .getService(Ci.nsIIOService);
+
+  function canDownload(aMediaItem) {
+    var contentSpec = aMediaItem.getProperty(SBProperties.contentURL);
+    var contentURL = IOS.newURI(contentSpec, null, null);
+    switch(contentURL.scheme) {
+      case "http":
+      case "https":
+      case "ftp":
+        // these are safe to download
+        return true;
+    }
+    return false;
+  }
+
+  if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+    var context = DNDUtils.
+      getInternalTransferDataForFlavour(aDragSession,
+                                        TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                        Ci.sbIMultipleItemTransferContext);
+    var items = context.items;
+    // we must remember to reset the context before we exit, so that when we
+    // actually need the items in onDrop we can get them again!
+    var count = 0;
+    while (items.hasMoreElements()) {
+      var item = items.getNext();
+      item.QueryInterface(Ci.sbIIndexedMediaItem);
+      if (!canDownload(item.mediaItem)) {
+        context.reset();
+        return false;
+      }
+      ++count;
+    }
+    if (count < 1) {
+      // umm, where's that list of items?
+      context.reset();
+      return false;
+    }
+    // all items in the list are downloadable
+    context.reset();
+    return true;
+  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
+    var context = DNDUtils.
+      getInternalTransferDataForFlavour(aDragSession,
+                                        TYPE_X_SB_TRANSFER_MEDIA_ITEM,
+                                        Ci.sbISingleItemTransferContext);
+    return canDownload(context.item);
+  } else {
+    Components.utils.reportError("_getMediaListForDrop should have returned null");
+    return false;
+  }
+}
+
 sbLibraryServicePane.prototype._getMediaListForDrop =
 function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrientation) {
   dump('_getMediaListForDrop('+aNode+', '+aDragSession+', '+aOrientation+')\n');
   // work out what the drop would target and return an sbIMediaList to
   // represent that target, or null if the drop is not allowed
 
-  // work out what's being dropped
-  var dropList = aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST);
-
-  // if it's not a list and not items, then we don't know or care what happens
-  // next
-  if (!dropList &&
-      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) &&
-      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS) && 
+  // check if we support this drop at all
+  if (!InternalDropHandler.isSupported(aDragSession)&& 
       !ExternalDropHandler.isSupported(aDragSession)) {
     return null;
   }
 
+  // are we dropping a list ?
+  var dropList = aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST);
+
   dump('dropList='+dropList+'\n');
 
-  // work out where its going
-  var container = aNode;
+  // work out where the drop items are going
+  var targetNode = aNode;
   var dropOnto = true;
   if (aOrientation != 0) {
-    // if we're dropping before/after we're dropping into the parent
-    container = aNode.parentNode;
     dropOnto = false;
   }
 
-  dump('container='+container+' ('+container.id+')\n');
-  dump('dropOnto='+dropOnto+'\n');
+  // work out what library resource is associated with the target node 
+  var targetResource = this.getLibraryResourceForNode(targetNode);
 
-  // work out what library resource is associated with the container node
-  var containerResource = this.getLibraryResourceForNode(container);
-
-  dump('containerResource='+containerResource+'\n');
-
-  // if there's no associated library then the target is assumed to be the
-  // default library
-  if (containerResource == null) {
-    containerResource = this._libraryManager.mainLibrary;
-  }
+  // check that the target list or library accepts drops
+  // TODO, i can't believe we don't have a property to check for that :/
+  // I'm told that the transfer policy will solve this, this might be a good
+  // spot for querying it in the future... (?)
 
   // is the target a library
-  var isLibrary = (containerResource instanceof Ci.sbILibrary);
-
-  dump('isLibrary='+isLibrary+'\n');
+  var targetIsLibrary = (targetResource instanceof Ci.sbILibrary);
 
   // The Rules:
-  //  * (non-playlist) items can be dropped on top of playlists or libraries
-  //  * playlists can be dropped next to other playlists in the same container
+  //  * non-playlist items can be dropped on top of playlists and libraries
+  //  * playlist items can be dropped on top of other libraries than their own
+  //  * playlists can be dropped next to other playlists, either as part of a
+  //      reordering, or as a playlist transfer to a different library, with a 
+  //      specific position to drop to
 
-  if (!dropList && dropOnto) {
-    return containerResource;
-  }
-  if (dropList && isLibrary) {
-    var draggedItem = this._getDndData(aDragSession,
-                                       TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                       Ci.sbISingleListTransferContext);
-    if (!draggedItem) {
-      return null;
+  if (dropOnto) {
+    if (!dropList) {
+      // we are dropping onto a target node, and this is not a playlist, 
+      // so return the target medialist that corresponds to the target node. 
+      return targetResource;
+    } else {
+      // we are dropping a list onto a target node, we can only accept this drop
+      // on a library, so if the target isnt one, refuse it
+      // note: if we ever want to support dropping playlists on playlists, this
+      // is the sport to add the new case
+      if (!targetIsLibrary) {
+        return null;
+      }
+        
+      // we can only accept a list drop on a library different than its own 
+      // (because its own library already has all of its tracks, so it makes no
+      // sense to allow it), so extract the medialist that we are dropping, 
+      // and check where it comes from
+      var draggedList = DNDUtils.
+        getInternalTransferDataForFlavour(aDragSession,
+                                          TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                          Ci.sbISingleListTransferContext);
+      if (targetResource == draggedList.library) {
+        return null;
+      }
+        
+      // we are indeed dropping the playlist onto a different library, accept
+      // the drop
+      return targetResource;
     }
-    var draggedContainer = this.getNodeForLibraryResource(draggedItem.list);
-    if (draggedContainer == container) {
-      return containerResource;
-    }
-  }
 
+  } else {
+
+    // we are dropping in between two items
+    if (dropList) {
+      
+      // we are dropping a playlist.
+      
+      // if we are trying to insert the playlist between two toplevel nodes,
+      // refuse the drop
+      if (targetNode.parentNode.id == "SB:Root") {
+        return null;
+      }
+      
+      // we now know that this is either a reorder inside a single container 
+      // or a playlist transfer from one library to another, involving two
+      // different containers. 
+      
+      // to be able to discriminate between those two cases, we need to know
+      // where the playlist is going, as well as where it comes from. 
+      
+      // find where the playlist comes from
+      var draggedList = DNDUtils.
+        getInternalTransferDataForFlavour(aDragSession,
+                                          TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                          Ci.sbISingleListTransferContext);
+      var fromResource = draggedList.library;
+      
+      var toResource = null;
+
+      // finding where the playlist is going however is much more complicated,
+      // because we cannot rely on the fact that we can extract a library
+      // resource from the parent container for the target list: we could be
+      // dropping into a foreign container (eg. a device node), and the actual
+      // library node could be a sibling of the target node.
+      
+      // so we'll first try to get a resource from the parent node, in case we
+      // are dropping into a list of playlist that are children of their
+      // library
+      var parentNode = targetNode.parentNode;
+      if (parentNode) {
+        toResource = this.getLibraryResourceForNode(parentNode);
+      }
+      
+      // ... and if there was no parent for the target node, or the parent had 
+      // no library resource, we can still look around the drop target for 
+      // libraries and playlists nodes. if we find any of these, we can assume 
+      // that the resource targeted for drop is these item's library
+      
+      if (!toResource) {
+        var siblingNode = targetNode.previousSibling;
+        if (siblingNode) {
+          toResource = this.getLibraryResourceForNode(siblingNode);
+        }
+      }
+      if (!toResource) {
+        var siblingNode = targetNode.nextSibling;
+        if (siblingNode) {
+          toResource = this.getLibraryResourceForNode(siblingNode);
+        }
+      }
+        
+      // if we have not found what the destination library is, refuse the drop
+      if (!toResource) 
+        return null;
+        
+      // get the library for the resource we found
+      toResource = toResource.library;
+        
+      // if the source and destination library are the same, this is a reorder,
+      // we can actually pretend to refuse it, because the servicePaneService
+      // is going to accept it based on further rules (dndAcceptIn, dndAcceptNear)
+      // and because there is no actual drop handling to be performed, the nodes
+      // will be reordered in the tree and that is it.
+      if (toResource == fromResource) 
+        return null;
+      
+      // otherwise, this is a playlist transfer from one library to another,
+      // we should accept the drop, but at the condition that we are not
+      // dropping above a library, because we want to keep playlists either 
+      // below or as children of their library nodes. 
+      if (targetIsLibrary && aOrientation == 1) 
+        return null;
+      
+      // the destination seems correct, accept the drop, the handler will
+      // first copy the list to the new library, and then move the node
+      // to where it belongs  
+      return toResource;
+    }
+  }
+  
+  // default is refuse the drop
   return null;
 }
 
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
   dump('\n\n\ncanDrop:\n');
-
+  
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
-
   if (list) {
-    dump('I CAN HAS DORP\n');
+    dump('canDrop on a list\n');
     // XXX Mook: hack for bug 4760 to do special handling for the download
     // playlist.  This will need to be expanded later to use IDLs on the
     // list so that things like extensions can do this too.
     var customType = list.getProperty(SBProperties.customType);
     if (customType == "download") {
-      var IOS = Cc["@mozilla.org/network/io-service;1"]
-                  .getService(Ci.nsIIOService);
-
-      function canDownload(aMediaItem) {
-        var contentSpec = aMediaItem.getProperty(SBProperties.contentURL);
-        var contentURL = IOS.newURI(contentSpec, null, null);
-        switch(contentURL.scheme) {
-          case "http":
-          case "https":
-          case "ftp":
-            // these are safe to download
-            dump(<>[{contentURL.spec} accept]&#10;</>);
-            return true;
-        }
-        dump(<>[{contentURL.spec} DENY]&#10;</>);
-        return false;
-      }
-
-      if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
-        var context = this._getDndData(aDragSession,
-                                       TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-                                       Ci.sbIMultipleItemTransferContext);
-        var items = context.items;
-        // we must remember to reset the context before we exit, so that when we
-        // actually need the items in onDrop we can get them again!
-        var count = 0;
-        while (items.hasMoreElements()) {
-          var item = items.getNext();
-          item.QueryInterface(Ci.sbIIndexedMediaItem);
-          if (!canDownload(item.mediaItem)) {
-            context.reset();
-            return false;
-          }
-          ++count;
-        }
-        if (count < 1) {
-          // umm, where's that list of items?
-          context.reset();
-          return false;
-        }
-        // all items in the list are downloadable
-        context.reset();
-        return true;
-      } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
-        var context = this._getDndData(aDragSession,
-                                       TYPE_X_SB_TRANSFER_MEDIA_ITEM,
-                                       Ci.sbISingleItemTransferContext);
-        return canDownload(context.item);
-      } else {
-        // huh? _getMediaListForDrop should have said no
-        return false;
-      }
+      return this._canDownloadDrop(aDragSession);
     }
-    return true;
+    // test whether the drop contains supported flavours
+    return InternalDropHandler.isSupported(aDragSession) ||
+           ExternalDropHandler.isSupported(aDragSession);
   } else {
-    dump('NO DROP FOR YOU!\n');
+    dump('Drop refused\n');
     return false;
   }
-}
-sbLibraryServicePane.prototype._getDndData =
-function sbLibraryServicePane__getDndData(aDragSession, aDataType, aInterface) {
-  // create an nsITransferable
-  var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
-      createInstance(Components.interfaces.nsITransferable);
-  // specify what kind of data we want it to contain
-  transferable.addDataFlavor(aDataType);
-  // ask the drag session to fill the transferable with that data
-  aDragSession.getData(transferable, 0);
-  // get the data from the transferable
-  var data = {};
-  var dataLength = {};
-  transferable.getTransferData(aDataType, data, dataLength);
-  // it's always a string. always.
-  data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
-  data = data.toString();
-
-  // get the object from the dnd source tracker
-  var dnd = Components.classes["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-      .getService(Components.interfaces.sbIDndSourceTracker);
-  return dnd.getSource(data).QueryInterface(aInterface);
 }
 
 sbLibraryServicePane.prototype.onDrop =
@@ -403,120 +489,58 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
 
   // where are we dropping?
   var targetList = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
+
   if (!targetList) {
     // don't know how to drop here
     return;
   }
-
-  var targetListIsLibrary = (targetList instanceof Ci.sbILibrary);
-
-  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                    .createInstance(Components.interfaces.sbIMetrics);
-
-  var targettype = targetList.getProperty(SBProperties.customType);
-  var totype = targetList.library.getProperty(SBProperties.customType);
-
-  if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
-    dump('media list dropped\n');
-
-    var context = this._getDndData(aDragSession,
-        TYPE_X_SB_TRANSFER_MEDIA_LIST, Ci.sbISingleListTransferContext);
-    var list = context.list;
-
-    // Metrics!
-    var fromtype = list.library.getProperty(SBProperties.customType);
-    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, list.length);
-
-    if (targetListIsLibrary) {
-      // want to copy the list and the contents
-      if (targetList == list.library) {
-        dump('this list is already in this library\n');
-        return;
-      }
-
-      // create a copy of the list
-      var newlist = targetList.copyMediaList('simple', list);
-
+  
+  // perform this test now because the incoming new node makes it unreliable
+  // to do in the onCopyMediaList callback
+  var isLastSibling = (aNode.nextSibling == null);
+  
+  var dropHandlerListener = {
+    libSPS: this,
+    onDropComplete: function(aTargetList,
+                             aImportedInLibrary,
+                             aDuplicates,
+                             aInsertedInMediaList,
+                             aOtherDropsHandled) { 
+      // show the standard report on the status bar
+      return true; 
+    },
+    onFirstMediaItem: function(aTargetList, aFirstMediaItem) {},
+    onCopyMediaList: function(aSourceList, aNewList) {
       // find the node that was created
-      var newnode = this._servicePane.getNode(this._itemURN(newlist));
-      if (aOrientation < 0) {
-        aNode.parentNode.insertBefore(newnode, aNode);
-      } else if (aNode.nextSibling) {
-        aNode.parentNode.insertBefore(newnode, aNode.nextSibling);
-      } else {
-        aNode.parentNode.appendChild(newnode);
+      var newnode = 
+        this.libSPS._servicePane.getNode(this.libSPS._itemURN(aNewList));
+      // move the item to the right spot
+      switch (aOrientation) {
+        case -1:
+          aNode.parentNode.insertBefore(newnode, aNode);
+          break;
+        case 1:
+          if (!isLastSibling)
+            aNode.parentNode.insertBefore(newnode, aNode.nextSibling);
+          // else, the node has already been placed at the right spot by
+          // the LibraryServicePaneService
+          break;
       }
-
-      // FIXME: handle the creation of the node in the pane correctly
-    } else {
-      if (context.list == targetList) {
-        // uh oh - you can't drop a list onto itself
-        dump("you can't drop a list onto itself\n");
-        return;
-      }
-      // just add the contents
-      targetList.addAll(list);
-      // lone> this is fake, it assumes that all tracks have been copied, which
-      // is true if both the source and target are playlists, but could be false
-      // if the target is a library. better than nothing anyway.
-      ExternalDropHandler.reportAddedTracks(list.length, 0, targetList.name);
     }
-    dump('added\n');
-  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
-    dump('media items dropped\n');
+  };
 
-    var context = this._getDndData(aDragSession,
-        TYPE_X_SB_TRANSFER_MEDIA_ITEMS, Ci.sbIMultipleItemTransferContext);
+  if (InternalDropHandler.isSupported(aDragSession)) {
+  
+    // handle drop of internal items
+    InternalDropHandler.dropOnList(aWindow, 
+                                   aDragSession, 
+                                   targetList, 
+                                   -1, 
+                                   dropHandlerListener);
 
-    var items = context.items;
-
-    // Metrics!
-    var fromtype = context.source.library.getProperty(SBProperties.customType);
-    //Components.utils.reportError(fromtype + " - " + totype );
-    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, context.count);
-
-    targetList.runInBatchMode(function() {
-      while (items.hasMoreElements()) {
-        var item = items.getNext().mediaItem;
-        item.setProperty(SBProperties.downloadStatusTarget,
-                         item.library.guid + "," + item.guid);
-        targetList.add(item);
-      }
-    });
-    ExternalDropHandler.reportAddedTracks(context.count, 0, targetList.name);
-    dump('added\n');
-
-  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
-    dump('media item dropped\n');
-
-    var context = this._getDndData(aDragSession,
-        TYPE_X_SB_TRANSFER_MEDIA_ITEM, Ci.sbISingleItemTransferContext);
-
-    var item = context.item;
-    item.setProperty(SBProperties.downloadStatusTarget,
-                     item.library.guid + "," + item.guid);
-    targetList.add(item);
-    ExternalDropHandler.reportAddedTracks(1, 0, targetList.name);
-
-    // Metrics!
-    var fromtype = context.source.library.getProperty(SBProperties.customType);
-    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, 1);
-
-    dump('added\n');
-  } else {
-
-    var dropHandlerListener = {
-      onDropComplete: function(aTargetList,
-                               aImportedInLibrary,
-                               aDuplicates,
-                               aInsertedInMediaList,
-                               aOtherDropsHandled) { 
-        // show the standard report on the status bar
-        return true; 
-      },
-      onFirstMediaItem: function(aTargetList, aFirstMediaItem) {}
-    };
-
+  } else if (ExternalDropHandler.isSupported(aDragSession)) {
+  
+    // handle drop of external items
     ExternalDropHandler.dropOnList(aWindow, 
                                    aDragSession, 
                                    targetList, 
@@ -524,6 +548,7 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
                                    dropHandlerListener);
   }
 }
+
 sbLibraryServicePane.prototype._nodeIsLibrary =
 function sbLibraryServicePane__nodeIsLibrary(aNode) {
   return aNode.getAttributeNS(LSP, "LibraryGUID") ==
@@ -1272,23 +1297,18 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   else
   {
     // Find the parent libary in the tree
-    var parentLibraryGUID = aMediaList.library.guid;
-    var parentLibraryNode;
-    var children = this._servicePane.root.childNodes;
-    while (children.hasMoreElements()) {
-      var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-      if (child.contractid == CONTRACTID &&
-          this._getLibraryGUIDForURN(child.id) == parentLibraryGUID)
-      {
-        parentLibraryNode = child;
-        break;
-      }
-    }
+    var parentLibraryNode = this.getNodeForLibraryResource(aMediaList.library);
 
-    // Insert after last of same type as child of
-    // this library
-    if (parentLibraryNode && parentLibraryNode.isContainer) {
-      this._insertAfterLastOfSameType(aNode, parentLibraryNode);
+    // If the parent library is a top level node, and a container, 
+    // make the playlist node its child
+    
+    if (parentLibraryNode) {
+      if (parentLibraryNode.isContainer && 
+          parentLibraryNode.parentNode == this._servicePane.root ) {
+        this._insertAfterLastOfSameType(aNode, parentLibraryNode);
+      } else {
+        this._insertAfterLastOfSameType(aNode, parentLibraryNode.parentNode);
+      }
     } else {
       dump("sbLibraryServicePane__insertMediaListNode: ");
       dump("could not add media list to parent library ");

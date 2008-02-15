@@ -752,7 +752,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_DEFAULT_MEDIAPAGE_URL),
     NS_LITERAL_STRING("property.default_mediapage_url"),
     stringBundle,
-    PR_TRUE,
+    PR_FALSE,
     PR_FALSE,
     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);

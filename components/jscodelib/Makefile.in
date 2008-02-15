@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(srcdir)/XPCOMUtils.jsm \
                       $(srcdir)/RDFHelper.jsm \
-                      $(srcdir)/ExternalDropHandler.jsm \
+                      $(srcdir)/DropHelper.jsm \
                       $(srcdir)/SBTimer.jsm \
                       $(NULL)
 
@@ -40,9 +40,10 @@ SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
 SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/XPCOMUtils.jsm \
                      $(srcdir)/RDFHelper.jsm \
-                     $(srcdir)/ExternalDropHandler.jsm \
+                     $(srcdir)/DropHelper.jsm \
                      $(srcdir)/SBTimer.jsm \
                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+
 

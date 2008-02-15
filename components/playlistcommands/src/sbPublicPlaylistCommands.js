@@ -36,7 +36,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Cu.import("resource://app/jsmodules/sbAddToPlaylist.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Cu.import("resource://app/jsmodules/ExternalDropHandler.jsm");
+Cu.import("resource://app/jsmodules/DropHelper.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -900,9 +900,9 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   mediaList.addSome(unwrapper);
 
   var itemsAdded = mediaList.length - oldLength;
-  ExternalDropHandler.reportAddedTracks(itemsAdded,
-                                         selectionCount - itemsAdded,
-                                         mediaList.name);
+  DNDUtils.reportAddedTracks(itemsAdded,
+                             selectionCount - itemsAdded,
+                             mediaList.name);
 }
 */
 

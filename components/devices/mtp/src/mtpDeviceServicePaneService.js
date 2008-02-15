@@ -37,6 +37,7 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
 const MTPNS = 'http://songbirdnest.com/rdf/servicepane/mtp-device#';
+const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
 
 var mtpServicePaneServiceConfig = {
   className:      "Songbird MTP Device Support Module",
@@ -60,7 +61,7 @@ var mtpServicePaneServiceConfig = {
   libURNPrefix:   "urn:library:",
   itemURNPrefix:  "urn:item:",
 
-  appQuitTopic:       "quit-application",
+  appQuitTopic:   "quit-application",
 
   devImgURL:      "chrome://songbird/skin/icons/icon-device.png",
   devBusyImgURL:  "chrome://songbird/skin/icons/icon-busy.png",
@@ -103,9 +104,31 @@ mtpServicePaneService.prototype = {
                                                                   aContextMenu,
                                                                   aParentWindow) {
     var mtpDevice = this._getMtpDeviceFromNode(aNode);
-    if (mtpDevice)
-      this._appendDeviceCommands(aNode, aContextMenu, mtpDevice, aParentWindow);
+    if (mtpDevice) {
+      this._appendDeviceCommands(aNode, 
+                                 aContextMenu, 
+                                 mtpDevice, 
+                                 aParentWindow,
+                                 true);
 
+    } else {
+      // get the resource for the node
+      var resource = this._libServicePaneSvc.getLibraryResourceForNode(aNode);
+      // did we find one, is it a library ?
+      if (resource && 
+          resource.library == resource) {
+        // get its parent
+        var deviceNode = aNode.parentNode;
+        // see if that node is an mtp device
+        var mtpDevice = this._getMtpDeviceFromNode(deviceNode);
+        // append the "new ..." commands on the context menu for the library
+        this._appendDeviceCommands(aNode, 
+                                   aContextMenu, 
+                                   mtpDevice, 
+                                   aParentWindow, 
+                                   false);
+      }
+    }
   },
 
   fillNewItemMenu: function mtpServicePaneService_fillNewItemMenu(aNode,
@@ -122,6 +145,20 @@ mtpServicePaneService.prototype = {
                                                   aDragSession, 
                                                   aOrientation, 
                                                   aWindow) {
+    
+    // only accept drops that are ON this node, not above or below
+    if (aOrientation != Ci.nsITreeView.DROP_ON) 
+      return false;
+      
+    // find the target library to which we need to forward the event
+    var libraryNode = this._getLibraryNodeForMtpDeviceNode(aNode);
+    if (libraryNode) {
+      // forward the event
+      return this._servicePaneSvc.canDrop(libraryNode.id, 
+                                          aDragSession, 
+                                          Ci.nsITreeView.DROP_ON, 
+                                          aWindow);
+    }
     return false;
   },
 
@@ -129,8 +166,17 @@ mtpServicePaneService.prototype = {
                                                 aDragSession, 
                                                 aOrientation, 
                                                 aWindow) {
+    // find the target library to which we need to forward the event
+    var libraryNode = this._getLibraryNodeForMtpDeviceNode(aNode);
+    if (libraryNode) {
+      // forward the event
+      this._servicePaneSvc.onDrop(libraryNode.id, 
+                                  aDragSession, 
+                                  Ci.nsITreeView.DROP_ON, 
+                                  aWindow);
+    } 
   },
-
+  
   onDragGesture: function mtpServicePaneService_onDragGesture(aNode, 
                                                               aTransferable) {
   },
@@ -304,6 +350,15 @@ mtpServicePaneService.prototype = {
       return;
     }
     var lib = libraries.queryElementAt(0, Components.interfaces.sbILibrary);
+    
+    // this is very important. null named libraries make all hell break lose
+    // in servicePaneService when they are rescanned.
+    // it can go away once the library does get a default name tho.
+    if (!lib.name) {
+      lib.name = "Library";
+      Components.utils.reportError("MTP Device Library had no name ! This is bad. Fixing.");
+    }
+      
     var devLibNode = this._libServicePaneSvc.createNodeForLibrary(lib);
     devNode.appendChild(devLibNode);
     devLibNode.hidden = false;
@@ -366,6 +421,24 @@ mtpServicePaneService.prototype = {
     return null;
   },
 
+  /**
+   * Find the first library node for a given mtp device node
+   */
+  _getLibraryNodeForMtpDeviceNode: function
+    mtpServicePaneService_getLibraryNodeForMtpDeviceNode(aNode) {
+    var mtpDevice = this._getMtpDeviceFromNode(aNode);
+    if (mtpDevice) {
+      var library = null;
+      var libs = mtpDevice.content.libraries;
+      if (libs && libs.length > 0) {
+        library = libs.queryElementAt(0, Ci.sbIMediaList);
+        if (library) {
+          return this._libServicePaneSvc.getNodeForLibraryResource(library);
+        }
+      }
+    }
+  },
+  
   /**
    * Convert a deviceId into its corresponding sbIDevice
    */
@@ -462,10 +535,15 @@ mtpServicePaneService.prototype = {
     var mediaList = aMediaListView.mediaList;
     var viewLibrary = mediaList.library;
     
+    return this._isDeviceLibrary(viewLibrary, aDevice);
+  },
+  
+  _isDeviceLibrary: function
+    mtpServicePaneService_isDeviceLibrary(aLibrary, aDevice) {
     // compare it to all the libraries for the device
     for (var i=0;i<aDevice.content.libraries.length;i++) {
       var devLib = aDevice.content.libraries[i];
-      if (devLib == viewLibrary) return true;
+      if (devLib == aLibrary) return true;
     }
     return false;
   },
@@ -538,22 +616,7 @@ mtpServicePaneService.prototype = {
     aParentWindow.alert("Cancel Device Sync");
   },
   
-  _command_handlers                    : [], // list of command handlers
   _stringBundle                        : null, // the songbird string bundle
-  
-  /**
-   * Removes all command handlers registered on context menu commands
-   */
-  _removeCommandHandlers: function mtpServicePaneService_removeCommandHandlers() {
-    while (this._command_handlers.length > 0) {
-      var entry = this._command_handlers[0];
-      var eventname = entry[0];
-      var domnode = entry[1];
-      var handler = entry[2];
-      domnode.removeEventListener(eventname, handler);
-      this._command_handlers.shift();
-    }
-  },
   
   /**
    * Appends all commands for a device node
@@ -562,9 +625,11 @@ mtpServicePaneService.prototype = {
     mtpServicePaneService_appendCommands(aNode,
                                          aContextMenu, 
                                          aDevice, 
-                                         aParentWindow) {
+                                         aParentWindow,
+                                         aIsDevice) {
 
     var service = this;
+    var command_handlers = [];
     
     // add a command to the context menu
     function addItem(id, label, accesskey, handler, disabled) {
@@ -576,7 +641,7 @@ mtpServicePaneService.prototype = {
         menuitem.setAttribute('accesskey', accesskey);
       }
       if (handler) {
-        service._command_handlers.push(["command", menuitem, handler]);
+        command_handlers.push(["command", menuitem, handler]);
         menuitem.addEventListener("command", handler, false);
       }
       aContextMenu.appendChild(menuitem);
@@ -631,76 +696,86 @@ mtpServicePaneService.prototype = {
       service._sync_listeners.push(syncChangeListener);
     };
 
-    var device_friendly_name = 
-      aDevice.parameters.getProperty("DeviceFriendlyName");
-    
-    // todo: get actual device capacity
-    var device_capacity = "?GB";
+    if (aIsDevice) {
+      var device_friendly_name = 
+        aDevice.parameters.getProperty("DeviceFriendlyName");
+      
+      // todo: get actual device capacity
+      var device_capacity = "?GB";
 
-    var device_descriptor = device_friendly_name + " (" + device_capacity + ")";
+      var device_descriptor = device_friendly_name + " (" + device_capacity + ")";
 
-    // "Device Name (XGB)"
-    addItem('command_mtp_devicedescriptor', 
-            device_descriptor, 
-            null, 
-            null,
-            true);
+      // "Device Name (XGB)"
+      addItem('command_mtp_devicedescriptor', 
+              device_descriptor, 
+              null, 
+              null,
+              true);
 
-    // "Get Info"
-    addItem('command_mtp_getdeviceinfo', 
-            this._localizeString('command.mtp.getdeviceinfo', "Get Info"), 
-            this._localizeString('command.mtp.getdeviceinfo.accesskey', 'I'), 
-            makeCommandHandler("_commandHandler_getDeviceInfo"));
+      // "Get Info"
+      addItem('command_mtp_getdeviceinfo', 
+              this._localizeString('command.mtp.getdeviceinfo', "Get Info"), 
+              this._localizeString('command.mtp.getdeviceinfo.accesskey', 'I'), 
+              makeCommandHandler("_commandHandler_getDeviceInfo"));
 
-    // "------------------"
-    addSyncListener(addSeparator(), "hidden", null, "true");
+      // "------------------"
+      addSyncListener(addSeparator(), "hidden", null, "true");
 
-    // "Cancel Sync"
-    addSyncListener(addItem('command_mtp_canceldevicesync', 
-                             this._localizeString('command.mtp.canceldevicesync',
-                                                  'Cancel Sync'),
-                             this._localizeString('command.mtp.canceldevicesync.accesskey',
-                                                  'C'), 
-                             makeCommandHandler("_commandHandler_cancelDeviceSync")),
-                     "hidden",
-                     null,
-                     "true");
+      // "Cancel Sync"
+      addSyncListener(addItem('command_mtp_canceldevicesync', 
+                               this._localizeString('command.mtp.canceldevicesync',
+                                                    'Cancel Sync'),
+                               this._localizeString('command.mtp.canceldevicesync.accesskey',
+                                                    'C'), 
+                               makeCommandHandler("_commandHandler_cancelDeviceSync")),
+                       "hidden",
+                       null,
+                       "true");
 
-    // "------------------"
-    addSeparator();
-    
-    // "New Playlist"
-    addItem('command_mtp_newplaylist', 
-            this._localizeString('menu.file.new', "New Playlist"), 
-            this._localizeString('menu.file.new.accesskey', 'P'), 
-            makeCommandHandler("_commandHandler_newPlaylist"));
+      // "------------------"
+      addSeparator();
+      
+      // "New Playlist"
+      addItem('command_mtp_newplaylist', 
+              this._localizeString('menu.file.new', "New Playlist"), 
+              this._localizeString('menu.file.new.accesskey', 'P'), 
+              makeCommandHandler("_commandHandler_newPlaylist"));
 
-    // "------------------"
-    addSeparator();
+      // "------------------"
+      addSeparator();
 
-    // "Rename"
-    addItem('command_mtp_renamedevice', 
-            this._localizeString('command.mtp.renamedevice', 'Rename'), 
-            this._localizeString('command.mtp.renamedevice.accesskey', 'R'), 
-            makeCommandHandler("_commandHandler_renameDevice"));
+      // "Rename"
+      addItem('command_mtp_renamedevice', 
+              this._localizeString('command.mtp.renamedevice', 'Rename'), 
+              this._localizeString('command.mtp.renamedevice.accesskey', 'R'), 
+              makeCommandHandler("_commandHandler_renameDevice"));
 
-    // "------------------"
-    addSeparator();
+      // "------------------"
+      addSeparator();
 
-    // "Eject"
-    addSyncListener(addItem('command_mtp_ejectdevice', 
-                           this._localizeString('command.mtp.ejectdevice', 
-                                                'Eject'), 
-                           this._localizeString('command.mtp.ejectdevice.accesskey',
-                                                'E'),
-                           makeCommandHandler("_commandHandler_ejectDevice")),
-                     "disabled",
-                     "true",
-                     null);
-    
-    // remember that this is the device we are watching
-    this._watched_deviceId = aDevice.id;
-    this._callLocalSyncListeners(aDevice.id);
+      // "Eject"
+      addSyncListener(addItem('command_mtp_ejectdevice', 
+                             this._localizeString('command.mtp.ejectdevice', 
+                                                  'Eject'), 
+                             this._localizeString('command.mtp.ejectdevice.accesskey',
+                                                  'E'),
+                             makeCommandHandler("_commandHandler_ejectDevice")),
+                       "disabled",
+                       "true",
+                       null);
+      
+      // remember that this is the device we are watching
+      this._watched_deviceId = aDevice.id;
+      this._callLocalSyncListeners(aDevice.id);
+    } else {
+
+      // "New Playlist"
+      addItem('command_mtp_newplaylist', 
+              this._localizeString('menu.file.new', "New Playlist"), 
+              this._localizeString('menu.file.new.accesskey', 'P'), 
+              makeCommandHandler("_commandHandler_newPlaylist"));
+
+    }
     
     // set up a listener for the popup hiding so we can clean up after ourselves               
     var popupHidingHandler = {
@@ -710,7 +785,14 @@ mtpServicePaneService.prototype = {
         this._menu.removeEventListener("popuphiding", this, false);
         this._service._sync_listeners = [];
         this._watched_deviceId = null;
-        this._service._removeCommandHandlers();
+        while (command_handlers.length > 0) {
+          var entry = command_handlers[0];
+          var eventname = entry[0];
+          var domnode = entry[1];
+          var handler = entry[2];
+          domnode.removeEventListener(eventname, handler);
+          command_handlers.shift();
+        }
       }
     };
     aContextMenu.addEventListener("popuphiding", popupHidingHandler, false);
