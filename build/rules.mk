@@ -174,6 +174,10 @@ ifdef SONGBIRD_SCRIPTS
 targets += copy_sb_scripts
 endif
 
+ifdef SONGBIRD_JSMODULES
+targets += copy_sb_jsmodules
+endif
+
 ifdef SONGBIRD_TESTS
 targets += copy_sb_tests
 endif
@@ -280,6 +284,7 @@ SONGBIRD_PREFERENCESDIR   = $(EXTENSION_STAGE_DIR)/defaults/preferences
 SONGBIRD_PLUGINSDIR       = $(EXTENSION_STAGE_DIR)/plugins
 SONGBIRD_SEARCHPLUGINSDIR = $(EXTENSION_STAGE_DIR)/searchplugins
 SONGBIRD_SCRIPTSDIR       = $(EXTENSION_STAGE_DIR)/scripts
+SONGBIRD_JSMODULESDIR     = $(EXTENSION_STAGE_DIR)/jsmodules
 
 endif
 
@@ -988,6 +993,17 @@ endif
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_SCRIPTS) $(SONGBIRD_SCRIPTSDIR)
 .PHONY : copy_sb_scripts
 endif #SONGBIRD_SCRIPTS
+
+#-----------------------
+
+ifdef SONGBIRD_JSMODULES
+copy_sb_jsmodules:
+ifeq (,$(wildcard $(SONGBIRD_JSMODULESDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_JSMODULESDIR)
+endif
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_JSMODULES) $(SONGBIRD_JSMODULESDIR)
+.PHONY : copy_sb_jsmodules
+endif #SONGBIRD_JSMODULES
 
 #-----------------------
 

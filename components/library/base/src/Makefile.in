@@ -76,11 +76,18 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(mo
 
 LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbStorageFormatter.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \
                       $(srcdir)/sbColumnSpecParser.jsm \
-                      $(DYNAMIC_LIB) \
                       $(NULL)
+
+# TODO: Post 0.5 we need to remove js modules from the line above
+SONGBIRD_JSMODULES = $(srcdir)/sbLibraryUtils.jsm \
+                     $(srcdir)/sbStorageFormatter.jsm \
+                     $(srcdir)/sbTimeFormatter.jsm \
+                     $(srcdir)/sbColumnSpecParser.jsm \
+                     $(NULL)
 
 include $(topsrcdir)/build/rules.mk

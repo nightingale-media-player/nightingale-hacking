@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/sbTimeFormatter.jsm");
+  Components.utils.import("resource://app/jsmodules/sbTimeFormatter.jsm");
 
   assertEqual(TimeFormatter.formatSingle(1), "1 second");
   assertEqual(TimeFormatter.formatSingle(2), "2 seconds");

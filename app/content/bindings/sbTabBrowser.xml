@@ -43,11 +43,11 @@
         window.gBrowser = this;
 
         if (!window.SBProperties)
-          Components.utils.import("resource://app/components/sbProperties.jsm");
+          Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
         if (!window.kPlaylistCommands) 
-          Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
+          Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
         if (!window.LibraryUtils) 
-          Components.utils.import("resource://app/components/LibraryUtils.jsm");
+          Components.utils.import("resource://app/jsmodules/LibraryUtils.jsm");
 
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |

@@ -38,7 +38,7 @@
 try
 {
   if (typeof(LibraryUtils) == "undefined") {
-    Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+    Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   }
 
   function closeJumpTo() {

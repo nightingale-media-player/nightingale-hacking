@@ -25,8 +25,8 @@
  */
 
 // For Songbird properties.
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 
 // Open functions

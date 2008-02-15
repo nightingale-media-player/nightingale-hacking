@@ -41,7 +41,7 @@ const SBDOWNLOADMODE_EFAILED          = 6;
 //
 
 if (typeof(SBProperties) == "undefined") {
-  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
   if (!SBProperties)
     throw new Error("Import of sbProperties module failed!");
 }

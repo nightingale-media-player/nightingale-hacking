@@ -38,7 +38,7 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
 if (typeof(ExternalDropHandler) == "undefined")
-  Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
+  Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
 
 
 // Module specific global for auto-init/deinit support

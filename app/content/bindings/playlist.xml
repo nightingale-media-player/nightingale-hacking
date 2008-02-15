@@ -133,17 +133,17 @@
 <![CDATA[
   this._destroyed = false;
   if (typeof(SBProperties) == "undefined") {
-    Components.utils.import("resource://app/components/sbProperties.jsm");
+    Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
     if (!SBProperties)
       throw new Error("Import of sbProperties module failed");
   }
   if (typeof(ExternalDropHandler) == "undefined") {
-    Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
+    Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
     if (!ExternalDropHandler)
       throw new Error("Import of ExternalDropHandler module failed");
   }
   if (typeof(ColumnSpecParser) == "undefined") {
-    Components.utils.import("resource://app/components/sbColumnSpecParser.jsm");
+    Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
     if (!ColumnSpecParser)
       throw new Error("Import of ColumnSpecParser module failed");
   }

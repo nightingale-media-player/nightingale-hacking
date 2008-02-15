@@ -30,9 +30,9 @@ const Ce = Components.Exception;
 const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://app/components/ArrayConverter.jsm");
-Cu.import("resource://app/components/RDFHelper.jsm");
-Cu.import("resource://app/components/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/RDFHelper.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
 function MediaPageManager() {
 }

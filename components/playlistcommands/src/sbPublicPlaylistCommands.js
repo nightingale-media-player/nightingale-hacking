@@ -31,12 +31,12 @@ var Cr = Components.results;
 var Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://app/components/ArrayConverter.jsm");
-Cu.import("resource://app/components/sbProperties.jsm");
-Cu.import("resource://app/components/kPlaylistCommands.jsm");
-Cu.import("resource://app/components/sbAddToPlaylist.jsm");
-Cu.import("resource://app/components/sbLibraryUtils.jsm");
-Cu.import("resource://app/components/ExternalDropHandler.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+Cu.import("resource://app/jsmodules/sbAddToPlaylist.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/ExternalDropHandler.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";

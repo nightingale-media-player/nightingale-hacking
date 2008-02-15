@@ -56,7 +56,7 @@ if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
 // Songbird imports.
-Cu.import("resource://app/components/sbStorageFormatter.jsm");
+Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 
 //------------------------------------------------------------------------------

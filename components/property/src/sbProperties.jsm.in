@@ -28,7 +28,7 @@
  * Property constants for use with the Songbird property system. Import into a
  * JS file or component using:
  *
- *   'Components.utils.import("resource://app/components/sbProperties.jsm");'
+ *   'Components.utils.import("resource://app/jsmodules/sbProperties.jsm");'
  *
  */
 

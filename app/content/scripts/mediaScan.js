@@ -23,8 +23,8 @@
 // END SONGBIRD GPL
 //
  */
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                              .getService(Components.interfaces.sbIPlaylistPlayback);

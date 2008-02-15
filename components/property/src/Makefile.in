@@ -116,5 +116,10 @@ LIBSONGBIRD_COMPONENT = SongbirdPropertiesModule
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       sbProperties.jsm \
                       $(NULL)
+                      
+# TODO: Post 0.5 we need to remove js modules from the line above           
+SONGBIRD_JSMODULES =  sbProperties.jsm \
+                      $(NULL)           
+
 
 include $(topsrcdir)/build/rules.mk

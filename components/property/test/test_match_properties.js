@@ -70,7 +70,7 @@ function readCPPProps() {
 }
 
 function checkJSMProps() {
-  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
   var props = {};
   for (var i in SBProperties) {
     if (typeof SBProperties[i] != "string") continue;

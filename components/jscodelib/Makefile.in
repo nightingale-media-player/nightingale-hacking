@@ -36,5 +36,13 @@ SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(srcdir)/SBTimer.jsm \
                       $(NULL)
 
+# TODO: Post 0.5 we need to remove js modules from the line above
+SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
+                     $(srcdir)/XPCOMUtils.jsm \
+                     $(srcdir)/RDFHelper.jsm \
+                     $(srcdir)/ExternalDropHandler.jsm \
+                     $(srcdir)/SBTimer.jsm \
+                     $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 

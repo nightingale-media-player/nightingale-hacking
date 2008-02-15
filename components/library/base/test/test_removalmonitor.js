@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   
   // Make a test library
   var library = createLibrary("test_library_removalmonitor1");

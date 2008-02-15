@@ -28,7 +28,7 @@
  * \brief MediaPage Unit Test File
  */
 
-Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
  
 var pageMgr = null;
 

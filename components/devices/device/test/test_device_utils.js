@@ -29,7 +29,7 @@
  * \brief Device tests - Device utilities
  */
 
-Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
   var file = Components.classes["@mozilla.org/file/directory_service;1"]

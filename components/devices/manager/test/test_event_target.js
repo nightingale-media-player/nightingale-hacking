@@ -29,7 +29,7 @@
  * \brief Device Manager tests - Device Event Target
  */
 
-Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 var hasEvent = false;
 

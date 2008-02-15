@@ -29,7 +29,7 @@
  * \brief Device Manager tests - Controller Registrar
  */
 
-Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 var gUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"]
                                .createInstance(Components.interfaces.nsIUUIDGenerator);
 

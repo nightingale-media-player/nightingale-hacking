@@ -30,8 +30,8 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/ArrayConverter.jsm");
-  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
   var databaseGUID = "test_librarynotifications";
   var library = createLibrary(databaseGUID, null, false);

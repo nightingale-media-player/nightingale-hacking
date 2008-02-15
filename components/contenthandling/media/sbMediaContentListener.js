@@ -52,8 +52,8 @@ const TYPE_MAYBE_MEDIA = "application/vnd.songbird.maybe.media";
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // For Songbird properties.
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 /**
  * An implementation of nsIURIContentListener that prevents audio and video

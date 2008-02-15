@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/sbStorageFormatter.jsm");
+  Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
   assertEqual(StorageFormatter.shortUnits[StorageFormatter.B], "B");
   assertEqual(StorageFormatter.shortUnits[StorageFormatter.KB], "KB");

@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/ArrayConverter.jsm");
+  Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
   var databaseGUID = "test_simplemedialistnotifications";
   var library = createLibrary(databaseGUID, null, false);

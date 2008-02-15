@@ -29,7 +29,7 @@
  * \brief Content Type Formats test
  */
 
-Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 /* return a new random content type. well, smells like one anyway. */
 function generateContentType() {

@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
   var SB_NS = "http://songbirdnest.com/data/1.0#";
 

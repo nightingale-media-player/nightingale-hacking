@@ -47,19 +47,19 @@ if (typeof(Ci) == "undefined")
  const Ci = Components.interfaces;
 
 if (typeof(SBProperties) == "undefined") {
-  Components.utils.import("resource://app/components/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
   if (!SBProperties)
     throw new Error("Import of sbProperties module failed!");
 }
 
 if (typeof(LibraryUtils) == "undefined") {
-  Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   if (!LibraryUtils)
     throw new Error("Import of sbLibraryUtils module failed!");
 }
 
 if (typeof(kPlaylistCommands) == "undefined") {
-  Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
+  Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
   if (!kPlaylistCommands)
     throw new Error("Import of kPlaylistCommands module failed!");
 }

@@ -24,8 +24,8 @@
 //
  */
 
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";

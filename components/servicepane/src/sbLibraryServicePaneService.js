@@ -32,9 +32,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/components/ExternalDropHandler.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ExternalDropHandler.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
