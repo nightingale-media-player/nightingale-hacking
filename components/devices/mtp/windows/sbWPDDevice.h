@@ -222,7 +222,7 @@ private:
   /**
    * Creates a media item from the Songbird item and list
    */
-  nsresult CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
+  nsresult CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
                                            sbIMediaItem * item,
                                            sbIMediaList * list);
   /**

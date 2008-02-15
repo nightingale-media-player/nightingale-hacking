@@ -38,40 +38,38 @@ class nsIProxyObjectManager;
 /**
  * This class is used to publish status information for the device.
  */
-class sbDeviceStatus
+class sbDeviceStatus : public nsISupports
 {
 public:
+  NS_DECL_ISUPPORTS
   /**
    * Initializses the status object with the device ID
    */
-	sbDeviceStatus(nsAString const & deviceID);
-	/**
-	 * cleanup
-	 */
-	virtual ~sbDeviceStatus();
-	/**
-	 * Sets the state message
-	 */
-	nsresult StateMessage(nsString const & msg);
-	/**
-	 * Sets the current operation
-	 */
-	nsresult CurrentOperation(nsString const & operationMessage);
-	/**
-	 * Sets the current progress as a percent. Done is 100.0.
-	 */
-	nsresult Progress(double percent);
-	/**
-	 * Sets the current work item # for example processing multiple files
-	 */
-	nsresult WorkItemProgress(PRUint32 current);
-	/**
-	 * Sets the end count for processing multiple items
-	 */
-	nsresult WorkItemProgressEndCount(PRUint32 count);
-	/**
-	 * Sets the item currently being acted on
-	 */
+  static already_AddRefed<sbDeviceStatus> New(nsAString const & deviceID);
+public:
+  /**
+   * Sets the state message
+   */
+  nsresult StateMessage(nsString const & msg);
+  /**
+   * Sets the current operation
+   */
+  nsresult CurrentOperation(nsString const & operationMessage);
+  /**
+   * Sets the current progress as a percent. Done is 100.0.
+   */
+  nsresult Progress(double percent);
+  /**
+   * Sets the current work item # for example processing multiple files
+   */
+  nsresult WorkItemProgress(PRUint32 current);
+  /**
+   * Sets the end count for processing multiple items
+   */
+  nsresult WorkItemProgressEndCount(PRUint32 count);
+  /**
+   * Sets the item currently being acted on
+   */
   void SetItem(sbIMediaItem * item)
   {
     mItem = item;
@@ -84,19 +82,30 @@ public:
     mList = list;
   }
 private:
+  /**
+   * Initializses the status object with the device ID
+   */
+  sbDeviceStatus(nsAString const & deviceID);
+  /**
+   * cleanup
+   */
+  virtual ~sbDeviceStatus();
+
   nsString const mDeviceID;
   nsCOMPtr<sbIDataRemote> mStatusRemote;
   nsCOMPtr<sbIDataRemote> mOperationRemote;
   nsCOMPtr<sbIDataRemote> mProgressRemote;
   nsCOMPtr<sbIDataRemote> mWorkCurrentCountRemote;
   nsCOMPtr<sbIDataRemote> mWorkTotalCountRemote;
-  nsCOMPtr<nsIProxyObjectManager> mProxyObjectManager;
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbIMediaList> mList;
   
-  nsresult GetDataRemote(const nsAString& aDataRemoteName,
+  nsresult GetDataRemote(nsIProxyObjectManager* aProxyObjectManager,
+                         const nsAString& aDataRemoteName,
                          const nsAString& aDataRemotePrefix,
                          void** appDataRemote);
+  
+  void Init();
 };
 
 #endif /*SBDEVICESTATUS_H_*/

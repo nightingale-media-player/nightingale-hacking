@@ -3,32 +3,26 @@
 #include <sbIDataRemote.h>
 #include <nsIProxyObjectManager.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
+
+NS_IMPL_THREADSAFE_ISUPPORTS0(sbDeviceStatus)
+
+already_AddRefed<sbDeviceStatus> sbDeviceStatus::New(nsAString const & deviceID)
+{
+  return new sbDeviceStatus(deviceID);
+}
 
 sbDeviceStatus::sbDeviceStatus(nsAString const & deviceID) : 
   mDeviceID(deviceID)
 {
-  static nsString const STATE(NS_LITERAL_STRING("status.state"));
-  static nsString const OPERATION(NS_LITERAL_STRING("status.operation"));
-  static nsString const PROGRESS(NS_LITERAL_STRING("status.progress"));
-  static nsString const WORK_CURRENT_COUNT(NS_LITERAL_STRING("status.workcount"));
-  static nsString const WORK_TOTAL_COUNT(NS_LITERAL_STRING("status.totalcount"));
-  
-  nsresult rv = GetDataRemote(STATE,
-                              mDeviceID,
-                              getter_AddRefs(mStatusRemote));
-  GetDataRemote(OPERATION,
-                mDeviceID,
-                getter_AddRefs(mOperationRemote));
-  GetDataRemote(PROGRESS,
-                mDeviceID,
-                getter_AddRefs(mProgressRemote));
-  GetDataRemote(WORK_CURRENT_COUNT,
-                mDeviceID,
-                getter_AddRefs(mWorkCurrentCountRemote));
-  GetDataRemote(WORK_TOTAL_COUNT,
-                mDeviceID,
-                getter_AddRefs(mWorkTotalCountRemote));
-  mProxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+  /* we need to call init on the main thread, because data remotes are not
+     threadsafe (because it eventually hits observer service) */
+  // of course, this means we need to hold a ref to ourselves...
+  // it ends up on ::New()
+  NS_ADDREF(this);
+  nsCOMPtr<nsIRunnable> event =
+    NS_NEW_RUNNABLE_METHOD(sbDeviceStatus, this, Init);
+  NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
 }
 
 sbDeviceStatus::~sbDeviceStatus()
@@ -60,16 +54,52 @@ nsresult sbDeviceStatus::WorkItemProgressEndCount(PRUint32 count)
   return mWorkTotalCountRemote->SetIntValue(count);
 }
 
-nsresult sbDeviceStatus::GetDataRemote(const nsAString& aDataRemoteName,
+void sbDeviceStatus::Init()
+{
+  NS_NAMED_LITERAL_STRING(STATE, "status.state");
+  NS_NAMED_LITERAL_STRING(OPERATION, "status.operation");
+  NS_NAMED_LITERAL_STRING(PROGRESS, "status.progress");
+  NS_NAMED_LITERAL_STRING(WORK_CURRENT_COUNT, "status.workcount");
+  NS_NAMED_LITERAL_STRING(WORK_TOTAL_COUNT, "status.totalcount");
+
+  /* the data remotes need the POM */
+  nsCOMPtr<nsIProxyObjectManager> pom =
+    do_GetService("@mozilla.org/xpcomproxy;1");
+  
+  
+  
+  GetDataRemote(pom,
+                STATE,
+                mDeviceID,
+                getter_AddRefs(mStatusRemote));
+  GetDataRemote(pom,
+                OPERATION,
+                mDeviceID,
+                getter_AddRefs(mOperationRemote));
+  GetDataRemote(pom,
+                PROGRESS,
+                mDeviceID,
+                getter_AddRefs(mProgressRemote));
+  GetDataRemote(pom,
+                WORK_CURRENT_COUNT,
+                mDeviceID,
+                getter_AddRefs(mWorkCurrentCountRemote));
+  GetDataRemote(pom,
+                WORK_TOTAL_COUNT,
+                mDeviceID,
+                getter_AddRefs(mWorkTotalCountRemote));
+}
+nsresult sbDeviceStatus::GetDataRemote(nsIProxyObjectManager* aProxyObjectManager,
+                                       const nsAString& aDataRemoteName,
                                        const nsAString& aDataRemotePrefix,
                                        void** appDataRemote)
 {
-  NS_PRECONDITION(mProxyObjectManager, "Proxy manager must be created");
   nsAutoString                fullDataRemoteName;
   nsCOMPtr<sbIDataRemote>     pDataRemote;
-  nsString                    *pNullNSString = NULL;
-  nsString                    &nullNSStringRef = *pNullNSString;
+  nsString                    nullString;
   nsresult                    rv;
+
+  nullString.SetIsVoid(PR_TRUE);
 
   /* Get the full data remote name. */
   if (!aDataRemotePrefix.IsEmpty())
@@ -83,11 +113,11 @@ nsresult sbDeviceStatus::GetDataRemote(const nsAString& aDataRemoteName,
   pDataRemote = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1",
                                   &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = pDataRemote->Init(fullDataRemoteName, nullNSStringRef);
+  rv = pDataRemote->Init(fullDataRemoteName, nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* Make a proxy for the status data remote. */
-  rv = mProxyObjectManager->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  rv = aProxyObjectManager->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                               NS_GET_IID(sbIDataRemote),
                                               pDataRemote,
                                               nsIProxyObjectManager::INVOKE_ASYNC | 

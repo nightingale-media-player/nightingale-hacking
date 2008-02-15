@@ -138,10 +138,12 @@ static nsresult GetDeviceContentProperties(IPortableDevice * theWPDDevice,
  */
 NS_IMPL_THREADSAFE_ADDREF(sbWPDDevice)
 NS_IMPL_THREADSAFE_RELEASE(sbWPDDevice)
-NS_IMPL_QUERY_INTERFACE2_CI(sbWPDDevice,
+NS_IMPL_QUERY_INTERFACE3_CI(sbWPDDevice,
     sbIDevice,
+    sbIDeviceEventTarget,
     nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER1(sbWPDDevice,
+NS_IMPL_CI_INTERFACE_GETTER2(sbWPDDevice,
+    sbIDeviceEventTarget,
     sbIDevice)
 
 NS_DECL_CLASSINFO(sbWPDDevice)
@@ -327,14 +329,16 @@ NS_IMETHODIMP sbWPDDevice::Connect()
                                getter_AddRefs(values));
     NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
     
-    LPWSTR puid;
-    hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &puid);
+    LPWSTR ppuid;
+    hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &ppuid);
     NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    
+    nsString puid = nsDependentString(ppuid);
+    ::CoTaskMemFree(ppuid);
     
     nsString libId = NS_ConvertASCIItoUTF16(idBuffer);
     libId.AppendLiteral("@");
-    libId.Append(nsDependentString(puid));
-    ::CoTaskMemFree(puid);
+    libId.Append(puid);
     
     // now we have to make it into a file-name compatible string. sigh.
     nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS), '_');
@@ -348,6 +352,9 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     rv = GetContent(getter_AddRefs(sbContent));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = sbContent->AddLibrary(devLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = devLib->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, puid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1231,7 +1238,7 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
  * @param output The COM output stream we'll be writing to
  * @param bufferSize the optional buffer size to use.
  */
-static nsresult CopynsIStream2IStream(sbDeviceStatus & status,
+static nsresult CopynsIStream2IStream(sbDeviceStatus * status,
                                       sbWPDDevice * device,
                                       PRInt64 contentLength,
                                       nsIInputStream * input,
@@ -1265,7 +1272,7 @@ static nsresult CopynsIStream2IStream(sbDeviceStatus & status,
     var->SetAsDouble(progress);
     device->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                                    var);
-    status.Progress(progress);
+    status->Progress(progress);
     
   }
   delete [] buffer;
@@ -1275,7 +1282,7 @@ static nsresult CopynsIStream2IStream(sbDeviceStatus & status,
   return NS_OK;
 }
 
-static nsresult CopyIStream2nsIStream(sbDeviceStatus & status,
+static nsresult CopyIStream2nsIStream(sbDeviceStatus * status,
                                       sbWPDDevice * device,
                                       IStream * input,
                                       nsIOutputStream * output,
@@ -1445,17 +1452,17 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
   return NS_OK;
 }
 
-nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
+nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
                                                       sbIMediaItem * item,
                                                       sbIMediaList * list)
 {
   PRInt64 contentLength;
   nsresult rv = item->GetContentLength(&contentLength);
   NS_ENSURE_SUCCESS(rv, rv);
-  status.CurrentOperation(NS_LITERAL_STRING("Copying"));
-  status.SetItem(item);
-  status.SetList(list);
-  status.StateMessage(NS_LITERAL_STRING("Starting"));
+  status->CurrentOperation(NS_LITERAL_STRING("Copying"));
+  status->SetItem(item);
+  status->SetList(list);
+  status->StateMessage(NS_LITERAL_STRING("Starting"));
   nsRefPtr<IPortableDeviceContent> content;
   rv = mPortableDevice->Content(getter_AddRefs(content));
   CreateAndDispatchGenericDeviceErrorEvent(this);
@@ -1488,7 +1495,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus & status,
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  status.StateMessage(NS_LITERAL_STRING("InProgress"));
+  status->StateMessage(NS_LITERAL_STRING("InProgress"));
 
   // This function handles firing it's own error events.
   HRESULT hr = S_FALSE;
@@ -1545,12 +1552,13 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                          var);
                     
-  sbDeviceStatus status(GetDeviceID(mPortableDevice));
+  nsRefPtr<sbDeviceStatus> status =
+    sbDeviceStatus::New(GetDeviceID(mPortableDevice));
   rv = CreateDeviceObjectFromMediaItem(status,
                                        request->item,
                                        request->list);
   if (NS_SUCCEEDED(rv)) {
-    status.StateMessage(NS_LITERAL_STRING("Completed"));
+    status->StateMessage(NS_LITERAL_STRING("Completed"));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
                            var);    
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
@@ -1560,7 +1568,6 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
   // XXXAus: Failures are handled within 
   // CreateDeviceObjectFromMediaItem() and methods it calls.
 
-  NS_RELEASE(request);
   return rv;
 }
 
@@ -1611,24 +1618,25 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
   nsCOMPtr<nsIOutputStream> outputStream;
   rv = request->item->OpenOutputStream(getter_AddRefs(outputStream));
   NS_ENSURE_SUCCESS(rv, rv);
-  sbDeviceStatus status(GetDeviceID(mPortableDevice));
+  nsRefPtr<sbDeviceStatus> status =
+    sbDeviceStatus::New(GetDeviceID(mPortableDevice));
   rv = CopyIStream2nsIStream(status,
                              this,
                              inputStream,
                              outputStream,
                              optimalBufferSize); 
   if (NS_SUCCEEDED(rv)) {
-    status.StateMessage(NS_LITERAL_STRING("Completed"));
+    status->StateMessage(NS_LITERAL_STRING("Completed"));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
                            var);    
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END,
                            var);      
   }
   else {
-    status.StateMessage(NS_LITERAL_STRING("Failed"));
+    status->StateMessage(NS_LITERAL_STRING("Failed"));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED,
-                           var);      }
-  NS_RELEASE(request);
+                           var);
+  }
   return NS_OK;
 }
 

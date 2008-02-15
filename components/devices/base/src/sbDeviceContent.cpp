@@ -148,11 +148,11 @@ sbDeviceContent::FindLibrary(sbIDeviceLibrary* aLibrary, PRUint32* _retval)
   nsresult rv;
   PRUint32 index;
   rv = mDeviceLibraries->IndexOf(0, aLibrary, &index);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (index < 0) {
+  if (rv == NS_ERROR_FAILURE) {
+    // yes, not found throws a generic error. sigh.
     return NS_ERROR_NOT_AVAILABLE;
   }
+  NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = (PRUint32)index;
   return NS_OK;

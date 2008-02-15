@@ -131,10 +131,6 @@ public:
   /* note to device implementors: just set mState directly. */
   NS_IMETHOD GetState(PRUint32 *aState);
   
-  /* attach a weak listener to the library which will notify this device of
-     things happening to the library */
-  nsresult AttachListeners(sbILibrary *aLibrary);
-  
   /**
    * Create a local database library for the device
    * @param aId the ID for the library

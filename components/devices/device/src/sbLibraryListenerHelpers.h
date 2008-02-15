@@ -25,7 +25,7 @@
 //
 */
 
-#include "sbIMediaListListener.h"
+#include "sbIDeviceLibrary.h"
 #include "sbILocalDatabaseSimpleMediaList.h"
 
 #include <nsCOMPtr.h>
@@ -34,12 +34,12 @@
 class sbBaseDevice;
 class sbIDevice;
 
-class sbBaseDeviceLibraryListener : public sbIMediaListListener,
+class sbBaseDeviceLibraryListener : public sbIDeviceLibraryListener,
                                     public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBIDEVICELIBRARYLISTENER
 
   sbBaseDeviceLibraryListener();
   virtual ~sbBaseDeviceLibraryListener();
