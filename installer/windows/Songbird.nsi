@@ -243,6 +243,7 @@ Section "-Application" Section1
   File /r components
   File /r defaults
   File /r extensions
+  File /r jsmodules
   File /r plugins
   File /r searchplugins
   File /r scripts
@@ -432,6 +433,7 @@ Section "Uninstall"
   Delete $INSTDIR\${FileMainEXE}
   Delete $INSTDIR\${CRuntime}
   Delete $INSTDIR\${CPPRuntime}
+  Delete $INSTDIR\${CRuntimeManifest}
   Delete $INSTDIR\${PreferredIcon}
   Delete $INSTDIR\${VistaIcon}
   
@@ -448,6 +450,7 @@ Section "Uninstall"
   RMDir /r $INSTDIR\components
   RMDir /r $INSTDIR\defaults
   RMDir /r $INSTDIR\extensions
+  RMDir /r $INSTDIR\jsmodules
   RMDir /r $INSTDIR\plugins
   RMDir /r $INSTDIR\searchplugins
   RMDir /r $INSTDIR\scripts
