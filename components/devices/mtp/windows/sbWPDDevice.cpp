@@ -56,6 +56,7 @@
 #include <sbDeviceCapabilities.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
+#include <sbProxyUtils.h>
 /* damn you microsoft */
 #undef CreateEvent
 #include <sbIDeviceManager.h>
@@ -1351,8 +1352,8 @@ static nsresult SetParentProperty(IPortableDeviceContent * content,
                     puid);
   nsString objectID;
   if (puid.IsEmpty() || NS_FAILED(sbWPDObjectIDFromPUID(content,
-                                                     puid,
-                                                     objectID)))
+                                                        puid,
+                                                        objectID)))
     return NS_ERROR_FAILURE;
   if (FAILED(properties->SetStringValue(WPD_OBJECT_PARENT_ID, objectID.get())))
     return NS_ERROR_FAILURE;
@@ -1386,6 +1387,148 @@ static nsresult SetContentName(sbIMediaItem * item,
     return NS_ERROR_FAILURE;
   
   return rv;
+}
+
+static nsresult SetStandardProperties(sbIMediaItem * item,
+                                      IPortableDeviceValues * properties)
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  HRESULT hr = S_FALSE;
+
+  nsString propValue;
+  PROPERTYKEY propKey;
+
+  // content url
+  /*rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_CONTENTURL, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);*/
+
+  // track name
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_TRACKNAME, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // album name
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_ALBUMNAME, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  // artist name
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_ARTISTNAME, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // duration
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_DURATION, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  // genre
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_GENRE, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // track no 
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_TRACKNUMBER, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // composer
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_COMPOSERNAME, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // lyrics
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_LYRICS), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_LYRICS, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // last played time
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_LASTPLAYTIME, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  // play count
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_PLAYCOUNT, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // skip count
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_SKIPCOUNT, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+    
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // rating
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_RATING), propValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbWPDStandardItemPropertyToPropertyKey(SB_PROPERTY_RATING, propKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  hr = properties->SetStringValue(propKey, propValue.get());
+  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 inline nsString GetItemID(sbIMediaItem * item)
@@ -1423,22 +1566,49 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
   rv = GetWPDContentType(contentMimeType,
                          WPDContentType,
                          WPDFormatType);
-  if (NS_SUCCEEDED(rv)) {
-    if (FAILED(properties->SetGuidValue(WPD_OBJECT_CONTENT_TYPE,
-                                        WPDContentType)) ||
-        FAILED(properties->SetGuidValue(WPD_OBJECT_FORMAT,
-                                        WPDFormatType)))
-      return NS_ERROR_FAILURE;
+
+  // If we fail to get it from the mime type, attempt to get it from the file extension.
+  if (NS_FAILED(rv)) {
+    nsCOMPtr<nsIURI> contentURI;
+    rv = item->GetContentSrc(getter_AddRefs(contentURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIURL> contentURL = do_QueryInterface(contentURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIURL> proxiedURL;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(nsIURL),
+                              contentURL,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(proxiedURL));
+
+    nsCString fileExtension;
+    rv = proxiedURL->GetFileExtension(fileExtension);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sbWPDFileExtensionToGUIDs(fileExtension, WPDContentType, WPDFormatType);
   }
-  else {
+
+  // We can't determine the type of the content, fire event to indicate that the
+  // file will not be transferred.
+  if (NS_FAILED(rv)) {
     nsCOMPtr<nsIWritableVariant> var =
       do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     var->SetAsAString(GetItemID(item));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE,
-                           var);    
+                           var);
     return SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED;
   }
+
+  if (FAILED(properties->SetGuidValue(WPD_OBJECT_CONTENT_TYPE,
+                                      WPDContentType)) ||
+      FAILED(properties->SetGuidValue(WPD_OBJECT_FORMAT,
+                                      WPDFormatType))) {
+    return NS_ERROR_FAILURE;
+  }
+
   rv = SetParentProperty(content, list, properties);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -1448,6 +1618,9 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
   rv = SetContentName(item, properties);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  rv = SetStandardProperties(item, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   properties.forget(itemProperties);
   return NS_OK;
 }
@@ -1465,7 +1638,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
   status->StateMessage(NS_LITERAL_STRING("Starting"));
   nsRefPtr<IPortableDeviceContent> content;
   rv = mPortableDevice->Content(getter_AddRefs(content));
-  CreateAndDispatchGenericDeviceErrorEvent(this);
+  SB_ENSURE_NO_DEVICE_ERROR_GENERIC(rv, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<IPortableDeviceValues> properties;
@@ -1523,9 +1696,10 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
   NS_ENSURE_SUCCESS(rv, rv);
 
   LPWSTR newObjectID = NULL;
-  if (SUCCEEDED(portableDataStream->GetObjectID(&newObjectID)))
+  hr = portableDataStream->GetObjectID(&newObjectID);
+  
+  if (SUCCEEDED(hr))
   {
-    properties = nsnull;
     GUID puid;
     if (SUCCEEDED(properties->GetGuidValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &puid))) {
       WCHAR buffer[48];

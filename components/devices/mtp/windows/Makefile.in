@@ -60,6 +60,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/mtp/public \
                $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/property/src \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/include \

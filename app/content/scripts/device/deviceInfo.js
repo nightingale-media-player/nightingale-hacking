@@ -772,6 +772,7 @@ var DIW = {
       return this._device.properties.iconUri.spec;
     } catch (err) {
       // default image dictated by CSS.
+      return null;
     }
   },
 

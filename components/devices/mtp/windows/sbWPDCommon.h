@@ -42,6 +42,7 @@
 #include <nsStringGlue.h>
 
 #include <sbStandardDeviceProperties.h>
+#include <sbStandardProperties.h>
 
 class sbIDeviceManager2;
 class sbIDeviceMarshall;
@@ -72,6 +73,17 @@ typedef struct
   PRBool  mIsContainerFormat;
   PRBool  mIsPlaylistFormat;
 } wpdObjectFormatKeymapEntry_t;
+
+/**
+ * Map entry to convert a file extension to a WPD Object Format
+ * GUID and Content Type GUID.
+ */
+typedef struct  
+{
+  char * mExtension;
+  GUID   mContentType;
+  GUID   mObjectFormat;
+} wpdFileExtensionKeymapEntry_t;
 
 /**
  * Retreives the WPD device manager
@@ -127,8 +139,8 @@ nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
  * Returns the PROPERTYKEY associated with the Standard Device Property
  */
 PRBool 
-sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
-                                          PROPERTYKEY &aPropertyKey);
+sbWPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
+                                         PROPERTYKEY &aPropertyKey);
 
 /**
  * This function creates a property key collection from a single key
@@ -158,5 +170,39 @@ nsresult sbWPDObjectFormatToContentTypeString(const GUID &aObjectFormat,
                                               nsACString &aContentType,
                                               PRBool &aIsContainerFormat,
                                               PRBool &aIsPlaylistFormat);
+
+/**
+ * Convert a file extension to a WPD Content Type GUID and
+ * WPD Object Format GUID.
+ * \param aFileExt The file extension to convert.
+ * \param aContentType The WPD content type for the input file extension.
+ * \param aObjectFormat The WPD object format for the input file extension.
+ * \retval NS_ERROR_NOT_AVAILABLE Couldn't find ContentType / ObjectFormat pair for file extension.
+ * \retval NS_OK Found ContentType / ObjectFormat pair.
+ */
+nsresult sbWPDFileExtensionToGUIDs(const nsACString &aFileExt,
+                                   GUID &aContentType,
+                                   GUID &aObjectFormat);
+
+/**
+ * Find the most appropriate folder for a specific content type.
+ * For example, find the folder to put MUSIC into.
+ * \param aContentType The WPD content type GUID.
+ * \param aParentID The suggested folder's GUID.
+ * \retval NS_ERROR_NOT_AVAILABLE Couldn't determine the best folder for the content type.
+ * \retval NS_OK Found an appropriate folder.
+ */
+nsresult sbWPDGetFolderForContentType(const GUID &aContentType,
+                                      nsAString &aParentID);
+
+/**
+ * Convert a standard data model property to a WPD propertykey
+ * \param aProp The standard data model property to convert (ie. SB_PROPERTY_TRACKNAME).
+ * \param aPropertyKey The WPD property key equivalent.
+ * \retval NS_ERROR_NOT_AVAILABLE Could not determine equivalent WPD property key.
+ * \retval NS_OK Found equivalent WPD property key.
+ */
+nsresult sbWPDStandardItemPropertyToPropertyKey(const char *aProp,
+                                                PROPERTYKEY &aPropertyKey);
 
 #endif /*SBWPDCOMMON_H_*/

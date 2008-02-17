@@ -127,8 +127,8 @@ nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
 }
 
 PRBool 
-sbWPPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
-                                          PROPERTYKEY &aPropertyKey)
+sbWPDStandardDevicePropertyToPropertyKey(const char* aStandardProp,
+                                         PROPERTYKEY &aPropertyKey)
 {
   static wpdPropertyKeymapEntry_t map[] = {
     { SB_DEVICE_PROPERTY_BATTERY_LEVEL,     WPD_DEVICE_POWER_LEVEL },
@@ -322,6 +322,84 @@ nsresult sbWPDObjectFormatToContentTypeString(const GUID &aObjectFormat,
       aIsContainerFormat = map[current].mIsContainerFormat;
       aIsPlaylistFormat = map[current].mIsPlaylistFormat;
       
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult 
+sbWPDFileExtensionToGUIDs(const nsACString &aFileExt,
+                          GUID &aContentType,
+                          GUID &aObjectFormat)
+{
+  static wpdFileExtensionKeymapEntry_t map[] = {
+    { "mp3", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3 },
+    { "wma", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WMA },
+  };
+
+  static PRUint32 mapSize = sizeof(map) / sizeof(wpdFileExtensionKeymapEntry_t);
+
+  nsCString str(aFileExt);
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if(!strcmp(str.get(), map[current].mExtension)) {
+      aContentType = map[current].mContentType;
+      aObjectFormat = map[current].mObjectFormat;
+
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult 
+sbWPDGetFolderForContentType(const GUID &aContentType,
+                             nsAString &aParentID)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+nsresult 
+sbWPDStandardItemPropertyToPropertyKey(const char *aProp,
+                                       PROPERTYKEY &aPropertyKey)
+{
+  static wpdPropertyKeymapEntry_t map[] = {
+    { SB_PROPERTY_CONTENTURL,           WPD_OBJECT_ORIGINAL_FILE_NAME },
+    { SB_PROPERTY_TRACKNAME,            WPD_MEDIA_TITLE },
+    { SB_PROPERTY_ALBUMNAME,            WPD_MUSIC_ALBUM },
+    { SB_PROPERTY_ARTISTNAME,           WPD_MEDIA_ARTIST },
+    { SB_PROPERTY_DURATION,             WPD_MEDIA_DURATION },
+    { SB_PROPERTY_GENRE,                WPD_MEDIA_GENRE },
+    { SB_PROPERTY_TRACKNUMBER,          WPD_MUSIC_TRACK },
+    // { SB_PROPERTY_YEAR,                 ??? },
+    // { SB_PROPERTY_DISCNUMBER,           ??? },
+    // { SB_PROPERTY_TOTALDISCS,           ??? },
+    // { SB_PROPERTY_TOTALTRACKS,          ??? },
+    // { SB_PROPERTY_ISPARTOFCOMPILATION,  ??? },
+    // { SB_PROPERTY_PRODUCERNAME,         ??? },
+    { SB_PROPERTY_COMPOSERNAME,         WPD_MEDIA_COMPOSER },
+    // { SB_PROPERTY_LYRICISTNAME,         ??? },
+    { SB_PROPERTY_LYRICS,               WPD_MUSIC_LYRICS },
+    // { SB_PROPERTY_RECORDLABELNAME,      ??? },
+    // { SB_PROPERTY_PRIMARYIMAGEURL,      ??? },
+    { SB_PROPERTY_LASTPLAYTIME,         WPD_MEDIA_LAST_ACCESSED_TIME },
+    { SB_PROPERTY_PLAYCOUNT,            WPD_MEDIA_USE_COUNT },
+    // { SB_PROPERTY_LASTSKIPTIME,         ??? },
+    { SB_PROPERTY_SKIPCOUNT,            WPD_MEDIA_SKIP_COUNT },
+    { SB_PROPERTY_RATING,               WPD_MEDIA_STAR_RATING },
+    // { SB_PROPERTY_ISLIST,               ??? },
+    // { SB_PROPERTY_MEDIALISTNAME,        ??? },
+  };
+
+  static PRUint32 mapSize = sizeof(map) / sizeof(wpdPropertyKeymapEntry_t);
+
+  NS_ENSURE_ARG_POINTER(aProp);
+
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if(!strcmp(map[current].mStandardProperty, aProp)) {
+      aPropertyKey = map[current].mPropertyKey;
       return NS_OK;
     }
   }

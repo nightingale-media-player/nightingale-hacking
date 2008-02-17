@@ -256,7 +256,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetEnumerator(nsISimpleEnumerator * *aEnumer
 NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name, nsIVariant **retval)
 {
   PROPERTYKEY key;
-  NS_ENSURE_TRUE(sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key), NS_ERROR_FAILURE);
   return GetPropertyString(key, retval);
 }
 
@@ -347,7 +347,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop, PRBool *retva
     return NS_ERROR_FAILURE;
   
   PROPERTYKEY keyToFind;
-  if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(prop).get(), keyToFind)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(prop).get(), keyToFind)) {
     for (DWORD index = 0; index < count; ++index) {
       PROPERTYKEY key;
       if (SUCCEEDED(keys->GetAt(index, &key)) &&
@@ -364,7 +364,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop, PRBool *retva
 NS_IMETHODIMP sbWPDPropertyAdapter::SetProperty(const nsAString & name, nsIVariant *value)
 {
   PROPERTYKEY key;
-  if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
     return sbWPDDevice::SetProperty(mDeviceProperties,
                                     key,
                                     value);
@@ -376,7 +376,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::SetProperty(const nsAString & name, nsIVaria
 NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
 {
   PROPERTYKEY key;
-  if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
     nsRefPtr<IPortableDeviceKeyCollection> propertyKeys;
     nsresult rv = sbWPDCreatePropertyKeyCollection(key, getter_AddRefs(propertyKeys));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -391,7 +391,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
   PR_BEGIN_MACRO \
     nsresult rv; \
     PROPERTYKEY key; \
-    if (sbWPPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) { \
+    if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) { \
       rv = mWorkerVariant->SetAs##type(val); \
       NS_ENSURE_SUCCESS(rv, rv); \
       return sbWPDDevice::SetProperty(mDeviceProperties, \

@@ -335,7 +335,7 @@ mtpServicePaneService.prototype = {
     devNode.image = this._cfg.devImgURL;
     devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
     devNode.editable = true;
-    devNode.name = device.parameters.getProperty("DeviceFriendlyName");
+    devNode.name = device.properties.friendlyName;
 
     devNode.hidden = false;
 
