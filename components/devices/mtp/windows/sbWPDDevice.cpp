@@ -405,7 +405,7 @@ NS_IMETHODIMP sbWPDDevice::GetPreference(const nsAString & aPrefName,
   nsresult rv = GetDeviceProperties(mPortableDevice, getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  return GetProperty(properties, aPrefName, retval);
+  return GetProperty(nsString(WPD_DEVICE_OBJECT_ID), properties, aPrefName, retval);
 }
 
 /* void setPreference (in AString aPrefName, in nsIVariant aPrefValue); */
@@ -662,7 +662,8 @@ nsresult sbWPDDevice::SetProperty(IPortableDeviceProperties * properties,
   return NS_OK;
 }
 
-nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
+nsresult sbWPDDevice::GetProperty(const nsAString &objectID,
+                                  IPortableDeviceProperties * properties,
                                   PROPERTYKEY const & propKey,
                                   nsIVariant ** retval)
 {
@@ -671,13 +672,13 @@ nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsRefPtr<IPortableDeviceValues> propValues;
-  rv = properties->GetValues(WPD_DEVICE_OBJECT_ID, propertyKeys, getter_AddRefs(propValues));
+  rv = properties->GetValues(nsString(objectID).get(), propertyKeys, getter_AddRefs(propValues));
   NS_ENSURE_SUCCESS(rv, rv);
   
   PROPVARIANT propVal = {0};
   PropVariantInit(&propVal);
   
-  NS_ENSURE_TRUE(SUCCEEDED(propValues->GetAt(0, 0, &propVal)), 
+  NS_ENSURE_TRUE(SUCCEEDED(propValues->GetValue(propKey, &propVal)), 
                  NS_ERROR_FAILURE);
   *retval = sbPropertyVariant::New(propVal);
   if (!*retval)
@@ -686,14 +687,15 @@ nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
   return NS_OK;
 }
 
-nsresult sbWPDDevice::GetProperty(IPortableDeviceProperties * properties,
+nsresult sbWPDDevice::GetProperty(const nsAString &objectID,
+                                  IPortableDeviceProperties * properties,
                                   nsAString const & key,
                                   nsIVariant ** value)
 {
   PROPERTYKEY propKey;
   nsresult rv = PropertyKeyFromString(key, &propKey);
   NS_ENSURE_SUCCESS(rv, rv);
-  return GetProperty(properties, propKey, value);
+  return GetProperty(objectID, properties, propKey, value);
 }
 
 nsresult sbWPDDevice::CreatePlaylist(nsAString const &aName,
@@ -1224,8 +1226,8 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
     nsRefPtr<IPortableDeviceContent> content;
     if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))) && content) {
       sbWPDObjectIDFromPUID(content,
-                         mediaID,
-                         result);
+                            mediaID,
+                            result);
     }
   }
   return result;
@@ -1697,19 +1699,29 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
 
   LPWSTR newObjectID = NULL;
   hr = portableDataStream->GetObjectID(&newObjectID);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_UNEXPECTED);
+
+  nsString objectID(newObjectID);
+  ::CoTaskMemFree(newObjectID);
+
+  nsRefPtr<IPortableDeviceProperties> objectProps;
+  hr = content->Properties(getter_AddRefs(objectProps));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<nsIVariant> objectPersistentID;
+  rv = GetProperty(objectID, 
+                   objectProps, 
+                   WPD_OBJECT_PERSISTENT_UNIQUE_ID, 
+                   getter_AddRefs(objectPersistentID));
+  NS_ENSURE_SUCCESS(rv, rv);
   
-  if (SUCCEEDED(hr))
-  {
-    GUID puid;
-    if (SUCCEEDED(properties->GetGuidValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &puid))) {
-      WCHAR buffer[48];
-      StringFromGUID2(puid,
-                      buffer,
-                      sizeof(buffer));
-      item->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, nsString(buffer));
-    }
-    ::CoTaskMemFree(newObjectID);
-  }
+  nsString strObjectPersistentID;
+  rv = objectPersistentID->GetAsAString(strObjectPersistentID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = item->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, 
+                         strObjectPersistentID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

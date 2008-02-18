@@ -211,7 +211,10 @@ public:
   nsresult SetPropertyFromDevice(PROPERTYKEY const & deviceProperty, nsAString const & propKey)
   {
     nsCOMPtr<nsIVariant> var;
-    nsresult rv = sbWPDDevice::GetProperty(mDeviceProperties, deviceProperty, getter_AddRefs(var));
+    nsresult rv = sbWPDDevice::GetProperty(nsString(WPD_DEVICE_OBJECT_ID), 
+                                           mDeviceProperties, 
+                                           deviceProperty, 
+                                           getter_AddRefs(var));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mBag->SetProperty(nsString(propKey), var);
     NS_ENSURE_SUCCESS(rv, rv);

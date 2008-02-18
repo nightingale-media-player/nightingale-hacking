@@ -123,7 +123,8 @@ nsresult sbWPDPropertyAdapter::GetPropertyString(PROPERTYKEY const & key,
                                                  nsIVariant ** var)
 {
   NS_ENSURE_TRUE(mDeviceProperties, NS_ERROR_NULL_POINTER);
-  return sbWPDDevice::GetProperty(mDeviceProperties,
+  return sbWPDDevice::GetProperty(nsString(WPD_DEVICE_OBJECT_ID),
+                                  mDeviceProperties,
                                   key,
                                   var);
 }

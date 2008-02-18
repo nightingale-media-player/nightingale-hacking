@@ -114,7 +114,8 @@ public:
   /**
    * Returns the property on the device
    */
-  static nsresult GetProperty(IPortableDeviceProperties * properties,
+  static nsresult GetProperty(const nsAString &objectID,
+                              IPortableDeviceProperties * properties,
                               PROPERTYKEY const & key,
                               nsIVariant ** value);
   /**
@@ -122,7 +123,8 @@ public:
    * uuid format wrapped by braces followed by a space 
    * example: {F29F85E0-4FF9-1068-AB91-08002B27B3D9} 2
    */
-  static nsresult GetProperty(IPortableDeviceProperties * properties,
+  static nsresult GetProperty(const nsAString &objectID,
+                              IPortableDeviceProperties * properties,
                               nsAString const & key,
                               nsIVariant ** value);
   /**
