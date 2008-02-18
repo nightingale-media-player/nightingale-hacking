@@ -35,7 +35,7 @@
 #include "TaglibChannelFileIOManager.h"
 #include "SeekableChannel.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataHandlerTaglib, FactoryInit)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataHandlerTaglib, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTagLibChannelFileIOManager, FactoryInit)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSeekableChannel)
 
@@ -63,4 +63,7 @@ static nsModuleComponentInfo componentInfo[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMetadataHandlerTaglibComponent, componentInfo)
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataHandlerTaglibComponent,
+                                   componentInfo,
+                                   sbMetadataHandlerTaglib::ModuleConstructor,
+                                   sbMetadataHandlerTaglib::ModuleDestructor)

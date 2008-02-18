@@ -154,6 +154,8 @@ private:
   sbLocalDatabaseLibrary* mLibrary;
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
+
+  PRLock* mCachePropertiesLock;
 };
 
 class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag

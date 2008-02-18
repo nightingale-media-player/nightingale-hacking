@@ -94,6 +94,7 @@
 #include <tfile.h>
 #include <xiphcomment.h>
 
+#include <nsAutoLock.h>
 
 /* *****************************************************************************
  *
@@ -157,13 +158,13 @@ private:
     nsCOMPtr<nsICrashReporter>  mpCrashReporter;
 #endif
 
+    static PRLock* mLock;
 
     /* Inherited interfaces. */
 public:
     NS_DECL_ISUPPORTS
     NS_DECL_SBIMETADATAHANDLER
     NS_DECL_SBISEEKABLECHANNELLISTENER
-
 
     /*
      * Public taglib metadata handler services.
@@ -173,7 +174,10 @@ public:
 
     virtual ~sbMetadataHandlerTaglib();
 
-    nsresult FactoryInit();
+    nsresult Init();
+
+    static nsresult ModuleConstructor(nsIModule* aSelf);
+    static void ModuleDestructor(nsIModule* aSelf);
 
     /* nsICharsetDetectionObserver */
     NS_IMETHOD Notify(const char* aCharset, nsDetectionConfident aConf);

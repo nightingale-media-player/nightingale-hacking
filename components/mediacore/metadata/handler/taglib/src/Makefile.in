@@ -45,6 +45,8 @@ CPP_SRCS = MetadataHandlerTaglib.cpp \
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
                $(topsrcdir)/components/mediacore/metadata/manager/src \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
                $(srcdir) \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/crashreporter \
@@ -66,10 +68,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             unicharutil_external_s \
                             xpcom \
                             xpcomglue_s \
+                            plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+                              $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
 
 ifeq (macosx,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += tag \

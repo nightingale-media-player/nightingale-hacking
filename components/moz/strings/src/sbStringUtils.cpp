@@ -156,3 +156,57 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
       aString.Replace(index, 1, aNewChar);
   }
 }
+
+PRBool IsUTF8(const nsACString& aString)
+{
+  if (aString.IsEmpty()) {
+    return PR_TRUE;
+  }
+
+  // number of bytes following given this prefix byte
+  // -1 = invalid prefix, is a continuation; -2 = invalid byte anywhere
+  const PRInt32 prefix_table[] = {
+  // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 0
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 1
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 2
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 3
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 4
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 5
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 6
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 7
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 8
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 9
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // A
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // B
+     1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, // C
+     1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, // D
+     2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2, // E
+     3,  3,  3,  3,  3, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2  // F
+  };
+
+  PRInt32 bytesRemaining = 0; // for multi-byte sequences
+  const nsACString::char_type *begin, *end;
+  aString.BeginReading(&begin, &end);
+
+  for (; begin != end; ++begin) {
+    PRInt32 next = prefix_table[*begin];
+    if (bytesRemaining) {
+      if (next != -1) {
+        // expected more bytes but didn't get a continuation
+        return PR_FALSE;
+      }
+      --bytesRemaining;
+      continue;
+    }
+
+    // expecting the next byte to be a lead byte
+    if (next < 0) {
+      // but isn't
+      return PR_FALSE;
+    }
+
+    bytesRemaining = next;
+  }
+  return PR_TRUE;
+}

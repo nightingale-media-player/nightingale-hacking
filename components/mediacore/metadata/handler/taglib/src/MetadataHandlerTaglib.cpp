@@ -49,6 +49,10 @@
 /* Local module imports. */
 #include "TaglibChannelFileIO.h"
 
+/* Songbird utility classes */
+#include "sbStringUtils.h"
+#include <sbProxiedComponentManager.h>
+
 /* Mozilla imports. */
 #include <necko/nsIURI.h>
 #include <nsComponentManagerUtils.h>
@@ -93,6 +97,8 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerTaglib");
 
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
+
+PRLock* sbMetadataHandlerTaglib::mLock = nsnull;
 
 /*******************************************************************************
  *
@@ -226,6 +232,11 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     nsAutoString                filePath;
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
+
+    // TagLib is not thread safe -- its string classes like to share data
+    // between threads.  mLock is static so this lock will serialize the
+    // calls to this method for all instances of this class.
+    nsAutoLock lock(mLock);
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
@@ -576,7 +587,7 @@ sbMetadataHandlerTaglib::~sbMetadataHandlerTaglib()
  * component.
  */
 
-nsresult sbMetadataHandlerTaglib::FactoryInit()
+nsresult sbMetadataHandlerTaglib::Init()
 {
     nsresult                    rv;
 
@@ -588,6 +599,23 @@ nsresult sbMetadataHandlerTaglib::FactoryInit()
     return (NS_OK);
 }
 
+/* static */
+nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
+{
+  sbMetadataHandlerTaglib::mLock =
+    nsAutoLock::NewLock("sbMetadataHandlerTaglib::mLock");
+  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::mLock, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+/* static */
+void sbMetadataHandlerTaglib::ModuleDestructor(nsIModule* aSelf)
+{
+  if (sbMetadataHandlerTaglib::mLock) {
+    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::mLock);
+  }
+}
 
 /*******************************************************************************
  *
@@ -1179,21 +1207,23 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    nsCOMPtr<nsIUTF8ConverterService> utf8Service =
-        do_GetService("@mozilla.org/intl/utf8converterservice;1");
-    if (utf8Service) {
-        // look at the raw bytes
-        data = tagString.toCString(); // raw data
-
-        nsCString dataUTF8;
-        rv = utf8Service->ConvertStringToUTF8(nsDependentCString(data, tagString.size()),
-                                              "utf-8",
-                                              PR_FALSE,
-                                              dataUTF8);
-        if (NS_SUCCEEDED(rv)) {
-            // this was utf8
-            _retval.AssignLiteral("utf-8");
-            return;
+    if (IsUTF8(nsDependentCString(data, tagString.size()))) {
+        nsCOMPtr<nsIUTF8ConverterService> utf8Service =
+            do_ProxiedGetService("@mozilla.org/intl/utf8converterservice;1");
+        if (utf8Service) {
+            // look at the raw bytes
+            data = tagString.toCString(); // raw data
+    
+            nsCString dataUTF8;
+            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(data, tagString.size()),
+                                                  "utf-8",
+                                                  PR_FALSE,
+                                                  dataUTF8);
+            if (NS_SUCCEEDED(rv)) {
+                // this was utf8
+                _retval.AssignLiteral("utf-8");
+                return;
+            }
         }
     }
 
@@ -1303,7 +1333,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 
     // convert via Mozilla
     nsCOMPtr<nsIUTF8ConverterService> utf8Service =
-        do_GetService("@mozilla.org/intl/utf8converterservice;1");
+        do_ProxiedGetService("@mozilla.org/intl/utf8converterservice;1");
     if (utf8Service) {
         nsDependentCString raw(data, aString.size());
         nsCString converted;

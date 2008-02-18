@@ -52,5 +52,16 @@ nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
 void nsString_ReplaceChar(/* inout */ nsAString& aString,
                           const nsAString& aOldChars,
                           const PRUnichar aNewChar);
+
+/**
+ * Return true if the given string is possibly UTF8
+ * (i.e. it errs on the side of returning true)
+ *
+ * Note that it assumes all 7-bit encodings are utf8, and doesn't check for
+ * invalid characters (e.g. 0xFFFE, surrogates).  This is a weaker check than
+ * the nsReadableUtils version.
+ */
+PRBool IsUTF8(const nsACString& aString);
+
 #endif /* __SBSTRINGUTILS_H__ */
 
