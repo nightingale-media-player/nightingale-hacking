@@ -1304,7 +1304,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
     
     if (parentLibraryNode) {
       if (parentLibraryNode.isContainer && 
-          parentLibraryNode.parentNode == this._servicePane.root ) {
+          parentLibraryNode.parentNode.id == "SB:Root") {
         this._insertAfterLastOfSameType(aNode, parentLibraryNode);
       } else {
         this._insertAfterLastOfSameType(aNode, parentLibraryNode.parentNode);
