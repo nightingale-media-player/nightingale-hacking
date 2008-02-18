@@ -1826,7 +1826,11 @@ sbLocalDatabaseSmartMediaList::MakeTempTableName(nsAString& aName)
   rv = uuidGen->GenerateUUIDInPlace(&id);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString guid(NS_ConvertUTF8toUTF16(id.ToString()));
+  char guidChars[NSID_LENGTH];
+  id.ToProvidedString(guidChars);
+
+  nsString guid(NS_ConvertASCIItoUTF16(nsDependentCString(guidChars,
+                                                          NSID_LENGTH - 1)));
 
   nsAutoString stripped;
 

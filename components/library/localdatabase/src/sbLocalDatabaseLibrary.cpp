@@ -927,8 +927,11 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
   rv = uuidGen->GenerateUUIDInPlace(&id);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString guid(NS_ConvertUTF8toUTF16(id.ToString()));
-  guid.Assign(Substring(guid, 1, guid.Length() - 2));
+  char guidChars[NSID_LENGTH];
+  id.ToProvidedString(guidChars);
+
+  nsString guid(NS_ConvertASCIItoUTF16(nsDependentCString(guidChars + 1,
+                                                          NSID_LENGTH - 3)));
 
   // ToString adds curly braces to the GUID which we don't want.
   rv = aQuery->BindStringParameter(0, guid);

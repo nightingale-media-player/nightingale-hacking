@@ -156,9 +156,13 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
   nsID id;
   rv = uuidGen->GenerateUUIDInPlace(&id);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCAutoString guidUtf8(id.ToString());
-  nsAutoString fullGuid;
-  fullGuid = NS_ConvertUTF8toUTF16(guidUtf8);
+
+  char guidChars[NSID_LENGTH];
+  id.ToProvidedString(guidChars);
+
+  nsString fullGuid(NS_ConvertASCIItoUTF16(nsDependentCString(guidChars,
+                                                              NSID_LENGTH - 1)));
+
   nsAutoString tableName = sbMetadataJob::DATABASE_GUID(); // Can't start a table name with a number
   tableName.AppendLiteral( "_" );
   tableName += Substring(fullGuid, 1, 8); // Or have dashes.  :(

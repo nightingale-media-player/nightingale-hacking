@@ -451,11 +451,11 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   rv = uuidGen->GenerateUUIDInPlace(&id);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCAutoString guidUtf8(id.ToString());
-  nsAutoString fullGuid;
-  fullGuid = NS_ConvertUTF8toUTF16(guidUtf8);
+  char guidChars[NSID_LENGTH];
+  id.ToProvidedString(guidChars);
 
-  const nsAString& guid = Substring(fullGuid, 1, fullGuid.Length() - 2);
+  nsString guid(NS_ConvertASCIItoUTF16(nsDependentCString(guidChars + 1,
+                                                          NSID_LENGTH - 3)));
 
   // Insert the guid into the database.
   nsCOMPtr<sbISQLInsertBuilder> insert =
