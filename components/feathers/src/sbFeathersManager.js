@@ -55,32 +55,31 @@ const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
 const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
 
-
-
+Components.utils.import("resource://app/jsmodules/RDFHelper.jsm");
 
 /**
  * /class ArrayEnumerator
  * /brief Converts a js array into an nsISimpleEnumerator
  */
-function ArrayEnumerator(array) 
+function ArrayEnumerator(array)
 {
   this.data = array;
 }
 ArrayEnumerator.prototype = {
 
   index: 0,
-  
+
   getNext: function() {
     return this.data[this.index++];
   },
-  
+
   hasMoreElements: function() {
     if (this.index < this.data.length)
       return true;
     else
       return false;
   },
-  
+
   QueryInterface: function(iid)
   {
     if (!iid.equals(Components.interfaces.nsISimpleEnumerator) &&
@@ -90,39 +89,6 @@ ArrayEnumerator.prototype = {
   }
 }
 
-
-
-/**
- * Debug helper that serializes an RDF datasource to the console
- */
-function dumpDS(prefix, ds) {
-  var outputStream = {
-    data: "",
-    close : function(){},
-    flush : function(){},
-    write : function (buffer,count){
-      this.data += buffer;
-      return count;
-    },
-    writeFrom : function (stream,count){},
-    isNonBlocking: false
-  }
-
-  var serializer = Components.classes["@mozilla.org/rdf/xml-serializer;1"]
-                           .createInstance(Components.interfaces.nsIRDFXMLSerializer);
-  serializer.init(ds);
-
-  serializer.QueryInterface(Components.interfaces.nsIRDFXMLSource);
-  serializer.Serialize(outputStream);
-  
-  outputStream.data.split('\n').forEach( function(line) {
-    dump(prefix + line + "\n");
-  });
-}
-
-
-
-
 /**
  * sbISkinDescription
  */
@@ -131,9 +97,8 @@ SkinDescription.prototype = {
   // TODO Expand?
   requiredProperties: [ "name", "internalName" ],
   optionalProperties: [ ],
-  
   QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbISkinDescription)) 
+    if (!iid.equals(Components.interfaces.sbISkinDescription))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -147,14 +112,12 @@ LayoutDescription.prototype = {
   // TODO Expand?
   requiredProperties: [ "name", "url" ],
   optionalProperties: [ ],
-  
   QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbILayoutDescription)) 
+    if (!iid.equals(Components.interfaces.sbILayoutDescription))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
 };
-
 
 /**
  * Static function that verifies the contents of the given description
@@ -180,101 +143,64 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 }
 
 
-
-
-
-
 /**
  * /class AddonMetadataReader
  * Responsible for reading addon metadata and performing 
  * registration with FeathersManager
  */
-function AddonMetadataReader() {
-  //debug("AddonMetadataReader: ctor\n");
-  this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);
-  this._datasource = this._RDF.GetDataSourceBlocking("rdf:addon-metadata");
-  this._feathersManager = Components.classes[CONTRACTID].getService(IID);
-    
-  this._resources = {
-    root: this._RDF.GetResource(RDFURI_ADDON_ROOT),
-    // Helper to convert a string array into 
-    // RDF resources in this object
-    addSongbirdResources: function(list){
-      for (var i = 0; i < list.length; i++) {
-        this[list[i]] = this._RDF.GetResource(PREFIX_NS_SONGBIRD + list[i]);
-      }
-    },
-    _RDF: this._RDF
-  };
-  
-  // Make RDF resources for all properties expected
-  // in the feathers portion of an install.rdf      
-  this._resources.addSongbirdResources(SkinDescription.prototype.requiredProperties);
-  this._resources.addSongbirdResources(SkinDescription.prototype.optionalProperties);
-  this._resources.addSongbirdResources(LayoutDescription.prototype.requiredProperties);
-  this._resources.addSongbirdResources(LayoutDescription.prototype.optionalProperties);
-  this._resources.addSongbirdResources(
-     [ "compatibleSkin", 
-       "compatibleLayout", 
-       "showChrome",
-       "feathers",
-       "skin",
-       "layout",
-       "layoutURL",
-       "onTop" ] );
-}
+function AddonMetadataReader() {};
+
 AddonMetadataReader.prototype = {
-
-  _RDF: null,
-  
-  _feathersManager: null,
-
-  // Addon metadata rdf datasource
-  _datasource: null,
-
-  // Hash of addon metadata RDF resources
-  _resources: null,
+  _manager: null,
 
   /**
    * Populate FeathersManager using addon metadata
    */
-  loadFeathers: function loadFeathers() {
-    //debug("AddonMetadataReader: loadFeathers\n");
+  loadMetadata: function(manager) {
+    //debug("AddonMetadataReader: loadMetadata\n");
+    this._manager = manager;
     
-    // Get addon list
-    var containerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"]
-                           .getService(Components.interfaces.nsIRDFContainerUtils);
-    var container = containerUtils.MakeSeq(this._datasource, this._resources.root);
-    var addons = container.GetElements();
+    var addons = RDFHelper.help(
+      "rdf:addon-metadata",
+      "urn:songbird:addon:root",
+      RDFHelper.DEFAULT_RDF_NAMESPACES
+    );
     
-    // Search all addons for feathers metadata
-    while (addons.hasMoreElements()) {
-      var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-      //debug("AddonMetadataReader.loadFeathers: - processing " + addon.Value + "\n");
-      try {
-        if (this._datasource.hasArcOut(addon, this._resources.feathers)) {
-          var feathersTarget = this._datasource.GetTarget(addon, this._resources.feathers, true)
-                                   .QueryInterface(Components.interfaces.nsIRDFResource);
-
-          // Process all skin metadata
-          var items = this._datasource.GetTargets(feathersTarget, this._resources.skin, true)
-          while (items.hasMoreElements()) {
-            var item = items.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-            this._processSkin(addon, item);
+    for (var i = 0; i < addons.length; i++) {
+      // first a little workaround to for backwards compatibility 
+      // with the now obsolete <feathers> element
+      // TODO: remove this when we stop supporting 0.4 feathers
+      var feathersHub = addons[i];
+      if (feathersHub.feathers) {
+        Components.utils.reportError("Feathers Metadata Reader: The <feathers/> element in " +
+                       "install.rdf is deprecated and will go away in a future version.");
+        feathersHub = feathersHub.feathers[0];
+      }
+      
+      if (feathersHub.skin) {
+        var skins = feathersHub.skin;
+        for (var j = 0; j < skins.length; j++) {
+          try {
+            this._registerSkin(addons[i], skins[j]);
           }
-
-          // Process all layout metadata
-          var items = this._datasource.GetTargets(feathersTarget, this._resources.layout, true)
-          while (items.hasMoreElements()) {
-            var item = items.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-            this._processLayout(addon, item);
+          catch (e) {
+            this._reportErrors("", [  "An error occurred while processing " +
+                  "extension " + addons[i].Value + ".  Exception: " + e  ]);
           }
         }
-
-      } catch (e) {
-        this._reportErrors("", [  "An error occurred while processing " +
-                    "extension " + addon.Value + ".  Exception: " + e  ]);
+      }
+      
+      if (feathersHub.layout) {
+        var layouts = feathersHub.layout;
+        for (var j = 0; j < layouts.length; j++) {
+          try {
+            this._registerLayout(addons[i], layouts[j]);
+          }
+          catch (e) {
+            this._reportErrors("", [  "An error occurred while processing " +
+                  "extension " + addons[i].Value + ".  Exception: " + e  ]);
+          }
+        }
       }
     }
   },
@@ -283,19 +209,27 @@ AddonMetadataReader.prototype = {
   /**
    * Extract skin metadata
    */
-  _processSkin: function _processSkin(addon, skin) {
+  _registerSkin: function _registerSkin(addon, skin) {
     var description = new SkinDescription();
     
     // Array of error messages
     var errorList = [];
     
-    // Fill the description object
-    this._populateDescription(skin, description, errorList);
-    
-    try {
-      SkinDescription.verify(description);
-    } catch (e) {
-      errorList.push(e.toString());
+    // NB: there is a "verify" function as well, 
+    //     but here we build and verify at the same time
+    for each (var prop in SkinDescription.prototype.requiredProperties) {
+      if(skin[prop][0]) {
+        description[prop] = skin[prop][0];
+      }
+      else {
+        errorList.push("Missing required <"+prop+"> element.");
+      }
+    }
+
+    for each (var prop in SkinDescription.prototype.optionalProperties) {
+      if(layout[prop][0]) {
+        description[prop] = layout[prop][0];
+      }
     }
     
     // If errors were encountered, then do not submit 
@@ -308,52 +242,72 @@ AddonMetadataReader.prototype = {
     }
     
     // Submit description
-    this._feathersManager.registerSkin(description);
+    this._manager.registerSkin(description);
     //debug("AddonMetadataReader: registered skin " + description.internalName
     //        + " from addon " + addon.Value + " \n");
-    
-    // Get compatibility information
-    var identifiers, showChromeInstructions, onTopInstructions;
-    [identifiers, showChromeInstructions, onTopInstructions] =
-        this._getCompatibility(addon, skin, "compatibleLayout", "layoutURL", errorList);
 
-    // Report errors
-    if (errorList.length > 0) {
-      this._reportErrors(
-          "Error finding compatibility information for skin " +
-          description.name + " in the install.rdf " +
-          "of extension " + addon.Value + ". Message: ", errorList);
-    }
-     
-    // Assert compatibility    
-    for (var i = 0; i < identifiers.length; i++) {
-      this._feathersManager.assertCompatibility(
-               identifiers[i],
-               description.internalName, 
-               showChromeInstructions[i],
-               onTopInstructions[i]);
+    if (skin.compatibleLayout) {
+      var compatibleLayouts = skin.compatibleLayout;
+      for (var i = 0; i < compatibleLayouts.length; i++) {
+        var compatibleLayout = compatibleLayouts[i];
+
+        var layoutUrl;
+        // TODO: FIXME! this is inconsistent with other capitalizations!!
+        if(compatibleLayout.layoutURL && compatibleLayout.layoutURL[0].length != 0) {
+          layoutUrl  = compatibleLayout.layoutURL[0];
+        }
+        else {
+          errorList.push("layoutUrl was missing or incorrect.");
+          continue;
+        }
+  
+        // these two work fine for undefined values
+        var showChrome = compatibleLayout.showChrome[0] == "true";
+        var onTop      = compatibleLayout.onTop[0]      == "true";
+  
+        this._manager.assertCompatibility(
+          layoutUrl, 
+          description.internalName, 
+          showChrome, 
+          onTop
+        );
+      }
+      
+      if (errorList.length > 0) {
+        this._reportErrors(
+            "Ignoring a <compatibleLayout> in the install.rdf of extension " +
+            addon.Value + ". Message: ", errorList);
+        return;
+      }
     }
   },
-
 
   /**
    * Extract layout metadata
    */
-  _processLayout: function _processLayout(addon, layout) {
+  _registerLayout: function _processLayout(addon, layout) {
     var description = new LayoutDescription();
-    
+
     // Array of error messages
     var errorList = [];
     
-    // Fill the description object
-    this._populateDescription(layout, description, errorList);
-    
-    try {
-      LayoutDescription.verify(description);
-    } catch (e) {
-      errorList.push(e.toString());
+    // NB: there is a "verify" function as well, 
+    //     but here we build and verify at the same time
+    for each (var prop in LayoutDescription.prototype.requiredProperties) {
+      if(layout[prop][0]) {
+        description[prop] = layout[prop][0];
+      }
+      else {
+        errorList.push("Missing required <"+prop+"> element.");
+      }
     }
-    
+
+    for each (var prop in LayoutDescription.prototype.optionalProperties) {
+      if(layout[prop][0]) {
+        description[prop] = layout[prop][0];
+      }
+    }
+
     // If errors were encountered, then do not submit 
     // to the Feathers Manager
     if (errorList.length > 0) {
@@ -362,16 +316,39 @@ AddonMetadataReader.prototype = {
           addon.Value + ". Message: ", errorList);
       return;
     }
-    
+
     // Submit description
-    this._feathersManager.registerLayout(description);
+    this._manager.registerLayout(description);
     //debug("AddonMetadataReader: registered layout " + description.name +
     //     " from addon " + addon.Value + "\n");    
-    
-    // Get compatibility information
-    var identifiers, showChromeInstructions, onTopInstructions;
-    [identifiers, showChromeInstructions, onTopInstructions] =
-        this._getCompatibility(addon, layout, "compatibleSkin", "internalName", errorList);
+
+    // TODO: should we error out here if there are errors already?
+    if (layout.compatibleSkin) {
+      var compatibleSkins = layout.compatibleSkin;
+      for (var i = 0; i < compatibleSkins.length; i++) {
+        var compatibleSkin = compatibleSkins[i];
+  
+        var internalName;
+        if(compatibleSkin.internalName && compatibleSkin.internalName[0].length != 0) {
+          internalName  = compatibleSkin.internalName[0];
+        }
+        else {
+          errorList.push("internalName was missing or incorrect.");
+          continue;
+        }
+  
+        // these two work fine for undefined values
+        var showChrome = compatibleSkin.showChrome[0] == "true";
+        var onTop      = compatibleSkin.onTop[0] == "true";
+  
+        this._manager.assertCompatibility(
+          description.url, 
+          internalName, 
+          showChrome, 
+          onTop
+        );
+      }
+    }
 
     // Report errors
     if (errorList.length > 0) {
@@ -380,161 +357,7 @@ AddonMetadataReader.prototype = {
           description.name + " in the install.rdf " +
           "of extension " + addon.Value + ". Message: ", errorList);
     }
-    
-    // Assert compatibility      
-    for (var i = 0; i < identifiers.length; i++) {
-      this._feathersManager.assertCompatibility(
-               description.url,
-               identifiers[i], 
-               showChromeInstructions[i],
-               onTopInstructions[i]);
-    }
-  
   },
-
-
-
-  /**
-   * \brief Populate a description object by looking up requiredProperties and
-   *        optionalProperties in a the given rdf source.
-   *
-   * \param source RDF resource from which to obtain property values
-   * \param description Object with requiredProperties and optionalProperties arrays
-   * \param errorList An array to which error messages should be added
-   */
-  _populateDescription: function _populateDescription(source, description, errorList) {
-
-    for (var i = 0; i < description.requiredProperties.length; i++) {
-      this._requireProperty(source, description, 
-                description.requiredProperties[i], errorList);
-    }
-    for (var i = 0; i < description.optionalProperties.length; i++) {
-      this._copyProperty(source, description, 
-                description.optionalProperties[i], errorList);
-    }
-  },
-  
-  
-  /**
-   * \brief Attempts to copy a property from an RDFResource into a
-   *        container object and reports an error on failure.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   * \param errorList An array to which error messages should be added
-   */
-  _requireProperty: function _requireProperty(source, description, property, errorList) {
-    this._copyProperty(source, description, property);
-    if (description[property] == undefined) 
-    {
-      errorList.push(
-        property + " is a required property."
-      );
-    }
-  },
- 
-  /**
-   * \brief Copies a property from an RDFResource into a container object.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   */
-  _copyProperty: function _copyProperty(source, description, property) {
-    description[property] = this._getProperty(source, property);
-  },
-
-
-  /**
-   * \brief Copies a property from an RDFResource into a container object.
-   *
-   * \param source RDF resource from which to obtain the value
-   * \param description Container object to receive the value
-   * \param property String property to be copied
-   */  
-  _getProperty: function _getProperty(source, property) {
-    //debug("AddonMetadataReader._getProperty " + source.Value + " " + property + "\n");
-    var target = this._datasource.GetTarget(source, this._resources[property], true);
-    if ( target instanceof Components.interfaces.nsIRDFInt
-         || target instanceof Components.interfaces.nsIRDFLiteral 
-         || target instanceof Components.interfaces.nsIRDFResource )
-    {
-      return target.Value;
-    }
-    return undefined;
-  },
-
-
-  /**
-   * \brief Extracts compatibility information for a feathers item into 
-   *        an array of identifiers and matching array of booleans 
-   *        indicating whether chrome should be shown
-   *
-   * \param addon RDF resource from the addon description
-   * \param source RDF resource for the feathers item
-   * \param resourceName Container object to receive the value
-   * \param idProperty String property to be copied
-   * \param errorList An array to which error messages should be added
-   * \return [array of identifiers, array of showChrome bools]
-   */
-  _getCompatibility: function _getCompatibility(addon, source, resourceName, idProperty, errorList) {
-    // List of internalName or layoutURL identifiers
-    var identifiers = [];
-    // Matching list of showChrome hints
-    var showChromeInstructions = [];
-    // Matching list of onTop hints
-    var onTopInstructions = [];
-    
-    // Look at all compatibility rules of type resourceName
-    var targets = this._datasource.GetTargets(source, this._resources[resourceName], true);
-    while (targets.hasMoreElements()) {
-      var target = targets.getNext();
-      
-      // Target must be a resource / contain a description
-      if (! (target instanceof Components.interfaces.nsIRDFResource)) {
-        
-        errorList.push("The install.rdf for " + addon.Value 
-              + " is providing an incomplete " + resourceName 
-              + " section.");
-              
-        // Skip this section
-        continue;        
-      }
-      target = target.QueryInterface(Components.interfaces.nsIRDFResource);
-      
-      // Get the identifier for the compatible feather item
-      var id = this._getProperty(target, idProperty);
-      
-      // Must provide an identifier
-      if (id == undefined) {
-        errorList.push("Extension " + addon.Value 
-              + " must provide " + idProperty 
-              + " in " + resourceName + " descriptions");
-              
-        // Skip this rule since it is incomplete
-        continue;
-      }
-      
-      // Should chrome be shown with this id?
-      var showChrome = this._getProperty(target, "showChrome") == "true";
-
-      // Should popup=yes be used with this id?
-      var onTop = this._getProperty(target, "onTop") == "true";
-      
-      // Store compatibility rule
-      identifiers.push(id);
-      showChromeInstructions.push(showChrome);
-      onTopInstructions.push(onTop);
-    }
-    
-    //debug("AddonMetadataReader: found " + identifiers.length + " " 
-    //      + resourceName + " rule(s) for addon " 
-    //      + addon.Value + "\n");
-
-    return [identifiers, showChromeInstructions, onTopInstructions];
-  },
-  
   
   /**
    * \brief Dump a list of errors to the console and jsconsole
@@ -546,9 +369,8 @@ AddonMetadataReader.prototype = {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
          getService(Components.interfaces.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
-      consoleService.logStringMessage("Feathers Metadata Reader: " 
+      Components.utils.reportError("Feathers Metadata Reader: " 
                                        + contextMessage + errorList[i]);
-      dump("FeathersMetadataReader: " + contextMessage + errorList[i] + "\n");
     }
   }
 }
@@ -662,7 +484,7 @@ FeathersManager.prototype = {
     
     // Load the feathers metadata
     var metadataReader = new AddonMetadataReader();
-    metadataReader.loadFeathers();
+    metadataReader.loadMetadata(this);
     
     // If no layout url has been specified, set to default
     if (this._layoutDataRemote.stringValue == "") {
@@ -792,6 +614,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   registerSkin: function registerSkin(skinDesc) {
+  
     SkinDescription.verify(skinDesc);
     
     if (this._skins[skinDesc.internalName] == null) {
@@ -830,7 +653,7 @@ FeathersManager.prototype = {
    */  
   registerLayout: function registerLayout(layoutDesc) {
     LayoutDescription.verify(layoutDesc);
-   
+
     if (this._layouts[layoutDesc.url] == null) {
       this._layoutCount++;
     }
@@ -1231,8 +1054,8 @@ FeathersManager.prototype = {
       prefs.setCharPref("toolkit.defaultChromeFeatures",
               defaultChromeFeatures.replace(titlebarRegEx, replacement));
     } catch (e) {
-      dump("\nFeathersManager._setChromeEnabled: Error setting defaultChromeFeatures pref! " +
-            e.toString + "\n");
+      Components.utils.reportError("FeathersManager._setChromeEnabled: Error setting " + 
+                                   "defaultChromeFeatures pref! " + e.toString);
     }
   },      
       
