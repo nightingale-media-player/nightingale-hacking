@@ -202,7 +202,7 @@ function doLoad()
     if (!path) {
       path = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"].
              getService(Ci.sbIDownloadDeviceHelper).
-             defaultMusicFolder.path;
+             getDefaultMusicFolder().path;
     }
     destURLTextbox.value = path;
   }
@@ -216,7 +216,7 @@ function doOK()
   // Make sure the folder is valid
   var folder = document.getElementById("subscribe_folder_path").value;
   var localFile;
-//  if (folder != "") // Uncomment this when the download device won't puke on blank.
+  if (folder != "")
   {
     var folderIsValid = false;
 

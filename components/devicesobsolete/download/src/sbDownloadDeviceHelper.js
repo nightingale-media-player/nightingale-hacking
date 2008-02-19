@@ -113,7 +113,7 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
     item = items.queryElementAt(0, Ci.sbIMediaItem);
   }
 
-  this._setDownloadDestination([item], downloadFileURL);
+  this._setDownloadDestinationIfNotSet([item], downloadFileURL);
   this._checkAndRemoveExistingItem(item);
   this.getDownloadMediaList().add(item);
 }
@@ -152,7 +152,7 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
     }
   }
 
-  this._setDownloadDestination(items, downloadFileURL);
+  this._setDownloadDestinationIfNotSet(items, downloadFileURL);
   this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
@@ -191,7 +191,7 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
     }
   }
 
-  this._setDownloadDestination(items, downloadFileURL);
+  this._setDownloadDestinationIfNotSet(items, downloadFileURL);
   this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
@@ -375,13 +375,15 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
   aPropertyArrayArray.appendElement(dest, false);
 }
 
-sbDownloadDeviceHelper.prototype._setDownloadDestination =
-function sbDownloadDeviceHelper__setDownloadDestination(aItems,
-                                                        aDownloadPath)
+sbDownloadDeviceHelper.prototype._setDownloadDestinationIfNotSet =
+function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(aItems,
+                                                                aDownloadPath)
 {
   for each (var item in aItems) {
     try {
-      item.setProperty(SBProperties.destination, aDownloadPath);
+      var curDestination = item.getProperty(SBProperties.destination);
+      if (!curDestination)
+        item.setProperty(SBProperties.destination, aDownloadPath);
     }
     catch (e) {
       // We're not allowed to set the download destination on remote media items
