@@ -366,22 +366,6 @@ nsString ConvertTonsString(T val)
   return nsString(buffer.str().c_str());
 }
 
-template <class T>
-nsString ConvertTonsString(__int64 val)
-{
-  PRUinchar buffer[128];
-  _snwprintf_s(buffer, sizeof(buffer), 1, "%I64i", val);
-  return nsString(buffer);
-}
-
-template <class T>
-nsString ConvertTonsString(unsigned __int64 val)
-{
-  PRUinchar buffer[128];
-  _snwprintf_s(buffer, sizeof(buffer), 1, "%I64u", val);
-  return nsString(buffer);
-}
-
 /* [noscript] AString getAsAString (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
 {
@@ -431,8 +415,7 @@ NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
     retval = ConvertTonsString(GET_VALUE(boolVal));
     break;
   case VT_ERROR:
-    retval = ConvertTonsString(GET_VALUE(scode));
-    break;
+    return SUCCEEDED(GET_VALUE(scode)) ? NS_OK : NS_ERROR_FAILURE;
   case VT_DATE:
     retval = ConvertTonsString(GET_VALUE(date));
     break;

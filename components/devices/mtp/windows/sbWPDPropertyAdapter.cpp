@@ -38,6 +38,7 @@
 #include <nsIVariant.h>
 #include <PortableDevice.h>
 #include <nsNetCID.h>
+#include "sbPropertyVariant.h"
 
 NS_IMPL_THREADSAFE_ADDREF(sbWPDPropertyAdapter)
 NS_IMPL_THREADSAFE_RELEASE(sbWPDPropertyAdapter)
@@ -55,11 +56,12 @@ sbWPDPropertyAdapter::sbWPDPropertyAdapter(sbWPDDevice * device)
 {
   nsresult rv;
   mWorkerVariant = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
-  nsString const & deviceID = device->GetDeviceID(device->PortableDevice());
+  mPortableDevice = device->PortableDevice();
+  mDeviceID = device->GetDeviceID(mPortableDevice);
   nsRefPtr<IPortableDeviceContent> content;
-  if (SUCCEEDED(device->PortableDevice()->Content(getter_AddRefs(content))))
+  if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))))
     content->Properties(getter_AddRefs(mDeviceProperties));
-  mDeviceID = device->GetDeviceID(device->PortableDevice());
+  
 }
 
 sbWPDPropertyAdapter::~sbWPDPropertyAdapter()
@@ -202,6 +204,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetIconUri(nsIURI * *aIconUri)
   // Retrieve the icon path from the device's properties, first query the length
   DWORD bytes = 0;
   DWORD type;
+  
   if (FAILED(manager->GetDeviceProperty(mDeviceID.get(),
                                         PORTABLE_DEVICE_ICON,
                                         0,
@@ -253,11 +256,168 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetEnumerator(nsISimpleEnumerator * *aEnumer
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* nsIVariant getProperty (in AString name); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name, nsIVariant **retval)
+/**
+ * Totals 64bit values for storage objects on a device
+ */
+static nsresult TotalStoragePropertyValue(IPortableDevice * device,
+                                          PROPERTYKEY const & wpdPropertyKey,
+                                          nsIVariant ** total)
 {
+  NS_ENSURE_ARG_POINTER(total);
+  nsRefPtr<IPortableDeviceContent> content;
+  if (FAILED(device->Content(getter_AddRefs(content))))
+    return NS_ERROR_FAILURE;
+  nsRefPtr<IPortableDeviceProperties> properties;
+  if (FAILED(content->Properties(getter_AddRefs(properties))))
+    return NS_ERROR_FAILURE;
+  nsRefPtr<IPortableDeviceCapabilities> capabilities;
+  if (FAILED(device->Capabilities(getter_AddRefs(capabilities))))
+    return NS_ERROR_FAILURE;
+  nsRefPtr<IPortableDevicePropVariantCollection> storageObjectIDs;
+  if (FAILED(capabilities->GetFunctionalObjects(WPD_FUNCTIONAL_CATEGORY_STORAGE,
+                                                getter_AddRefs(storageObjectIDs))))
+    return NS_ERROR_FAILURE;
+  DWORD count = 0;
+  if (FAILED(storageObjectIDs->GetCount(&count)))
+    return NS_ERROR_FAILURE;
+  PRUint64 totalCapacity = 0;
+  // Loop through the storage objects
+  for (DWORD index = 0; index < count; ++index) {
+    PROPVARIANT objectID = {0};
+    PropVariantInit(&objectID);
+    if (SUCCEEDED(storageObjectIDs->GetAt(index, &objectID)) &&
+        objectID.vt == VT_LPWSTR) {
+      nsRefPtr<nsIVariant> var;
+      PRUint64 val = 0;
+      if (NS_SUCCEEDED(sbWPDDevice::GetProperty(nsDependentString(objectID.pwszVal), 
+                                                properties,
+                                                wpdPropertyKey,
+                                                getter_AddRefs(var))) &&
+          NS_SUCCEEDED(var->GetAsUint64(&val))) {
+        totalCapacity += val;
+      }
+    }
+    PropVariantClear(&objectID);
+  }
+  nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
+  NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = propVariant->SetAsUint64(totalCapacity);
+  if (NS_SUCCEEDED(rv)) {
+    *total = propVariant.get();
+    propVariant.forget();
+  }
+  return rv;
+}
+/**
+ * Calculate the capacity for the entire device
+ */
+nsresult sbWPDGetPropertyCapacity(IPortableDevice * device, nsIVariant ** var)
+{
+  return TotalStoragePropertyValue(device, WPD_STORAGE_CAPACITY, var);
+}
+
+/**
+ * Calculate the free space for the entire device
+ */
+nsresult sbWPDGetPropertyFreeSpace(IPortableDevice * device,
+                                   nsIVariant ** var)
+{
+  return TotalStoragePropertyValue(device, 
+                                   WPD_STORAGE_FREE_SPACE_IN_BYTES,
+                                   var);
+}
+
+/**
+ * Calculate the total space used by music/audio files on the device
+ */
+nsresult sbWPDGetPropertyMusicUsedSpace(IPortableDevice * device,
+                                        nsIVariant ** var)
+{
+  // TODO: calculate real value
+  NS_ENSURE_ARG(device);
+  NS_ENSURE_ARG_POINTER(var);
+  nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
+  NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = propVariant->SetAsUint64(3000000000l);
+  if (NS_SUCCEEDED(rv)) {
+    *var = propVariant.get();
+    propVariant.forget();
+  }
+  return rv;
+}
+
+/**
+ * Calculate the total space used by video files on the device
+ */
+nsresult sbWPDGetPropertyVideoUsedSpace(IPortableDevice * device,
+                                        nsIVariant ** var)
+{
+  // TODO: calculate real value
+  NS_ENSURE_ARG(device);
+  NS_ENSURE_ARG_POINTER(var);
+  nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
+  NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = propVariant->SetAsUint64(3200000000l);
+  if (NS_SUCCEEDED(rv)) {
+    *var = propVariant.get();
+    propVariant.forget();
+  }
+  return rv;
+}
+
+/**
+ * Calculate the total space used by video files on the device
+ */
+nsresult sbWPDGetPropertyTotalUsedSpace(IPortableDevice * device,
+                                        nsIVariant ** var)
+{
+  NS_ENSURE_ARG(device);
+  NS_ENSURE_ARG_POINTER(var);
+  nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
+  NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = propVariant->SetAsUint64(62000000002);
+  if (NS_SUCCEEDED(rv)) {
+    *var = propVariant.get();
+    propVariant.forget();
+  }
+  return rv;
+}
+
+typedef nsresult (*GetPropertyFunc)(IPortableDevice * device,
+                                    nsIVariant ** var);
+
+struct PropertyFunctionMap
+{
+  char const * propertyName;
+  GetPropertyFunc propertyFunction;
+};
+
+static PropertyFunctionMap const sbPropertyFunctionMap[] =
+{
+  { SB_DEVICE_PROPERTY_CAPACITY, sbWPDGetPropertyCapacity },
+  { SB_DEVICE_PROPERTY_FREE_SPACE, sbWPDGetPropertyFreeSpace },
+  { SB_DEVICE_PROPERTY_MUSIC_USED_SPACE, sbWPDGetPropertyMusicUsedSpace },
+  { SB_DEVICE_PROPERTY_VIDEO_USED_SPACE, sbWPDGetPropertyVideoUsedSpace },
+  { SB_DEVICE_PROPERTY_TOTAL_USED_SPACE, sbWPDGetPropertyTotalUsedSpace },
+};
+
+/* nsIVariant getProperty (in AString name); */
+NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name,
+                                                nsIVariant **retval)
+{
+  nsCString const & asciiName = NS_LossyConvertUTF16toASCII(name);
+  // Check for special handling
+  int const propertyFunctionMapLength = NS_ARRAY_LENGTH(sbPropertyFunctionMap);
+  for (int index = 0; index < propertyFunctionMapLength; ++index) {
+    if (asciiName.Equals(sbPropertyFunctionMap[index].propertyName)) {
+      return sbPropertyFunctionMap[index].propertyFunction(mPortableDevice, retval);
+    }
+  }
+  // There' wasn't a special handler so now use basic mapping and hope for the best
   PROPERTYKEY key;
-  NS_ENSURE_TRUE(sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(sbWPDStandardDevicePropertyToPropertyKey(asciiName.get(), 
+                                                          key), 
+                 NS_ERROR_FAILURE);
   return GetPropertyString(key, retval);
 }
 
@@ -270,73 +430,86 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name, nsIVaria
   PR_END_MACRO
   
 /* PRInt32 getPropertyAsInt32 (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInt32(const nsAString & prop, PRInt32 *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInt32(const nsAString & prop,
+                                                       PRInt32 *retval)
 {
   GET_PROPERTY(prop, retval, Int32);
 }
 
 /* PRUint32 getPropertyAsUint32 (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsUint32(const nsAString & prop, PRUint32 *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsUint32(const nsAString & prop,
+                                                        PRUint32 *retval)
 {
   GET_PROPERTY(prop, retval, Uint32);
 }
 
 /* PRInt64 getPropertyAsInt64 (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInt64(const nsAString & prop, PRInt64 *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInt64(const nsAString & prop,
+                                                       PRInt64 *retval)
 {
   GET_PROPERTY(prop, retval, Int64);
 }
 
 /* PRUint64 getPropertyAsUint64 (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsUint64(const nsAString & prop, PRUint64 *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsUint64(const nsAString & prop,
+                                                        PRUint64 *retval)
 {
   GET_PROPERTY(prop, retval, Uint64);
 }
 
 /* double getPropertyAsDouble (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsDouble(const nsAString & prop, double *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsDouble(const nsAString & prop,
+                                                        double *retval)
 {
   GET_PROPERTY(prop, retval, Double);
 }
 
 /* AString getPropertyAsAString (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsAString(const nsAString & prop, nsAString & retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsAString(const nsAString & prop,
+                                                         nsAString & retval)
 {
   GET_PROPERTY(prop, retval, AString);
 }
 
 /* ACString getPropertyAsACString (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsACString(const nsAString & prop, nsACString & retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsACString(const nsAString & prop,
+                                                          nsACString & retval)
 {
   GET_PROPERTY(prop, retval, ACString);
 }
 
 /* AUTF8String getPropertyAsAUTF8String (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsAUTF8String(const nsAString & prop, nsACString & retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsAUTF8String(const nsAString & prop,
+                                                             nsACString & retval)
 {
   GET_PROPERTY(prop, retval, AUTF8String);
 }
 
 /* boolean getPropertyAsBool (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsBool(const nsAString & prop, PRBool *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsBool(const nsAString & prop,
+                                                      PRBool *retval)
 {
   GET_PROPERTY(prop, retval, Bool);
 }
 
 /* void getPropertyAsInterface (in AString prop, in nsIIDRef iid, [iid_is (iid), retval] out nsQIResult result); */
-NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInterface(const nsAString & prop, const nsIID & iid, void * * retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::GetPropertyAsInterface(const nsAString & prop,
+                                                           const nsIID & iid,
+                                                           void * * retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* nsIVariant get (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::Get(const nsAString & prop, nsIVariant **retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::Get(const nsAString & prop,
+                                        nsIVariant **retval)
 {
   return GetProperty(prop, retval);
 }
 
 /* PRBool hasKey (in AString prop); */
-NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop, PRBool *retval)
+NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop,
+                                           PRBool *retval)
 {
   NS_ENSURE_ARG(retval);
   *retval = PR_FALSE;
@@ -348,7 +521,8 @@ NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop, PRBool *retva
     return NS_ERROR_FAILURE;
   
   PROPERTYKEY keyToFind;
-  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(prop).get(), keyToFind)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(prop).get(), 
+                                               keyToFind)) {
     for (DWORD index = 0; index < count; ++index) {
       PROPERTYKEY key;
       if (SUCCEEDED(keys->GetAt(index, &key)) &&
@@ -362,10 +536,12 @@ NS_IMETHODIMP sbWPDPropertyAdapter::HasKey(const nsAString & prop, PRBool *retva
 }
 
 /* void setProperty (in AString name, in nsIVariant value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetProperty(const nsAString & name, nsIVariant *value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetProperty(const nsAString & name,
+                                                nsIVariant *value)
 {
   PROPERTYKEY key;
-  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(),
+                                               key)) {
     return sbWPDDevice::SetProperty(mDeviceProperties,
                                     key,
                                     value);
@@ -377,7 +553,8 @@ NS_IMETHODIMP sbWPDPropertyAdapter::SetProperty(const nsAString & name, nsIVaria
 NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
 {
   PROPERTYKEY key;
-  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) {
+  if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(),
+                                               key)) {
     nsRefPtr<IPortableDeviceKeyCollection> propertyKeys;
     nsresult rv = sbWPDCreatePropertyKeyCollection(key, getter_AddRefs(propertyKeys));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -392,7 +569,8 @@ NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
   PR_BEGIN_MACRO \
     nsresult rv; \
     PROPERTYKEY key; \
-    if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), key)) { \
+    if (sbWPDStandardDevicePropertyToPropertyKey(NS_LossyConvertUTF16toASCII(name).get(), \
+                                                 key)) { \
       rv = mWorkerVariant->SetAs##type(val); \
       NS_ENSURE_SUCCESS(rv, rv); \
       return sbWPDDevice::SetProperty(mDeviceProperties, \
@@ -403,61 +581,71 @@ NS_IMETHODIMP sbWPDPropertyAdapter::DeleteProperty(const nsAString & name)
   PR_END_MACRO
   
 /* void setPropertyAsInt32 (in AString prop, in PRInt32 value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInt32(const nsAString & prop, PRInt32 value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInt32(const nsAString & prop,
+                                                       PRInt32 value)
 {
   SET_PROPERTY(prop, value, Int32);
 }
 
 /* void setPropertyAsUint32 (in AString prop, in PRUint32 value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsUint32(const nsAString & prop, PRUint32 value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsUint32(const nsAString & prop,
+                                                        PRUint32 value)
 {
   SET_PROPERTY(prop, value, Uint32);
 }
 
 /* void setPropertyAsInt64 (in AString prop, in PRInt64 value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInt64(const nsAString & prop, PRInt64 value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInt64(const nsAString & prop,
+                                                       PRInt64 value)
 {
   SET_PROPERTY(prop, value, Int64);
 }
 
 /* void setPropertyAsUint64 (in AString prop, in PRUint64 value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsUint64(const nsAString & prop, PRUint64 value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsUint64(const nsAString & prop,
+                                                        PRUint64 value)
 {
   SET_PROPERTY(prop, value, Uint64);
 }
 
 /* void setPropertyAsDouble (in AString prop, in double value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsDouble(const nsAString & prop, double value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsDouble(const nsAString & prop,
+                                                        double value)
 {
   SET_PROPERTY(prop, value, Double);
 }
 
 /* void setPropertyAsAString (in AString prop, in AString value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsAString(const nsAString & prop, const nsAString & value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsAString(const nsAString & prop,
+                                                         const nsAString & value)
 {
   SET_PROPERTY(prop, value, AString);
 }
 
 /* void setPropertyAsACString (in AString prop, in ACString value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsACString(const nsAString & prop, const nsACString & value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsACString(const nsAString & prop,
+                                                          const nsACString & value)
 {
   SET_PROPERTY(prop, value, ACString);
 }
 
 /* void setPropertyAsAUTF8String (in AString prop, in AUTF8String value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsAUTF8String(const nsAString & prop, const nsACString & value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsAUTF8String(const nsAString & prop,
+                                                             const nsACString & value)
 {
   SET_PROPERTY(prop, value, AUTF8String);
 }
 
 /* void setPropertyAsBool (in AString prop, in boolean value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsBool(const nsAString & prop, PRBool value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsBool(const nsAString & prop,
+                                                      PRBool value)
 {
   SET_PROPERTY(prop, value, Bool);
 }
 
 /* void setPropertyAsInterface (in AString prop, in nsISupports value); */
-NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInterface(const nsAString & prop, nsISupports *value)
+NS_IMETHODIMP sbWPDPropertyAdapter::SetPropertyAsInterface(const nsAString & prop,
+                                                           nsISupports *value)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

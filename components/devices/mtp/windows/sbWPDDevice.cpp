@@ -53,14 +53,13 @@
 #include "sbStringUtils.h"
 #include "sbWPDDeviceThread.h"
 #include "sbWPDPropertyAdapter.h"
-#include <sbDeviceCapabilities.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 /* damn you microsoft */
 #undef CreateEvent
 #include <sbIDeviceManager.h>
-
+#include "sbWPDCapabilitiesBuilder.h"
 /* Implementation file */
 
 /**
@@ -418,16 +417,11 @@ NS_IMETHODIMP sbWPDDevice::SetPreference(const nsAString & aPrefName,
 NS_IMETHODIMP sbWPDDevice::GetCapabilities(sbIDeviceCapabilities * *theCapabilities)
 {
   nsresult rv;
-  nsCOMPtr<sbIDeviceCapabilities> capabilities = do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
-                                                                   &rv);
   nsRefPtr<IPortableDeviceCapabilities> deviceCaps;
   if (FAILED(mPortableDevice->Capabilities(getter_AddRefs(deviceCaps))))
     return NS_ERROR_FAILURE;
-  //rv = SetFunctionalTypes(deviceCaps,
-  //                        capabilities);
-  NS_ENSURE_SUCCESS(rv, rv);
-  capabilities.forget(theCapabilities);
-  return NS_OK;
+  sbWPDCapabilitiesBuilder builder(deviceCaps);
+  return builder.Create(theCapabilities);
 }
 
 /* readonly attribute sbIDeviceContent content; */
@@ -490,7 +484,7 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
     NS_ENSURE_SUCCESS(rv, PR_FALSE);
   
     nsCOMPtr<sbILibrary> lib;
-    if (request->list) {
+    if (request->list.get()) {
       lib = do_QueryInterface(request->list);
     }
     
@@ -513,7 +507,7 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
       case TransferRequest::REQUEST_SUSPEND:
         break;
       case TransferRequest::REQUEST_WRITE: {
-        if (lib) {
+        if (lib.get()) {
           // add item to library
           rv = WriteRequest(request);
           return NS_SUCCEEDED(rv);
@@ -524,7 +518,7 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
         }
       }
       case TransferRequest::REQUEST_DELETE: {
-        if (lib) {
+        if (lib.get()) {
           // remove item from library
           rv = RemoveItem(request->item);
           return NS_SUCCEEDED(rv);
@@ -1420,7 +1414,7 @@ static nsresult CopyIStream2nsIStream(sbDeviceStatus * status,
 {
   char * buffer = new char[bufferSize];
   ULONG bytesRead;
-  nsresult rv;
+  nsresult rv = NS_OK;
   for (HRESULT hr = input->Read(buffer, bufferSize, &bytesRead);
        SUCCEEDED(hr) && bytesRead != 0;
        hr = input->Read(buffer, bufferSize, &bytesRead)) {
@@ -1486,6 +1480,7 @@ static nsresult SetParentProperty(IPortableDeviceContent * content,
     return NS_ERROR_FAILURE;
   if (FAILED(properties->SetStringValue(WPD_OBJECT_PARENT_ID, objectID.get())))
     return NS_ERROR_FAILURE;
+  return NS_OK;
 }
 
 static nsresult SetContentLength(sbIMediaItem * item,

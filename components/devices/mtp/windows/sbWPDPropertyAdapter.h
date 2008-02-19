@@ -69,8 +69,8 @@ public:
 private:
   nsRefPtr<IPortableDeviceProperties> mDeviceProperties;
   nsCOMPtr<nsIWritableVariant> mWorkerVariant;
+  nsRefPtr<IPortableDevice> mPortableDevice;
   nsString mDeviceID;
-
   /**
    * Creates a worker variant to eliminate excess object creation. Initializes
    * the devlice properties pointer as well as the ID of the device.

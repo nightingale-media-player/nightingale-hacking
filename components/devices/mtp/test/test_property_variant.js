@@ -46,8 +46,8 @@ function runTest ()
   assertTrue(variant.QueryInterface(Components.interfaces.nsIVariant) == "42000", "Uint16 failed returned " + variant.QueryInterface(Components.interfaces.nsIVariant));
   variant.setAsUint32(420000);
   assertTrue(variant.QueryInterface(Components.interfaces.nsIVariant) == "420000", "Uint32 failed returned " + variant.QueryInterface(Components.interfaces.nsIVariant));
-  variant.setAsUint64(420000000);
-  assertTrue(variant.QueryInterface(Components.interfaces.nsIVariant) == "420000000", "Uint8 failed returned " + variant.QueryInterface(Components.interfaces.nsIVariant));
+  variant.setAsUint64(42000000000);
+  assertTrue(variant.QueryInterface(Components.interfaces.nsIVariant) == "42000000000", "Uint8 failed returned " + variant.QueryInterface(Components.interfaces.nsIVariant));
   variant.setAsFloat(42.0);
   assertTrue(variant.QueryInterface(Components.interfaces.nsIVariant) == "42", "Float failed returned " + variant.QueryInterface(Components.interfaces.nsIVariant));
   variant.setAsDouble(420000000.42);
