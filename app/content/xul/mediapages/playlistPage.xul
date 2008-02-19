@@ -266,14 +266,6 @@ window.mediaPage = {
         }
       }
     }
-  },
-  
-  // TODO CONFIRM THAT THIS IS NEEDED!
-  QueryInterface: function(iid) {
-    if (iid.equals(Ci.sbIMediaPage) || 
-        iid.equals(Ci.nsISupports))
-      return this;
-    throw Cr.NS_ERROR_NO_INTERFACE;
   }
 
 } // End window.mediaPage 
