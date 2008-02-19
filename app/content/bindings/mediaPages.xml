@@ -119,14 +119,21 @@
           
           var ml = gBrowser.currentMediaPage.mediaListView.mediaList;
 
-          // Make a disabled menuitem to act as a label above the page items
-          var item = document.createElement("menuitem");
-          item.setAttribute("label", ml.name);
-          item.setAttribute("name", "mediapage.item");
-          item.setAttribute("disabled", "true");
-          item.setAttribute("class", "mediapage-menu-selected-page-title");
-          this._addToMenu(item);
-          
+          // these properties are used to customize the menu based on the space you
+          // want to allocate for it
+          var hideTitle = this.getAttribute("hideMediaListTitle");
+          var hideGetMore = this.getAttribute("hideGetMore");
+
+          if (hideTitle != "true") {
+            // Make a disabled menuitem to act as a label above the page items
+            var item = document.createElement("menuitem");
+            item.setAttribute("label", ml.name);
+            item.setAttribute("name", "mediapage.item");
+            item.setAttribute("disabled", "true");
+            item.setAttribute("class", "mediapage-menu-selected-page-title");
+            this._addToMenu(item);
+          }
+
           var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
                         .getService(Components.interfaces.sbIMediaPageManager);
           var pages = mgr.getAvailablePages(ml);
@@ -161,7 +168,7 @@
           // If the current window has a browser/servicepane, then add a link
           // to get more media pages.
           // NOTE: This is brittle. Please change this once we have a proper API.
-          if (typeof(gBrowser) != "undefined") {
+          if (typeof(gBrowser) != "undefined" && hideGetMore != "true") {
             this._addToMenu(document.createElement("menuseparator"));
             this._addToMenu(this._makeGetMore());
           }
@@ -223,7 +230,7 @@
                          tooltiptext="&tooltip.browser.mediapages;"
                          type="menu">
           <xul:menupopup orient="vertical">
-            <xul:sb-mediapages-menuitems/>
+            <xul:sb-mediapages-menuitems hideMediaListTitle="true"/>
           </xul:menupopup>
       </xul:toolbarbutton>
     </content>
