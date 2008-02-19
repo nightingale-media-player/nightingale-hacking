@@ -348,7 +348,7 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
   if (aBefore) {
     aBefore.parentNode.insertBefore(bnode, aBefore);
   }
-  bnode.properties = "bookmark " + aTitle;
+  bnode.properties = "bookmark " + this._makeCSSProperty(aTitle);
   bnode.hidden = false;
   bnode.contractid = CONTRACTID;
   bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
@@ -433,7 +433,7 @@ function sbBookmarks_addFolderAt(aId, aTitle, aIconURL, aParent, aBefore) {
   if (aBefore) {
     aBefore.parentNode.insertBefore(fnode, aBefore);
   }
-  fnode.properties = "folder " + aTitle;
+  fnode.properties = "folder " + this._makeCSSProperty(aTitle);
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;
   fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
@@ -615,7 +615,18 @@ function sbBookmarks_onRename(aNode, aNewName) {
   }
 }
 
-
+/**
+ * Turn a partial entity (&foo.bar) into a css property string (foo-bar),
+ * but leaves other strings as they are.
+ */
+sbBookmarks.prototype._makeCSSProperty = 
+function sbBookmarks__makeCSSProperty(aString) {
+  if ( aString[0] == "&" ) {
+    aString = aString.substr(1, aString.length);
+    aString = aString.replace(/\./g, "-");
+  }
+  return aString;
+}
 
 /**
  * /brief XPCOM initialization code
