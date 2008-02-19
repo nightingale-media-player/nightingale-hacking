@@ -32,7 +32,6 @@
  
 //
 // TODO:
-//  * add onSwitchCompleted, change onSwitchRequested to allow feedback
 //  * Explore skin/layout versioning issues?
 // 
  
@@ -261,9 +260,16 @@ AddonMetadataReader.prototype = {
           continue;
         }
   
-        // these two work fine for undefined values
-        var showChrome = compatibleLayout.showChrome[0] == "true";
-        var onTop      = compatibleLayout.onTop[0]      == "true";
+        var showChrome = false;
+        if (compatibleLayout.showChrome && 
+            compatibleLayout.showChrome[0] == "true") {
+          showChrome = true;
+        }
+        var onTop = false
+        if (compatibleLayout.onTop && 
+            compatibleLayout.onTop[0] == "true") {
+          onTop = true;
+        }
   
         this._manager.assertCompatibility(
           layoutUrl, 
@@ -337,9 +343,16 @@ AddonMetadataReader.prototype = {
           continue;
         }
   
-        // these two work fine for undefined values
-        var showChrome = compatibleSkin.showChrome[0] == "true";
-        var onTop      = compatibleSkin.onTop[0] == "true";
+        var showChrome = false;
+        if (compatibleSkin.showChrome && 
+            compatibleSkin.showChrome[0] == "true") {
+          showChrome = true;
+        }
+        var onTop = false
+        if (compatibleSkin.onTop && 
+            compatibleSkin.onTop[0] == "true") {
+          onTop = true;
+        }
   
         this._manager.assertCompatibility(
           description.url, 
