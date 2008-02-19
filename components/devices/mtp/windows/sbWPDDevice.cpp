@@ -56,7 +56,7 @@
 #include <sbDeviceCapabilities.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 /* damn you microsoft */
 #undef CreateEvent
 #include <sbIDeviceManager.h>
@@ -511,7 +511,8 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
       case TransferRequest::REQUEST_WRITE: {
         if (lib) {
           // add item to library
-          return WriteRequest(request);
+          rv = WriteRequest(request);
+          return NS_SUCCEEDED(rv);
         } else {
           // add item to playlist
           rv = AddItemToPlaylist(request->item, request->list, request->index);
@@ -521,7 +522,8 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
       case TransferRequest::REQUEST_DELETE: {
         if (lib) {
           // remove item from library
-          return RemoveItem(request->item);
+          rv = RemoveItem(request->item);
+          return NS_SUCCEEDED(rv);
         } else {
           // remove item from list
           rv = RemoveItemFromPlaylist(request->list, request->index);
@@ -1380,11 +1382,33 @@ static nsresult SetContentName(sbIMediaItem * item,
   nsCOMPtr<nsIURI> theURI;
   nsresult rv = item->GetContentSrc(getter_AddRefs(theURI));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIURL> theURL = do_QueryInterface(theURI, &rv);
-  nsCString temp;
-  rv = theURL->GetFileName(temp);
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+
+  nsCOMPtr<nsIURI> proxiedURI;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURI),
+                            theURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedURI));
+
+  nsCOMPtr<nsIURL> theURL = do_QueryInterface(proxiedURI, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> proxiedURL;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURL),
+                            theURL,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedURL));
+
+  nsCString temp;
+  rv = proxiedURL->GetFileName(temp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsString const & fileName = NS_ConvertUTF8toUTF16(temp);
+
   if (FAILED(properties->SetStringValue(WPD_OBJECT_NAME, fileName.get())))
     return NS_ERROR_FAILURE;
   
@@ -1575,14 +1599,24 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
     rv = item->GetContentSrc(getter_AddRefs(contentURI));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIURL> contentURL = do_QueryInterface(contentURI, &rv);
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+
+    nsCOMPtr<nsIURI> proxiedURI;
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIURI),
+                              contentURI,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedURI));
+
+    nsCOMPtr<nsIURL> contentURL = do_QueryInterface(proxiedURI, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIURL> proxiedURL;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIURL),
                               contentURL,
-                              NS_PROXY_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(proxiedURL));
 
     nsCString fileExtension;
@@ -1661,15 +1695,26 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
     return NS_ERROR_FAILURE;
   }
 
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+
+  nsCOMPtr<sbIMediaItem> proxiedItem;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIMediaItem),
+                            item,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedItem));
+
   nsCOMPtr<nsIInputStream> inputStream;
-  rv = item->OpenInputStream(getter_AddRefs(inputStream));
+  rv = proxiedItem->OpenInputStream(getter_AddRefs(inputStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<IPortableDeviceDataStream> portableDataStream;
   if (FAILED(streamWriter->QueryInterface(__uuidof(IPortableDeviceDataStream), getter_AddRefs(portableDataStream)))) {
     SB_ENSURE_NO_DEVICE_ERROR_GENERIC(NS_ERROR_FAILURE, this);
     return NS_ERROR_FAILURE;
   }
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   status->StateMessage(NS_LITERAL_STRING("InProgress"));
 
   // This function handles firing it's own error events.

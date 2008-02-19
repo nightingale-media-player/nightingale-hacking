@@ -116,4 +116,24 @@ do_ProxiedGetService(const char* aContractID, nsresult* error = 0)
   return sbCreateProxiedComponent(aContractID, PR_TRUE, error);
 }
 
+inline nsresult
+do_GetProxyForObject(nsIEventTarget *target,
+                     REFNSIID aIID,
+                     nsISupports* aObj,
+                     PRInt32 proxyType,
+                     void** aProxyObject)
+{
+  nsresult rv;
+  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
+    do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = proxyObjMgr->GetProxyForObject(target, 
+                                      aIID, 
+                                      aObj, 
+                                      proxyType,
+                                      aProxyObject);
+  return rv;
+}
+
 #endif /* __SB_PROXIEDCOMPONENTMANAGER_H__ */
