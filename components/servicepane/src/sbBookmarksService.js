@@ -93,6 +93,26 @@ function sbBookmarks_servicePaneInit(sps) {
 
   // set the weight of the bookmarks node
   this._bookmarkNode.setAttributeNS(SP, 'Weight', 4);
+  
+  // if a flag was set by the safe mode dialog to signify that we should
+  // restore the default bookmarks, do so by first deleting all the current
+  // ones, and then forcing an import like it would happen on first run.
+  var restoreDefault = false;
+  var prefBranch  = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefBranch);
+  try {
+    restoreDefault = prefBranch.getBoolPref("browser.bookmarks.restore_default_bookmarks");
+  } catch (e) { }
+  if (restoreDefault) {
+    // remove all current bookmarks
+    while (this._bookmarkNode.firstChild != null) {
+      this._servicePane.removeNode(this._bookmarkNode.firstChild);
+    }
+    // forget that we did the import already
+    this._bookmarkNode.setAttributeNS(BSP, 'Imported', 'false');
+    // reset the safe mode flag so we don't keep doing this over and over
+    prefBranch.setBoolPref("browser.bookmarks.restore_default_bookmarks", "false");
+  }
     
   // if the bookmark node doesn't have the Imported attribute set, lets do an import
   if (this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {
@@ -189,7 +209,7 @@ function sbBookmarks_importBookmarks() {
       
       fnode.isOpen = (folder.getAttribute('open') == 'true');
       
-      if (fnode && fnode.getAttributeNS(BSP, 'Imported')) {
+      if (fnode && fnode.getAttributeNS(BSP, 'Imported') == 'true') {
         // don't reimport a folder that's already been imported
         continue;
       }
@@ -681,4 +701,5 @@ var NSGetModule = makeGetModule (
     entry: 'bookmarks',
     value: '@songbirdnest.com/servicepane/bookmarks;1'
   }]);
+
 

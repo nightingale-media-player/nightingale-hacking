@@ -35,10 +35,13 @@
 //  * Explore skin/layout versioning issues?
 // 
  
+const Ci = Components.interfaces;
+const Cc = Components.classes; 
+
 const CONTRACTID = "@songbirdnest.com/songbird/feathersmanager;1";
 const CLASSNAME = "Songbird Feathers Manager Service Interface";
 const CID = Components.ID("{99f24350-a67f-11db-befa-0800200c9a66}");
-const IID = Components.interfaces.sbIFeathersManager;
+const IID = Ci.sbIFeathersManager;
 
 
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
@@ -81,8 +84,8 @@ ArrayEnumerator.prototype = {
 
   QueryInterface: function(iid)
   {
-    if (!iid.equals(Components.interfaces.nsISimpleEnumerator) &&
-        !iid.equals(Components.interfaces.nsISupports))
+    if (!iid.equals(Ci.nsISimpleEnumerator) &&
+        !iid.equals(Ci.nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -97,7 +100,7 @@ SkinDescription.prototype = {
   requiredProperties: [ "name", "internalName" ],
   optionalProperties: [ ],
   QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbISkinDescription))
+    if (!iid.equals(Ci.sbISkinDescription))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -112,7 +115,7 @@ LayoutDescription.prototype = {
   requiredProperties: [ "name", "url" ],
   optionalProperties: [ ],
   QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbILayoutDescription))
+    if (!iid.equals(Ci.sbILayoutDescription))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -379,8 +382,8 @@ AddonMetadataReader.prototype = {
    * \param errorList Array of error messages
    */
   _reportErrors: function _reportErrors(contextMessage, errorList) {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
-         getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"].
+         getService(Ci.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
       Components.utils.reportError("Feathers Metadata Reader: " 
                                        + contextMessage + errorList[i]);
@@ -409,8 +412,8 @@ AddonMetadataReader.prototype = {
  */
 function FeathersManager() {
 
-  var os      = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
+  var os      = Cc["@mozilla.org/observer-service;1"]
+                      .getService(Ci.nsIObserverService);
   // We need to unhook things on shutdown
   os.addObserver(this, "quit-application", false);
   
@@ -480,11 +483,18 @@ FeathersManager.prototype = {
     if (this._initialized) {
       return;
     }
+
+
+    // If the safe-mode dialog was requested to disable all addons, our
+    // basic layouts and default skin have been disabled too. We need to 
+    // check if that's the case, and reenable them if needed
+    this._ensureAddOnEnabled("basic-layouts@songbirdnest.com");
+    this._ensureAddOnEnabled("rubberducky@songbirdnest.com");
     
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
                   "@songbirdnest.com/Songbird/DataRemote;1",
-                  Components.interfaces.sbIDataRemote, "init");
+                  Ci.sbIDataRemote, "init");
 
     this._layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
     this._skinDataRemote = createDataRemote("selectedSkin", "general.skins.");
@@ -736,8 +746,8 @@ FeathersManager.prototype = {
     
     // TEMP fix for the Mac to enable the titlebar on the main window.
     // See Bug 4363
-    var sysInfo = Components.classes["@mozilla.org/system-info;1"]
-                            .getService(Components.interfaces.nsIPropertyBag2);
+    var sysInfo = Cc["@mozilla.org/system-info;1"]
+                            .getService(Ci.nsIPropertyBag2);
     var platform = sysInfo.getProperty("name");
     
     if (this._mappings[layoutURL]) {
@@ -751,8 +761,8 @@ FeathersManager.prototype = {
 
 
   getFeatherPrefBranch: function getFeatherPrefBranch (layoutURL, internalName) {
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefService);
+    var prefs = Cc["@mozilla.org/preferences-service;1"]
+      .getService(Ci.nsIPrefService);
 
     // a really simple url escaping algorithm
     // turn all non-alphanumeric characters into:
@@ -899,10 +909,10 @@ FeathersManager.prototype = {
     // (songbird bug 3965)
     this._closePlayerWindow();
     
-    var timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+    var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
     this._switching = true;
-    timer.initWithCallback(callback, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+    timer.initWithCallback(callback, 0, Ci.nsITimer.TYPE_ONE_SHOT);
   },
   
   
@@ -923,8 +933,8 @@ FeathersManager.prototype = {
     }
     
     
-    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                   .getService(Components.interfaces.nsIWindowMediator);
+    var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Ci.nsIWindowMediator);
 
     // The core window (plugin host) is the only window which cannot be shut down
     var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
@@ -959,7 +969,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   addListener: function addListener(listener) {
-    if (! (listener instanceof Components.interfaces.sbIFeathersManagerListener))
+    if (! (listener instanceof Ci.sbIFeathersManagerListener))
     {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
@@ -981,8 +991,8 @@ FeathersManager.prototype = {
    * Close all player windows (except the plugin host)
    */
   _closePlayerWindow: function _closePlayerWindow() {
-    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                   .getService(Components.interfaces.nsIWindowMediator);
+    var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Ci.nsIWindowMediator);
 
     // The core window (plugin host) is the only window which cannot be shut down
     var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
@@ -1054,8 +1064,8 @@ FeathersManager.prototype = {
     // Set the global chrome (window border and title) flag
     this._showChromeDataRemote.boolValue = enabled;
 
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefBranch);
+    var prefs = Cc["@mozilla.org/preferences-service;1"]
+                          .getService(Ci.nsIPrefBranch);
 
     // Set the flags used to open the core window on startup.
     // Do a replacement in order to preserve whatever other features 
@@ -1088,8 +1098,8 @@ FeathersManager.prototype = {
    */
   _onSelect: function onSelect(layoutDesc, skinDesc) {
     // Verify args
-    layoutDesc = layoutDesc.QueryInterface(Components.interfaces.sbILayoutDescription);
-    skinDesc = skinDesc.QueryInterface(Components.interfaces.sbISkinDescription);
+    layoutDesc = layoutDesc.QueryInterface(Ci.sbILayoutDescription);
+    skinDesc = skinDesc.QueryInterface(Ci.sbISkinDescription);
     
     // Broadcast notification
     this._listeners.forEach( function (listener) {
@@ -1108,8 +1118,8 @@ FeathersManager.prototype = {
   },
 
   _flushXULPrototypeCache: function flushXULPrototypeCache() {
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefBranch);
+    var prefs = Cc["@mozilla.org/preferences-service;1"]
+                          .getService(Ci.nsIPrefBranch);
     var disabled = false;
     var userPref = false;
 
@@ -1133,8 +1143,8 @@ FeathersManager.prototype = {
    * Called by the observer service. Looks for XRE shutdown messages 
    */
   observe: function(subject, topic, data) {
-    var os      = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
+    var os      = Cc["@mozilla.org/observer-service;1"]
+                      .getService(Ci.nsIObserverService);
     switch (topic) {
     case "quit-application":
       os.removeObserver(this, "quit-application");
@@ -1144,12 +1154,46 @@ FeathersManager.prototype = {
   },
 
   /**
+   * Check if an addon is disabled, and if so, re-enables it.
+   * Note that this only checks for the userDisabled flag,
+   * not appDisabled, so addons that have been disabled because
+   * of a compatibility or security issue remain disabled.
+   */
+  _ensureAddOnEnabled: function(id) {
+    const nsIUpdateItem = Ci.nsIUpdateItem;
+    var em = Cc["@mozilla.org/extensions/manager;1"]
+               .getService(Ci.nsIExtensionManager);
+    var ds = em.datasource; 
+    var rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
+                .getService(Ci.nsIRDFService);
+
+    var resource = rdf.GetResource("urn:mozilla:item:" + id); 
+
+    var property = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#userDisabled");
+    var target = ds.GetTarget(resource, property, true);
+
+    function getData(literalOrResource) {
+      if (literalOrResource instanceof Ci.nsIRDFLiteral ||
+          literalOrResource instanceof Ci.nsIRDFResource ||
+          literalOrResource instanceof Ci.nsIRDFInt)
+        return literalOrResource.Value;
+      return undefined;
+    }
+
+    var userDisabled = getData(target);
+      
+    if (userDisabled == "true") {
+      em.enableItem(id); 
+    }
+  }, 
+
+  /**
    * See nsISupports.idl
    */
   QueryInterface: function(iid) {
     if (!iid.equals(IID) &&
-        !iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupports))
+        !iid.equals(Ci.nsIObserver) && 
+        !iid.equals(Ci.nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -1195,14 +1239,14 @@ FeathersManager_switchFeathers_callback.prototype = {
  */
 var gModule = {
   registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
+    componentManager = componentManager.QueryInterface(Ci.nsIComponentRegistrar);
 
     componentManager.registerFactoryLocation(CID, CLASSNAME, CONTRACTID,
                                                fileSpec, location, type);
   },
 
   getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
+    if (!iid.equals(Ci.nsIFactory))
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 
     if (cid.equals(CID)) {
