@@ -178,6 +178,11 @@ protected:
    * note that the playlist already exists in the library
    */
   nsresult CreatePlaylist(sbIMediaList* aPlaylist);
+  
+  /**
+   * Update the given playlist
+   */
+  nsresult UpdatePlaylist(sbIMediaList* aPlaylist);
 
   /** remove a given media item
    * \@param aObjId the objId of the item/playlist to remove
@@ -245,6 +250,14 @@ protected:
    */
   static nsresult PropertyKeyFromString(const nsAString & aString,
                                         PROPERTYKEY* aPropKey);
+  
+  /* find the child object of the given WPD_OBJECT_ORIGINAL_FILE_NAME
+   * @param aParent the WPD object ID of the parent
+   * @param aName the name to look for
+   * @return The object ID of the child, or empty string if not found
+   */
+  nsString FindChildNamed(const nsAString& aParent,
+                          const nsAString& aName);
 };
 
 #define SB_WPDDEVICE_CID \

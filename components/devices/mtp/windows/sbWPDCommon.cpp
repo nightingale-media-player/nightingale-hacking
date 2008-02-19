@@ -28,6 +28,7 @@
 #include <nsAutoPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
 #include <sbIDeviceMarshall.h>
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceManager.h>
@@ -96,8 +97,8 @@ nsresult sbWPDStringToPropVariant(nsAString const & str,
 }
 
 nsresult sbWPDObjectIDFromPUID(IPortableDeviceContent * content,
-                            nsAString const & PUID,
-                            nsAString & objectID)
+                               nsAString const & PUID,
+                               nsAString & objectID)
 {
   nsRefPtr<IPortableDevicePropVariantCollection> persistentUniqueIDs;
   HRESULT hr = CoCreateInstance(CLSID_PortableDevicePropVariantCollection,
@@ -329,23 +330,36 @@ nsresult sbWPDObjectFormatToContentTypeString(const GUID &aObjectFormat,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+// Some weird undocumented GUID for playlists, as found on some Sansa devices
+// {BA050000-AE6C-4804-98BA-C57B46965FE7}
+static const GUID WPD_OBJECT_FORMAT_PLAPLAYLIST = 
+{ 0xBA050000, 0xAE6C, 0x4804, { 0x98, 0xBA, 0xC5, 0x7B, 0x46, 0x96, 0x5F, 0xE7 } };
+
+static wpdFileExtensionKeymapEntry_t MAP_FILE_EXTENSION_KEYMAP[] = {
+  { "mp3", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3 },
+  { "wma", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WMA },
+  
+  /* playlists */
+  { "asx", WPD_CONTENT_TYPE_PLAYLIST, WPD_OBJECT_FORMAT_ASXPLAYLIST },
+  { "m3u", WPD_CONTENT_TYPE_PLAYLIST, WPD_OBJECT_FORMAT_M3UPLAYLIST },
+  { "pla", WPD_CONTENT_TYPE_PLAYLIST, WPD_OBJECT_FORMAT_PLAPLAYLIST },
+  { "pls", WPD_CONTENT_TYPE_PLAYLIST, WPD_OBJECT_FORMAT_PLSPLAYLIST },
+  { "wpl", WPD_CONTENT_TYPE_PLAYLIST, WPD_OBJECT_FORMAT_WPLPLAYLIST },
+};
+
 nsresult 
 sbWPDFileExtensionToGUIDs(const nsACString &aFileExt,
                           GUID &aContentType,
                           GUID &aObjectFormat)
 {
-  static wpdFileExtensionKeymapEntry_t map[] = {
-    { "mp3", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3 },
-    { "wma", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WMA },
-  };
 
-  static PRUint32 mapSize = sizeof(map) / sizeof(wpdFileExtensionKeymapEntry_t);
+  const PRUint32 mapSize = NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_KEYMAP);
 
   nsCString str(aFileExt);
   for(PRUint32 current = 0; current < mapSize; ++current) {
-    if(!strcmp(str.get(), map[current].mExtension)) {
-      aContentType = map[current].mContentType;
-      aObjectFormat = map[current].mObjectFormat;
+    if(!strcmp(str.get(), MAP_FILE_EXTENSION_KEYMAP[current].mExtension)) {
+      aContentType = MAP_FILE_EXTENSION_KEYMAP[current].mContentType;
+      aObjectFormat = MAP_FILE_EXTENSION_KEYMAP[current].mObjectFormat;
 
       return NS_OK;
     }
@@ -354,11 +368,45 @@ sbWPDFileExtensionToGUIDs(const nsACString &aFileExt,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+nsresult sbWPDGUIDtoFileExtension(GUID &aObjectFormat,
+                                  /* out */ nsACString& aFileExt)
+{
+  const PRUint32 mapSize = NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_KEYMAP);
+  
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if (aObjectFormat == MAP_FILE_EXTENSION_KEYMAP[current].mObjectFormat) {
+      aFileExt.Assign(MAP_FILE_EXTENSION_KEYMAP[current].mExtension);
+      return NS_OK;
+    }
+  }
+  aFileExt.Truncate();
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+
 nsresult 
 sbWPDGetFolderForContentType(const GUID &aContentType,
                              nsAString &aParentID)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  aParentID.Truncate();
+  #define TEST_START if(false) { /* nothing */
+  #define TEST_GUID(aGUID, aString)   \
+  } else if (aContentType == aGUID) {  \
+    aParentID.AssignLiteral(aString);
+  #define TEST_END }
+  
+  TEST_START
+  TEST_GUID(WPD_CONTENT_TYPE_AUDIO,    "MUSIC")
+  TEST_GUID(WPD_CONTENT_TYPE_PLAYLIST, "PLAYLISTS")
+  TEST_GUID(WPD_CONTENT_TYPE_IMAGE,    "PICTURES")
+  TEST_GUID(WPD_CONTENT_TYPE_VIDEO,    "VIDEO")
+  TEST_END
+  
+  #undef TEST_START
+  #undef TEST_GUID
+  #undef TEST_END
+  
+  return aParentID.IsEmpty() ? NS_ERROR_NOT_AVAILABLE : NS_OK;
 }
 
 nsresult 

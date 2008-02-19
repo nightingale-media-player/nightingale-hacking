@@ -185,10 +185,20 @@ nsresult sbWPDFileExtensionToGUIDs(const nsACString &aFileExt,
                                    GUID &aObjectFormat);
 
 /**
+ * Look up the file extension corresponding to a given WPD Object Format GUID
+ * \param aObjectFormat The WPD object format to look for
+ * \param aFileExt The file extension that matches the given object format
+ * \retval NS_ERROR_NOT_AVAILABLE couldn't find ObjectFormat
+ * \retval NS_OK found corresponding extension
+ */
+nsresult sbWPDGUIDtoFileExtension(GUID &aObjectFormat,
+                                  /* out */ nsACString& aFileExt);
+
+/**
  * Find the most appropriate folder for a specific content type.
  * For example, find the folder to put MUSIC into.
  * \param aContentType The WPD content type GUID.
- * \param aParentID The suggested folder's GUID.
+ * \param aParentID The suggested folder's name.
  * \retval NS_ERROR_NOT_AVAILABLE Couldn't determine the best folder for the content type.
  * \retval NS_OK Found an appropriate folder.
  */

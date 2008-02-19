@@ -298,14 +298,9 @@ NS_IMETHODIMP sbWPDDevice::Connect()
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   nsRefPtr<IPortableDeviceKeyCollection> propertiesToRead;
-  hr = CoCreateInstance(CLSID_PortableDeviceKeyCollection, 
-                        NULL,
-                        CLSCTX_INPROC_SERVER,
-                        IID_IPortableDeviceKeyCollection,
-                        getter_AddRefs(propertiesToRead));
-  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
-  hr = propertiesToRead->Add(WPD_OBJECT_PERSISTENT_UNIQUE_ID);
-  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_PERSISTENT_UNIQUE_ID,
+                                        getter_AddRefs(propertiesToRead));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   char idBuffer[NSID_LENGTH];
   nsID *id;
@@ -498,6 +493,15 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
     if (request->list) {
       lib = do_QueryInterface(request->list);
     }
+    
+    nsCOMPtr<sbIMediaList> itemList; // request->item as a list
+    if (request->item) {
+      itemList = do_QueryInterface(request->item);
+    }
+    nsCOMPtr<sbILibrary> itemLib; // request->item as a library
+    if (itemList) {
+      itemLib = do_QueryInterface(itemList);
+    }
   
     switch (request->type) {
       case TransferRequest::REQUEST_EJECT:
@@ -542,12 +546,22 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
         return NS_SUCCEEDED(rv);
       }
       case TransferRequest::REQUEST_UPDATE:
+        if (itemLib) {
+          /* nothing to update for libraries */
+        } else if (itemList) {
+          rv = UpdatePlaylist(itemList);
+          return NS_SUCCEEDED(rv);
+        }
         break;
       case TransferRequest::REQUEST_NEW_PLAYLIST: {
-        nsCOMPtr<sbIMediaList> list = do_QueryInterface(request->item, &rv);
-        NS_ENSURE_SUCCESS(rv, PR_FALSE);
-        rv = CreatePlaylist(list);
-        return NS_SUCCEEDED(rv);
+        if (itemLib) {
+          /* umm, what? creating a new... library? this makes no sense */
+          NS_NOTREACHED("Can't create a new library as a playlist");
+        } else if (itemList) {
+          rv = CreatePlaylist(itemList);
+          return NS_SUCCEEDED(rv);
+        }
+        return PR_FALSE;
       }
     }
     // Let the worker thread know there's work to be done.
@@ -705,6 +719,7 @@ nsresult sbWPDDevice::CreatePlaylist(nsAString const &aName,
                                      /*out*/nsAString &aObjId)
 {
   HRESULT hr;
+  nsresult rv;
   NS_ENSURE_STATE(mPortableDevice);
   
   // create the set of values we need to set on the new playlist
@@ -725,11 +740,36 @@ nsresult sbWPDDevice::CreatePlaylist(nsAString const &aName,
   hr = values->SetStringValue(WPD_OBJECT_NAME, aName.BeginReading());
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
-  // XXX Mook: do we need to figure out what sort of playlist to use?
-  hr = values->SetGuidValue(WPD_OBJECT_FORMAT, WPD_OBJECT_FORMAT_M3UPLAYLIST);
+  nsRefPtr<IPortableDeviceCapabilities> caps;
+  hr = mPortableDevice->Capabilities(getter_AddRefs(caps));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
-  hr = values->SetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, aName.BeginReading());
+  nsRefPtr<IPortableDevicePropVariantCollection> formats;
+  hr = caps->GetSupportedFormats(WPD_CONTENT_TYPE_PLAYLIST,
+                                 getter_AddRefs(formats));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<sbPropertyVariant> format = new sbPropertyVariant();
+  rv = formats->GetAt(0, format->GetPropVariant());
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  hr = values->SetGuidValue(WPD_OBJECT_FORMAT,
+                            *format->GetPropVariant()->puuid);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsString fileName(aName);
+  fileName.AppendLiteral(".");
+  nsCString extension;
+  rv = sbWPDGUIDtoFileExtension(*format->GetPropVariant()->puuid, extension);
+  if (NS_SUCCEEDED(rv)) {
+    fileName.Append(NS_ConvertASCIItoUTF16(extension));
+  } else {
+    // fallback
+    fileName.AppendLiteral("pla");
+  }
+  
+  hr = values->SetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME,
+                              fileName.BeginReading());
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   // remember to add the (empty) list of references
@@ -770,6 +810,12 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   NS_ENSURE_ARG_POINTER(aPlaylist);
   NS_ENSURE_STATE(mPortableDevice);
   
+  // we can get a create message that really should be an update
+  nsString objId = GetWPDDeviceIDFromMediaItem(aPlaylist);
+  if (!objId.IsEmpty()) {
+    return UpdatePlaylist(aPlaylist);
+  }
+  
   nsCOMPtr<sbILibrary> library;
   rv = aPlaylist->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -781,6 +827,17 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   nsString libraryObjId = GetWPDDeviceIDFromMediaItem(library);
   NS_ENSURE_TRUE(!libraryObjId.IsEmpty(), NS_ERROR_FAILURE);
   
+  // the parent folder is a child of the library (storage) guid
+  nsString parentObjId(libraryObjId), parentName;
+  rv = sbWPDGetFolderForContentType(WPD_CONTENT_TYPE_PLAYLIST, parentName);
+  if (NS_SUCCEEDED(rv)) {
+    parentObjId = FindChildNamed(libraryObjId, parentName);
+    if (parentObjId.IsEmpty()) {
+      // not found, fall back to library
+      parentObjId.Assign(libraryObjId);
+    }
+  }
+
   // do what we can before actually creating the playlist in case something
   // fails (so we don't get a playlist on the device we don't know about)
   nsRefPtr<IPortableDeviceContent> content;
@@ -790,36 +847,104 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   nsRefPtr<IPortableDeviceProperties> properties;
   hr = content->Properties(getter_AddRefs(properties));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
-  
+
   nsRefPtr<IPortableDeviceKeyCollection> keys;
-  hr = CoCreateInstance(CLSID_PortableDeviceKeyCollection,
-                        NULL,
-                        CLSCTX_INPROC_SERVER,
-                        IID_IPortableDeviceKeyCollection,
-                        getter_AddRefs(keys));
-  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
-  
-  hr = keys->Add(WPD_OBJECT_PERSISTENT_UNIQUE_ID);
-  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_PERSISTENT_UNIQUE_ID,
+                                        getter_AddRefs(keys));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // okay, we've done what we can, actually create the playlist now
-  nsString puid, objid;
-  rv = CreatePlaylist(name, libraryObjId, objid);
+  nsString objid;
+  rv = CreatePlaylist(name, parentObjId, objid);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsRefPtr<IPortableDeviceValues> values;
   hr = properties->GetValues(objid.BeginReading(), keys, getter_AddRefs(values));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
-  nsRefPtr<sbPropertyVariant> variant = sbPropertyVariant::New();
-  hr = values->GetAt(0, NULL, variant->GetPropVariant());
+  LPWSTR ppuid = nsnull;
+  hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &ppuid);
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
-  rv = variant->GetAsAString(puid);
+  nsString puid = nsDependentString(ppuid);
+  ::CoTaskMemFree(ppuid);
+  
+  rv = aPlaylist->SetProperty(PUID_SBIMEDIAITEM_PROPERTY, puid);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = aPlaylist->SetProperty(sbWPDDevice::DEVICE_ID_PROP, puid);
+  return NS_OK;
+}
+
+nsresult sbWPDDevice::UpdatePlaylist(sbIMediaList* aPlaylist)
+{
+  NS_ENSURE_ARG_POINTER(aPlaylist);
+  NS_ENSURE_STATE(mPortableDevice);
+
+  nsresult rv;
+  HRESULT hr;
+  nsString objId = GetWPDDeviceIDFromMediaItem(aPlaylist);
+  if (objId.IsEmpty())
+    return CreatePlaylist(aPlaylist);
+  
+  nsString name;
+  rv = aPlaylist->GetName(name);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsRefPtr<IPortableDeviceContent> content;
+  hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDeviceValues> values;
+  hr = CoCreateInstance(CLSID_PortableDeviceValues,
+                        NULL,
+                        CLSCTX_INPROC_SERVER,
+                        IID_IPortableDeviceValues,
+                        getter_AddRefs(values));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  hr = values->SetStringValue(WPD_OBJECT_NAME, name.BeginReading());
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  // in order to figure out the extension, we must first have the object format
+  nsRefPtr<IPortableDeviceKeyCollection> formatKey;
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_FORMAT,
+                                        getter_AddRefs(formatKey));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsRefPtr<IPortableDeviceValues> formatValues;
+  hr = properties->GetValues(objId.BeginReading(),
+                             formatKey,
+                             getter_AddRefs(formatValues));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  GUID formatGuid;
+  hr = formatValues->GetGuidValue(WPD_OBJECT_FORMAT, &formatGuid);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsString fileName(name);
+  fileName.AppendLiteral(".");
+  nsCString extension;
+  rv = sbWPDGUIDtoFileExtension(formatGuid, extension);
+  if (NS_SUCCEEDED(rv)) {
+    fileName.Append(NS_ConvertASCIItoUTF16(extension));
+  } else {
+    fileName.AppendLiteral("pla"); // fallback :|
+  }
+  
+  hr = values->SetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME,
+                              fileName.BeginReading());
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  nsRefPtr<IPortableDeviceValues> results;
+  
+  hr = properties->SetValues(objId.BeginReading(),
+                             values,
+                             getter_AddRefs(results));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   return NS_OK;
 }
@@ -1888,4 +2013,72 @@ nsresult sbWPDDevice::PropertyKeyFromString(const nsAString & aString,
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
+}
+
+nsString sbWPDDevice::FindChildNamed(const nsAString& aParent,
+                                     const nsAString& aName)
+{
+  NS_ENSURE_TRUE(mPortableDevice, EmptyString());
+  
+  HRESULT hr;
+  nsresult rv;
+  
+  nsRefPtr<IPortableDeviceContent> content;
+  hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), EmptyString());
+  
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), EmptyString());
+  
+  nsRefPtr<IEnumPortableDeviceObjectIDs> folderIdList;
+  hr = content->EnumObjects(0, /* flags */
+                            aParent.BeginReading(),
+                            NULL, /* no filter */
+                            getter_AddRefs(folderIdList));
+  if (FAILED(hr)) {
+    return EmptyString();
+  }
+  
+  nsRefPtr<IPortableDeviceKeyCollection> nameKey;
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_ORIGINAL_FILE_NAME,
+                                        getter_AddRefs(nameKey));
+  if (FAILED(rv)) {
+    return EmptyString();
+  }
+  
+  for(;;) {
+    LPWSTR pFolderObjId;
+    hr = folderIdList->Next(1, &pFolderObjId, NULL);
+    if (FAILED(hr) || (hr == S_FALSE)) {
+      return EmptyString();
+    }
+      
+    nsString folderObjId(pFolderObjId); // copies
+    ::CoTaskMemFree(pFolderObjId);
+    
+    nsRefPtr<IPortableDeviceValues> nameValues;
+    hr = properties->GetValues(folderObjId.BeginReading(),
+                               nameKey,
+                               getter_AddRefs(nameValues));
+    if (FAILED(hr)) {
+      continue;
+    }
+    
+    LPWSTR nameStr;
+    hr = nameValues->GetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, &nameStr);
+    if (FAILED(hr)) {
+      continue;
+    }
+    
+    if (aName.Equals(nameStr)) {
+      ::CoTaskMemFree(nameStr);
+      return folderObjId;
+    }
+
+    ::CoTaskMemFree(nameStr);
+  }
+  
+  NS_NOTREACHED("returned from infinite loop");
+  return EmptyString();
 }
