@@ -220,8 +220,31 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SupportedFileExtensions(
 * \return -1 if operating asynchronously, otherwise the number of metadata
 *            values read (0 on failure)
 */
-
 NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
+    PRInt32                     *pReadCount)
+{
+  // XXX this is very wrong!  We're back to touching taglib with more than
+  // one thread.  This is teh sux0r
+
+  // We can not have the main thread acquire the same lock that the background
+  // threads do since it can easy deadlock if the main thread is waiting
+  // to acquire the lock while a backround thread is reading metadata and
+  // trying to proxy a call to the main thread.
+
+  if (NS_IsMainThread()) {
+    return ReadInternal(pReadCount);
+  }
+  else {
+    // TagLib is not thread safe -- its string classes like to share data
+    // between threads.  mLock is static so this lock will serialize the
+    // calls to this method for all instances of this class.
+    nsAutoLock lock(mLock);
+
+    return ReadInternal(pReadCount);
+  }
+}
+
+nsresult sbMetadataHandlerTaglib::ReadInternal(
     PRInt32                     *pReadCount)
 {
     nsCOMPtr<nsIStandardURL>    pStandardURL;
@@ -232,11 +255,6 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     nsAutoString                filePath;
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
-
-    // TagLib is not thread safe -- its string classes like to share data
-    // between threads.  mLock is static so this lock will serialize the
-    // calls to this method for all instances of this class.
-    nsAutoLock lock(mLock);
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =

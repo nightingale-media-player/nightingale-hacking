@@ -197,6 +197,9 @@ private:
      */
 
 private:
+    nsresult ReadInternal(
+        PRInt32                     *pReadCount);
+
     void ReadID3v2Tags(
         TagLib::ID3v2::Tag          *pTag,
         const char                  *charset = 0);
