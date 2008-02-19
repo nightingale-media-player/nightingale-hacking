@@ -1207,15 +1207,13 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    if (IsUTF8(nsDependentCString(data, tagString.size()))) {
+    const char* raw = tagString.toCString();
+    if (IsLikelyUTF8(nsDependentCString(raw, tagString.size()))) {
         nsCOMPtr<nsIUTF8ConverterService> utf8Service =
             do_ProxiedGetService("@mozilla.org/intl/utf8converterservice;1");
         if (utf8Service) {
-            // look at the raw bytes
-            data = tagString.toCString(); // raw data
-    
             nsCString dataUTF8;
-            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(data, tagString.size()),
+            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(raw, tagString.size()),
                                                   "utf-8",
                                                   PR_FALSE,
                                                   dataUTF8);

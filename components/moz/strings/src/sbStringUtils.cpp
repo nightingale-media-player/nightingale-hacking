@@ -157,7 +157,7 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
   }
 }
 
-PRBool IsUTF8(const nsACString& aString)
+PRBool IsLikelyUTF8(const nsACString& aString)
 {
   if (aString.IsEmpty()) {
     return PR_TRUE;

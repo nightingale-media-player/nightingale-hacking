@@ -61,7 +61,7 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
  * invalid characters (e.g. 0xFFFE, surrogates).  This is a weaker check than
  * the nsReadableUtils version.
  */
-PRBool IsUTF8(const nsACString& aString);
+PRBool IsLikelyUTF8(const nsACString& aString);
 
 #endif /* __SBSTRINGUTILS_H__ */
 
