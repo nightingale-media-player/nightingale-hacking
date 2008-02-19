@@ -277,7 +277,13 @@ PlaylistPlayback.prototype = {
    */
   _shuffle: false,
   _shuffleWasTriggered: false,
-  _shuffleData: { shuffleView: null, indexes: [], availableIndexes: [], position: 0, initialized: false },
+  _shuffleData: { shuffleView: null, 
+                  shuffleFilters: [],
+                  shuffleSearch: null,
+                  indexes: [], 
+                  availableIndexes: [], 
+                  position: 0, 
+                  initialized: false },
 
   /**
    * An array of cores to use
@@ -1911,8 +1917,9 @@ PlaylistPlayback.prototype = {
 
   _shufflerGetPreviousTrack: function sbPlaylistPlayback_shufflerGetPreviousTrack(aIncrement) {
 
-    // Check if our view is still the playing view.
-    if(this._playingView != this._shuffleData.shuffleView ) {
+    // Check if the playing view or its filter/search has changed, in which
+    // case the shuffle data needs to be reset
+    if (this._shuffleViewChanged()) {
       this._shufflerResetData();
     }
 
@@ -1928,10 +1935,9 @@ PlaylistPlayback.prototype = {
   },
   
   _shufflerGetNextTrack: function sbPlaylistPlayback_shufflerGetNextTrack() {
-    
-    // Check if our view is still the playing view.
-    if(this._playingView != this._shuffleData.shuffleView ||
-       this._playingView.length != this._shuffleData.shuffleView.length) {
+    // Check if the playing view or its filter/search has changed, in which
+    // case the shuffle data needs to be reset
+    if (this._shuffleViewChanged()) {
       this._shufflerResetData();
     }
     
@@ -1996,7 +2002,10 @@ PlaylistPlayback.prototype = {
 
   _shufflerResetData: function sbPlaylistPlayback_shufflerResetData() {
     this._shuffleData.shuffleView = this._playingView;
+    this._shuffleData.shuffleFilters = this._getViewFilters(this._playingView);
+    this._shuffleData.shuffleSearch = this._getViewSearch(this._playingView);
     this._shuffleData.indexes = [];
+    this._shuffleData.availableIndexes = [];
     
     // Fill pool of indexes.
     var i = 0;
@@ -2007,6 +2016,88 @@ PlaylistPlayback.prototype = {
     
     this._shuffleData.position = 0;
     this._shuffleData.initialized = true;
+  },
+
+  // return true if what we are currently playing is not what the
+  // shuffle data has been constructed for
+  _shuffleViewChanged: function sbPlaylistPlayback_shuffleViewChanged() {
+    if (this._playingView != this._shuffleData.shuffleView) 
+      return true;
+    if (this._playingView.length != this._shuffleData.shuffleView.length)
+      return true;
+    var playingViewFilters = this._getViewFilters(this._playingView);
+    if (!this._filtersEqual(playingViewFilters, this._shuffleData.shuffleFilters)) 
+      return true;
+    var playingViewSearch = this._getViewSearch(this._playingView);
+    if (playingViewSearch != this._shuffleData.shuffleSearch)
+      return true;
+    return false;
+  },
+  
+  // returns an array representing the active filters for a view
+  _getViewFilters: function sbPlaylistPlayback_getViewFilters(view) {
+    var filters = [];
+    var filter = view.filterConstraint;
+    if (!filter) {
+      return filters;
+    }
+    var pm = 
+      Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+      .getService(Components.interfaces.sbIPropertyManager);
+    var groupCount = filter.groupCount;
+    for (var i = 0; i < groupCount; i++) {
+      var group = filter.getGroup(i);
+      var properties = group.properties;
+      while (properties.hasMore()) {
+        var prop = properties.getNext();
+        if (this._isInCascadeFilterSet(view, prop)) {
+          var info = pm.getPropertyInfo(prop);
+          filters.push( [ prop,
+                          group.getValues(prop).getNext(),
+                        info.displayName ] );
+        }
+      }
+    }
+    return filters;
+  },
+
+  _isInCascadeFilterSet: function sbPlaylistPlayback_isInCascadeFilterSet(view, prop) {
+    var cfs = view.cascadeFilterSet;
+    if (!cfs || cfs.length <= 0) 
+      return false;
+    for (var i=0;i<cfs.length;i++) {
+      if (cfs.getProperty(i) == prop) 
+        return true;
+    }
+    return false;
+  },
+
+  // compares two filters arrays and returns true if they are equal
+  _filtersEqual: function sbPlaylistPlayback_filtersEqual(a, b) {
+    if (a.length != b.length) return false;
+    for (var j=0;j<a.length;j++) {
+      if (a[j].length != b[j].length) return false;
+      for (var i=0;i<a[j].length;i++) {
+        if (a[j][i] != b[j][i]) return false;
+      }
+    }
+    return true;
+  },
+
+  // returns a string representing the active search on a view
+  _getViewSearch: function sbPlaylistPlayback_getViewSearch(view) {
+    var search = view.searchConstraint;
+    if (search) {
+      var terms = [];
+      var groupCount = search.groupCount;
+      for (var i = 0; i < groupCount; i++) {
+        var group = search.getGroup(i);
+        var property = group.properties.getNext();
+        terms.push(group.getValues(property).getNext());
+      }
+      return terms.join(" ");
+    }
+    return "";
   },
 
   _restartApp: function() {
