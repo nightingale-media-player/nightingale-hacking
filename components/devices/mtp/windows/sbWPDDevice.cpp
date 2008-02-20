@@ -484,6 +484,8 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
 
   while (NS_SUCCEEDED(rv = PopRequest(getter_AddRefs(request))) && request) {
     
+    PRBool isOk = PR_TRUE;
+    
     // PeekRequest returns NS_OK+nsnull if there is no next request
     rv = PeekRequest(getter_AddRefs(nextRequest));
     // Something bad happened terminate the thread
@@ -507,32 +509,35 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
       case TransferRequest::REQUEST_EJECT:
       case TransferRequest::REQUEST_MOUNT:
         // MTP devices can't be mounted or ejected
-        return NS_ERROR_NOT_IMPLEMENTED;
+        return PR_FALSE;
       case TransferRequest::REQUEST_READ:
-        return ReadRequest(request);
+        isOk = ReadRequest(request);
+        break;
       case TransferRequest::REQUEST_SUSPEND:
         break;
       case TransferRequest::REQUEST_WRITE: {
         if (lib) {
           // add item to library
           rv = WriteRequest(request);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
         } else {
           // add item to playlist
           rv = AddItemToPlaylist(request->item, request->list, request->index);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
         }
+        break;
       }
       case TransferRequest::REQUEST_DELETE: {
         if (lib) {
           // remove item from library
           rv = RemoveItem(request->item);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
         } else {
           // remove item from list
           rv = RemoveItemFromPlaylist(request->list, request->index);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
         }
+        break;
       }
       case TransferRequest::REQUEST_SYNC:
       case TransferRequest::REQUEST_WIPE:                    /* delete all files */
@@ -543,30 +548,37 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
            might have been applied to it).  So we can't just rebuild the whole
            thing, we need to be dumb. */
         rv = MoveItemInPlaylist(request->list, request->index, request->otherIndex);
-        return NS_SUCCEEDED(rv);
+        isOk = NS_SUCCEEDED(rv);
+        break;
       }
       case TransferRequest::REQUEST_UPDATE:
         if (itemLib) {
           /* nothing to update for libraries */
         } else if (itemList) {
           rv = UpdatePlaylist(itemList);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
         }
         break;
       case TransferRequest::REQUEST_NEW_PLAYLIST: {
         if (itemLib) {
           /* umm, what? creating a new... library? this makes no sense */
           NS_NOTREACHED("Can't create a new library as a playlist");
+          isOk = PR_FALSE;
         } else if (itemList) {
           rv = CreatePlaylist(itemList);
-          return NS_SUCCEEDED(rv);
+          isOk = NS_SUCCEEDED(rv);
+        } else {
+          isOk = PR_FALSE;
         }
-        return PR_FALSE;
       }
     }
-    // Let the worker thread know there's work to be done.
+    
+    if (!isOk) {
+      return PR_FALSE;
+    }
+    // keep going
   }
-  return PR_TRUE;
+  return PR_TRUE; // let the worker thread know we can keep going
 }
 
 nsresult sbWPDDevice::GetClientInfo(IPortableDeviceValues ** clientInfo)
@@ -882,6 +894,22 @@ nsresult sbWPDDevice::UpdatePlaylist(sbIMediaList* aPlaylist)
 
   nsresult rv;
   HRESULT hr;
+  
+  // check if the playlist is already gone from the library (i.e. this is a
+  // post-delete update notification)
+  nsString guid;
+  rv = aPlaylist->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbILibrary> ownerLibrary;
+  rv = aPlaylist->GetLibrary(getter_AddRefs(ownerLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> item;
+  rv = ownerLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  if (!item) {
+    // this playlist doesn't actually exist
+    return NS_OK;
+  }
+  
   nsString objId = GetWPDDeviceIDFromMediaItem(aPlaylist);
   if (objId.IsEmpty())
     return CreatePlaylist(aPlaylist);
@@ -993,10 +1021,17 @@ nsresult sbWPDDevice::RemoveItem(sbIMediaItem *aItem)
   nsresult rv;
   NS_ENSURE_ARG_POINTER(aItem);
 
+  // if we can't find the object id, it's perfectly fine - it means the item
+  // has already been removed.
   nsString objid = GetWPDDeviceIDFromMediaItem(aItem);
-  NS_ENSURE_TRUE(!objid.IsEmpty(), NS_ERROR_FAILURE);
+  if (!objid.IsEmpty()) {
+    rv = RemoveItem(objid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
-  rv = RemoveItem(objid);
+  nsString nullString;
+  nullString.SetIsVoid(PR_TRUE);
+  rv = aItem->SetProperty(PUID_SBIMEDIAITEM_PROPERTY, nullString);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
