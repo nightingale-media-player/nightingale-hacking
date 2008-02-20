@@ -632,6 +632,10 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   if (!this._libraryManager || !this._servicePane) {
     throw Components.results.NS_ERROR_NOT_INITIALIZED;
   }
+
+  // if no node was provided, then suggest the main library
+  if (!aNode) 
+    return this._libraryManager.mainLibrary;
   
   function checkNode(aNode, aLibServicePane) {
     // If this node is visible and belongs to the library
