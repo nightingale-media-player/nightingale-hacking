@@ -57,6 +57,7 @@ if (typeof(Cu) == "undefined")
 
 // Songbird imports.
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
+Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -612,25 +613,8 @@ var DIW = {
 
   _getDeviceModelSize: function DIW__getDeviceModelSize() {
     try {
-      // These should match the "storageformatter.*" in songbird.properties
-      var sFormats = [ "B", "KB", "MB", "GB" ];
-      //var modelSize = this._device.properties.properties
-      //                    .getPropertyAsUint64("http://songbirdnest.com/device/1.0#capacity");
       var modelSize = this._getDeviceProperty("http://songbirdnest.com/device/1.0#capacity");
-      modelSize = parseInt(modelSize);
-      if (modelSize < 0) {
-        return SBString("device.info.unknown");
-      }
-      
-      var storageFormatter = 0;
-      while (modelSize > 1024 && storageFormatter < (sFormats.length - 1)) {
-        modelSize = modelSize / 1024;
-        storageFormatter++;
-      }
-      
-      // Round to 2 decimal places
-      modelSize = modelSize.toFixed(2);
-      return modelSize + " " + SBString("storageformatter." + sFormats[storageFormatter]);
+      return StorageFormatter.format(modelSize);
     } catch (err) {
       return SBString("device.info.unknown");
     }
