@@ -1432,13 +1432,13 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
 
   // If there was another request on deck, send it now
   if (mNextGetByIndexAsync > -1) {
-    mNextGetByIndexAsync = -1;
     rv = SetPageCachedStatus(mNextGetByIndexAsync, ePending);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mArray->GetGuidByIndexAsync(mNextGetByIndexAsync);
     NS_ENSURE_SUCCESS(rv, rv);
     mGetByIndexAsyncPending = PR_TRUE;
+    mNextGetByIndexAsync = -1;
   }
 
   return NS_OK;
