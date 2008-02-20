@@ -43,6 +43,7 @@ var mtpCore = {
   _promptSvc:           null,
   _stringBundle:        null,
   _stringBundleSvc:     null,
+  _deviceInfoList:      null,
   
   // ************************************
   // Internal methods
@@ -57,7 +58,7 @@ var mtpCore = {
     var deviceEventListener = {
       mtpCore: this,
       onDeviceEvent: function deviceEventListener_onDeviceEvent(aDeviceEvent) {
-        this.mtpCore._processDeviceEvent(aDeviceEvent);
+        this.mtpCore._processDeviceManagerEvent(aDeviceEvent);
       }
     };
 
@@ -73,6 +74,12 @@ var mtpCore = {
       this._stringBundleSvc
           .createBundle( "chrome://songbird/locale/songbird.properties" );
     
+    // Initialize the device info list.
+    this._deviceInfoList = {};
+    var deviceEnum = this._deviceManager.devices.enumerate();
+    while (deviceEnum.hasMoreElements()) {
+      this._addDevice(deviceEnum.getNext().QueryInterface(Ci.sbIDevice));
+    }
   },
   
   _shutdown: function mtpCore_shutdown() {
@@ -81,6 +88,9 @@ var mtpCore = {
     this._deviceManager.removeEventListener(this._deviceEventListener);
     this._deviceEventListener = null;
 
+    this._removeAllDevices();
+    this._deviceInfoList = null;
+
     this._deviceManager = null;
     this._promptSvc = null;
     
@@ -88,13 +98,28 @@ var mtpCore = {
     this._stringBundleSvc = null;
   },
   
+  _processDeviceManagerEvent:
+    function mtpCore_processDeviceManagerEvent(aDeviceEvent) {
+    switch(aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
+        this._addDevice(aDeviceEvent.data.QueryInterface(Ci.sbIDevice));
+      }
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED: {
+        this._removeDevice(aDeviceEvent.data.QueryInterface(Ci.sbIDevice));
+      }
+      break;
+    }
+  },
+
   _processDeviceEvent: function mtpCore_processDeviceEvent(aDeviceEvent) {
     
     // For now, we only process events coming from sbIDevice.
     if(!(aDeviceEvent.origin instanceof Ci.sbIDevice))
       return;
     
-    var applicationName = this._stringBundle.getStringFromName("brandShortName");
+    var applicationName = SBString("brandShortName");
 
     var errorTitle = "";
     var errorMsg = "";
@@ -106,6 +131,16 @@ var mtpCore = {
     var mainWindow = windowMediator.getMostRecentWindow("Songbird:Main");
     
     switch(aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE: {
+        this._addUnsupportedMediaItem(device, aDeviceEvent.data);
+      }
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END: {
+        this._processUnsupportedMediaItems(device, mainWindow);
+      }
+      break;
+
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED: {
         errorTitle = 
           this._stringBundle
@@ -158,6 +193,118 @@ var mtpCore = {
       }
       break;
     }
+  },
+
+  _processUnsupportedMediaItems:
+    function mtpCore_processUnsupportedMediaItems(aDevice, aMainWindow) {
+    // Get the unsupported media items.  Do nothing if there are no unsupported
+    // media items.
+    var deviceInfo = this._deviceInfoList[aDevice.id];
+    if (!deviceInfo)
+      return;
+    var unsupportedMediaItems = deviceInfo.unsupportedMediaItems;
+    // Get the unsupported media items.  Do nothing if there are no unsupported
+    if (!unsupportedMediaItems)
+      return;
+
+    // Clear the unsupported media items before presenting the dialog as this
+    // function can be reentered while the dialog is open.
+    deviceInfo.unsupportedMediaItems = null;
+
+    // Present unsupported media dialog.
+    SBWindow.openModalDialog
+               (aMainWindow,
+                "chrome://songbird/content/xul/device/unsupportedMedia.xul",
+                "unsupported_media_dialog",
+                "chrome,centerscreen",
+                [ aDevice, unsupportedMediaItems ],
+                null);
+  },
+
+  //XXXErikS This won't work properly if user switches feathers during a
+  // transfer.  This Javascript will get unloaded and reloaded, losing this
+  // context.
+  _addUnsupportedMediaItem: function mtpCore_addUnsupportedMediaItem(aDevice,
+                                                                     aGuid) {
+    // Get the device media item.
+    var mediaItem = this._getDeviceItemByGuid(aDevice, aGuid);
+    if (!mediaItem) {
+      dump("addUnsupportedMediaItem: " +
+           "Could not get media item from GUID.\n");
+      return;
+    }
+
+    // Get the unsupported media items list.
+    var deviceInfo = this._deviceInfoList[aDevice.id];
+    if (!deviceInfo.unsupportedMediaItems) {
+      deviceInfo.unsupportedMediaItems =
+        Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    }
+    var unsupportedMediaItems = deviceInfo.unsupportedMediaItems;
+
+    // Add the item to the unsupported media items list if it's not already
+    // there.
+    try {
+      unsupportedMediaItems.indexOf(0, mediaItem);
+    } catch (ex) {
+      unsupportedMediaItems.appendElement(mediaItem, false);
+    }
+  },
+
+  _addDevice: function mtpCore_addDevice(aDevice) {
+    // Do nothing if device is already in list.
+    if (this._deviceInfoList[aDevice.id])
+      return;
+
+    // Add device info to list.
+    var deviceInfo = { device: aDevice };
+    this._deviceInfoList[aDevice.id] = deviceInfo;
+
+    // Listen for device events.
+    deviceInfo.deviceEventListener = {
+      mtpCore: this,
+      onDeviceEvent: function deviceEventListener_onDeviceEvent(aDeviceEvent) {
+        this.mtpCore._processDeviceEvent(aDeviceEvent);
+      }
+    };
+    var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.addEventListener(deviceInfo.deviceEventListener);
+  },
+
+  _removeDevice: function mtpCore_removeDevice(aDevice) {
+    // Get the device info.
+    var deviceInfo = this._deviceInfoList[aDevice.id];
+
+    // Remove device event listener.
+    var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.removeEventListener(deviceInfo.deviceEventListener);
+
+    // Delete the device info.
+    delete this._deviceInfoList[aDevice.id];
+  },
+
+  _removeAllDevices: function mtpCore_removeAllDevices() {
+    for (var id in this._deviceInfoList) {
+      this._removeDevice(this._deviceInfoList[id].device);
+    }
+  },
+
+  _getDeviceItemByGuid: function mtpCore_getDeviceItemByGuid(aDevice, aGuid) {
+    // Search all device libraries for item.
+    var libraries = aDevice.content.libraries;
+    var libEnum = libraries.enumerate();
+    while (libEnum.hasMoreElements()) {
+      // Get the next device library.
+      var library = libEnum.getNext().QueryInterface(Ci.sbILibrary);
+
+      // Look up item in device library.  Continue searching on exception as
+      // this indicates that the item is not present in the library.
+      try {
+        return library.getItemByGuid(aGuid);
+      } catch (ex) {}
+    }
+
+    return null;
   },
 };
 

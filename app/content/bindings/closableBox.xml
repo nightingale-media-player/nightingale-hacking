@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Closable box widget.
+   *
+   *   This widget is a box that can contain items and can be closed.  It
+   * provides and open/close twisty that shows or hides the contents of the box.
+   * It may also be given a label that it will display above the box contents.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-closable-box">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox flex="1">
+
+        <!-- Box open/close twisty and label. -->
+        <xul:hbox>
+          <xul:vbox pack="center">
+            <xul:image sbid="twisty"
+                       class="closable-box-image"
+                       mousethrough="never"
+                       onclick="toggleOpenClose(event);"/>
+          </xul:vbox>
+          <xul:label xbl:inherits="value=label"/>
+        </xul:hbox>
+
+        <!-- Box contents. -->
+        <xul:box sbid="content" hidden="true">
+          <children/>
+        </xul:box>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+    <!--
+     /**
+      * \brief Toggle the open/close state of the box contents.
+      */
+     -->
+
+    <method name="toggleOpenClose"><body><![CDATA[
+      // Toggle the twisty state.
+      var twisty = document.getAnonymousElementByAttribute(this,
+                                                           "sbid",
+                                                           "twisty");
+      if (twisty.getAttribute("open") == "true")
+          twisty.removeAttribute("open");
+      else
+          twisty.setAttribute("open", "true");
+
+      // Update content box state.
+      var contentBox = document.getAnonymousElementByAttribute(this,
+                                                               "sbid",
+                                                               "content");
+      if (twisty.getAttribute("open") == "true") {
+        contentBox.hidden = false;
+      } else {
+        contentBox.hidden = true;
+      }
+
+      // Update window size.
+      window.sizeToContent();
+    ]]></body></method>
+
+    </implementation>
+
+  </binding>
+
+</bindings>
+

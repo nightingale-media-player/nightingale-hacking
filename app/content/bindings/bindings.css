@@ -284,6 +284,10 @@ sb-player-cyclefaceplate-button {
   -moz-binding: url("chrome://songbird/content/bindings/facePlate.xml#cyclefaceplate") !important;
 }
 
+sb-closable-box {
+  -moz-binding: url("chrome://songbird/content/bindings/closableBox.xml#sb-closable-box") !important;
+}
+
 /* SYSBTNS */
 
 sb-sys-close-button {

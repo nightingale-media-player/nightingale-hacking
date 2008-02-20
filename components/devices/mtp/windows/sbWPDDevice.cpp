@@ -1948,13 +1948,13 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
   rv = CreateDeviceObjectFromMediaItem(status,
                                        request->item,
                                        request->list);
-  if (NS_SUCCEEDED(rv)) {
-    status->StateMessage(NS_LITERAL_STRING("Completed"));
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
-                           var);    
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
-                           var);      
-  }
+
+  // Operation is complete regardless of any errors
+  status->StateMessage(NS_LITERAL_STRING("Completed"));
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
+                         var);    
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
+                         var);      
 
   // XXXAus: Failures are handled within 
   // CreateDeviceObjectFromMediaItem() and methods it calls.

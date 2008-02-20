@@ -417,3 +417,7 @@
 <!ENTITY device.capacity.video.label    "Video">
 <!ENTITY device.capacity.other.label    "Other">
 <!ENTITY device.capacity.free.label     "Free">
+
+<!ENTITY device.unsupported_media.dialog.title  "Incompatible Files Detected">
+<!ENTITY device.unsupported_media.dialog.enable "Tell me when incompatible files are detected">
+

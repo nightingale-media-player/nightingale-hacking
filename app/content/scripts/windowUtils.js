@@ -834,7 +834,9 @@ var SBWindow = {
    *        Strings may be specified as locale string bundle keys.  In addition,
    *        if an array of strings is specified as an argument, the first string
    *        is the locale key for a formatted string, and the remaining strings
-   *        are the format arguments.
+   *        are the format arguments.  Strings are interpreted as locale keys if
+   *        they're wrapped in "&;" (e.g., "&local.string;"); otherwise, they're
+   *        interpreted as literal strings.
    *        Set the value field of the objects within the array aOutArgs to the
    *        arguments returned by the dialog.
    *        A locale string bundle may be optionally specified by aLocale.  If
@@ -886,6 +888,7 @@ var SBWindow = {
                      .createInstance(Ci.nsIDialogParamBlock);
 
     /* Put arguments into param block. */
+    var stringArgNum = 0;
     for (var i = 0; i < aArgs.length; i++) {
       // Get the next argument.
       var arg = aArgs[i];
@@ -899,7 +902,8 @@ var SBWindow = {
         }
         dialogPB.objects.appendElement(arg, false);
       } else {
-        dialogPB.SetString(i, this._getArgString(arg, aLocale));
+        dialogPB.SetString(stringArgNum, this._getArgString(arg, aLocale));
+        stringArgNum++;
       }
     }
 
@@ -936,10 +940,17 @@ var SBWindow = {
    */
 
   _getArgString: function SBWindow__getArgString(aArg, aLocale) {
-    if (aArg instanceof Array)
-      return SBFormattedString(aArg[0], aArg.slice(1), aLocale);
-    else
-      return SBString(aArg, aLocale);
+    if (aArg instanceof Array) {
+      var localeKeyMatch = aArg[0].match(/^&(.*);$/);
+      return SBFormattedString(localeKeyMatch[1], aArg.slice(1), aLocale);
+    }
+    else {
+      var localeKeyMatch = aArg.match(/^&(.*);$/);
+      if (localeKeyMatch)
+        return SBString(localeKeyMatch[1], null, aLocale);
+      else
+        return aArg;
+    }
   }
 };
 
