@@ -25,6 +25,13 @@
  */
 
 //
+// XXX: This functionality was copied from the original 0.1 
+// cheezyVideoWindow.xul and desperately needs to be rewritten.
+//
+
+
+
+//
 // Module specific auto-init/deinit support
 //
 var appInit = {};
@@ -32,20 +39,17 @@ appInit.init_once = 0;
 appInit.deinit_once = 0;
 appInit.onLoad = function()
 {
-  if (appInit.init_once++) { dump("WARNING: appInit double init!!\n"); return; }
+  if (appInit.init_once++) { Components.utils.reportError("WARNING: appInit double init!!\n"); return; }
   // Application, initialize thyself.
   SBAppInitialize();
   SBRestarterInitialize();
-  try
-  {
-    //Whatever migration is required between version, this function takes care of it.
-    SBMigrateDatabase();
-  }
-  catch(e) { }
+  
+  // Check to see if any version update migrations need to be performed
+  appInit.migrator.doMigrations();
 }
 appInit.onUnload = function()
 {
-  if (appInit.deinit_once++) { dump("WARNING: appInit double deinit!!\n"); return; }
+  if (appInit.deinit_once++) { Components.utils.reportError("WARNING: appInit double deinit!!\n"); return; }
   window.removeEventListener("load", appInit.onLoad, false);
   window.removeEventListener("unload", appInit.onUnload, false);
   SBAppDeinitialize();
@@ -355,43 +359,118 @@ function SBRestarterDeinitialize()
   songbird_restartNow = null;
 }
 
-function SBMigrateDatabase()
-{
 
-  var directory = Components.classes["@mozilla.org/file/directory_service;1"].
-                  getService(Components.interfaces.nsIProperties).
-                  get("ProfD", Components.interfaces.nsIFile);
-  directory.append("db");
-  if (directory.exists()) {
-    var old_database_file = directory.clone();
-    old_database_file.append("songbird.db");
-    if (!old_database_file.exists()) {
-      return;
+
+
+
+/**
+ * Responsible for performing version update migrations
+ */
+appInit.migrator = {
+  
+  /**
+   * Handle any necessary migration tasks. Called at application initialization.
+   */
+  doMigrations: function doMigrations() {
+    try {
+      this._updateUI();
+    } catch (e) {
+      Components.utils.reportError(e);
     }
-  }
+  },
+  
+  /**
+   * Perform UI migration tasks
+   */
+  _updateUI: function _updateUI() {
+    var prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
     
-
-  var queryObject = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
-    .createInstance(Components.interfaces.sbIDatabaseQuery);
-  queryObject.setAsyncQuery(false);
+    var migration = 0;
+    try {
+      migration = prefBranch.getIntPref("songbird.migration.ui.version");
+    } catch(ex) {}
+    
+    // In 0.5 we added the "media pages" switcher button.
+    // Make sure it appears in the nav-bar currentset.
+    if (migration == 0) {
+      // Get a wrapper for localstore.rdf
+      var localStoreHelper = this._getLocalStoreHelper();
+      
+      // Make sure the media page switching is in the web toolbar 
+      // currentset for each known layout
+      var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+                                      .getService(Components.interfaces.sbIFeathersManager);
+      var layouts = feathersManager.getLayoutDescriptions();
+      while (layouts.hasMoreElements()) {
+        var layoutURL = layouts.getNext().QueryInterface(
+                          Components.interfaces.sbILayoutDescription).url;      
+        var currentSet = localStoreHelper.getPersistedAttribute(layoutURL, "nav-bar", "currentset");
+        if (currentSet && currentSet.indexOf("mediapages-container") == -1) {
+          currentSet += ",mediapages-container";
+          localStoreHelper.setPersistedAttribute(layoutURL, "nav-bar", "currentset", currentSet);
+        }
+      }
+      localStoreHelper.flush();      
+      
+      // update the migration version
+      prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+    }
+  },
   
-  queryObject.setDatabaseGUID("songbird");
-  queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
-  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"&metadata.origin_url\", 1, 0, 1, 0, -1, 'text', 1)");
-  queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
-  queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
-  
-  queryObject.execute();
-  
-  queryObject.resetQuery();
-  queryObject.setDatabaseGUID("webplaylist");
-  queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
-  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"&metadata.origin_url\", 1, 0, 1, 0, -1, 'text', 1)");
-  queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
-  queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
-  
-  queryObject.execute();
+  /**
+   * Gets a wrapper for localstore.rdf
+   */
+  _getLocalStoreHelper: function _getLocalStoreHelper() {
+    var LocalStoreHelper = function() {
+      this._rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
+      this._localStore = this._rdf.GetDataSource("rdf:local-store");
+      this.dirty = false;
+    }
+    LocalStoreHelper.prototype = {
+      
+      // Get an attribute value for an element id in a given file
+      getPersistedAttribute: function(file, id, attribute) {
+        var source = this._rdf.GetResource(file + "#" + id);
+        var property = this._rdf.GetResource(attribute);
+        var target = this._localStore.GetTarget(source, property, true);
+        if (target instanceof Ci.nsIRDFLiteral)
+          return target.Value;
+        return null;
+      },
+      
+      // Set an attribute on an element id in a given file
+      setPersistedAttribute: function(file, id, attribute, value) {
+        var source = this._rdf.GetResource(file + "#" +  id);    
+        var property = this._rdf.GetResource(attribute);
+        try {
+          var oldTarget = this._localStore.GetTarget(source, property, true);
+          if (oldTarget) {
+            if (value)
+              this._localStore.Change(source, property, oldTarget, this._rdf.GetLiteral(value));
+            else
+              this._localStore.Unassert(source, property, oldTarget);
+          }
+          else {
+            this._localStore.Assert(source, property, this._rdf.GetLiteral(value), true);
+          }
+          this.dirty = true;
+        }
+        catch(ex) {
+          Components.utils.reportError(ex);
+        }
+      },
+        
+      // Save changes if needed
+      flush: function flush() {
+        if (this.dirty) {
+          this._localStore.QueryInterface(Ci.nsIRDFRemoteDataSource).Flush();
+        }
+      }
+    }
+    return new LocalStoreHelper();
+  }
 }
+
 
 function initDataRemoteCmdLine()
 {

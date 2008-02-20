@@ -411,7 +411,7 @@
   <toolbox id="control_pane_toolbox" 
            mode="icons"
            defaultmode="icons"
-           iconsize="small">
+           iconsize="large">
     <toolbarpalette id="control_pane_toolbar_palette">
     </toolbarpalette>
     <toolbar

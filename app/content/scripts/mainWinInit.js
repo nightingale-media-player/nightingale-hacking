@@ -28,14 +28,16 @@
 //
 // Mainwin Initialization
 //
+// XXX: This functionality was copied from the original 0.1 
+// songbird_hack.js and desperately needs to be rewritten.
+//
+
 
 /**
  * \file mainWinInit.js
  * \brief Main window initialization functions and objects.
  * \internal
  */
-
-var thePollPlaylistService = null;
 
 var gServicePane = null;
 
@@ -71,21 +73,10 @@ document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
  */
 function SBInitialize()
 {
-  try
-  {
-    //Whatever migration is required between version, this function takes care of it.
-    SBMigrateDatabase();
-  }
-  catch(e) { }
-
   dump("SBInitialize *** \n");
-
-  window.focus();
-
+  
   try
   {
-    windowPlacementSanityChecks();
-
     // Set attributes on the Window element so we can use them in CSS.
     var platform = getPlatformString();
     var windowElement = document.getElementsByTagName("window")[0];
@@ -124,8 +115,6 @@ function SBUninitialize()
   closeJumpTo();
 
   resetMinMaxCallback();
-
-  thePollPlaylistService = null;
 }
 
 var SBWindowMinMaxCB =

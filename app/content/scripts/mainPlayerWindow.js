@@ -52,6 +52,9 @@ var gSongbirdPlayerWindow = {
     this._onPlayCallback = function(e) { gSongbirdPlayerWindow.onPlay(e); };    
     window.addEventListener("Play", 
         this._onPlayCallback, true);
+    
+    window.focus();
+    windowPlacementSanityChecks();
   },
 
 
