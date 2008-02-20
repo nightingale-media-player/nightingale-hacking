@@ -61,7 +61,6 @@ interface sbIMediaPage : nsISupports
    */
   attribute sbIMediaListView mediaListView;
 
-
   /**
    * \brief Tell the page to make the MediaItem at the given index visible and highlighted.
    * \param aViewIndex Index into the MediaListView (needed, since 
@@ -69,16 +68,21 @@ interface sbIMediaPage : nsISupports
    * \return True if the page is able to show the corresponding item
    */
   PRBool highlightItem(in unsigned long aViewIndex);
-  
-  
-  // TODO Playback
-  
-  // TODO Drag and Drop
-  
-  // Exact drag/drop requirements TBD in http://bugzilla.songbirdnest.com/show_bug.cgi?id=6812
-  // when drag and drop handling is moved from dndDefaultHandler.js and sbTabBrowser.xml
-  // into playlist.xml
+
+  /** 
+   * \brief Called when something is dragged over the tabbrowser tab for this page
+   * \param aEvent The draggedover event
+   * \param aSession The items to be dropped  
+   * \return True if the drop can proceed
+   */
   PRBool canDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+  
+  /** 
+   * \brief Called when something is dropped on the tabbrowser tab for this page
+   * \param aEvent The drop event
+   * \param aSession The items to be dropped  
+   * \return True if the drop succeeded
+   */
   PRBool onDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
 };
 

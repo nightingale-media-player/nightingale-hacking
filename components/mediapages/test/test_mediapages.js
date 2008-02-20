@@ -44,8 +44,8 @@ function runTest () {
   log("OK");
 }
 
-const DEFAULTPAGE1 = "chrome://songbird/content/xul/mediapages/playlistPage.xul?useFilters=true"
-const DEFAULTPAGE2 = "chrome://songbird/content/xul/mediapages/playlistPage.xul"
+const DEFAULTPAGE1 = "chrome://songbird/content/mediapages/playlistPage.xul?useFilters=true"
+const DEFAULTPAGE2 = "chrome://songbird/content/mediapages/playlistPage.xul"
 const EXTENSIONPAGE = "chrome://songbird-test-media-page/content/testMediaPage.xul"
 const EXTENSIONPAGEDOWNLOADS = "chrome://songbird-test-media-page/content/testMediaPage.xul?downloads"
 const EXTENSIONPAGELIBRARY = "chrome://songbird-test-media-page/content/testMediaPage.xul?library"

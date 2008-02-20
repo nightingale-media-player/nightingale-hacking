@@ -48,6 +48,8 @@
           Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
         if (!window.LibraryUtils) 
           Components.utils.import("resource://app/jsmodules/LibraryUtils.jsm");
+        if (!window.ArrayConverter) 
+          Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
@@ -495,10 +497,26 @@
               aMediaListView = LibraryUtils.createStandardMediaListView(aMediaList);
             }
 
-            // If no URL was provided, get the default from the page manager
+            var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                .getService(Components.interfaces.sbIMediaPageManager);
+
+            // If a page URL was provided, confirm that it is allowed for this medialist
+            if (aPageURL) {
+              var found = false;
+              for each (var page in ArrayConverter.JSArray(mgr.getAvailablePages(aMediaList))) {
+                if (aPageURL.indexOf(page.QueryInterface(Components.interfaces.sbIMediaPageInfo)
+                        .contentUrl) == 0) {
+                  found = true;
+                  break;
+                }
+              }
+              if (!found){
+                aPageURL = null;
+              }            
+            }
+            
+            // If no URL, get the default from the page manager
             if (!aPageURL) {
-              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaPageManager);
               var page = mgr.getPage(aMediaList);
               aPageURL = page.contentUrl;
             }
