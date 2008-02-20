@@ -714,8 +714,11 @@ var DIW = {
   _getDeviceBatteryStatus: function DIW__getDeviceBatteryStatus
                                       (aBatteryLevel,
                                        aOnBatteryPower) {
-    aBatteryLevel.value = this._getDeviceProperty("http://songbirdnest.com/device/1.0#batteryLevel", 0);
-    aOnBatteryPower.value = this._getDeviceProperty("http://songbirdnest.com/device/1.0#powerSource", 0);
+    aBatteryLevel.value = this._getDeviceProperty
+                        ("http://songbirdnest.com/device/1.0#batteryLevel", 0);
+    var powerSource = this._getDeviceProperty
+                        ("http://songbirdnest.com/device/1.0#powerSource", 0);
+    aOnBatteryPower.value = (parseInt(powerSource) ? true : false);
   },
 
 
