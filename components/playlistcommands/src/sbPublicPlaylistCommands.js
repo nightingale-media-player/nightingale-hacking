@@ -72,10 +72,10 @@ SelectionUnwrapper.prototype = {
 function PublicPlaylistCommands() {
   this.m_mgr = Components.
     classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
-    .getService(Components.interfaces.sbIPlaylistCommandsManager);
+    .getService(Ci.sbIPlaylistCommandsManager);
 
-  var obs = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
+  var obs = Cc["@mozilla.org/observer-service;1"]
+              .getService(Ci.nsIObserverService);
   obs.addObserver(this, "final-ui-startup", false);
 }
 
@@ -128,15 +128,15 @@ PublicPlaylistCommands.prototype = {
       // Add an observer for the application shutdown event, so that we can
       // shutdown our commands
 
-      var obs = Components.classes["@mozilla.org/observer-service;1"]
-                          .getService(Components.interfaces.nsIObserverService);
+      var obs = Cc["@mozilla.org/observer-service;1"]
+                  .getService(Ci.nsIObserverService);
       obs.removeObserver(this, "final-ui-startup");
       obs.addObserver(this, "quit-application", false);
 
       // --------------------------------------------------------------------------
 
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch2);
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch2);
 
       // --------------------------------------------------------------------------
 
@@ -548,7 +548,7 @@ PublicPlaylistCommands.prototype = {
 
       var webListGUID =
         prefs.getComplexValue("songbird.library.web",
-                              Components.interfaces.nsISupportsString);
+                              Ci.nsISupportsString);
 
       this.m_mgr.registerPlaylistCommandsMediaItem(webListGUID, "", this.m_webPlaylistCommands);
 
@@ -602,7 +602,7 @@ PublicPlaylistCommands.prototype = {
 
       var downloadListGUID =
         prefs.getComplexValue("songbird.library.download",
-                              Components.interfaces.nsISupportsString);
+                              Ci.nsISupportsString);
 
       this.m_mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "", this.m_downloadCommands);
 
@@ -655,7 +655,7 @@ PublicPlaylistCommands.prototype = {
       // Register these commands to the download playlist
       var downloadListGUID =
         prefs.getComplexValue("songbird.library.download",
-                              Components.interfaces.nsISupportsString);
+                              Ci.nsISupportsString);
 
       this.m_mgr.registerPlaylistCommandsMediaList(downloadListGUID, "", this.m_downloadCommandsServicePane);
 
@@ -679,16 +679,26 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.registerPlaylistCommandsMediaList( "", "simple", this.m_serviceTreeDefaultCommands );
       this.m_mgr.registerPlaylistCommandsMediaList( "", "smart",  this.m_serviceTreeDefaultCommands );
     } catch (e) {
-      Components.utils.reportError(e);
+      Cu.reportError(e);
     }
+
+    // notify observers that the default commands are now ready
+    var observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    observerService.notifyObservers(null, "playlist-commands-ready", "default");
   },
 
   // ==========================================================================
   // SHUTDOWN
   // ==========================================================================
   shutdownCommands: function() {
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefBranch2);
+    // notify observers that the default commands are going away
+    var observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    observerService.notifyObservers(null, "playlist-commands-shutdown", "default");
+
+    var prefs = Cc["@mozilla.org/preferences-service;1"]
+                  .getService(Ci.nsIPrefBranch2);
 
     // Un-publish atomic commands
 
@@ -721,7 +731,7 @@ PublicPlaylistCommands.prototype = {
 
     var downloadListGUID =
       prefs.getComplexValue("songbird.library.download",
-                            Components.interfaces.nsISupportsString);
+                            Ci.nsISupportsString);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID,
                                                    "",
@@ -745,7 +755,7 @@ PublicPlaylistCommands.prototype = {
 
     var webListGUID =
       prefs.getComplexValue("songbird.library.web",
-                            Components.interfaces.nsISupportsString);
+                            Ci.nsISupportsString);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem(webListGUID,
                                                    "",
@@ -784,8 +794,8 @@ PublicPlaylistCommands.prototype = {
 
     g_dataRemoteService = null;
 
-    var obs = Components.classes["@mozilla.org/observer-service;1"]
-                        .getService(Components.interfaces.nsIObserverService);
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
 
     obs.removeObserver(this, "quit-application");
   },
@@ -803,7 +813,7 @@ PublicPlaylistCommands.prototype = {
   },
 
   QueryInterface:
-    XPCOMUtils.generateQI([Components.interfaces.nsIObserver])
+    XPCOMUtils.generateQI([Ci.nsIObserver])
 };
 
 function unwrap(obj) {
@@ -875,7 +885,7 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
   }
   catch( err )
   {
-    Components.utils.reportError(err);
+    Cu.reportError(err);
   }
 }
 
@@ -886,8 +896,8 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
 // Called when the "add to library" action is triggered
 function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var libraryManager =
-    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-              .getService(Components.interfaces.sbILibraryManager);
+    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      .getService(Ci.sbILibraryManager);
   var mediaList = libraryManager.mainLibrary;
 
   var playlist = unwrap(aContext.playlist);
@@ -936,8 +946,8 @@ function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandI
     }
   }
 
-  var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                            .getService(Components.interfaces.nsIClipboardHelper);
+  var clipboard = Cc["@mozilla.org/widget/clipboardhelper;1"]
+                    .getService(Ci.nsIClipboardHelper);
   clipboard.copyString(clipboardtext);
 }
 
@@ -1018,8 +1028,8 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   if (servicePane) {
     // Ask the library service pane provider to suggest where
     // a new playlist should be created
-    var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
-                              .getService(Components.interfaces.sbILibraryServicePaneService);
+    var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                       .getService(Ci.sbILibraryServicePaneService);
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(medialist);
 
@@ -1033,8 +1043,8 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
 
   // Otherwise pop up a dialog and ask for playlist name
   } else {
-    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
-                                  .getService(Components.interfaces.nsIPromptService);
+    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"  ]
+                          .getService(Ci.nsIPromptService);
 
     var input = {value: medialist.name};
     var title = SBString("renamePlaylist.title", "Rename Playlist");
@@ -1130,8 +1140,8 @@ function plCmd_False(aContext, aSubMenuId, aCommandId, aHost) {
 function onBrowserTransfer(mediaItems, parentWindow)
 {
   var ddh =
-    Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-              .getService(Components.interfaces.sbIDownloadDeviceHelper);
+    Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+      .getService(Ci.sbIDownloadDeviceHelper);
   ddh.downloadSome(mediaItems);
 }
 
@@ -1140,8 +1150,8 @@ function getDownloadDevice() {
   try
   {
     if (!g_downloadDevice) {
-      var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                      getService(Components.interfaces.sbIDeviceManager);
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
+                            .getService(Ci.sbIDeviceManager);
 
       if (deviceManager)
       {
@@ -1150,13 +1160,13 @@ function getDownloadDevice() {
         {
           g_downloadDevice = deviceManager.getDeviceByCategory(downloadCategory);
           g_downloadDevice = g_downloadDevice.QueryInterface
-                                      (Components.interfaces.sbIDownloadDevice);
+                                      (Ci.sbIDownloadDevice);
         }
       }
     }
     return g_downloadDevice;
   } catch(e) {
-    Components.utils.reportError(e);
+    Cu.reportError(e);
   }
   return null;
 }
@@ -1165,17 +1175,17 @@ var g_webLibrary = null
 function getWebLibrary() {
   try {
     if (g_webLibrary == null) {
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch2);
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+        .getService(Ci.nsIPrefBranch2);
       var webListGUID = prefs.getComplexValue("songbird.library.web",
-          Components.interfaces.nsISupportsString);
+          Ci.nsISupportsString);
       var libraryManager =
-        Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-        .getService(Components.interfaces.sbILibraryManager);
+        Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+          .getService(Ci.sbILibraryManager);
       g_webLibrary = libraryManager.getLibrary(webListGUID);
     }
   } catch(e) {
-    Components.utils.reportError(e);
+    Cu.reportError(e);
   }
 
   return g_webLibrary;
@@ -1299,8 +1309,8 @@ function dataRemote(aKey, aRoot) {
 }
 
 function LOG(str) {
-  var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                          .getService(Components.interfaces.nsIConsoleService);
+  var consoleService = Cc['@mozilla.org/consoleservice;1']
+                         .getService(Ci.nsIConsoleService);
   consoleService.logStringMessage(str);
   dump(str+"\n");
 };
