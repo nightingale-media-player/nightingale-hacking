@@ -628,6 +628,8 @@ var DIW = {
         storageFormatter++;
       }
       
+      // Round to 2 decimal places
+      modelSize = modelSize.toFixed(2);
       return modelSize + " " + SBString("storageformatter." + sFormats[storageFormatter]);
     } catch (err) {
       return SBString("device.info.unknown");
