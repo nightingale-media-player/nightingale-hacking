@@ -154,6 +154,10 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
         || (_url.Find(".m4v", PR_TRUE) != -1)
+        || (_url.Find(".oga", PR_TRUE) != -1)
+        || (_url.Find(".ogm", PR_TRUE) != -1)
+        || (_url.Find(".ogv", PR_TRUE) != -1)
+        || (_url.Find(".ogx", PR_TRUE) != -1)
         || (_url.Find(".ogg", PR_TRUE) != -1))
     {
         vote = 1;
@@ -1096,6 +1100,14 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p")))
             isValid = ReadMP4File(metadataPathCStr);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")))
+            isValid = ReadOGGFile(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("oga")))
+            isValid = ReadOGGFile(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv")))
+            isValid = ReadOGGFile(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm")))
+            isValid = ReadOGGFile(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogx")))
             isValid = ReadOGGFile(metadataPathCStr);
         else
             decodedFileExt = PR_FALSE;

@@ -153,15 +153,16 @@ function CoreVLC()
   
   this._lastVolume = 25;
 
-  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
-                              "wma", "wmv", "asf", "avi",  "mov", "mpg",
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc",  "wav",   "aac", "mva",
+                              "wma", "wmv", "asf",  "avi",  "mov",   "mpg",
                               "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
-                              "mka", "ogm", "mpe", "qt", "aiff", "aif", "m4a",
-                              "m4v"];
+                              "mka", "ogm", "mpe",  "qt",   "aiff",  "aif", "m4a",
+                              "m4v", "oga", "ogv",  "ogx"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
-  this._videoUrlExtensions = ["wmv", "asf", "avi", "mov", "qt", "mpg",
-                              "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
+  this._videoUrlExtensions = ["wmv", "asf", "avi", "mov",  "qt", "mpg",
+                              "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv",
+                              "ogm", "ogv", "ogx"];
 
   this._unsupportedExtensions = [];
 
