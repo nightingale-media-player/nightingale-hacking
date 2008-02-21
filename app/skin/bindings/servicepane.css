@@ -49,6 +49,12 @@ Imported by bindings.css or directly into feathers.
 }
 
 /* Service Pane Icons **/
+.servicepane-tree > treechildren::-moz-tree-image()
+{
+  width: 16px;
+  max-height: 16px;
+}
+
 .servicepane-tree > treechildren::-moz-tree-image( library ),
 .locationbar-image[properties~="library"],
 .tabbrowser-tab[properties~="library"] > .tab-image-middle > .tab-icon > .tab-icon-image
