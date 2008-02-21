@@ -1342,10 +1342,14 @@ void sbMetadataHandlerTaglib::GuessCharset(
 #if XP_WIN
     // we have no idea what charset this is, but we know it's bad.
     // for Windows only, assume CP_ACP
-    int len = tagString.size();
 
     // make the call fail if it's not valid CP_ACP
-    int size = MultiByteToWideChar( CP_ACP, MB_ERR_INVALID_CHARS, data, len, nsnull, 0 );
+    int size = MultiByteToWideChar( CP_ACP,
+                                    MB_ERR_INVALID_CHARS,
+                                    data.c_str(),
+                                    data.length(),
+                                    nsnull,
+                                    0 );
     if (size) {
         // okay, so CP_ACP is usable
         _retval.AssignLiteral("CP_ACP");
