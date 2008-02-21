@@ -96,6 +96,11 @@ sb-sys-dialog-titlebar
   color: #feffff; /** Light Color Brightest */
 }
 
+window[platform=Darwin] > sb-sys-outer-frame > sb-sys-titlebar {
+  font-family: Lucida Grande; 
+  font-size: 13px;
+}
+
 sb-sys-close-button,
 sb-sys-maximize-button,
 sb-sys-minimize-button,
@@ -1776,12 +1781,16 @@ DIALOGS
 *******************************************************************************
 */
 
-#mainplayer,
-dialog
+/* on OS X there is a shadow on the window
+  so this border is considered undesirable.
+  see: bug 6399
+ */
+#mainplayer:not([platform=Darwin]),
+dialog:not([platform=Darwin])
 {
-	border-right:1px solid black;
-	border-bottom:1px solid black;
-	border-left:1px solid black;
+  border-right:1px solid black;
+  border-bottom:1px solid black;
+  border-left:1px solid black;
 }
 
 /*prefwindow*/

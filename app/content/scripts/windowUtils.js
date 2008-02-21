@@ -793,6 +793,19 @@ function onLayoutLoad(event) {
 }
 window.addEventListener('load', onLayoutLoad, false);
 
+/**
+ * \brief Add a "platform" attribute to the current document's root element.
+ * This attribute is used by CSS developers to be able to target a particular
+ * platform.
+ * eg: window[platform=Darwin] {  someOSXspecificstuff }
+ */ 
+function initializeDocumentPlatformAttribute() {
+    // Perform platform specific customization
+    var platform = getPlatformString();
+
+    // Set attributes on the document element so we can use them in CSS.
+    document.documentElement.setAttribute("platform",platform);
+}
 
 /**
  * \brief Get the main window browser.

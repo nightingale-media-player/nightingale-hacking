@@ -61,6 +61,13 @@
 
       </sb-sys-outer-frame>
     </content>
+    <implementation>
+      <constructor>
+        // see: windowUtils::initializeDocumentPlatformAttribute();
+        document.documentElement.setAttribute("platform",getPlatformString());
+        
+      </constructor>
+    </implementation>
   </binding>
   
   <binding id="platform-dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">

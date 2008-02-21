@@ -77,10 +77,8 @@ function SBInitialize()
   
   try
   {
-    // Set attributes on the Window element so we can use them in CSS.
-    var platform = getPlatformString();
-    var windowElement = document.getElementsByTagName("window")[0];
-    windowElement.setAttribute("platform", platform);
+    windowPlacementSanityChecks();
+    initializeDocumentPlatformAttribute();
 
     // Delay setting the min max callback to enable the reflow of the mainwin to
     // happen. The reflow is caused by restoring the window size and position (or

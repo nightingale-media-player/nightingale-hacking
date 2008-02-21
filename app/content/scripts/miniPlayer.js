@@ -56,16 +56,12 @@ var gMiniplayer = {
     // Prevent window from being resized inappropriately
     this._setMinMaxCallback();
 
-
-    // Perform platform specific customization
-    var platform = this._getPlatform();
-
     // Set attributes on the Window element so we can use them in CSS.
     var windowElement = document.getElementsByTagName("window")[0];
-    windowElement.setAttribute("platform",platform);
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
 
     windowPlacementSanityChecks();
+    initializeDocumentPlatformAttribute();
     
     // so, right now the height is correct but something somewhere after this is going to go
     // and screw it right up. we don't know why, or how, but on windows it ends up being 100px
@@ -364,6 +360,7 @@ var gMiniplayer = {
   /**
    * Figure out which operating system we are on
    */
+  // XXXpvh: can this be removed and replaced with the GetPlatformString used everywhere else?
   _getPlatform: function _getPlatform() {
     var platform;
     try {
