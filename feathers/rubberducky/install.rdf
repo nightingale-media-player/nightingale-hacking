@@ -22,22 +22,18 @@
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <songbird:feathers>
+    <songbird:skin>
       <Description>
-        <songbird:skin>
+        <songbird:name>Rubberducky (default)</songbird:name>
+        <songbird:internalName>rubberducky/0.2</songbird:internalName>
+        <songbird:compatibleLayout>
           <Description>
-            <songbird:name>Rubberducky (default)</songbird:name>
-            <songbird:internalName>rubberducky/0.2</songbird:internalName>
-            <songbird:compatibleLayout>
-              <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleLayout>
+            <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
           </Description>
-        </songbird:skin>
+        </songbird:compatibleLayout>
       </Description>
-    </songbird:feathers>
+    </songbird:skin>
 
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>

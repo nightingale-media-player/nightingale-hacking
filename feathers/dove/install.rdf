@@ -22,28 +22,24 @@
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <songbird:feathers>
+    <songbird:skin>
       <Description>
-        <songbird:skin>
+        <songbird:name>Dove</songbird:name>
+        <songbird:internalName>dove/0.1</songbird:internalName>
+        <songbird:compatibleLayout>
           <Description>
-            <songbird:name>Dove</songbird:name>
-            <songbird:internalName>dove/0.1</songbird:internalName>
-            <songbird:compatibleLayout>
-              <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleLayout>
-            <songbird:compatibleLayout>
-              <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:layoutURL>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleLayout>            
+            <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
           </Description>
-        </songbird:skin>
+        </songbird:compatibleLayout>
+        <songbird:compatibleLayout>
+          <Description>
+            <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+          </Description>
+        </songbird:compatibleLayout>            
       </Description>
-    </songbird:feathers>
+    </songbird:skin>
     
     
     <em:internalName>dove/0.1</em:internalName>
