@@ -381,7 +381,7 @@ mtpServicePaneService.prototype = {
     // Remove the device library.
 
     // Remove the device node.
-    this._servicePaneSvc.removeNode(devInfo.svcPaneNode);
+    devInfo.svcPaneNode.hidden = true;
 
     // Remove device info list entry.
     delete this._deviceInfoList[devId];
@@ -460,7 +460,7 @@ mtpServicePaneService.prototype = {
 
     // Remove device nodes.
     if (aNode.contractid == this._cfg.contractID)
-      this._servicePaneSvc.removeNode(aNode);
+      aNode.hidden = true;
   },
   
   /**
@@ -790,7 +790,7 @@ mtpServicePaneService.prototype = {
           var eventname = entry[0];
           var domnode = entry[1];
           var handler = entry[2];
-          domnode.removeEventListener(eventname, handler);
+          domnode.removeEventListener(eventname, handler, false);
           command_handlers.shift();
         }
       }
