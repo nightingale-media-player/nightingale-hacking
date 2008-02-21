@@ -53,6 +53,10 @@ static PRLogModuleInfo* gDeviceCapabilitiesLog = nsnull;
 sbDeviceCapabilities::sbDeviceCapabilities() :
 isInitialized(false)
 {
+  nsresult rv = mContentTypes.Init();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize mContentTypes");
+  rv = mSupportedFormats.Init();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize mSupportedFormats");
 #ifdef PR_LOGGING
   if (!gDeviceCapabilitiesLog) {
     gDeviceCapabilitiesLog = PR_NewLogModule("sbDeviceCapabilities");
@@ -84,8 +88,8 @@ sbDeviceCapabilities::SetFunctionTypes(PRUint32 *aFunctionTypes,
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   PRUint32 arrayCounter;
-  for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; arrayCounter++) {
-    mFunctionTypes[arrayCounter] = aFunctionTypes[arrayCounter];
+  for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; ++arrayCounter) {
+    mFunctionTypes.AppendElement(aFunctionTypes[arrayCounter]);
   }
 
   return NS_OK;
@@ -97,8 +101,8 @@ sbDeviceCapabilities::SetEventTypes(PRUint32 *aEventTypes,
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  for (PRUint32 arrayCounter = 0; arrayCounter < aEventTypesCount; arrayCounter++) {
-    mSupportedEvents[arrayCounter] = aEventTypes[arrayCounter];
+  for (PRUint32 arrayCounter = 0; arrayCounter < aEventTypesCount; ++arrayCounter) {
+    mSupportedEvents.AppendElement(aEventTypes[arrayCounter]);
   }
 
   return NS_OK;
@@ -112,31 +116,31 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  nsTArray<PRUint32> nContentTypes;
+  nsTArray<PRUint32> * nContentTypes = new nsTArray<PRUint32>(aContentTypesCount);
   
-  for (PRUint32 arrayCounter = 0; arrayCounter < aContentTypesCount; arrayCounter++) {
-    nContentTypes[arrayCounter] = aContentTypes[arrayCounter];
+  for (PRUint32 arrayCounter = 0; arrayCounter < aContentTypesCount; ++arrayCounter) {
+    nContentTypes->AppendElement(aContentTypes[arrayCounter]);
   }
   
-  mContentTypes.Put(aFunctionType, &nContentTypes);
+  mContentTypes.Put(aFunctionType, nContentTypes);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
-                                 PRUint32 *aFormats,
+                                 const char * *aFormats,
                                  PRUint32 aFormatsCount)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  nsTArray<PRUint32> nFormats;
+  nsTArray<nsCString> * nFormats = new nsTArray<nsCString>(aFormatsCount);
   
-  for (PRUint32 arrayCounter = 0; arrayCounter < aFormatsCount; arrayCounter++) {
-    nFormats[arrayCounter] = aFormats[arrayCounter];
+  for (PRUint32 arrayCounter = 0; arrayCounter < aFormatsCount; ++arrayCounter) {
+    nFormats->AppendElement(aFormats[arrayCounter]);
   }
   
-  mSupportedFormats.Put(aContentType, &nFormats);
+  mSupportedFormats.Put(aContentType, nFormats);
 
   return NS_OK;
 }
@@ -149,9 +153,7 @@ sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
 
   PRUint32 arrayLen = mFunctionTypes.Length();
   PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
-  if (!outArray) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
+  NS_ENSURE_TRUE(outArray, NS_ERROR_OUT_OF_MEMORY);
   
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     outArray[arrayCounter] = mFunctionTypes[arrayCounter];
@@ -185,7 +187,7 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     outArray[arrayCounter] = contentTypes->ElementAt(arrayCounter);
   }
-
+  
   *aArrayCount = arrayLen;
   *aContentTypes = outArray;
   return NS_OK;
@@ -194,11 +196,11 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
 NS_IMETHODIMP
 sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
                                           PRUint32 *aArrayCount,
-                                          PRUint32 **aSupportedFormats)
+                                          char ***aSupportedFormats)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   
-  nsTArray<PRUint32>* supportedFormats;
+  nsTArray<nsCString>* supportedFormats;
 
   if (!mSupportedFormats.Get(aContentType, &supportedFormats)) {
     NS_WARNING("Requseted content type is not available for this device.");
@@ -206,13 +208,14 @@ sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
   }
 
   PRUint32 arrayLen = supportedFormats->Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  char** outArray = reinterpret_cast<char**>(NS_Alloc(arrayLen * sizeof(char*)));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
   
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
-    outArray[arrayCounter] = supportedFormats->ElementAt(arrayCounter);
+    nsCString const & format = supportedFormats->ElementAt(arrayCounter);
+    outArray[arrayCounter] = ToNewCString(format);
   }
 
   *aArrayCount = arrayLen;

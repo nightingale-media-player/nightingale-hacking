@@ -63,7 +63,7 @@ interface sbIDeviceCapabilities : nsISupports
    * \param aContentTypesCount length of aContentTypes array
    */
   void addContentTypes(in PRUint32 aFunctionType,
-                [array, size_is(aContentTypesCount)] in PRUint32 aContentTypes,
+                [array, size_is(aContentTypesCount)] in unsigned long aContentTypes,
                 in unsigned long aContentTypesCount);
   
   /**
@@ -73,7 +73,7 @@ interface sbIDeviceCapabilities : nsISupports
    * \param aFormatsCount length of aFormats array
    */
   void addFormats(in PRUint32 aContentType,
-                  [array, size_is(aFormatsCount)] in PRUint32 aFormats,
+                  [array, size_is(aFormatsCount)] in string aFormats,
                   in unsigned long aFormatsCount);
 
   /**
@@ -132,7 +132,7 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedContentTypes(in PRUint32 aFunctionType,
                                 out unsigned long aArrayCount,
                                 [retval, array, size_is(aArrayCount)]
-                                  out PRUint32 aContentTypes);
+                                out PRUint32 aContentTypes);
 
   /**
    * Returns an array of sbIContentTypeFormat objects.
@@ -140,7 +140,7 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedFormats(in PRUint32 aContentType,
                            out unsigned long aArrayCount,
                            [retval, array, size_is(aArrayCount)]
-                            out PRUint32 aSuportedFormats);
+                           out string aSuportedFormats);
 
   /**
    * An array of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl

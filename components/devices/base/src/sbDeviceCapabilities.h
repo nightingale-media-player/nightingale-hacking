@@ -50,7 +50,7 @@ protected:
 
   nsTArray<PRUint32> mFunctionTypes;
   nsClassHashtable<nsUint32HashKey, nsTArray<PRUint32> > mContentTypes;
-  nsClassHashtable<nsUint32HashKey, nsTArray<PRUint32> > mSupportedFormats;
+  nsClassHashtable<nsUint32HashKey, nsTArray<nsCString> > mSupportedFormats;
   nsTArray<PRUint32> mSupportedEvents;
 };
 
