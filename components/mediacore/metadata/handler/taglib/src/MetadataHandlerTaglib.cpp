@@ -98,9 +98,11 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerTaglib");
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
 
-PRLock* sbMetadataHandlerTaglib::mLock = nsnull;
+PRLock* sbMetadataHandlerTaglib::sBusyLock = nsnull;
+PRLock* sbMetadataHandlerTaglib::sBackgroundLock = nsnull;
+PRBool sbMetadataHandlerTaglib::sBusyFlag = PR_FALSE;
 
-/*******************************************************************************
+/*
  *
  * Taglib metadata handler nsISupports implementation.
  *
@@ -223,25 +225,72 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SupportedFileExtensions(
 NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     *pReadCount)
 {
-  // XXX this is very wrong!  We're back to touching taglib with more than
-  // one thread.  This is teh sux0r
+  nsresult rv;
 
-  // We can not have the main thread acquire the same lock that the background
-  // threads do since it can easy deadlock if the main thread is waiting
-  // to acquire the lock while a backround thread is reading metadata and
-  // trying to proxy a call to the main thread.
+  // TagLib is not thread safe so we must do this elaborate dance
+  // to ensure that only one thread toches taglib at a time as well
+  // as make sure the main thread can process events while waiting
+  // its turn.  This is done by busy-waiting around sBusyFlag.  If
+  // you are the main thread, process events while busy waiting.
 
   if (NS_IsMainThread()) {
-    return ReadInternal(pReadCount);
+    nsCOMPtr<nsIThread> mainThread = do_GetMainThread();
+
+    PRBool gotLock = PR_FALSE;
+    while (!gotLock) {
+      // Scope the lock
+      {
+        nsAutoLock lock(sBusyLock);
+        if (!sBusyFlag) {
+          sBusyFlag = PR_TRUE;
+          gotLock = PR_TRUE;
+        }
+      }
+
+      if (!gotLock) {
+        NS_ProcessPendingEvents(mainThread, 100);
+      }
+
+    }
+
+    rv = ReadInternal(pReadCount);
+
+    // Scope the lock
+    {
+      nsAutoLock lock(sBusyLock);
+      sBusyFlag = PR_FALSE;
+    }
+
   }
   else {
-    // TagLib is not thread safe -- its string classes like to share data
-    // between threads.  mLock is static so this lock will serialize the
-    // calls to this method for all instances of this class.
-    nsAutoLock lock(mLock);
+    // To prevent an army of busy waiting background threads,
+    // use a lock here so only one background thread can enter
+    // this section at a time.
+    nsAutoLock lock(sBackgroundLock);
 
-    return ReadInternal(pReadCount);
+    PRBool gotLock = PR_FALSE;
+    while (!gotLock) {
+      // Scope the lock
+      {
+        nsAutoLock lock(sBusyLock);
+        if (!sBusyFlag) {
+          sBusyFlag = PR_TRUE;
+          gotLock = PR_TRUE;
+        }
+      }
+    }
+
+    rv = ReadInternal(pReadCount);
+
+    // Scope the lock
+    {
+      nsAutoLock lock(sBusyLock);
+      sBusyFlag = PR_FALSE;
+    }
+
   }
+
+  return rv;
 }
 
 nsresult sbMetadataHandlerTaglib::ReadInternal(
@@ -614,15 +663,23 @@ nsresult sbMetadataHandlerTaglib::Init()
             do_CreateInstance("@mozilla.org/network/protocol;1?name=file", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    mProxiedServices =
+      do_GetService("@songbirdnest.com/moz/proxied-services;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     return (NS_OK);
 }
 
 /* static */
 nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
 {
-  sbMetadataHandlerTaglib::mLock =
-    nsAutoLock::NewLock("sbMetadataHandlerTaglib::mLock");
-  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::mLock, NS_ERROR_OUT_OF_MEMORY);
+  sbMetadataHandlerTaglib::sBusyLock =
+    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sBusyLock");
+  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sBusyLock, NS_ERROR_OUT_OF_MEMORY);
+
+  sbMetadataHandlerTaglib::sBackgroundLock =
+    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sBackgroundLock");
+  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sBackgroundLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -630,8 +687,12 @@ nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
 /* static */
 void sbMetadataHandlerTaglib::ModuleDestructor(nsIModule* aSelf)
 {
-  if (sbMetadataHandlerTaglib::mLock) {
-    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::mLock);
+  if (sbMetadataHandlerTaglib::sBusyLock) {
+    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sBusyLock);
+  }
+
+  if (sbMetadataHandlerTaglib::sBackgroundLock) {
+    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sBackgroundLock);
   }
 }
 
@@ -763,7 +824,7 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
         {
             PRInt32                     length;
 
-            PR_sscanf(frameList.front()->toString().toCString(true),
+            PR_sscanf(frameList.front()->toString().to8Bit(true).c_str(),
                       "%d",
                       &length);
             length *= 1000;
@@ -869,7 +930,7 @@ void sbMetadataHandlerTaglib::AddAPETag(
         {
             PRInt32                     length;
 
-            PR_sscanf(item.toString().toCString(true),
+            PR_sscanf(item.toString().to8Bit(true).c_str(),
                       "%d",
                       &length);
             length *= 1000;
@@ -1198,8 +1259,8 @@ void sbMetadataHandlerTaglib::GuessCharset(
     // XXXben We can't use the TagLib::String iterators here because TagLib was
     //        not compiled with -fshort_wchar whereas this component (and
     //        mozilla) are. Iterate manually instead.
-    const char* data = tagString.toCString(true);
-    NS_ConvertUTF8toUTF16 expandedData(data);
+    std::string data = tagString.to8Bit(true);
+    NS_ConvertUTF8toUTF16 expandedData(data.c_str());
 
     const PRUnichar *begin, *end;
     expandedData.BeginReading(&begin, &end);
@@ -1225,13 +1286,13 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    const char* raw = tagString.toCString();
-    if (IsLikelyUTF8(nsDependentCString(raw, tagString.size()))) {
-        nsCOMPtr<nsIUTF8ConverterService> utf8Service =
-            do_ProxiedGetService("@mozilla.org/intl/utf8converterservice;1");
+    std::string raw = tagString.to8Bit();
+    if (IsLikelyUTF8(nsDependentCString(raw.c_str(), raw.length()))) {
+        nsCOMPtr<nsIUTF8ConverterService> utf8Service;
+        mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
         if (utf8Service) {
             nsCString dataUTF8;
-            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(raw, tagString.size()),
+            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(raw.c_str(), raw.length()),
                                                   "utf-8",
                                                   PR_FALSE,
                                                   dataUTF8);
@@ -1260,7 +1321,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
             const PRUint32 chunkSize = tagString.size();
             PRUint32 currentSize = 0;
             while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
-                rv = detector->DoIt(data, chunkSize, &isDone);
+                rv = detector->DoIt(data.c_str(), chunkSize, &isDone);
                 if (NS_FAILED(rv) || isDone) {
                     break;
                 }
@@ -1315,14 +1376,14 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
         return aString;
     }
 
-    const char* data = aString.toCString(false);
+    std::string data = aString.to8Bit(false);
 #if XP_WIN
     if (strcmp("CP_ACP", aCharset) == 0) {
         // convert to CP_ACP
         int size = ::MultiByteToWideChar( CP_ACP,
                                           MB_ERR_INVALID_CHARS,
-                                          data,
-                                          aString.size(),
+                                          data.c_str(),
+                                          data.length(),
                                           nsnull,
                                           0 );
         if (size) {
@@ -1331,8 +1392,8 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
             if (wstr) {
                 int read = MultiByteToWideChar( CP_ACP,
                                                 MB_ERR_INVALID_CHARS,
-                                                data,
-                                                aString.size(),
+                                                data.c_str(),
+                                                data.length(),
                                                 wstr,
                                                 size );
                 NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
@@ -1348,10 +1409,10 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 #endif
 
     // convert via Mozilla
-    nsCOMPtr<nsIUTF8ConverterService> utf8Service =
-        do_ProxiedGetService("@mozilla.org/intl/utf8converterservice;1");
+    nsCOMPtr<nsIUTF8ConverterService> utf8Service;
+    mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
     if (utf8Service) {
-        nsDependentCString raw(data, aString.size());
+        nsDependentCString raw(data.c_str(), data.length());
         nsCString converted;
         nsresult rv = utf8Service->ConvertStringToUTF8(
             raw, aCharset, PR_FALSE, converted);
@@ -1689,13 +1750,13 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     nsresult                    result = NS_OK;
 
     /* Do nothing if no metadata value available. */
-    if (value == TagLib::String::null)
+    if (value.isNull())
         return (result);
 
     /* Add the metadata value. */
     result = mpMetadataValues->SetValue
                                 (NS_ConvertUTF8toUTF16(name),
-                                 NS_ConvertUTF8toUTF16(value.toCString(true)),
+                                 NS_ConvertUTF8toUTF16(value.to8Bit(true).c_str()),
                                  0);
 
     return (result);

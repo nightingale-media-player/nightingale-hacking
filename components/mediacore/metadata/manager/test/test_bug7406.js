@@ -30,10 +30,20 @@
 
 var gTestMetadataJobManager;
 var count = 0;
+var gServer;
 
 function runTest () {
-  var NUM_JOBS = 2;
+  var NUM_JOBS = 10;
   var NUM_ITEMADD_LOOPS = 2;
+
+  var port = getTestServerPortNumber();
+
+  gServer = Cc["@mozilla.org/server/jshttp;1"].createInstance(Ci.nsIHttpServer);
+
+  gServer.start(port);
+  gServer.registerDirectory("/", getFile("."));
+
+  var prefix = "http://localhost:" + port + "/";
 
   var library = createNewLibrary( "test_metadatajob" );
 
@@ -42,7 +52,10 @@ function runTest () {
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/2%20Svefn-G-Englar.mp3",
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/3%20Star%C3%A1lfur.mp3",
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/4%20Flugufrelsarinn.mp3",
-    "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/5%20Ny%20Batteri.mp3"
+    "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/5%20Ny%20Batteri.mp3",
+    prefix + "test1.mp3",
+    prefix + "test2.mp3",
+    prefix + "test3.mp3"
   ];
 
   gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
@@ -86,6 +99,18 @@ function onComplete(aSubject, aTopic, aData) {
   log("done = " + count);
   count--;
   if (count == 0) {
+    gServer.stop();
     testFinished(); // Complete the testing
   }
+}
+
+function getFile(fileName) {
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file = file.clone();
+  file.append("testharness");
+  file.append("metadatamanager");
+  file.append(fileName);
+  return file;
 }

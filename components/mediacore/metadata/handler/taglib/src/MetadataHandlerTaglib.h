@@ -85,6 +85,7 @@
 #include <sbIMetadataValues.h>
 #include <sbISeekableChannel.h>
 #include <sbITagLibChannelFileIOManager.h>
+#include <sbIProxiedServices.h>
 
 /* TagLib imports. */
 #include <id3v2tag.h>
@@ -158,7 +159,12 @@ private:
     nsCOMPtr<nsICrashReporter>  mpCrashReporter;
 #endif
 
-    static PRLock* mLock;
+    // Statics to help manage the single threading of taglib
+    static PRLock* sBusyLock;
+    static PRLock* sBackgroundLock;
+    static PRBool sBusyFlag;
+
+    nsCOMPtr<sbIProxiedServices> mProxiedServices;
 
     /* Inherited interfaces. */
 public:
