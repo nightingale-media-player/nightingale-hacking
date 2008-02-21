@@ -2,10 +2,10 @@ Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.45
-diff -u -8 -p -r1.45 nsCocoaWindow.h
+diff -u -8 -r1.45 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	19 Dec 2007 19:40:19 -0000	1.45
-+++ widget/src/cocoa/nsCocoaWindow.h	3 Jan 2008 23:48:22 -0000
-@@ -94,17 +94,21 @@ class nsChildView;
++++ widget/src/cocoa/nsCocoaWindow.h	21 Feb 2008 18:46:06 -0000
+@@ -94,17 +94,21 @@
  
  
  @interface BorderlessWindow : NSWindow
@@ -30,11 +30,11 @@ diff -u -8 -p -r1.45 nsCocoaWindow.h
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.128
-diff -u -8 -p -r1.128 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	19 Dec 2007 19:40:19 -0000	1.128
-+++ widget/src/cocoa/nsCocoaWindow.mm	3 Jan 2008 23:48:22 -0000
-@@ -362,20 +362,34 @@ nsresult nsCocoaWindow::StandardCreate(n
+retrieving revision 1.131
+diff -u -8 -r1.131 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	16 Feb 2008 20:33:32 -0000	1.131
++++ widget/src/cocoa/nsCocoaWindow.mm	21 Feb 2008 18:46:07 -0000
+@@ -365,20 +365,34 @@
      // Note that we need to check the window type because we mark sheets sheets as 
      // having titlebars.
      if (mWindowType == eWindowType_toplevel &&
@@ -73,7 +73,7 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
      if (mWindowType == eWindowType_popup) {
        [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
        [mWindow setLevel:NSPopUpMenuWindowLevel];
-@@ -394,17 +408,21 @@ nsresult nsCocoaWindow::StandardCreate(n
+@@ -397,17 +411,21 @@
          [mWindow setContentView:newContentView];
        }
      }
@@ -96,7 +96,7 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
      
      mWindowMadeHere = PR_TRUE;
    }
-@@ -1920,8 +1938,171 @@ void patternDraw(void* aInfo, CGContextR
+@@ -1959,8 +1977,215 @@
  {
    NSWindow *nativeWindow = [self retain];
    BOOL retval = [super performKeyEquivalent:theEvent];
@@ -259,10 +259,54 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
 +@end
 +
 +@implementation SongbirdWindow
++
 ++ (Class)frameViewClassForStyleMask:(unsigned int)styleMask
 +{
 +  return [SongbirdThemeFrame class];
 +}
++
++- (id)initWithContentRect:(NSRect)contentRect 
++                styleMask:(unsigned int)aStyle 
++                  backing:(NSBackingStoreType)bufferingType 
++                    defer:(BOOL)flag
++{
++  if ((self = [super initWithContentRect:contentRect 
++                               styleMask:aStyle 
++                                 backing:bufferingType 
++                                   defer:flag])) 
++  {
++    [[NSNotificationCenter defaultCenter] addObserver:self 
++                                             selector:@selector(windowDidMove:)
++                                                 name:NSWindowDidMoveNotification 
++                                               object:self];
++  }
++  
++  return self;
++}
++
++- (void)dealloc
++{
++  [[NSNotificationCenter defaultCenter] removeObserver:self
++                                                  name:NSWindowDidMoveNotification
++                                                object:self];
++  [super dealloc];
++}
++
++- (void)windowDidMove:(NSNotification *)notification
++{
++  NSRect newFrame = [self frame];
++  NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
++  
++  // Prevent the window from going under the menubar:
++  if ((newFrame.origin.y + newFrame.size.height) > 
++      (screenFrame.origin.y + screenFrame.size.height))
++  {
++    newFrame.origin.y = 
++      screenFrame.origin.y + (screenFrame.size.height - newFrame.size.height);
++    [self setFrameOrigin:newFrame.origin];
++  }
++}
++
 +@end
 +
 +/*************************************************************************
