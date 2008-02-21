@@ -1,5 +1,6 @@
 mk_add_options MOZ_CO_PROJECT=xulrunner
 mk_add_options MOZ_CO_MODULE=mozilla/other-licenses/bsdiff,mozilla/tools/update-packaging
+mk_add_options MOZ_CO_DATE="2008-02-11 16:00 PST"
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-debug
 export MOZ_DEBUG_SYMBOLS=1
 export MOZILLA_OFFICIAL=1
