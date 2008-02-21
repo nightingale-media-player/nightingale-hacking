@@ -2563,6 +2563,12 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
 
   itemInfo->weakRef = do_GetWeakReference(strongMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
+    do_QueryInterface(strongMediaItem, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    strongLocalItem->SetSuppressNotifications(PR_FALSE);
+  }
 
   NS_ADDREF(*_retval = strongMediaItem);
   return NS_OK;

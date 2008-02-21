@@ -119,6 +119,7 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 : mMediaItemId(0),
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
+  mSuppressNotifications(PR_TRUE),
   mPropertyCacheLock(nsnull),
   mPropertyBagLock(nsnull)
 {
@@ -443,7 +444,9 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  mLibrary->NotifyListenersItemUpdated(this, properties);
+  if (!mSuppressNotifications) {
+    mLibrary->NotifyListenersItemUpdated(this, properties);
+  }
 
   return rv;
 }
@@ -514,7 +517,9 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     }
   }
 
-  mLibrary->NotifyListenersItemUpdated(this, properties);
+  if (!mSuppressNotifications) {
+    mLibrary->NotifyListenersItemUpdated(this, properties);
+  }
 
   return NS_OK;
 }
@@ -669,6 +674,12 @@ sbLocalDatabaseMediaItem::SetPropertyBag(sbILocalDatabaseResourcePropertyBag* aP
 
   mPropertyBag = aPropertyBag;
   return NS_OK;
+}
+
+NS_IMETHODIMP_(void)
+sbLocalDatabaseMediaItem::SetSuppressNotifications(PRBool aSuppress)
+{
+  mSuppressNotifications = aSuppress;
 }
 
 /**

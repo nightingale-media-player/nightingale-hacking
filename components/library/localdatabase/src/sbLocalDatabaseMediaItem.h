@@ -86,6 +86,11 @@ protected:
 
   nsString mGuid;
 
+  // When set, listeners will not be notified.  This is used to signal when the
+  // item is not yet ready for notification (e.g. during the middle of creation)
+  // and when it's already been deleted.
+  PRBool mSuppressNotifications;
+
 private:
   PRLock* mPropertyCacheLock;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
