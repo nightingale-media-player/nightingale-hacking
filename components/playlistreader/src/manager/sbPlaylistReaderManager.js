@@ -316,11 +316,11 @@ CPlaylistReaderManager.prototype =
     // the given regexp, it is assigned the given mime type.
     var regexps = [
       {
-        regexp:    /^<\?xml(.|\n)*<rss/,
+        regexp:    /<\?xml[\s\S]*<rss/,
         mimeType: "application/rss+xml"
       },
       {
-        regexp:    /^<\?xml(.|\n)*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/,
+        regexp:    /<\?xml[\s\S]*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/,
         mimeType: "application/atom+xml"
       },
       {
