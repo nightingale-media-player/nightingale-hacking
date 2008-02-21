@@ -93,7 +93,8 @@ window.mediaPage = {
     }
   
 	  // TODO: Get cmds that are appropriate for the list    
-	  var mgr = new sbIPlaylistCommandsManager();
+	  var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                      .getService(Ci.sbIPlaylistCommandsManager);
 	  var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
 	    
 	  // Set up the playlist
