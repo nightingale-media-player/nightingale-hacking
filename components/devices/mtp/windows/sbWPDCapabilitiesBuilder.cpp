@@ -136,6 +136,8 @@ nsresult sbWPDCapabilitiesBuilder::Create(sbIDeviceCapabilities ** capabilities)
   NS_ENSURE_SUCCESS(rv, rv);
   rv = SetContentCaptureTypes();
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = mSBCapabilities->InitDone();
+  NS_ENSURE_SUCCESS(rv, rv);
   mSBCapabilities.forget(capabilities);
   return NS_OK;
 }
@@ -157,6 +159,8 @@ nsresult sbWPDCapabilitiesBuilder::SetSupportedFormats(GUID contentType)
   char const ** formatStrings = new char const *[formatCount];
   NS_ENSURE_TRUE(formatStrings, NS_ERROR_OUT_OF_MEMORY);
   DWORD index;
+  // We may have fewer valid formats than expected
+  DWORD validFormats = 0;
   for (index = 0; index < formatCount; ++index) {
     PROPVARIANT format = {0};
     PropVariantInit(&format);
@@ -165,12 +169,18 @@ nsresult sbWPDCapabilitiesBuilder::SetSupportedFormats(GUID contentType)
     nsCString contentType;
     PRBool isContainerFormat;
     PRBool isPlaylistFormat;
-    sbWPDObjectFormatToContentTypeString(*(format.puuid),
-                                         contentType,
-                                         isContainerFormat,
-                                         isPlaylistFormat);
-    formatStrings[index] = ToNewCString(contentType);
-    NS_ENSURE_TRUE(formatStrings[index], NS_ERROR_OUT_OF_MEMORY);
+    nsresult rv = sbWPDObjectFormatToContentTypeString(*(format.puuid),
+                                                       contentType,
+                                                       isContainerFormat,
+                                                       isPlaylistFormat);
+    if (NS_SUCCEEDED(rv)) {
+      formatStrings[validFormats] = ToNewCString(contentType);
+      NS_ENSURE_TRUE(formatStrings[validFormats], NS_ERROR_OUT_OF_MEMORY);
+      ++validFormats;
+    }
+    else {
+      NS_WARNING("Encountered an unknown media format");
+    }
   }
   PRUint32 sbContentType;
   PRUint32 sbFunctionType;
@@ -181,9 +191,9 @@ nsresult sbWPDCapabilitiesBuilder::SetSupportedFormats(GUID contentType)
   
   hr = mSBCapabilities->AddFormats(sbContentType,
                                    formatStrings,
-                                   formatCount);
+                                   validFormats);
   // Free our strings and array
-  for (index = 0; index < formatCount; ++index) {
+  for (index = 0; index < validFormats; ++index) {
     NS_Free(const_cast<char*>(formatStrings[index]));
   }
   delete [] formatStrings;
