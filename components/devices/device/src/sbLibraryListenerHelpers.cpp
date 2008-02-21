@@ -103,6 +103,8 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST,
                               aMediaItem, aMediaList, aIndex);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDevice->ListenToList(list);
+    NS_ENSURE_SUCCESS(rv, rv);
   } else {
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
                               aMediaItem, aMediaList, aIndex);
@@ -331,5 +333,144 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
                             aSourceItem, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(sbBaseDeviceMediaListListener,
+                   sbIMediaListListener)
+
+sbBaseDeviceMediaListListener::sbBaseDeviceMediaListListener()
+  : mDevice(nsnull)
+{
+  
+}
+
+sbBaseDeviceMediaListListener::~sbBaseDeviceMediaListListener()
+{
+  
+}
+
+nsresult
+sbBaseDeviceMediaListListener::Init(sbBaseDevice* aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_FALSE(mDevice, NS_ERROR_ALREADY_INITIALIZED);
+  mDevice = aDevice;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
+                                           sbIMediaItem *aMediaItem,
+                                           PRUint32 aIndex,
+                                           PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> lib = do_QueryInterface(aMediaList);
+  if (lib) {
+    // umm, why are we listening to a library adding an item?
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    // a list being added to a list? we don't care, I think?
+  } else {
+    rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
+                              aMediaItem, aMediaList, aIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  if (_retval) {
+    *_retval = PR_FALSE; /* don't stop */
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                                   sbIMediaItem *aMediaItem,
+                                                   PRUint32 aIndex,
+                                                   PRBool *_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                                  sbIMediaItem *aMediaItem,
+                                                  PRUint32 aIndex,
+                                                  PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  
+  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_DELETE,
+                            aMediaItem, aMediaList, aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (_retval) {
+    *_retval = PR_FALSE; /* don't stop */
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnItemUpdated(sbIMediaList *aMediaList,
+                                             sbIMediaItem *aMediaItem,
+                                             sbIPropertyArray *aProperties,
+                                             PRBool *_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
+                                           PRUint32 aFromIndex,
+                                           PRUint32 aToIndex,
+                                           PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,
+                            nsnull, aMediaList, aFromIndex, aToIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (_retval) {
+    *_retval = PR_FALSE; /* don't stop */
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
+                                             PRBool *_retval)
+{
+  NS_NOTREACHED("Playlist clearing not yet implemented");
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnBatchBegin(sbIMediaList *aMediaList)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnBatchEnd(sbIMediaList *aMediaList)
+{
   return NS_OK;
 }

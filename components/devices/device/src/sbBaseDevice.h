@@ -30,6 +30,7 @@
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 #include <nsDeque.h>
 #include <nsISupportsImpl.h>
 #include <prlock.h>
@@ -39,6 +40,7 @@
 
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
+class sbBaseDeviceMediaListListener;
 class sbIDeviceLibrary;
 
 class sbBaseDevice : public sbIDevice,
@@ -140,6 +142,12 @@ public:
   nsresult CreateDeviceLibrary(const nsAString& aId,
                                nsIURI* aLibraryLocation,
                                sbIDeviceLibrary** _retval);
+  
+  /**
+   * Called when a media list has been added to the device library
+   * @param aList the media list to listen for modifications
+   */
+  nsresult ListenToList(sbIMediaList* aList);
 
 protected:
   PRLock *mRequestLock;
@@ -148,4 +156,5 @@ protected:
   
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
+  nsDataHashtable<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
 };

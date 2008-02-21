@@ -27,6 +27,7 @@
 
 #include "sbIDeviceLibrary.h"
 #include "sbILocalDatabaseSimpleMediaList.h"
+#include "sbIMediaListListener.h"
 
 #include <nsCOMPtr.h>
 #include <nsWeakReference.h>
@@ -70,4 +71,21 @@ protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
 
+};
+
+class sbBaseDeviceMediaListListener : public sbIMediaListListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTLISTENER
+  
+  sbBaseDeviceMediaListListener();
+  
+  nsresult Init(sbBaseDevice* aDevice);
+  
+protected:
+  virtual ~sbBaseDeviceMediaListListener();
+
+  // The device owns the listener, so use a non-owning reference here
+  sbBaseDevice* mDevice;
 };

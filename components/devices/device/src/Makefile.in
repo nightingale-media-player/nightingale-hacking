@@ -32,10 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 target_name = sbDeviceCore$(DEBUG:%=_d)
 
 CPP_SRCS = sbBaseDevice.cpp \
-           sbDeviceUtils.cpp \
-           sbLibraryListenerHelpers.cpp \
            sbDeviceStatus.cpp \
            sbDeviceUtils.cpp \
+           sbLibraryListenerHelpers.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \

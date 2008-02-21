@@ -36,6 +36,7 @@
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbLibraryListenerHelpers.h"
+#include "sbStandardProperties.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
@@ -55,6 +56,56 @@ public:
     return nsnull;
   }
 };
+
+class MediaListListenerAttachingEnumerator : public sbIMediaListEnumerationListener
+{
+public:
+  MediaListListenerAttachingEnumerator(sbBaseDevice* aDevice)
+   : mDevice(aDevice)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+private:
+  sbBaseDevice* mDevice;
+};
+
+NS_IMPL_ISUPPORTS1(MediaListListenerAttachingEnumerator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumerationBegin(sbIMediaList*,
+                                                                       PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumeratedItem(sbIMediaList*,
+                                                                     sbIMediaItem* aItem,
+                                                                     PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+  
+  nsresult rv;
+  
+  nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDevice->ListenToList(list);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumerationEnd(sbIMediaList*,
+                                                                     nsresult)
+{
+  return NS_OK;
+}
 
 sbBaseDevice::TransferRequest * sbBaseDevice::TransferRequest::New()
 {
@@ -253,6 +304,13 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
+  if (!mMediaListListeners.IsInitialized()) {
+    // we expect to be unintialized, but just in case...
+    if (!mMediaListListeners.Init()) {
+      return NS_ERROR_FAILURE;
+    }
+  }
+  
   nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary();
   NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
   nsresult rv = devLib->Init(aId);
@@ -270,6 +328,59 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   
   rv = devLib->AddDeviceLibraryListener(libListener);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // hook up the media list listeners to the existing lists
+  nsRefPtr<MediaListListenerAttachingEnumerator> enumerator =
+    new MediaListListenerAttachingEnumerator(this);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+  
+  rv = devLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                        NS_LITERAL_STRING("1"),
+                                        enumerator,
+                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+  NS_ASSERTION(mMediaListListeners.IsInitialized(),
+               "sbBaseDevice::ListenToList called before listener hash is initialized!");
+  
+  nsresult rv;
+  
+  #if DEBUG
+    // check to make sure we're not listening to a library
+    nsCOMPtr<sbILibrary> library = do_QueryInterface(aList);
+    NS_ASSERTION(!library,
+                 "Should not call sbBaseDevice::ListenToList on a library!");
+  #endif
+  
+  // the extra QI to make sure we're at the canonical pointer
+  // and not some derived interface
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // check for an existing listener
+  if (mMediaListListeners.Get(list, nsnull)) {
+    // we are already listening to the media list, don't re-add
+    return NS_OK;
+  }
+  
+  nsRefPtr<sbBaseDeviceMediaListListener> listener =
+    new sbBaseDeviceMediaListListener();
+  NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+  
+  rv = listener->Init(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = list->AddListener(listener,
+                         PR_FALSE, /* weak */
+                         0, /* all */
+                         nsnull /* filter */);
+  
+  mMediaListListeners.Put(list, listener);
   return NS_OK;
 }
