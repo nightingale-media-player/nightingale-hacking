@@ -53,8 +53,10 @@ NS_IMETHODIMP sbWPDDeviceThread::Run()
     // This may be due to a catostrophic error or normal shutdown while requests
     // are being processed.
     mTimeToDie = !mDevice->ProcessThreadsRequest();
+
     // Wait on the event, will get set when there are items on the queue
     ::WaitForSingleObject(mEvent, INFINITE);
+    ::ResetEvent(mEvent);
   } while (!mTimeToDie);
   return NS_OK;
 }

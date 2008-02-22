@@ -45,6 +45,7 @@
 #include "sbIDeviceLibrary.h"
 #include <sbILibrary.h>
 #include <sbDeviceStatus.h>
+#include <sbLibraryListenerHelpers.h>
 #include "sbWPDCommon.h"
 #include "sbPropertyVariant.h"
 #include <sbDeviceContent.h>
@@ -154,7 +155,8 @@ nsString const sbWPDDevice::DEVICE_ID_PROP(NS_LITERAL_STRING("DeviceID"));
 nsString const sbWPDDevice::DEVICE_FRIENDLY_NAME_PROP(NS_LITERAL_STRING("DeviceFriendlyName"));
 nsString const sbWPDDevice::DEVICE_DESCRIPTION_PROP(NS_LITERAL_STRING("DeviceDescription"));
 nsString const sbWPDDevice::DEVICE_MANUFACTURER_PROP(NS_LITERAL_STRING("DeviceManufacturer"));
-nsString const sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY(NS_LITERAL_STRING("WPDPUID"));
+
+nsString const sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#WPDPUID"));
 
 sbWPDDevice * sbWPDDevice::New(nsID const & controllerID,
                                nsIPropertyBag2 * deviceProperties,
@@ -176,7 +178,7 @@ sbWPDDevice::sbWPDDevice(nsID const & controllerID,
   NS_ASSERTION(deviceProperties, "deviceProperties cannot be null");
   
   // Startup our worker thread
-  mRequestsPendingEvent = CreateEventW(0, FALSE, FALSE, 0);
+  mRequestsPendingEvent = CreateEventW(0, TRUE, FALSE, 0);
   mDeviceThread = new sbWPDDeviceThread(this,
                                   mRequestsPendingEvent);
   NS_NewThread(getter_AddRefs(mThreadObject), mDeviceThread);
@@ -352,6 +354,11 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     
     rv = devLib->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, puid);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOUNT,
+                     nsnull,
+                     devLib);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK; 
@@ -360,18 +367,20 @@ NS_IMETHODIMP sbWPDDevice::Connect()
 /* void disconnect (); */
 NS_IMETHODIMP sbWPDDevice::Disconnect()
 {
-  if (mPortableDevice) {
-    if (FAILED(mPortableDevice->Close()))
-      NS_WARNING("Failed to close PortableDevice instance!");
-    mPortableDevice = nsnull;
-  }
-
+  // The thread requires mPortableDevice! This means we must shutdown the 
+  // thread before we release the portable device instance.
   if (mDeviceThread) {
     mDeviceThread->Die();
     mThreadObject->Shutdown();
   }
 
   NS_IF_RELEASE(mDeviceThread);
+
+  if (mPortableDevice) {
+    if (FAILED(mPortableDevice->Close()))
+      NS_WARNING("Failed to close PortableDevice instance!");
+    mPortableDevice = nsnull;
+  }
 
   return NS_OK;
 }
@@ -501,12 +510,16 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
     }
   
     switch (request->type) {
-      case TransferRequest::REQUEST_EJECT:
       case TransferRequest::REQUEST_MOUNT:
-        // MTP devices can't be mounted or ejected
+        rv = MountRequest(request);
+        isOk = NS_SUCCEEDED(rv);
+        break;
+      case TransferRequest::REQUEST_EJECT:
+        // MTP devices can't be ejected
         return PR_FALSE;
       case TransferRequest::REQUEST_READ:
-        isOk = ReadRequest(request);
+        rv = ReadRequest(request);
+        isOk = NS_SUCCEEDED(rv);
         break;
       case TransferRequest::REQUEST_SUSPEND:
         break;
@@ -574,6 +587,16 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
     // keep going
   }
   return PR_TRUE; // let the worker thread know we can keep going
+}
+
+PRUint64 sbWPDDevice::GetMusicUsedSpace()
+{
+  return 0;
+}
+
+PRUint64 sbWPDDevice::GetVideoUsedSpace()
+{
+  return 0;
 }
 
 nsresult sbWPDDevice::GetClientInfo(IPortableDeviceValues ** clientInfo)
@@ -1376,6 +1399,7 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
 {
   nsString result;
   nsString mediaID;
+  
   // Ignore error, treat as not found
   mediaItem->GetProperty(PUID_SBIMEDIAITEM_PROPERTY,
                          mediaID);
@@ -1387,6 +1411,7 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
                             result);
     }
   }
+
   return result;
 }
 
@@ -1598,7 +1623,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
   
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // album name
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), propValue);
@@ -1608,7 +1633,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   // artist name
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), propValue);
@@ -1618,7 +1643,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // duration
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION), propValue);
@@ -1628,7 +1653,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   // genre
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), propValue);
@@ -1638,7 +1663,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // track no 
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propValue);
@@ -1648,7 +1673,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // composer
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME), propValue);
@@ -1658,7 +1683,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // lyrics
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_LYRICS), propValue);
@@ -1668,7 +1693,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // last played time
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME), propValue);
@@ -1678,7 +1703,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   // play count
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT), propValue);
@@ -1688,7 +1713,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // skip count
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT), propValue);
@@ -1698,7 +1723,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
     
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   // rating
   rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_RATING), propValue);
@@ -1708,7 +1733,7 @@ static nsresult SetStandardProperties(sbIMediaItem * item,
   NS_ENSURE_SUCCESS(rv, rv);
 
   hr = properties->SetStringValue(propKey, propValue.get());
-  NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -2024,6 +2049,174 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED,
                            var);
   }
+  return NS_OK;
+}
+
+nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
+  NS_ENSURE_ARG_POINTER(request);
+  NS_ENSURE_STATE(mPortableDevice);
+
+  nsresult rv;
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(request->list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the library wpd puid (this tells us which storage is associated
+  // with the library).
+  nsString libraryPUID;
+  rv = library->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
+                            libraryPUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<IPortableDeviceContent> content;
+  HRESULT hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the WPD ID of the storage based on it's PUID.
+  nsString libraryObjectID;
+  rv = sbWPDObjectIDFromPUID(content, libraryPUID, libraryObjectID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Ignore listener events during mount.
+   rv = mLibraryListener->SetIgnoreListener(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Add all the PROPERTYKEYs we want to read from the objects.
+  nsRefPtr<IPortableDeviceKeyCollection> keys;
+
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_CONTENT_TYPE, getter_AddRefs(keys));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsTArray<PROPERTYKEY> keyArray;
+  keyArray.AppendElement(WPD_OBJECT_CONTENT_TYPE);
+
+  // Standard set of PROPERTYKEYs we will attempt to fetch from items.
+  static PROPERTYKEY standardKeys[] = 
+    { WPD_OBJECT_FORMAT, 
+      WPD_OBJECT_PERSISTENT_UNIQUE_ID, 
+      WPD_MEDIA_TITLE, 
+      WPD_MUSIC_ALBUM, 
+      WPD_MEDIA_ARTIST, 
+      WPD_MEDIA_DURATION, 
+      WPD_MEDIA_GENRE, 
+      WPD_MUSIC_TRACK, 
+      WPD_MEDIA_COMPOSER, 
+      WPD_MUSIC_LYRICS, 
+      WPD_MEDIA_LAST_ACCESSED_TIME, 
+      WPD_MEDIA_USE_COUNT, 
+      WPD_MEDIA_SKIP_COUNT, 
+      WPD_MEDIA_STAR_RATING };
+
+  const PRUint32 standardKeysCount = NS_ARRAY_LENGTH(standardKeys);
+  for(PRUint32 current = 0; current < standardKeysCount; ++current) {
+    hr = keys->Add(standardKeys[current]);
+    NS_ENSURE_SUCCESS(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    
+    keyArray.AppendElement(standardKeys[current]);
+  }
+
+  // Attempt to do this with the bulk interface.
+  nsRefPtr<IPortableDevicePropertiesBulk> bulkProps;
+  hr = properties->QueryInterface(__uuidof(IPortableDevicePropertiesBulk), getter_AddRefs(bulkProps));
+
+#if 0
+  if(SUCCEEDED(hr)) {
+  // We get to use the bulk interface.
+    
+  }
+  else {
+#endif
+
+  // Couldn't get the bulk interface, fall back to normal properties interface.
+    nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
+    hr = content->EnumObjects(0, libraryObjectID.get(), NULL, getter_AddRefs(enumObjectIds));
+    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+    ULONG count = 0;
+    do {
+      // Do this in batches of 100
+      LPWSTR objectIds[100] = {0};
+
+      hr = enumObjectIds->Next(100, objectIds, &count);
+
+      if(SUCCEEDED(hr)) {
+
+        for(ULONG current = 0; current < count; ++current) {
+          nsRefPtr<IPortableDeviceValues> values;
+
+          hr = properties->GetValues(objectIds[current], keys, getter_AddRefs(values));
+          NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+          LPWSTR value = NULL;
+          hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, 
+                                      &value);
+
+          // Skip if no PUID.
+          if(FAILED(hr)) {
+            ::CoTaskMemFree(value);
+            continue;
+          }
+
+          nsString objectPUID(value);
+          ::CoTaskMemFree(value);
+
+          GUID contentTypeGuid;
+          hr = values->GetGuidValue(WPD_OBJECT_CONTENT_TYPE, &contentTypeGuid);
+
+          // Skip if no content type.
+          if(FAILED(hr))
+            continue;
+          
+          // Skip if not audio or video.
+          // XXXAus: THIS WILL CHANGE AS WE SUPPORT OTHER CONTENT TYPES
+          if(!IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO) &&
+             !IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_VIDEO))
+             continue;
+          
+          GUID objectFormatGuid;
+          hr = values->GetGuidValue(WPD_OBJECT_FORMAT, &objectFormatGuid);
+          
+          // Skip if no object format
+          if(FAILED(hr)) 
+            continue;
+
+          // Skip if content type does not map to something we support.
+          // XXXAus: THIS IS WRONG, it should use the PlaylistPlayback extensions list!!!
+          nsCString contentTypeExt;
+          if(NS_FAILED(sbWPDGUIDtoFileExtension(objectFormatGuid, contentTypeExt)))
+            continue;
+
+          nsCOMPtr<sbIMediaItem> item;
+          rv = sbWPDGetMediaItemByPUID(library, objectPUID, getter_AddRefs(item));
+          
+          // Looks like we will have to create the item.
+          if(rv == NS_ERROR_NOT_AVAILABLE) {
+            rv = sbWPDCreateMediaItemFromDeviceValues(library, keyArray, values, getter_AddRefs(item));
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+          else {
+            rv = sbWPDSetMediaItemPropertiesFromDeviceValues(item, keyArray, values);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+
+          ::CoTaskMemFree(objectIds[current]);
+          objectIds[current] = NULL;
+        }
+      }
+    }
+    while(SUCCEEDED(hr) &&
+          count);
+    
+    rv = mLibraryListener->SetIgnoreListener(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+#if 0 
+  }
+#endif
+
   return NS_OK;
 }
 

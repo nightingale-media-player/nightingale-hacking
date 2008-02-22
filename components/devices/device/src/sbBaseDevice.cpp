@@ -340,6 +340,8 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  libListener.swap(mLibraryListener);
+
   return NS_OK;
 }
 

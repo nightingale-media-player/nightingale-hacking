@@ -38,6 +38,7 @@
 
 #include <nscore.h>
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 
 #include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
@@ -47,7 +48,12 @@ class sbIDeviceMarshall;
 class sbIDevice;
 class sbIDeviceEventTarget;
 class sbIDeviceEvent;
+class sbILibrary;
+class sbIMediaItem;
+class sbIPropertyArray;
+
 class nsIVariant;
+
 struct IPortableDeviceContent;
 
 /**
@@ -212,5 +218,25 @@ nsresult sbWPDGetFolderForContentType(const GUID &aContentType,
  */
 nsresult sbWPDStandardItemPropertyToPropertyKey(const char *aProp,
                                                 PROPERTYKEY &aPropertyKey);
+
+nsresult sbWPDPropertyKeyToStandardItemProperty(const PROPERTYKEY &aPropertyKey,
+                                                nsACString &aProp);
+
+nsresult sbWPDSetMediaItemPropertiesFromDeviceValues(sbIMediaItem *aItem, 
+                                                     const nsTArray<PROPERTYKEY> &aKeys,
+                                                     IPortableDeviceValues *aValues);
+
+nsresult sbWPDGetMediaItemByPUID(sbILibrary *aLibrary, 
+                                 const nsAString &aPUID,
+                                 sbIMediaItem **aItem);
+
+nsresult sbWPDCreateMediaItemFromDeviceValues(sbILibrary *aLibrary,
+                                              const nsTArray<PROPERTYKEY> &aKeys,
+                                              IPortableDeviceValues *aValues,
+                                              sbIMediaItem **aItem);
+
+nsresult sbWPDCreatePropertyArrayFromDeviceValues(const nsTArray<PROPERTYKEY> &aKeys,
+                                                  IPortableDeviceValues *aValues,
+                                                  sbIPropertyArray **aProps);
 
 #endif /*SBWPDCOMMON_H_*/

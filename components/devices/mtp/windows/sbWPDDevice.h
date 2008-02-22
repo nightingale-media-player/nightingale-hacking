@@ -41,6 +41,7 @@
 #include <nsCOMPtr.h>
 #include <nsIThread.h>
 #include "sbDeviceContent.h"
+#include "sbPortableDevicePropertiesBulkCallback.h"
 
 struct IPortableDevice;
 struct IPortableDeviceValues;
@@ -50,6 +51,7 @@ class sbWPDMarshall;
 class sbDeviceStatus;
 
 #define SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
+
 /**
  * This class represents a WPD device and is used to communicate with the WPD
  * device
@@ -153,6 +155,16 @@ public:
    */
   PRBool ProcessThreadsRequest();
 
+  /** 
+   * Returns the total amount of space used by music files.
+   */
+  PRUint64 GetMusicUsedSpace();
+
+  /**
+   * Returns the total amount of space used by video files.
+   */
+  PRUint64 GetVideoUsedSpace();
+
 protected:
   /**
    * Initializse the device with the creating controller's ID
@@ -240,6 +252,12 @@ private:
    * Process the read request
    */
   nsresult ReadRequest(TransferRequest * request);
+
+  /**
+   * Process the mount request.
+   */
+  nsresult MountRequest(TransferRequest * request);
+
   // Prevent copying and assignment
   sbWPDDevice(sbWPDDevice const &) {}
   sbWPDDevice & operator= (sbWPDDevice const &) { return *this; }

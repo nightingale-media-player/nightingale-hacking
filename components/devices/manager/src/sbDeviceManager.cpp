@@ -43,8 +43,11 @@
 #include "sbIDeviceController.h"
 #include "sbDeviceEvent.h"
 
+#include <sbILibraryManager.h>
+
 /* observer topics */
-#define NS_PROFILE_STARTUP_OBSERVER_ID "profile-after-change"
+#define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
+#define NS_QUIT_APPLICATION_OBSERVER_ID "profile-change-teardown"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
@@ -398,19 +401,19 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+    rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->AddObserver(observer, NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+    rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
   } else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
     rv = this->Init();
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
+  } else if (!strcmp(NS_QUIT_APPLICATION_OBSERVER_ID, aTopic)) {
     rv = this->PrepareShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(NS_XPCOM_SHUTDOWN_OBSERVER_ID, aTopic)) {
+  } else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
     rv = this->FinalShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -426,10 +429,10 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->RemoveObserver(observer, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
@@ -516,8 +519,8 @@ nsresult sbDeviceManager::Init()
   }
   
   // connect all the devices
-  rv = this->UpdateDevices();
-  NS_ENSURE_SUCCESS(rv, rv);
+  //rv = this->UpdateDevices();
+  //NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

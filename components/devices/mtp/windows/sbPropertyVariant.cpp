@@ -423,8 +423,16 @@ NS_IMETHODIMP sbPropertyVariant::GetAsAString(nsAString & retval)
     NS_ERROR("Cannot convert file times to string");
     return NS_ERROR_NOT_IMPLEMENTED;
   case VT_CLSID:
-    NS_ERROR("Cannot convert UUID's to string");
-    return NS_ERROR_NOT_IMPLEMENTED;
+  {
+    LPOLESTR olestr = NULL;
+    if(FAILED(StringFromCLSID(*(mPropVariant.puuid), &olestr))) {
+      return NS_ERROR_OUT_OF_MEMORY;
+    }
+
+    retval = ConvertTonsString(olestr);
+    ::CoTaskMemFree(olestr);
+  }
+  break;
   case VT_BSTR:
   {
     PRUint32 const length = ::SysStringLen(GET_VALUE(bstrVal));

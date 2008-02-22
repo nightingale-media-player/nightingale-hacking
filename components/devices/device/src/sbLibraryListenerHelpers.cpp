@@ -302,6 +302,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
                               sbILocalDatabaseMediaListCopyListener);
 
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
+: mDevice(nsnull),
+  mIgnoreListener(PR_FALSE)
 {
 
 }
@@ -318,6 +320,13 @@ sbDeviceBaseLibraryCopyListener::Init(sbBaseDevice* aDevice)
 
   mDevice = aDevice;
 
+  return NS_OK;
+}
+
+nsresult 
+sbDeviceBaseLibraryCopyListener::SetIgnoreListener(PRBool aIgnoreListener)
+{
+  mIgnoreListener = aIgnoreListener;
   return NS_OK;
 }
 
@@ -340,7 +349,8 @@ NS_IMPL_ISUPPORTS1(sbBaseDeviceMediaListListener,
                    sbIMediaListListener)
 
 sbBaseDeviceMediaListListener::sbBaseDeviceMediaListListener()
-  : mDevice(nsnull)
+: mDevice(nsnull),
+  mIgnoreListener(PR_FALSE)
 {
   
 }
@@ -359,6 +369,13 @@ sbBaseDeviceMediaListListener::Init(sbBaseDevice* aDevice)
   return NS_OK;
 }
 
+nsresult 
+sbBaseDeviceMediaListListener::SetIgnoreListener(PRBool aIgnoreListener)
+{
+  mIgnoreListener = aIgnoreListener;
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
@@ -368,6 +385,10 @@ sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
 
   nsresult rv;
 
@@ -412,6 +433,10 @@ sbBaseDeviceMediaListListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
   nsresult rv;
   
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_DELETE,
@@ -442,6 +467,10 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
 
   nsresult rv;
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,

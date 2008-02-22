@@ -42,6 +42,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
+               $(DEPTH)/components/library/base/public \
                $(topsrcdir)/components/devices/base/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \

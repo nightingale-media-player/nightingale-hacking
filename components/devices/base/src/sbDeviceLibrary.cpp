@@ -96,8 +96,8 @@ sbDeviceLibrary::Init(const nsAString& aDeviceIdentifier)
   NS_ENSURE_FALSE(mLock, NS_ERROR_ALREADY_INITIALIZED);
   mLock = nsAutoLock::NewLock(__FILE__ "sbDeviceLibrary::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  if (!mListeners.Init())
-    return NS_ERROR_FAILURE;
+  PRBool succeeded = mListeners.Init();
+  NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
   return CreateDeviceLibrary(aDeviceIdentifier, nsnull);
 }
 
@@ -318,7 +318,7 @@ sbDeviceLibrary::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey
 
 #define SB_NOTIFY_LISTENERS_ASK_PERMISSION(call)                              \
   PRBool mShouldProcceed = PR_TRUE;                                           \
-  PRBool mPerformAction = PR_FALSE;                                           \
+  PRBool mPerformAction = PR_TRUE;                                            \
                                                                               \
   nsCOMArray<sbIDeviceLibraryListener> listeners;                             \
   {                                                                           \
@@ -369,6 +369,7 @@ sbDeviceLibrary::OnItemAdded(sbIMediaList* aMediaList,
                                   aMediaItem,
                                   aIndex,
                                   aNoMoreForBatch));
+
   return NS_OK;
 }
 

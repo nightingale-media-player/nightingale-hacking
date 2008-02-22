@@ -67,10 +67,13 @@ public:
 
   nsresult Init(sbBaseDevice* aDevice);
 
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
+
 protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
-
+  
+  PRBool mIgnoreListener;
 };
 
 class sbBaseDeviceMediaListListener : public sbIMediaListListener
@@ -82,10 +85,14 @@ public:
   sbBaseDeviceMediaListListener();
   
   nsresult Init(sbBaseDevice* aDevice);
-  
+
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
+
 protected:
   virtual ~sbBaseDeviceMediaListListener();
 
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
+
+  PRBool mIgnoreListener;
 };

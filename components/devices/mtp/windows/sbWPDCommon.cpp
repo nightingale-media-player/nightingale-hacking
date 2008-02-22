@@ -25,6 +25,8 @@
  */
 
 #include "sbWPDCommon.h"
+#include "sbPropertyVariant.h"
+
 #include <nsAutoPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -36,6 +38,16 @@
 #include <nsIVariant.h>
 #include <sbIDeviceEvent.h>
 #include <propvarutil.h>
+
+#include <sbILibrary.h>
+#include <sbIMediaItem.h>
+#include <sbIMediaListListener.h>
+
+#include <sbIPropertyArray.h>
+#include <sbPropertiesCID.h>
+
+#include <nsIURI.h>
+#include <nsNetUtil.h>
 
 /**
  * Create the Songbird Device manager and return it
@@ -409,48 +421,214 @@ sbWPDGetFolderForContentType(const GUID &aContentType,
   return aParentID.IsEmpty() ? NS_ERROR_NOT_AVAILABLE : NS_OK;
 }
 
+
+static const wpdPropertyKeymapEntry_t MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP[] = {
+  { SB_PROPERTY_CONTENTLENGTH,        WPD_OBJECT_SIZE },
+  { SB_PROPERTY_TRACKNAME,            WPD_MEDIA_TITLE },
+  { SB_PROPERTY_ALBUMNAME,            WPD_MUSIC_ALBUM },
+  { SB_PROPERTY_ARTISTNAME,           WPD_MEDIA_ARTIST },
+  { SB_PROPERTY_DURATION,             WPD_MEDIA_DURATION },
+  { SB_PROPERTY_GENRE,                WPD_MEDIA_GENRE },
+  { SB_PROPERTY_TRACKNUMBER,          WPD_MUSIC_TRACK },
+  // { SB_PROPERTY_YEAR,                 ??? },
+  // { SB_PROPERTY_DISCNUMBER,           ??? },
+  // { SB_PROPERTY_TOTALDISCS,           ??? },
+  // { SB_PROPERTY_TOTALTRACKS,          ??? },
+  // { SB_PROPERTY_ISPARTOFCOMPILATION,  ??? },
+  // { SB_PROPERTY_PRODUCERNAME,         ??? },
+  { SB_PROPERTY_COMPOSERNAME,         WPD_MEDIA_COMPOSER },
+  // { SB_PROPERTY_LYRICISTNAME,         ??? },
+  { SB_PROPERTY_LYRICS,               WPD_MUSIC_LYRICS },
+  // { SB_PROPERTY_RECORDLABELNAME,      ??? },
+  // { SB_PROPERTY_PRIMARYIMAGEURL,      ??? },
+  { SB_PROPERTY_LASTPLAYTIME,         WPD_MEDIA_LAST_ACCESSED_TIME },
+  { SB_PROPERTY_PLAYCOUNT,            WPD_MEDIA_USE_COUNT },
+  // { SB_PROPERTY_LASTSKIPTIME,         ??? },
+  { SB_PROPERTY_SKIPCOUNT,            WPD_MEDIA_SKIP_COUNT },
+  { SB_PROPERTY_RATING,               WPD_MEDIA_STAR_RATING },
+  // { SB_PROPERTY_ISLIST,               ??? },
+  // { SB_PROPERTY_MEDIALISTNAME,        ??? },
+  { "http://songbirdnest.com/data/1.0#WPDPUID", WPD_OBJECT_PERSISTENT_UNIQUE_ID },
+};
+
 nsresult 
 sbWPDStandardItemPropertyToPropertyKey(const char *aProp,
                                        PROPERTYKEY &aPropertyKey)
 {
-  static wpdPropertyKeymapEntry_t map[] = {
-    { SB_PROPERTY_CONTENTURL,           WPD_OBJECT_ORIGINAL_FILE_NAME },
-    { SB_PROPERTY_TRACKNAME,            WPD_MEDIA_TITLE },
-    { SB_PROPERTY_ALBUMNAME,            WPD_MUSIC_ALBUM },
-    { SB_PROPERTY_ARTISTNAME,           WPD_MEDIA_ARTIST },
-    { SB_PROPERTY_DURATION,             WPD_MEDIA_DURATION },
-    { SB_PROPERTY_GENRE,                WPD_MEDIA_GENRE },
-    { SB_PROPERTY_TRACKNUMBER,          WPD_MUSIC_TRACK },
-    // { SB_PROPERTY_YEAR,                 ??? },
-    // { SB_PROPERTY_DISCNUMBER,           ??? },
-    // { SB_PROPERTY_TOTALDISCS,           ??? },
-    // { SB_PROPERTY_TOTALTRACKS,          ??? },
-    // { SB_PROPERTY_ISPARTOFCOMPILATION,  ??? },
-    // { SB_PROPERTY_PRODUCERNAME,         ??? },
-    { SB_PROPERTY_COMPOSERNAME,         WPD_MEDIA_COMPOSER },
-    // { SB_PROPERTY_LYRICISTNAME,         ??? },
-    { SB_PROPERTY_LYRICS,               WPD_MUSIC_LYRICS },
-    // { SB_PROPERTY_RECORDLABELNAME,      ??? },
-    // { SB_PROPERTY_PRIMARYIMAGEURL,      ??? },
-    { SB_PROPERTY_LASTPLAYTIME,         WPD_MEDIA_LAST_ACCESSED_TIME },
-    { SB_PROPERTY_PLAYCOUNT,            WPD_MEDIA_USE_COUNT },
-    // { SB_PROPERTY_LASTSKIPTIME,         ??? },
-    { SB_PROPERTY_SKIPCOUNT,            WPD_MEDIA_SKIP_COUNT },
-    { SB_PROPERTY_RATING,               WPD_MEDIA_STAR_RATING },
-    // { SB_PROPERTY_ISLIST,               ??? },
-    // { SB_PROPERTY_MEDIALISTNAME,        ??? },
-  };
-
-  static PRUint32 mapSize = sizeof(map) / sizeof(wpdPropertyKeymapEntry_t);
+  static const PRUint32 mapSize = NS_ARRAY_LENGTH(MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP);
 
   NS_ENSURE_ARG_POINTER(aProp);
 
   for(PRUint32 current = 0; current < mapSize; ++current) {
-    if(!strcmp(map[current].mStandardProperty, aProp)) {
-      aPropertyKey = map[current].mPropertyKey;
+    if(!strcmp(MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP[current].mStandardProperty, aProp)) {
+      aPropertyKey = MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP[current].mPropertyKey;
       return NS_OK;
     }
   }
 
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult sbWPDPropertyKeyToStandardItemProperty(const PROPERTYKEY &aPropertyKey,
+                                                nsACString &aProp)
+{
+  static const PRUint32 mapSize = NS_ARRAY_LENGTH(MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP);
+
+  for(PRUint32 current = 0; current < mapSize; ++current) {
+    if(MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP[current].mPropertyKey.pid == aPropertyKey.pid) {
+      aProp.Assign(MAP_PROPERTY_TO_PROPERTYKEY_KEYMAP[current].mStandardProperty);
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult sbWPDSetMediaItemPropertiesFromDeviceValues(sbIMediaItem *aItem, 
+                                                     const nsTArray<PROPERTYKEY> &aKeys,
+                                                     IPortableDeviceValues *aValues)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aValues);
+
+  nsCOMPtr<sbIPropertyArray> props;
+  nsresult rv = sbWPDCreatePropertyArrayFromDeviceValues(aKeys, aValues, getter_AddRefs(props));
+
+  return aItem->SetProperties(props);
+}
+
+
+class sbWPDGetMediaItemByPUIDEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+
+  NS_IMETHODIMP OnEnumerationBegin(sbIMediaList *aMediaList, PRUint16 *_retval) {
+    NS_ENSURE_ARG_POINTER(_retval);
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
+    return NS_OK;
+  }
+
+  NS_IMETHODIMP OnEnumeratedItem(sbIMediaList *aMediaList, sbIMediaItem *aItem, PRUint16 *_retval) {
+    NS_ENSURE_ARG_POINTER(aItem);
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    NS_WARN_IF_FALSE(!mFoundItem, "Found multiple items with the same WPD PUID!");
+    mFoundItem = aItem;
+
+    *_retval = sbIMediaListEnumerationListener::CANCEL;
+
+    return NS_OK;
+  }
+
+  NS_IMETHODIMP OnEnumerationEnd(sbIMediaList *aMediaList, nsresult aStatusCode) {
+    return NS_OK;
+  }
+
+  nsresult GetItem(sbIMediaItem **aItem) {
+    NS_ENSURE_ARG_POINTER(aItem);
+    NS_ENSURE_TRUE(mFoundItem, NS_ERROR_NOT_AVAILABLE);
+    NS_ADDREF(*aItem = mFoundItem);
+    return NS_OK;
+  }
+
+protected:
+  virtual ~sbWPDGetMediaItemByPUIDEnumerationListener() {};
+  nsCOMPtr<sbIMediaItem> mFoundItem;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbWPDGetMediaItemByPUIDEnumerationListener,
+                              sbIMediaListEnumerationListener);
+
+nsresult sbWPDGetMediaItemByPUID(sbILibrary *aLibrary, 
+                                 const nsAString &aPUID,
+                                 sbIMediaItem **aItem)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  *aItem = nsnull;
+  
+  nsRefPtr<sbWPDGetMediaItemByPUIDEnumerationListener> listener;
+  NS_NEWXPCOM(listener, sbWPDGetMediaItemByPUIDEnumerationListener);
+  NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+    
+  nsresult rv = aLibrary->EnumerateItemsByProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#WPDPUID"),
+                                                   aPUID, 
+                                                   listener, 
+                                                   sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return listener->GetItem(aItem);
+}
+
+nsresult sbWPDCreateMediaItemFromDeviceValues(sbILibrary *aLibrary,
+                                              const nsTArray<PROPERTYKEY> &aKeys,
+                                              IPortableDeviceValues *aValues,
+                                              sbIMediaItem **aItem)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aValues);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsCOMPtr<sbIPropertyArray> props;
+  nsresult rv = sbWPDCreatePropertyArrayFromDeviceValues(aKeys, aValues, getter_AddRefs(props));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //XXXAus: This URI is wrong and needs to be something valid!!!
+  nsCOMPtr<nsIURI> uri;
+  rv = NS_NewURI(getter_AddRefs(uri), NS_LITERAL_STRING("mtp://device-id/object-id/filename.mp3"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //XXXAus: We allow duplicates currently. 
+  nsCOMPtr<sbIMediaItem> item;
+  rv = aLibrary->CreateMediaItem(uri, 
+                                 nsnull, 
+                                 PR_TRUE, 
+                                 getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = item->SetProperties(props);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbWPDCreatePropertyArrayFromDeviceValues(const nsTArray<PROPERTYKEY> &aKeys,
+                                                  IPortableDeviceValues *aValues,
+                                                  sbIPropertyArray **aProps)
+{
+  NS_ENSURE_ARG_POINTER(aValues);
+  NS_ENSURE_ARG_POINTER(aProps);
+
+  DWORD count = aKeys.Length();
+
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> props = 
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = props->SetStrict(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(DWORD current = 0; current < count; ++current) {
+    LPWSTR value = NULL;
+    
+    nsString propValue;
+    nsCString propName;
+
+    HRESULT hr = aValues->GetStringValue(aKeys[current], &value);
+    if(FAILED(hr))
+      continue;
+
+    propValue.Assign(value);
+    ::CoTaskMemFree(value);
+
+    if(NS_SUCCEEDED(sbWPDPropertyKeyToStandardItemProperty(aKeys[current], propName))) {
+      rv = props->AppendProperty(NS_ConvertUTF8toUTF16(propName), propValue);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Value of property did not validate. It will not get set.");
+    }
+  }
+
+  return CallQueryInterface(props, aProps);
 }
