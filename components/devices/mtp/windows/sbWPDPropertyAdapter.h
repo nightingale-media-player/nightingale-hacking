@@ -89,16 +89,24 @@ public:
    * Calculate the total space used by video files on the device
    */
   nsresult sbWPDGetPropertyTotalUsedSpace(nsIVariant ** var);
+
+  /**
+   * Get the access compatibility ('ro' for read-only, 'rw' for read-write)
+   */
+  nsresult sbWPDGetPropertyAccessCompatibility(nsIVariant ** var);
   
 private:
   nsRefPtr<IPortableDeviceProperties> mDeviceProperties;
   nsCOMPtr<nsIWritableVariant> mWorkerVariant;
   nsRefPtr<IPortableDevice> mPortableDevice;
   nsString mDeviceID;
-  nsString mAccessCompatibility;
+
   PRUint64 mAudioUsed;
   PRUint64 mVideoUsed;
   PRUint64 mOtherUsed;
+
+  sbWPDDevice *mDevice;
+
   /**
    * Creates a worker variant to eliminate excess object creation. Initializes
    * the devlice properties pointer as well as the ID of the device.

@@ -58,7 +58,9 @@ sbWPDPropertyAdapter::sbWPDPropertyAdapter(sbWPDDevice * device)
   mWorkerVariant = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
   mPortableDevice = device->PortableDevice();
   mDeviceID = device->GetDeviceID(mPortableDevice);
-  mAccessCompatibility = device->GetAccessCompatibility();
+  
+  mDevice = device;
+
   nsRefPtr<IPortableDeviceContent> content;
   if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))))
     content->Properties(getter_AddRefs(mDeviceProperties));
@@ -381,6 +383,45 @@ nsresult sbWPDPropertyAdapter::sbWPDGetPropertyTotalUsedSpace(nsIVariant ** var)
   return rv;
 }
 
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyAccessCompatibility(nsIVariant ** var)
+{
+  nsRefPtr<IPortableDeviceKeyCollection> propertyKeys;
+  nsresult rv = sbWPDCreatePropertyKeyCollection(WPD_CLIENT_DESIRED_ACCESS, getter_AddRefs(propertyKeys));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<IPortableDeviceValues> propValues;
+  rv = mDeviceProperties->GetValues(nsDependentString(WPD_DEVICE_OBJECT_ID).get(), 
+    propertyKeys, 
+    getter_AddRefs(propValues));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PROPVARIANT propVal = {0};
+  PropVariantInit(&propVal);
+
+  NS_ENSURE_TRUE(SUCCEEDED(propValues->GetValue(WPD_CLIENT_DESIRED_ACCESS, &propVal)), 
+    NS_ERROR_FAILURE);
+  nsRefPtr<sbPropertyVariant> propVar = sbPropertyVariant::New(propVal);
+
+  PRUint32 access;
+  rv = propVar->GetAsUint32(&access);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(access == GENERIC_READ) {
+    rv = propVar->SetAsAString(NS_LITERAL_STRING("ro"));
+  } 
+  else {
+    rv = propVar->SetAsAString(NS_LITERAL_STRING("rw"));
+  }
+
+  if(NS_SUCCEEDED(rv)) {
+    *var = propVar.get();
+    propVar.forget();
+    return NS_OK;
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
 typedef nsresult (sbWPDPropertyAdapter::*GetPropertyFunc)(nsIVariant ** var);
 
 struct PropertyFunctionMap
@@ -396,6 +437,7 @@ static PropertyFunctionMap const sbPropertyFunctionMap[] =
   { SB_DEVICE_PROPERTY_MUSIC_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyMusicUsedSpace },
   { SB_DEVICE_PROPERTY_VIDEO_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyVideoUsedSpace },
   { SB_DEVICE_PROPERTY_TOTAL_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyTotalUsedSpace },
+  { SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY, &sbWPDPropertyAdapter::sbWPDGetPropertyAccessCompatibility },
 };
 
 /* nsIVariant getProperty (in AString name); */
@@ -408,19 +450,6 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name,
   for (int index = 0; index < propertyFunctionMapLength; ++index) {
     if (asciiName.Equals(sbPropertyFunctionMap[index].propertyName)) {
       return (this->*sbPropertyFunctionMap[index].propertyFunction)(retval);
-    }
-  }
-
-  // XXXAus: This one is also special, but we have this value cached internally.
-  if(asciiName.Equals(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY)) {
-    nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
-    NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
-
-    nsresult rv = propVariant->SetAsAString(mAccessCompatibility);
-    if(NS_SUCCEEDED(rv)) {
-      *retval = propVariant.get();
-      propVariant.forget();
-      return NS_OK;
     }
   }
 
