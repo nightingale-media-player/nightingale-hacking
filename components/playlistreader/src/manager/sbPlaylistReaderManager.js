@@ -316,6 +316,8 @@ CPlaylistReaderManager.prototype =
     // the given regexp, it is assigned the given mime type.
     var regexps = [
       {
+        // Note: "\s\S" matches *everything*, unlike "." which matches
+        // everything except system-specific variations on \n.
         regexp:    /<\?xml[\s\S]*<rss/,
         mimeType: "application/rss+xml"
       },
