@@ -17,7 +17,7 @@
 
 #include "sbIGStreamerSimple.h"
 
-const GST_NOPLUGIN_ERROR  6
+#define GST_NOPLUGIN_ERROR  6
 
 class sbGStreamerSimple : public sbIGStreamerSimple,
                           public nsIDOMEventListener,
