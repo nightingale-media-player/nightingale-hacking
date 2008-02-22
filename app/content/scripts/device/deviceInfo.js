@@ -673,8 +673,16 @@ var DIW = {
    */
 
   _getDeviceAccessCompatibility: function DIW__getDeviceAccessCompatibility() {
-    return this._getDeviceProperty("http://songbirdnest.com/device/1.0#accessCompatibility",
-                                   SBString("device.info.unknown"));
+    var accessCompatibility =
+          this._getDeviceProperty
+                 ("http://songbirdnest.com/device/1.0#accessCompatibility",
+                  SBString("device.info.unknown"));
+    if (accessCompatibility == "ro")
+      accessCompatibility = SBString("device.info.read_only");
+    else if (accessCompatibility == "rw")
+      accessCompatibility = SBString("device.info.read_write");
+
+    return accessCompatibility;
   },
 
 
