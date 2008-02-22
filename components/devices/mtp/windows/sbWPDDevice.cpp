@@ -1293,6 +1293,14 @@ nsresult sbWPDDevice::GetPlaylistReferences(sbIMediaList* aList,
   
   hr = values->GetIPortableDevicePropVariantCollectionValue(WPD_OBJECT_REFERENCES,
                                                             aItems);
+  if (hr == HRESULT_FROM_WIN32(ERROR_EMPTY)) {
+    // the drive is too dumb to create a new one for us
+    hr = CoCreateInstance(CLSID_PortableDevicePropVariantCollection,
+                          NULL,
+                          CLSCTX_INPROC_SERVER,
+                          IID_IPortableDevicePropVariantCollection,
+                          (LPVOID*)aItems);
+  }
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   return NS_OK;
