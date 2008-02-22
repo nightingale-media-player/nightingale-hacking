@@ -41,6 +41,7 @@ struct IPortableDevice;
 class sbWPDDevice;
 class nsAString;
 class nsIWritableVariant;
+class nsIVariant;
 
 /**
  * This class provides the WPD properties through the sbIDeviceProperties interface
@@ -66,11 +67,37 @@ public:
 	 * encure the wrath of MSVCRT allocation gods.
 	 */
 	static sbWPDPropertyAdapter * New(sbWPDDevice * device);
+  /**
+   * Calculate the capacity for the entire device
+   */
+  nsresult sbWPDGetPropertyCapacity(nsIVariant ** var);
+
+  /**
+   * Calculate the free space for the entire device
+   */
+  nsresult sbWPDGetPropertyFreeSpace(nsIVariant ** var);
+
+  /**
+   * Calculate the total space used by music/audio files on the device
+   */
+  nsresult sbWPDGetPropertyMusicUsedSpace(nsIVariant ** var);
+  /**
+   * Calculate the total space used by video files on the device
+   */
+  nsresult sbWPDGetPropertyVideoUsedSpace(nsIVariant ** var);
+  /**
+   * Calculate the total space used by video files on the device
+   */
+  nsresult sbWPDGetPropertyTotalUsedSpace(nsIVariant ** var);
+  
 private:
   nsRefPtr<IPortableDeviceProperties> mDeviceProperties;
   nsCOMPtr<nsIWritableVariant> mWorkerVariant;
   nsRefPtr<IPortableDevice> mPortableDevice;
   nsString mDeviceID;
+  PRUint64 mAudioUsed;
+  PRUint64 mVideoUsed;
+  PRUint64 mOtherUsed;
   /**
    * Creates a worker variant to eliminate excess object creation. Initializes
    * the devlice properties pointer as well as the ID of the device.

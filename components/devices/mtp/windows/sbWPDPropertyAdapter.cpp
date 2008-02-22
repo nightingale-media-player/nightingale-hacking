@@ -61,7 +61,11 @@ sbWPDPropertyAdapter::sbWPDPropertyAdapter(sbWPDDevice * device)
   nsRefPtr<IPortableDeviceContent> content;
   if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))))
     content->Properties(getter_AddRefs(mDeviceProperties));
-  
+  // Initialized the used stats
+  sbDeviceStatistics & stats = device->DeviceStatistics();
+  mAudioUsed = stats.AudioUsed();
+  mVideoUsed = stats.VideoUsed();
+  mOtherUsed = stats.OtherUsed();
 }
 
 sbWPDPropertyAdapter::~sbWPDPropertyAdapter()
@@ -311,18 +315,17 @@ static nsresult TotalStoragePropertyValue(IPortableDevice * device,
 /**
  * Calculate the capacity for the entire device
  */
-nsresult sbWPDGetPropertyCapacity(IPortableDevice * device, nsIVariant ** var)
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyCapacity(nsIVariant ** var)
 {
-  return TotalStoragePropertyValue(device, WPD_STORAGE_CAPACITY, var);
+  return TotalStoragePropertyValue(mPortableDevice, WPD_STORAGE_CAPACITY, var);
 }
 
 /**
  * Calculate the free space for the entire device
  */
-nsresult sbWPDGetPropertyFreeSpace(IPortableDevice * device,
-                                   nsIVariant ** var)
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyFreeSpace(nsIVariant ** var)
 {
-  return TotalStoragePropertyValue(device, 
+  return TotalStoragePropertyValue(mPortableDevice, 
                                    WPD_STORAGE_FREE_SPACE_IN_BYTES,
                                    var);
 }
@@ -330,15 +333,13 @@ nsresult sbWPDGetPropertyFreeSpace(IPortableDevice * device,
 /**
  * Calculate the total space used by music/audio files on the device
  */
-nsresult sbWPDGetPropertyMusicUsedSpace(IPortableDevice * device,
-                                        nsIVariant ** var)
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyMusicUsedSpace(nsIVariant ** var)
 {
   // TODO: calculate real value
-  NS_ENSURE_ARG(device);
   NS_ENSURE_ARG_POINTER(var);
   nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
   NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv = propVariant->SetAsUint64(3000000000l);
+  nsresult rv = propVariant->SetAsUint64(mAudioUsed);
   if (NS_SUCCEEDED(rv)) {
     *var = propVariant.get();
     propVariant.forget();
@@ -349,15 +350,13 @@ nsresult sbWPDGetPropertyMusicUsedSpace(IPortableDevice * device,
 /**
  * Calculate the total space used by video files on the device
  */
-nsresult sbWPDGetPropertyVideoUsedSpace(IPortableDevice * device,
-                                        nsIVariant ** var)
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyVideoUsedSpace(nsIVariant ** var)
 {
   // TODO: calculate real value
-  NS_ENSURE_ARG(device);
   NS_ENSURE_ARG_POINTER(var);
   nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
   NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv = propVariant->SetAsUint64(3200000000l);
+  nsresult rv = propVariant->SetAsUint64(mVideoUsed);
   if (NS_SUCCEEDED(rv)) {
     *var = propVariant.get();
     propVariant.forget();
@@ -368,14 +367,12 @@ nsresult sbWPDGetPropertyVideoUsedSpace(IPortableDevice * device,
 /**
  * Calculate the total space used by video files on the device
  */
-nsresult sbWPDGetPropertyTotalUsedSpace(IPortableDevice * device,
-                                        nsIVariant ** var)
+nsresult sbWPDPropertyAdapter::sbWPDGetPropertyTotalUsedSpace(nsIVariant ** var)
 {
-  NS_ENSURE_ARG(device);
   NS_ENSURE_ARG_POINTER(var);
   nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
   NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv = propVariant->SetAsUint64(62000000002);
+  nsresult rv = propVariant->SetAsUint64(mAudioUsed + mVideoUsed + mOtherUsed);
   if (NS_SUCCEEDED(rv)) {
     *var = propVariant.get();
     propVariant.forget();
@@ -383,8 +380,7 @@ nsresult sbWPDGetPropertyTotalUsedSpace(IPortableDevice * device,
   return rv;
 }
 
-typedef nsresult (*GetPropertyFunc)(IPortableDevice * device,
-                                    nsIVariant ** var);
+typedef nsresult (sbWPDPropertyAdapter::*GetPropertyFunc)(nsIVariant ** var);
 
 struct PropertyFunctionMap
 {
@@ -394,11 +390,11 @@ struct PropertyFunctionMap
 
 static PropertyFunctionMap const sbPropertyFunctionMap[] =
 {
-  { SB_DEVICE_PROPERTY_CAPACITY, sbWPDGetPropertyCapacity },
-  { SB_DEVICE_PROPERTY_FREE_SPACE, sbWPDGetPropertyFreeSpace },
-  { SB_DEVICE_PROPERTY_MUSIC_USED_SPACE, sbWPDGetPropertyMusicUsedSpace },
-  { SB_DEVICE_PROPERTY_VIDEO_USED_SPACE, sbWPDGetPropertyVideoUsedSpace },
-  { SB_DEVICE_PROPERTY_TOTAL_USED_SPACE, sbWPDGetPropertyTotalUsedSpace },
+  { SB_DEVICE_PROPERTY_CAPACITY, &sbWPDPropertyAdapter::sbWPDGetPropertyCapacity },
+  { SB_DEVICE_PROPERTY_FREE_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyFreeSpace },
+  { SB_DEVICE_PROPERTY_MUSIC_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyMusicUsedSpace },
+  { SB_DEVICE_PROPERTY_VIDEO_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyVideoUsedSpace },
+  { SB_DEVICE_PROPERTY_TOTAL_USED_SPACE, &sbWPDPropertyAdapter::sbWPDGetPropertyTotalUsedSpace },
 };
 
 /* nsIVariant getProperty (in AString name); */
@@ -410,7 +406,7 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name,
   int const propertyFunctionMapLength = NS_ARRAY_LENGTH(sbPropertyFunctionMap);
   for (int index = 0; index < propertyFunctionMapLength; ++index) {
     if (asciiName.Equals(sbPropertyFunctionMap[index].propertyName)) {
-      return sbPropertyFunctionMap[index].propertyFunction(mPortableDevice, retval);
+      return (this->*sbPropertyFunctionMap[index].propertyFunction)(retval);
     }
   }
   // There' wasn't a special handler so now use basic mapping and hope for the best

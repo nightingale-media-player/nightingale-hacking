@@ -155,16 +155,6 @@ public:
    */
   PRBool ProcessThreadsRequest();
 
-  /** 
-   * Returns the total amount of space used by music files.
-   */
-  PRUint64 GetMusicUsedSpace();
-
-  /**
-   * Returns the total amount of space used by video files.
-   */
-  PRUint64 GetVideoUsedSpace();
-
 protected:
   /**
    * Initializse the device with the creating controller's ID

@@ -440,7 +440,6 @@ NS_IMETHODIMP sbWPDDevice::SetPreference(const nsAString & aPrefName,
 /* readonly attribute sbIDeviceCapabilities capabilities; */
 NS_IMETHODIMP sbWPDDevice::GetCapabilities(sbIDeviceCapabilities * *theCapabilities)
 {
-  nsresult rv;
   nsRefPtr<IPortableDeviceCapabilities> deviceCaps;
   if (FAILED(mPortableDevice->Capabilities(getter_AddRefs(deviceCaps))))
     return NS_ERROR_FAILURE;
@@ -601,16 +600,6 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
     // keep going
   }
   return PR_TRUE; // let the worker thread know we can keep going
-}
-
-PRUint64 sbWPDDevice::GetMusicUsedSpace()
-{
-  return 0;
-}
-
-PRUint64 sbWPDDevice::GetVideoUsedSpace()
-{
-  return 0;
 }
 
 nsresult sbWPDDevice::GetClientInfo(IPortableDeviceValues ** clientInfo)
@@ -2066,6 +2055,19 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
   return NS_OK;
 }
 
+inline
+void AddObjectSize(IPortableDeviceValues * values, PRUint64 & total)
+{
+  PROPVARIANT var = {0};
+  PropVariantInit(&var);
+  if (SUCCEEDED(values->GetValue(WPD_OBJECT_SIZE, &var))) {
+    if (var.vt == VT_UI8 || var.vt == VT_I8) {
+      total += var.vt == VT_UI8 ? var.uhVal.QuadPart : var.hVal.QuadPart;
+    }
+    PropVariantClear(&var);
+  }
+}
+
 nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
   NS_ENSURE_ARG_POINTER(request);
   NS_ENSURE_STATE(mPortableDevice);
@@ -2122,7 +2124,8 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
       WPD_MEDIA_LAST_ACCESSED_TIME, 
       WPD_MEDIA_USE_COUNT, 
       WPD_MEDIA_SKIP_COUNT, 
-      WPD_MEDIA_STAR_RATING };
+      WPD_MEDIA_STAR_RATING,
+      WPD_OBJECT_SIZE };
 
   const PRUint32 standardKeysCount = NS_ARRAY_LENGTH(standardKeys);
   for(PRUint32 current = 0; current < standardKeysCount; ++current) {
@@ -2143,6 +2146,10 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
   }
   else {
 #endif
+    // Stats to track
+    PRUint64 videoUsed = 0;
+    PRUint64 audioUsed = 0;
+    PRUint64 otherUsed = 0;
 
   // Couldn't get the bulk interface, fall back to normal properties interface.
     nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
@@ -2183,12 +2190,19 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           // Skip if no content type.
           if(FAILED(hr))
             continue;
-          
+
           // Skip if not audio or video.
           // XXXAus: THIS WILL CHANGE AS WE SUPPORT OTHER CONTENT TYPES
-          if(!IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO) &&
-             !IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_VIDEO))
-             continue;
+          if(IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO)) {
+            AddObjectSize(values, audioUsed);
+          }
+          else if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_VIDEO)) {
+            AddObjectSize(values, videoUsed);
+          }
+          else {
+            AddObjectSize(values, otherUsed);
+            continue;
+          }
           
           GUID objectFormatGuid;
           hr = values->GetGuidValue(WPD_OBJECT_FORMAT, &objectFormatGuid);
@@ -2223,7 +2237,10 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
     }
     while(SUCCEEDED(hr) &&
           count);
-    
+
+    mDeviceStatistics.SetAudioUsed(audioUsed);
+    mDeviceStatistics.SetVideoUsed(videoUsed);
+    mDeviceStatistics.SetOtherUsed(otherUsed);
     rv = mLibraryListener->SetIgnoreListener(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 

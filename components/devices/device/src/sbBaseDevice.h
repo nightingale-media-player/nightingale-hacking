@@ -37,6 +37,7 @@
 
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
+#include "sbDeviceStatistics.h"
 
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
@@ -148,11 +149,18 @@ public:
    * @param aList the media list to listen for modifications
    */
   nsresult ListenToList(sbIMediaList* aList);
-
+  /**
+   * Return our statistics collector
+   */
+  sbDeviceStatistics & DeviceStatistics()
+  {
+    return mDeviceStatistics;
+  }
 protected:
   PRLock *mRequestLock;
   nsDeque/*<TransferRequest>*/ mRequests;
   PRInt32 mState;
+  sbDeviceStatistics mDeviceStatistics;
   
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
