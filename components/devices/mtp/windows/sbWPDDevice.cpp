@@ -331,16 +331,30 @@ NS_IMETHODIMP sbWPDDevice::Connect()
     hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &ppuid);
     NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
     
+    // hack for Sansa View (firmware 01.00.03H):
+    // the storage GUID for a View would occasionally have two extra characters
+    // in it: U+00C5 (Latin capital A with ring above), and an underscore.
+    // we work around this by stripping all non-7bit characters, as well as
+    // a few selected delimiters.
+    
     nsString puid = nsDependentString(ppuid);
     ::CoTaskMemFree(ppuid);
     
-    nsString libId = NS_ConvertASCIItoUTF16(idBuffer);
-    libId.AppendLiteral("@");
+    nsString libId = NS_ConvertASCIItoUTF16(idBuffer + 1, NSID_LENGTH - 3);
+    libId.AppendLiteral(".");
     libId.Append(puid);
+    libId.AppendLiteral("@devices.library.songbirdnest.com");
     
-    // now we have to make it into a file-name compatible string. sigh.
-    nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS), '_');
-    nsString_ReplaceChar(libId, NS_LITERAL_STRING(FILE_PATH_SEPARATOR), '_');
+    PRUnichar *begin, *end;
+    
+    for (libId.BeginWriting(&begin, &end); begin < end; ++begin) {
+      if (*begin & (~0x7F)) {
+        *begin = PRUnichar('_');
+      }
+    }
+    libId.StripChars(FILE_ILLEGAL_CHARACTERS
+                     FILE_PATH_SEPARATOR
+                     " _-");
 
     nsCOMPtr<sbIDeviceLibrary> devLib;
     rv = CreateDeviceLibrary(libId, nsnull, getter_AddRefs(devLib));
