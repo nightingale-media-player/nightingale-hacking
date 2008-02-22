@@ -95,6 +95,7 @@ private:
   nsCOMPtr<nsIWritableVariant> mWorkerVariant;
   nsRefPtr<IPortableDevice> mPortableDevice;
   nsString mDeviceID;
+  nsString mAccessCompatibility;
   PRUint64 mAudioUsed;
   PRUint64 mVideoUsed;
   PRUint64 mOtherUsed;

@@ -58,6 +58,7 @@ sbWPDPropertyAdapter::sbWPDPropertyAdapter(sbWPDDevice * device)
   mWorkerVariant = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
   mPortableDevice = device->PortableDevice();
   mDeviceID = device->GetDeviceID(mPortableDevice);
+  mAccessCompatibility = device->GetAccessCompatibility();
   nsRefPtr<IPortableDeviceContent> content;
   if (SUCCEEDED(mPortableDevice->Content(getter_AddRefs(content))))
     content->Properties(getter_AddRefs(mDeviceProperties));
@@ -409,10 +410,24 @@ NS_IMETHODIMP sbWPDPropertyAdapter::GetProperty(const nsAString & name,
       return (this->*sbPropertyFunctionMap[index].propertyFunction)(retval);
     }
   }
+
+  // XXXAus: This one is also special, but we have this value cached internally.
+  if(asciiName.Equals(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY)) {
+    nsRefPtr<sbPropertyVariant> propVariant = sbPropertyVariant::New();
+    NS_ENSURE_TRUE(propVariant, NS_ERROR_OUT_OF_MEMORY);
+
+    nsresult rv = propVariant->SetAsAString(mAccessCompatibility);
+    if(NS_SUCCEEDED(rv)) {
+      *retval = propVariant.get();
+      propVariant.forget();
+      return NS_OK;
+    }
+  }
+
   // There' wasn't a special handler so now use basic mapping and hope for the best
   PROPERTYKEY key;
   NS_ENSURE_TRUE(sbWPDStandardDevicePropertyToPropertyKey(asciiName.get(), 
-                                                          key), 
+                 key), 
                  NS_ERROR_FAILURE);
   return GetPropertyString(key, retval);
 }

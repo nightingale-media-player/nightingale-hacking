@@ -63,9 +63,9 @@ public:
     return ulRefCount;
   }
 
-  virtual HRESULT onStart(REFGUID aContext) = 0;
-  virtual HRESULT onProgress(REFGUID aContext, IPortableDeviceValuesCollection *aResults) = 0;
-  virtual HRESULT onEnd(REFGUID aContext) = 0;
+  HRESULT __stdcall onStart(REFGUID aContext) { return E_NOTIMPL; };
+  HRESULT __stdcall onProgress(REFGUID aContext, IPortableDeviceValuesCollection *aResults) { return E_NOTIMPL; };
+  HRESULT __stdcall onEnd(REFGUID aContext) { return E_NOTIMPL; };
 
 protected:
   sbPortableDevicePropertiesBulkCallback(sbWPDDevice * aDevice)
@@ -75,11 +75,11 @@ protected:
     NS_ASSERTION(aDevice, "marshall cannot be null");
   }
 
-  ~sbPortableDevicePropertiesBulkCallback();
+  ~sbPortableDevicePropertiesBulkCallback() { };
 
-private:
+protected:
   ULONG mRefCnt;
-  nsRefPtr<sbWPDDevice> mDevice;
+  sbWPDDevice *mDevice;
 };
 
 #endif //SBPORTABLEDEVICEPROPERTIESBULKCALLBACK_H_

@@ -23,30 +23,31 @@
 // END SONGBIRD GPL
 //
 */
+#ifndef SBPORTABLEDEVICEPROPERTIESBULKIMPORTCALLBACK_H_
+#define SBPORTABLEDEVICEPROPERTIESBULKIMPORTCALLBACK_H_
+
+#include "sbWPDCommon.h"
+#include <nsStringAPI.h>
 
 #include "sbPortableDevicePropertiesBulkCallback.h"
 
-HRESULT __stdcall sbPortableDevicePropertiesBulkCallback::QueryInterface(
-  REFIID riid,
-  LPVOID* ppvObj)
+class sbPortableDevicePropertiesBulkImportCallback : public sbPortableDevicePropertiesBulkCallback
 {
-  HRESULT hr = S_OK;
-  if (ppvObj == NULL)
+public:
+
+  HRESULT __stdcall onStart(REFGUID aContext);
+  HRESULT __stdcall onProgress(REFGUID aContext, IPortableDeviceValuesCollection *aResults);
+  HRESULT __stdcall onEnd(REFGUID aContext);
+
+protected:
+  sbPortableDevicePropertiesBulkImportCallback(sbWPDDevice * aDevice)
+  : sbPortableDevicePropertiesBulkCallback(aDevice)
   {
-    hr = E_INVALIDARG;
-    return hr;
+    
   }
 
-  if ((riid == IID_IUnknown) ||
-    (riid == IID_IPortableDevicePropertiesBulkCallback))
-  {
-    AddRef();
-    *ppvObj = this;
-  }
-  else
-  {
-    *ppvObj = NULL;
-    hr = E_NOINTERFACE;
-  }
-  return hr;
-}
+  virtual ~sbPortableDevicePropertiesBulkImportCallback() { };
+
+};
+
+#endif //SBPORTABLEDEVICEPROPERTIESBULKIMPORTCALLBACK_H_

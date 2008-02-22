@@ -34,6 +34,8 @@ target_name = sbMTPWin32$(DEBUG:%=_d)
 CPP_SRCS = sbWPDMarshall.cpp \
            sbWPDModule.cpp \
            sbPortableDeviceEventsCallback.cpp \
+           sbPortableDevicePropertiesBulkCallback.cpp \
+           sbPortableDevicePropertiesBulkImportCallback.cpp \
            sbWPDCommon.cpp \
            sbPropertyVariant.cpp \
            sbWPDDevice.cpp \

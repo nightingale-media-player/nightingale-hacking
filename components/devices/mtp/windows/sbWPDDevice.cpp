@@ -31,6 +31,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
+#include <nsINetUtil.h>
 #include <nsStringAPI.h>
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
@@ -59,8 +60,10 @@
 #include <sbProxiedComponentManager.h>
 /* damn you microsoft */
 #undef CreateEvent
+
 #include <sbIDeviceManager.h>
 #include "sbWPDCapabilitiesBuilder.h"
+#include "sbPortableDevicePropertiesBulkImportCallback.h"
 
 /* Implementation file */
 
@@ -173,7 +176,8 @@ sbWPDDevice::sbWPDDevice(nsID const & controllerID,
                            mPortableDevice(device),
                            mDeviceProperties(deviceProperties),
                            mControllerID(controllerID),
-                           mState(STATE_IDLE)
+                           mState(STATE_IDLE),
+                           mAccessCompatibility(0)
 {
   NS_ASSERTION(deviceProperties, "deviceProperties cannot be null");
   
@@ -244,12 +248,13 @@ NS_IMETHODIMP sbWPDDevice::GetId(nsID * *aId)
 /* void connect (); */
 NS_IMETHODIMP sbWPDDevice::Connect()
 {
+  HRESULT hr;
   nsresult rv;
   
   // If the pointer is set then it's already opened
   if (!mPortableDevice) {
     nsRefPtr<IPortableDevice> portableDevice;
-    HRESULT hr = CoCreateInstance(CLSID_PortableDevice,
+    hr = CoCreateInstance(CLSID_PortableDevice,
                                   NULL,
                                   CLSCTX_INPROC_SERVER,
                                   IID_IPortableDevice,
@@ -263,10 +268,18 @@ NS_IMETHODIMP sbWPDDevice::Connect()
       NS_ERROR("Unable to get client info");
       return NS_ERROR_FAILURE;
     }
-    if (NS_FAILED(portableDevice->Open(GetDeviceID(mPortableDevice).get(), clientInfo))) {
-      NS_ERROR("Unable to open the MTP device");
-      return NS_ERROR_FAILURE;
+    
+    mAccessCompatibility = 1;
+    hr = portableDevice->Open(GetDeviceID(portableDevice).get(), clientInfo);
+
+    if(hr == E_ACCESSDENIED) {
+      mAccessCompatibility = 0;
+      clientInfo->SetUnsignedIntegerValue(WPD_CLIENT_DESIRED_ACCESS,
+                                          GENERIC_READ);
+      hr = portableDevice->Open(GetDeviceID(portableDevice).get(), clientInfo);
     }
+    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
     mPortableDevice = portableDevice;
   }
 
@@ -277,7 +290,6 @@ NS_IMETHODIMP sbWPDDevice::Connect()
   }
   
   // get the libraries on the device
-  HRESULT hr;
   nsRefPtr<IPortableDeviceCapabilities> capabilities;
   hr = mPortableDevice->Capabilities(getter_AddRefs(capabilities));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
@@ -1587,15 +1599,40 @@ static nsresult SetContentName(sbIMediaItem * item,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedURL));
 
-  nsCString temp;
-  rv = proxiedURL->GetFileName(temp);
+  nsCString fileName;
+  rv = proxiedURL->GetFileName(fileName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString const & fileName = NS_ConvertUTF8toUTF16(temp);
-
-  if (FAILED(properties->SetStringValue(WPD_OBJECT_NAME, fileName.get())))
-    return NS_ERROR_FAILURE;
+  nsCString extension;
+  rv = proxiedURL->GetFileExtension(extension);
+  NS_ENSURE_SUCCESS(rv, rv);
   
+  //If there's an extension, cut it off for the name of the object.
+  nsCString objectName(fileName);
+  if(extension.Length())
+    objectName.Cut(objectName.Length() - extension.Length() - 1, extension.Length() + 1);
+
+  nsCOMPtr<nsINetUtil> netUtil;
+  netUtil = do_GetService("@mozilla.org/network/util;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCString decodedObjectName;
+  rv = netUtil->UnescapeString(objectName,
+    nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
+    decodedObjectName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString decodedFileName;
+  rv = netUtil->UnescapeString(fileName,
+    nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
+    decodedFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (FAILED(properties->SetStringValue(WPD_OBJECT_NAME, NS_ConvertUTF8toUTF16(decodedObjectName).get())))
+    return NS_ERROR_FAILURE;
+
+  if (FAILED(properties->SetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, NS_ConvertUTF8toUTF16(decodedFileName).get())))
+    return NS_ERROR_FAILURE;
+
   return rv;
 }
 

@@ -24,29 +24,23 @@
 //
 */
 
-#include "sbPortableDevicePropertiesBulkCallback.h"
+#include "sbPortableDevicePropertiesBulkImportCallback.h"
 
-HRESULT __stdcall sbPortableDevicePropertiesBulkCallback::QueryInterface(
-  REFIID riid,
-  LPVOID* ppvObj)
+HRESULT 
+sbPortableDevicePropertiesBulkImportCallback::onStart(REFGUID aContext)
 {
-  HRESULT hr = S_OK;
-  if (ppvObj == NULL)
-  {
-    hr = E_INVALIDARG;
-    return hr;
-  }
+  return S_OK;
+}
 
-  if ((riid == IID_IUnknown) ||
-    (riid == IID_IPortableDevicePropertiesBulkCallback))
-  {
-    AddRef();
-    *ppvObj = this;
-  }
-  else
-  {
-    *ppvObj = NULL;
-    hr = E_NOINTERFACE;
-  }
-  return hr;
+HRESULT 
+sbPortableDevicePropertiesBulkImportCallback::onProgress(REFGUID aContext, 
+                                                         IPortableDeviceValuesCollection *aResults)
+{
+  return S_OK;
+}
+
+HRESULT 
+sbPortableDevicePropertiesBulkImportCallback::onEnd(REFGUID aContext)
+{
+  return S_OK;
 }

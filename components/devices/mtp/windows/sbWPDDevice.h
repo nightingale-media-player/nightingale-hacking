@@ -155,6 +155,12 @@ public:
    */
   PRBool ProcessThreadsRequest();
 
+  nsString GetAccessCompatibility() {
+    return mAccessCompatibility ? 
+           NS_LITERAL_STRING("rw") : 
+           NS_LITERAL_STRING("ro");
+  }
+
 protected:
   /**
    * Initializse the device with the creating controller's ID
@@ -220,6 +226,7 @@ private:
   nsCOMPtr<nsIThread> mThreadObject;
   
   HANDLE mRequestsPendingEvent;
+  PRUint32 mAccessCompatibility;
  
   /**
    * This returns the WPD properties for a sbMediaItem
