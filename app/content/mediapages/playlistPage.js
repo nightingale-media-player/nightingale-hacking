@@ -108,8 +108,8 @@ window.mediaPage = {
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
     var mgr =
-    Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
-    .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
+      Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
     
     // Set up the playlist widget
