@@ -31,8 +31,6 @@
 #include <tchar.h>
 #include <PortableDeviceApi.h>
 #include <PortableDevice.h>
-#include <atlbase.h>
-#include <atlstr.h>
 
 // Dealing with Win32 macro mess
 #undef CreateDevice
