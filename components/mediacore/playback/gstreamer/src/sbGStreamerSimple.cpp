@@ -1048,7 +1048,8 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       g_free (debug);
 
-      showMessage = ( (mLastErrorCode == 0) && (error->code != 0) );
+      showMessage = ( (mLastErrorCode != error->code) &&
+                      (error->code == GST_NOPLUGIN_ERROR) );
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
       mBufferingPercent = 0;
