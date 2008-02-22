@@ -191,6 +191,13 @@
        */
 
       _isReadOnly: function deviceSummary__isReadOnly() {
+        try {
+          var accessCompatibility =
+                this._device.properties.properties.getPropertyAsAString
+                  ("http://songbirdnest.com/device/1.0#accessCompatibility");
+          if (accessCompatibility == "ro")
+            return true;
+        } catch (ex) { }
         return false;
       },
 
