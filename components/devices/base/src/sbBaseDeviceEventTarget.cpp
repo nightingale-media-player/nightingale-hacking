@@ -130,10 +130,12 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
   
   for (state.index = 0; state.index < state.length; ++state.index) {
     rv = mListeners[state.index]->OnDeviceEvent(aEvent);
-    if (NS_FAILED(rv)) {
-      // can't early return, we need to clean up!
-      break;
-    }
+    /* the return value is only checked on debug builds */
+    #if DEBUG
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Device event listener returned error");
+      }
+    #endif
     if (_retval)
       *_retval = PR_TRUE;
   }
@@ -142,9 +144,24 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
   // variable dangling
   mStates.Pop();
   
-  // remember to check the return value from the listener, if it failed
-  // (so that on debug builds we get a warning on stderr)
+  // bubble this event upwards
+  if (!mParentEventTarget) {
+    // no other event target, just return early
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDeviceEventTarget> parentEventTarget =
+    do_QueryReferent(mParentEventTarget, &rv);
+  if (NS_FAILED(rv) || !parentEventTarget) {
+    // the parent's gone, we don't care all that much
+    return NS_OK;
+  }
+  
+  // always dispatch as sync, since if we wanted to be async, we're already on
+  // that path and the caller's already gone.
+  rv = parentEventTarget->DispatchEvent(aEvent, PR_TRUE, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

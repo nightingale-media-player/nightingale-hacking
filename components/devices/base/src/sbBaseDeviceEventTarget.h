@@ -31,6 +31,7 @@
 
 #include <nsCOMArray.h>
 #include <nsDeque.h>
+#include <nsWeakReference.h>
 #include <prmon.h>
 
 class sbIDeviceEventListener;
@@ -65,6 +66,8 @@ protected:
   // our stack of states (holds *pointers* to DispatchStates)
   nsDeque mStates;
   friend class sbDeviceEventTargetRemovalHelper;
+  
+  nsCOMPtr<nsIWeakReference> mParentEventTarget;
 
 private:
   PRMonitor* mMonitor;

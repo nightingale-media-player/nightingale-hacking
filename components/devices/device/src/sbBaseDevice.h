@@ -44,6 +44,13 @@ class sbDeviceBaseLibraryCopyListener;
 class sbBaseDeviceMediaListListener;
 class sbIDeviceLibrary;
 
+/**
+ * Base class for implementing a device
+ *
+ * Derived classes should
+ *  - QI to sbIDevice, sbIDeviceEventTarget
+ *  - call sbBaseDevice::Init() at some early point
+ */
 class sbBaseDevice : public sbIDevice,
                      public sbBaseDeviceEventTarget
 {
@@ -156,6 +163,10 @@ public:
   {
     return mDeviceStatistics;
   }
+protected:
+  friend class sbBaseDeviceInitHelper;
+  void Init();
+
 protected:
   PRLock *mRequestLock;
   nsDeque/*<TransferRequest>*/ mRequests;

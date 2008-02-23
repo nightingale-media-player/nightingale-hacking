@@ -30,6 +30,8 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 
 #include "sbDeviceLibrary.h"
 #include "sbILibrary.h"
@@ -120,6 +122,7 @@ sbBaseDevice::sbBaseDevice()
   /* the deque owns the deallocator */
   
   mRequestLock = nsAutoLock::NewLock(__FILE__ "::mRequestLock");
+  NS_ASSERTION(mRequestLock, "Failed to allocate request lock");
 }
 
 sbBaseDevice::~sbBaseDevice()
@@ -385,4 +388,51 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
   
   mMediaListListeners.Put(list, listener);
   return NS_OK;
+}
+
+/* a helper class to proxy sbBaseDevice::Init onto the main thread
+ * needed because sbBaseDevice multiply-inherits from nsISupports, so
+ * AddRef gets confused
+ */
+class sbBaseDeviceInitHelper : public nsRunnable
+{
+public:
+  sbBaseDeviceInitHelper(sbBaseDevice* aDevice)
+    : mDevice(aDevice) {
+      NS_ADDREF(NS_ISUPPORTS_CAST(sbIDevice*, mDevice));
+    }
+  
+  NS_IMETHOD Run() {
+    mDevice->Init();
+    return NS_OK;
+  }
+  
+private:
+  ~sbBaseDeviceInitHelper() {
+    NS_ISUPPORTS_CAST(sbIDevice*, mDevice)->Release();
+  }
+  sbBaseDevice* mDevice;
+};
+
+void sbBaseDevice::Init()
+{
+  NS_ASSERTION(NS_IsMainThread(),
+               "base device init not on main thread, implement proxying");
+  if (!NS_IsMainThread()) {
+    // we need to get the weak reference on the main thread because it is not
+    // threadsafe, but we only ever use it from the main thread
+    nsCOMPtr<nsIRunnable> event = new sbBaseDeviceInitHelper(this);
+    NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
+    return;
+  }
+  
+  // get a weak ref of the device manager
+  nsCOMPtr<nsISupportsWeakReference> manager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2");
+  if (!manager)
+    return;
+  
+  nsresult rv = manager->GetWeakReference(getter_AddRefs(mParentEventTarget));
+  if (NS_FAILED(rv))
+    mParentEventTarget = nsnull;
 }

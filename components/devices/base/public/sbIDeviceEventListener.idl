@@ -34,6 +34,7 @@ interface sbIDeviceEvent;
  *
  * Used to listen to events on a particular device, controller, etc.
  *
+ * Any exceptions thrown from the event listeners are ignored.
  */
 [scriptable, function, uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]
 interface sbIDeviceEventListener : nsISupports
