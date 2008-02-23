@@ -47,16 +47,19 @@ sbWPDDeviceThread::~sbWPDDeviceThread()
 
 NS_IMETHODIMP sbWPDDeviceThread::Run()
 {
+  PRBool dieNow = PR_FALSE;
+
   do
   {
     // If PRocessThreadsRequest returns true it means it's it's time to die.
     // This may be due to a catostrophic error or normal shutdown while requests
     // are being processed.
-    mTimeToDie = !mDevice->ProcessThreadsRequest();
+     dieNow = !mDevice->ProcessThreadsRequest();
 
     // Wait on the event, will get set when there are items on the queue
     ::WaitForSingleObject(mEvent, INFINITE);
     ::ResetEvent(mEvent);
-  } while (!mTimeToDie);
+  } while (!mTimeToDie &&
+           !dieNow);
   return NS_OK;
 }

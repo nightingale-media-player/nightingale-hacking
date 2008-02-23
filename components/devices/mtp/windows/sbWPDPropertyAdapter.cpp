@@ -402,7 +402,7 @@ nsresult sbWPDPropertyAdapter::sbWPDGetPropertyAccessCompatibility(nsIVariant **
     NS_ERROR_FAILURE);
   nsRefPtr<sbPropertyVariant> propVar = sbPropertyVariant::New(propVal);
 
-  PRUint32 access;
+  PRUint32 access = GENERIC_READ;
   rv = propVar->GetAsUint32(&access);
   NS_ENSURE_SUCCESS(rv, rv);
 
