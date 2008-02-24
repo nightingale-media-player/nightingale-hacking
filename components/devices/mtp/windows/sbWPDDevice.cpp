@@ -52,6 +52,7 @@
 #include <sbDeviceContent.h>
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
+#include <nsIWritablePropertyBag.h>
 #include "sbStringUtils.h"
 #include "sbWPDDeviceThread.h"
 #include "sbWPDPropertyAdapter.h"
@@ -181,6 +182,11 @@ sbWPDDevice::sbWPDDevice(nsID const & controllerID,
 {
   NS_ASSERTION(deviceProperties, "deviceProperties cannot be null");
   
+  // look up the device
+  deviceProperties->GetPropertyAsInterface(NS_LITERAL_STRING("DevicePointer"),
+                                           *reinterpret_cast<const nsIID*>(&IID_IPortableDevice),
+                                           getter_AddRefs(mPortableDevice));
+  
   // Startup our worker thread
   mRequestsPendingEvent = CreateEventW(0, TRUE, FALSE, 0);
   mDeviceThread = new sbWPDDeviceThread(this,
@@ -235,13 +241,58 @@ NS_IMETHODIMP sbWPDDevice::GetControllerId(nsID * *aControllerId)
   return NS_OK;
 }
 
+inline
+nsresult AddHash(unsigned char * aBuffer, int & aOffset,
+                 nsIPropertyBag2* aPropBag, const nsAString& aProp)
+{
+  nsCString value;
+  nsresult rv = aPropBag->GetPropertyAsACString(aProp, value);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  const nsCString::char_type *p, *end;
+  
+  for (value.BeginReading(&p, &end); p < end; ++p) {
+    unsigned int data = (*p) & 0x7F; // only look at 7 bits
+    data <<= (aOffset / 7 + 1) % 8;
+    int index = (aOffset + 6) / 8;
+    if (index > 0)
+      aBuffer[(index - 1) % sizeof(nsID)] ^= (data & 0xFF00) >> 8;
+    aBuffer[index % sizeof(nsID)] ^= (data & 0xFF);
+    aOffset += 7;
+  }
+
+  return S_OK;
+}
+
 /* readonly attribute nsIDPtr id; */
 NS_IMETHODIMP sbWPDDevice::GetId(nsID * *aId)
 {
   NS_ENSURE_ARG(aId);
-  static nsID const id = SB_WPDDEVICE_CID;
+  
+  if (!mDeviceId) {
+    // no cached version, make the device id from the property bag
+    unsigned char buffer[sizeof(nsID)];
+    memset(buffer, 0, sizeof(nsID));
+    
+    nsresult rv;
+
+    int offset = 0;
+    rv = AddHash(buffer, offset, mDeviceProperties,
+                 NS_LITERAL_STRING("DeviceManufacturer"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = AddHash(buffer, offset, mDeviceProperties,
+                 NS_LITERAL_STRING("ModelNo"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = AddHash(buffer, offset, mDeviceProperties,
+                 NS_LITERAL_STRING("SerialNo"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mDeviceId = new nsID; // yay nsAutoPtr
+    *mDeviceId = *(reinterpret_cast<nsID*>(&buffer)); // copy by value
+  }
+
   *aId = static_cast<nsID*>(NS_Alloc(sizeof(nsID)));
-  **aId = id;
+  **aId = *mDeviceId; // NB: copy by value
   return NS_OK;
 }
 
@@ -393,6 +444,8 @@ NS_IMETHODIMP sbWPDDevice::Connect()
 /* void disconnect (); */
 NS_IMETHODIMP sbWPDDevice::Disconnect()
 {
+  nsresult rv;
+  
   // The thread requires mPortableDevice! This means we must shutdown the 
   // thread before we release the portable device instance.
   if (mDeviceThread) {
@@ -407,6 +460,15 @@ NS_IMETHODIMP sbWPDDevice::Disconnect()
       NS_WARNING("Failed to close PortableDevice instance!");
     mPortableDevice = nsnull;
   }
+  
+  // clear the device passed in the creation parameters, since
+  // PortableDeviceApi.dll wants to go away too fast
+  nsCOMPtr<nsIWritablePropertyBag> bag =
+    do_QueryInterface(mDeviceProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // silently eat failures
+  bag->DeleteProperty(NS_LITERAL_STRING("DevicePointer"));
 
   return NS_OK;
 }

@@ -31,15 +31,19 @@
 #include <tchar.h>
 #include <PortableDeviceApi.h>
 #include <PortableDevice.h>
+
+#include <nsAutoPtr.h>
 #include <nsStringAPI.h>
-#include <sbIMediaItem.h>
-#include <sbIMediaList.h>
-#include <sbBaseDevice.h>
 #include <nsIPropertyBag2.h>
 #include <nsIClassInfo.h>
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIThread.h>
+
+#include "sbIMediaItem.h"
+#include "sbIMediaList.h"
+
+#include "sbBaseDevice.h"
 #include "sbDeviceContent.h"
 #include "sbPortableDevicePropertiesBulkCallback.h"
 
@@ -227,6 +231,7 @@ private:
   
   HANDLE mRequestsPendingEvent;
   PRUint32 mAccessCompatibility;
+  nsAutoPtr<nsID> mDeviceId;
  
   /**
    * This returns the WPD properties for a sbMediaItem

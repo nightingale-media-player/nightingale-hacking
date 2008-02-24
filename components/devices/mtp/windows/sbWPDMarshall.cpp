@@ -294,6 +294,23 @@ nsresult AddDevicePropertiesToPropertyBag(IPortableDeviceManager * deviceManager
                                NS_LITERAL_STRING("SerialNo"));
   writer.SetPropertyFromDevice(WPD_DEVICE_MODEL,
                                NS_LITERAL_STRING("ModelNo"));
+  
+  nsRefPtr<nsISupports> supports;
+  HRESULT hr = device->QueryInterface(*reinterpret_cast<const IID*>(&NS_GET_IID(nsISupports)),
+                                      getter_AddRefs(supports));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_NO_INTERFACE);
+  
+  nsresult rv;
+  nsCOMPtr<nsIWritableVariant> variant =
+    do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = variant->SetAsISupports(supports);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = propertyBag->SetProperty(NS_LITERAL_STRING("DevicePointer"), variant);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -524,17 +541,13 @@ nsresult sbWPDMarshall::DiscoverDevices()
 {
   nsresult rv = NS_OK;
   
-  // Create the property bad to pass to the control
-  nsCOMPtr<nsIWritablePropertyBag> propBag = do_CreateInstance(HASH_PROPERTY_BAG_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Grab the device manager service instance
   nsCOMPtr<sbIDeviceManager2> deviceManager = do_GetService(SONGBIRD_DEVICEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Grab the device registrar from the device manager instance
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar = do_QueryInterface(deviceManager, &rv);
-  if (NS_SUCCEEDED(rv) && propBag)
+  if (NS_SUCCEEDED(rv))
   {
     // Create the WPD device manager
     nsRefPtr<IPortableDeviceManager> deviceManager;
@@ -547,6 +560,11 @@ nsresult sbWPDMarshall::DiscoverDevices()
     size_t const deviceIDCount = deviceIDs.size();
     for (size_t index = 0; index < deviceIDCount; ++index)
     {
+      // Create the property bag to pass to the control
+      nsCOMPtr<nsIWritablePropertyBag> propBag =
+        do_CreateInstance(HASH_PROPERTY_BAG_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       nsString const & deviceID = deviceIDs[index];
       // If we don't know this device, set it up
       nsAutoMonitor mon(mKnownDevicesLock);
@@ -564,11 +582,6 @@ nsresult sbWPDMarshall::DiscoverDevices()
             nsCOMPtr<sbIDevice> sbDevice;
             if (NS_SUCCEEDED(controller->CreateDevice(propBag,
                                                       getter_AddRefs(sbDevice))) && sbDevice) {
-
-              // XXXAus: This is bad to have to do this. 
-              // But I have to reuse the IPortableDeviceInstance.
-              sbWPDDevice *wpdDevice = static_cast<sbWPDDevice *>(sbDevice.get());
-              wpdDevice->mPortableDevice = device;
 
               // Create the listener for this device
               CreateDeviceListener(this, device, sbDevice);
