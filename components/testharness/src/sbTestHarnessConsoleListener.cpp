@@ -34,11 +34,24 @@
 
 #include "nsStringGlue.h"
 #include <stdio.h>
+#if XP_WIN
+  #include <windows.h>
+  #undef GetMessage
+  #include <stdlib.h>
+#endif
+
+void sb_purecall_handler() {
+  ::DebugBreak();
+}
 
 NS_IMPL_ISUPPORTS1(sbTestHarnessConsoleListener, nsIConsoleListener)
 
 sbTestHarnessConsoleListener::sbTestHarnessConsoleListener()
 {
+  // XXX Mook temp hack
+  #if XP_WIN
+    _set_purecall_handler(sb_purecall_handler);
+  #endif
   MOZ_COUNT_CTOR(sbTestHarnessConsoleListener);
 }
 
