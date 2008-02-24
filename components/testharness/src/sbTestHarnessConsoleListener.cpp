@@ -38,11 +38,11 @@
   #include <windows.h>
   #undef GetMessage
   #include <stdlib.h>
-#endif
 
-void sb_purecall_handler() {
-  ::DebugBreak();
-}
+  void sb_purecall_handler() {
+    ::DebugBreak();
+  }
+#endif
 
 NS_IMPL_ISUPPORTS1(sbTestHarnessConsoleListener, nsIConsoleListener)
 
