@@ -186,13 +186,17 @@
                            class="device-specs-grid-label"/>
               </xul:row>
 
-              <!-- Playback formats row. -->
+              <!-- Playback formats row.  Use a description element  -->
+              <!-- with a single text child node to enable wrapping. -->
               <xul:row devicespec="playback_formats">
                 <xul:label sbid="playback_formats_label"
                            class="device-specs-grid-label"
                            value="&device.info.playback_formats.label;"/>
-                <xul:label sbid="playback_formats_value_label"
-                           class="device-specs-grid-label"/>
+                <xul:vbox>
+                  <xul:description sbid="playback_formats_value_label"
+                                   class="device-specs-grid-label">
+                  </xul:description>
+                </xul:vbox>
               </xul:row>
 
               <!-- Battery status row. -->

@@ -267,8 +267,8 @@ var DIW = {
         break;
 
       case "playback_formats" :
-        this._deviceSpecUpdateValue("playback_formats_value_label",
-                                    this._getDevicePlaybackFormats());
+        this._deviceSpecUpdateDesc("playback_formats_value_label",
+                                   this._getDevicePlaybackFormats());
         break;
 
       case "battery" :
@@ -295,6 +295,23 @@ var DIW = {
     var labelElem = this._getElement(aLabelID);
     if (labelElem.getAttribute("value") != aValue)
       labelElem.setAttribute("value", aValue);
+  },
+
+
+  /**
+   * \brief Update the device spec text of the description specified by aDescID
+   *        with the text specified by aText.  Assume that the first child node
+   *        of the description exists and is a text node.
+   *
+   * \param aDescID             ID of description to update.
+   * \param aText               Text with which to update description.
+   */
+
+  _deviceSpecUpdateDesc: function DIW__deviceSpecUpdateDesc(aDescID, aText) {
+    // Set the description text.
+    var descElem = this._getElement(aDescID);
+    if (descElem.firstChild.data != aText)
+      descElem.firstChild.data = aText;
   },
 
 
@@ -702,7 +719,7 @@ var DIW = {
         var contentArray = deviceCapabilities.getSupportedContentTypes(functionArray[functionCounter], {});
         for (var contentCounter = 0; contentCounter < contentArray.length; contentCounter++) {
           var formatArray = deviceCapabilities.getSupportedFormats(contentArray[contentCounter], {});
-          retFormats.concat(formatArray);
+          retFormats = retFormats.concat(formatArray);
         }
       }
     } catch (err) { }
