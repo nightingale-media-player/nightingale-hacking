@@ -335,7 +335,7 @@ function SBOpenPreferences(paneID, parentWindow)
   // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null);
 }
 
-/*function SBOpenDownloadManager()
+function SBOpenDownloadManager()
 {
   var dlmgr = Components.classes['@mozilla.org/download-manager;1'].getService();
   dlmgr = dlmgr.QueryInterface(Components.interfaces.nsIDownloadManager);
@@ -348,9 +348,9 @@ function SBOpenPreferences(paneID, parentWindow)
     dlmgrWindow.focus();
   }
   else {
-    openDialog("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen", null);
-   }
-}*/
+    window.open("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen,dialog=no,resizable", null);
+  }
+}
 
 function SBWatchFolders( parentWindow )
 {

@@ -138,6 +138,10 @@
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
+        <menuitem id="menu_downloadmgr"
+                  key="downloadmgr-key"
+                  label="&menu.downloadmgr;"
+                  accesskey="&menu.downloadmgr.accesskey;"/>
         <menuitem id="menu_extensions"
                   label="&menu.extensions;"
                   accesskey="&menu.extensions.accesskey;"/>
@@ -269,6 +273,7 @@
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
       <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
+      <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
     </keyset>
     
 

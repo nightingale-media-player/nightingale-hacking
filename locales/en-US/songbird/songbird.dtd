@@ -102,6 +102,7 @@
 <!ENTITY menu.viewpagesource "View Page Source">
 <!ENTITY menu.errorconsole "Error Console">
 <!ENTITY menu.dominspector  "DOM Inspector" >
+<!ENTITY menu.downloadmgr   "File Downloads..." >
 
 
 <!ENTITY html.context.open  "Open" >
@@ -263,6 +264,7 @@
 <!ENTITY menu.clearprivatedata.accesskey "P" >
 <!ENTITY menu.errorconsole.accesskey  "C" >
 <!ENTITY menu.file.exit.accesskey     "X" >
+<!ENTITY menu.downloadmgr.accesskey   "D" >
 
 <!ENTITY menu.edit.accesskey          "E" >
 <!ENTITY menu.edit.undo.accesskey     "U" >
@@ -385,6 +387,7 @@
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY sanitize.key                  "Del" >
 <!ENTITY menu.viewpagesource.key       "U" >
+<!ENTITY downloadmgr.key               "J" >
 
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">

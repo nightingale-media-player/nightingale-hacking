@@ -129,9 +129,9 @@ function doMenu( command ) {
     case "menu_preferences":
       SBOpenPreferences();
     break;
-/*    case "menu.downloadmgr":
+    case "menu_downloadmgr":
       SBOpenDownloadManager();
-    break;*/
+    break;
     case "menuitem_tools_clearprivatedata":
       Sanitizer.showUI();
     break;
