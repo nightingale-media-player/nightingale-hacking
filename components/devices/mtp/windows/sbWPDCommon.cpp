@@ -397,29 +397,43 @@ nsresult sbWPDGUIDtoFileExtension(GUID &aObjectFormat,
 }
 
 
-nsresult 
+nsString
 sbWPDGetFolderForContentType(const GUID &aContentType,
-                             nsAString &aParentID)
+                             const nsAString &aParentID,
+                             IPortableDeviceContent *aContent)
 {
-  aParentID.Truncate();
-  #define TEST_START if(false) { /* nothing */
-  #define TEST_GUID(aGUID, aString)   \
-  } else if (aContentType == aGUID) {  \
-    aParentID.AssignLiteral(aString);
-  #define TEST_END }
+  struct FolderMapping_t {
+    const GUID guid;
+    const char ** name;
+  };
   
-  TEST_START
-  TEST_GUID(WPD_CONTENT_TYPE_AUDIO,    "MUSIC")
-  TEST_GUID(WPD_CONTENT_TYPE_PLAYLIST, "PLAYLISTS")
-  TEST_GUID(WPD_CONTENT_TYPE_IMAGE,    "PICTURES")
-  TEST_GUID(WPD_CONTENT_TYPE_VIDEO,    "VIDEO")
-  TEST_END
+  const char* NAMES_AUDIO[]    = {"MUSIC", "My Music", NULL};
+  const char* NAMES_PLAYLIST[] = {"PLAYLISTS", "My Playlists", NULL};
+  const char* NAMES_IMAGE[]    = {"PICTURES", "My Pictures", NULL};
+  const char* NAMES_VIDEO[]    = {"VIDEO", "My Videos", NULL};
   
-  #undef TEST_START
-  #undef TEST_GUID
-  #undef TEST_END
+  const FolderMapping_t MAP[] = {
+    { WPD_CONTENT_TYPE_AUDIO,    NAMES_AUDIO },
+    { WPD_CONTENT_TYPE_PLAYLIST, NAMES_PLAYLIST },
+    { WPD_CONTENT_TYPE_IMAGE,    NAMES_IMAGE },
+    { WPD_CONTENT_TYPE_VIDEO,    NAMES_VIDEO }
+  };
   
-  return aParentID.IsEmpty() ? NS_ERROR_NOT_AVAILABLE : NS_OK;
+  nsString resultObjId(aParentID);
+  for (int guidIdx = 0; guidIdx < NS_ARRAY_LENGTH(MAP); ++guidIdx) {
+    if (MAP[guidIdx].guid == aContentType) {
+      for (const char ** name = MAP[guidIdx].name; name; ++name) {
+        resultObjId = sbWPDFindChildNamed(aParentID,
+                                          NS_ConvertASCIItoUTF16(*name),
+                                          aContent);
+        if (!resultObjId.IsEmpty()) {
+          break;
+        }
+      }
+      break;
+    }
+  }
+  return resultObjId;
 }
 
 
@@ -632,4 +646,76 @@ nsresult sbWPDCreatePropertyArrayFromDeviceValues(const nsTArray<PROPERTYKEY> &a
   }
 
   return CallQueryInterface(props, aProps);
+}
+
+static PRInt32 LossyCaseInsensitiveCompare(const nsAString::char_type *a,
+                                           const nsAString::char_type *b,
+                                           PRUint32 length)
+{
+  return CaseInsensitiveCompare(NS_LossyConvertUTF16toASCII(a, length).get(),
+                                NS_LossyConvertUTF16toASCII(b, length).get(),
+                                length);
+}
+
+nsString sbWPDFindChildNamed(const nsAString& aParent,
+                             const nsAString& aName,
+                             IPortableDeviceContent* aContent)
+{
+  HRESULT hr;
+  nsresult rv;
+  
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = aContent->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), EmptyString());
+  
+  nsRefPtr<IEnumPortableDeviceObjectIDs> folderIdList;
+  hr = aContent->EnumObjects(0, /* flags */
+                             aParent.BeginReading(),
+                             NULL, /* no filter */
+                             getter_AddRefs(folderIdList));
+  if (FAILED(hr)) {
+    return EmptyString();
+  }
+  
+  nsRefPtr<IPortableDeviceKeyCollection> nameKey;
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_ORIGINAL_FILE_NAME,
+                                        getter_AddRefs(nameKey));
+  if (FAILED(rv)) {
+    return EmptyString();
+  }
+  
+  for(;;) {
+    LPWSTR pFolderObjId;
+    hr = folderIdList->Next(1, &pFolderObjId, NULL);
+    if (FAILED(hr) || (hr == S_FALSE)) {
+      return EmptyString();
+    }
+      
+    nsString folderObjId(pFolderObjId); // copies
+    ::CoTaskMemFree(pFolderObjId);
+    
+    nsRefPtr<IPortableDeviceValues> nameValues;
+    hr = properties->GetValues(folderObjId.BeginReading(),
+                               nameKey,
+                               getter_AddRefs(nameValues));
+    if (FAILED(hr)) {
+      continue;
+    }
+    
+    LPWSTR nameStr;
+    hr = nameValues->GetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, &nameStr);
+    if (FAILED(hr)) {
+      continue;
+    }
+    
+    if (aName.Equals(nameStr, LossyCaseInsensitiveCompare)) {
+      ::CoTaskMemFree(nameStr);
+      return folderObjId;
+    }
+
+    ::CoTaskMemFree(nameStr);
+  }
+  
+  NS_NOTREACHED("returned from infinite loop");
+  return EmptyString();
 }

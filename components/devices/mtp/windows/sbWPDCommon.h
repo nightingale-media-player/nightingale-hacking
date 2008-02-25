@@ -201,13 +201,25 @@ nsresult sbWPDGUIDtoFileExtension(GUID &aObjectFormat,
 /**
  * Find the most appropriate folder for a specific content type.
  * For example, find the folder to put MUSIC into.
+ * If own found, returns aParentID.
  * \param aContentType The WPD content type GUID.
- * \param aParentID The suggested folder's name.
- * \retval NS_ERROR_NOT_AVAILABLE Couldn't determine the best folder for the content type.
- * \retval NS_OK Found an appropriate folder.
+ * \param aParentID The WPD object ID of the parent
+ * \param aContent the device content to make it more likely to match
+ * \retval The suggested folder's object id.
  */
-nsresult sbWPDGetFolderForContentType(const GUID &aContentType,
-                                      nsAString &aParentID);
+nsString sbWPDGetFolderForContentType(const GUID &aContentType,
+                                      const nsAString &aParentID,
+                                      IPortableDeviceContent* aContent);
+
+
+/* find the child object of the given WPD_OBJECT_ORIGINAL_FILE_NAME
+ * @param aParent the WPD object ID of the parent
+ * @param aName the name to look for
+ * @return The object ID of the child, or empty string if not found
+ */
+nsString sbWPDFindChildNamed(const nsAString& aParent,
+                             const nsAString& aName,
+                             IPortableDeviceContent* aContent);
 
 /**
  * Convert a standard data model property to a WPD propertykey

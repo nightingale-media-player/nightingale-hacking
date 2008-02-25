@@ -270,14 +270,6 @@ protected:
    */
   static nsresult PropertyKeyFromString(const nsAString & aString,
                                         PROPERTYKEY* aPropKey);
-  
-  /* find the child object of the given WPD_OBJECT_ORIGINAL_FILE_NAME
-   * @param aParent the WPD object ID of the parent
-   * @param aName the name to look for
-   * @return The object ID of the child, or empty string if not found
-   */
-  nsString FindChildNamed(const nsAString& aParent,
-                          const nsAString& aName);
 };
 
 #define SB_WPDDEVICE_CID \

@@ -95,6 +95,7 @@ nsresult CreateAndDispatchGenericDeviceErrorEvent(sbWPDDevice *aDevice) {
 /**
  * Helper functions
  */
+
 /**
  * This helper functions retrieves a list of values for a content item on the device
  * @param theWPDDevice is the device to ask
@@ -193,6 +194,8 @@ sbWPDDevice::sbWPDDevice(nsID const & controllerID,
                                   mRequestsPendingEvent);
   NS_NewThread(getter_AddRefs(mThreadObject), mDeviceThread);
   NS_IF_ADDREF(mDeviceThread);
+
+  sbBaseDevice::Init();
 }
 
 sbWPDDevice::~sbWPDDevice()
@@ -934,23 +937,17 @@ nsresult sbWPDDevice::CreatePlaylist(sbIMediaList* aPlaylist)
   nsString libraryObjId = GetWPDDeviceIDFromMediaItem(library);
   NS_ENSURE_TRUE(!libraryObjId.IsEmpty(), NS_ERROR_FAILURE);
   
-  // the parent folder is a child of the library (storage) guid
-  nsString parentObjId(libraryObjId), parentName;
-  rv = sbWPDGetFolderForContentType(WPD_CONTENT_TYPE_PLAYLIST, parentName);
-  if (NS_SUCCEEDED(rv)) {
-    parentObjId = FindChildNamed(libraryObjId, parentName);
-    if (parentObjId.IsEmpty()) {
-      // not found, fall back to library
-      parentObjId.Assign(libraryObjId);
-    }
-  }
-
-  // do what we can before actually creating the playlist in case something
-  // fails (so we don't get a playlist on the device we don't know about)
   nsRefPtr<IPortableDeviceContent> content;
   hr = mPortableDevice->Content(getter_AddRefs(content));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
+  // the parent folder is a child of the library (storage) guid
+  nsString parentObjId = sbWPDGetFolderForContentType(WPD_CONTENT_TYPE_PLAYLIST,
+                                                      libraryObjId,
+                                                      content);
+
+  // do what we can before actually creating the playlist in case something
+  // fails (so we don't get a playlist on the device we don't know about)
   nsRefPtr<IPortableDeviceProperties> properties;
   hr = content->Properties(getter_AddRefs(properties));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
@@ -1612,20 +1609,37 @@ static nsresult GetWPDContentType(nsAString const & mimeType,
   return NS_ERROR_FAILURE;
 }
 
-static nsresult SetParentProperty(IPortableDeviceContent * content,
-                                  sbIMediaList * list,
-                                  IPortableDeviceValues * properties)
+static nsresult SetParentProperty(IPortableDeviceContent * aContent,
+                                  sbIMediaItem * aItem,
+                                  const GUID & aContentType,
+                                  IPortableDeviceValues * aProperties)
 {
-  nsString puid;
-  list->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
-                    puid);
-  nsString objectID;
-  if (puid.IsEmpty() || NS_FAILED(sbWPDObjectIDFromPUID(content,
-                                                        puid,
-                                                        objectID)))
+  nsresult rv;
+  HRESULT hr;
+  
+  nsCOMPtr<sbILibrary> deviceLibrary;
+  rv = aItem->GetLibrary(getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libraryPuid, libraryObjId;
+  deviceLibrary->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
+                             libraryPuid);
+  if (libraryPuid.IsEmpty())
     return NS_ERROR_FAILURE;
-  if (FAILED(properties->SetStringValue(WPD_OBJECT_PARENT_ID, objectID.get())))
+
+  rv = sbWPDObjectIDFromPUID(aContent, libraryPuid, libraryObjId);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_FALSE(libraryObjId.IsEmpty(), NS_ERROR_FAILURE);
+  
+  nsString parentObjId = sbWPDGetFolderForContentType(aContentType,
+                                                      libraryObjId,
+                                                      aContent);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  hr = aProperties->SetStringValue(WPD_OBJECT_PARENT_ID, parentObjId.get());
+  if (FAILED(hr))
     return NS_ERROR_FAILURE;
+
   return NS_OK;
 }
 
@@ -1936,7 +1950,7 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
     return NS_ERROR_FAILURE;
   }
 
-  rv = SetParentProperty(content, list, properties);
+  rv = SetParentProperty(content, item, WPDContentType, properties);
   NS_ENSURE_SUCCESS(rv, rv);
   
   rv = SetContentLength(item, properties);
@@ -2375,72 +2389,4 @@ nsresult sbWPDDevice::PropertyKeyFromString(const nsAString & aString,
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
-}
-
-nsString sbWPDDevice::FindChildNamed(const nsAString& aParent,
-                                     const nsAString& aName)
-{
-  NS_ENSURE_TRUE(mPortableDevice, EmptyString());
-  
-  HRESULT hr;
-  nsresult rv;
-  
-  nsRefPtr<IPortableDeviceContent> content;
-  hr = mPortableDevice->Content(getter_AddRefs(content));
-  NS_ENSURE_TRUE(SUCCEEDED(hr), EmptyString());
-  
-  nsRefPtr<IPortableDeviceProperties> properties;
-  hr = content->Properties(getter_AddRefs(properties));
-  NS_ENSURE_TRUE(SUCCEEDED(hr), EmptyString());
-  
-  nsRefPtr<IEnumPortableDeviceObjectIDs> folderIdList;
-  hr = content->EnumObjects(0, /* flags */
-                            aParent.BeginReading(),
-                            NULL, /* no filter */
-                            getter_AddRefs(folderIdList));
-  if (FAILED(hr)) {
-    return EmptyString();
-  }
-  
-  nsRefPtr<IPortableDeviceKeyCollection> nameKey;
-  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_ORIGINAL_FILE_NAME,
-                                        getter_AddRefs(nameKey));
-  if (FAILED(rv)) {
-    return EmptyString();
-  }
-  
-  for(;;) {
-    LPWSTR pFolderObjId;
-    hr = folderIdList->Next(1, &pFolderObjId, NULL);
-    if (FAILED(hr) || (hr == S_FALSE)) {
-      return EmptyString();
-    }
-      
-    nsString folderObjId(pFolderObjId); // copies
-    ::CoTaskMemFree(pFolderObjId);
-    
-    nsRefPtr<IPortableDeviceValues> nameValues;
-    hr = properties->GetValues(folderObjId.BeginReading(),
-                               nameKey,
-                               getter_AddRefs(nameValues));
-    if (FAILED(hr)) {
-      continue;
-    }
-    
-    LPWSTR nameStr;
-    hr = nameValues->GetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, &nameStr);
-    if (FAILED(hr)) {
-      continue;
-    }
-    
-    if (aName.Equals(nameStr)) {
-      ::CoTaskMemFree(nameStr);
-      return folderObjId;
-    }
-
-    ::CoTaskMemFree(nameStr);
-  }
-  
-  NS_NOTREACHED("returned from infinite loop");
-  return EmptyString();
 }
