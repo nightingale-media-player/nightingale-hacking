@@ -39,7 +39,7 @@ interface sbILibraryResource;
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(961b6911-c48a-4a48-a3a3-596f5fa68b7c)]
+[scriptable, uuid(15928572-66fc-4eb8-a430-a5bac5bf350e)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -81,4 +81,12 @@ interface sbILibraryServicePaneService : nsISupports {
    * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null
    */
   sbILibraryResource getLibraryResourceForNode (in sbIServicePaneNode aNode);
+
+  /* \brief Set node read-only property.
+   *
+   * \param aNode Node to set.
+   * \param aReadOnly If true, node is read-only.
+   */
+  void setNodeReadOnly(in sbIServicePaneNode aNode,
+                       in boolean aReadOnly);
 };

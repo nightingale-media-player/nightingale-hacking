@@ -464,6 +464,10 @@ sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
   dump('\n\n\ncanDrop:\n');
   
+  // don't allow drop on read-only nodes
+  if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
+    return false;
+
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
   if (list) {
     dump('canDrop on a list\n');
@@ -486,6 +490,10 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
 sbLibraryServicePane.prototype.onDrop =
 function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) {
   dump('\n\n\nonDrop:\n');
+
+  // don't allow drop on read-only nodes
+  if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
+    return;
 
   // where are we dropping?
   var targetList = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
@@ -777,6 +785,23 @@ function sbLibraryServicePane_getLibraryResourceForNode(aNode) {
   }
 
   return resource;
+}
+
+
+/* \brief Set node read-only property.
+ *
+ * \param aNode Node to set.
+ * \param aReadOnly If true, node is read-only.
+ */
+sbLibraryServicePane.prototype.setNodeReadOnly =
+function sbLibraryServicePane_setNodeReadOnly(aNode, aReadOnly) {
+  if (aReadOnly) {
+    aNode.editable = false;
+    aNode.setAttributeNS(LSP, "ReadOnly", "true");
+  } else {
+    aNode.editable = true;
+    aNode.setAttributeNS(LSP, "ReadOnly", "false");
+  }
 }
 
 
