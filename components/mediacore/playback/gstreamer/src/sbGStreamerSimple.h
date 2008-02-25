@@ -17,8 +17,6 @@
 
 #include "sbIGStreamerSimple.h"
 
-#define GST_NOPLUGIN_ERROR  6
-
 class sbGStreamerSimple : public sbIGStreamerSimple,
                           public nsIDOMEventListener,
                           public nsITimerCallback
@@ -93,6 +91,7 @@ private:
   PRBool mIsPlayingVideo;
   PRBool mFullscreen;
   PRInt32 mLastErrorCode;
+  PRInt32 mLastDomain;
   PRUint16 mBufferingPercent;
 
   double mLastVolume;

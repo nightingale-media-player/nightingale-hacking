@@ -80,6 +80,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mIsPlayingVideo(PR_FALSE),
   mFullscreen(PR_FALSE),
   mLastErrorCode(0),
+  mLastDomain(0),
   mBufferingPercent(0),
   mLastVolume(0),
   mVideoOutputElement(nsnull),
@@ -1040,7 +1041,6 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_ERROR: {
       GError *error = NULL;
       gchar *debug = NULL;
-      PRBool showMessage = false;
 
       gst_message_parse_error(message, &error, &debug);
 
@@ -1048,9 +1048,17 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       g_free (debug);
 
-      showMessage = ( (mLastErrorCode != error->code) &&
-                      (error->code == GST_NOPLUGIN_ERROR) );
-      mLastErrorCode = error->code;
+      // Only show the message if this is a new error for this domain and if it
+      // is a plugin or codec missing error.
+      PRBool isErrorAlreadyHandled;
+      PRBool isPluginOrCodecError;
+      isErrorAlreadyHandled = ( (mLastDomain == error->domain) &&
+                                (mLastErrorCode == error->code) );
+      isPluginOrCodecError = ( (error->domain == GST_CORE_ERROR &&
+                                error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
+                               (error->domain == GST_STREAM_ERROR &&
+                                error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND) );
+
       mIsAtEndOfStream = PR_TRUE;
       mBufferingPercent = 0;
       mIsPlayingVideo = PR_FALSE;
@@ -1059,7 +1067,10 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       }
       mCursorIntervalTimer->Cancel();
 
-      if (showMessage) {
+      if ( !isErrorAlreadyHandled && isPluginOrCodecError ) {
+        mLastErrorCode = error->code;
+        mLastDomain = error->domain;
+
         // If we fail to show the dialog to the user then we just return
         // the GST_BUS_PASS success code so that the GST stuff will keep
         // going and not worry about the dialog this time.
