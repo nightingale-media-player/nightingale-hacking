@@ -2177,14 +2177,17 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
 }
 
 inline
-void AddObjectSize(IPortableDeviceValues * values, PRUint64 & total)
+void AddObjectSize(IPortableDeviceValues * values, 
+                   sbPropertyVariant * propVar,
+                   PRUint64 & total)
 {
   PROPVARIANT var = {0};
   PropVariantInit(&var);
   if (SUCCEEDED(values->GetValue(WPD_OBJECT_SIZE, &var))) {
-    if (var.vt == VT_UI8 || var.vt == VT_I8) {
-      total += var.vt == VT_UI8 ? var.uhVal.QuadPart : var.hVal.QuadPart;
-    }
+    propVar->SetPropVariant(var);
+    PRUint64 val;
+    if (NS_SUCCEEDED(propVar->GetAsUint64(&val)))
+      total += val;
     PropVariantClear(&var);
   }
 }
@@ -2276,7 +2279,8 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
     nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
     hr = content->EnumObjects(0, libraryObjectID.get(), NULL, getter_AddRefs(enumObjectIds));
     NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
-
+    // This is created here to prevent one from being created for each loop
+    nsRefPtr<sbPropertyVariant> sizeVar = sbPropertyVariant::New();
     ULONG count = 0;
     do {
       // Do this in batches of 100
@@ -2315,13 +2319,13 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           // Skip if not audio or video.
           // XXXAus: THIS WILL CHANGE AS WE SUPPORT OTHER CONTENT TYPES
           if(IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO)) {
-            AddObjectSize(values, audioUsed);
+            AddObjectSize(values, sizeVar, audioUsed);
           }
           else if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_VIDEO)) {
-            AddObjectSize(values, videoUsed);
+            AddObjectSize(values, sizeVar, videoUsed);
           }
           else {
-            AddObjectSize(values, otherUsed);
+            AddObjectSize(values, sizeVar, otherUsed);
             continue;
           }
           

@@ -53,6 +53,10 @@ public:
     PropVariantInit(&mPropVariant);
   }
   /* shared */ PROPVARIANT* GetPropVariant();
+  /**
+   * This call makes a copy of the PROPVARIANT to the mPropVariant
+   */
+  nsresult SetPropVariant(PROPVARIANT const & var);
 protected:
   /**
    * Initializes the object with the given PROPVARIANT

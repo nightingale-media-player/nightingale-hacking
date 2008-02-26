@@ -163,6 +163,14 @@ NS_IMETHODIMP sbPropertyVariant::GetDataType(PRUint16 *aDataType)
   return rv;
 }
 
+/**
+ * Used to return the value whether it's a ref or not
+ */
+#define GET_VALUE(v) (byRef ? *(mPropVariant.p##v) : mPropVariant.v) 
+
+/**
+ * Returns the value either by ref or value.
+ */
 #define ReturnValue(type, name)           \
   switch (AssertSupportedType(type))      \
   {                                       \
@@ -176,6 +184,9 @@ NS_IMETHODIMP sbPropertyVariant::GetDataType(PRUint16 *aDataType)
       return NS_ERROR_NOT_IMPLEMENTED;    \
   }
 
+/**
+ * Returns the value when there is no supported ref type
+ */
 #define ReturnValueNP(type, name)         \
   switch (AssertSupportedType(type))      \
   {                                       \
@@ -205,11 +216,99 @@ NS_IMETHODIMP sbPropertyVariant::GetAsInt32(PRInt32 *retval)
   ReturnValue(nsIDataType::VTYPE_INT32, lVal);
 }
 
+#undef max
+
 /* [noscript] PRInt64 getAsInt64 (); */
-NS_IMETHODIMP sbPropertyVariant::GetAsInt64(PRInt64 *rv)
+NS_IMETHODIMP sbPropertyVariant::GetAsInt64(PRInt64 *retval)
 {
-  LARGE_INTEGER * retval = reinterpret_cast<LARGE_INTEGER*>(rv);
-  ReturnValueNP(nsIDataType::VTYPE_INT64, hVal);
+  PRBool const byRef = mPropVariant.vt & VT_BYREF ? PR_TRUE : PR_FALSE;
+  switch (mPropVariant.vt & VT_TYPEMASK)
+  {
+  case VT_EMPTY:
+    *retval = 0;
+    break;
+  case VT_NULL:
+    *retval = 0;
+    break;
+  case VT_I1:
+    *retval = static_cast<PRInt64>(GET_VALUE(cVal));
+    break;
+  case VT_UI1:
+    *retval = static_cast<PRInt64>(GET_VALUE(bVal));
+    break;
+  case VT_I2:
+    *retval = static_cast<PRInt64>(GET_VALUE(iVal));
+    break;
+  case VT_UI2:
+    *retval = static_cast<PRInt64>(GET_VALUE(uiVal));
+    break;
+  case VT_I4:
+  case VT_INT:
+    *retval = static_cast<PRInt64>(GET_VALUE(lVal));
+    break;
+  case VT_UI4:
+  case VT_UINT:
+    *retval = static_cast<PRInt64>(GET_VALUE(ulVal));
+    break;
+  case VT_I8:
+    *retval = mPropVariant.hVal.QuadPart;
+    break;
+  case VT_UI8:
+    if (mPropVariant.uhVal.QuadPart <= std::numeric_limits<PRInt64>::max()) {
+      *retval = mPropVariant.uhVal.QuadPart;
+    }
+    else
+      return NS_ERROR_ILLEGAL_VALUE;
+    break;
+  case VT_R4:
+    *retval = static_cast<PRUint64>(GET_VALUE(fltVal));
+    break;
+  case VT_R8:
+    *retval = static_cast<PRUint64>(GET_VALUE(dblVal));
+    break;
+  case VT_BOOL:
+    *retval = static_cast<PRUint64>(GET_VALUE(boolVal));
+    break;
+  case VT_ERROR:
+    *retval = static_cast<PRUint64>(GET_VALUE(scode));
+    break;
+  case VT_DATE:
+    *retval = static_cast<PRUint64>(GET_VALUE(date));
+    break;
+  case VT_FILETIME:
+    NS_ERROR("Cannot convert file times to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CLSID:
+    NS_ERROR("Cannot convert UUID's to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_BSTR:
+  {
+    NS_ERROR("Cannot convert BSTR to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  break;
+  case VT_LPWSTR:
+    NS_ERROR("Cannot convert strings to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CY:
+  case VT_CF:
+  case VT_BSTR_BLOB:
+  case VT_BLOB:
+//  case VT_BLOBOBJECT:
+  case VT_UNKNOWN:
+  case VT_DISPATCH:
+  case VT_STREAM:
+  case VT_STREAMED_OBJECT:
+  case VT_STORAGE:
+  case VT_STORED_OBJECT:
+  case VT_VERSIONED_STREAM:
+  case VT_DECIMAL:
+  case VT_VECTOR:
+  default:
+    NS_ERROR("Unable to convert COM type to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  return NS_OK;
 }
 
 /* [noscript] PRUint8 getAsUint8 (); */
@@ -231,10 +330,92 @@ NS_IMETHODIMP sbPropertyVariant::GetAsUint32(PRUint32 *retval)
 }
 
 /* [noscript] PRUint64 getAsUint64 (); */
-NS_IMETHODIMP sbPropertyVariant::GetAsUint64(PRUint64 *rv)
+NS_IMETHODIMP sbPropertyVariant::GetAsUint64(PRUint64 *retval)
 {
-  ULARGE_INTEGER * retval = reinterpret_cast<ULARGE_INTEGER*>(rv);
-  ReturnValueNP(nsIDataType::VTYPE_UINT64, uhVal);
+  PRBool const byRef = mPropVariant.vt & VT_BYREF ? PR_TRUE : PR_FALSE;
+  switch (mPropVariant.vt & VT_TYPEMASK)
+  {
+  case VT_EMPTY:
+    *retval = 0;
+    break;
+  case VT_NULL:
+    *retval = 0;
+    break;
+  case VT_I1:
+    *retval = static_cast<PRUint64>(GET_VALUE(cVal));
+    break;
+  case VT_UI1:
+    *retval = static_cast<PRUint64>(GET_VALUE(bVal));
+    break;
+  case VT_I2:
+    *retval = static_cast<PRUint64>(GET_VALUE(iVal));
+    break;
+  case VT_UI2:
+    *retval = static_cast<PRUint64>(GET_VALUE(uiVal));
+    break;
+  case VT_I4:
+  case VT_INT:
+    *retval = static_cast<PRUint64>(GET_VALUE(lVal));
+    break;
+  case VT_UI4:
+  case VT_UINT:
+    *retval = static_cast<PRUint64>(GET_VALUE(ulVal));
+    break;
+  case VT_I8:
+    *retval = static_cast<PRUint64>(mPropVariant.hVal.QuadPart);
+    break;
+  case VT_UI8:
+    *retval = mPropVariant.uhVal.QuadPart;
+    break;
+  case VT_R4:
+    *retval = static_cast<PRUint64>(GET_VALUE(fltVal));
+    break;
+  case VT_R8:
+    *retval = static_cast<PRUint64>(GET_VALUE(dblVal));
+    break;
+  case VT_BOOL:
+    *retval = static_cast<PRUint64>(GET_VALUE(boolVal));
+    break;
+  case VT_ERROR:
+    *retval = static_cast<PRUint64>(GET_VALUE(scode));
+    break;
+  case VT_DATE:
+    *retval = static_cast<PRUint64>(GET_VALUE(date));
+    break;
+  case VT_FILETIME:
+    NS_ERROR("Cannot convert file times to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CLSID:
+    NS_ERROR("Cannot convert UUID's to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_BSTR:
+  {
+    NS_ERROR("Cannot convert BSTR to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  break;
+  case VT_LPWSTR:
+    NS_ERROR("Cannot convert strings to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  case VT_CY:
+  case VT_CF:
+  case VT_BSTR_BLOB:
+  case VT_BLOB:
+//  case VT_BLOBOBJECT:
+  case VT_UNKNOWN:
+  case VT_DISPATCH:
+  case VT_STREAM:
+  case VT_STREAMED_OBJECT:
+  case VT_STORAGE:
+  case VT_STORED_OBJECT:
+  case VT_VERSIONED_STREAM:
+  case VT_DECIMAL:
+  case VT_VECTOR:
+  default:
+    NS_ERROR("Unable to convert COM type to double");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  return NS_OK;
 }
 
 /* [noscript] float getAsFloat (); */
@@ -242,8 +423,6 @@ NS_IMETHODIMP sbPropertyVariant::GetAsFloat(float *retval)
 {
   ReturnValue(nsIDataType::VTYPE_FLOAT, fltVal);
 }
-
-#define GET_VALUE(v) (byRef ? *(mPropVariant.p##v) : mPropVariant.v) 
 
 /* [noscript] double getAsDouble (); */
 NS_IMETHODIMP sbPropertyVariant::GetAsDouble(double *retval)
@@ -869,4 +1048,13 @@ NS_IMETHODIMP sbPropertyVariant::SetFromVariant(nsIVariant *aOther)
 PROPVARIANT* sbPropertyVariant::GetPropVariant()
 {
   return &mPropVariant;
+}
+
+nsresult sbPropertyVariant::SetPropVariant(PROPVARIANT const & var)
+{
+  // Clean out the existing variant freeing any allocated resources.
+  HRESULT hr = PropVariantClear(&mPropVariant);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  // Make a copy of var
+  return SUCCEEDED(PropVariantCopy(&mPropVariant, &var)) ? NS_OK : NS_ERROR_FAILURE;
 }
