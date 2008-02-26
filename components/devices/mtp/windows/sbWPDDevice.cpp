@@ -58,6 +58,7 @@
 #include "sbWPDPropertyAdapter.h"
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
+#include <nsTArray.h>
 #include <sbProxiedComponentManager.h>
 /* damn you microsoft */
 #undef CreateEvent
@@ -2235,19 +2236,20 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
 
   // Standard set of PROPERTYKEYs we will attempt to fetch from items.
   static PROPERTYKEY standardKeys[] = 
-    { WPD_OBJECT_FORMAT, 
-      WPD_OBJECT_PERSISTENT_UNIQUE_ID, 
-      WPD_MEDIA_TITLE, 
-      WPD_MUSIC_ALBUM, 
-      WPD_MEDIA_ARTIST, 
-      WPD_MEDIA_DURATION, 
-      WPD_MEDIA_GENRE, 
-      WPD_MUSIC_TRACK, 
-      WPD_MEDIA_COMPOSER, 
-      WPD_MUSIC_LYRICS, 
-      WPD_MEDIA_LAST_ACCESSED_TIME, 
-      WPD_MEDIA_USE_COUNT, 
-      WPD_MEDIA_SKIP_COUNT, 
+    { WPD_OBJECT_FORMAT,
+      WPD_OBJECT_PERSISTENT_UNIQUE_ID,
+      WPD_OBJECT_ORIGINAL_FILE_NAME,
+      WPD_MEDIA_TITLE,
+      WPD_MUSIC_ALBUM,
+      WPD_MEDIA_ARTIST,
+      WPD_MEDIA_DURATION,
+      WPD_MEDIA_GENRE,
+      WPD_MUSIC_TRACK,
+      WPD_MEDIA_COMPOSER,
+      WPD_MUSIC_LYRICS,
+      WPD_MEDIA_LAST_ACCESSED_TIME,
+      WPD_MEDIA_USE_COUNT,
+      WPD_MEDIA_SKIP_COUNT,
       WPD_MEDIA_STAR_RATING,
       WPD_OBJECT_SIZE };
 
@@ -2276,35 +2278,48 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
     PRUint64 otherUsed = 0;
 
   // Couldn't get the bulk interface, fall back to normal properties interface.
-    nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
-    hr = content->EnumObjects(0, libraryObjectID.get(), NULL, getter_AddRefs(enumObjectIds));
-    NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+    nsTArray<nsString> objectsToScan;
+    objectsToScan.AppendElement(libraryObjectID);
+  
+    while (!objectsToScan.IsEmpty()) {
+      nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
+      PRUint32 nextObjectIdx = objectsToScan.Length() - 1;
+      hr = content->EnumObjects(0,
+                                objectsToScan[nextObjectIdx].get(),
+                                NULL,
+                                getter_AddRefs(enumObjectIds));
+      NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+      objectsToScan.RemoveElementAt(nextObjectIdx);
+  
+      ULONG count = 0;
+      do {
+        // Do this in batches of 100
+        LPWSTR objectIds[100] = {0};
+  
+        hr = enumObjectIds->Next(100, objectIds, &count);
+        
+        if (FAILED(hr))
+          break;
+  
+        for(ULONG current = 0; current < count; ++current) {
+          nsString objId(objectIds[current]);
+          ::CoTaskMemFree(objectIds[current]);
+          objectIds[current] = NULL;
     // This is created here to prevent one from being created for each loop
     nsRefPtr<sbPropertyVariant> sizeVar = sbPropertyVariant::New();
-    ULONG count = 0;
-    do {
-      // Do this in batches of 100
-      LPWSTR objectIds[100] = {0};
-
-      hr = enumObjectIds->Next(100, objectIds, &count);
-
-      if(SUCCEEDED(hr)) {
-
-        for(ULONG current = 0; current < count; ++current) {
           nsRefPtr<IPortableDeviceValues> values;
 
-          hr = properties->GetValues(objectIds[current], keys, getter_AddRefs(values));
-          NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+          hr = properties->GetValues(objId.get(), keys, getter_AddRefs(values));
+          if (FAILED(hr))
+            continue;
 
           LPWSTR value = NULL;
           hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, 
                                       &value);
 
           // Skip if no PUID.
-          if(FAILED(hr)) {
-            ::CoTaskMemFree(value);
+          if (FAILED(hr))
             continue;
-          }
 
           nsString objectPUID(value);
           ::CoTaskMemFree(value);
@@ -2313,18 +2328,22 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           hr = values->GetGuidValue(WPD_OBJECT_CONTENT_TYPE, &contentTypeGuid);
 
           // Skip if no content type.
-          if(FAILED(hr))
+          if (FAILED(hr))
             continue;
 
           // Skip if not audio or video.
           // XXXAus: THIS WILL CHANGE AS WE SUPPORT OTHER CONTENT TYPES
-          if(IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO)) {
+          if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_AUDIO)) {
             AddObjectSize(values, sizeVar, audioUsed);
           }
           else if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_VIDEO)) {
             AddObjectSize(values, sizeVar, videoUsed);
           }
           else {
+            if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_FOLDER)) {
+              // scan this folder too
+              objectsToScan.AppendElement(objId);
+            }
             AddObjectSize(values, sizeVar, otherUsed);
             continue;
           }
@@ -2333,13 +2352,13 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           hr = values->GetGuidValue(WPD_OBJECT_FORMAT, &objectFormatGuid);
           
           // Skip if no object format
-          if(FAILED(hr)) 
+          if (FAILED(hr)) 
             continue;
 
           // Skip if content type does not map to something we support.
           // XXXAus: THIS IS WRONG, it should use the PlaylistPlayback extensions list!!!
           nsCString contentTypeExt;
-          if(NS_FAILED(sbWPDGUIDtoFileExtension(objectFormatGuid, contentTypeExt)))
+          if (NS_FAILED(sbWPDGUIDtoFileExtension(objectFormatGuid, contentTypeExt)))
             continue;
 
           nsCOMPtr<sbIMediaItem> item;
@@ -2347,21 +2366,21 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           
           // Looks like we will have to create the item.
           if(rv == NS_ERROR_NOT_AVAILABLE) {
-            rv = sbWPDCreateMediaItemFromDeviceValues(library, keyArray, values, getter_AddRefs(item));
-            NS_ENSURE_SUCCESS(rv, rv);
+            rv = sbWPDCreateMediaItemFromDeviceValues(library,
+                                                      keyArray,
+                                                      values,
+                                                      getter_AddRefs(item));
+            /* ignore errors */
           }
           else {
-            rv = sbWPDSetMediaItemPropertiesFromDeviceValues(item, keyArray, values);
-            NS_ENSURE_SUCCESS(rv, rv);
+            rv = sbWPDSetMediaItemPropertiesFromDeviceValues(item,
+                                                             keyArray,
+                                                             values);
+            /* ignore errors */
           }
-
-          ::CoTaskMemFree(objectIds[current]);
-          objectIds[current] = NULL;
-        }
-      }
-    }
-    while(SUCCEEDED(hr) &&
-          count);
+        } /* for current = 0 ... count - 1 */
+      } while(count);
+    } /* !objectsToScan.IsEmpty() */
 
     mDeviceStatistics.SetAudioUsed(audioUsed);
     mDeviceStatistics.SetVideoUsed(videoUsed);
