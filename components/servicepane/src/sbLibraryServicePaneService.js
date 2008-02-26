@@ -676,14 +676,16 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   var lib = checkNode(aNode, this);
   if (lib)
     return lib;
-  
-  // check the children of the node (but not recursively) for a usable library
-  for (var child = aNode.firstChild; child; child = child.nextSibling) {
-    lib = checkNode(child, this);
-    if (lib)
-      return lib;
-  }
 
+  if (aNode.isContainer) {
+    // check the children of the node (but not recursively) for a usable library
+    for (var child = aNode.firstChild; child; child = child.nextSibling) {
+      lib = checkNode(child, this);
+      if (lib)
+        return lib;
+    }
+  }
+  
   // Move up the tree looking for libraries that support the
   // given media list type.
   aNode = aNode.parentNode;
