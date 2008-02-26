@@ -225,7 +225,7 @@
 
   <binding id="sb-sys-icon" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
-      <handler event="dblclick" action="quitApp();"/>
+      <handler event="dblclick" action="( event.target.getAttribute('type') == 'dialog' ) ? onExit() : ( event.target.getAttribute('type') == 'hide' ) ? onHideButtonClick() : quitApp(); "/>
     </handlers>
     <implementation>
       <constructor>
@@ -363,7 +363,7 @@
         </xul:hbox>
         <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
           <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
-          <xul:sb-sys-icon id="sb-sys-titlebar-icon"/>
+          <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
           <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
           <children />
           <xul:spacer id="sb-sys-titlebar-spacer" flex="1"/>
