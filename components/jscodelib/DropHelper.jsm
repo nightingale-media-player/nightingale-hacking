@@ -108,8 +108,6 @@ var DNDUtils = {
         var data = {};
         var length = {};
         transfer.getTransferData(aFlavour, data, length);
-        //data.value = data.value.QueryInterface(Components.interfaces.nsISupportsString);
-        //data.value = data.value.toString();
         if (!r) r = data.value;
         if (aArray) aArray.push([data.value, length.value, aFlavour]);
       }
@@ -685,8 +683,7 @@ var ExternalDropHandler = {
 
   supportedFlavours: [ "application/x-moz-file",
                        "text/x-moz-url",
-                       "text/unicode",
-                       "text/plain" ],
+                       "text/unicode"],
   
   // returns true if the drag session contains supported external flavors
   isSupported: function(aDragSession) {
@@ -820,16 +817,18 @@ var ExternalDropHandler = {
         rawData = fileHandler.getURLSpecFromFile(item);
       } else {
         if (item instanceof this._Ci.nsISupportsString) {
-          rawData = item.data;
+          rawData = item.toString();
         } else {
           rawData = ""+item;
         }
-        if (rawData.toLowerCase().indexOf("http://") < 0) {
-          // not a url, ignore
-          continue;
-        } else {
+        if (rawData.toLowerCase().indexOf("http://") >= 0) {
           // remember that this is not a local file
           islocal = false;
+        } else if (rawData.toLowerCase().indexOf("file://") >= 0) {
+          islocal = true;
+        } else {
+          // not a url, ignore
+          continue;
         }
       }
       
@@ -1160,6 +1159,7 @@ var ExternalDropHandler = {
   }
  
 }
+
 
 
 

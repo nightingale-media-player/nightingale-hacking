@@ -2241,52 +2241,166 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         </body>
       </method>
 
-      <!-- Drag and Drop -->
+      <field name="nsDragAndDropObserver">
+        <![CDATA[({ 
+        _self: this,
+        
+        // we are dragging items from the list, construct the session data
+        onDragStart: function(event, xferData, dragAction) {
+          try {
+            var treeView = this._self.treeView;
+
+            var ml = this._self.mediaListView.mediaList;
+            var numRows = treeView.selectionCount;
+            if (numRows == 0) {
+              // Nothing selected, dont drag
+              throw this._self._Cr.NS_OK;
+            }
+
+            var dnd = this._self._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                              .getService(this._self._Ci.sbIDndSourceTracker);
+            dnd.reset();
+
+            xferData.data = new TransferDataSet();
+            var data = new TransferData();
+
+            // If only one item is selected, send two flavors
+            var self = this;
+            if (numRows == 1) {
+              var item = treeView.currentMediaItem;
+              if (!item) {
+                throw this._self._Cr.NS_OK;
+              }
+
+              if (item instanceof this._self._Ci.sbIMediaList) {
+                // If this is a list, send it as both a media item and a media list
+                var context = this._self._getSingleListTransferContext(item, ml);
+                var handle = dnd.registerSource(context);
+                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+              }
+              else {
+                // If this is just a media item, send it only as a media item
+                var context = this._self._getSingleItemTransferContext(item, ml);
+                var handle = dnd.registerSource(context);
+                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+              }
+
+            }
+            else {
+              // We are sending more than one item.  We dont know (or care to find
+              // out) if all of the items to be sent are actually lists, so send
+              // as items
+
+              // initialize the context to have items
+              var context = this._self._getMultipleItemTransferContext(ml, numRows, treeView);
+              context.reset();
+
+              var handle = dnd.registerSource(context);
+              data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+            }
+
+            // Add the url of the item as well
+            // XXX: Probably want to make sure that this is a local file that exists
+            // before providing this flavor
+            //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
+
+            xferData.data.push(data);
+
+            dragAction.action = this._self._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+          }
+          catch(e) {
+            // The drag and drop helper swallows exceptions, so report them and
+            // rethrow
+            if (e.result != this._self._Cr.NS_OK) {
+              Components.utils.reportError(e);
+            }
+            throw e;
+          }
+        },
+        
+        // whether we can accept the drop or not
+        canDrop: function(event, session) {
+          return (InternalDropHandler.isSupported(session) ||
+                  ExternalDropHandler.isSupported(session));
+        },
+
+        // expose the flavours we support
+        getSupportedFlavours: function() {
+          var flavours = new FlavourSet();
+          InternalDropHandler.addFlavours(flavours);
+          ExternalDropHandler.addFlavours(flavours);
+          return flavours;
+        },
+
+        // this method is only here to keep nsDragAndDrop.js happy
+        onDragOver: function(event, flavor, session) {
+        }
+
+      })]]></field>
+
+      <!-- Items are dragged from the list -->
       <method name="_onDragGesture">
         <parameter name="event"/>
         <body>
 <![CDATA[
+  // eventually calls this.nsDragAndDropObserver.onDragStart to fill
+  // the session with our data
   if (event.target.localName == "treechildren") {
-    nsDragAndDrop.startDrag(event, this);
+    nsDragAndDrop.startDrag(event, this.nsDragAndDropObserver);
   }
 ]]>
         </body>
       </method>
 
+      <!-- Something is dragged over the list -->
       <method name="_onDragOver">
         <parameter name="event"/>
         <body>
 <![CDATA[
+  // eventually calls this.nsDragAndDropObserver.canDrop to see if the
+  // drop is allowed
   if (event.target.localName == "treechildren") {
-    nsDragAndDrop.dragOver(event, this);
+    nsDragAndDrop.dragOver(event, this.nsDragAndDropObserver);
   }
 ]]>
         </body>
       </method>
 
+      <!-- Something is dropped on the list -->
       <method name="_onDragDrop">
         <parameter name="event"/>
         <body>
 <![CDATA[
-  // Note that drop is handled by the tree observer.  This is so we can know
-  // what row and orientation the drop happened at.
+  // The actual drop is not handled here, it is taken care of by the tree 
+  // observer. This is so we can know what row and orientation the drop 
+  // happened at.
+  
+  // This method is here to prevent the default drag and drop handler
+  // from handling the drop
   event.stopPropagation();
 ]]>
         </body>
       </method>
 
+      <!-- Called from either the tree observer (when dropping inside the tree,
+           via .drop()) or the mediapage (when dropping on a browser tab) -->
       <method name="_dropOnTree">
         <parameter name="row"/>
         <parameter name="orientation"/>
+        <parameter name="session"/>
         <body>
 <![CDATA[
+  this._dragSession = session;
+  
   // Note that this is called by our tree observer
   var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
                     .getService(this._Ci.sbIDndSourceTracker);
 
   // handle mediaitem drops
   
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM,
+                                                session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbISingleItemTransferContext);
@@ -2294,7 +2408,8 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     return;
   }
 
-  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                            session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbISingleListTransferContext);
@@ -2302,7 +2417,8 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     return;
   }
 
-  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                            session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
@@ -2349,15 +2465,6 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     position = -1;
   }
   
-  // drop the files
-
-  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                            .getService(this._Ci.nsIDragService);
-  var session = dragService.getCurrentSession();
-
-  var reportcb = function(playlistObj, imported, dups, inserted, firstItem) {
-  }
-
   var dropHandlerListener = {
     onDropComplete: function(aTargetList,
                              aImportedInLibrary,
@@ -2376,86 +2483,6 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
                                  position, 
                                  dropHandlerListener);
 
-]]>
-        </body>
-      </method>
-
-      <method name="onDragStart">
-        <parameter name="event"/>
-        <parameter name="xferData"/>
-        <parameter name="dragAction"/>
-        <body>
-<![CDATA[
-  try {
-    var treeView = this.treeView;
-
-    var ml = this.mediaListView.mediaList;
-    var numRows = treeView.selectionCount;
-    if (numRows == 0) {
-      // Nothing selected, dont drag
-      throw this._Cr.NS_OK;
-    }
-
-    var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-                      .getService(this._Ci.sbIDndSourceTracker);
-    dnd.reset();
-
-    xferData.data = new TransferDataSet();
-    var data = new TransferData();
-
-    // If only one item is selected, send two flavors
-    var self = this;
-    if (numRows == 1) {
-      var item = treeView.currentMediaItem;
-      if (!item) {
-        throw this._Cr.NS_OK;
-      }
-
-      if (item instanceof this._Ci.sbIMediaList) {
-        // If this is a list, send it as both a media item and a media list
-        var context = this._getSingleListTransferContext(item, ml);
-        var handle = dnd.registerSource(context);
-        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
-        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
-      }
-      else {
-        // If this is just a media item, send it only as a media item
-        var context = this._getSingleItemTransferContext(item, ml);
-        var handle = dnd.registerSource(context);
-        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
-      }
-
-    }
-    else {
-      // We are sending more than one item.  We dont know (or care to find
-      // out) if all of the items to be sent are actually lists, so send
-      // as items
-
-      // initialize the context to have items
-      var context = this._getMultipleItemTransferContext(ml, numRows, treeView);
-      context.reset();
-
-      var handle = dnd.registerSource(context);
-      data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
-    }
-
-    // Add the url of the item as well
-    // XXX: Probably want to make sure that this is a local file that exists
-    // before providing this flavor
-    //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
-
-    xferData.data.push(data);
-
-    dragAction.action = this._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
-  }
-  catch(e) {
-    // The drag and drop helper swallows exceptions, so report them and
-    // rethrow
-    if (e.result != this._Cr.NS_OK) {
-      Components.utils.reportError(e);
-    }
-    throw e;
-  }
 ]]>
         </body>
       </method>
@@ -2533,48 +2560,6 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
     }
   }
   return new sbMultipleItemTransferContext(ml, numRows, treeView);
-]]>
-        </body>
-      </method>
-
-      <method name="canDrop">
-        <parameter name="event"/>
-        <parameter name="session"/>
-        <body>
-<![CDATA[
-  if (session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
-      session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
-      session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS) ||
-      ExternalDropHandler.isSupported(session)) {
-    return true;
-  }
-  else {
-    return false;
-  }
-]]>
-        </body>
-      </method>
-
-      <method name="onDragOver">
-        <parameter name="event"/>
-        <parameter name="flavor"/>
-        <parameter name="session"/>
-        <body>
-<![CDATA[
-]]>
-        </body>
-      </method>
-
-      <method name="getSupportedFlavours">
-        <body>
-<![CDATA[
-  var flavorSet = new FlavourSet();
-  flavorSet.appendFlavour(this._TYPE_X_SB_MEDIAITEM);
-  flavorSet.appendFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR);
-  flavorSet.appendFlavour("application/x-moz-file", "nsIFile");
-  flavorSet.appendFlavour("text/x-moz-url");
-  flavorSet.appendFlavour("text/unicode");
-  return flavorSet;
 ]]>
         </body>
       </method>
@@ -2689,12 +2674,28 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         ]]>
         </body>
       </method>
-
+      
+      <!-- called by the tree observer to see whether we can drop at this position -->
       <method name="canDrop">
         <parameter name="aIndex"/>
         <parameter name="aOrientation"/>
         <body>
 <![CDATA[
+
+  // Our tree observer callback does not get the drag session as a parameter,
+  // that is fine on windows, but on linux, the dragservice does not hold on
+  // to the session after the drop completes, so we cannot ask it for the
+  // session that just got dropped. Because of this, we need to remember the
+  // session during the drag over event, and reuse it later in the drop event.
+  // Note that canDrop is also called before calling the drop event, so in that
+  // case on linux, getCurrentSession will fail, we need to test if we got
+  // something and only record it if we did.
+
+  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(this._Ci.nsIDragService);
+  var session = dragService.getCurrentSession();
+  if (session != null)
+    this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
 
   // look for the source of the dnd, if it is ourselves, we need to test whether
   // we are a sorted playlist, or a library (cannot reorder tracks in a library), 
@@ -2704,17 +2705,20 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
                     .getService(this._Ci.sbIDndSourceTracker);
 
   var context;
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, 
+                                                this._dragSession);
   if (data) {
     context = dnd.getSourceSupports(data)
                  .QueryInterface(this._Ci.sbISingleItemTransferContext);
   } else {
-    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                              this._dragSession);
     if (data) {
       context = dnd.getSourceSupports(data)
                   .QueryInterface(this._Ci.sbISingleListTransferContext);
     } else {
-      data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+      data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                                this._dragSession);
       if (data) {
         context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
@@ -2722,10 +2726,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         // the dnd does not contain songbird mediaitems, it cannot have 
         // been made by ourselves, only accept the drop if it is a supported 
         // flavour
-        var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                                  .getService(this._Ci.nsIDragService);
-        var session = dragService.getCurrentSession();
-        if (!ExternalDropHandler.isSupported(session)) 
+        if (!ExternalDropHandler.isSupported(this._dragSession)) 
           return false;
           
         // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
@@ -2758,14 +2759,15 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
 ]]>
         </body>
       </method>
-      
+
+      <!-- called by the tree observer when items are dropped on the tree -->
       <method name="drop">
         <parameter name="aIndex"/>
         <parameter name="aOrientation"/>
         <body>
-<![CDATA[
-  this._dropOnTree(aIndex, aOrientation);
-]]>
+          <![CDATA[
+            this._dropOnTree(aIndex, aOrientation, this._dragSession);
+          ]]>
         </body>
       </method>
 
