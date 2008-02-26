@@ -487,6 +487,9 @@ var InternalDropHandler = {
           this._dropComplete(aListener, targetList, 0, context.count, 0, 0);
           return;
         }
+        // we just ate an item; reset the enumerator
+        context.reset();
+        items = context.items;
       }
 
       // record metrics
