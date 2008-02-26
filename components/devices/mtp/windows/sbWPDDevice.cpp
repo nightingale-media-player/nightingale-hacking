@@ -2182,14 +2182,11 @@ void AddObjectSize(IPortableDeviceValues * values,
                    sbPropertyVariant * propVar,
                    PRUint64 & total)
 {
-  PROPVARIANT var = {0};
-  PropVariantInit(&var);
-  if (SUCCEEDED(values->GetValue(WPD_OBJECT_SIZE, &var))) {
-    propVar->SetPropVariant(var);
+  if (SUCCEEDED(values->GetValue(WPD_OBJECT_SIZE, propVar->GetPropVariant()))) {
     PRUint64 val;
     if (NS_SUCCEEDED(propVar->GetAsUint64(&val)))
       total += val;
-    PropVariantClear(&var);
+    PropVariantClear(propVar->GetPropVariant());
   }
 }
 
@@ -2281,6 +2278,9 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
     nsTArray<nsString> objectsToScan;
     objectsToScan.AppendElement(libraryObjectID);
   
+    // This is created here to prevent one from being created for each loop
+    nsRefPtr<sbPropertyVariant> sizeVar = sbPropertyVariant::New();
+
     while (!objectsToScan.IsEmpty()) {
       nsRefPtr<IEnumPortableDeviceObjectIDs> enumObjectIds;
       PRUint32 nextObjectIdx = objectsToScan.Length() - 1;
@@ -2305,8 +2305,6 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
           nsString objId(objectIds[current]);
           ::CoTaskMemFree(objectIds[current]);
           objectIds[current] = NULL;
-    // This is created here to prevent one from being created for each loop
-    nsRefPtr<sbPropertyVariant> sizeVar = sbPropertyVariant::New();
           nsRefPtr<IPortableDeviceValues> values;
 
           hr = properties->GetValues(objId.get(), keys, getter_AddRefs(values));
