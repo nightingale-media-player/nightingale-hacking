@@ -24,17 +24,21 @@
 //
  */
 
-Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
 if (typeof(Ci) == "undefined")
   var Ci = Components.interfaces;
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 const MTPNS = 'http://songbirdnest.com/rdf/servicepane/mtp-device#';
 const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
@@ -697,13 +701,18 @@ mtpServicePaneService.prototype = {
     };
 
     if (aIsDevice) {
-      var device_friendly_name = 
-        aDevice.parameters.getProperty("DeviceFriendlyName");
-      
-      // todo: get actual device capacity
-      var device_capacity = "?GB";
+      var device_friendly_name = aDevice.properties.friendlyName;
 
-      var device_descriptor = device_friendly_name + " (" + device_capacity + ")";
+      var device_capacity = "";
+      try {
+        device_capacity = " (" + 
+          StorageFormatter.format(
+            aDevice.properties.properties.
+              getPropertyAsAString("http://songbirdnest.com/device/1.0#capacity")) + 
+          ")";
+      } catch (err) { }
+
+      var device_descriptor = device_friendly_name + device_capacity;
 
       // "Device Name (XGB)"
       addItem('command_mtp_devicedescriptor', 
