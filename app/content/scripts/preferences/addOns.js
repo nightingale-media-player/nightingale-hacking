@@ -44,6 +44,16 @@ var AddonsPrefPane = {
     const pluginRadio = this._addonsDoc.getElementById("plugins-view");
     pluginRadio.setAttribute("hidden", "true");
   },
+  
+  _setupWindowArgs: function() {
+    if ("arguments" in window &&
+        window.arguments[0] instanceof Components.interfaces.nsIDialogParamBlock &&
+        window.arguments[1] instanceof Components.interfaces.nsIObserver) {
+
+      var frameAddons = document.getElementById("addonsFrame");
+      frameAddons.contentWindow.arguments = window.arguments;
+    }
+  },
 
   load: function load() {
     const self = AddonsPrefPane;
@@ -61,6 +71,7 @@ var AddonsPrefPane = {
 
     self._addonsDoc = addonsIFrame.contentDocument;
 
+    self._setupWindowArgs();
     self._hideResizer();
     self._hidePlugins();
   }

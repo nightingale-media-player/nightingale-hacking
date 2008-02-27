@@ -34,23 +34,11 @@ addEventListener("load", function() {
 
     var paneAddons = document.getElementById("paneAddons");
 
-    function doStartup() {
-      var frameAddons = document.getElementById("addonsFrame");
-      frameAddons.contentWindow.arguments = window.arguments;
-      frameAddons.contentWindow.Startup();
-
-      paneAddons.removeEventListener("paneload", doStartup, false);
-    }
-    
     if (!paneAddons.loaded) {
       // this is needed in case the pane hasn't loaded yet and the pref window
       // loads it dynamically as we show it (in reality, this will happen all
       // the time, since this is the initial load)
-      paneAddons.addEventListener("paneload", doStartup, false);
       document.documentElement.showPane(paneAddons);
-    } else {
-      // also pass to the internal frame if it is already loaded
-      doStartup();
     }
   }
 }, false);
