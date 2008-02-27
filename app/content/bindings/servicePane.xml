@@ -209,6 +209,20 @@
           if (node) {
             sp.mService.onRename(node.id, newName);
           }
+
+          // Now try to highlight the current node as per onBrowserTabChange
+          try {
+            var url = sp._browser.currentURI.spec;
+
+            // Is there a servicepane node for the current tab?
+            var node = sp._browser.selectedTab.servicePaneNode;
+
+            if (node) {
+              sp.highlightNode(node);
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+          }
         }
 
         // If we have a browser, set up listeners to monitor the location
@@ -218,7 +232,7 @@
           }
           function windowOnLoad() {
             sp.browser.addEventListener("TabContentChange", 
-                  sp._onBrowserTabChangeListener, false);            
+                  sp._onBrowserTabChangeListener, false);
 
             gServicePane.doneInit = true;
             window.removeEventListener('load', windowOnLoad, false);
@@ -360,6 +374,11 @@
       <method name="highlightNode">
         <parameter name="aNode" />
         <body><![CDATA[
+          // we only want to allow highlighting if we aren't currently editing
+          if (this.mTree.hasAttribute("editing")) {
+            return;
+          }
+
           if (aNode) {
             var row = this.getRowForNode(aNode);
             if (row >= 0) {
@@ -389,7 +408,7 @@
             
             if (node) {
               this.highlightNode(node);
-            }              
+            }
           } catch (e) {
             Components.utils.reportError(e); 
           }

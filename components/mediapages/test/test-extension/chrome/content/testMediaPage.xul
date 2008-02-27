@@ -92,13 +92,13 @@ window.mediaPage = {
       }
     }
   
-	  // TODO: Get cmds that are appropriate for the list    
-	  var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+    // TODO: Get cmds that are appropriate for the list    
+    var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
                       .getService(Ci.sbIPlaylistCommandsManager);
-	  var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
-	    
-	  // Set up the playlist
-	  this._playlist.bind(this._mediaListView, cmds);
+    var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
+
+    // Set up the playlist
+    this._playlist.bind(this._mediaListView, cmds);
   },
 
   onUnload:  function(e) {
@@ -126,7 +126,7 @@ window.mediaPage = {
 
     <p>
       This is an Add-On Media Page. To learn more about how to make your own 
-      <a href="javascript:openLink('http://www.songbirdnest.com/add-on-api/articles/media-pages');">Display Panes</a>, 
+      <a href="javascript:openLink('http://www.songbirdnest.com/add-on-api/articles/media-pages');">Media Pages</a>, 
       go <a href="javascript:openLink('http://www.songbirdnest.com/add-on-api/articles/media-pages');">here</a>.
     </p>
 
