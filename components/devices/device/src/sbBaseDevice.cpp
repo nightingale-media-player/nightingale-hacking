@@ -148,6 +148,8 @@ nsresult sbBaseDevice::PushRequest(const int aType,
   req->index = aIndex;
   req->otherIndex = aOtherIndex;
   req->batchCount = 1;
+  req->batchIndex = 1;
+  req->itemTransferID = 0;
 
   { /* scope for request lock */
     nsAutoLock lock(mRequestLock);
@@ -155,10 +157,15 @@ nsresult sbBaseDevice::PushRequest(const int aType,
     /* figure out the batch count */
     TransferRequest* last =
       static_cast<sbBaseDevice::TransferRequest*>(mRequests.Peek());
+
+    if (last) {
+      req->itemTransferID = last->itemTransferID + 1;
+    }
   
     if (last && last->type == aType) {
       // same type of request, batch them
       req->batchCount += last->batchCount;
+      req->batchIndex = req->batchCount;
   
       nsDequeIterator begin = mRequests.Begin();
       nsDequeIterator it = mRequests.End(); 
@@ -186,7 +193,7 @@ nsresult sbBaseDevice::PushRequest(const int aType,
                      "Unexpected batch count in old request");
         ++(oldReq->batchCount);
   
-        if (begin == it) {
+          if (begin == it) {
           /* no requests left */
           break;
         }

@@ -1508,11 +1508,12 @@ nsString sbWPDDevice::GetWPDDeviceIDFromMediaItem(sbIMediaItem * mediaItem)
  */
 static nsresult CopynsIStream2IStream(sbDeviceStatus * status,
                                       sbWPDDevice * device,
+                                      sbBaseDevice::TransferRequest * request,
                                       PRInt64 contentLength,
                                       nsIInputStream * input,
                                       IStream * output,
                                       HRESULT * hr,
-                                      PRUint32 bufferSize = 64 * 1024)
+                                      PRUint32 bufferSize)
 {
   double const length = contentLength;
   double current = 0;
@@ -1537,7 +1538,7 @@ static nsresult CopynsIStream2IStream(sbDeviceStatus * status,
     nsCOMPtr<nsIWritableVariant> var =
       do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    var->SetAsDouble(progress);
+    var->SetAsISupports(request->item);
     device->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                                    var);
     status->Progress(progress);
@@ -1968,16 +1969,17 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
 }
 
 nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
-                                                      sbIMediaItem * item,
-                                                      sbIMediaList * list)
+                                                      TransferRequest * request)
 {
   PRInt64 contentLength;
-  nsresult rv = item->GetContentLength(&contentLength);
+  nsresult rv = request->item->GetContentLength(&contentLength);
   NS_ENSURE_SUCCESS(rv, rv);
   status->CurrentOperation(NS_LITERAL_STRING("Copying"));
-  status->SetItem(item);
-  status->SetList(list);
+  status->SetItem(request->item);
+  status->SetList(request->list);
   status->StateMessage(NS_LITERAL_STRING("Starting"));
+  status->WorkItemProgress(request->batchIndex);
+  status->WorkItemProgressEndCount(request->batchCount);
   nsRefPtr<IPortableDeviceContent> content;
   rv = mPortableDevice->Content(getter_AddRefs(content));
   SB_ENSURE_NO_DEVICE_ERROR_GENERIC(rv, this);
@@ -1985,8 +1987,8 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
 
   nsRefPtr<IPortableDeviceValues> properties;
   rv = GetPropertiesFromItem(content,
-                             item,
-                             list,
+                             request->item,
+                             request->list,
                              getter_AddRefs(properties));
   SB_ENSURE_NO_DEVICE_ERROR_GENERIC(rv, this);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2007,7 +2009,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
   nsCOMPtr<sbIMediaItem> proxiedItem;
   rv = do_GetProxyForObject(target,
                             NS_GET_IID(sbIMediaItem),
-                            item,
+                            request->item,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedItem));
 
@@ -2027,6 +2029,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
   HRESULT hr = S_FALSE;
   rv = CopynsIStream2IStream(status,
                              this,
+                             request,
                              contentLength,
                              inputStream,
                              streamWriter,
@@ -2040,7 +2043,7 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
     nsCOMPtr<nsIWritableVariant> var = do_CreateInstance(NS_VARIANT_CONTRACTID, &rv2);
     NS_ENSURE_SUCCESS(rv2, rv2);
 
-    rv2 = var->SetAsISupports(item);
+    rv2 = var->SetAsISupports(request->item);
     NS_ENSURE_SUCCESS(rv2, rv2);
     
     CreateAndDispatchEventFromHRESULT(hr, var);
@@ -2070,10 +2073,25 @@ nsresult sbWPDDevice::CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
   rv = objectPersistentID->GetAsAString(strObjectPersistentID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = item->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, 
+  rv = request->item->SetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY, 
                          strObjectPersistentID);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+/**
+ * Returns the device's ID as a string
+ */
+nsresult GetDeviceIDAsString(sbWPDDevice * device,
+                             nsString & deviceID)
+{
+  NS_ENSURE_ARG_POINTER(device);
+  nsID * id;
+  if (NS_FAILED(device->GetId(&id)))
+    return NS_ERROR_FAILURE;
+  
+  deviceID = NS_ConvertASCIItoUTF16(id->ToString());
   return NS_OK;
 }
 
@@ -2083,17 +2101,22 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
   nsCOMPtr<nsIWritableVariant> var =
     do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  var->SetAsAString(GetItemID(request->item));
+  var->SetAsISupports(request->item);
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_START,
                          var);  
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                          var);
                     
+
+  nsString deviceIDStr;
+  rv = GetDeviceIDAsString(this, deviceIDStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<sbDeviceStatus> status =
-    sbDeviceStatus::New(GetDeviceID(mPortableDevice));
+    sbDeviceStatus::New(deviceIDStr);
+
   rv = CreateDeviceObjectFromMediaItem(status,
-                                       request->item,
-                                       request->list);
+                                       request);
 
   // Operation is complete regardless of any errors
   status->StateMessage(NS_LITERAL_STRING("Completed"));
@@ -2132,7 +2155,7 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
   nsCOMPtr<nsIWritableVariant> var =
     do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  var->SetAsAString(GetItemID(request->item));
+  var->SetAsISupports(request->item);
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_START,
                          var);
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
@@ -2155,8 +2178,13 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
   nsCOMPtr<nsIOutputStream> outputStream;
   rv = request->item->OpenOutputStream(getter_AddRefs(outputStream));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString deviceIDStr;
+  rv = GetDeviceIDAsString(this, deviceIDStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<sbDeviceStatus> status =
-    sbDeviceStatus::New(GetDeviceID(mPortableDevice));
+    sbDeviceStatus::New(deviceIDStr);
   rv = CopyIStream2nsIStream(status,
                              this,
                              inputStream,

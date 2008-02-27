@@ -55,6 +55,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+Cu.import("resource://app/components/sbProperties.jsm");
 
 //------------------------------------------------------------------------------
 //
@@ -68,10 +69,12 @@ var DPW = {
   //
   //   _widget                  Device info widget.
   //   _deviceID                Device ID.
+  //   _isIdle                  Flag for state of device.
   //
 
   _widget: null,
   _deviceID: null,
+  _isIdle: true,
 
 
   /**
@@ -241,9 +244,15 @@ var DPW = {
   // Device info services fields.
   //
   //   _device                  sbIDevice object.
+  //   _dProgressRemote         DataRemote for progress
+  //   _dText1Remote            DataRemote for Header text on progress
+  //   _dText2Remote            DataRemote for bottom text on progress
   //
 
   _device: null,
+  _dProgressRemote: null,
+  _dText1Remote: null,
+  _dText2Remote: null,
 
 
   /**
@@ -253,8 +262,25 @@ var DPW = {
   _deviceInitialize: function DPW__deviceInitialize() {
     // Get the device object.
     this._device = this._getDevice(this._deviceID);
-  },
+    // Add a listener for status operations
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.addEventListener(this);
 
+      this._dText1Remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                                     .createInstance(Ci.sbIDataRemote);
+      this._dText1Remote.init("device." + this._deviceID + ".status.text1", null);
+
+      this._dText2Remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                                     .createInstance(Ci.sbIDataRemote);
+      this._dText2Remote.init("device." + this._deviceID + ".status.text2", null);
+  
+      this._dProgressRemote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                                     .createInstance(Ci.sbIDataRemote);
+      this._dProgressRemote.init("device." + this._deviceID + ".status.progress", null);
+    }
+  },
 
   /**
    * \brief Finalize the device services.
@@ -262,9 +288,97 @@ var DPW = {
 
   _deviceFinalize: function DPW__deviceFinalize() {
     // Clear object fields.
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+      this._dProgressRemote.unbind();
+    }
     this._device = null;
   },
 
+  /**
+   * \brief Gets a pref value (string) or returns a default if not found.
+   *
+   * \param aPrefID id of preference to get.
+   * \param aDefaultValue default value to retun in case of error.
+   *
+   * \return string value of preference or aDefaultValue if error occurs.
+   */
+
+  _getPrefValue : function DPW__getPrefValue(aPrefID, aDefaultValue) {
+    var prefService = Cc['@mozilla.org/preferences-service;1']
+                        .getService(Ci.nsIPrefBranch);
+    try {
+      return prefService.getCharPref(aPrefID);
+    } catch (err) {
+      return aDefaultValue;
+    }
+  },
+
+  /**
+   * \brief Updates the device sync/copy status
+   *
+   * \param aMediaItem the media item that is currently being processed.
+   */
+
+  _updateDeviceStatus : function DPW__updateDeviceStatus(aMediaItem) {
+    
+    var curProgress = this._getPrefValue("songbird." + this._deviceID +
+                                         ".status.progress", 0);
+    curProgress = Math.round(parseInt(curProgress) / 100);
+    
+    var totalItems = this._getPrefValue("songbird." + this._deviceID +
+                                          ".status.totalcount", 0);
+    var curItemIndex = this._getPrefValue("songbird." + this._deviceID +
+                                        ".status.workcount", 0);
+    var curOperation = this._getPrefValue("songbird." + this._deviceID +
+                                        ".status.operation",
+                                        SBString("device.info.unknown"));
+
+    this._dText1Remote.stringValue = SBFormattedString(
+                                      "device.status.progress_header",
+                                      [curOperation, curItemIndex, totalItems]);
+    this._dProgressRemote.intValue = curProgress;
+
+    if (aMediaItem) {
+      var pItemName = aMediaItem.getProperty(SBProperties.trackName);
+      this._dText2Remote.stringValue = curOperation + ": " + pItemName;
+    }
+  },
+
+  /**
+   * \brief Listener for device events.
+   *
+   * \sa sbIDeviceEvent.idl
+   */
+
+  onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
+    // Something happened :)
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
+        var aMediaItem = aEvent.data;
+        aMediaItem.QueryInterface(Ci.sbIMediaItem);
+        this._updateDeviceStatus(aMediaItem);
+        this._isIdle = false;
+        this._update();
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
+        var aMediaItem = aEvent.data;
+        aMediaItem.QueryInterface(Ci.sbIMediaItem);
+        this._updateDeviceStatus(aMediaItem);
+        this._isIdle = false;
+        this._update();
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
+        this._dText1Remote.stringValue = SBString("device.status.progress_complete");
+        this._dText2Remote.stringValue = SBString("device.status.progress_idle");
+        this._dProgressRemote.intValue = 100;
+        this._isIdle = true;
+        this._update();
+      break;
+    }
+  },
 
   /**
    * \brief Cancel device operations.
@@ -293,9 +407,7 @@ var DPW = {
    */
 
   _deviceIsIdle: function DPW__deviceIsIdle() {
-    // Return non-idle device for testing.
-    // STEVO TODO: we need to get status from the device.
-    return false;
+    return this._isIdle;
   },
 
 

@@ -80,21 +80,25 @@ public:
       REQUEST_WRITE = REQUEST_FLAG_WRITE + 1,
       REQUEST_DELETE,
       REQUEST_SYNC,
-      REQUEST_WIPE,                    /* delete all files */
-      REQUEST_MOVE,                    /* move an item in one playlist */
+      REQUEST_WIPE,                  /* delete all files */
+      REQUEST_MOVE,                  /* move an item in one playlist */
       REQUEST_UPDATE,
       REQUEST_NEW_PLAYLIST
     };
     
-    int type;                          /* one of the REQUEST_* constants,
+    int type;                        /* one of the REQUEST_* constants,
                                           or a custom type */
-    nsCOMPtr<sbIMediaItem> item;       /* the item this request pertains to */
-    nsCOMPtr<sbIMediaList> list;       /* the list this request is to act on */
-    PRUint32 index;                    /* the index in the list for this action */
-    PRUint32 otherIndex;               /* any secondary index needed */
+    nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
+    nsCOMPtr<sbIMediaList> list;     /* the list this request is to act on */
+    PRUint32 index;                  /* the index in the list for this action */
+    PRUint32 otherIndex;             /* any secondary index needed */
 
-    PRUint32 batchCount;        /* the number of items in this batch
-                                   (batch = run of requests of the same type) */
+    PRUint32 batchCount;             /* the number of items in this batch
+                                          (batch = run of requests of the same
+                                          type) */
+    PRUint32 batchIndex;             /* index of item in the batch to process */
+
+    PRUint32 itemTransferID;         /* id for this item transfer */
 
     NS_DECL_ISUPPORTS
     static TransferRequest * New();

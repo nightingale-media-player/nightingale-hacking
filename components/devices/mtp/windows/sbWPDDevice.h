@@ -232,7 +232,7 @@ private:
   HANDLE mRequestsPendingEvent;
   PRUint32 mAccessCompatibility;
   nsAutoPtr<nsID> mDeviceId;
- 
+
   /**
    * This returns the WPD properties for a sbMediaItem
    */
@@ -244,8 +244,7 @@ private:
    * Creates a media item from the Songbird item and list
    */
   nsresult CreateDeviceObjectFromMediaItem(sbDeviceStatus * status,
-                                           sbIMediaItem * item,
-                                           sbIMediaList * list);
+                                           TransferRequest * request);
   /**
    * Process the write request
    */
