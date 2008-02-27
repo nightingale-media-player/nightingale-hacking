@@ -319,6 +319,7 @@
 <!ENTITY hotkeys.set                  "Set" >
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
+<!ENTITY hotkeys.info                 "Global Hotkeys allow you to access Songbird functionality even if Songbird is not the active application.&#10;&#10;Some Hotkey combinations must include modifier keys to minimize unwanted interference with other applications." >
 
 <!ENTITY rapi.prefpane.title             "Web Integration" >
 <!ENTITY rapi.prefpane.access.caption    "Web Integration Permissions" >

@@ -37,7 +37,8 @@
     <script type="application/x-javascript" 
             src="chrome://songbird/content/scripts/preferences/hotKeys.js"/>
 
-    <groupbox> 
+    <groupbox id="hotkeys-groupbox">
+      <description id="hotkeys-info" style="white-space: -moz-pre-wrap;">&hotkeys.info;</description>
       <checkbox id="hotkeys.enabled" label="&hotkeys.useglobalhotkeys;" accesskey="&hotkeys.useglobalhotkeys.accesskey;" oncommand="gHotkeysPane.onEnableDisable();"/>
       <listbox id="hotkey.list" onselect="gHotkeysPane.onSelectHotkey();">
         <listhead>
@@ -59,7 +60,7 @@
       </hbox>
       <hbox align="center">
         <label value="&hotkeys.hotkey;" id="hotkey.hotkeylabel"/>
-        <sb-hotkey-textbox id="hotkey.hotkey" flex="1"/>
+        <sb-hotkey-textbox id="hotkey.hotkey" flex="1" nostandardkeys="true"/>
         <button id="hotkey.add" label="&hotkeys.add;" oncommand="gHotkeysPane.addHotkey();"/>
         <button id="hotkey.set" label="&hotkeys.set;" oncommand="gHotkeysPane.setHotkey();"/>
         <button id="hotkey.remove" label="&hotkeys.remove;" oncommand="gHotkeysPane.removeHotkey();"/>

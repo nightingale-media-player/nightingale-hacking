@@ -62,6 +62,29 @@ var gHotkeysPane = {
     this.loadActions();
     this.loadHotkeys();
     this.enableDisableElements();
+    
+    // this fixes the pref window being to short to contain all of our objects, this 
+    // is necessary because reflow is buggy with multiline description objects.
+    setTimeout(function() {
+      // get our groupbox, it contains all our elements
+      var groupbox = document.getElementById("hotkeys-groupbox");
+
+      // force the height of the groupbox to be that which was calculated
+      groupbox.height = groupbox.boxObject.height;
+
+      // get our pane
+      var pane = document.documentElement.currentPane;
+      // get the pane's content box
+      var contentBox = document.getAnonymousElementByAttribute(pane, "class", "content-box");
+      // clear its height style, which has been set to a specific height by the pane object
+      contentBox.style.height = "auto";
+
+      // cause the style element on the content box to be recalculated and reset
+      document.documentElement._selectPane(pane);
+      
+      // and resize the window so it fits our new height
+      window.sizeToContent();
+    }, 0);
   },
   
   onUnload: function()
