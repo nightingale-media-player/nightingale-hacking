@@ -410,10 +410,51 @@ appInit.migrator = {
           localStoreHelper.setPersistedAttribute(layoutURL, "nav-bar", "currentset", currentSet);
         }
       }
-      localStoreHelper.flush();      
+      localStoreHelper.flush();
+      
+      // migrate preferences
+      const PREF_OLD_DOWNLOAD_MUSIC_FOLDER        = "songbird.download.folder";
+      const PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT  = "songbird.download.always";
+      const PREF_DOWNLOAD_MUSIC_FOLDER            = "songbird.download.music.folder";
+      const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT      = "songbird.download.music.alwaysPrompt";
+
+      this._migratePref(prefBranch, 
+                        "setCharPref", 
+                        "getCharPref", 
+                        function(p) { return p; }, 
+                        PREF_OLD_DOWNLOAD_MUSIC_FOLDER, 
+                        PREF_DOWNLOAD_MUSIC_FOLDER);
+      
+      this._migratePref(prefBranch, 
+                        "setBoolPref", 
+                        "getCharPref", 
+                        function(p) { return p=="1"; }, 
+                        PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT, 
+                        PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
       
       // update the migration version
       prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+    }
+  },
+  
+  _migratePref: function(prefBranch, setMethod, getMethod, cvtFunction, oldPrefKey, newPrefKey) {
+    // if the old pref exists, do the migration
+    if (this._hasPref(prefBranch, getMethod, oldPrefKey)) {
+      // but only if the new pref does not exists, otherwise, keep the new pref's value
+      if (!this._hasPref(prefBranch, getMethod, newPrefKey)) {
+        prefBranch[setMethod](newPrefKey, cvtFunction(prefBranch[getMethod](oldPrefKey)));
+      }
+      // in every case, get rid of the old pref
+      prefBranch.clearUserPref(oldPrefKey); 
+    }
+  },
+
+  _hasPref: function(prefBranch, getMethod, prefKey) {
+    try {
+      var str = prefBranch[getMethod](prefKey);
+      return (str && str != "");
+    } catch (e) {
+      return false;
     }
   },
   
