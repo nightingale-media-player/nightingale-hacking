@@ -211,17 +211,25 @@
           var resizebefore = this.getResizeBefore();
           if (resizebefore) {
             if (this.isVertical()) {
-              if (resizebefore.height == "") defaultbefore = resizebefore.boxObject.height;
+              if (resizebefore.height == 0 ||
+                  resizebefore.height == "") 
+                defaultbefore = resizebefore.boxObject.height;
             } else {
-              if (resizebefore.width == "") defaultbefore = resizebefore.boxObject.width;
+              if (resizebefore.width == 0 ||
+                  resizebefore.width == "") 
+                defaultbefore = resizebefore.boxObject.width;
             }
           }
           var resizeafter = this.getResizeAfter();
           if (resizeafter) {
             if (this.isVertical()) {
-              if (resizeafter.height == "") defaultafter = resizeafter.boxObject.height;
+              if (resizeafter.height == 0 ||
+                  resizeafter.height == "") 
+                defaultafter = resizeafter.boxObject.height;
             } else {
-              if (resizeafter.width == "") defaultafter = resizeafter.boxObject.width;
+              if (resizeafter.width == 0 ||
+                  resizeafter.width == "") 
+                defaultafter = resizeafter.boxObject.width;
             }
           }
           
