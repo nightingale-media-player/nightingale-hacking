@@ -213,9 +213,21 @@ protected:
   nsresult RemoveItemFromPlaylist(sbIMediaList* aList, /* the list to remove from */
                                   PRUint32 aIndex);    /* the item to remove */
 
+  nsresult ImportPlaylist(sbILibrary * aLibrary,
+                          nsAString const &aObjId);
+
+  nsresult ImportPlaylistItem(sbILibrary* aLibrary,
+                              sbIMediaList* aPlaylistML,
+                              IPortableDevicePropVariantCollection* aItems,
+                              DWORD aItemIndex);
+
   /* playlist utility methods */
   nsresult GetPlaylistReferences(sbIMediaList* aList,
                                  /* out */ IPortableDevicePropVariantCollection** aItems);
+
+  nsresult GetPlaylistReferences(nsAString const &aObjId,
+                                 /* out */ IPortableDevicePropVariantCollection** aItems);
+
   nsresult SetPlaylistReferences(sbIMediaList* aList,
                                  IPortableDevicePropVariantCollection* aItems);
 

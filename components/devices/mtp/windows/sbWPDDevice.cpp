@@ -60,6 +60,7 @@
 #include <nsIPrefBranch.h>
 #include <nsTArray.h>
 #include <sbProxiedComponentManager.h>
+#include <sbIOrderableMediaList.h>
 /* damn you microsoft */
 #undef CreateEvent
 
@@ -1315,17 +1316,224 @@ nsresult sbWPDDevice::RemoveItemFromPlaylist(sbIMediaList* aList, /* the list to
   return NS_OK;
 }
 
+// This function performs and incremental update of the playlist.  If the
+// playlist has been modified on another system, this function imports the
+// differences.
+nsresult sbWPDDevice::ImportPlaylist(sbILibrary* aLibrary,
+                                     nsAString const &aObjId)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_STATE(mPortableDevice);
+
+  HRESULT hr;
+  nsresult rv = NS_OK;
+
+  // Get the device content.
+  nsRefPtr<IPortableDeviceContent> content;
+  hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the content properties.
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the playlist properties.
+  nsRefPtr<IPortableDeviceKeyCollection> keys;
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_PERSISTENT_UNIQUE_ID,
+                                        getter_AddRefs(keys));
+  NS_ENSURE_SUCCESS(rv, rv);
+  hr = keys->Add(WPD_OBJECT_NAME);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  nsRefPtr<IPortableDeviceValues> values;
+  hr = properties->GetValues(aObjId.BeginReading(),
+                             keys,
+                             getter_AddRefs(values));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the playlist PUID.
+  LPWSTR pPlaylistPUID = nsnull;
+  hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &pPlaylistPUID);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  nsString playlistPUID = nsDependentString(pPlaylistPUID);
+  ::CoTaskMemFree(pPlaylistPUID);
+
+  // Get the playlist name.
+  LPWSTR pPlaylistName = nsnull;
+  hr = values->GetStringValue(WPD_OBJECT_NAME, &pPlaylistName);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  nsString playlistName = nsDependentString(pPlaylistName);
+  ::CoTaskMemFree(pPlaylistName);
+
+  // Get the list of playlist items.
+  nsRefPtr<IPortableDevicePropVariantCollection> items;
+  rv = GetPlaylistReferences(aObjId, getter_AddRefs(items));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Look for the playlist media list.  Create the media list if not found.
+  nsCOMPtr<sbIMediaItem> item;
+  nsCOMPtr<sbIMediaList> playlistML;
+  rv = sbWPDGetMediaItemByPUID(aLibrary, playlistPUID, getter_AddRefs(item));
+  if (NS_SUCCEEDED(rv)) {
+    playlistML = do_QueryInterface(item, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    rv = aLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                   nsnull,
+                                   getter_AddRefs(playlistML));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = playlistML->SetProperty(PUID_SBIMEDIAITEM_PROPERTY, playlistPUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Set device playlist listener to ignore changes during import.
+  nsRefPtr<sbBaseDeviceMediaListListener> playlistListener;
+  if (mMediaListListeners.Get(playlistML, &playlistListener)) {
+    rv = playlistListener->SetIgnoreListener(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Set the playlist name, ignoring errors.
+  playlistML->SetName(playlistName);
+
+  // Import each playlist item, ignoring errors.
+  DWORD itemCount;
+  hr = items->GetCount(&itemCount);
+  if (SUCCEEDED(hr)) {
+    for (DWORD i = 0; i < itemCount; i++) {
+      ImportPlaylistItem(aLibrary, playlistML, items, i);
+    }
+  }
+  else {
+    rv = NS_ERROR_FAILURE;
+  }
+
+  // Remove any playlist media list items left over.  This could happen if any
+  // items were moved or deleted.
+  if (NS_SUCCEEDED(rv)) {
+    PRUint32 length;
+    rv = playlistML->GetLength(&length);
+    if (NS_SUCCEEDED(rv) && (length > 0)) {
+      for (PRInt32 i = length - 1; i >= itemCount; i--) {
+        playlistML->RemoveByIndex(i);
+      }
+    }
+  }
+
+  // Set device playlist listener to no longer ignore changes.
+  if (playlistListener) {
+    rv = playlistListener->SetIgnoreListener(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return rv;
+}
+
+nsresult sbWPDDevice::ImportPlaylistItem
+                        (sbILibrary* aLibrary,
+                         sbIMediaList* aPlaylistML,
+                         IPortableDevicePropVariantCollection* aItems,
+                         DWORD aItemIndex)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aPlaylistML);
+  NS_ENSURE_ARG_POINTER(aItems);
+  NS_ENSURE_STATE(mPortableDevice);
+
+  HRESULT hr;
+  nsresult rv;
+
+  // Get the device content.
+  nsRefPtr<IPortableDeviceContent> content;
+  hr = mPortableDevice->Content(getter_AddRefs(content));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the content properties.
+  nsRefPtr<IPortableDeviceProperties> properties;
+  hr = content->Properties(getter_AddRefs(properties));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the item object ID.
+  nsRefPtr<sbPropertyVariant> variant = sbPropertyVariant::New();
+  hr = aItems->GetAt(aItemIndex, variant->GetPropVariant());
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  nsString objId;
+  rv = variant->GetAsAString(objId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the item properties.
+  nsRefPtr<IPortableDeviceKeyCollection> keys;
+  rv = sbWPDCreatePropertyKeyCollection(WPD_OBJECT_PERSISTENT_UNIQUE_ID,
+                                        getter_AddRefs(keys));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsRefPtr<IPortableDeviceValues> values;
+  hr = properties->GetValues(objId.BeginReading(),
+                             keys,
+                             getter_AddRefs(values));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  // Get the item PUID.
+  LPWSTR pItemPUID = nsnull;
+  hr = values->GetStringValue(WPD_OBJECT_PERSISTENT_UNIQUE_ID, &pItemPUID);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  nsString itemPUID = nsDependentString(pItemPUID);
+  ::CoTaskMemFree(pItemPUID);
+
+  // Get the media item.
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = sbWPDGetMediaItemByPUID(aLibrary, itemPUID, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Append item to end of media list if it comes after the end.  Otherwise,
+  // insert it inside the media list.
+  PRUint32 length;
+  rv = aPlaylistML->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (aItemIndex >= length) {
+    rv = aPlaylistML->Add(mediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Get the media list item at the insert point.
+    nsCOMPtr<sbIMediaItem> mediaItemAtIndex;
+    rv = aPlaylistML->GetItemByIndex(aItemIndex,
+                                     getter_AddRefs(mediaItemAtIndex));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Insert item in media list if it's not already present there.
+    PRBool equals;
+    rv = mediaItem->Equals(mediaItemAtIndex, &equals);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!equals) {
+      nsCOMPtr<sbIOrderableMediaList> playlistOML =
+                                        do_QueryInterface(aPlaylistML, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = playlistOML->InsertBefore(aItemIndex, mediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
 nsresult sbWPDDevice::GetPlaylistReferences(sbIMediaList* aList,
                                             /* out */ IPortableDevicePropVariantCollection** aItems)
 {
-  HRESULT hr;
-  NS_ENSURE_STATE(mPortableDevice);
   NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItems);
 
   nsString objId = GetWPDDeviceIDFromMediaItem(aList);
   NS_ENSURE_TRUE(!objId.IsEmpty(), NS_ERROR_FAILURE);
-  
+
+  return GetPlaylistReferences(objId, aItems);
+}
+
+nsresult sbWPDDevice::GetPlaylistReferences(nsAString const &aObjId,
+                                            /* out */ IPortableDevicePropVariantCollection** aItems)
+{
+  HRESULT hr;
+  NS_ENSURE_STATE(mPortableDevice);
+  NS_ENSURE_ARG_POINTER(aItems);
+
   nsRefPtr<IPortableDeviceContent> content;
   hr = mPortableDevice->Content(getter_AddRefs(content));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
@@ -1346,7 +1554,7 @@ nsresult sbWPDDevice::GetPlaylistReferences(sbIMediaList* aList,
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
   
   nsRefPtr<IPortableDeviceValues> values;
-  hr = properties->GetValues(objId.BeginReading(),
+  hr = properties->GetValues(aObjId.BeginReading(),
                              keys,
                              getter_AddRefs(values));
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
@@ -2304,6 +2512,7 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
 
   // Couldn't get the bulk interface, fall back to normal properties interface.
     nsTArray<nsString> objectsToScan;
+    nsTArray<nsString> playlistsToScan;
     objectsToScan.AppendElement(libraryObjectID);
   
     // This is created here to prevent one from being created for each loop
@@ -2370,6 +2579,10 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
               // scan this folder too
               objectsToScan.AppendElement(objId);
             }
+            if (IsEqualGUID(contentTypeGuid, WPD_CONTENT_TYPE_PLAYLIST)) {
+              // Scan playlists after all media items have been scanned.
+              playlistsToScan.AppendElement(objId);
+            }
             AddObjectSize(values, sizeVar, otherUsed);
             continue;
           }
@@ -2407,6 +2620,11 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
         } /* for current = 0 ... count - 1 */
       } while(count);
     } /* !objectsToScan.IsEmpty() */
+
+    // Scan playlists.
+    for (PRUint32 i = 0; i < playlistsToScan.Length(); i++) {
+      ImportPlaylist(library, playlistsToScan[i]);
+    }
 
     mDeviceStatistics.SetAudioUsed(audioUsed);
     mDeviceStatistics.SetVideoUsed(videoUsed);
