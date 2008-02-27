@@ -56,7 +56,7 @@ var gPrefs   = Components.classes["@mozilla.org/preferences-service;1"]
                       .getService(Components.interfaces.nsIPrefBranch);
 var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
                       .getService(Components.interfaces.nsIConsoleService);
-                      
+                                      
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
 if (typeof(Ci) == "undefined")
@@ -66,6 +66,108 @@ if (typeof(Cu) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
+
+/**
+ * Since the Mac doesn't technically "maximize" - it "zooms", this controller
+ * recreates that functionality for mac windows.
+ *
+ * KREEGER: This functionality is also affected by mozbug 407405 and will make
+ *          zoom to the secondary monitor work properly once that bug is fixed.
+ */
+function sbMacWindowZoomController() {
+  this._init();
+}
+
+sbMacWindowZoomController.prototype = {
+  _mIsZoomed:              false,
+  _mIsResizeEventFromZoom: false,
+  _mSavedXPos:   0,
+  _mSavedYPos:   0,
+  _mSavedWidth:  0,
+  _mSavedHeight: 0,
+ 
+  _init: function() {
+    // Listen to document dragging events, we need a closure when a message
+    // is dispatched directly through the document object.
+    var self = this;
+    this._windowdragexit = function(evt) {
+      self._onWindowDragged();
+    };
+    document.addEventListener("ondragexit", this._windowdragexit, false);
+    document.addEventListener("resize", this._onWindowResized, false);
+    
+    var observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    observerService.addObserver(this, "quit-application", false);
+  },
+  
+  _onWindowResized: function() { 
+    if (this._mIsZoomed) {
+      if (this._mIsResizeEventFromZoom) {
+        this._mIsResizeEventFromZoom = false;
+      }
+      else {
+        this._mIsZoomed = false;
+        this._saveWindowCoords();
+      }
+    }
+  },
+  
+  _onWindowDragged: function() {
+    if (this._mIsZoomed) {
+      this._mIsZoomed = false;
+    }
+    this._saveWindowCoords();
+  },
+  
+  onZoom: function() {    
+    if (this._mIsZoomed) {
+      window.resizeTo(this._mSavedWidth, this._mSavedHeight);
+      window.moveTo(this._mSavedXPos, this._mSavedYPos);
+      this._mIsZoomed = false;
+    }
+    else {
+      this._saveWindowCoords();
+      
+      window.resizeTo(window.screen.availWidth, window.screen.availHeight);
+      window.moveTo(window.screen.availLeft, window.screen.availTop);
+      
+      this._mIsZoomed = true;
+      this._mIsResizeEventFromZoom = true;
+    }
+  },
+ 
+  _saveWindowCoords: function() {
+    this._mSavedYPos = parseInt(document.documentElement.boxObject.screenY);
+    this._mSavedXPos = parseInt(document.documentElement.boxObject.screenX);
+    this._mSavedWidth = parseInt(document.documentElement.boxObject.width);
+    this._mSavedHeight = parseInt(document.documentElement.boxObject.height);
+  },
+  
+  observe: function(aSubject, aTopic, aData) {
+    if (aTopic == "quit-application") {
+      document.removeEventListener("ondragexit", this._windowdragexit, false);
+      document.removeEventListener("resize", this._onWindowResized, false);
+      this._windowdragexit = null;  // destroy the closure.
+        
+      var observerService = Cc["@mozilla.org/observer-service;1"]
+                              .getService(Ci.nsIObserverService);
+      observerService.removeObserver(this, "quit-application");
+    }
+  },
+  
+  QueryInterface: function(iid) {
+    if (!iid.equals(Ci.nsIObserver) && !iid.equals(Ci.nsISupports)) {
+      throw new Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    return this;
+  }
+};
+
+// Only use our mac zoom controller on the mac:
+var macZoomWindowController = null;
+if (getPlatformString() == "Darwin")
+  macZoomWindowController = new sbMacWindowZoomController();
 
 
 // Strings are cool.
@@ -129,13 +231,20 @@ function onMinimize()
  */
 function onMaximize()
 {
-  if ( isMaximized() )
+  if ( macZoomWindowController != null )
   {
-    document.defaultView.restore();
+    macZoomWindowController.onZoom();
   }
   else
   {
-    document.defaultView.maximize();
+    if ( isMaximized() )
+    {
+      document.defaultView.restore();
+    }
+    else
+    {
+      document.defaultView.maximize();
+    }
   }
   // TODO
   //syncMaxButton();
@@ -313,7 +422,7 @@ function deferredWindowPlacementSanityChecks() {
     xul: document.documentElement.getAttribute("width"), // the property as set on XUL or by persist
     css: getStyle(document.documentElement, "width"),
     min: getStyle(document.documentElement, "min-width") || 16, // ensure windows aren't crushed unsizably w/fallback value
-    max: getStyle(document.documentElement, "max-width"),
+    max: getStyle(document.documentElement, "max-width")
   };
   var height = {
     actual: document.documentElement.boxObject.height,
@@ -371,7 +480,6 @@ function deferredWindowPlacementSanityChecks() {
   // Now update the values on the actual window itself.
   if (x != oldx || y != oldy) { window.moveTo(x, y); }
   if (newHeight != height.actual || newWidth != width.actual) { window.resizeTo(newWidth, newHeight); }
-
 }
 /**
  * \brief Get a style property from an element in the window in the current context.

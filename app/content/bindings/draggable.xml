@@ -36,7 +36,10 @@
     <!-- Apparently, the only way to stop dragging a titlebar is hide it. -->
     <content>
       <xul:stack mousethrough="always" flex="1">
-        <xul:titlebar sbid="draggable-titlebar" flex="1"/>
+        <xul:titlebar sbid="draggable-titlebar" flex="1" 
+          onmousedown="onMouseDown();"
+          onmouseup="onMouseUp();"
+          onmousemove="onMouseMove();"/>
         <xul:vbox mousethrough="always" flex="1">
           <children />
         </xul:vbox>
@@ -46,6 +49,8 @@
       <constructor><![CDATA[
         // Dont trap mouseclicks
         this.setAttribute('mousethrough', 'always');
+
+        this._mMouseDidDrag = false;
 
         // Pay attention to if the window changes size
         var self = this;
@@ -78,6 +83,36 @@
                 // Show the titlebar (allow drag) if we are not maximized
                 titlebar.removeAttribute("hidden");
             }, 1000 );
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseDown">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            this._mMouseIsDown = true;
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseUp">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            this._mMouseIsDown = false;
+            if (this._mMouseDidDrag) {
+              var event = document.createEvent("HTMLEvents");
+              event.initEvent("ondragexit", false, false);
+              document.dispatchEvent(event);
+            }
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseMove">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (this._mMouseIsDown)
+              this._mMouseDidDrag = true;
           ]]>
         </body>
       </method>
