@@ -121,12 +121,19 @@
         if (this._lastURL.stringValue) {
           var paneinfo = paneMgr.getPaneInfo(this._lastURL.stringValue);
           if (paneinfo) {
+            // hide the pane as soon as possible if the url is about:blank
+            if (aPaneInfo.contentUrl == "about:blank") {
+              this._hidden = true;
+            }
             setTimeout(function(self){
               // need to give the <browser> time to initialize
               self._internalLoadURL(paneinfo);
             }, 0, this);
             paneLoaded = true;
           }
+        } else {
+          // hide the pane as soon as possible if we dont have a lasturl to load
+          this._hidden = true;
         }
 
         if (!paneLoaded) {
