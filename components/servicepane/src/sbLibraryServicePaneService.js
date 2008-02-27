@@ -1269,7 +1269,7 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
         this._servicePane.root, true);
   }
   fnode.name = '&servicesource.playlists';
-  this._mergeProperties(fnode, ["folder", "Playlists"]);
+  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;
   fnode.dndAcceptIn = 'text/x-sb-playlist';
@@ -1476,6 +1476,19 @@ function sbLibraryServicePane__mergeProperties(aNode, aList) {
     retval.push(prop);
   }
   aNode.properties = retval.join(" ");
+}
+
+/**
+ * Turn a partial entity (&foo.bar) into a css property string (foo-bar),
+ * but leaves other strings as they are.
+ */
+sbLibraryServicePane.prototype._makeCSSProperty = 
+function sbLibraryServicePane__makeCSSProperty(aString) {
+  if ( aString[0] == "&" ) {
+    aString = aString.substr(1, aString.length);
+    aString = aString.replace(/\./g, "-");
+  }
+  return aString;
 }
 
 ///////////////////////////////
