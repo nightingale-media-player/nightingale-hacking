@@ -57,7 +57,7 @@ const static char* sPublicRProperties[] =
   "helper:status",
 
   // nsIDOMEventTarget
-  // N/A
+  "helper:type",
   
   // nsIClassInfo
   "classinfo:classDescription",

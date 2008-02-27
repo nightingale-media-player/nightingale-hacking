@@ -80,6 +80,7 @@ class sbRemotePlayer : public sbIRemotePlayer,
                        public nsIDOMEventListener,
                        public nsISecurityCheckedComponent,
                        public nsSupportsWeakReference,
+                       public sbIPlaylistPlaybackListener,
                        public sbISecurityAggregator
 {
   friend class sbRemotePlayerDownloadCallback;
@@ -91,6 +92,7 @@ public:
   NS_DECL_NSIDOMEVENTLISTENER
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_DECL_SBISECURITYAGGREGATOR
+  NS_DECL_SBIPLAYLISTPLAYBACKLISTENER
 
   sbRemotePlayer();
 
@@ -173,6 +175,9 @@ protected:
 
   // the remote impl for the playlist binding
   nsRefPtr<sbRemoteWebPlaylist> mRemWebPlaylist;
+
+  // the playback service listener
+  nsCOMPtr<sbIPlaylistPlaybackListener> mPlaybackListener;
 
   // The download device callback
   nsRefPtr<sbRemotePlayerDownloadCallback> mDownloadCallback;

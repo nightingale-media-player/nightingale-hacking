@@ -203,6 +203,8 @@ const static char* sPublicCategoryConversions[][2] =
 #define RAPI_EVENT_TYPE                   NS_LITERAL_STRING("remoteapi")
 #define RAPI_EVENT_TYPE_DOWNLOADSTART     NS_LITERAL_STRING("downloadstart")
 #define RAPI_EVENT_TYPE_DOWNLOADCOMPLETE  NS_LITERAL_STRING("downloadcomplete")
+#define RAPI_EVENT_TYPE_BEFORETRACKCHANGE NS_LITERAL_STRING("beforetrackchange")
+#define RAPI_EVENT_TYPE_TRACKCHANGE       NS_LITERAL_STRING("trackchange")
 #define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER                 NS_LITERAL_STRING("sb-tabbrowser")
@@ -291,19 +293,21 @@ class sbRemotePlayerEnumCallback : public sbIMediaListEnumerationListener
 };
 NS_IMPL_ISUPPORTS1( sbRemotePlayerEnumCallback, sbIMediaListEnumerationListener )
 
-NS_IMPL_ISUPPORTS6( sbRemotePlayer,
+NS_IMPL_ISUPPORTS7( sbRemotePlayer,
                     nsIClassInfo,
                     nsISecurityCheckedComponent,
                     sbIRemotePlayer,
                     nsIDOMEventListener,
                     nsISupportsWeakReference,
+                    sbIPlaylistPlaybackListener,
                     sbISecurityAggregator )
 
-NS_IMPL_CI_INTERFACE_GETTER5( sbRemotePlayer,
+NS_IMPL_CI_INTERFACE_GETTER6( sbRemotePlayer,
                               nsISecurityCheckedComponent,
                               sbIRemotePlayer,
                               nsIDOMEventListener,
                               nsISupportsWeakReference,
+                              sbIPlaylistPlaybackListener,
                               sbISecurityAggregator )
 
 SB_IMPL_CLASSINFO( sbRemotePlayer,
@@ -493,6 +497,11 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
 
   rv = mNotificationMgr->Init();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up listener for playback service
+  LOG(("sbRemotePlayer::Init() -- registering playback listener"));
+  rv = mGPPS->AddListener(this);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Set up download callbacks
   mDownloadCallback = new sbRemotePlayerDownloadCallback();
@@ -1440,6 +1449,58 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
 
 // ---------------------------------------------------------------------------
 //
+//                           sbIPlaylistPlaybackListener
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemotePlayer::OnStop()
+{
+  LOG(("sbRemotePlayer::OnStop()"));
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::OnTrackChange(sbIMediaItem* aItem,
+                              sbIMediaListView* aView,
+                              PRUint32 aIndex)
+{
+  LOG(("sbRemotePlayer::OnTrackChange()"));
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+  nsresult rv;
+
+  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE_TRACKCHANGE,
+                                          aItem,
+                                          NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::OnBeforeTrackChange(sbIMediaItem* aItem,
+                                    sbIMediaListView* aView,
+                                    PRUint32 aIndex)
+{
+  LOG(("sbRemotePlayer::OnBeforeTrackChange()"));
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+  nsresult rv;
+
+  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE_BEFORETRACKCHANGE,
+                                          aItem,
+                                          NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
 //                           nsIDOMEventListener
 //
 // ---------------------------------------------------------------------------
@@ -1496,6 +1557,10 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
                                            PR_TRUE );
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIPermissionChanged listener from document" );
+
+    rv = mGPPS->RemoveListener(this);
+    NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to remove playback listener" );
+
     // the page is going away, clean up things that will cause us to
     // not get released.
     UnregisterCommands();
