@@ -438,7 +438,8 @@ ULONG STDMETHODCALLTYPE sbDeviceMarshallListener::Release()
  */
 sbWPDMarshall::sbWPDMarshall() :
   sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY)),
-  mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbWPDMarshall.mKnownDevicesLock"))
+  mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbWPDMarshall.mKnownDevicesLock")),
+  mDeviceListenerCookie(0)
 {
   mKnownDevices.Init(8);
 }
@@ -495,12 +496,12 @@ NS_IMETHODIMP sbWPDMarshall::BeginMonitoring()
   DiscoverDevices();
   // Hook up the listener for device events
   sbDeviceMarshallListener * listener = new sbDeviceMarshallListener(this);
-  nsRefPtr<::IConnectionPointContainer> pConnectionPointContainer;
-  nsRefPtr<::IConnectionPoint> pConnectionPoint;
-  DWORD cookie = 0;
-  if (SUCCEEDED(hr = devMgr->QueryInterface(__uuidof(IConnectionPointContainer), getter_AddRefs(pConnectionPointContainer))) &&
-      SUCCEEDED(hr = pConnectionPointContainer->FindConnectionPoint(::IID_IWMDMNotification, getter_AddRefs(pConnectionPoint))) &&
-      SUCCEEDED(hr = pConnectionPoint->Advise(listener, &cookie))) {
+  nsRefPtr<IConnectionPointContainer> pConnectionPointContainer;
+  nsRefPtr<IConnectionPoint> pConnectionPoint;
+
+  if (SUCCEEDED(hr = devMgr->QueryInterface(IID_IConnectionPointContainer, getter_AddRefs(pConnectionPointContainer))) &&
+      SUCCEEDED(hr = pConnectionPointContainer->FindConnectionPoint(IID_IWMDMNotification, getter_AddRefs(pConnectionPoint))) &&
+      SUCCEEDED(hr = pConnectionPoint->Advise(listener, &mDeviceListenerCookie))) {
     return NS_OK;
   }
   return NS_ERROR_FAILURE;
@@ -534,7 +535,26 @@ NS_IMETHODIMP sbWPDMarshall::LoadControllers(sbIDeviceControllerRegistrar *aRegi
 NS_IMETHODIMP sbWPDMarshall::StopMonitoring()
 {
   ClearMonitoringFlag();
-  return NS_OK;
+  nsRefPtr<::IConnectionPointContainer> pConnectionPointContainer;
+  nsRefPtr<::IConnectionPoint> pConnectionPoint;
+  HRESULT hr;
+  nsRefPtr<IPortableDeviceManager> deviceManager;
+  if (FAILED(GetDeviceManager(getter_AddRefs(deviceManager))) || !deviceManager)
+    return NS_ERROR_FAILURE;
+  
+  // If there is no listener then time to go
+  if (mDeviceListenerCookie == 0)
+    return NS_OK;
+  
+  // If we created a listener then stop listening
+  hr = deviceManager->QueryInterface(__uuidof(IConnectionPointContainer), getter_AddRefs(pConnectionPointContainer));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+  
+  hr = pConnectionPointContainer->FindConnectionPoint(::IID_IWMDMNotification, getter_AddRefs(pConnectionPoint));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_FAILURE);
+
+  hr = pConnectionPoint->Unadvise(mDeviceListenerCookie);
+  return SUCCEEDED(hr) ? NS_OK : NS_ERROR_FAILURE;
 }
 
 nsresult sbWPDMarshall::DiscoverDevices()

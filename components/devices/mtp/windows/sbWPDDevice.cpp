@@ -1126,6 +1126,73 @@ nsresult sbWPDDevice::RemoveItem(nsAString const &aObjId)
   return NS_OK;
 }
 
+/**
+ * Returns the content and format type for the Songbird item. This uses
+ * the MIME type if present or the extension if not. If neither the MIME
+ * type or extension are known then NS_ERROR_NOT_AVAILABLE is returned
+ */
+static nsresult GetWPDContentType(sbIMediaItem * item,
+                                  GUID & contentType,
+                                  GUID & formatType)
+{
+  struct MimeTypeMediaMapItem
+  {
+    WCHAR * MimeType;
+    GUID WPDContentType;
+    GUID WPDFormatType;
+  };
+  static MimeTypeMediaMapItem const MimeTypeMediaMap[] = 
+  {
+    {L"audio/x-ms-wma;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WMA},
+    {L"audio/mp3;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3},
+    {L"audio/mpeg;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3},
+    {L"audio/x-wav;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WAVE},
+    {L"audio/x-aiff;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_AIFF}
+  };
+  static PRUint32 const MimeTypeMediaMapSize = NS_ARRAY_LENGTH(MimeTypeMediaMap);
+
+  // Attempt to find the MIME type
+  nsString PUID;
+  nsresult rv = item->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
+                                  PUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString contentMimeType;
+  rv = item->GetContentType(contentMimeType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!contentMimeType.IsEmpty()) {
+    for (int index = 0; index < MimeTypeMediaMapSize; ++index) {
+      MimeTypeMediaMapItem const & item = MimeTypeMediaMap[index];
+      if (contentMimeType.Equals(item.MimeType)) {
+        contentType = item.WPDContentType;
+        formatType = item.WPDFormatType;
+        return NS_OK;
+      }
+    }
+  }  
+  // If we fail to get it from the mime type, attempt to get it from the file extension.
+  nsCOMPtr<nsIURI> contentURI;
+  rv = item->GetContentSrc(getter_AddRefs(contentURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+
+  nsCOMPtr<nsIURL> proxiedURL;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURL),
+                            contentURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedURL));
+
+  nsCString fileExtension;
+  rv = proxiedURL->GetFileExtension(fileExtension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return sbWPDFileExtensionToGUIDs(fileExtension, contentType, formatType);
+}
+
 nsresult sbWPDDevice::RemoveItem(sbIMediaItem *aItem)
 {
   nsresult rv;
@@ -1139,6 +1206,22 @@ nsresult sbWPDDevice::RemoveItem(sbIMediaItem *aItem)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
+  PRInt64 contentLength = 0;
+  GUID contentType;
+  GUID contentFormat;
+  if (NS_SUCCEEDED(aItem->GetContentLength(&contentLength)) &&
+      NS_SUCCEEDED(GetWPDContentType(aItem, contentType, contentFormat))) {
+    if (contentType == WPD_CONTENT_TYPE_AUDIO) {
+      DeviceStatistics().SubAudioUsed(contentLength);
+    }
+    else if (contentType == WPD_CONTENT_TYPE_VIDEO) {
+      DeviceStatistics().SubVideoUsed(contentLength);
+    }
+    else {
+      DeviceStatistics().SubOtherUsed(contentLength);
+    }
+  }
+
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
   rv = aItem->SetProperty(PUID_SBIMEDIAITEM_PROPERTY, nullString);
@@ -1831,38 +1914,6 @@ static nsresult CopyIStream2nsIStream(sbDeviceStatus * status,
   return NS_OK;
 }
 
-struct MimeTypeMediaMapItem
-{
-  WCHAR * MimeType;
-  GUID WPDContentType;
-  GUID WPDFormatType;
-};
-
-MimeTypeMediaMapItem MimeTypeMediaMap[] = 
-{
-  {L"audio/x-ms-wma;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WMA},
-  {L"audio/mp3;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MP3},
-  {L"audio/mpeg;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_MPEG},
-  {L"audio/x-wav;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_WAVE},
-  {L"audio/x-aiff;", WPD_CONTENT_TYPE_AUDIO, WPD_OBJECT_FORMAT_AIFF}
-};
-PRUint32 const MimeTypeMediaMapSize = sizeof(MimeTypeMediaMap)/sizeof(MimeTypeMediaMapItem);
-
-static nsresult GetWPDContentType(nsAString const & mimeType,
-                                  GUID & contentType,
-                                  GUID & formatType)
-{
-  for (int index = 0; index < MimeTypeMediaMapSize; ++index) {
-    MimeTypeMediaMapItem const & item = MimeTypeMediaMap[index];
-    if (mimeType.Equals(item.MimeType)) {
-      contentType = item.WPDContentType;
-      formatType = item.WPDFormatType;
-      return NS_OK;
-    }
-  }
-  return NS_ERROR_FAILURE;
-}
-
 static nsresult SetParentProperty(IPortableDeviceContent * aContent,
                                   sbIMediaItem * aItem,
                                   const GUID & aContentType,
@@ -2136,54 +2187,12 @@ nsresult sbWPDDevice::GetPropertiesFromItem(IPortableDeviceContent * content,
                                 getter_AddRefs(properties));
   if (FAILED(hr))
     return NS_ERROR_FAILURE;
-  
-  nsString PUID;
-  nsresult rv = item->GetProperty(sbWPDDevice::PUID_SBIMEDIAITEM_PROPERTY,
-                                  PUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsString contentMimeType;
-  rv = item->GetContentType(contentMimeType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
+    
   GUID WPDContentType;
   GUID WPDFormatType;
-  rv = GetWPDContentType(contentMimeType,
-                         WPDContentType,
-                         WPDFormatType);
-
-  // If we fail to get it from the mime type, attempt to get it from the file extension.
-  if (NS_FAILED(rv)) {
-    nsCOMPtr<nsIURI> contentURI;
-    rv = item->GetContentSrc(getter_AddRefs(contentURI));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIThread> target;
-    rv = NS_GetMainThread(getter_AddRefs(target));
-
-    nsCOMPtr<nsIURI> proxiedURI;
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(nsIURI),
-                              contentURI,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                              getter_AddRefs(proxiedURI));
-
-    nsCOMPtr<nsIURL> contentURL = do_QueryInterface(proxiedURI, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIURL> proxiedURL;
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(nsIURL),
-                              contentURL,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                              getter_AddRefs(proxiedURL));
-
-    nsCString fileExtension;
-    rv = proxiedURL->GetFileExtension(fileExtension);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = sbWPDFileExtensionToGUIDs(fileExtension, WPDContentType, WPDFormatType);
-  }
+  nsresult rv = GetWPDContentType(item,
+                                  WPDContentType,
+                                  WPDFormatType);
 
   // We can't determine the type of the content, fire event to indicate that the
   // file will not be transferred.
@@ -2369,7 +2378,23 @@ nsresult sbWPDDevice::WriteRequest(TransferRequest * request)
 
   rv = CreateDeviceObjectFromMediaItem(status,
                                        request);
-
+  
+  PRInt64 contentLength = 0;
+  GUID contentType;
+  GUID contentFormat;
+  if (NS_SUCCEEDED(rv) && 
+      NS_SUCCEEDED(request->item->GetContentLength(&contentLength)) &&
+      NS_SUCCEEDED(GetWPDContentType(request->item, contentType, contentFormat))) {
+    if (contentType == WPD_CONTENT_TYPE_AUDIO) {
+      DeviceStatistics().AddAudioUsed(contentLength);
+    }
+    else if (contentType == WPD_CONTENT_TYPE_VIDEO) {
+      DeviceStatistics().AddVideoUsed(contentLength);
+    }
+    else {
+      DeviceStatistics().AddOtherUsed(contentLength);
+    }
+  }
   // Operation is complete regardless of any errors
   status->StateMessage(NS_LITERAL_STRING("Completed"));
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,

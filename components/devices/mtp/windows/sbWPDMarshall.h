@@ -26,12 +26,13 @@
 #ifndef SBWPDMARSHALL_H_
 #define SBWPDMARSHALL_H_
 
-#include <sbBaseDeviceMarshall.h>
+#include <PortableDeviceTypes.h> // Needed for DWORD
+#include <nsStringAPI.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
-#include <nsStringAPI.h>
-#include <sbIDevice.h>
 #include <nsAutoLock.h>
+#include <sbBaseDeviceMarshall.h>
+#include <sbIDevice.h>
 
 class nsIPropertyBag;
 class sbIDeviceManager2;
@@ -95,7 +96,8 @@ public:
 private:
   nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
   PRMonitor* mKnownDevicesLock;
-
+  DWORD mDeviceListenerCookie;
+  
   // Prevent copying and assignment
   sbWPDMarshall(sbWPDMarshall const &) : sbBaseDeviceMarshall(nsCString()) {}
   sbWPDMarshall & operator= (sbWPDMarshall const &) { return *this; }
