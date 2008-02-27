@@ -547,7 +547,8 @@ nsresult sbDeviceManager::PrepareShutdown()
                                    getter_AddRefs(marshall));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = marshall->StopMonitoring();
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+      "StopMonitoring returned an error, monitoring of devices may not be completely stopped.");
   }
   
   // ask the controllers to disconnect all devices

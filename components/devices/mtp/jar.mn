@@ -1,9 +1,0 @@
-mtp.jar:
-% content  mtp  %content/mtp/
-% overlay windowtype:Songbird:Main chrome://mtp/content/overlay/mtpDeviceOverlay.xul
-% skin mtp classic/1.0 %skin/mtp/
-  content/mtp/overlay/mtpDeviceOverlay.xul            (chrome/content/overlay/mtpDeviceOverlay.xul)
-  content/mtp/scripts/mtpDevice.js                    (chrome/content/scripts/mtpDevice.js)
-  content/mtp/xul/mtpDeviceSummaryPage.xul            (chrome/content/xul/mtpDeviceSummaryPage.xul)
-  skin/mtp/mtp.css                                    (skin/mtp.css)
-  
