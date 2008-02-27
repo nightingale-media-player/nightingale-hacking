@@ -245,6 +245,7 @@ nsresult sbWPDGetMediaItemByPUID(sbILibrary *aLibrary,
 nsresult sbWPDCreateMediaItemFromDeviceValues(sbILibrary *aLibrary,
                                               const nsTArray<PROPERTYKEY> &aKeys,
                                               IPortableDeviceValues *aValues,
+                                              nsID *aDeviceID,
                                               sbIMediaItem **aItem);
 
 nsresult sbWPDCreatePropertyArrayFromDeviceValues(const nsTArray<PROPERTYKEY> &aKeys,

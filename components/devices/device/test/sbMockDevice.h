@@ -47,6 +47,7 @@ public:
   NS_IMETHOD GetContent(sbIDeviceContent * *aContent);
   NS_IMETHOD GetParameters(nsIPropertyBag2 * *aParameters);
   NS_IMETHOD GetProperties(sbIDeviceProperties * *theProperties);
+  NS_IMETHOD SubmitRequest(PRUint32 aRequest, nsIPropertyBag2 *aRequestParameters);
   
 public:
   nsresult ProcessRequest();

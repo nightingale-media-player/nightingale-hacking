@@ -30,6 +30,7 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIPropertyBag2.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 
@@ -151,25 +152,32 @@ nsresult sbBaseDevice::PushRequest(const int aType,
   req->batchIndex = 1;
   req->itemTransferID = 0;
 
+  return PushRequest(req);
+}
+
+nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+
   { /* scope for request lock */
     nsAutoLock lock(mRequestLock);
-  
+
     /* figure out the batch count */
     TransferRequest* last =
       static_cast<sbBaseDevice::TransferRequest*>(mRequests.Peek());
 
     if (last) {
-      req->itemTransferID = last->itemTransferID + 1;
+      aRequest->itemTransferID = last->itemTransferID + 1;
     }
   
-    if (last && last->type == aType) {
+    if (last && last->type == aRequest->type) {
       // same type of request, batch them
-      req->batchCount += last->batchCount;
-      req->batchIndex = req->batchCount;
+      aRequest->batchCount += last->batchCount;
+      aRequest->batchIndex = aRequest->batchCount;
   
       nsDequeIterator begin = mRequests.Begin();
       nsDequeIterator it = mRequests.End(); 
-  
+
       for(; /* see loop */; --it) {
         TransferRequest* oldReq =
           static_cast<sbBaseDevice::TransferRequest*>(it.GetCurrent());
@@ -185,14 +193,14 @@ nsresult sbBaseDevice::PushRequest(const int aType,
           }
           continue;
         }
-        if (oldReq->type != aType) {
+        if (oldReq->type != aRequest->type) {
           /* differernt request type */
           break;
         }
-        NS_ASSERTION(oldReq->batchCount == req->batchCount - 1,
-                     "Unexpected batch count in old request");
+        NS_ASSERTION(oldReq->batchCount == aRequest->batchCount - 1,
+          "Unexpected batch count in old request");
         ++(oldReq->batchCount);
-  
+
           if (begin == it) {
           /* no requests left */
           break;
@@ -200,8 +208,8 @@ nsresult sbBaseDevice::PushRequest(const int aType,
       }
     }
 
-    NS_ADDREF(req);
-    mRequests.Push(req);
+    NS_ADDREF(aRequest);
+    mRequests.Push(aRequest);
   } /* end scope for request lock */
 
   return ProcessRequest();
@@ -394,6 +402,76 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
                          nsnull /* filter */);
   
   mMediaListListeners.Put(list, listener);
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDevice::CreateTransferRequest(PRUint32 aRequest, 
+                                    nsIPropertyBag2 *aRequestParameters,
+                                    TransferRequest **aTransferRequest)
+{
+  NS_ENSURE_ARG_RANGE(aRequest, REQUEST_MOUNT, REQUEST_NEW_PLAYLIST);
+  NS_ENSURE_ARG_POINTER(aRequestParameters);
+  NS_ENSURE_ARG_POINTER(aTransferRequest);
+
+  TransferRequest* req = TransferRequest::New();
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsCOMPtr<sbIMediaList> list;
+  nsCOMPtr<nsISupports>  data;
+
+  PRUint32 index = PR_UINT32_MAX;
+  PRUint32 otherIndex = PR_UINT32_MAX;
+  PRUint32 batchCount = 1;
+  
+  rv = aRequestParameters->GetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                                  NS_GET_IID(sbIMediaItem),
+                                                  getter_AddRefs(item));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No item present in request parameters.");
+
+  rv = aRequestParameters->GetPropertyAsInterface(NS_LITERAL_STRING("list"),
+                                                  NS_GET_IID(sbIMediaList),
+                                                  getter_AddRefs(list));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No list present in request parameters.");
+
+  rv = aRequestParameters->GetPropertyAsInterface(NS_LITERAL_STRING("data"),
+                                                  NS_GET_IID(nsISupports),
+                                                  getter_AddRefs(data));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No data present in request parameters.");
+
+  NS_WARN_IF_FALSE(item || list || data, "No data of any kind given in request. This request will most likely fail.");
+
+  rv = aRequestParameters->GetPropertyAsUint32(NS_LITERAL_STRING("index"),
+                                               &index);
+  if(NS_FAILED(rv)) {
+    index = PR_UINT32_MAX;
+  }
+
+  rv = aRequestParameters->GetPropertyAsUint32(NS_LITERAL_STRING("otherIndex"),
+                                               &otherIndex);
+  if(NS_FAILED(rv)) {
+    otherIndex = PR_UINT32_MAX;
+  }
+
+  rv = aRequestParameters->GetPropertyAsUint32(NS_LITERAL_STRING("batchCount"),
+                                               &batchCount);
+  if(NS_FAILED(rv)) {
+    batchCount = 1;
+  }
+
+  req->type = aRequest;
+  req->item = item;
+  req->list = list;
+  req->data = data;
+  req->index = index;
+  req->otherIndex = otherIndex;
+  req->batchCount = batchCount;
+
+  NS_ADDREF(*aTransferRequest = req);
+
   return NS_OK;
 }
 

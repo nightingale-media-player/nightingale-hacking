@@ -34,11 +34,13 @@
 #include <nsINetUtil.h>
 #include <nsStringAPI.h>
 #include <nsIThread.h>
+#include <nsNetUtil.h>
 #include <nsThreadUtils.h>
 #include <nsIVariant.h>
 #include <nsCRT.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
+#include <nsIFileURL.h>
 #include <nsIURL.h>
 #include <nsID.h>
 #include <sbIDevice.h>
@@ -565,6 +567,18 @@ NS_IMETHODIMP sbWPDDevice::GetState(PRUint32 *aState)
   return sbBaseDevice::GetState(aState);
 }
 
+NS_IMETHODIMP sbWPDDevice::SubmitRequest(PRUint32 aRequest,
+                                         nsIPropertyBag2 *aRequestParameters)
+{
+  nsRefPtr<TransferRequest> transferRequest;
+  nsresult rv = CreateTransferRequest(aRequest, 
+                                      aRequestParameters, 
+                                      getter_AddRefs(transferRequest));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return PushRequest(transferRequest);
+}
+
 nsresult sbWPDDevice::ProcessRequest()
 {
   // Let the worker thread know there's work to be done.
@@ -673,6 +687,8 @@ PRBool sbWPDDevice::ProcessThreadsRequest()
       }
     }
     
+    NS_WARN_IF_FALSE(isOk, "WPD Device Processor Thread is going to die.");
+
     if (!isOk) {
       return PR_FALSE;
     }
@@ -1766,9 +1782,23 @@ static nsresult CopyIStream2nsIStream(sbDeviceStatus * status,
                                       PRUint32 bufferSize = 64 * 1024)
 {
   char * buffer = new char[bufferSize];
+  double current = 0;
   ULONG bytesRead;
   nsresult rv = NS_OK;
-  for (HRESULT hr = input->Read(buffer, bufferSize, &bytesRead);
+
+  PRBool enableProgress = PR_TRUE;
+  double length = -1;
+  STATSTG streamStats = {0};
+  
+  HRESULT hr = input->Stat(&streamStats, STATFLAG_NONAME);
+  if(FAILED(hr)) {
+    enableProgress = PR_FALSE;
+  }
+  else {
+    length = streamStats.cbSize.QuadPart;
+  }
+
+  for (hr = input->Read(buffer, bufferSize, &bytesRead);
        SUCCEEDED(hr) && bytesRead != 0;
        hr = input->Read(buffer, bufferSize, &bytesRead)) {
     PRUint32 bytesWritten;  
@@ -1779,8 +1809,22 @@ static nsresult CopyIStream2nsIStream(sbDeviceStatus * status,
       // TODO: We need to clean up the file
       output->Close();
     }
+
+    current += bytesWritten;
+    if(enableProgress) {
+      double const progress = current / length * 100.0;
+      nsCOMPtr<nsIWritableVariant> var =
+        do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      var->SetAsDouble(progress);
+      device->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
+        var);
+      status->Progress(progress);
+    }
   }
+
   delete [] buffer;
+
   // Something bad happened
   if (bytesRead)
     return rv;
@@ -2379,13 +2423,8 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
                            getter_AddRefs(inputStream),
                            optimalBufferSize);
   NS_ENSURE_SUCCESS(rv, rv);
-  STATSTG stat;
-  if (FAILED(inputStream->Stat(&stat, STATFLAG_DEFAULT)))
-    return NS_ERROR_FAILURE;
   
   nsCOMPtr<nsIOutputStream> outputStream;
-  rv = request->item->OpenOutputStream(getter_AddRefs(outputStream));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   nsString deviceIDStr;
   rv = GetDeviceIDAsString(this, deviceIDStr);
@@ -2393,23 +2432,62 @@ nsresult sbWPDDevice::ReadRequest(TransferRequest * request)
 
   nsRefPtr<sbDeviceStatus> status =
     sbDeviceStatus::New(deviceIDStr);
+
+  if(request->item &&
+     !request->data) {
+    rv = request->item->OpenOutputStream(getter_AddRefs(outputStream));
+  }
+  else if(request->data) {
+    nsCOMPtr<nsIFile> file;
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(request->data, &rv);
+    PRBool exists = PR_FALSE;
+    if(NS_SUCCEEDED(rv) && fileURL &&
+       NS_SUCCEEDED(fileURL->GetFile(getter_AddRefs(file))) &&
+       NS_SUCCEEDED(file->Exists(&exists)) &&
+       !exists) {
+      rv = NS_NewLocalFileOutputStream(getter_AddRefs(outputStream), file);
+    }
+    else if(exists) {
+      return NS_OK;
+    }
+  }
+  else {
+    // We simply don't have enough data to complete the operation.
+    rv = NS_ERROR_UNEXPECTED;
+  }
+
+  if(FAILED(rv)) {
+    status->StateMessage(NS_LITERAL_STRING("Failed"));
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED,
+                           var);
+    // Operation is complete regardless of errors.
+    status->StateMessage(NS_LITERAL_STRING("Completed"));
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
+                           var);    
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END,
+                           var);
+    return rv;
+  }
+
   rv = CopyIStream2nsIStream(status,
                              this,
                              inputStream,
                              outputStream,
                              optimalBufferSize); 
-  if (NS_SUCCEEDED(rv)) {
-    status->StateMessage(NS_LITERAL_STRING("Completed"));
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
-                           var);    
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END,
-                           var);      
-  }
-  else {
+
+  if(FAILED(rv)) {
     status->StateMessage(NS_LITERAL_STRING("Failed"));
     CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED,
                            var);
   }
+
+  // Operation is complete regardless of errors.
+  status->StateMessage(NS_LITERAL_STRING("Completed"));
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
+                         var);    
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END,
+                         var);
+
   return NS_OK;
 }
 
@@ -2498,6 +2576,11 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
   nsRefPtr<IPortableDevicePropertiesBulk> bulkProps;
   hr = properties->QueryInterface(__uuidof(IPortableDevicePropertiesBulk), getter_AddRefs(bulkProps));
 
+
+  nsID *deviceID = nsnull;
+  rv = GetId(&deviceID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
 #if 0
   if(SUCCEEDED(hr)) {
   // We get to use the bulk interface.
@@ -2537,6 +2620,9 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
         
         if (FAILED(hr))
           break;
+
+        // This is created here to prevent one from being created for each loop
+        nsRefPtr<sbPropertyVariant> sizeVar = sbPropertyVariant::New();
   
         for(ULONG current = 0; current < count; ++current) {
           nsString objId(objectIds[current]);
@@ -2608,6 +2694,7 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
             rv = sbWPDCreateMediaItemFromDeviceValues(library,
                                                       keyArray,
                                                       values,
+                                                      deviceID,
                                                       getter_AddRefs(item));
             /* ignore errors */
           }
@@ -2629,6 +2716,11 @@ nsresult sbWPDDevice::MountRequest(TransferRequest * request) {
     mDeviceStatistics.SetAudioUsed(audioUsed);
     mDeviceStatistics.SetVideoUsed(videoUsed);
     mDeviceStatistics.SetOtherUsed(otherUsed);
+
+    if(deviceID) {
+      NS_Free(deviceID);
+    }
+
     rv = mLibraryListener->SetIgnoreListener(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 

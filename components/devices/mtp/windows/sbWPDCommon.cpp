@@ -46,6 +46,7 @@
 #include <sbIPropertyArray.h>
 #include <sbPropertiesCID.h>
 
+#include <nsID.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
 
@@ -580,6 +581,7 @@ nsresult sbWPDGetMediaItemByPUID(sbILibrary *aLibrary,
 nsresult sbWPDCreateMediaItemFromDeviceValues(sbILibrary *aLibrary,
                                               const nsTArray<PROPERTYKEY> &aKeys,
                                               IPortableDeviceValues *aValues,
+                                              nsID *aDeviceID,
                                               sbIMediaItem **aItem)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -590,9 +592,38 @@ nsresult sbWPDCreateMediaItemFromDeviceValues(sbILibrary *aLibrary,
   nsresult rv = sbWPDCreatePropertyArrayFromDeviceValues(aKeys, aValues, getter_AddRefs(props));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //XXXAus: This URI is wrong and needs to be something valid!!!
+  char strDeviceID[NSID_LENGTH] = {0};
+  aDeviceID->ToProvidedString(strDeviceID);
+
+  nsCString itemSpec(NS_LITERAL_CSTRING("x-mtp://"));
+  itemSpec.Append(strDeviceID);
+  itemSpec.AppendLiteral("/");
+  
+  nsString itemPUID;
+  rv = props->GetPropertyValue(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#WPDPUID"),
+                               itemPUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  itemSpec.Append(NS_ConvertUTF16toUTF8(itemPUID));
+  itemSpec.AppendLiteral("/");
+
+  LPWSTR itemOriginalFilename = NULL;
+  HRESULT hr = aValues->GetStringValue(WPD_OBJECT_ORIGINAL_FILE_NAME, 
+                                       &itemOriginalFilename);
+
+#if defined(DEBUG)
+  if(FAILED(hr)) {
+    NS_WARNING("Couldn't get original filename, item URI will seem wrong but still function!");
+  }
+#endif
+  
+  if(itemOriginalFilename) {
+    itemSpec.Append(NS_ConvertUTF16toUTF8(nsDependentString(itemOriginalFilename)));
+    ::CoTaskMemFree(itemOriginalFilename);
+  }
+
   nsCOMPtr<nsIURI> uri;
-  rv = NS_NewURI(getter_AddRefs(uri), NS_LITERAL_STRING("mtp://device-id/object-id/filename.mp3"));
+  rv = NS_NewURI(getter_AddRefs(uri), itemSpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //XXXAus: We allow duplicates currently. 

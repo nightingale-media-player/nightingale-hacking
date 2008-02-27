@@ -46,7 +46,7 @@ interface sbIDeviceParameters;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(ef5c2db8-37b7-42d4-aa7e-f76bd91d710e)]
+[scriptable, uuid(d36581c4-1d0a-481f-8acd-c15779dd5787)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -123,11 +123,33 @@ interface sbIDevice : nsISupports
    */
   readonly attribute unsigned long state;
 
-  const PRUint32 STATE_IDLE            = 0;
-  const PRUint32 STATE_DOWNLOADING     = 1;
-  const PRUint32 STATE_UPLOADING       = 2;
-  const PRUint32 STATE_BUSY            = 3;
-  const PRUint32 STATE_DELETING        = 4;
-  const PRUint32 STATE_DOWNLOAD_PAUSED = 5;
-  const PRUint32 STATE_UPLOAD_PAUSED   = 6;
+  const unsigned long STATE_IDLE            = 0;
+  const unsigned long STATE_DOWNLOADING     = 1;
+  const unsigned long STATE_UPLOADING       = 2;
+  const unsigned long STATE_BUSY            = 3;
+  const unsigned long STATE_DELETING        = 4;
+  const unsigned long STATE_DOWNLOAD_PAUSED = 5;
+  const unsigned long STATE_UPLOAD_PAUSED   = 6;
+
+  const unsigned long REQUEST_FLAG_USER  = 0x80000000;
+  const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
+
+  const unsigned long REQUEST_RESERVED  = 0;
+  const unsigned long REQUEST_MOUNT     = 1;
+  const unsigned long REQUEST_READ      = 2;
+  const unsigned long REQUEST_EJECT     = 3;
+  const unsigned long REQUEST_SUSPEND   = 4;
+
+  const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;
+  const unsigned long REQUEST_DELETE        = REQUEST_FLAG_WRITE + 2;
+  const unsigned long REQUEST_SYNC          = REQUEST_FLAG_WRITE + 3;
+  const unsigned long REQUEST_WIPE          = REQUEST_FLAG_WRITE + 4;
+  const unsigned long REQUEST_MOVE          = REQUEST_FLAG_WRITE + 5;
+  const unsigned long REQUEST_UPDATE        = REQUEST_FLAG_WRITE + 6;
+  const unsigned long REQUEST_NEW_PLAYLIST  = REQUEST_FLAG_WRITE + 7;
+
+  /**
+   * 
+   */
+  void submitRequest(in unsigned long aRequest, in nsIPropertyBag2 aRequestParameters);
 };

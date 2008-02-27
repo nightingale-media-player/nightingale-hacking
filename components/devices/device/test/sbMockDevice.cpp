@@ -274,25 +274,31 @@ NS_IMETHODIMP sbMockDevice::SetPreference(const nsAString & aPrefName, nsIVarian
 /* readonly attribute sbIDeviceCapabilities capabilities; */
 NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabilities)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* readonly attribute sbIDeviceContent content; */
 NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;  
+  return NS_ERROR_NOT_IMPLEMENTED;  
 }
+
+NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequest, nsIPropertyBag2 *aRequestParameters)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;  
+}
+
 nsresult sbMockDevice::ProcessRequest()
 {
   nsRefPtr<TransferRequest> request;

@@ -68,30 +68,33 @@ public:
 
     /* note that type 0 is reserved */
     enum {
-      REQUEST_RESERVED = 0,
+      REQUEST_RESERVED    = sbIDevice::REQUEST_RESERVED,
 
       /* read requests */
-      REQUEST_MOUNT,
-      REQUEST_READ,
-      REQUEST_EJECT,
-      REQUEST_SUSPEND,
+      REQUEST_MOUNT         = sbIDevice::REQUEST_MOUNT,
+      REQUEST_READ          = sbIDevice::REQUEST_READ,
+      REQUEST_EJECT         = sbIDevice::REQUEST_EJECT,
+      REQUEST_SUSPEND       = sbIDevice::REQUEST_SUSPEND,
       
       /* write requests */
-      REQUEST_WRITE = REQUEST_FLAG_WRITE + 1,
-      REQUEST_DELETE,
-      REQUEST_SYNC,
-      REQUEST_WIPE,                  /* delete all files */
-      REQUEST_MOVE,                  /* move an item in one playlist */
-      REQUEST_UPDATE,
-      REQUEST_NEW_PLAYLIST
+      REQUEST_WRITE         = sbIDevice::REQUEST_WRITE,
+      REQUEST_DELETE        = sbIDevice::REQUEST_DELETE,
+      REQUEST_SYNC          = sbIDevice::REQUEST_SYNC,
+      /* delete all files */
+      REQUEST_WIPE          = sbIDevice::REQUEST_WIPE,
+      /* move an item in one playlist */
+      REQUEST_MOVE          = sbIDevice::REQUEST_MOVE,
+      REQUEST_UPDATE        = sbIDevice::REQUEST_UPDATE,
+      REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST
     };
     
     int type;                        /* one of the REQUEST_* constants,
                                           or a custom type */
-    nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
-    nsCOMPtr<sbIMediaList> list;     /* the list this request is to act on */
-    PRUint32 index;                  /* the index in the list for this action */
-    PRUint32 otherIndex;             /* any secondary index needed */
+    nsCOMPtr<sbIMediaItem> item;       /* the item this request pertains to */
+    nsCOMPtr<sbIMediaList> list;       /* the list this request is to act on */
+    nsCOMPtr<nsISupports>  data;       /* optional data that may or may not be used by a type of request */
+    PRUint32 index;                    /* the index in the list for this action */
+    PRUint32 otherIndex;               /* any secondary index needed */
 
     PRUint32 batchCount;             /* the number of items in this batch
                                           (batch = run of requests of the same
@@ -117,6 +120,8 @@ public:
                         sbIMediaList* aList = nsnull,
                         PRUint32 aIndex = PR_UINT32_MAX,
                         PRUint32 aOtherIndex = PR_UINT32_MAX);
+
+  nsresult PushRequest(TransferRequest *aRequest);
 
   /* remove the next request to be processed; note that _retval will be null
      if there are no requests left */
@@ -160,6 +165,7 @@ public:
    * @param aList the media list to listen for modifications
    */
   nsresult ListenToList(sbIMediaList* aList);
+  
   /**
    * Return our statistics collector
    */
@@ -167,6 +173,11 @@ public:
   {
     return mDeviceStatistics;
   }
+
+  nsresult CreateTransferRequest(PRUint32 aRequest, 
+                                 nsIPropertyBag2 *aRequestParameters,
+                                 TransferRequest **aTransferRequest);
+
 protected:
   friend class sbBaseDeviceInitHelper;
   void Init();

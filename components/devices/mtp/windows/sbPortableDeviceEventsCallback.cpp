@@ -101,7 +101,7 @@ HRESULT __stdcall sbPortableDeviceEventsCallback::OnEvent(
       // Not handled for now
     }
     else if (eventID == WPD_EVENT_DEVICE_RESET) {
-      sbEventID = sbIDeviceEvent::COMMAND_DEVICE_RESET;
+      sbEventID = sbIDeviceEvent::EVENT_DEVICE_RESET;
     }
     else if (eventID == WPD_EVENT_DEVICE_CAPABILITIES_UPDATED) {
       // Not handled for now

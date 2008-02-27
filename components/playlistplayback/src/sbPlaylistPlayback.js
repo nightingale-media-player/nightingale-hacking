@@ -60,6 +60,12 @@ const DEBUG = false;
 // number of milliseconds for timer calling the playback loop
 const LOOP_DURATION = 250;
 
+// Accessors for Components.*
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+
 /**
  * ----------------------------------------------------------------------------
  * Global variables
@@ -352,6 +358,14 @@ PlaylistPlayback.prototype = {
   _listeners: [],
   
   /**
+   * XXXAus: This data is private and should not be used for any purpose
+   * other than to clean up temp files used for playing back items coming
+   * from MTP devices!!! This data will go away without any notice in the 
+   * future, DO NOT RELY ON IT BEING AROUND.
+   */
+   _deviceTempDirectoriesForCleanup: [],
+  
+  /**
    * ---------------------------------------------
    * Private Methods
    * ---------------------------------------------
@@ -382,6 +396,25 @@ PlaylistPlayback.prototype = {
       var core = this._cores[0];
       this.removeCore(core);
     }
+    
+    dump(" ******************************\nDEINIT!!!!!\n\n\n\n");
+    
+    //XXXAus: Remove temp folders created for playing back media
+    // on MTP devices. This will remove all temporary content
+    // copied from the device.
+    function deleteDeviceTempDirectories(aElem, aIndex, aArray) {
+      //XXXAus: call once with recursive true, so that it erases 
+      //the _contents_ of the folder recursively.
+      aElem.remove(true);
+      //XXXAus: call again with recursive false (no param) so that
+      // it erases the folder, now that it is empty.
+      aElem.remove();
+    }
+    this._deviceTempDirectoriesForCleanup.forEach(deleteDeviceTempDirectories);
+    
+    //XXXAus: clean out all references to 
+    // the temporary directories so they can be freed.
+    this._deviceTempDirectoriesForCleanup = [];
     
     LOG("Songbird PlaylistPlayback Service unloaded successfully");
   },
@@ -948,6 +981,13 @@ PlaylistPlayback.prototype = {
       this._metadataURL.stringValue = "";
       
       var uri = newURI(aURL);
+
+      // XXXAus: x-mtp uri's are special for the time being. They require
+      // that we copy the actual content from the device into a temporary
+      // file on the users hard drive.
+      if(uri.scheme == "x-mtp") {
+        return this._handleMTPURI(uri);
+      }
       
       var file;
       try {
@@ -973,7 +1013,7 @@ PlaylistPlayback.prototype = {
       this._controlTriggered.stringValue = Date.now();
       
       try {
-        core.playURL(spec);      
+        core.playURL(spec);
       }
       catch(e) {
         // XXXAus: SB_EXTERNAL_VIDEO_LAUNCH.
@@ -2098,6 +2138,76 @@ PlaylistPlayback.prototype = {
       return terms.join(" ");
     }
     return "";
+  },
+  
+  _handleMTPURI: function sbPlaylistPlayback_handleMTPURI(aURI) {
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var xmtpScheme = "x-mtp://";
+    var spec = aURI.spec;
+    
+    spec = spec.substring(xmtpScheme.length);
+    var splitSpec = spec.split("/");
+    
+    // spec is as follows "x-mtp://device-id/item-puid/originalfilename.ext".
+    // splitSpec[0] == device-id, splitSpec[1] == item-puid., splitSpec[2] == original filename.
+    var device = deviceManager.getDevice(Components.ID(splitSpec[0]));
+    
+    var item = null;
+    var libraries = device.content.libraries.enumerate();
+    var listener = {
+      item: null,
+      onEnumerationBegin: function(aList) {},
+      onEnumeratedItem: function(aList, aItem) {
+        this.foundItem = true;
+        this.item = aItem;
+      },
+      onEnumerationEnd: function(aList, aStatusCode) {}
+    };
+    
+    while(libraries.hasMoreElements()) {
+      var library = libraries.getNext().QueryInterface(Ci.sbIMediaList);
+      library.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#WPDPUID",
+                                       splitSpec[1],
+                                       listener);
+      if(listener.item) {
+        break;
+      }
+    }
+    
+    if(!listener.item)
+      return false;
+    
+    var requestParams = Cc["@mozilla.org/hash-property-bag;1"]
+                          .createInstance(Ci.nsIWritablePropertyBag2);
+
+    var dirService = Cc["@mozilla.org/file/directory_service;1"]
+                       .getService(Ci.nsIProperties);
+    var tempDir = dirService.get("TmpD", Ci.nsIFile).clone();
+    tempDir.append(splitSpec[1]);
+    if(!tempDir.exists()) {
+      tempDir.create(Ci.nsIFile.DIRECTORY_TYPE, 0600);
+    }
+    var tempFile = tempDir.clone();
+    tempFile.append(splitSpec[2]);
+    
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var tempFileURL = ioService.newFileURI(tempFile);
+    
+    requestParams.setPropertyAsInterface("data", tempFileURL.QueryInterface(Ci.nsISupports));
+    requestParams.setPropertyAsInterface("item", this._playingItem);
+
+    device.submitRequest(Ci.sbIDevice.REQUEST_READ, requestParams);
+    if(this._deviceTempDirectoriesForCleanup.indexOf(tempDir) == -1) {
+      //Keep a reference to the temp directory around 
+      //so we can delete it easily later.
+      this._deviceTempDirectoriesForCleanup.push(tempDir);
+    }
+    
+    this.playURL(tempFileURL.spec);
+
+    return true;
   },
 
   _restartApp: function() {
