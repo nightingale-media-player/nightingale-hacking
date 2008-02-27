@@ -1333,7 +1333,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
             const PRUint32 chunkSize = tagString.size();
             PRUint32 currentSize = 0;
             while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
-                rv = detector->DoIt(data.c_str(), chunkSize, &isDone);
+                rv = detector->DoIt(raw.c_str(), chunkSize, &isDone);
                 if (NS_FAILED(rv) || isDone) {
                     break;
                 }
