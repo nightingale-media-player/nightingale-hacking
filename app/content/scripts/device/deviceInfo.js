@@ -702,6 +702,28 @@ var DIW = {
     return accessCompatibility;
   },
 
+  /**
+   * \brief Format a mime type to human readable
+   *
+   * \return Human readable information for mime type.
+   */
+
+  _getExtForFormat : function(aMimeType) {
+    var mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService);
+    if (mimeService) {
+      var mimeExtension;
+      try {
+        mimeExtension = mimeService.getFromTypeAndExtension(aMimeType, null)
+                                   .primaryExtension;
+      } catch (err) {}
+      
+      if (mimeExtension) {
+        return SBString("device.info.mimetype." + mimeExtension, mimeExtension);
+      }
+    }
+    // Fall back to mime type if all else failed.
+    return aMimeType;
+  },
 
   /**
    * \brief Return the device playback formats.
@@ -710,7 +732,6 @@ var DIW = {
    */
 
   _getDevicePlaybackFormats: function DIW__getDevicePlaybackFormats() {
-    // STEVO TODO format this properly with songbird.properties.
     var retFormats = [];
     try {
       var deviceCapabilities = this._device.capabilities;
@@ -723,6 +744,13 @@ var DIW = {
         }
       }
     } catch (err) { }
+
+    if (retFormats.length > 0) {
+      var formatIndex;
+      for (formatIndex in retFormats) {
+        retFormats[formatIndex] = this._getExtForFormat(retFormats[formatIndex]);
+      }
+    }
     return retFormats.join(", ") || SBString("device.info.unknown");
   },
 
