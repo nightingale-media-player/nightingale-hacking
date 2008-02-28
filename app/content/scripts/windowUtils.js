@@ -31,6 +31,17 @@
  *
  * Note: This file is dependent on chrome://global/content/globalOverlay.js
  */
+ 
+
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+ 
 
 /**
  * \brief The Songbird Core Window Type.
@@ -40,31 +51,56 @@ var CORE_WINDOWTYPE         = "Songbird:Core";
 /**
  * \brief Maximized State value.
  */
-var STATE_MAXIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED;
+var STATE_MAXIMIZED         = Ci.nsIDOMChromeWindow.STATE_MAXIMIZED;
 
 /**
  * \brief Minimized State value.
  */
-var STATE_MINIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MINIMIZED;
+var STATE_MINIMIZED         = Ci.nsIDOMChromeWindow.STATE_MINIMIZED;
 
 // Convenient globals.
-var gPPS     = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
-var gPrompt  = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                      .getService(Components.interfaces.nsIPromptService);
-var gPrefs   = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
-var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
-                      .getService(Components.interfaces.nsIConsoleService);
-                                      
-if (typeof(Cc) == "undefined")
-  var Cc = Components.classes;
-if (typeof(Ci) == "undefined")
-  var Ci = Components.interfaces;
-if (typeof(Cu) == "undefined")
-  var Cu = Components.utils;
-if (typeof(Cr) == "undefined")
-  var Cr = Components.results;
+var gPPS     = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                 .getService(Ci.sbIPlaylistPlayback);
+var gPrompt  = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                 .getService(Ci.nsIPromptService);
+var gPrefs   = Cc["@mozilla.org/preferences-service;1"]
+                 .getService(Ci.nsIPrefBranch);
+var gConsole = Cc["@mozilla.org/consoleservice;1"]
+                 .getService(Ci.nsIConsoleService);
+                                    
+
+/**
+ * Simple JS container that holds rectangle information
+ * for (x, y) and (width, height).
+ */
+function sbScreenRect(inWidth, inHeight, inX, inY) {
+  this.width = inWidth;
+  this.height = inHeight;
+  this.x = inX;
+  this.y = inY;
+}
+
+/**
+ * Get the current maximum available screen rect based on which screen
+ * the window is currently on.
+ * @return A |sbScreenRect| object containing the max available 
+ *         coordinates of the current screen.
+ */
+function getCurMaxScreenRect() {
+  var screenManager = Cc["@mozilla.org/gfx/screenmanager;1"]
+                        .getService(Ci.nsIScreenManager);
+                        
+  var curX = parseInt(document.documentElement.boxObject.screenX);
+  var curY = parseInt(document.documentElement.boxObject.screenY);
+  var curWidth = parseInt(document.documentElement.boxObject.width);
+  var curHeight = parseInt(document.documentElement.boxObject.height);
+  
+  var curScreen = screenManager.screenForRect(curX, curY, curWidth, curHeight);
+  var x = {}, y = {}, width = {}, height = {};
+  curScreen.GetAvailRect(x, y, width, height);
+  
+  return new sbScreenRect(width.value, height.value, x.value, y.value);
+}
 
 
 /**
@@ -93,12 +129,15 @@ sbMacWindowZoomController.prototype = {
     this._windowdragexit = function(evt) {
       self._onWindowDragged();
     };
+    this._windowresized = function(evt) {
+      self._onWindowResized();
+    };
     document.addEventListener("ondragexit", this._windowdragexit, false);
-    document.addEventListener("resize", this._onWindowResized, false);
+    document.addEventListener("resize", this._windowresized, false);
     
     var observerService = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
-    observerService.addObserver(this, "quit-application", false);
+    observerService.addObserver(this, "quit-application-granted", false);
   },
   
   _onWindowResized: function() { 
@@ -129,8 +168,9 @@ sbMacWindowZoomController.prototype = {
     else {
       this._saveWindowCoords();
       
-      window.resizeTo(window.screen.availWidth, window.screen.availHeight);
-      window.moveTo(window.screen.availLeft, window.screen.availTop);
+      var maxScreenRect = getCurMaxScreenRect();
+      window.moveTo(maxScreenRect.x, maxScreenRect.y);
+      window.resizeTo(maxScreenRect.width, maxScreenRect.height);
       
       this._mIsZoomed = true;
       this._mIsResizeEventFromZoom = true;
@@ -145,15 +185,18 @@ sbMacWindowZoomController.prototype = {
   },
   
   observe: function(aSubject, aTopic, aData) {
-    if (aTopic == "quit-application") {
+    
+    if (aTopic == "quit-application-granted") {
       document.removeEventListener("ondragexit", this._windowdragexit, false);
       document.removeEventListener("resize", this._onWindowResized, false);
-      this._windowdragexit = null;  // destroy the closure.
-        
+      this._windowdragexit = null;
+      this._windowresized = null;
+
       var observerService = Cc["@mozilla.org/observer-service;1"]
                               .getService(Ci.nsIObserverService);
-      observerService.removeObserver(this, "quit-application");
+      observerService.removeObserver(this, "quit-application-granted");
     }
+    
   },
   
   QueryInterface: function(iid) {
