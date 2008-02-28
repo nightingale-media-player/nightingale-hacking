@@ -90,3 +90,19 @@ statusbarpanel.statusbar-resizerpanel
 {
   display: none;
 }
+
+description.sb-status-bar-status-label,
+description.sb-status-bar-status-label[type="normal"]
+{
+  font-weight: normal;
+}
+
+description.sb-status-bar-status-label[type="playable"]
+{
+  font-weight: bold;
+}
+
+description.sb-status-bar-status-label[type="report"]
+{
+  font-weight: bold;
+}

@@ -78,13 +78,13 @@
 
          this.descbinding = SB_NewDataRemote( "faceplate.status.text", null );
          this.descbinding.bindObserver(this.on_status_change, true);
-         this.stylebinding = SB_NewDataRemote( "faceplate.status.style", null );
-         this.stylebinding.bindObserver(this.on_status_change, true);
+         this.typebinding = SB_NewDataRemote( "faceplate.status.type", null );
+         this.typebinding.bindObserver(this.on_status_change, true);
 
          this.override_descbinding = SB_NewDataRemote( "faceplate.status.override.text", null );
          this.override_descbinding.bindObserver(this.on_override_change, true);
-         this.override_stylebinding = SB_NewDataRemote( "faceplate.status.override.style", null );
-         this.override_stylebinding.bindObserver(this.on_status_change, true);
+         this.override_typebinding = SB_NewDataRemote( "faceplate.status.override.type", null );
+         this.override_typebinding.bindObserver(this.on_status_change, true);
        ]]>
      </constructor>
 
@@ -97,10 +97,10 @@
          this.on_override_change = null;
          this.descbinding.unbind();
          this.descbinding = null;
-         this.stylebinding.unbind();
-         this.stylebinding = null;
+         this.typebinding.unbind();
+         this.typebinding = null;
          this.override_descbinding.unbind();
-         this.override_stylebinding.unbind();
+         this.override_typebinding.unbind();
        ]]>
      </destructor>
 
@@ -112,11 +112,11 @@
           // if there is an override, use it
           if (this.override_descbinding.stringValue != "") {
             this.desc.value = this.override_descbinding.stringValue + " ";
-            this.desc.setAttribute("style", this.override_stylebinding.stringValue);
+            this.desc.setAttribute("type", this.override_typebinding.stringValue);
           } else {
             // otherwise use the normal status text
             this.desc.value = this.descbinding.stringValue + " ";
-            this.desc.setAttribute("style", this.stylebinding.stringValue);
+            this.desc.setAttribute("type", this.typebinding.stringValue);
           }
          ]]>
        </body>
@@ -153,7 +153,7 @@
          <![CDATA[
            this.resetTimeout();
            this.override_descbinding.stringValue = "";
-           this.override_stylebinding.stringValue = "";
+           this.override_typebinding.stringValue = "";
          ]]>
        </body>
      </method>

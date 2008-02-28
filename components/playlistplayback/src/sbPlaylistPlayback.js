@@ -337,7 +337,7 @@ PlaylistPlayback.prototype = {
   _metadataPosText:    null,
   _metadataLenText:    null,
   _statusText:         null,
-  _statusStyle:        null,
+  _statusType:         null,
   
   /**
    * For tracking change of playback control - used as event broadcaster
@@ -469,7 +469,7 @@ PlaylistPlayback.prototype = {
     this._restartAppNow         = createDataRemote("restart.restartnow", null);
 
     this._statusText            = createDataRemote("faceplate.status.text", null );
-    this._statusStyle           = createDataRemote("faceplate.status.style", null );
+    this._statusType            = createDataRemote("faceplate.status.type", null );
 
     // track the last time playback controls were used
     this._controlTriggered       = createDataRemote("playback.control.triggered", null);
@@ -495,7 +495,7 @@ PlaylistPlayback.prototype = {
     this._metadataAlbum.stringValue = "";
     this._metadataGenre.stringValue = "";
     this._statusText.stringValue = "";
-    this._statusStyle.stringValue = "";
+    this._statusType.stringValue = "";
     this._playingRef.stringValue = "";
     this._playURL.stringValue = ""; 
 
@@ -534,7 +534,7 @@ PlaylistPlayback.prototype = {
     this._metadataLenText.unbind();
     this._restartOnPlaybackEnd.unbind();
     this._statusText.unbind();
-    this._statusStyle.unbind();
+    this._statusType.unbind();
   },
   
   /**

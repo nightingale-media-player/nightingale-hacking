@@ -155,12 +155,12 @@ var DNDUtils = {
                              "init");
     var statusOverrideText = 
       SB_NewDataRemote( "faceplate.status.override.text", null );
-    var statusOverrideStyle = 
-      SB_NewDataRemote( "faceplate.status.override.style", null );
+    var statusOverrideType = 
+      SB_NewDataRemote( "faceplate.status.override.type", null );
 
     statusOverrideText.stringValue = "";
     statusOverrideText.stringValue = aMessage;
-    statusOverrideStyle.stringValue = "font-weight: bold;";
+    statusOverrideType.stringValue = "report";
   },
 
   _str_tracksaddedto        : null,

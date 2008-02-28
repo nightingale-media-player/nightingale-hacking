@@ -622,9 +622,9 @@ nsBrowserStatusHandler.prototype =
       SBDataSetStringValue( "faceplate.status.text", text);
       if (this.overLink && (gPPS.isMediaURL(this.overLink) || 
                             gPPS.isPlaylistURL(this.overLink))) {
-        SBDataSetStringValue( "faceplate.status.style", "font-weight: bold;");
+        SBDataSetStringValue( "faceplate.status.type", "playable");
       } else {
-        SBDataSetStringValue( "faceplate.status.style", "font-weight: normal;");
+        SBDataSetStringValue( "faceplate.status.type", "normal");
       }
       this.statusText = text;
     }
