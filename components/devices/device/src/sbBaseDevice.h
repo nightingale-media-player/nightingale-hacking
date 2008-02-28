@@ -147,8 +147,13 @@ public:
   virtual nsresult ProcessRequest() = 0;
 
   /* sbIDevice */
-  /* note to device implementors: just set mState directly. */
   NS_IMETHOD GetState(PRUint32 *aState);
+
+  /**
+   * Set the device state
+   * @param aState new device state
+   */
+  nsresult SetState(PRUint32 aState);
   
   /**
    * Create a local database library for the device
@@ -178,6 +183,14 @@ public:
                                  nsIPropertyBag2 *aRequestParameters,
                                  TransferRequest **aTransferRequest);
 
+  /**
+   * Create an event for the device and dispatch it
+   * @param aType type of event
+   * @param aData event data
+   */
+  nsresult CreateAndDispatchEvent(PRUint32 aType,
+                                  nsIVariant *aData);
+
 protected:
   friend class sbBaseDeviceInitHelper;
   void Init();
@@ -185,6 +198,7 @@ protected:
 protected:
   PRLock *mRequestLock;
   nsDeque/*<TransferRequest>*/ mRequests;
+  PRLock *mStateLock;
   PRInt32 mState;
   sbDeviceStatistics mDeviceStatistics;
   

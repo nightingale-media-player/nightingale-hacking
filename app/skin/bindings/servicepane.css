@@ -109,6 +109,20 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-downloads-progress.png) ;
 }
 
+.servicepane-tree > treechildren::-moz-tree-image( device ),
+.locationbar-image[properties~="device"],
+.tabbrowser-tab[properties~="device"] > .tab-image-middle > .tab-icon > .tab-icon-image
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon-device.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( device busy ),
+.locationbar-image[properties~="device"][properties~="busy"],
+.tabbrowser-tab[properties~="device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon-busy.png) ;
+}
+
 .servicepane-tree > treechildren::-moz-tree-image( folder open )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;

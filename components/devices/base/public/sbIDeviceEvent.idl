@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(8783a180-5858-4aa8-a1b9-c0d21f0a0d81)]
+[scriptable, uuid(d49fa358-2745-4df3-b592-ce6f3929d7b4)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -111,6 +111,9 @@ interface sbIDeviceEvent : nsISupports
 
   // device generic catch-all error
   const unsigned long EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 20;
+
+  // device generic state changed
+  const unsigned long EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 21;
 
   /**
    * 

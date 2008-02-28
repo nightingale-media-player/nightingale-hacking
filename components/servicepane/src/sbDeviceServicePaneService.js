@@ -174,6 +174,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
   node.contractid = CONTRACTID;
   node.editable = false;
+  node.properties = "device";
 
   // Sort node into position.
   this._servicePane.sortNode(node);

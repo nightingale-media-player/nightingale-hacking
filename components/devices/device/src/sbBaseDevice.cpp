@@ -31,10 +31,13 @@
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIPropertyBag2.h>
+#include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 
 #include "sbDeviceLibrary.h"
+#include "sbIDeviceEvent.h"
+#include "sbIDeviceManager.h"
 #include "sbILibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
@@ -122,12 +125,18 @@ sbBaseDevice::sbBaseDevice()
   mRequests.SetDeallocator(deallocator);
   /* the deque owns the deallocator */
   
+  mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
+  NS_ASSERTION(mStateLock, "Failed to allocate state lock");
+
   mRequestLock = nsAutoLock::NewLock(__FILE__ "::mRequestLock");
   NS_ASSERTION(mRequestLock, "Failed to allocate request lock");
 }
 
 sbBaseDevice::~sbBaseDevice()
 {
+  if (mStateLock)
+    nsAutoLock::DestroyLock(mStateLock);
+
   mRequests.SetDeallocator(nsnull);
 }
 
@@ -312,7 +321,39 @@ nsresult sbBaseDevice::ClearRequests()
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  nsAutoLock lock(mStateLock);
   *aState = mState;
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SetState(PRUint32 aState)
+{
+
+  nsresult rv;
+  PRBool stateChanged = PR_FALSE;
+
+  // set state, checking if it changed
+  {
+    NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+    nsAutoLock lock(mStateLock);
+    if (mState != aState) {
+      mState = aState;
+      stateChanged = PR_TRUE;
+    }
+  }
+
+  // send state changed event.  do it outside of lock in case event handler gets
+  // called immediately and tries to read the state
+  if (stateChanged) {
+    nsCOMPtr<nsIWritableVariant> var = do_CreateInstance(NS_VARIANT_CONTRACTID,
+                                                         &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = var->SetAsUint32(aState);
+    NS_ENSURE_SUCCESS(rv, rv);
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_STATE_CHANGED, var);
+  }
+
   return NS_OK;
 }
 
@@ -473,6 +514,23 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
   NS_ADDREF(*aTransferRequest = req);
 
   return NS_OK;
+}
+
+nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
+                                              nsIVariant *aData)
+{
+  nsresult rv;
+  
+  nsCOMPtr<sbIDeviceManager2> manager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIDeviceEvent> deviceEvent;
+  rv = manager->CreateEvent(aType, aData, static_cast<sbIDevice*>(this),
+                            getter_AddRefs(deviceEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return DispatchEvent(deviceEvent, PR_TRUE, nsnull);
 }
 
 /* a helper class to proxy sbBaseDevice::Init onto the main thread
