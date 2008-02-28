@@ -343,8 +343,12 @@ sbTestHarness.prototype = {
   buildTestComponents : function() {
     // iterate over all directories in testharness and add ALL directories
     // found to the list of dirs to recurse through.
-    let dirEnum = this.mTestDir.directoryEntries;
+    if (!this.mTestDir.exists()) {
+      // No test dir so no tests to run.
+      return;
+    }
 
+    let dirEnum = this.mTestDir.directoryEntries;
     this.mTestComponents = new Array();
     while ( dirEnum.hasMoreElements() ) {
       var entry = dirEnum.getNext().QueryInterface(Ci.nsIFile);
