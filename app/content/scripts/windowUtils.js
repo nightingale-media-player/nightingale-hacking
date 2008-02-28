@@ -477,22 +477,16 @@ function deferredWindowPlacementSanityChecks() {
   for (var i in width ) { width[i]  = parseInt(width[i])  }
   for (var i in height) { height[i] = parseInt(height[i]) }
   
-  // note: This code should work correctly, but will always be told that the window is positioned 
-  //       relative to the main screen.
-  //
-  //       This is caused by mozbug 407405, and should auto-correct when the bug goes away.
-  //       
-  //       -pvh dec07
-  
   // move offscreen windows back onto the center of the screen
-  if ((x - screen.left > screen.availWidth ) || // offscreen right
-      (x - screen.left + width.actual  < 0)  || // offscreen left
-      (y - screen.top > screen.availHeight ) || // offscreen bottom
-      (y - screen.top + height.actual  < 0)     // offscreen top
+  var screenRect = getCurMaxScreenRect();
+  if ((x - screenRect.x > screenRect.width )  || // offscreen right
+      (x - screenRect.x + width.actual  < 0)  || // offscreen left
+      (y - screenRect.y > screenRect.height ) || // offscreen bottom
+      (y - screenRect.y + height.actual  < 0)    // offscreen top
   ) { 
-    x = screen.availWidth/2 - window.outerWidth/2; 
+    x = (screenRect.width / 2) - (window.outerWidth / 2); 
     x = (x < 0) ? 0 : x; // don't move window left of zero. 
-    y = screen.availHeight/2 - window.outerHeight/2; 
+    y = (screenRect.height / 2) - (window.outerHeight / 2); 
     y = (y < 0) ? 0 : y; // don't move window above zero. 
   }
   
