@@ -63,3 +63,8 @@ installitem {
 .xpinstallItemIcon {
   list-style-image: url("chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png");
 }
+
+/* Hide the un-signed author string */
+.xpinstallItemSigned[signed="false"] {
+  visibility: hidden;
+}
