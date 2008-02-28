@@ -46,7 +46,7 @@ interface sbIDeviceParameters;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(d36581c4-1d0a-481f-8acd-c15779dd5787)]
+[scriptable, uuid(a488b859-899a-4a9c-a337-782f976c0874)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -152,4 +152,8 @@ interface sbIDevice : nsISupports
    * 
    */
   void submitRequest(in unsigned long aRequest, in nsIPropertyBag2 aRequestParameters);
+  /**
+   * Cancel all current pending requests
+   */
+  void cancelRequests();
 };

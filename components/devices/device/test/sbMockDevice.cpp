@@ -310,3 +310,8 @@ nsresult sbMockDevice::ProcessRequest()
   
   // XXX mook todo :)
 }
+
+NS_IMETHODIMP sbMockDevice::CancelRequests()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}

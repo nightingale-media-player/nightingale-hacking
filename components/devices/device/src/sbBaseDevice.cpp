@@ -118,7 +118,7 @@ sbBaseDevice::TransferRequest * sbBaseDevice::TransferRequest::New()
   return new TransferRequest();
 }
 
-sbBaseDevice::sbBaseDevice()
+sbBaseDevice::sbBaseDevice() : mAbortCurrentRequest(PR_FALSE)
 {
   nsDequeFunctor* deallocator = new RequestDeallocator;
   NS_ASSERTION(deallocator, "Failed to create queue deallocator");
@@ -313,6 +313,7 @@ nsresult sbBaseDevice::ClearRequests()
 {
   NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   nsAutoLock lock(mRequestLock);
+  mAbortCurrentRequest = PR_TRUE;
   mRequests.Erase();
   return NS_OK;
 }

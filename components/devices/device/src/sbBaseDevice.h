@@ -191,6 +191,18 @@ public:
   nsresult CreateAndDispatchEvent(PRUint32 aType,
                                   nsIVariant *aData);
 
+  /**
+   * Returns true if the current request should be aborted. This subsequently
+   * resets the flags
+   */
+  PRBool IsRequestAborted()
+  {
+    NS_ASSERTION(mRequestLock, "mRequestLock must be initialized");
+    nsAutoLock lock(mRequestLock);
+    PRBool const abort = mAbortCurrentRequest;
+    mAbortCurrentRequest = PR_FALSE;
+    return abort;
+  }
 protected:
   friend class sbBaseDeviceInitHelper;
   void Init();
@@ -201,6 +213,7 @@ protected:
   PRLock *mStateLock;
   PRInt32 mState;
   sbDeviceStatistics mDeviceStatistics;
+  PRBool mAbortCurrentRequest;
   
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
