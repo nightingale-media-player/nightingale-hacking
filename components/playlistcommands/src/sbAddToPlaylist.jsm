@@ -456,6 +456,10 @@ addToPlaylistHelper.prototype = {
         this._downloadListGUID =
           prefs.getComplexValue("songbird.library.download",
                                 Components.interfaces.nsISupportsString);
+
+        this._libraryServicePane = 
+          Components.classes['@songbirdnest.com/servicepane/library;1']
+          .getService(Components.interfaces.sbILibraryServicePaneService);
       },
       onEnumerationEnd: function() { },
       onEnumeratedItem: function(list, item) {
@@ -479,6 +483,25 @@ addToPlaylistHelper.prototype = {
         // interrogate the policy on each playlist to see if it should be
         // put in this menu
         if (item.guid == this._downloadListGUID) {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
+        
+        // XXXlone also prevent playlists that do not have a corresponding node in
+        // the service pane from appearing (or those whose node, or parent nodes are
+        // hidden). This filters out remote playlists, as well as 'utility' extension 
+        // playlists. This should be a fairly good test for discriminating which 
+        // playlists are useful as sento targets, since it mirror the user's ability 
+        // to drag and drop to them. Eventually this should be fixed by testing the 
+        // policy on the playlist once we close bug 4017.
+        function isHidden(node) {
+          while (node) {
+            if (node.hidden) return true;
+            node = node.parentNode;
+          }
+          return false;
+        }
+        var node = this._libraryServicePane.getNodeForLibraryResource(item);
+        if (!node || isHidden(node)) {
           return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
         }
 
