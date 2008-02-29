@@ -574,6 +574,18 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                    stringBundle, PR_TRUE, PR_FALSE, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Origin Library Guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Origin Item Guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Download destination
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
                    NS_LITERAL_STRING("property.destination"),
