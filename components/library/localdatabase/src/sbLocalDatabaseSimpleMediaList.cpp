@@ -356,11 +356,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
                                              getter_AddRefs(newItems));
     NS_ENSURE_SUCCESS(rv, rv);
 
-#ifdef DEBUG
     PRUint32 newItemCount;
     rv = newItems->GetLength(&newItemCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef DEBUG
     NS_ASSERTION(newItemCount == oldItemCount,
                  "BatchCreateMediaItems didn't make the right number of items!");
 #endif
