@@ -1,0 +1,25 @@
+Index: widget/src/cocoa/nsMenuX.mm
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/cocoa/nsMenuX.mm,v
+retrieving revision 1.62
+diff -u -8 -r1.62 nsMenuX.mm
+--- widget/src/cocoa/nsMenuX.mm	20 Feb 2008 23:47:05 -0000	1.62
++++ widget/src/cocoa/nsMenuX.mm	29 Feb 2008 19:59:34 -0000
+@@ -105,16 +105,17 @@
+ 
+ 
+ nsMenuX::~nsMenuX()
+ {
+   NS_OBJC_BEGIN_TRY_ABORT_BLOCK;
+ 
+   RemoveAll();
+ 
++  [mMacMenu setDelegate:nil];
+   [mMacMenu release];
+   [mMenuDelegate release];
+   [mNativeMenuItem release];
+ 
+   // alert the change notifier we don't care no more
+   if (mMenuContent)
+     mMenuBar->UnregisterForContentChanges(mMenuContent);
+ 
