@@ -385,7 +385,12 @@ var DPW = {
    */
 
   _deviceCancelOperations: function DPW__deviceCancelOperations() {
-    dump("Cancelling device operations.\n");
+    try {
+      this._device.cancelRequests();
+    } catch (e) {
+      dump("Error: " + e);
+      Cu.reportError("Error occurred when canceling requests: " + e);
+    }
   },
 
 
