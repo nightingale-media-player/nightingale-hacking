@@ -136,8 +136,8 @@ function runTest () {
     mediaItemIndex = list.indexOf(mediaItem);
   } catch (e) {
     indexOfException3 = e;
+    assertEqual(indexOfException3.result, Cr.NS_ERROR_INVALID_ARG);
   }
-  assertEqual(indexOfException3.result, Cr.NS_ERROR_INVALID_ARG);
 
   mediaItemIndex = list.lastIndexOf(mediaItem, 0);
   assertEqual(mediaItemIndex, 8);
