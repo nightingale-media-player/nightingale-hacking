@@ -43,7 +43,7 @@ function openURL(url) {
                       .getService(Components.interfaces.nsIWindowMediator);
   var mainWin = wm.getMostRecentWindow("Songbird:Main");
   if (mainWin && mainWin.window && mainWin.window.gBrowser) {
-    mainWin.window.gBrowser.loadURI(url);
+    mainWin.window.gBrowser.loadURI(url, null, null, null, "_blank");
     mainWin.focus();
     return;
   }
