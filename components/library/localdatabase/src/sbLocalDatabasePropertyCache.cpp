@@ -73,7 +73,7 @@ static PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 /**
  * \brief Number of milliseconds after the last write to force a cache write
  */
-#define SB_LOCALDATABASE_CACHE_FLUSH_DELAY (500)
+#define SB_LOCALDATABASE_CACHE_FLUSH_DELAY (1000)
 
 #define CACHE_HASHTABLE_SIZE 1000
 #define BAG_HASHTABLE_SIZE   50
@@ -798,10 +798,6 @@ sbLocalDatabasePropertyCache::Write()
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-      rv = query->WaitForCompletion(&dbOk);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
       mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
 
       mUnflushedQueries.RemoveElementAt(0);
@@ -963,10 +959,6 @@ sbLocalDatabasePropertyCache::Write()
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-      rv = query->WaitForCompletion(&dbOk);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
       mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
 
       mUnflushedQueries.RemoveElementAt(0);
@@ -1110,10 +1102,6 @@ sbLocalDatabasePropertyCache::LoadProperties()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1242,10 +1230,6 @@ sbLocalDatabasePropertyCache::InsertPropertyIDInLibrary(const nsAString& aProper
 
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
-  rv = query->WaitForCompletion(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 

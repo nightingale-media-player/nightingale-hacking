@@ -859,6 +859,7 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 {
   //Query is null, bail.
   if(!pQuery) {
+    NS_WARNING("A null queury was submitted to the database engine");
     return 1;
   }
 
@@ -881,8 +882,12 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
   nsresult rv = pThread->PushQueryToQueue(pQuery);
   NS_ENSURE_SUCCESS(rv, 1);
 
+  PR_Lock(pQuery->m_StateLock);
   pQuery->m_IsExecuting = PR_TRUE;
-  pThread->NotifyQueue();
+  PR_Unlock(pQuery->m_StateLock);
+
+  rv = pThread->NotifyQueue();
+  NS_ENSURE_SUCCESS(rv, 1);
 
   PRBool bAsyncQuery = PR_FALSE;
   pQuery->IsAyncQuery(&bAsyncQuery);
@@ -895,12 +900,6 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 
   return result;
 } //SubmitQueryPrivate
-
-//-----------------------------------------------------------------------------
-PRBool CDatabaseEngine::HasThreadForGUID(const nsAString & aGUID)
-{
-  return m_ThreadPool.Get(nsAutoString(aGUID), nsnull);
-}
 
 //-----------------------------------------------------------------------------
 already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDatabaseQuery *pQuery,
@@ -1110,6 +1109,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
   if(!pEngine ||
      !pThread ) {
+    NS_WARNING("Called QueryProcessor without an engine or thread!!!!");
     return;
   }
 
@@ -1119,13 +1119,16 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
   {
     pQuery = nsnull;
 
-    { // Enter Monitor
-      PRUint32 queueSize = 0;
 
+    { // Enter Monitor
+      // Wrap any calls that access the pThread.m_Queue because they cause a
+      // context switch between threads and can mess up the link between the
+      // NotifyQueue() call and the Wait() here. See bug 6514 for more details.
+      nsAutoMonitor mon(pThread->m_pQueueMonitor);
+
+      PRUint32 queueSize = 0;
       nsresult rv = pThread->GetQueueSize(queueSize);
       NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
-
-      nsAutoMonitor mon(pThread->m_pQueueMonitor);
 
       while (!queueSize &&
              !pThread->m_Shutdown) {
@@ -1554,18 +1557,18 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 #endif
     }
 
-    PR_Lock(pQuery->m_StateLock);
-    pQuery->m_IsExecuting = PR_FALSE;
-    PR_Unlock(pQuery->m_StateLock);
-    
-    pQuery->m_IsAborting = PR_FALSE;
-
-
     //Whatever happened, the query is done running now.
     {
       nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
 
+      PR_Lock(pQuery->m_StateLock);
+
       pQuery->m_QueryHasCompleted = PR_TRUE;
+      pQuery->m_IsExecuting = PR_FALSE;
+      pQuery->m_IsAborting = PR_FALSE;
+
+      PR_Unlock(pQuery->m_StateLock);
+
       mon.NotifyAll();
 
       LOG(("DBE: Notified query monitor."));
@@ -1934,3 +1937,4 @@ sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
   }
 }
 #endif
+

@@ -110,7 +110,6 @@ protected:
 
   nsresult CloseDB(sqlite3 *pHandle);
 
-  PRBool HasThreadForGUID(const nsAString & aGUID);
   already_AddRefed<QueryProcessorThread> GetThreadByQuery(CDatabaseQuery *pQuery, PRBool bCreate = PR_FALSE);
   already_AddRefed<QueryProcessorThread> CreateThreadFromQuery(CDatabaseQuery *pQuery);
 
@@ -176,7 +175,6 @@ public:
   : m_Shutdown(PR_FALSE)
   , m_IdleTime(0)
   , m_pQueueMonitor(nsnull)
-  , m_pQueueLock(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
   , m_pEngine(nsnull) {
@@ -184,9 +182,6 @@ public:
   }
 
   ~QueryProcessorThread() {
-    if(m_pQueueLock) {
-      PR_DestroyLock(m_pQueueLock);
-    }
 
     if(m_pHandleLock) {
       PR_DestroyLock(m_pHandleLock);
@@ -203,9 +198,6 @@ public:
                 sqlite3 *pHandle) {
     NS_ENSURE_ARG_POINTER(pEngine);
     NS_ENSURE_ARG_POINTER(pHandle);
-
-    m_pQueueLock = PR_NewLock();
-    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_OUT_OF_MEMORY);
 
     m_pHandleLock = PR_NewLock();
     NS_ENSURE_TRUE(m_pHandleLock, NS_ERROR_OUT_OF_MEMORY);
@@ -247,23 +239,10 @@ public:
     return NS_OK;
   }
 
-  nsresult LockQueue() {
-    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_NOT_INITIALIZED);
-    PR_Lock(m_pQueueLock);
-    return NS_OK;
-  }
-
-  nsresult UnlockQueue() {
-    NS_ENSURE_TRUE(m_pQueueLock, NS_ERROR_NOT_INITIALIZED);
-    PR_Unlock(m_pQueueLock);
-    return NS_OK;
-  }
-
   nsresult PushQueryToQueue(CDatabaseQuery *pQuery, PRBool bPushToFront = PR_FALSE) {
     NS_ENSURE_ARG_POINTER(pQuery);
 
-    nsresult rv = LockQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoMonitor mon(m_pQueueMonitor);
 
     CDatabaseQuery **p = nsnull;
 
@@ -275,24 +254,20 @@ public:
 
     NS_ENSURE_TRUE(p, NS_ERROR_OUT_OF_MEMORY);
 
-    return UnlockQueue();
+    return NS_OK;
   }
 
   nsresult PopQueryFromQueue(CDatabaseQuery ** ppQuery) {
     NS_ENSURE_ARG_POINTER(ppQuery);
 
-    nsresult rv = LockQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoMonitor mon(m_pQueueMonitor);
 
     if(m_Queue.Length()) {
       *ppQuery = m_Queue[0];
       m_Queue.RemoveElementAt(0);
 
-      return UnlockQueue();
+      return NS_OK;
     }
-
-    rv = UnlockQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_ERROR_NOT_AVAILABLE;
   }
@@ -300,16 +275,10 @@ public:
   nsresult GetQueueSize(PRUint32 &aSize) {
     aSize = 0;
     
-    nsresult rv = LockQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    nsAutoMonitor mon(m_pQueueMonitor);
     aSize = m_Queue.Length();
 
-    return UnlockQueue();
-  }
-
-  threadqueue_t * GetQueue() {
-    return &m_Queue;
+    return NS_OK;
   }
 
   nsresult NotifyQueue() {
@@ -322,8 +291,7 @@ public:
   }
 
   nsresult ClearQueue() {
-    nsresult rv = LockQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoMonitor mon(m_pQueueMonitor);
 
     threadqueue_t::size_type current = 0;
     threadqueue_t::size_type length = m_Queue.Length();
@@ -341,7 +309,7 @@ public:
 
     m_Queue.Clear();
 
-    return UnlockQueue();
+    return NS_OK;
   }
 
   nsresult PrepareForShutdown() {
@@ -370,8 +338,6 @@ protected:
   sqlite3*      m_pHandle;
 
   PRMonitor *   m_pQueueMonitor;
-
-  PRLock *      m_pQueueLock;
   threadqueue_t m_Queue;
 };
 

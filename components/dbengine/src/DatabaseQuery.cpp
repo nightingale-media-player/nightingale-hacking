@@ -33,6 +33,7 @@
 #include "DatabaseQuery.h"
 #include "DatabaseEngine.h"
 
+#include <prlog.h>
 #include <prmem.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsXPCOM.h>
@@ -54,6 +55,12 @@
 #endif
 
 #define DATABASEQUERY_MAX_WAIT_TIME (50)
+
+#ifdef PR_LOGGING
+static PRLogModuleInfo* sDatabaseQueryLog = nsnull;
+#define LOG(args)   PR_LOG(sDatabaseQueryLog, PR_LOG_ALWAYS, args)
+#endif
+
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -144,6 +151,12 @@ CDatabaseQuery::CDatabaseQuery()
 
   m_PersistentCallbackList.Init();
   m_CallbackList.Init();
+
+#ifdef PR_LOGGING
+  if (!sDatabaseQueryLog)
+    sDatabaseQueryLog = PR_NewLogModule("sbDatabaseQuery");
+#endif
+
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -498,6 +511,17 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   //          What happens when one thread resets the query and another tries
   //          to read the query results? Maybe we could just switch the order.
   // XXXAus - This is ok by design.
+
+  // Make sure we're not running
+  nsAutoMonitor mon(m_pQueryRunningMonitor);
+
+  // These should be in sync, but just in case
+  NS_ASSERTION( !m_IsExecuting, "Resetting a query that is executing!!!!!");
+  NS_ASSERTION( m_QueryHasCompleted, "Resetting a query that is not complete!!!!!");
+
+  // Make sure no-one is touching m_IsExecuting
+  PR_Lock(m_StateLock);
+
   PR_Lock(m_pDatabaseQueryListLock);
   m_DatabaseQueryList.clear();
   PR_Unlock(m_pDatabaseQueryListLock);
@@ -517,6 +541,8 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   m_RollingLimitColumnIndex = 0;
   m_RollingLimitResult = 0;
   PR_Unlock(m_pRollingLimitLock);
+
+  PR_Unlock(m_StateLock);
 
   return NS_OK;
 }
@@ -583,6 +609,7 @@ NS_IMETHODIMP CDatabaseQuery::SetLastError(PRInt32 dbError)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 {
+  LOG(("DBQ:[0x%x] Execute - ENTRY POINT", this));
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = 1;
 
@@ -591,16 +618,21 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
     m_QueryHasCompleted = PR_FALSE;
   }
 
+  // Will re-enter back to WaitForCompletion and wait if Sync Query
+  //   returns failure only if shutting down
+  //   retval is 1 if an error
+  //             0 if successful OR already running
   nsresult rv = mDatabaseEngine->SubmitQuery(this, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(*_retval != 0)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
-
     m_QueryHasCompleted = PR_TRUE;
     mon.NotifyAll();
   }
+
+  LOG(("DBQ:[0x%x] Execute - EXIT POINT\n\n", this));
 
   return NS_OK;
 } //Execute
@@ -611,8 +643,11 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
-    while (!m_QueryHasCompleted)
+    while (!m_QueryHasCompleted) {
       mon.Wait( PR_MillisecondsToInterval(DATABASEQUERY_MAX_WAIT_TIME) );
+    }
+
+    NS_ASSERTION( !m_IsExecuting, "Query marked completed but still executing.");
   }
   *_retval = NS_OK;
   return NS_OK;
@@ -689,7 +724,10 @@ NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
   {
     PRInt32 nWaitResult = 0;
 
+    PR_Lock(m_StateLock);
     m_IsAborting = PR_TRUE;
+    PR_Unlock(m_StateLock);
+
     WaitForCompletion(&nWaitResult);
 
     *_retval = PR_TRUE;
