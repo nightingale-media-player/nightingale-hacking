@@ -59,6 +59,10 @@
 #define SB_PROPERTY_ORIGINPAGE                "http://songbirdnest.com/data/1.0#originPage"
 #define SB_PROPERTY_ORIGINPAGEIMAGE           "http://songbirdnest.com/data/1.0#originPageImage"
 #define SB_PROPERTY_ORIGINPAGETITLE           "http://songbirdnest.com/data/1.0#originPageTitle"
+/* for items copied from other libraries, the library it came from */
+#define SB_PROPERTY_ORIGINLIBRARYGUID         "http://songbirdnest.com/data/1.0#originLibraryGuid"
+/* for items copied from other libraries, the original item's guid */
+#define SB_PROPERTY_ORIGINITEMGUID            "http://songbirdnest.com/data/1.0#originItemGuid"
 #define SB_PROPERTY_GUID                      "http://songbirdnest.com/data/1.0#GUID"
 #define SB_PROPERTY_HIDDEN                    "http://songbirdnest.com/data/1.0#hidden"
 #define SB_PROPERTY_ISLIST                    "http://songbirdnest.com/data/1.0#isList"
