@@ -1,3 +1,4 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -43,6 +44,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbMediaListEnumSingleItemHelper.h"
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
@@ -180,12 +182,68 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   PRBool sameLibrary;
   rv = itemLibrary->Equals(mListLibrary, &sameLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString listLibGuid;
+  rv = mListLibrary->GetGuid(listLibGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool success;
+  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
   if (!sameLibrary && !mItemsToCreate.Get(aMediaItem, nsnull)) {
     // This item comes from another library so we'll need to add it to our
     // library before it can be used.
-    success = mItemsToCreate.Put(aMediaItem, nsnull);
+    
+    // but first check if we have an existing item that is close enough
+    nsString originLibGuid, originItemGuid;
+    rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (originLibGuid.IsEmpty()) {
+      rv = itemLibrary->GetGuid(originLibGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
+    // check if we have an item that originated from the same item
+    rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (originItemGuid.IsEmpty()) {
+      rv = aMediaItem->GetGuid(originItemGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    nsCOMPtr<sbIMediaItem> foundItem;
+    // if the origin library is this library, just look for the item
+    if (listLibGuid.Equals(originLibGuid)) {
+      // the origin item was from this library
+      rv = mListLibrary->GetMediaItem(originItemGuid, getter_AddRefs(foundItem));
+      if (NS_FAILED(rv)) {
+        // didn't find it
+        foundItem = nsnull;
+      }
+    } else {
+      nsCOMPtr<sbIMutablePropertyArray> originGuidArray =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = originGuidArray->AppendProperty(PROP_LIBRARY, originLibGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = originGuidArray->AppendProperty(PROP_ITEM, originItemGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    
+      nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
+        new sbMediaListEnumSingleItemHelper();
+      NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
+      
+      rv = mListLibrary->EnumerateItemsByProperties(originGuidArray,
+                                                    guidCheckHelper,
+                                                    sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+    
+      foundItem = guidCheckHelper->GetItem(); /* null if not found */
+    }
+    
+    success = mItemsToCreate.Put(aMediaItem, foundItem);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
 
@@ -239,11 +297,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 itemCount;
-    rv = oldItems->GetLength(&itemCount);
+    PRUint32 oldItemCount;
+    rv = oldItems->GetLength(&oldItemCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    for (PRUint32 i = 0; i < itemCount; i++) {
+    for (PRUint32 i = 0; i < oldItemCount; i++) {
       nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(oldItems, i, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -255,7 +313,38 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       rv = mFriendList->GetFilteredPropertiesForNewItem(properties,
                                                         getter_AddRefs(filteredProperties));
       NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+        do_QueryInterface(filteredProperties, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
+      // keep track of the library/item guid that we just copied from
+      NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+      NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+      nsString existingGuid, sourceGuid;
+      
+      rv = filteredProperties->GetPropertyValue(PROP_LIBRARY, existingGuid);
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        nsCOMPtr<sbILibrary> oldLibrary;
+        rv = item->GetLibrary(getter_AddRefs(oldLibrary));
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        rv = oldLibrary->GetGuid(sourceGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      
+      rv = filteredProperties->GetPropertyValue(PROP_ITEM, existingGuid);
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        rv = item->GetGuid(sourceGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      
       rv = propertyArrayArray->AppendElement(filteredProperties, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -272,11 +361,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     rv = newItems->GetLength(&newItemCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ASSERTION(newItemCount == itemsToCreateCount,
+    NS_ASSERTION(newItemCount == oldItemCount,
                  "BatchCreateMediaItems didn't make the right number of items!");
 #endif
 
-    for (PRUint32 index = 0; index < itemsToCreateCount; index++) {
+    for (PRUint32 index = 0; index < newItemCount; index++) {
       nsCOMPtr<sbIMediaItem> oldItem = do_QueryElementAt(oldItems, index, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -377,6 +466,13 @@ sbSimpleMediaListInsertingEnumerationListener::AddURIsToArrayCallback(nsISupport
   NS_ASSERTION(pointers, "This can't be null!");
 
   nsresult rv;
+  
+  if (aEntry) {
+    // the item already exists, we don't need to create it
+    // (e.g. we found it via the originLibraryGuid/originItemGUID properties)
+    return PL_DHASH_NEXT;
+  }
+  
   nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(aKey, &rv);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 

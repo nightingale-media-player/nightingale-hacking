@@ -51,6 +51,7 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseMediaListView.cpp \
            sbLocalDatabaseMediaListViewState.cpp \
            sbDatabaseResultStringEnumerator.cpp \
+           sbMediaListEnumSingleItemHelper.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/dbengine/public \

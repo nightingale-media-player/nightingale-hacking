@@ -1,3 +1,4 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -82,6 +83,7 @@
 #include "sbLocalDatabaseSchemaInfo.h"
 #include "sbLocalDatabaseSmartMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbMediaListEnumSingleItemHelper.h"
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
@@ -1334,6 +1336,37 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    // keep track of the library/item guid that we just copied from
+    NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+    NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+    nsString existingGuid, sourceGuid;
+    
+    nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+      do_QueryInterface(properties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->GetPropertyValue(PROP_LIBRARY, existingGuid);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      nsCOMPtr<sbILibrary> oldLibrary;
+      rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = oldLibrary->GetGuid(sourceGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
+    rv = properties->GetPropertyValue(PROP_ITEM, existingGuid);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      rv = aMediaItem->GetGuid(sourceGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     // CreateMediaItem usually notify listeners that an item was added to the
     // media list. That's not what we want in this case because our callers
     // (Add and OnEnumeratedItem) will notify instead.
@@ -3269,6 +3302,65 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (equals) {
+    return NS_OK;
+  }
+  
+  // check if this has already been copied over before
+  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+
+  nsString originLibGuid, originItemGuid;
+
+  rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (originLibGuid.IsEmpty()) {
+    rv = itemLibrary->GetGuid(originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (originItemGuid.IsEmpty()) {
+    rv = aMediaItem->GetGuid(originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  nsCOMPtr<sbIMediaItem> existingItem;
+  if (originLibGuid.Equals(mGuid)) {
+    // the item originally came from this library, look for it
+    rv = this->GetMediaItem(originItemGuid, getter_AddRefs(existingItem));
+    if (NS_FAILED(rv)) {
+      // didn't find it
+      existingItem = nsnull;
+    }
+  } else {
+    // the item is foreign, look for another item that was also copied from the
+    // same place
+    nsCOMPtr<sbIMutablePropertyArray> originGuidArray =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = originGuidArray->AppendProperty(PROP_LIBRARY, originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = originGuidArray->AppendProperty(PROP_ITEM, originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
+      new sbMediaListEnumSingleItemHelper();
+    NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
+    
+    rv = this->EnumerateItemsByProperties(originGuidArray,
+                                          guidCheckHelper,
+                                          ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    existingItem = guidCheckHelper->GetItem();
+  }
+  
+  if (existingItem) {
+    // we have an existing item in this library that claims to have been copied
+    // from the given media item; don't re-do the copy.
     return NS_OK;
   }
 

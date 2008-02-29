@@ -32,104 +32,114 @@ function runTest () {
 
   var one = createLibrary("multilibrary_one");
   one.clear();
-  assertTrue(one.length == 0);
+  assertEqual(one.length, 0);
 
   var two = createLibrary("multilibrary_two");
   two.clear();
-  assertTrue(two.length == 0);
+  assertEqual(two.length, 0);
 
   var uri = newURI("http://www.poot.com");
 
   var item = one.createMediaItem(uri, null, true);
-  assertTrue(one.length == 1);
+  assertEqual(one.length, 1);
 
   two.add(item);
-  assertTrue(two.length == 1);
+  assertEqual(two.length, 1);
 
   one.clear();
   two.clear();
-  assertTrue(one.length == 0 && two.length == 0);
+  assertEqual(one.length, 0);
+  assertEqual(two.length, 0);
 
   var items = [];
   for (var i = 0; i < 10; i++) {
     items.push(one.createMediaItem(uri, null, true));
   }
-  assertTrue(one.length == 10);
+  assertEqual(one.length, 10);
 
   var enumerator = new SimpleArrayEnumerator(items);
   two.addSome(enumerator);
-  assertTrue(two.length == 10);
+  assertEqual(two.length, 10);
 
   two.clear();
-  assertTrue(two.length == 0);
+  assertEqual(two.length, 0);
 
   var list1 = two.createMediaList("simple");
-  assertTrue(list1.length == 0);
+  assertEqual(list1.length, 0);
 
   var list2 = two.createMediaList("simple");
-  assertTrue(list2.length == 0);
-
-  assertTrue(two.length == 2);
+  assertEqual(list2.length, 0);
+  assertEqual(two.length, 2);
 
   enumerator = new SimpleArrayEnumerator(items);
   list1.addSome(enumerator);
 
-  assertTrue(list1.length == 10);
-  assertTrue(list2.length == 0);
-  assertEqual(two.length, 12);
+  assertEqual(list1.length, 10);
+  assertEqual(list2.length, 0);
+  assertEqual(two.length, 12); // 10 items 2 lists
 
   enumerator = new SimpleArrayEnumerator(items);
+  // adding items that already exist should not give new media items in the library
   list2.addSome(enumerator);
-  assertTrue(list1.length == 10);
-  assertTrue(list2.length == 10);
-  assertTrue(two.length == 22);
+  assertEqual(list1.length, 10);
+  assertEqual(list2.length, 10);
+  assertEqual(two.length, 12);
+  assertNotEqual(list1, list2);
 
   list2.clear();
-  assertTrue(list1.length == 10);
-  assertTrue(list2.length == 0);
-  assertTrue(two.length == 22);
+  assertEqual(list1.length, 10);
+  assertEqual(list2.length, 0);
+  assertEqual(two.length, 12);
+  assertEqual(one.length, 10); // unchanged from before
 
   enumerator = new SimpleArrayEnumerator(items);
   list2.addSome(enumerator);
-  assertTrue(list1.length == 10);
-  assertTrue(list2.length == 10);
-  assertTrue(two.length == 32);
-
-  for(var i = 0; i < 10; i++) {
-    two.remove(list1.getItemByIndex(0));
-  }
-  assertTrue(list1.length == 0);
-  assertTrue(list2.length == 10);
-  assertTrue(two.length == 22);
+  assertEqual(list1.length, 10);
+  assertEqual(list2.length, 10);
+  assertEqual(two.length, 12);
 
   var list3 = one.copyMediaList("simple", list2);
   assertTrue(list3);
   assertEqual(list2.length, list3.length);
   assertEqual(list3.library, one);
+  assertEqual(one.length, 11); // 10 items + 1 list
 
   var list4 = two.copyMediaList("simple", list2);
   assertTrue(list4);
   assertEqual(list2.length, list4.length);
   assertEqual(list4.library, two);
+  assertEqual(two.length, 13);
 
   var list5 = two.copyMediaList("simple", list3);
   assertTrue(list5);
   assertEqual(list3.length, list5.length);
   assertEqual(list5.library, two);
+  assertEqual(two.length, 14);
+
+  two.remove(list3);
+  two.remove(list4);
+  two.remove(list5);
+  assertEqual(list1.length, 10);
+  for(var i = 0; i < 10; i++) {
+    two.remove(list1.getItemByIndex(0));
+  }
+  assertEqual(list1.length, 0);
+  assertEqual(list2.length, 0);
+  assertEqual(two.length, 2);
 
   // test to make sure that the factory doesn't return different library
   // instances for the same database file.
   var libOne = createLibrary("multilibrary_libOne");
   var libTwo = createLibrary("multilibrary_libOne");
-  assertTrue(libOne === libTwo);
+  assertTrue(libOne === libTwo); // same COM identity, not just equivalent
 
   var libOneLength = libOne.length;
-  assertTrue(libOne.length == libTwo.length);
+  assertEqual(libOne.length, libTwo.length);
 
   libOne.createMediaItem(uri);
-  assertTrue(libOneLength != libOne.length);
+  assertNotEqual(libOneLength, libOne.length);
 
-  assertTrue(libOne.length == libTwo.length);
+  assertEqual(libOne.length, libTwo.length);
 
   // Test cross-library adding of media lists
   libTwo = createLibrary("multilibrary_libTwo");
