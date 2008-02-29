@@ -53,6 +53,10 @@ static PRLogModuleInfo* gLocalDatabaseAsyncGUIDArrayLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
+// Shut down the thread after 45 seconds of inactivity
+#define SB_LOCALDATABASE_ASYNCGUIDARRAY_THREAD_TIMEOUT (45)
+
+
 static const char kShutdownMessage[] = "xpcom-shutdown-threads";
 
 NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
@@ -62,8 +66,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
                               nsISupportsWeakReference)
 
 sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
-  mThreadShouldExit(PR_FALSE),
-  mThreadShutDown(PR_FALSE)
+  mThreadShouldExit(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseAsyncGUIDArrayLog) {
@@ -121,6 +124,8 @@ sbLocalDatabaseAsyncGUIDArray::Init()
 nsresult
 sbLocalDatabaseAsyncGUIDArray::InitalizeThread()
 {
+  mThreadShouldExit = PR_FALSE;
+
   nsCOMPtr<nsIRunnable> runnable = new CommandProcessor(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
 
@@ -130,6 +135,8 @@ sbLocalDatabaseAsyncGUIDArray::InitalizeThread()
 nsresult
 sbLocalDatabaseAsyncGUIDArray::ShutdownThread()
 {
+  // Note that the thread may have shut itself down due to inactivity
+
   if (mThread) {
     if (mQueueMonitor) {
       nsAutoMonitor mon(mQueueMonitor);
@@ -142,8 +149,6 @@ sbLocalDatabaseAsyncGUIDArray::ShutdownThread()
     mThread = nsnull;
   }
 
-  mThreadShutDown = PR_TRUE;
-
   return NS_OK;
 }
 
@@ -154,7 +159,6 @@ sbLocalDatabaseAsyncGUIDArray::EnqueueCommand(CommandType aType,
   nsresult rv;
 
   NS_ENSURE_STATE(mAsyncListenerArray.Length());
-  NS_ENSURE_FALSE(mThreadShutDown, NS_ERROR_ABORT);
 
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - EnqueueCommand(%d, %d)",
          this, aType, aIndex));
@@ -729,6 +733,10 @@ CommandProcessor::Run()
 {
   nsresult rv;
 
+  const PRIntervalTime timeout = 
+    PR_SecondsToInterval(SB_LOCALDATABASE_ASYNCGUIDARRAY_THREAD_TIMEOUT);
+
+
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread Start", mFriendArray));
 
   while (PR_TRUE) {
@@ -737,14 +745,43 @@ CommandProcessor::Run()
 
     // Enter the monitor and wait for something to either appear on the queue
     // or for a request to exit.  When something shows up on the queue, pop
-    // it off the top and exit the monitor.
+    // it off the top and exit the monitor.  If we time out without getting 
+    // any work, shut down.
     {
       NS_ENSURE_TRUE(mFriendArray->mQueueMonitor, NS_ERROR_FAILURE);
       nsAutoMonitor mon(mFriendArray->mQueueMonitor);
   
       while (mFriendArray->mQueue.Length() == 0 &&
             !mFriendArray->mThreadShouldExit) {
-        mon.Wait();
+        rv = mon.Wait(timeout);
+        
+        if (NS_FAILED(rv)) {
+          // Another thread had the monitor when we timed out, so
+          // just go back and try again.
+          continue;
+        }
+        
+        if (mFriendArray->mQueue.Length() == 0 &&
+            !mFriendArray->mThreadShouldExit) {
+          // We timed out, and there is nothing in the queue, 
+          // so might as well shut down.
+          nsCOMPtr<nsIThread> doomed;
+          // Try proxying to thread
+          SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD, NS_GET_IID(nsIThread), 
+                mFriendArray->mThread, NS_PROXY_ASYNC, getter_AddRefs(doomed));
+          if (doomed) {
+            TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End Due To Timeout", mFriendArray));
+
+            mFriendArray->mThread = nsnull;
+            mFriendArray->mThreadShouldExit = PR_TRUE;
+            doomed->Shutdown();
+            
+            // Return early to make sure nothing bad happens
+            return NS_OK;
+          } else {
+            NS_WARNING("failed to construct proxy to main thread");
+          }
+        }
       }
 
       if (mFriendArray->mThreadShouldExit) {

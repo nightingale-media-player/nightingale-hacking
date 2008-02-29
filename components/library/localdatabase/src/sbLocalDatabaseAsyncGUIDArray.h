@@ -112,9 +112,6 @@ private:
   // Tell our background thread it should exit
   PRPackedBool mThreadShouldExit;
 
-  // True if the thread has been explictly shut down
-  PRPackedBool mThreadShutDown;
-
   nsresult SendOnGetLength(PRUint32 aLength, nsresult aResult);
   nsresult SendOnGetGuidByIndex(PRUint32 aIndex,
                                 const nsAString& aGUID,

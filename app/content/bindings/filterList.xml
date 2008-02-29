@@ -60,9 +60,6 @@
 <![CDATA[
   if (this._isBound) {
     this.cfs.removeListener(this);
-    while (this.cfs.length) {
-      this.cfs.remove(0);
-    }
   }
 ]]>
       </destructor>
