@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(013dd574-cae2-4f2c-8507-63dcc3ca4035)]
+[scriptable, uuid(4517f0f3-a142-40d8-aed0-1ecf8246efec)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -469,9 +469,9 @@ interface sbIMediaList : sbIMediaItem
                                   [optional] in unsigned short aEnumerationType);
 
   /**
-   * \brief Get the first index of a media item int he list
+   * \brief Get the first index of a media item in the list
    * \param aMediaItem Media item to search for
-   * \param aStartFrom ben write me
+   * \param aStartFrom If specified, the index to start the search from.
    * \return The index that the media item was first found at, or throws
    * NS_ERROR_NOT_AVAILABLE if not found
    */
@@ -486,7 +486,7 @@ interface sbIMediaList : sbIMediaItem
 
   Parameters:
     mediaItem - The <MediaItem> to find.
-    startFrom - The index position at which to start searching. Index starts at 0.
+    startFrom - If specfied, the index position at which to start searching. Index starts at 0.
 
   Returns:
     The index where the <MediaItem> was first found.
@@ -520,7 +520,7 @@ interface sbIMediaList : sbIMediaItem
     <contains()>
   */
   unsigned long indexOf(in sbIMediaItem aMediaItem,
-                        in unsigned long aStartFrom);
+                        [optional] in unsigned long aStartFrom);
 
   /**
    * \brief Get the last index of a media item int he list
