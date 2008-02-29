@@ -24,6 +24,7 @@
 //
 */
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
 
 EXPORTED_SYMBOLS = ["LibraryUtils"];
 
@@ -133,6 +134,18 @@ var LibraryUtils = {
 
   createStandardMediaListView: function(aMediaList, aSearchString) {
     var mediaListView = aMediaList.createView();
+
+    // Get the sort for this list by parsing the list's column spec.  Then hit
+    // the property manager to see if there is a special sort profile for this
+    // ID
+    var parser = new ColumnSpecParser(LibraryUtils.webLibrary, null);
+    if (parser.sortID) {
+      var pm =
+        Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                  .getService(Components.interfaces.sbIPropertyManager);
+      var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
+      mediaListView.setSort(sort);
+    }
     
     // By default, we never want to show lists and hidden 
     // things in the playlist

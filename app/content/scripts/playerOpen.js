@@ -119,8 +119,19 @@ try
         var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                   .getService(Components.interfaces.sbILibraryManager);
 
-        // Display the propery view and play the newly imported item.
-        SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
+        // show the view and play
+
+        var view = LibraryUtils.createStandardMediaListView(libraryManager.mainLibrary);
+
+        var index = view.getIndexForItem(item);
+        
+        // If we have a browser, try to show the view
+        if (window.gBrowser) {
+          gBrowser.showIndexInView(view, index);
+        }
+        
+        // Play the item
+        gPPS.playView(view, index);
       }
     }
   }
@@ -143,7 +154,19 @@ try
       SBDataSetStringValue("metadata.artist", "");
       SBDataSetStringValue("metadata.album", "");
 
-      SBDisplayViewForListAndPlayItem(library, item);
+      // show the view and play
+
+      var view = LibraryUtils.createStandardMediaListView(library);
+
+      var index = view.getIndexForItem(item);
+      
+      // If we have a browser, try to show the view
+      if (window.gBrowser) {
+        gBrowser.showIndexInView(view, index);
+      }
+      
+      // Play the item
+      gPPS.playView(view, index);
     }
   }
 
