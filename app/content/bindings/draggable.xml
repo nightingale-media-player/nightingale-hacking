@@ -39,7 +39,8 @@
         <xul:titlebar sbid="draggable-titlebar" flex="1" 
           onmousedown="onMouseDown();"
           onmouseup="onMouseUp();"
-          onmousemove="onMouseMove();"/>
+          onmousemove="onMouseMove();"
+          ondblclick="onDblClick();"/>
         <xul:vbox mousethrough="always" flex="1">
           <children />
         </xul:vbox>
@@ -113,6 +114,21 @@
           <![CDATA[
             if (this._mMouseIsDown)
               this._mMouseDidDrag = true;
+          ]]>
+        </body>
+      </method>
+      <method name="onDblClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                          .getService(Components.interfaces.nsIPropertyBag2);
+            if ( sysInfo.getProperty("name") == "Darwin" )
+              // Minimize on Mac
+              onMinimize();
+            else
+              // Maximize elsewhere
+              onMaximize();
           ]]>
         </body>
       </method>
