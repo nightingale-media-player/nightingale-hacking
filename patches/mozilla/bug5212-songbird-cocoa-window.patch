@@ -1,11 +1,11 @@
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
-retrieving revision 1.46
-diff -u -8 -r1.46 nsCocoaWindow.h
---- widget/src/cocoa/nsCocoaWindow.h	20 Feb 2008 02:30:24 -0000	1.46
-+++ widget/src/cocoa/nsCocoaWindow.h	23 Feb 2008 22:42:15 -0000
-@@ -94,17 +94,21 @@
+retrieving revision 1.45
+diff -u -8 -p -r1.45 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	19 Dec 2007 19:40:19 -0000	1.45
++++ widget/src/cocoa/nsCocoaWindow.h	1 Mar 2008 00:41:12 -0000
+@@ -94,17 +94,21 @@ class nsChildView;
  
  
  @interface BorderlessWindow : NSWindow
@@ -30,11 +30,11 @@ diff -u -8 -r1.46 nsCocoaWindow.h
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.136
-diff -u -8 -r1.136 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	22 Feb 2008 01:47:14 -0000	1.136
-+++ widget/src/cocoa/nsCocoaWindow.mm	23 Feb 2008 22:42:15 -0000
-@@ -371,20 +371,34 @@
+retrieving revision 1.128
+diff -u -8 -p -r1.128 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	19 Dec 2007 19:40:19 -0000	1.128
++++ widget/src/cocoa/nsCocoaWindow.mm	1 Mar 2008 00:41:12 -0000
+@@ -362,20 +362,34 @@ nsresult nsCocoaWindow::StandardCreate(n
      // Note that we need to check the window type because we mark sheets sheets as 
      // having titlebars.
      if (mWindowType == eWindowType_toplevel &&
@@ -73,7 +73,7 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
      if (mWindowType == eWindowType_popup) {
        [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
        [mWindow setLevel:NSPopUpMenuWindowLevel];
-@@ -403,17 +417,21 @@
+@@ -394,17 +408,21 @@ nsresult nsCocoaWindow::StandardCreate(n
          [mWindow setContentView:newContentView];
        }
      }
@@ -96,12 +96,12 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
      
      mWindowMadeHere = PR_TRUE;
    }
-@@ -2159,8 +2177,213 @@
+@@ -1920,8 +1938,202 @@ void patternDraw(void* aInfo, CGContextR
+ {
+   NSWindow *nativeWindow = [self retain];
    BOOL retval = [super performKeyEquivalent:theEvent];
    [nativeWindow release];
    return retval;
- 
-   NS_OBJC_END_TRY_ABORT_BLOCK_RETURN(NO);
  }
  
  @end
@@ -122,7 +122,6 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
 + * about things like resizing and zooming.
 + *
 + *************************************************************************/
-+
 +
 +@class NSDocumentDragButton, NSButton, NSCell, NSImage, NSString;
 +
@@ -146,9 +145,6 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
 +
 +@end
 +
-+
-+
-+
 +@interface NSTitledFrame : NSFrameView
 +{
 +  int resizeFlags;
@@ -164,9 +160,6 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
 +- (float)_windowTitlebarTitleMinHeight;
 +
 +@end
-+
-+
-+
 +
 +@interface NSThemeFrame : NSTitledFrame
 +{
@@ -190,8 +183,6 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
 ++ (float)_windowTitlebarTitleMinHeight:(unsigned int)fp8;
 +
 +@end
-+
-+
 +
 +
 +// A ThemeFrame with no titlebar or resize indicator,
@@ -246,8 +237,6 @@ diff -u -8 -r1.136 nsCocoaWindow.mm
 +}
 +
 +@end
-+
-+
 +
 +
 +// Create a window that uses our special frame
