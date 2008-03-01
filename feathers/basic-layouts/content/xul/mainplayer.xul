@@ -171,7 +171,7 @@
             Note: this item must have id="status-bar" for Firefox 
             extension compatibility.
       -->
-      <statusbar id="status-bar"/>
+      <statusbar id="status-bar" mousethrough="never"/>
     </vbox>
     <!-- END INNER PLAYER BOX -->
 
