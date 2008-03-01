@@ -210,3 +210,19 @@ progressmeter.sb-player-seek-slider > .progress-bar
 {
   list-style-image: url(chrome://songbird/skin/faceplate/repeat-one.png);
 }
+
+/**
+ * The following rules are there to allow showing the seek buffering animation
+ * when faceplate.buffering is true.
+ */
+sb-player-seek-slider[buffering="true"]
+{
+  background-image: url(chrome://songbird/skin/faceplate/seek-buffering-animation.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+sb-player-seek-slider[buffering="true"] #sb-player-seek-slider
+{
+  display: none;
+}

@@ -219,6 +219,27 @@ StringArrayEnumerator.prototype = {
   }
 };
 
+function DeviceCopyListener(aPlaylistPlayback, aDevice, aItem, aURI) {
+  this._playlistPlayback = aPlaylistPlayback;
+  this._device = aDevice;
+  this._item = aItem;
+  this._uri = aURI;
+}
+
+DeviceCopyListener.prototype = {
+  constructor: DeviceCopyListener,
+  onDeviceEvent: function DeviceCopyListener_onDeviceEvent(aEvent) {
+    if(aEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_END) {
+      var guid = aEvent.data.guid;
+      if(guid == this._item.guid) {
+        this._device.removeEventListener(this);
+        this._playlistPlayback._buffering.boolValue = false;
+        this._playlistPlayback.playURL(this._uri.spec);
+      }
+    }
+  }
+}
+
 /**
  * ----------------------------------------------------------------------------
  * The PlaylistPlayback Component
@@ -317,6 +338,7 @@ PlaylistPlayback.prototype = {
   _playURL:            null,
   _playing:            null,
   _paused:             null,
+  _buffering:          null,
   _seenPlaying:        null,
   _playingVideo:       null,
   _lastVolume:         null,
@@ -397,8 +419,6 @@ PlaylistPlayback.prototype = {
       this.removeCore(core);
     }
     
-    dump(" ******************************\nDEINIT!!!!!\n\n\n\n");
-    
     //XXXAus: Remove temp folders created for playing back media
     // on MTP devices. This will remove all temporary content
     // copied from the device.
@@ -430,9 +450,11 @@ PlaylistPlayback.prototype = {
     this._playURL               = createDataRemote("faceplate.play.url", null);
     // whether the core is playing or not (if the core is paused, it is *also* playing, this remote indicates that the core is not stopped)
     this._playing               = createDataRemote("faceplate.playing", null);
-    // whether the paused or not (if it is paused, it is also playing). 
+    // whether the core is paused or not (if it is paused, it is also playing). 
     this._paused                = createDataRemote("faceplate.paused", null);
-    
+    // whether the core is buffering or not.
+    this._buffering             = createDataRemote("faceplate.buffering", null);
+
     // note:
     // an autoswitching play/pause button should decide upon its state in one of two ways :
     // show_play_button = !playing || paused; show_pause_button = !show_play_button;
@@ -479,6 +501,7 @@ PlaylistPlayback.prototype = {
     this._metadataLen.intValue = 0;
     this._playing.boolValue = false;
     this._paused.boolValue = false;
+    this._buffering.boolValue = false;
     this._seenPlaying.boolValue = false;
     this._playingVideo.boolValue = false;
     this._metadataPosText.stringValue = "0:00";
@@ -513,6 +536,8 @@ PlaylistPlayback.prototype = {
     // And we have to let them go when we are done else all hell breaks loose.
     this._playURL.unbind();
     this._playing.unbind();
+    this._paused.unbind();
+    this._buffering.unbind();
     this._seenPlaying.unbind();
     this._playingVideo.unbind();
     this._volume.unbind();
@@ -1681,8 +1706,10 @@ PlaylistPlayback.prototype = {
         
         LOG("_onPollCompleted - position is not moving.");
         
-        // After 10 seconds, give up and go to the next one?
-        if ( (LOOP_DURATION * this._lookForPlayingCount++) > (10 * 1000) )
+        // After 10 seconds, give up and go to the next one? 
+        // Yes! But only if we are not in a buffering state.
+        if ( (LOOP_DURATION * this._lookForPlayingCount++) > (10 * 1000) &&
+             !this._buffering.boolValue )
           this.next();
       }
       else {
@@ -2181,14 +2208,17 @@ PlaylistPlayback.prototype = {
     requestParams.setPropertyAsInterface("data", tempFileURL.QueryInterface(Ci.nsISupports));
     requestParams.setPropertyAsInterface("item", this._playingItem);
 
+    device.addEventListener(new DeviceCopyListener(this, device, this._playingItem, tempFileURL));
+
     device.submitRequest(Ci.sbIDevice.REQUEST_READ, requestParams);
     if(this._deviceTempDirectoriesForCleanup.indexOf(tempDir) == -1) {
       //Keep a reference to the temp directory around 
       //so we can delete it easily later.
       this._deviceTempDirectoriesForCleanup.push(tempDir);
     }
-    
-    this.playURL(tempFileURL.spec);
+
+    //We are now "buffering" until we are ready to play the item.
+    this._buffering.boolValue = true;
 
     return true;
   },
