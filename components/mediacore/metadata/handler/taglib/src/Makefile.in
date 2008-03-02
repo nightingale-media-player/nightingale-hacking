@@ -73,34 +73,25 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib \
+                           $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib \
                            $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
                               $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
 
-ifeq (macosx,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += libtag \
+                               zlib \
+                               $(NULL)
+else
   DYNAMIC_LIB_EXTRA_IMPORTS += tag \
                                z \
                                $(NULL)
 endif
 
-ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += \
-                          $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag \
-                          $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/libz
-endif
-
-ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += libtag \
-                               zlib \
-                               $(NULL)
-endif
-
 CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
                       $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib \
-                            $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib
                              
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
