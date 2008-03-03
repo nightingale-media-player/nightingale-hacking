@@ -26,7 +26,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Songbird</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Songbird 0.3 For Mac, © 2005-2007 Pioneers of the Inevitable</string>
+	<string>Songbird 0.5 For Mac, © 2005-2008 Pioneers of the Inevitable</string>
 	<key>CFBundleIconFile</key>
 	<string>MacSongbirdInstall.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -38,7 +38,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.2</string>
+	<string>0.5</string>
 	<key>CFBundleSignature</key>
 	<string>POTI</string>
 	<key>CFBundleURLTypes</key>
@@ -73,7 +73,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.2</string>
+	<string>0.5</string>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 </dict>
