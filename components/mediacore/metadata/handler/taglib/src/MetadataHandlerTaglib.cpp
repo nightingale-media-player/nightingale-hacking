@@ -746,7 +746,7 @@ static char *ID3v2Map[][2] =
     { "TPE2", "accompaniment" },
     { "TPE3", "conductor" },
     { "TPE4", "interpreter_remixer" },
-    { "TPOS", "set_collection" },
+    { "TPOS", "disc_no" },
     { "TPUB", "publisher" },
     { "TRCK", "track_no" },
     { "TYER", "year" },
