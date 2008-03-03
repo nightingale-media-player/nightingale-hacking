@@ -146,8 +146,25 @@ const gSearchHandler = {
         var browser = gBrowser.getBrowserForDocument(targetDoc);
          // Append the URI and an appropriate title to the browser data.
         var iconURL = null;
-        if (gBrowser.shouldLoadFavIcon(browser.currentURI))
-          iconURL = browser.currentURI.prePath + "/favicon.ico";
+        if (gBrowser.shouldLoadFavIcon(browser.currentURI)) {
+          var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                                 .getService(Components.interfaces.nsIFaviconService);
+          try {
+            iconURL = faviconService.getFaviconForPage(browser.currentURI).spec;
+            // Favicon URI's are prepended with "moz-anno:favicon:".
+            if(iconURL.indexOf("moz-anno:favicon:") == 0) {
+              iconURL = iconURL.substr(17);
+            }
+          }
+          catch(e) {
+            if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE)
+              Components.utils.reportError(e);
+            
+            //Default to favicon.ico if no favicon is available.
+            iconURL = browser.currentURI.prePath + "/favicon.ico";
+          }
+          
+        }
 
         var hidden = false;
         // If this engine (identified by title) is already in the list, add it
