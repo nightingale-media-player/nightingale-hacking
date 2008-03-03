@@ -139,8 +139,42 @@ sbTestHarness.prototype = {
     }
     this.mTempDownloadFolder = null;
   },
+  
+  // when using NO_EM_RESTART, on first run extension components do not get
+  // registered.  Do that manually in the hopes of things working better
+  _registerExtensionComponents: function() {
+    // NO_EM_RESTART has been removed from the environment at this point, we
+    // can't check for it.
+    
+    var marker = Cc["@mozilla.org/file/directory_service;1"].
+                 getService(Ci.nsIProperties).
+                 get("ProfD", Components.interfaces.nsIFile);
+    marker.append(".autoreg"); // Mozilla component registration marker
+    if (!marker.exists()) {
+      // not first run, things have already registered
+      return;
+    }
+    // NOTE: we do _not_ remove the marker file, we let Mozilla deal with it
+    
+    var compReg = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+    
+    var em = Cc["@mozilla.org/extensions/manager;1"].
+             getService(Ci.nsIExtensionManager);
+    
+    var itemList = em.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+    for each (var item in itemList) {
+      var installLocation = em.getInstallLocation(item.id);
+      var dir = installLocation.getItemLocation(item.id);
+      dir.append("components");
+      if (!dir.exists())
+        continue;
+      compReg.autoRegister(dir);
+    }
+  },
 
   init : function ( aTests ) {
+    this._registerExtensionComponents();
+
     // list of test components and possible test names to run.
     //   e.g. - testcomp:testname+testname,testcomp,testcomp:testname
     if (aTests && aTests != "")
