@@ -669,9 +669,7 @@
     <method name="removeSelectedTracks">
       <body>
 <![CDATA[
-  var mediaListViewTreeView =
-    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
-  mediaListViewTreeView.removeSelectedMediaItems();
+  this.mediaListView.removeSelectedMediaItems();
 ]]>
       </body>
     </method>
@@ -2248,10 +2246,10 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         // we are dragging items from the list, construct the session data
         onDragStart: function(event, xferData, dragAction) {
           try {
-            var treeView = this._self.treeView;
+            var mediaListView = this._self._mediaListView;
 
-            var ml = this._self.mediaListView.mediaList;
-            var numRows = treeView.selectionCount;
+            var ml = mediaListView.mediaList;
+            var numRows = mediaListView.selection.count;
             if (numRows == 0) {
               // Nothing selected, dont drag
               throw this._self._Cr.NS_OK;
@@ -2267,7 +2265,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
             // If only one item is selected, send two flavors
             var self = this;
             if (numRows == 1) {
-              var item = treeView.currentMediaItem;
+              var item = mediaListView.selection.currentMediaItem;
               if (!item) {
                 throw this._self._Cr.NS_OK;
               }
@@ -2293,7 +2291,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
               // as items
 
               // initialize the context to have items
-              var context = this._self._getMultipleItemTransferContext(ml, numRows, treeView);
+              var context = this._self._getMultipleItemTransferContext(ml, numRows, mediaListView);
               context.reset();
 
               var handle = dnd.registerSource(context);
@@ -2538,19 +2536,19 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
       <method name="_getMultipleItemTransferContext">
         <parameter name="ml"/>
         <parameter name="numRows"/>
-        <parameter name="treeView"/>
+        <parameter name="mediaListView"/>
         <body>
 <![CDATA[
-  function sbMultipleItemTransferContext(ml, numRows, treeView) {
-    this.items     = null;
-    this.source    = ml;
-    this.count     = numRows;
-    this._treeView = treeView;
+  function sbMultipleItemTransferContext(ml, numRows, mediaListView) {
+    this.items          = null;
+    this.source         = ml;
+    this.count          = numRows;
+    this._mediaListView = mediaListView;
   }
   sbMultipleItemTransferContext.prototype = {
     reset: function() {
       // fetch a new enumerator (reset it)
-      this.items = this._treeView.selectedMediaItems;
+      this.items = this._mediaListView.selection.selectedMediaItems;
     },
     QueryInterface : function(iid) {
       if (iid.equals(Components.interfaces.sbIMultipleItemTransferContext) ||
@@ -2559,7 +2557,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
       throw Components.results.NS_NOINTERFACE;
     }
   }
-  return new sbMultipleItemTransferContext(ml, numRows, treeView);
+  return new sbMultipleItemTransferContext(ml, numRows, mediaListView);
 ]]>
         </body>
       </method>

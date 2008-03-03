@@ -58,6 +58,7 @@ class sbILocalDatabaseAsyncGUIDArray;
 class sbLocalDatabaseLibrary;
 class sbLocalDatabaseTreeView;
 class sbLocalDatabaseCascadeFilterSet;
+class sbLocalDatabaseMediaListViewSelection;
 
 class sbLocalDatabaseMediaListView : public nsSupportsWeakReference,
                                      public sbIMediaListView,
@@ -210,6 +211,8 @@ private:
   // If true, changing the sort/search/filter will not update the view array
   // configuration or listener settings
   PRPackedBool mInitializing;
+
+  nsRefPtr<sbLocalDatabaseMediaListViewSelection> mSelection;
 };
 
 class sbMakeSortableStringEnumerator : public nsIStringEnumerator

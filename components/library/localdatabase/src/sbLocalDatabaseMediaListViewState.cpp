@@ -61,12 +61,14 @@ sbLocalDatabaseMediaListViewState::sbLocalDatabaseMediaListViewState() :
 sbLocalDatabaseMediaListViewState::sbLocalDatabaseMediaListViewState(sbIMutablePropertyArray* aSort,
                                                                      sbILibraryConstraint* aSearch,
                                                                      sbILibraryConstraint* aFilter,
+                                                                     sbLocalDatabaseMediaListViewSelectionState* aSelection,
                                                                      sbLocalDatabaseCascadeFilterSetState* aFilterSet,
                                                                      sbLocalDatabaseTreeViewState* aTreeViewState) :
   mInitialized(PR_TRUE),
   mSort(aSort),
   mSearch(aSearch),
   mFilter(aFilter),
+  mSelection(aSelection),
   mFilterSet(aFilterSet),
   mTreeViewState(aTreeViewState)
 {
@@ -101,6 +103,16 @@ sbLocalDatabaseMediaListViewState::GetFilter(sbILibraryConstraint** aFilter)
   NS_ENSURE_ARG_POINTER(aFilter);
 
   NS_IF_ADDREF(*aFilter = mFilter);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListViewState::GetSelection(sbLocalDatabaseMediaListViewSelectionState** aSelection)
+{
+  NS_ENSURE_STATE(mInitialized);
+  NS_ENSURE_ARG_POINTER(aSelection);
+
+  NS_IF_ADDREF(*aSelection = mSelection);
   return NS_OK;
 }
 
@@ -141,9 +153,9 @@ sbLocalDatabaseMediaListViewState::ToString(nsAString& aString)
 
   buff.AppendLiteral(" search: ");
   if (mSearch) {
-  rv = mSearch->ToString(temp);
-  NS_ENSURE_SUCCESS(rv, rv);
-  buff.Append(temp);
+    rv = mSearch->ToString(temp);
+    NS_ENSURE_SUCCESS(rv, rv);
+    buff.Append(temp);
   }
   else {
     buff.AppendLiteral("null");
@@ -151,9 +163,19 @@ sbLocalDatabaseMediaListViewState::ToString(nsAString& aString)
 
   buff.AppendLiteral(" filter: ");
   if (mFilter) {
-  rv = mFilter->ToString(temp);
-  NS_ENSURE_SUCCESS(rv, rv);
-  buff.Append(temp);
+    rv = mFilter->ToString(temp);
+    NS_ENSURE_SUCCESS(rv, rv);
+    buff.Append(temp);
+  }
+  else {
+    buff.AppendLiteral("null");
+  }
+
+  buff.AppendLiteral(" selection: ");
+  if (mSelection) {
+    rv = mSelection->ToString(temp);
+    NS_ENSURE_SUCCESS(rv, rv);
+    buff.Append(temp);
   }
   else {
     buff.AppendLiteral("null");
@@ -190,7 +212,7 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
 
   nsCOMPtr<nsISupports> supports;
 
-  rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));  
+  rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
   mSort = do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -200,10 +222,10 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasSearch) {
-  rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
-  NS_ENSURE_SUCCESS(rv, rv);
-  mSearch = do_QueryInterface(supports, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    mSearch = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   PRBool hasFilter;
@@ -211,11 +233,20 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasFilter) {
-  rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
-  NS_ENSURE_SUCCESS(rv, rv);
-  mFilter = do_QueryInterface(supports, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = aStream->ReadObject(PR_TRUE, getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    mFilter = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  mSelection = new sbLocalDatabaseMediaListViewSelectionState();
+  NS_ENSURE_TRUE(mSelection, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mSelection->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mSelection->Read(aStream);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasFilterSet;
   rv = aStream->ReadBoolean(&hasFilterSet);
@@ -263,8 +294,8 @@ sbLocalDatabaseMediaListViewState::Write(nsIObjectOutputStream* aStream)
   if (mSearch) {
     rv = aStream->WriteBoolean(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
-  rv = aStream->WriteObject(mSearch, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = aStream->WriteObject(mSearch, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     rv = aStream->WriteBoolean(PR_FALSE);
@@ -274,13 +305,16 @@ sbLocalDatabaseMediaListViewState::Write(nsIObjectOutputStream* aStream)
   if (mFilter) {
     rv = aStream->WriteBoolean(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
-  rv = aStream->WriteObject(mFilter, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = aStream->WriteObject(mFilter, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     rv = aStream->WriteBoolean(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = mSelection->Write(aStream);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (mFilterSet) {
     rv = aStream->WriteBoolean(PR_TRUE);

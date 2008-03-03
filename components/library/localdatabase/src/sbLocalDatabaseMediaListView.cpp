@@ -63,8 +63,9 @@
 #include "sbDatabaseResultStringEnumerator.h"
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseCascadeFilterSet.h"
-#include "sbLocalDatabaseMediaListViewState.h"
 #include "sbLocalDatabaseLibrary.h"
+#include "sbLocalDatabaseMediaListViewSelection.h"
+#include "sbLocalDatabaseMediaListViewState.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSchemaInfo.h"
 
@@ -297,11 +298,15 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = mArray->SetFetchSize(1000);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mSelection = new sbLocalDatabaseMediaListViewSelection();
+  NS_ENSURE_TRUE(mSelection, NS_ERROR_OUT_OF_MEMORY);
+
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
   mInitializing = PR_TRUE;
 
+  nsRefPtr<sbLocalDatabaseMediaListViewSelectionState> selectionState;
   if (state) {
     nsCOMPtr<sbIMutablePropertyArray> sort;
     rv = state->GetSort(getter_AddRefs(sort));
@@ -314,6 +319,9 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = state->GetFilter(getter_AddRefs(mViewFilter));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = state->GetSelection(getter_AddRefs(selectionState));
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -334,6 +342,21 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   mInitializing = PR_FALSE;
 
   rv = UpdateListener(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString guid;
+  rv = mMediaList->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseGUIDArray> syncArray =
+    do_QueryInterface(mArray, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mSelection->Init(mLibrary,
+                        guid,
+                        syncArray,
+                        mMediaListId == 0,
+                        selectionState);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateViewArrayConfiguration(PR_FALSE);
@@ -640,6 +663,10 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
   rv = ClonePropertyArray(mViewSort, getter_AddRefs(sort));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsRefPtr<sbLocalDatabaseMediaListViewSelectionState> selectionState;
+  rv = mSelection->GetState(getter_AddRefs(selectionState));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<sbLocalDatabaseCascadeFilterSetState> filterSetState;
   if (mCascadeFilterSet) {
     rv = mCascadeFilterSet->GetState(getter_AddRefs(filterSetState));
@@ -656,6 +683,7 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
     new sbLocalDatabaseMediaListViewState(sort,
                                           mViewSearch,
                                           mViewFilter,
+                                          selectionState,
                                           filterSetState,
                                           treeViewState);
   NS_ENSURE_TRUE(state, NS_ERROR_OUT_OF_MEMORY);
@@ -729,6 +757,43 @@ sbLocalDatabaseMediaListView::RemoveListener(sbIMediaListViewListener* aListener
                    "Attempted to remove a listener that was never added!");
 
   mListenerTable.RemoveEntry(supports);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetSelection(sbIMediaListViewSelection** aSelection)
+{
+  NS_ENSURE_ARG_POINTER(aSelection);
+  NS_IF_ADDREF(*aSelection = mSelection);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
+{
+  nsresult rv;
+
+  PRInt32 currentIndex;
+  rv = mSelection->GetCurrentIndex(&currentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isSelected;
+  rv = mSelection->IsSelected(currentIndex, &isSelected);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> selection;
+  rv = mSelection->GetSelectedMediaItems(getter_AddRefs(selection));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mLibrary->RemoveSelected(selection, this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate current index as its row has been removed
+  if (isSelected) {
+    rv = mSelection->SetCurrentIndex(-1);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -1026,20 +1091,20 @@ sbLocalDatabaseMediaListView::SetFilterConstraint(sbILibraryConstraint* aFilterC
   if (aFilterConstraint) {
     PRUint32 groupCount;
     rv = aFilterConstraint->GetGroupCount(&groupCount);
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < groupCount; i++) {
       nsCOMPtr<sbILibraryConstraintGroup> group;
       rv = aFilterConstraint->GetGroup(i, getter_AddRefs(group));
-    NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIStringEnumerator> properties;
       rv = group->GetProperties(getter_AddRefs(properties));
-    NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       nsString junk;
       rv = properties->GetNext(junk);
-    NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       PRBool HasMore;
       rv = properties->HasMore(&HasMore);
@@ -1047,9 +1112,9 @@ sbLocalDatabaseMediaListView::SetFilterConstraint(sbILibraryConstraint* aFilterC
 
       if (HasMore) {
         return NS_ERROR_INVALID_ARG;
-        }
       }
     }
+  }
 
   mViewFilter = aFilterConstraint;
 
@@ -1059,11 +1124,11 @@ sbLocalDatabaseMediaListView::SetFilterConstraint(sbILibraryConstraint* aFilterC
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-    rv = UpdateViewArrayConfiguration(PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = UpdateViewArrayConfiguration(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // And notify listeners
-    NotifyListenersFilterChanged();
+  // And notify listeners
+  NotifyListenersFilterChanged();
 
   return NS_OK;
 }
@@ -1504,7 +1569,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 
       nsCOMPtr<sbILibraryConstraintGroup> group;
       rv = mViewFilter->GetGroup(i, getter_AddRefs(group));
-  NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIStringEnumerator> properties;
       rv = group->GetProperties(getter_AddRefs(properties));
@@ -1513,7 +1578,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       // XXXsteve We only support one property in a group
       nsString property;
       rv = properties->GetNext(property);
-  NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIStringEnumerator> values;
       rv = group->GetValues(property, getter_AddRefs(values));
@@ -1522,9 +1587,9 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       // Top level properties are not filtered as sortable
       if (!SB_IsTopLevelProperty(property)) {
 
-    nsCOMPtr<sbIPropertyInfo> info;
+        nsCOMPtr<sbIPropertyInfo> info;
         rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
-    NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<nsIStringEnumerator> sortable =
           new sbMakeSortableStringEnumerator(info, values);
@@ -1535,9 +1600,9 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 
       // Set the filter.
       rv = mArray->AddFilter(property, values, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      NS_ENSURE_SUCCESS(rv, rv);
     }
+  }
 
   // Update searches
   // XXXsteve Eventually we should simply pass the library constraint directly
@@ -1555,7 +1620,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 
     nsCOMPtr<nsIStringEnumerator> firstGroupProperties;
     rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool hasMore;
     while (NS_SUCCEEDED(firstGroupProperties->HasMore(&hasMore)) && hasMore) {
@@ -1568,21 +1633,21 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       for (PRUint32 i = 0; i < groupCount; i++) {
         nsCOMPtr<sbILibraryConstraintGroup> group;
         rv = mViewSearch->GetGroup(i, getter_AddRefs(group));
-    NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<nsIStringEnumerator> values;
         rv = group->GetValues(property, getter_AddRefs(values));
-    NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         PRBool hasMoreValues;
         while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
-    nsString value;
+          nsString value;
           rv = values->GetNext(value);
-    NS_ENSURE_SUCCESS(rv, rv);
+          NS_ENSURE_SUCCESS(rv, rv);
 
           nsString* added = allValues.AppendElement(value);
           NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
-    }
+        }
 
         nsCOMPtr<nsIStringEnumerator> allValuesEnum =
           new sbTArrayStringEnumerator(&allValues);
@@ -1593,7 +1658,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 
           nsCOMPtr<sbIPropertyInfo> info;
           rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
-    NS_ENSURE_SUCCESS(rv, rv);
+          NS_ENSURE_SUCCESS(rv, rv);
 
           nsCOMPtr<nsIStringEnumerator> sortable =
             new sbMakeSortableStringEnumerator(info, allValuesEnum);
@@ -1603,8 +1668,8 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
         }
 
         rv = mArray->AddFilter(property, allValuesEnum, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
@@ -1648,15 +1713,6 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
   // If no sort is specified, use the default sort
   if (!hasSorts) {
     mArray->AddSort(mDefaultSortProperty, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (aClearTreeSelection && mTreeView) {
-    nsCOMPtr<nsITreeSelection> selection;
-    rv = mTreeView->GetSelection(getter_AddRefs(selection));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = selection->ClearSelection();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1818,6 +1874,10 @@ sbLocalDatabaseMediaListView::Invalidate()
 
   // Invalidate the view array
   rv = mArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify our selection that things have changed
+  rv = mSelection->ConfigurationChanged();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If we have an active tree view, rebuild it

@@ -33,6 +33,7 @@ SONGBIRD_TEST_COMPONENT = appcontent
 
 SONGBIRD_TESTS = $(srcdir)/head_appcontent.js \
                  $(srcdir)/test_playlist_selection.js \
+                 $(srcdir)/test_view_selection.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

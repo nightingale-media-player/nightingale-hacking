@@ -40,6 +40,7 @@ interface sbIMediaItem;
 interface sbIMediaList;
 interface sbIMediaListView;
 interface sbIMutablePropertyArray;
+interface sbIMediaListViewSelection;
 
 /**
  * \interface sbIMediaListViewState
@@ -47,7 +48,7 @@ interface sbIMutablePropertyArray;
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(3635a8d5-3e36-49ea-9ca3-e8ddad962b34)]
+[scriptable, uuid(bb26d18e-8387-4512-9d99-8ce9b18f929b)]
 interface sbIMediaListViewState : nsISupports
 {
   AString toString();
@@ -204,4 +205,14 @@ interface sbIMediaListView : nsISupports
    * \param aListener The listener instance to remove.
    */
   void removeListener(in sbIMediaListViewListener aListener);
+
+  /**
+   * \brief Get the selection for the view
+   */
+  readonly attribute sbIMediaListViewSelection selection;
+
+  /**
+   * \brief Remove selected items from the view's media list
+   */
+  void removeSelectedMediaItems();
 };

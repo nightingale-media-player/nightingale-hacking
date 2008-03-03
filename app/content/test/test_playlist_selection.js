@@ -244,8 +244,7 @@ function setSort(playlist, property, direction) {
 }
 
 function getSelected(playlist) {
-  var treeView = playlist.tree.view;
-  var enumerator = treeView.selectedMediaItems;
+  var enumerator = playlist.mediaListView.selection.selectedMediaItems;
   var selected = [];
   while (enumerator.hasMoreElements()) {
     selected.push(enumerator.getNext().mediaItem.guid);

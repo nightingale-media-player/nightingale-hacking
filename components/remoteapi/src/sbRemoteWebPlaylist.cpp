@@ -33,14 +33,12 @@
 #include <sbIPropertyManager.h>
 #include <sbIRemoteMediaList.h>
 #include <sbIMediaListView.h>
-#include <sbIMediaListViewTreeView.h>
+#include <sbIMediaListViewSelection.h>
 #include <sbPropertiesCID.h>
 #include <sbIPropertyBuilder.h>
 
 #include <nsAutoPtr.h>
 #include <nsIDOMElement.h>
-#include <nsITreeSelection.h>
-#include <nsITreeView.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -242,15 +240,12 @@ sbRemoteWebPlaylist::GetSelection( nsISimpleEnumerator **aSelection )
   nsresult rv = GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // get to the right view interface
-  nsCOMPtr<nsITreeView> treeView;
-  rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
-  nsCOMPtr<sbIMediaListViewTreeView> view = do_QueryInterface( treeView, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIMediaListViewSelection> viewSelection;
+  rv = mediaListView->GetSelection( getter_AddRefs(viewSelection) );
 
   // get enumeration of selected items
   nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = view->GetSelectedMediaItems( getter_AddRefs(selection) );
+  rv = viewSelection->GetSelectedMediaItems( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // wrap it so it's safe
@@ -276,20 +271,16 @@ sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
   nsresult rv = GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<nsITreeView> treeView;
-  rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCOMPtr<nsITreeSelection> treeSelection;
-  rv = treeView->GetSelection( getter_AddRefs(treeSelection) );
+  nsCOMPtr<sbIMediaListViewSelection> viewSelection;
+  rv = mediaListView->GetSelection( getter_AddRefs(viewSelection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   PRBool isSelected;
-  rv = treeSelection->IsSelected( aIndex, &isSelected );
+  rv = viewSelection->IsSelected( aIndex, &isSelected );
   NS_ENSURE_SUCCESS( rv, rv );
 
   if ( isSelected != aSelected ) {
-    rv = treeSelection->ToggleSelect(aIndex);
+    rv = viewSelection->ToggleSelect(aIndex);
     NS_ENSURE_SUCCESS( rv, rv );
   }
 

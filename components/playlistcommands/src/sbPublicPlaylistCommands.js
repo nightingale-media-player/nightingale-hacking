@@ -837,7 +837,7 @@ function plCmd_Edit_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
     var playlist = unwrap(aContext.playlist);
     if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) ||
-        playlist.mediaListView.treeView.selectionCount > 1 ) {
+        playlist.mediaListView.selection.count > 1 ) {
       // Open the multiple tracks editor for this playlist and its selection
       playlist.onPlaylistEditor();
     } else {
@@ -861,9 +861,9 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
   {
     var playlist = unwrap(aContext.playlist);
     var window = unwrap(aContext.window);
-    if(playlist.treeView.selectionCount) {
+    if(playlist.mediaListView.selection.count) {
       onBrowserTransfer(new SelectionUnwrapper(
-                       playlist.treeView.selectedMediaItems));
+                       playlist.mediaListView.selection.selectedMediaItems));
     }
     else {
       var allItems = {
@@ -901,10 +901,10 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   var mediaList = libraryManager.mainLibrary;
 
   var playlist = unwrap(aContext.playlist);
-  var treeView = playlist.treeView;
-  var selectionCount = treeView.selectionCount;
+  var mediaListView = playlist.mediaListView;
+  var selectionCount = mediaListView.selection.count;
 
-  var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
+  var unwrapper = new SelectionUnwrapper(mediaListView.selectedMediaItems);
 
   var oldLength = mediaList.length;
   mediaList.addSome(unwrapper);

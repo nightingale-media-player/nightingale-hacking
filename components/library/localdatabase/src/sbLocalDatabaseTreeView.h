@@ -27,6 +27,8 @@
 #ifndef __SBLOCALDATABASETREEVIEW_H__
 #define __SBLOCALDATABASETREEVIEW_H__
 
+#include "sbSelectionListUtils.h"
+
 #include <nsIClassInfo.h>
 #include <nsITreeView.h>
 #include <nsITreeSelection.h>
@@ -34,6 +36,7 @@
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseTreeView.h>
 #include <sbIMediaListViewTreeView.h>
+#include <sbIMediaListViewSelection.h>
 #include <sbIPlaylistPlayback.h>
 
 #include <nsCOMPtr.h>
@@ -62,21 +65,23 @@ class sbIPropertyInfo;
 class sbIPropertyManager;
 class sbITreeViewPropertyInfo;
 class sbLocalDatabaseMediaListView;
-
+class sbFilterTreeSelection;
+class sbPlaylistTreeSelection;
 class sbLocalDatabaseTreeViewState;
-
-typedef nsDataHashtable<nsStringHashKey, nsString> sbSelectionList;
 
 class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public nsIClassInfo,
-                                public nsITreeView,
                                 public sbILocalDatabaseAsyncGUIDArrayListener,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
-                                public sbIPlaylistPlaybackListener
+                                public sbIPlaylistPlaybackListener,
+                                public sbIMediaListViewSelectionListener
+
 {
-  friend class sbLocalDatabaseTreeSelection;
+  friend class sbFilterTreeSelection;
+  friend class sbPlaylistTreeSelection;
+
   typedef nsresult (*PR_CALLBACK sbSelectionEnumeratorCallbackFunc)
     (PRUint32 aIndex, const nsAString& aId, const nsAString& aGuid, void* aUserData);
 
@@ -89,6 +94,7 @@ public:
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW
   NS_DECL_SBILOCALDATABASETREEVIEW
   NS_DECL_SBIPLAYLISTPLAYBACKLISTENER
+  NS_DECL_SBIMEDIALISTVIEWSELECTIONLISTENER
 
   sbLocalDatabaseTreeView();
 
@@ -165,23 +171,6 @@ private:
                                           const nsAString& aGuid,
                                           void* aUserData);
 
-  static nsresult PR_CALLBACK
-    SelectionToArrayEnumeratorCallback(PRUint32 aIndex,
-                                       const nsAString& aId,
-                                       const nsAString& aGuid,
-                                       void* aUserData);
-
-  static nsresult PR_CALLBACK
-    SelectionIndexEnumeratorCallback(PRUint32 aIndex,
-                                     const nsAString& aId,
-                                     const nsAString& aGuid,
-                                     void* aUserData);
-
-  static PLDHashOperator PR_CALLBACK
-    CopySelectionListCallback(nsStringHashKey::KeyType aKey,
-                              nsString aEntry,
-                              void* aUserData);
-
   inline PRUint32 TreeToArray(PRInt32 aRow) {
     return (PRUint32) (mFakeAllRow ? aRow - 1 : aRow);
   }
@@ -214,6 +203,7 @@ private:
   // The media list view that this tree view is a view of.  This pointer is
   // set to null when the view is destroyed.
   sbLocalDatabaseMediaListView* mMediaListView;
+  sbIMediaListViewSelection* mViewSelection;
 
   // The async guid array given to us by our view
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
@@ -255,6 +245,9 @@ private:
 
   // Temporary cache of visible rows while refreshing
   nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mDirtyRowCache;
+
+  // Do we manage our selection?  Filters do, playlists don't
+  PRBool mManageSelection;
 
   // Saved list of selected rows and associated guids used to restore selection
   // between rebuilds
@@ -304,76 +297,6 @@ private:
   nsString mLocalizedAll;
 };
 
-class sbLocalDatabaseTreeSelection : public nsITreeSelection
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSITREESELECTION
-
-  sbLocalDatabaseTreeSelection(nsITreeSelection* aSelection,
-                               sbLocalDatabaseTreeView* mTreeView,
-                               PRBool mAllRow);
-
-private:
-  nsresult CheckIsSelectAll(PRBool* _retval = nsnull);
-  PRBool RangeIncludesNotCachedPage(PRUint32 startIndex, PRUint32 endIndex);
-
-  nsCOMPtr<nsITreeSelection> mSelection;
-
-  // A pointer to the friend sbLocalDatabaseTreeView class.  This class keeps
-  // a strong reference to this class so this pointer will never be invalid.
-  sbLocalDatabaseTreeView* mTreeView;
-
-  // Include an all row in this selection.  When this is true, the first row
-  // (the "all" row) will remain selected when nothing else is selected.
-  PRBool mAllRow;
-};
-
-class sbGUIDArrayToIndexedMediaItemEnumerator : public nsISimpleEnumerator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISIMPLEENUMERATOR
-
-  sbGUIDArrayToIndexedMediaItemEnumerator(sbILibrary* aLibrary);
-
-  nsresult AddGuid(const nsAString& aGuid, PRUint32 aIndex);
-
-private:
-  struct Item {
-    PRUint32 index;
-    nsString guid;
-  };
-
-  nsresult GetNextItem();
-
-  PRBool mInitalized;
-  nsCOMPtr<sbILibrary> mLibrary;
-  nsTArray<Item> mItems;
-  PRUint32 mNextIndex;
-  nsCOMPtr<sbIMediaItem> mNextItem;
-  PRUint32 mNextItemIndex;
-};
-
-class sbIndexedGUIDArrayEnumerator : public nsISimpleEnumerator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISIMPLEENUMERATOR
-
-  sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
-                               sbILocalDatabaseGUIDArray* aArray);
-
-private:
-  nsresult Init();
-
-  nsTArray<nsString> mGUIDArray;
-  nsCOMPtr<sbILibrary> mLibrary;
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
-  PRUint32 mNextIndex;
-  PRBool mInitalized;
-};
-
 class sbLocalDatabaseTreeViewState : public nsISerializable
 {
 friend class sbLocalDatabaseTreeView;
@@ -382,7 +305,7 @@ public:
   NS_DECL_NSISERIALIZABLE
 
   nsresult Init();
-  nsresult ToString(nsAString& aStr); 
+  nsresult ToString(nsAString& aStr);
 
   sbLocalDatabaseTreeViewState();
 
@@ -393,11 +316,6 @@ protected:
 
   PRPackedBool mSelectionIsAll;
 
-private:
-  static PLDHashOperator PR_CALLBACK
-    SerializeSelectionListCallback(nsStringHashKey::KeyType aKey,
-                                   nsString aEntry,
-                                   void* aUserData);
 };
 
 #endif /* __SBLOCALDATABASETREEVIEW_H__ */

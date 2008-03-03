@@ -29,6 +29,7 @@
  */
 
 #include "nsISupports.idl"
+#include "nsITreeView.idl"
 
 interface nsISimpleEnumerator;
 interface nsITreeColumn;
@@ -55,8 +56,8 @@ interface sbIMediaListViewTreeViewObserver : nsISupports
  * \interface sbIMediaListViewTreeView
  * \brief A tree view that views a media list view
  */
-[scriptable, uuid(53b15ff3-e26c-43ce-9edd-120ac083edad)]
-interface sbIMediaListViewTreeView : nsISupports
+[scriptable, uuid(b5ad98fa-15a8-40dd-a3e2-9170a983ffc3)]
+interface sbIMediaListViewTreeView : nsITreeView
 {
   /**
    * \brief Calculates the first row index based on a series of keystrokes.
@@ -80,28 +81,4 @@ interface sbIMediaListViewTreeView : nsISupports
    *        observer must support nsIWeakReference
    */
   attribute sbIMediaListViewTreeViewObserver observer;
-
-  /**
-   * \brief Returns an enumerator of sbIIndexedMediaItems that represents the
-   *        current list of selected rows in the tree.  The enumerator will
-   *        return the items in order.
-   */
-  readonly attribute nsISimpleEnumerator selectedMediaItems;
-
-  /**
-   * \brief Returns the media item corresponding to the currently index of the
-   *        tree, or null if there is no current index
-   */
-  readonly attribute sbIMediaItem currentMediaItem;
-
-  /**
-   * \brief Returns the number of selected items in the tree
-   */
-  readonly attribute unsigned long selectionCount;
-
-  /**
-   * \brief Remove selected items from the view's media list
-   */
-  void removeSelectedMediaItems();
 };
-

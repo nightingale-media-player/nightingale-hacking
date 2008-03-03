@@ -30,6 +30,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseTreeView.h"
+#include "sbLocalDatabaseMediaListViewSelection.h"
 
 #include <sbIMediaListView.h>
 #include <sbILibraryConstraints.h>
@@ -54,6 +55,7 @@ public:
   NS_IMETHOD GetSort(sbIMutablePropertyArray** aSort) = 0;
   NS_IMETHOD GetSearch(sbILibraryConstraint** aSearch) = 0;
   NS_IMETHOD GetFilter(sbILibraryConstraint** aFilter) = 0;
+  NS_IMETHOD GetSelection(sbLocalDatabaseMediaListViewSelectionState** aState) = 0;
   NS_IMETHOD GetFilterSet(sbLocalDatabaseCascadeFilterSetState** aFilterSet) = 0;
   NS_IMETHOD GetTreeViewState(sbLocalDatabaseTreeViewState** aTreeViewState) = 0;
 };
@@ -77,6 +79,7 @@ public:
   NS_IMETHOD GetSort(sbIMutablePropertyArray** aSort);
   NS_IMETHOD GetSearch(sbILibraryConstraint** aSearch);
   NS_IMETHOD GetFilter(sbILibraryConstraint** aFilter);
+  NS_IMETHOD GetSelection(sbLocalDatabaseMediaListViewSelectionState** aState);
   NS_IMETHOD GetFilterSet(sbLocalDatabaseCascadeFilterSetState** aFilterSet);
   NS_IMETHOD GetTreeViewState(sbLocalDatabaseTreeViewState** aTreeViewState);
 
@@ -84,6 +87,7 @@ public:
   sbLocalDatabaseMediaListViewState(sbIMutablePropertyArray* aSort,
                                     sbILibraryConstraint* aSearch,
                                     sbILibraryConstraint* aFilter,
+                                    sbLocalDatabaseMediaListViewSelectionState* aSelection,
                                     sbLocalDatabaseCascadeFilterSetState* aFilterSet,
                                     sbLocalDatabaseTreeViewState* aTreeViewState);
 private:
@@ -91,9 +95,9 @@ private:
   nsCOMPtr<sbIMutablePropertyArray> mSort;
   nsCOMPtr<sbILibraryConstraint> mSearch;
   nsCOMPtr<sbILibraryConstraint> mFilter;
+  nsRefPtr<sbLocalDatabaseMediaListViewSelectionState> mSelection;
   nsRefPtr<sbLocalDatabaseCascadeFilterSetState> mFilterSet;
   nsRefPtr<sbLocalDatabaseTreeViewState> mTreeViewState;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTVIEWSTATE_H__ */
-
