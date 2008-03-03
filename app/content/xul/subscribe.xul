@@ -85,6 +85,8 @@ const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
 const SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
 const SB_PROP_DESTINATION          = SB_NS + "destination"
 
+var subscriptionCreated = false;
+
 function getWindowArguments() {
   // First window argument is a sbIMediaList if we are updating an existing
   // list, otherwise it is null
@@ -213,6 +215,10 @@ function doLoad()
 
 function doOK()
 {
+  // Do nothing if subscription already created
+  if (subscriptionCreated)
+    return true;
+
   // Make sure the folder is valid
   var folder = document.getElementById("subscribe_folder_path").value;
   var localFile;
@@ -296,6 +302,9 @@ function doOK()
     dps.updateList(args.mediaList, uri, interval, localFile);
 
   dps.updateNow(args.mediaList);
+
+  // Indicate that the subscription has been created
+  subscriptionCreated = true;
 
   return true;
 }
