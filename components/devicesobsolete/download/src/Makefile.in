@@ -32,9 +32,11 @@ include $(DEPTH)/build/autodefs.mk
 ifdef DEBUG
 target_name = sbDownloadDevice_d
 devicebase = devicebase_d
+moz_utils = sbMozStringUtils_d
 else
 target_name = sbDownloadDevice
 devicebase = devicebase
+moz_utils = sbMozStringUtils
 endif
 
 CPP_SRCS = DownloadDevice.cpp \
@@ -49,6 +51,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/dom \
@@ -71,7 +74,9 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
 
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devicesobsolete/base/src/$(devicebase)
+DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devicesobsolete/base/src/$(devicebase) \
+                             $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
+
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
