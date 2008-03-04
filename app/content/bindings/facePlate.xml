@@ -532,6 +532,9 @@
         this._albumDataremote = SB_NewDataRemote( "metadata.album", null ); 
         this._albumDataremote.bindObserver( observer, true );
         
+        // Update the UI.
+        this._update();
+
         // Note: Since the UI is updated by dataremotes and not the
         // sbIFaceplatePane we do not bother calling _initPaneInterface.
        ]]>
@@ -550,6 +553,15 @@
           "anonid", "dash_label");</field>
       
       <method name="_onMetadataChange">
+        <body>
+         <![CDATA[ 
+          // Update the UI.
+          this._update();
+         ]]>
+        </body>
+      </method>
+
+      <method name="_update">
         <body>
          <![CDATA[ 
           var title = this._titleDataremote.stringValue;
