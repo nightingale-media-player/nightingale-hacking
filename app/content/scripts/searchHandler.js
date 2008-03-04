@@ -635,6 +635,11 @@ const gSearchHandler = {
    * the state of the current media list view
    */
   _syncSearchBarToMediaPage: function SearchHandler__syncSearchBarToMediaPage() {
+    // if we are not currently showing a view (iem we're showing a web site)
+    // then do not change anything, we want the content of the search bar to
+    // persist
+    var mediaListView = this._getCurrentMediaListView();
+    if (!mediaListView) return;
     
     // Get the search box element
     var searchBar = this.getSearchBar();
@@ -651,7 +656,7 @@ const gSearchHandler = {
     }
 
     // Find out what search is filtering this medialist
-    var queryString = this._getMediaPageSearch();    
+    var queryString = this._getMediaPageSearch();
     searchBar.value = queryString;
   }
 }  // End of gSearchHandler
