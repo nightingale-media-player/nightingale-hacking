@@ -107,11 +107,15 @@ sb-smart-splitter[orient="vertical"][state="collapsed"]
 }
 
 /** When collapsed, show a pointer since it's click to open **/
+splitter:not([orient="vertical"])[state="collapsed"],
+sb-smart-splitter:not([orient="vertical"])[state="collapsed"],
 splitter:not([orient="vertical"])[state="collapsed"] > grippy,
 sb-smart-splitter:not([orient="vertical"])[state="collapsed"] > grippy
 {
   cursor: pointer !important;
 }
+splitter[orient="vertical"][state="collapsed"],
+sb-smart-splitter[orient="vertical"][state="collapsed"],
 splitter[orient="vertical"][state="collapsed"] > grippy,
 sb-smart-splitter[orient="vertical"][state="collapsed"] > grippy
 {
