@@ -863,7 +863,7 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
     var window = unwrap(aContext.window);
     if(playlist.mediaListView.selection.count) {
       onBrowserTransfer(new SelectionUnwrapper(
-                       playlist.mediaListView.selection.selectedMediaItems));
+                       playlist.mediaListView.selection.selectedIndexedMediaItems));
     }
     else {
       var allItems = {
@@ -904,7 +904,7 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   var mediaListView = playlist.mediaListView;
   var selectionCount = mediaListView.selection.count;
 
-  var unwrapper = new SelectionUnwrapper(mediaListView.selectedMediaItems);
+  var unwrapper = new SelectionUnwrapper(mediaListView.selectedIndexedMediaItems);
 
   var oldLength = mediaList.length;
   mediaList.addSome(unwrapper);

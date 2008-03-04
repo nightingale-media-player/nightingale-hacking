@@ -50,28 +50,34 @@ function runTest () {
   assertEqual(item, null);
 
   selection.select(0);
-  assertTrue(selection.isSelected(0));
+  assertTrue(selection.isIndexSelected(0));
   assertEqual(selection.count, 1);
 
   selection.select(1);
-  assertFalse(selection.isSelected(0));
-  assertTrue(selection.isSelected(1));
+  assertTrue(selection.isIndexSelected(0));
+  assertTrue(selection.isIndexSelected(1));
+  assertEqual(selection.count, 2);
+
+  selection.toggle(0);
+  assertFalse(selection.isIndexSelected(0));
   assertEqual(selection.count, 1);
 
-  selection.toggleSelect(0);
-  assertTrue(selection.isSelected(0));
-  assertEqual(selection.count, 2);
-
-  selection.rangedSelect(3, 5, true);
-  assertEqual(selection.count, 5);
+  selection.selectRange(3, 5);
+  assertEqual(selection.count, 4);
 
   selection.clearRange(1, 4);
-  assertEqual(selection.count, 2);
+  assertEqual(selection.count, 1);
 
-  selection.clearSelection();
+  selection.selectNone();
   assertEqual(selection.count, 0);
 
   selection.selectAll();
+  assertEqual(selection.count, library.length);
+
+  selection.clear(3);
+  assertEqual(selection.count, library.length - 1);
+
+  selection.select(3);
   assertEqual(selection.count, library.length);
 
   // Test notifications
@@ -111,10 +117,11 @@ function runTest () {
   items.push(library.getItemByIndex(20));
   items.push(library.getItemByIndex(21));
 
+  selection.selectNone();
   selection.select(2);
-  selection.toggleSelect(10);
-  selection.toggleSelect(20);
-  selection.toggleSelect(21);
+  selection.toggle(10);
+  selection.toggle(20);
+  selection.toggle(21);
 
   assertSelectedItems(selection, items);
 
@@ -128,7 +135,7 @@ function runTest () {
 
   // all but one
   allItems.splice(10, 1);
-  selection.toggleSelect(10);
+  selection.toggle(10);
   assertSelectedItems(selection, allItems);
 
   // all but a range
@@ -145,7 +152,7 @@ function assertSelectedItems(selection, items) {
     allGuids[items[i].guid] = 1;
   }
 
-  var allItems = selection.selectedMediaItems;
+  var allItems = selection.selectedIndexedMediaItems;
   var count = 0;
   while(allItems.hasMoreElements()) {
     var item = allItems.getNext().mediaItem;

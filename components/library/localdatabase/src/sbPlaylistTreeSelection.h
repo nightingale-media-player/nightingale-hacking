@@ -51,6 +51,8 @@ private:
   // the view selection
   sbIMediaListViewSelection* mViewSelection;
   sbLocalDatabaseTreeView* mTreeView;
+
+  PRInt32 mShiftSelectPivot;
 };
 
 #endif /* __SBPLAYLISTTREESELECTION_H__ */

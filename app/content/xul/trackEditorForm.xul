@@ -193,10 +193,9 @@
   {
     if (!playlist) { setTimeout("loadSelection();", 0); return; }
     var _guids = Array();
-    if (playlist && playlist.mediaListView &&
-        playlist.mediaListView.selection.selectedMediaItems) 
+    if (playlist && playlist.mediaListView) 
     {
-      var items = playlist.mediaListView.selection.selectedMediaItems;
+      var items = playlist.mediaListView.selection.selectedIndexedMediaItems;
       while (items.hasMoreElements()) {
         var item = items.getNext().mediaItem;
         if (item) _guids.push(item.guid);

@@ -86,7 +86,6 @@ private:
   sbSelectionList mSelection;
   PRBool mSelectionIsAll;
   PRInt32 mCurrentIndex;
-  PRInt32 mShiftSelectPivot;
 
   nsCOMPtr<sbILibrary> mLibrary;
   nsString mListGUID;
@@ -98,6 +97,37 @@ private:
 
   PRUint32 mLength;
   PRBool mSelectionNotificationsSuppressed;
+};
+
+/**
+ * \brief Use scope to manage the notifications suppressed flag on the
+ *        view selection so it does not accidentally remain set.
+ */
+class sbAutoSelectNotificationsSuppressed
+{
+public:
+  sbAutoSelectNotificationsSuppressed(sbIMediaListViewSelection* aSelection) :
+    mSelection(aSelection)
+  {
+    NS_ASSERTION(aSelection, "aSelection is null");
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectionNotificationsSuppressed(PR_TRUE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set");
+  }
+
+  ~sbAutoSelectNotificationsSuppressed()
+  {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectionNotificationsSuppressed(PR_FALSE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unset");
+  }
+
+private:
+  sbIMediaListViewSelection* mSelection;
 };
 
 class sbLocalDatabaseMediaListViewSelectionState : public nsISerializable
@@ -113,7 +143,6 @@ public:
   sbLocalDatabaseMediaListViewSelectionState();
 
 protected:
-  PRInt32 mShiftSelectPivot;
   PRInt32 mCurrentIndex;
   sbSelectionList mSelectionList;
   PRBool mSelectionIsAll;

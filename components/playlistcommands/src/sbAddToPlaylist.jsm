@@ -581,7 +581,7 @@ addToPlaylistHelper.prototype = {
     if (medialist) {
 
       var oldLength = medialist.length;
-      var selection = sourceplaylist.mediaListView.selection.selectedMediaItems;
+      var selection = sourceplaylist.mediaListView.selection.selectedIndexedMediaItems;
 
       // Create an enumerator that wraps the enumerator we were handed since
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain

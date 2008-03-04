@@ -76,17 +76,11 @@ interface sbIMediaListViewSelection : nsISupports
   readonly attribute sbIMediaItem currentMediaItem;
 
   /**
-   * \brief The shift select pivot keeps the index from which the next
-   *        selection range should start on a selection augmentation
-   */
-  readonly attribute long shiftSelectPivot;
-
-  /**
    * \brief Indicates whether or not if the item at the specified index
    *        is part of the selection
    * \param aIndex Index of the item in the view
    */
-  boolean isSelected(in long aIndex);
+  boolean isIndexSelected(in long aIndex);
 
   /**
    * \brief Get an enumerator of all the selected media items.  The elements
@@ -94,10 +88,10 @@ interface sbIMediaListViewSelection : nsISupports
    *        allows the consumer of the enumerator to know the item and the
    *        index of the item.
    */
-  readonly attribute nsISimpleEnumerator selectedMediaItems;
+  readonly attribute nsISimpleEnumerator selectedIndexedMediaItems;
 
   /**
-   * \brief Deselect all items and select the item at the given index
+   * \brief Select the item at the given index
    * \param aIndex Index of the item in the view
    */
   void select(in long aIndex);
@@ -106,25 +100,20 @@ interface sbIMediaListViewSelection : nsISupports
    * \brief Toggle the selection state of the item at the given index
    * \param aIndex Index of the item in the view
    */
-  void toggleSelect(in long aIndex);
+  void toggle(in long aIndex);
 
   /**
-   * \brief Select the range specified by the indices.  If aAugment is true,
-   *        then we add the range to the selection without clearing anything
-   *        else.  If aAugment is false, everything is cleared except for the
-   *        specified range.
-   * \param aStartIndex Index of the starting item in the view.  If the
-   *        aStartIndex is -1, the range starts at the shift select pivot.  If
-   *        the shift select pivot is -1, then the range starts at the current
-   *        index.  If the current index is -1, then the range starts at
-   *        aEndIndex.
-   * \param aEndIndex Index of the ending item in the view.  This must be a
-   *        valid row.
-   * \param aAugment True to augment the current selection, false to replace.
+   * \brief Unselect the item at the given index
+   * \param aIndex Index of the item in the view
    */
-  void rangedSelect(in long aStartIndex,
-                    in long aEndIndex,
-                    in boolean aAugment);
+  void clear(in long aIndex);
+
+  /**
+   * \brief Select the range specified by the indices.
+   * \param aStartIndex Index of the starting item in the view.
+   * \param aEndIndex Index of the ending item in the view.
+   */
+  void selectRange(in long aStartIndex, in long aEndIndex);
 
   /**
    * \brief Clear the specified range
@@ -134,19 +123,9 @@ interface sbIMediaListViewSelection : nsISupports
   void clearRange(in long aStartIndex, in long aEndIndex);
 
   /**
-   * \brief Shift the selection.  This is used when items are added or removed
-   *        from the view.  Currently, this only impacts the current item index
-   *        and the shift pivot since item selection is not tracked by index.
-   * \param aIndex Index of the point in the view where the change occurred
-   * \param aCount Number of items that were added or removed.  A positive
-   *               number indicates addition, negative indicates removeal.
-   */
-  void adjustSelection(in long aIndex, in long aCount);
-
-  /**
    * \brief Clears the selection
    */
-  void clearSelection();
+  void selectNone();
 
   /**
    * \brief Selects all items

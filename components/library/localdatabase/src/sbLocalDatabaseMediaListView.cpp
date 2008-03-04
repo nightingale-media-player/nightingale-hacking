@@ -779,11 +779,11 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isSelected;
-  rv = mSelection->IsSelected(currentIndex, &isSelected);
+  rv = mSelection->IsIndexSelected(currentIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = mSelection->GetSelectedMediaItems(getter_AddRefs(selection));
+  rv = mSelection->GetSelectedIndexedMediaItems(getter_AddRefs(selection));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mLibrary->RemoveSelected(selection, this);

@@ -2548,7 +2548,7 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
   sbMultipleItemTransferContext.prototype = {
     reset: function() {
       // fetch a new enumerator (reset it)
-      this.items = this._mediaListView.selection.selectedMediaItems;
+      this.items = this._mediaListView.selection.selectedIndexedMediaItems;
     },
     QueryInterface : function(iid) {
       if (iid.equals(Components.interfaces.sbIMultipleItemTransferContext) ||

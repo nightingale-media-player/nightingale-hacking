@@ -60,7 +60,6 @@ static PRLogModuleInfo* gLocalDatabaseMediaListViewSelectionLog = nsnull;
 sbLocalDatabaseMediaListViewSelection::sbLocalDatabaseMediaListViewSelection()
   : mSelectionIsAll(PR_FALSE),
     mCurrentIndex(-1),
-    mShiftSelectPivot(-1),
     mArray(nsnull),
     mIsLibrary(PR_FALSE),
     mLength(0),
@@ -93,7 +92,6 @@ sbLocalDatabaseMediaListViewSelection::Init(sbILibrary* aLibrary,
 
   if (aState) {
     mCurrentIndex     = aState->mCurrentIndex;
-    mShiftSelectPivot = aState->mShiftSelectPivot;
     mSelectionIsAll   = aState->mSelectionIsAll;
 
     if (!mSelectionIsAll) {
@@ -115,10 +113,6 @@ sbLocalDatabaseMediaListViewSelection::ConfigurationChanged()
     mCurrentIndex = mLength - 1;
   }
 
-  if (mShiftSelectPivot >=0 && (PRUint32) mShiftSelectPivot > mLength) {
-    mShiftSelectPivot = mLength - 1;
-  }
-
   return NS_OK;
 }
 
@@ -134,7 +128,6 @@ sbLocalDatabaseMediaListViewSelection::GetState(sbLocalDatabaseMediaListViewSele
   nsresult rv = state->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  state->mShiftSelectPivot = mShiftSelectPivot;
   state->mCurrentIndex     = mCurrentIndex;
   state->mSelectionIsAll   = mSelectionIsAll;
 
@@ -171,14 +164,6 @@ sbLocalDatabaseMediaListViewSelection::GetCurrentIndex(PRInt32* aCurrentIndex)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::GetShiftSelectPivot(PRInt32* aShiftSelectPivot)
-{
-  NS_ENSURE_ARG_POINTER(aShiftSelectPivot);
-  *aShiftSelectPivot = mShiftSelectPivot;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::SetCurrentIndex(PRInt32 aCurrentIndex)
 {
   NS_ENSURE_ARG_RANGE(aCurrentIndex, -1, (PRInt32) mLength - 1);
@@ -209,14 +194,14 @@ sbLocalDatabaseMediaListViewSelection::GetCurrentMediaItem(sbIMediaItem** aCurre
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::IsSelected(PRInt32 aIndex,
-                                                  PRBool* _retval)
+sbLocalDatabaseMediaListViewSelection::IsIndexSelected(PRInt32 aIndex,
+                                                       PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
 
   // An invalid row is always not selected
-  if (aIndex < 0 || aIndex > mLength - 1) {
+  if (aIndex < 0 || aIndex > (PRInt32) mLength - 1) {
     *_retval = PR_FALSE;
     return NS_OK;
   }
@@ -236,7 +221,7 @@ sbLocalDatabaseMediaListViewSelection::IsSelected(PRInt32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::GetSelectedMediaItems(nsISimpleEnumerator** aSelectedMediaItems)
+sbLocalDatabaseMediaListViewSelection::GetSelectedIndexedMediaItems(nsISimpleEnumerator** aSelectedMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aSelectedMediaItems);
   nsresult rv;
@@ -309,14 +294,10 @@ sbLocalDatabaseMediaListViewSelection::GetSelectedMediaItems(nsISimpleEnumerator
 NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::Select(PRInt32 aIndex)
 {
-  NS_ENSURE_ARG_RANGE(aIndex, -1, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE(aIndex, 0, (PRInt32) mLength - 1);
   nsresult rv;
 
   mCurrentIndex = aIndex;
-  mShiftSelectPivot = -1;
-
-  mSelection.Clear();
-  mSelectionIsAll = PR_FALSE;
 
   rv = AddToSelection(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -333,13 +314,12 @@ sbLocalDatabaseMediaListViewSelection::Select(PRInt32 aIndex)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::ToggleSelect(PRInt32 aIndex)
+sbLocalDatabaseMediaListViewSelection::Toggle(PRInt32 aIndex)
 {
-  NS_ENSURE_ARG_RANGE((PRInt32) aIndex, -1, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE((PRInt32) aIndex, 0, (PRInt32) mLength - 1);
   nsresult rv;
 
   mCurrentIndex = aIndex;
-  mShiftSelectPivot = -1;
 
   // If have an all selection, fill the selection with everything but the
   // toggled index
@@ -356,7 +336,7 @@ sbLocalDatabaseMediaListViewSelection::ToggleSelect(PRInt32 aIndex)
 
   // Otherwise, simply do the toggle
   PRBool isSelected;
-  rv = IsSelected(aIndex, &isSelected);
+  rv = IsIndexSelected(aIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (isSelected) {
@@ -380,49 +360,63 @@ sbLocalDatabaseMediaListViewSelection::ToggleSelect(PRInt32 aIndex)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::RangedSelect(PRInt32 aStartIndex,
-                                                    PRInt32 aEndIndex,
-                                                    PRBool aAugment)
+sbLocalDatabaseMediaListViewSelection::Clear(PRInt32 aIndex)
 {
-  TRACE(("sbLocalDatabaseMediaListViewSelection[0x%.8x] - AugmentSelect(%d, %d)",
-         this, aStartIndex, aEndIndex));
-
-  NS_ENSURE_ARG_RANGE(aStartIndex, -1, (PRInt32) mLength - 1);
-  NS_ENSURE_ARG_RANGE(aEndIndex,    0, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE(aIndex, 0, (PRInt32) mLength - 1);
 
   nsresult rv;
 
-  // If we are not augmenting the current selection (which means we have an
-  // entirely new selection), clear the selection list
-  if (!aAugment) {
-    mSelection.Clear();
+  mCurrentIndex = aIndex;
+
+  // If have an all selection, fill the selection with everything but the
+  // range we're clearing
+  if (mSelectionIsAll) {
     mSelectionIsAll = PR_FALSE;
+    for (PRUint32 i = 0; i < mLength; i++) {
+      if (i != (PRUint32) aIndex) {
+        rv = AddToSelection(i);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+
+    NOTIFY_LISTENERS(OnSelectionChanged, ());
+
+    return NS_OK;
   }
+
+  rv = RemoveFromSelection((PRUint32) aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NOTIFY_LISTENERS(OnSelectionChanged, ());
+
+#ifdef DEBUG
+  LogSelection();
+#endif
+
+  return NS_OK;
+}
+
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListViewSelection::SelectRange(PRInt32 aStartIndex,
+                                                   PRInt32 aEndIndex)
+{
+  TRACE(("sbLocalDatabaseMediaListViewSelection[0x%.8x] - SelectRange(%d, %d)",
+         this, aStartIndex, aEndIndex));
+
+  NS_ENSURE_ARG_RANGE(aStartIndex, 0, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE(aEndIndex,   0, (PRInt32) mLength - 1);
+
+  nsresult rv;
 
   if (mSelectionIsAll) {
     return NS_OK;
   }
 
-  // A startIndex of -1 means to use a known index as the start
-  if (aStartIndex == -1) {
-    if (mShiftSelectPivot != -1) {
-      aStartIndex = mShiftSelectPivot;
-    }
-    else {
-      if (mCurrentIndex != -1) {
-        aStartIndex = mCurrentIndex;
-      }
-      else {
-        aStartIndex = aEndIndex;
-      }
-    }
-  }
-
   mCurrentIndex = aEndIndex;
-  mShiftSelectPivot = aStartIndex;
 
   PRInt32 start = PR_MIN(aStartIndex, aEndIndex);
-  PRInt32 end   = PR_MAX(aStartIndex,aEndIndex);
+  PRInt32 end   = PR_MAX(aStartIndex, aEndIndex);
 
   for (PRInt32 i = start; i <= end; i++) {
     rv = AddToSelection((PRUint32) i);
@@ -444,13 +438,12 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::ClearRange(PRInt32 aStartIndex,
                                                   PRInt32 aEndIndex)
 {
-  NS_ENSURE_ARG_RANGE(aStartIndex, -1, (PRInt32) mLength - 1);
-  NS_ENSURE_ARG_RANGE(aEndIndex, -1, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE(aStartIndex, 0, (PRInt32) mLength - 1);
+  NS_ENSURE_ARG_RANGE(aEndIndex,   0, (PRInt32) mLength - 1);
 
   nsresult rv;
 
   mCurrentIndex = aEndIndex;
-  mShiftSelectPivot = -1;
 
   // If have an all selection, fill the selection with everything but the
   // range we're clearing
@@ -483,48 +476,11 @@ sbLocalDatabaseMediaListViewSelection::ClearRange(PRInt32 aStartIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::AdjustSelection(PRInt32 aIndex,
-                                                       PRInt32 aCount)
-{
-  // Note that we don't bounds check aIndex here since it reflects the position
-  // where rows were removed from (which could be gone)
-
-  // adjust mCurrentIndex, if necessary
-  if ((mCurrentIndex != -1) && (aIndex <= mCurrentIndex)) {
-    // if we are deleting and the delete includes the current index, reset it
-    if (aCount < 0 && (mCurrentIndex <= (aIndex -aCount -1))) {
-        mCurrentIndex = -1;
-    }
-    else {
-        mCurrentIndex += aCount;
-    }
-
-    NOTIFY_LISTENERS(OnCurrentIndexChanged, ());
-
-  }
-
-  // adjust mShiftSelectPivot, if necessary
-  if ((mShiftSelectPivot != 1) && (aIndex <= mShiftSelectPivot)) {
-    // if we are deleting and the delete includes the shift select pivot, reset it
-    if (aCount < 0 && (mShiftSelectPivot <= (aIndex - aCount - 1))) {
-        mShiftSelectPivot = -1;
-    }
-    else {
-        mShiftSelectPivot += aCount;
-    }
-  }
-
-  // Not much else to do since we don't store the indicies of the selected
-  // rows
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::ClearSelection()
+sbLocalDatabaseMediaListViewSelection::SelectNone()
 {
   mSelection.Clear();
   mSelectionIsAll = PR_FALSE;
+  mCurrentIndex = -1;
 
   NOTIFY_LISTENERS(OnSelectionChanged, ());
 
@@ -540,7 +496,6 @@ sbLocalDatabaseMediaListViewSelection::SelectAll()
 {
   mSelection.Clear();
   mSelectionIsAll = PR_TRUE;
-  mShiftSelectPivot = -1;
 
   NOTIFY_LISTENERS(OnSelectionChanged, ());
 
@@ -573,6 +528,12 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::SetSelectionNotificationsSuppressed(PRBool aSelectionEventsSuppressed)
 {
   mSelectionNotificationsSuppressed = aSelectionEventsSuppressed;
+
+  // If this is being set to false, notify
+  if (!mSelectionNotificationsSuppressed) {
+    NOTIFY_LISTENERS(OnSelectionChanged, ());
+  }
+
   return NS_OK;
 }
 
@@ -678,7 +639,6 @@ NS_IMPL_ISUPPORTS1(sbLocalDatabaseMediaListViewSelectionState,
                    nsISerializable);
 
 sbLocalDatabaseMediaListViewSelectionState::sbLocalDatabaseMediaListViewSelectionState() :
-  mShiftSelectPivot(-1),
   mCurrentIndex(-1),
   mSelectionIsAll(PR_FALSE)
 {
@@ -690,9 +650,6 @@ sbLocalDatabaseMediaListViewSelectionState::Read(nsIObjectInputStream* aStream)
   NS_ENSURE_ARG_POINTER(aStream);
 
   nsresult rv;
-
-  rv = aStream->Read32((PRUint32*) &mShiftSelectPivot);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aStream->Read32((PRUint32*) &mCurrentIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -730,9 +687,6 @@ sbLocalDatabaseMediaListViewSelectionState::Write(nsIObjectOutputStream* aStream
 
   nsresult rv;
 
-  rv = aStream->Write32((PRUint32) mShiftSelectPivot);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = aStream->Write32((PRUint32) mCurrentIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -761,8 +715,6 @@ sbLocalDatabaseMediaListViewSelectionState::ToString(nsAString& aStr)
 {
   nsString buff;
 
-  buff.AppendLiteral("shiftSelectPivot ");
-  buff.AppendInt(mShiftSelectPivot);
   buff.AppendLiteral(" currentIndex ");
   buff.AppendInt(mCurrentIndex);
 

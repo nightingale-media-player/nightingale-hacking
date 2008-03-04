@@ -1745,7 +1745,7 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   if (!mCachedRowCountDirty && !mManageSelection &&
       mRealSelection && mViewSelection) {
     PRBool viewIsSelected;
-    rv = mViewSelection->IsSelected(row, &viewIsSelected);
+    rv = mViewSelection->IsIndexSelected(row, &viewIsSelected);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool treeIsSelected;

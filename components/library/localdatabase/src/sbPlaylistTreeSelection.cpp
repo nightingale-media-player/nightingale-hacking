@@ -26,6 +26,33 @@
 
 #include "sbPlaylistTreeSelection.h"
 
+class sbAutoSelectNotificationsSuppressed
+{
+public:
+  sbAutoSelectNotificationsSuppressed(sbIMediaListViewSelection* aSelection) :
+    mSelection(aSelection)
+  {
+    NS_ASSERTION(aSelection, "aSelection is null");
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectionNotificationsSuppressed(PR_TRUE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set");
+  }
+
+  ~sbAutoSelectNotificationsSuppressed()
+  {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectionNotificationsSuppressed(PR_FALSE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unset");
+  }
+
+private:
+  sbIMediaListViewSelection* mSelection;
+};
+
 NS_IMPL_ISUPPORTS1(sbPlaylistTreeSelection,
                    nsITreeSelection)
 
@@ -34,7 +61,8 @@ sbPlaylistTreeSelection::sbPlaylistTreeSelection(nsITreeSelection* aTreeSelectio
                                                  sbLocalDatabaseTreeView* aTreeView) :
   mTreeSelection(aTreeSelection),
   mViewSelection(aViewSelection),
-  mTreeView(aTreeView)
+  mTreeView(aTreeView),
+  mShiftSelectPivot(-1)
 {
   NS_ASSERTION(aTreeSelection && aViewSelection, "Null passed to ctor");
 }
@@ -73,25 +101,38 @@ sbPlaylistTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
     *_retval = PR_FALSE;
     return NS_OK;
   }
-  return mViewSelection->IsSelected(index, _retval);
+  return mViewSelection->IsIndexSelected(index, _retval);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::Select(PRInt32 index)
 {
+  nsresult rv;
+  sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
+  mShiftSelectPivot = -1;
+
+  rv = mViewSelection->SelectNone();
+  NS_ENSURE_SUCCESS(rv, rv);
   return mViewSelection->Select(index);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 {
+  nsresult rv;
+  sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
+  mShiftSelectPivot = -1;
+
+  rv = mViewSelection->SelectNone();
+  NS_ENSURE_SUCCESS(rv, rv);
   return mViewSelection->Select(index);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::ToggleSelect(PRInt32 index)
 {
-  return mViewSelection->ToggleSelect(index);
+  mShiftSelectPivot = -1;
+  return mViewSelection->Toggle(index);
 }
 
 NS_IMETHODIMP
@@ -99,20 +140,52 @@ sbPlaylistTreeSelection::RangedSelect(PRInt32 startIndex,
                                       PRInt32 endIndex,
                                       PRBool augment)
 {
-  return mViewSelection->RangedSelect(startIndex, endIndex, augment);
+  nsresult rv;
+  sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
+
+  // Save the current index here since we need it later and it may be
+  // changed if we need to clear the selection
+  PRInt32 currentIndex;
+  rv = mViewSelection->GetCurrentIndex(&currentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!augment) {
+    rv = mViewSelection->SelectNone();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (startIndex == -1) {
+    if (mShiftSelectPivot != -1) {
+      startIndex = mShiftSelectPivot;
+    }
+    else {
+      if (currentIndex != -1) {
+        startIndex = currentIndex;
+      }
+      else {
+        startIndex = endIndex;
+      }
+    }
+  }
+
+  mShiftSelectPivot = startIndex;
+
+  return mViewSelection->SelectRange(startIndex, endIndex);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::ClearRange(PRInt32 startIndex,
                                     PRInt32 endIndex)
 {
+  mShiftSelectPivot = -1;
   return mViewSelection->ClearRange(startIndex, endIndex);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::ClearSelection()
 {
-  return mViewSelection->ClearSelection();
+  mShiftSelectPivot = -1;
+  return mViewSelection->SelectNone();
 }
 
 NS_IMETHODIMP
@@ -125,6 +198,7 @@ sbPlaylistTreeSelection::InvertSelection()
 NS_IMETHODIMP
 sbPlaylistTreeSelection::SelectAll()
 {
+  mShiftSelectPivot = -1;
   return mViewSelection->SelectAll();
 }
 
@@ -151,7 +225,37 @@ sbPlaylistTreeSelection::InvalidateSelection()
 NS_IMETHODIMP
 sbPlaylistTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 {
-  return mViewSelection->AdjustSelection(index, count);
+  nsresult rv;
+  PRInt32 currentIndex;
+  rv = mViewSelection->GetCurrentIndex(&currentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // adjust current index, if necessary
+  if ((currentIndex != -1) && (index <= currentIndex)) {
+    // if we are deleting and the delete includes the current index, reset it
+    if (count < 0 && (currentIndex <= (index - count -1))) {
+        currentIndex = -1;
+    }
+    else {
+        currentIndex += count;
+    }
+
+    rv = mViewSelection->SetCurrentIndex(currentIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // adjust mShiftSelectPivot, if necessary
+  if ((mShiftSelectPivot != 1) && (index <= mShiftSelectPivot)) {
+    // if we are deleting and the delete includes the shift select pivot, reset it
+    if (count < 0 && (mShiftSelectPivot <= (index - count - 1))) {
+        mShiftSelectPivot = -1;
+    }
+    else {
+        mShiftSelectPivot += count;
+    }
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -190,5 +294,6 @@ sbPlaylistTreeSelection::SetCurrentColumn(nsITreeColumn* aCurrentColumn)
 NS_IMETHODIMP
 sbPlaylistTreeSelection::GetShiftSelectPivot(PRInt32* aShiftSelectPivot)
 {
-  return mViewSelection->GetShiftSelectPivot(aShiftSelectPivot);
+  *aShiftSelectPivot = mShiftSelectPivot;
+  return NS_OK;
 }

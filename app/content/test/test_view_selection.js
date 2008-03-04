@@ -97,7 +97,7 @@ function testSelectSome(library, playlist) {
   // select first and last
   var selection = playlist.mediaListView.selection;
   selection.select(0);
-  selection.toggleSelect(library.length - 1);
+  selection.toggle(library.length - 1);
 
   safeSetTimeout(function() {
 
