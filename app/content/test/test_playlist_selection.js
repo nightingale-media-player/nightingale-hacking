@@ -137,7 +137,7 @@ function testSelectSomeResort(library, playlist, previouslySelected) {
 
     // continue
     continueWindowTest(testSelectAllThenAdd, [library, playlist]);
-  }, 500);
+  }, 1000);
 }
 
 function testSelectAllThenAdd(library, playlist) {
