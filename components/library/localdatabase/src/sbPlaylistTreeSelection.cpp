@@ -25,33 +25,7 @@
 */
 
 #include "sbPlaylistTreeSelection.h"
-
-class sbAutoSelectNotificationsSuppressed
-{
-public:
-  sbAutoSelectNotificationsSuppressed(sbIMediaListViewSelection* aSelection) :
-    mSelection(aSelection)
-  {
-    NS_ASSERTION(aSelection, "aSelection is null");
-#ifdef DEBUG
-    nsresult rv =
-#endif
-    mSelection->SetSelectionNotificationsSuppressed(PR_TRUE);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set");
-  }
-
-  ~sbAutoSelectNotificationsSuppressed()
-  {
-#ifdef DEBUG
-    nsresult rv =
-#endif
-    mSelection->SetSelectionNotificationsSuppressed(PR_FALSE);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unset");
-  }
-
-private:
-  sbIMediaListViewSelection* mSelection;
-};
+#include <sbLocalDatabaseMediaListViewSelection.h>
 
 NS_IMPL_ISUPPORTS1(sbPlaylistTreeSelection,
                    nsITreeSelection)
