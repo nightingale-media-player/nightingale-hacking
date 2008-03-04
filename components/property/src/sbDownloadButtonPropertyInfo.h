@@ -33,6 +33,8 @@
 #include <sbITreeViewPropertyInfo.h>
 #include <sbIClickablePropertyInfo.h>
 
+#include <sbStringUtils.h>
+
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -172,9 +174,9 @@ public:
       aValue.Truncate();
       aValue.AppendInt(GetMode());
       aValue.AppendLiteral("|");
-      aValue.AppendInt(GetTotal());
+      AppendInt(aValue, GetTotal());
       aValue.AppendLiteral("|");
-      aValue.AppendInt(GetCurrent());
+      AppendInt(aValue, GetCurrent());
     }
     else {
       aValue = mValue;
