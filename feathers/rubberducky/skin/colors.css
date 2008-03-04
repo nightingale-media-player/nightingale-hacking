@@ -442,7 +442,7 @@ Organize your collection with genre/artist/album filterlists.
 
 .sb-filterlist-tree
 {
-  background-color: #B3BAAC; 
+  background-color: #feffff; /** Light Color Brightest */
   border-left: 1px solid #202220; /** Button Shadow */
   border-right: none;
   border-bottom: 1px solid #474948; /** Rubber Highlight */
@@ -523,7 +523,7 @@ sb-playlist > stack > vbox
 
 .sb-playlist-tree
 {
-  background-color: #B3BAAC !important;  
+  background-color: #feffff !important; /** Light Color Brightest */
   border-right: 0px solid transparent !important;
 }
 .sb-commands-toolbar
@@ -571,7 +571,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertafter)
 {
-  border-right: 2px solid #202220 !important; /** Button Shadow */
+  border-right: 1px dotted #313131 !important; /* color of the Main Window **/
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertbefore)
@@ -723,19 +723,30 @@ tree treecol,
   color: #8A8F84; /** Light Color 2 */
 }
 
-treecol[dragging="true"]
+tree treecol:hover:active
 {
-  background-color: transparent !important;
+  border:none;
+  border-top: 1px solid #474948; /** Rubber Highlight */
 }
 
-treecol[dragging="true"] > label
+treecol[dragging="true"],
+treecol[dragging="true"]:hover:active
 {
-  color: #5c5f58; /** Selected Focus Row */
+  background-color: #797f76 !important; /** Light Color 2 */
+  border:none !important;
+  border-top:1px solid #B3BAAC !important;
+  border-right: 1px solid #202220 !important; /** Button Shadow */
+}
+
+treecol[dragging="true"] > label,
+treecol[dragging="true"]:hover:active > label
+{
+  color: #feffff; /** Light Color Brightest */
 }
 
 treecol[insertafter="true"] 
 {
-  border-right: 5px solid transparent !important; 
+  border-right: 1px solid #202220 !important; /** Button Shadow */
 }
 
 treecol > label
@@ -748,7 +759,7 @@ treecolpicker,
 {
   border-top: 1px solid #474948; /** Rubber Highlight */
   background-color: #313131 !important; /* same as the main window */
-  border-right: 1px solid #202220 !important;
+  border-right: 1px solid #202220 !important; /** Button Shadow */
 }
 
 

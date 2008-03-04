@@ -91,17 +91,10 @@ dialog
 ***************************************************************************************************
 THE PLAYLIST
 ***************************************************************************************************
-*/ 
+*/
 
-/* Put a Background behind your filterlists for extra style. */
-sb-playlist
+.sb-filterlist-tree,
+.sb-playlist-tree
 {
-  /*background-image: url( ... );*/ 
+  background-image: url('chrome://songbird/skin/tree/empty.png') !important;
 }
-
-/*  This rule changes the background image behind the Main Pane **/
-#content_pane_box
-{
-  background-image: none;
-}
-
