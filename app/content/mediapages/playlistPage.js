@@ -183,9 +183,12 @@ window.mediaPage = {
     // Use the querystring to determine what to show.
     var queryString = this._parseQueryString();
     var useFilters = queryString["useFilters"] == "true";
+    
     var filters = this._mediaListView.cascadeFilterSet;
     
-    if (useFilters && filters) {
+    // If filters are requested, make sure we have
+    // some to show
+    if (useFilters) {
       this._playlist.setAttribute("hidefilters", false);
       
       // Set up standard filters if not already present.
@@ -206,6 +209,20 @@ window.mediaPage = {
         for each (var filter in filterSet) {
           filters.appendFilter(filter);
         }
+      }
+    
+    // For a plain list all we can handle is a search filter
+    } else {
+      for (var i = filters.length - 1; i > 0; i--) {
+       filters.remove(i);
+      }
+      if (!filters.isSearch(0)) {
+        filters.remove(0);
+        filters.appendSearch([
+          SBProperties.artistName,
+          SBProperties.albumName,
+          SBProperties.trackName
+        ], 3);
       }
     }
   }
