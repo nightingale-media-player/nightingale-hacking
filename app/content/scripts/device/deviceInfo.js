@@ -811,7 +811,13 @@ var DIW = {
 
   _getDeviceIcon: function DIW__getDeviceIcon() {
     try {
-      return this._device.properties.iconUri.spec;
+      var uri = this._device.properties.iconUri;
+      var spec = uri.spec;
+      if (uri.schemeIs("file") && /\.ico$/(spec)) {
+        // try to use a suitably sized image
+        spec = "moz-icon://" + spec + "?size=64";
+      }
+      return spec;
     } catch (err) {
       // default image dictated by CSS.
       return null;
