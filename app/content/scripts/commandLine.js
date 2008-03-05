@@ -30,6 +30,9 @@
  * \internal
  */
 
+if (typeof(ExternalDropHandler) == "undefined")
+  Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+
 try 
 {
 
@@ -76,23 +79,30 @@ try
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         gBrowser.loadURI(aUriSpec);
       } else {
-        if (!_drop_filelist) 
-          _drop_filelist = Array();
-        
-        if (isXPI(aUriSpec)) 
-          installXPI(aUriSpec);
-        else 
-          _drop_filelist.push(aUriSpec);
-          
-        if (aCount == aTotal-1) {
-          // if we are already importing, our items will be imported automatically, otherwise, start the drop handler
-          if (!importingDrop) {
-            firstDrop = true;
-            importingDrop = true;
-            setTimeout( SBDropped, 10 ); // Next frame
-            importingDrop = false;
-          }
-        }
+        var dropHandlerListener = {
+          onDropComplete: function(aTargetList,
+                                   aImportedInLibrary,
+                                   aDuplicates,
+                                   aInsertedInMediaList,
+                                   aOtherDropsHandled) {
+            // show the standard report on the status bar
+            return true;
+          },
+          onFirstMediaItem: function(aTargetList, aFirstMediaItem) {
+            var view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+
+            var index = view.getIndexForItem(aFirstMediaItem);
+            
+            // If we have a browser, try to show the view
+            if (window.gBrowser) {
+              gBrowser.showIndexInView(view, index);
+            }
+            
+            // Play the item
+            gPPS.playView(view, index);
+          },
+        };
+        ExternalDropHandler.dropUrls(window, [aUriSpec], dropHandlerListener);
       }
       return true;
     },

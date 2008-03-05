@@ -647,6 +647,10 @@ the following code:
 In order to target the drop at the end of the targeted mediaList, you
 should give a value of -1 for targetMediaListPosition.
 
+Two similar methods (dropUrls and dropUrlsOnList) exist that let you simulate a 
+drop by giving a list of URLs, and triggering the same handling as the one that 
+would happen had these URLs been part of a dragsession drop.
+
 The other public methods in this helper can be used to simplify the rest of your
 drag and drop handler as well. For instance, an nsDragAndDrop observer's 
 getSupportedFlavours() method may be implemented simply as:
@@ -702,6 +706,15 @@ var ExternalDropHandler = {
     this.dropOnList(aWindow, aDragSession, mainLibrary, -1, aListener);
   },
 
+  // performs a default drop of a list of urls. media items go to the
+  // main library. 
+  dropUrls: function(aWindow, aUrlArray, aListener) {
+    var mainLibrary = this._Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(this._Ci.sbILibraryManager)
+                          .mainLibrary;
+    this.dropUrlsOnList(aWindow, aUrlArray, mainLibrary, -1, aListener);
+  },
+
   // perform a drop onto a medialist. media items are inserted at the specified
   // position in the list if that list is orderable. otherwise, or if the
   // position is invalid, the items are added to the target list.
@@ -715,6 +728,26 @@ var ExternalDropHandler = {
     }
     this._dropFiles(aWindow,
                     aDragSession, 
+                    null,
+                    aTargetList, 
+                    aDropPosition, 
+                    aListener);
+  },
+
+  // perform a drop of a list of urls onto a medialist. media items are inserted at 
+  // the specified position in the list if that list is orderable. otherwise, or if the
+  // position is invalid, the items are added to the target list.
+  dropUrlsOnList: function(aWindow, 
+                           aUrlArray, 
+                           aTargetList, 
+                           aDropPosition, 
+                           aListener) {
+    if (!aTargetList) {
+      throw new Error("No target medialist specified for dropOnList");
+    }
+    this._dropFiles(aWindow,
+                    null, 
+                    aUrlArray,
                     aTargetList, 
                     aDropPosition, 
                     aListener);
@@ -763,11 +796,14 @@ var ExternalDropHandler = {
   // until everything in the file queue has been processed. when that's done, 
   // we then look for queued directory scans, which we give to the mediaScan 
   // modal dialog. after the directories have been processed, we notify the 
-  // listener that processing has ended.
-  _dropFiles: function(window, session, targetlist, position, listener) {
+  // listener that processing has ended. Note that the function can take either
+  // a drag session of an array of URLs. If both are provided, only the session
+  // will be handled (ie, the method is not meant to be called with both a session
+  // and a urlarray).
+  _dropFiles: function(window, session, urlarray, targetlist, position, listener) {
   
     // check that we are indeed processing an external drop
-    if (!this.isSupported(session)) {
+    if (session && !this.isSupported(session)) {
       return;
     }
 
@@ -781,7 +817,7 @@ var ExternalDropHandler = {
     var lcase = (this._getPlatformString() == "Windows_NT");
     
     // get drop data in any of the supported formats
-    var dropdata = this.getTransferData(session);
+    var dropdata = session ? this.getTransferData(session) : urlarray;
     
     // remember the target list and position for this drop
     this._targetList = targetlist;
@@ -805,8 +841,14 @@ var ExternalDropHandler = {
     for (var dropentry in dropdata) {
       var dropitem = dropdata[dropentry];
     
-      var item = dropitem[0];
-      var flavour = dropitem[2];
+      var item, flavour;
+      if (session) {
+        item = dropitem[0];
+        flavour = dropitem[2];
+      } else {
+        item = dropitem;
+        flavour = "text/x-moz-url";
+      }
       var islocal = true;
       var rawData;
       
