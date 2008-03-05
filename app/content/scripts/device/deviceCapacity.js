@@ -253,7 +253,13 @@ var DCW = {
         value = 0;
 
       // Update the capacity legend.
-      child.setAttribute("value", StorageFormatter.format(value));
+      if (value) {
+        child.setAttribute("value", StorageFormatter.format(value));
+        child.hidden = false;
+      }
+      else {
+        child.hidden = true;
+      }
     }
   },
 
