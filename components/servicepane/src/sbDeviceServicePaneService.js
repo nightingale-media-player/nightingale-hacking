@@ -34,6 +34,7 @@ const Cr = Components.results;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/device;1";
 
+const NC='http://home.netscape.com/NC-rdf#';
 const SP = "http://songbirdnest.com/rdf/servicepane#";
 
 const URN_PREFIX_DEVICE = "urn:device:";
@@ -175,6 +176,20 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   node.contractid = CONTRACTID;
   node.editable = false;
   node.properties = "device";
+
+  try {
+    var iconUri = aDevice.properties.iconUri;
+    if (iconUri) {
+      var spec = iconUri.spec;
+      if (iconUri.schemeIs("file") && /\.ico$/i(spec)) {
+        // for *.ico, try to get the small icon
+        spec = "moz-icon://" + spec + "?size=16";
+      }
+      node.setAttributeNS(NC, "Icon", spec);
+    }
+  } catch(ex) {
+    /* we do not care if setting the icon fails */
+  }
 
   // Sort node into position.
   this._servicePane.sortNode(node);
