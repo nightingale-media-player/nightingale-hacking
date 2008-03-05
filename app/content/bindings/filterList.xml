@@ -290,11 +290,15 @@
             // Get the property info for the property
             var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                             .getService(Components.interfaces.sbIPropertyManager);
-            var propEnumerator = pm.propertyIDs;
-            while (propEnumerator.hasMore()) {
-              var propertyID = propEnumerator.getNext();
+
+            var cm = Components.classes["@mozilla.org/categorymanager;1"]
+                               .getService(Components.interfaces.nsICategoryManager);
+            var propEnumerator = cm.enumerateCategory("filter-list-picker-properties");
+            while (propEnumerator.hasMoreElements()) {
+              var propertyID = propEnumerator.getNext()
+                                             .QueryInterface(Components.interfaces.nsISupportsCString);
               var propertyInfo = pm.getPropertyInfo(propertyID);
-              
+
               if (propertyInfo.userViewable) {
                 var popupChild = document.createElement("menuitem");
                 

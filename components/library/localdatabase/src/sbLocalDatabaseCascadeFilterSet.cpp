@@ -124,6 +124,9 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mProtoArray->ClearSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = AppendDefaultFilters(mProtoArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mProtoArray->SetIsDistinct(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -903,6 +906,9 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = AppendDefaultFilters(fs.array);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1068,6 +1074,37 @@ sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 
   return NS_OK;
 }
+
+nsresult
+sbLocalDatabaseCascadeFilterSet::AppendDefaultFilters(sbILocalDatabaseGUIDArray* aArray)
+{
+  nsresult rv;
+
+  // Set the filter not to show lists or hidden items
+  nsAutoTArray<nsString, 1> values;
+  nsString* appended = values.AppendElement(NS_LITERAL_STRING("0"));
+  NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIStringEnumerator> valuesEnum =
+    new sbTArrayStringEnumerator(&values);
+  NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                         valuesEnum,
+                         PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  valuesEnum = new sbTArrayStringEnumerator(&values);
+  NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                         valuesEnum,
+                         PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 
 // sbIMediaListListener
 NS_IMETHODIMP

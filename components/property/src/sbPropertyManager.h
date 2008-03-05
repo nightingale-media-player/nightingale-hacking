@@ -53,6 +53,8 @@ public:
   NS_METHOD CreateSystemProperties();
 private:
 
+  nsresult RegisterFilterListPickerProperties();
+
   nsresult RegisterDateTime(const nsAString& aPropertyID,
                             const nsAString& aDisplayKey,
                             PRInt32 aType,

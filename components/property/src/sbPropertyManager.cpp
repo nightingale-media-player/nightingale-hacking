@@ -29,6 +29,7 @@
 
 #include <nsAutoLock.h>
 #include <nsMemory.h>
+#include <nsICategoryManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -56,6 +57,15 @@
 #if !defined(SB_STRING_BUNDLE_CHROME_URL)
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
+
+const char* sFilterListPickerProperties[] = {
+  SB_PROPERTY_ALBUMNAME,
+  SB_PROPERTY_ARTISTNAME,
+  SB_PROPERTY_GENRE,
+  SB_PROPERTY_YEAR,
+  SB_PROPERTY_RATING
+};
+
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
                               sbIPropertyManager)
@@ -86,6 +96,9 @@ NS_METHOD sbPropertyManager::Init()
   nsresult rv;
 
   rv = CreateSystemProperties();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterFilterListPickerProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -779,6 +792,28 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
     PR_FALSE,
     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterFilterListPickerProperties()
+{
+  nsresult rv;
+
+  nsCOMPtr<nsICategoryManager> cm =
+    do_GetService("@mozilla.org/categorymanager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(sFilterListPickerProperties); i++) {
+    rv = cm->AddCategoryEntry("filter-list-picker-properties",
+                              sFilterListPickerProperties[i],
+                              "1",
+                              PR_FALSE,
+                              PR_TRUE,
+                              nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
