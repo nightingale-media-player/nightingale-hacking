@@ -323,11 +323,14 @@ var DPW = {
    */
 
   _updateDeviceStatus : function DPW__updateDeviceStatus(aMediaItem) {
-    
+/*
+ * This will update the progress for each item
+ * We are currently going to show a progress for total items instead (see below)
+ * 
     var curProgress = this._getPrefValue("songbird." + this._deviceID +
                                          ".status.progress", 0);
     curProgress = Math.round(parseInt(curProgress) / 100);
-    
+*/
     var totalItems = this._getPrefValue("songbird." + this._deviceID +
                                           ".status.totalcount", 0);
     var curItemIndex = this._getPrefValue("songbird." + this._deviceID +
@@ -335,6 +338,9 @@ var DPW = {
     var curOperation = this._getPrefValue("songbird." + this._deviceID +
                                         ".status.operation",
                                         SBString("device.info.unknown"));
+
+    // Now show progress for all items rather than each one.
+    var curProgress = Math.round((curItemIndex / totalItems) * 100);
 
     this._dText1Remote.stringValue = SBFormattedString(
                                       "device.status.progress_header",
