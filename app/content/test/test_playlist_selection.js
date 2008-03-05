@@ -128,12 +128,16 @@ function testSelectSome(library, playlist) {
 function testSelectSomeResort(library, playlist, previouslySelected) {
 
   log("testSelectSomeResort");
-
+  dump("XXXsteve 1\n");
   setSort(playlist, "created", "a");
+  dump("XXXsteve 2\n");
 
   safeSetTimeout(function() {
+  dump("XXXsteve 3\n");
     var selected = getSelected(playlist);
+  dump("XXXsteve 4\n");
     assertArraySimilar(previouslySelected.reverse(), selected);
+  dump("XXXsteve 5\n");
 
     // continue
     continueWindowTest(testSelectAllThenAdd, [library, playlist]);
