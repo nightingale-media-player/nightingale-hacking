@@ -47,6 +47,12 @@
   <binding id="sb-searchbar"
            extends="chrome://browser/content/search/search.xml#searchbar">
     <implementation>
+
+      <constructor>
+        // Add the songbird autocomplete source to the textbox.
+        this._textbox.setAttribute("autocompletesearch", 
+                  "search-autocomplete songbird-autocomplete");
+      </constructor>
       
 
       <!-- Map of engine names to booleans.
@@ -216,7 +222,8 @@
         -->   
       <method name="handleSearchCommand">
         <parameter name="aEvent"/>
-        <body><![CDATA[
+        <body>
+            <![CDATA[
           var textBox = this._textbox;
           var textValue = this.value;
 
@@ -241,6 +248,7 @@
           if ( textValue == "migmigmig" )  { alert( ".gge retsaE" ); } 
           else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); }
           else if ( textValue == "joshuajoshua" )  { alert( "basket'o'eggz" ); }
+          else if ( textValue == "lonedfx" )  { alert( "rotteneggs" ); }
                               
           this._sendSearchEvent();
         ]]></body>
@@ -321,49 +329,109 @@
           }
         ]]>
         </body>
-      </method>      
+      </method>
+
+      <!-- Open the autocomplete menu if the object's class is 'autocomplete-textbox' 
+           and the content is empty (since we do no want to autoopen the menu if the 
+           user clicked to move its carret) -->
+      <method name="_autoOpenMenu">
+        <body>
+          <![CDATA[
+          const target = this._textbox.inputField;
+          // If the class is right, and ...
+          if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
+            // ... If the textbox is empty, then show the autocomplete
+            if (this.value == "") {
+              // Defer launching the popup so that we don't end up 
+              // refocusing the textbox and screwing up the 
+              // text displayed on empty=true
+              if (this._popupTimeout)
+                clearTimeout(this._popupTimeout);
+              this._popupTimeout = setTimeout(function(o) { 
+                  if (!o._textbox.popupOpen)
+                    o._textbox.toggleHistoryPopup(); 
+                  this._popupTimeout = null;
+              }, 10, this);
+            }                  
+          }
+          ]]>
+        </body>
+      </method>
     </implementation>
-    
+
     <handlers>
 
-      <!-- Capture focus on the autocomplete textbox so that we can
-           immediately pop out the autocomplete box 
-        -->
-      <handler event="focus" phase="capturing"><![CDATA[
-        const target = event.originalTarget;
-        
-        this.setAttribute("focused", "true");
-        
-        if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
-          
-          // Make sure the songbird autocomplete source has been added
-          // to the textbox.
-          if (!this._textbox._hasSongbirdAutoCompleter) {
-            this._textbox.setAttribute("autocompletesearch", 
-                      "search-autocomplete songbird-autocomplete");
-            this._textbox._hasSongbirdAutoCompleter = true;
-          } 
-          
-          // If the textbox is empty then show the autocomplete
-          if (this.getAttribute("empty") == "true") {          
+      <!-- Capture mousedown on the autocomplete textbox so that we can
+           pop out the autocomplete menu (this needs to only occur if 
+           the textbox is empty, since we do not want to pop the menu if
+           the user is just moving the cursor within the text).
+           
+           Ideally, the code in the mousedown handler would simply call
+           this._autoOpenMenu(), however, further focus events that
+           occur after the mousedown event will cancel the popup, so
+           what we need to do instead is set a variable to remember that 
+           we need to open the menu when we get those focus events.
+           
+           Now, if we were only getting one focus event, all we would
+           have to do when we intercept it is to pop the menu, and reset
+           that variable, but unfortunately, there is a case that will
+           trigger several chained focus events (clicking in the part of
+           the search box that has no text), although nothing in the
+           event variable lets us distinguish this case (whether the 
+           click happens on the text or not, the event variable has the
+           same target and originalTarget). In this case, the additional
+           focus events will again cancel our history menu, which means
+           that we should not reset the variable immediately, we need 
+           the additional focus events to keep causing more attempts to 
+           open the menu (the _autoOpenMenu method is smart enough to
+           cancel its previous attempts if necessary).
+           
+           Still, we need to reset our trigger variable at some point,
+           otherwise we will end up opening the menu again whenever
+           the control is refocused in the future, which we do not want
+           (we want the menu only if the focus occured due to a click). 
+           We solve this by setting a short timeout to reset the variable, 
+           but not so short as to miss the focus events we want to handle.
+           
+           In addition, we want to open the menu when the control is
+           already focused, and a simple click occurs. In this case, we need
+           to do so immediately, since no futher event is going to give us 
+           that opportunity (note that clicking on the control when the app
+           is deactivated is handled by this case as well, because the focus
+           event will occur before the mousedown event).  -->
 
-            // Defer launching the popup so that we don't end up 
-            // refocusing and textbox and screwing up the 
-            // text displayed on empty=true
-            if (!this._waitingForPopup) {
-              this._waitingForPopup = true;
-              setTimeout(function(o) { 
-                  o._textbox.toggleHistoryPopup(); 
-                  o._waitingForPopup = false;
-                }, 10, this);
-            }
-          }                  
+      <handler event="mousedown" button="0"> <![CDATA[
+        // only handle the clicks we should
+        if (event.originalTarget.tagName == "div" &&
+            event.originalTarget.parentNode.tagName == "html:input") {
+          // if we are already focused, open the auto complete menu immediately
+          if (this._textbox.hasAttribute("focused")) {
+            this._autoOpenMenu(); 
+          } else {
+            // otherwise cause any focus event that occurs within the next 250ms
+            // to try to open the menu again
+            this._openPopupOnFocus = true;
+            setTimeout(function(o) {
+              o._openPopupOnFocus = false;
+            }, 250, this);
+          }
+        }
+      ]]></handler>
+
+
+      <handler event="focus" phase="capturing"><![CDATA[
+        // remember we have focus
+        this.setAttribute("focused", "true");
+        // should we attempt to open the autocomplete menu?
+        if (this._openPopupOnFocus) {
+          this._autoOpenMenu();
         }
       ]]></handler>
       
       <handler event="blur" phase="capturing"><![CDATA[
+        // forget that we were focused
         if (this.hasAttribute("focused")) {
-          this.removeAttribute("focused");        
+          this.removeAttribute("focused");
         }  
       ]]></handler>      
 
