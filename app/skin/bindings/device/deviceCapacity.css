@@ -66,17 +66,17 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-music,
 .device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(40,200,40);
+  background-color: rgb(0,105,245);
 }
 
 .device-capacity-video,
 .device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(200,100,40);
+  background-color: rgb(69,200,0);
 }
 
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(40,200,200);
+  background-color: rgb(255,210,0);
 }
 
 .device-capacity-other2,
@@ -96,7 +96,7 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-free,
 .device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(200,200,200);
+  background-color: rgb(235,235,235);
 }
 
 .device-capacity-legend-color-box {
