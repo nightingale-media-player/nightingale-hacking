@@ -222,10 +222,10 @@ function doOK()
   // Make sure the folder is valid
   var folder = document.getElementById("subscribe_folder_path").value;
   var localFile;
+  
+  var folderIsValid = false;
   if (folder != "")
   {
-    var folderIsValid = false;
-
     localFile = Cc["@mozilla.org/file/local;1"]
                   .createInstance(Ci.nsILocalFile);
     try {
@@ -235,15 +235,15 @@ function doOK()
     catch(e) {
       // folder is not valid
     }
+  }
 
-    if (!folderIsValid) {
-      gPrompt.alert(window,
-                    SBString("subscribe.selectvalidfolder.title",
-                             "Invalid folder"),
-                    SBString("subscribe.selectvalidfolder.msg",
-                             "Please select a valid destination folder for download."));
-      return false;
-    }
+  if (!folderIsValid) {
+    gPrompt.alert(window,
+                  SBString("subscribe.selectvalidfolder.title",
+                           "Invalid folder"),
+                  SBString("subscribe.selectvalidfolder.msg",
+                           "Please select a valid destination folder for download."));
+    return false;
   }
 
   // Make sure the interval is a positive non-zero integer
