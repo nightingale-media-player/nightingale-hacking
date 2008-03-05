@@ -401,51 +401,12 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     mLocalizedAll.AssignLiteral("library.all");
   }
 
-  // If this is not a distinct list, set up a listener to track playback
-  // changes
+  // If this is not a distinct list, we will want a listener to track playback
+  // changes.  This listener should be set up in SetTree.
   if (mListType != eDistinct) {
     mPlaylistPlayback =
       do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool isPlaying;
-    rv = mPlaylistPlayback->GetPlaying(&isPlaying);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If we are already playing, initialize the playing indicator
-    if (isPlaying) {
-      nsCOMPtr<sbIMediaListView> playingView;
-      rv = mPlaylistPlayback->GetPlayingView(getter_AddRefs(playingView));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRInt32 playingIndex;
-      rv = mPlaylistPlayback->GetCurrentIndex(&playingIndex);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (playingIndex >= 0) {
-        nsCOMPtr<sbIMediaItem> playingItem;
-        rv = playingView->GetItemByIndex(playingIndex,
-                                         getter_AddRefs(playingItem));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // XXXsteve It is possible that the item at the currently playing index
-        // is not actually the playing item if the item has been removed from
-        // the view.  Double check this before lighting up the indicator.
-        // This should be removed when bug 7409 is fixed.
-        nsString playingItemGUID;
-        rv = playingItem->GetGuid(playingItemGUID);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsString actuallyPlayingGUID;
-        rv = mPlaylistPlayback->GetCurrentGUID(actuallyPlayingGUID);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (playingItemGUID.Equals(actuallyPlayingGUID)) {
-          rv = OnTrackChange(playingItem, playingView, playingIndex);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-    }
   }
 
   return NS_OK;
@@ -2212,6 +2173,45 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
         rv = mPlaylistPlayback->AddListener(playbackListener);
         NS_ENSURE_SUCCESS(rv, rv);
         mIsListeningToPlayback = PR_TRUE;
+        
+        PRBool isPlaying;
+        rv = mPlaylistPlayback->GetPlaying(&isPlaying);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // If we are already playing, initialize the playing indicator
+        if (isPlaying) {
+          nsCOMPtr<sbIMediaListView> playingView;
+          rv = mPlaylistPlayback->GetPlayingView(getter_AddRefs(playingView));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          PRInt32 playingIndex;
+          rv = mPlaylistPlayback->GetCurrentIndex(&playingIndex);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (playingIndex >= 0) {
+            nsCOMPtr<sbIMediaItem> playingItem;
+            rv = playingView->GetItemByIndex(playingIndex,
+                                             getter_AddRefs(playingItem));
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            // XXXsteve It is possible that the item at the currently playing index
+            // is not actually the playing item if the item has been removed from
+            // the view.  Double check this before lighting up the indicator.
+            // This should be removed when bug 7409 is fixed.
+            nsString playingItemGUID;
+            rv = playingItem->GetGuid(playingItemGUID);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            nsString actuallyPlayingGUID;
+            rv = mPlaylistPlayback->GetCurrentGUID(actuallyPlayingGUID);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            if (playingItemGUID.Equals(actuallyPlayingGUID)) {
+              rv = OnTrackChange(playingItem, playingView, playingIndex);
+              NS_ENSURE_SUCCESS(rv, rv);
+            }
+          }
+        }
       }
       else {
         NS_WARNING("Tree set but we're already listening to playback!");
