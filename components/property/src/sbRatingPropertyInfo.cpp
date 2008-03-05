@@ -184,6 +184,11 @@ sbRatingPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
   nsString ratingStr;
   ratingStr.AppendInt(rating);
 
+  if (rating > 0 && ratingStr.Equals(aCurrentValue)) {
+    ratingStr.Truncate();
+    ratingStr.AppendInt(rating - 1);
+  }
+
   _retval = ratingStr;
   return NS_OK;
 }
