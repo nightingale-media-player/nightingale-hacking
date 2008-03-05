@@ -881,9 +881,11 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
     return NS_ERROR_FAILURE;
   }
 
+  printf("XXXsteve before %s\n", NS_LossyConvertUTF16toASCII(mGUIDArray[mNextIndex]).get());
   nsCOMPtr<sbIMediaItem> item;
   rv = mLibrary->GetMediaItem(mGUIDArray[mNextIndex], getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
+  printf("XXXsteve after  %s\n", NS_LossyConvertUTF16toASCII(mGUIDArray[mNextIndex]).get());
 
   nsRefPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
     (new sbLocalDatabaseIndexedMediaItem(mNextIndex, item));
