@@ -527,15 +527,14 @@ function SBTrackEditorOpen( parentWindow, playlist )
     const TEFEATURES = "chrome,dialog=no,resizable=no";
     
     // HAAAAAAAAAACK. The track editor is a) broken and b) depends on the playlist
-    if (playlist) {
-      playlist = gBrowser.currentOuterPlaylist;
-    }
-    if (playlist) {
-      if (gBrowser.mediaPage && gBrowser.mediaPage._playlist) {
-        playlist = gBrowser.mediaPage._playlist;
+    if (!playlist) {
+      if (gBrowser.currentMediaPage && gBrowser.currentMediaPage._playlist) {
+        playlist = gBrowser.currentMediaPage._playlist;
       }
     }
-    
+    if (!playlist) {
+      playlist = gBrowser.currentOuterPlaylist;
+    }
     SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist, parentWindow);
   }
 }

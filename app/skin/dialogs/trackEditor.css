@@ -45,7 +45,7 @@ See app/content/xul/trackEditor.xul
 
 sb-trackeditor-drawer > .drawer-box > .drawer-content
 {
-  height: 170px !important;
+  height: 185px !important;
 }
 
 sb-exttrackeditor-drawer > .drawer-box > .drawer-content

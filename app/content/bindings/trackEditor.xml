@@ -381,24 +381,12 @@
       <body>
         <![CDATA[
           var _guids = Array();
-          if (this.playlist && this.playlist.tree) 
+          if (playlist && playlist.mediaListView) 
           {
-            if (this.playlist.mediaListView && this.playlist.mediaListView.treeView.selection)
-            {
-              var rangeCount = this.playlist.mediaListView.treeView.selection.getRangeCount();
-              if (rangeCount == 0) return; // abort !
-              for (var i=0; i < rangeCount; i++) 
-              {
-                var start = {};
-                var end = {};
-                this.playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
-                for (var j=start.value;j<=end.value;j++)
-                {
-                  // Get the item, this contains the uuid.
-                  var item = this.playlist.mediaListView.mediaList.getItemByIndex(j);
-                  if (item) _guids.push(item.guid);
-                }
-              }
+            var items = playlist.mediaListView.selection.selectedIndexedMediaItems;
+            while (items.hasMoreElements()) {
+              var item = items.getNext().mediaItem;
+              if (item) _guids.push(item.guid);
             }
           }
           this.guids = _guids;
