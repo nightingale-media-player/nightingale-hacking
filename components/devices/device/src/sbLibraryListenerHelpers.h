@@ -28,6 +28,7 @@
 #include "sbIDeviceLibrary.h"
 #include "sbILocalDatabaseSimpleMediaList.h"
 #include "sbIMediaListListener.h"
+#include <sbStandardProperties.h>
 
 #include <nsCOMPtr.h>
 #include <nsWeakReference.h>

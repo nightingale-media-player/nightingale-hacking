@@ -106,6 +106,11 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
     rv = mDevice->ListenToList(list);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
+    // Hide the item. It is the responsibility of the device to make the item
+    // visible when the transfer is successful.
+    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+                                 NS_LITERAL_STRING("1"));
+
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
                               aMediaItem, aMediaList, aIndex);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -402,6 +407,10 @@ sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
   if (list) {
     // a list being added to a list? we don't care, I think?
   } else {
+    // Hide the item. It is the responsibility of the device to make the item
+    // visible when the transfer is successful.
+    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+                                 NS_LITERAL_STRING("1"));
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
                               aMediaItem, aMediaList, aIndex);
     NS_ENSURE_SUCCESS(rv, rv);
