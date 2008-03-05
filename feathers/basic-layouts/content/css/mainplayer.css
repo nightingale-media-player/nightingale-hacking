@@ -62,6 +62,7 @@ window#mainplayer
   margin: 0px;
   padding: 0px;
   width: 167px;
+  max-width: 300px;
 }
 
 
