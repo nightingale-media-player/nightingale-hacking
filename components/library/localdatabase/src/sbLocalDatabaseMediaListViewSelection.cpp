@@ -281,7 +281,7 @@ sbLocalDatabaseMediaListViewSelection::GetSelectedIndexedMediaItems(nsISimpleEnu
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString guid;
-    if (mSelection.Get(uid, nsnull)) {
+    if (mSelection.Get(uid, &guid)) {
       rv = enumerator->AddGuid(guid, i);
       NS_ENSURE_SUCCESS(rv, rv);
     }
