@@ -368,7 +368,8 @@
                    flex="1"/>
           <xul:image class="device-battery-right"/>
         </xul:hbox>
-        <xul:label sbid="device_battery_level_label"/>
+        <xul:label sbid="device_battery_level_label"
+                   class="device-specs-grid-label"/>
       </xul:hbox>
     </content>
 
