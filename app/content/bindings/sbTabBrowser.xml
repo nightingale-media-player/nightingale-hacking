@@ -58,30 +58,6 @@
         this.loading = false;
         this.tabStateRestored = false;
 
-        /* we need to track when tabs change */
-        this.tabChangeEventListener = {
-          tabbrowser: this,
-          timer_period: 200, // fire after 1/5th of a second
-          timer: null,
-          handleEvent: function(event) {
-            if (event.attrName == 'selectedIndex' &&
-                event.prevValue != event.newValue &&
-                !this.timer) {
-              this.timer = Components.classes['@mozilla.org/timer;1']
-                  .createInstance(Components.interfaces.nsITimer);
-              this.timer.initWithCallback(this, this.timer_period,
-                  Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-
-            }
-          },
-          notify: function(timer) {
-            //this.tabbrowser._loaded();
-            this.timer = null;
-          }
-        };
-        this.mTabBox.addEventListener("DOMAttrModified",
-            this.tabChangeEventListener, false);
-
         /* we want to know when the window has finished opening so we can
           restore tabs and other fun stuff
         */
@@ -212,13 +188,6 @@
         this._servicePaneService = null;
 
         this.removeProgressListener(this);
-        if (this.tabChangeEventListener) {
-          if (this.tabChangeEventListener.timer) {
-            this.tabChangeEventListener.timer.cancel();
-          }
-          this.mTabBox.removeEventListener("DOMAttrModified",
-              this.tabChangeEventListener, false);
-        }
 
         window.removeEventListener('load', this.windowLoadEventListener, true);
 
@@ -290,14 +259,27 @@
             var tabs = this._tabState;
             if (tabs) {
               var location = "_top";
-              var tab;
+              var tab;              
               for (var i=0; i<tabs.length; i++) {  
                 tab = tabs[i];             
                 // If the tab had a media page, restore it by reloading
                 // the media list
                 if (tab.listGUID) {
+
+                  // HACK! Add a random param to the querystring in order to avoid
+                  // the XUL cache.  This is a work around for the following bugs:
+                  //
+                  // Bug 7896   – Media pages do not initialize when loaded from tab restore
+                  // BMO 420815 – XUL Cache interferes with onload when loading multiple 
+                  //              instances of the same XUL file
+                  var url = tab.pageURL;
+                  if (url.indexOf("&bypassXULCache") == -1) {
+                    url += "&bypassXULCache="+ Math.random();
+                  }
+                  
                   this.loadMediaListGUID(tab.libraryGUID, tab.listGUID, null,
-                                         location, tab.pageURL);
+                                         location, url);
+                                         
                 // Otherwise just reload the URL
                 } else {
                   this.loadURI(tab, null, null, null, location);
@@ -1622,25 +1604,71 @@
         
       ]]></constructor>
      <destructor><![CDATA[
-        this.closeBalloonTip();
-        
-        // Remove the browser DOM loaded event listener.
-        this.linkedBrowser.removeEventListener("DOMContentLoaded",
-                                               this.browserDOMLoadedEventListener,
-                                               true);
-
-        // Clear the progress filter.
-        this._progressFilter.removeProgressListener(this);
-        this.linkedBrowser.removeProgressListener(this._progressFilter);
-        
-        window.removeEventListener("unload", 
-              this._onBrowserUnloadListener, true);
-        
-        if (this._mediaListRemovalMonitor) {
-          this._mediaListRemovalMonitor.setMediaList(null);
-          this._mediaListRemovalMonitor = null;
-        }
+        this.destroy();
      ]]></destructor>
+
+      <!-- Shut down everything in the tab.  
+           Called from onTabClose and the destructor. 
+           Used to ensure that the tab can be garbage collected. -->
+      <field name="_destroyed">false</field>     
+      <method name="destroy">
+        <body><![CDATA[
+          if (this._destroyed) {
+            return;  // Nothing to do.
+          }
+          try {
+            this.closeBalloonTip();
+              
+            // Stop async scanner and hide outerplaylist
+            this.clearOuterPlaylist();
+
+            // When we drop the tab, release all of the associated views stored in the map.
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap)
+                      .releaseViews(this.linkedBrowser);
+
+            if (this._playlist) {
+              this._playlist.destroy();
+              this._playlist.parentNode.removeChild(this._playlist);
+              this._playlist = null;
+            }
+            if (this._splitter) {
+              this._splitter.destroy();
+              this._splitter.parentNode.removeChild(this._splitter);
+              this._splitter = null;
+            }
+
+            this._metrics = null;
+            
+            if (this._mediaListRemovalMonitor) {
+              this._mediaListRemovalMonitor.setMediaList(null);
+              this._mediaListRemovalMonitor = null;
+            }
+            
+            this._viewForPage = null;
+            
+            // Remove the browser DOM loaded event listener.
+            this.linkedBrowser.removeEventListener("DOMContentLoaded",
+                                                   this.browserDOMLoadedEventListener,
+                                                   true);
+
+            // Clear the progress filter.
+            this._progressFilter.removeProgressListener(this);
+            this.linkedBrowser.removeProgressListener(this._progressFilter);
+            
+            window.removeEventListener("unload", 
+                  this._onBrowserUnloadListener, true);
+            
+            if (this._mediaListRemovalMonitor) {
+              this._mediaListRemovalMonitor.setMediaList(null);
+              this._mediaListRemovalMonitor = null;
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+          }
+          this._destroyed = true;
+        ]]></body>
+      </method>
 
       <field name="_progressFilter">null</field>
       
@@ -2368,7 +2396,6 @@
         <parameter name="evt"/>
         <body>
         <![CDATA[
-           
           // For now only save view history for chrome media pages
           if (!this.linkedBrowser.currentURI.schemeIs("chrome") ||
               !this.mediaPage) {
@@ -2453,33 +2480,7 @@
 
     <handlers>
       <handler event="TabClose"><![CDATA[
-        // Stop async scanner and hide outerplaylist
-        this.clearOuterPlaylist();
-
-        // When we drop the tab, release all of the associated views stored in the map.
-        Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                  .getService(Components.interfaces.sbIMediaListViewMap)
-                  .releaseViews(event.target.linkedBrowser);
-
-        if (this._playlist) {
-          this._playlist.destroy();
-          this._playlist.parentNode.removeChild(this._playlist);
-          this._playlist = null;
-        }
-        if (this._splitter) {
-          this._splitter.destroy();
-          this._splitter.parentNode.removeChild(this._splitter);
-          this._splitter = null;
-        }
-
-        this._metrics = null;
-        
-        if (this._mediaListRemovalMonitor) {
-          this._mediaListRemovalMonitor.setMediaList(null);
-          this._mediaListRemovalMonitor = null;
-        }
-        
-        this._viewForPage = null;
+        this.destroy();
 
         // save the tab state soon
         setTimeout("window.gBrowser.saveTabState();", 100);
