@@ -2313,7 +2313,7 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_STATE(mMediaListView);
 
-  if (IsAllRow(row)) {
+  if (IsAllRow(row) || value.IsEmpty() || value.EqualsLiteral(" ")) {
     return NS_OK;
   }
 
