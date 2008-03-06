@@ -94,6 +94,7 @@
   if (this._isBound) {
     throw new Error("already bound");
   }
+  this.setAttribute("sbtype", "filterlist");
   this.cfs = cfs;
   this.index = index;
   this._property = cfs.getProperty(index);
@@ -285,7 +286,12 @@
               aPopup.removeChild(aPopup.firstChild);
 
             var refChild = aPopup.firstChild;
-            var filterlist = this.parentNode.parentNode.parentNode;
+
+            // look for the filterlist that owns us
+            var node = this;
+            while (node && node.getAttribute("sbtype") != "filterlist")
+              node = node.parentNode;
+            var filterlist = node;
 
             // Get the property info for the property
             var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
@@ -321,9 +327,10 @@
                 
                 popupChild.setAttribute("type", "checkbox");
                 popupChild.setAttribute("label", propertyInfo.displayName);
-                popupChild.setAttribute("property", propertyID);
+                popupChild.setAttribute("property", propertyInfo.id);
+                popupChild.setAttribute("type", "radio");
                 
-                if (propertyID == filterlist._property)
+                if (propertyInfo.id == filterlist._property)
                     popupChild.setAttribute("checked", "true");
                     
                 aPopup.insertBefore(popupChild, refChild);
