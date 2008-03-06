@@ -342,14 +342,18 @@ var DPW = {
     // Now show progress for all items rather than each one.
     var curProgress = Math.round((curItemIndex / totalItems) * 100);
 
-    this._dText1Remote.stringValue = SBFormattedString(
-                                      "device.status.progress_header",
-                                      [curOperation, curItemIndex, totalItems]);
+    this._dText1Remote.stringValue =
+              SBFormattedString("device.status.progress_header_" + curOperation,
+                                [curItemIndex, totalItems]);
     this._dProgressRemote.intValue = curProgress;
 
     if (aMediaItem) {
       var pItemName = aMediaItem.getProperty(SBProperties.trackName);
-      this._dText2Remote.stringValue = curOperation + ": " + pItemName;
+      var pItemArtist = aMediaItem.getProperty(SBProperties.artistName);
+      var pItemAlbum = aMediaItem.getProperty(SBProperties.albumName);
+      this._dText2Remote.stringValue =
+          SBFormattedString("device.status.progress_footer_" + curOperation,
+                            [pItemName, pItemArtist, pItemAlbum]);
     }
   },
 
@@ -364,14 +368,16 @@ var DPW = {
     switch (aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
         var aMediaItem = aEvent.data;
-        aMediaItem.QueryInterface(Ci.sbIMediaItem);
+        if (aMediaItem)
+          aMediaItem.QueryInterface(Ci.sbIMediaItem);
         this._updateDeviceStatus(aMediaItem);
         this._isIdle = false;
         this._update();
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
         var aMediaItem = aEvent.data;
-        aMediaItem.QueryInterface(Ci.sbIMediaItem);
+        if (aMediaItem)
+          aMediaItem.QueryInterface(Ci.sbIMediaItem);
         this._updateDeviceStatus(aMediaItem);
         this._isIdle = false;
         this._update();
