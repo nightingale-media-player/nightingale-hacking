@@ -119,9 +119,16 @@ var DIW = {
 
     // Update the UI.
     this._update();
+    
+    // Watch for device changes
+    this._device.addEventListener(this);
   },
 
-
+  onDeviceEvent : function DIW_onDeviceEvent(anEvent) {
+    if (anEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_INFO_CHANGED) {
+      this._update();
+    }
+  },
   /**
    * \brief Finalize the device info services.
    */
@@ -129,7 +136,12 @@ var DIW = {
   finalize: function DIW_finalize() {
     // Finalize the pollsing services.
     this._pollingFinalize();
-
+    
+    // Stop listening
+    if (this._device != null) {
+      this._device.removeEventListener(this);
+    }
+    
     // Finalize the device services.
     this._deviceFinalize();
 

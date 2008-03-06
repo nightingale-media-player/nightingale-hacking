@@ -99,6 +99,8 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 12;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 13;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 14;
+  
+  const unsigned long EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 15;
 
   // device transfer errors
   const unsigned long EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 15;
