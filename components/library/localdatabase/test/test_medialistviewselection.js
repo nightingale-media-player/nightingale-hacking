@@ -80,6 +80,10 @@ function runTest () {
   selection.select(3);
   assertEqual(selection.count, library.length);
 
+  selection.selectOnly(2);
+  assertTrue(selection.isIndexSelected(2));
+  assertEqual(selection.count, 1);
+
   // Test notifications
   var listener = {
     countSelectionChanged: 0,

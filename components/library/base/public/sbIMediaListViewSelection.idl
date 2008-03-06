@@ -57,7 +57,7 @@ interface sbIMediaListViewSelectionListener : nsISupports
  * \brief Manage the selection of items within a view.  This interface is a
  *        subset of nsITreeView.
  */
-[scriptable, uuid(9a1b097d-c649-4a02-a7e7-16adcc2c899e)]
+[scriptable, uuid(3010571b-c11c-43fc-87a7-ba64f08895ac)]
 interface sbIMediaListViewSelection : nsISupports
 {
   /**
@@ -95,6 +95,13 @@ interface sbIMediaListViewSelection : nsISupports
    * \param aIndex Index of the item in the view
    */
   void select(in long aIndex);
+
+  /**
+   * \brief Select only the item at the given index, all others will be
+   *        deselected
+   * \param aIndex Index of the item in the view
+   */
+  void selectOnly(in long aIndex);
 
   /**
    * \brief Toggle the selection state of the item at the given index

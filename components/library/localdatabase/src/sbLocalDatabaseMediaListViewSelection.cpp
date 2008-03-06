@@ -314,6 +314,31 @@ sbLocalDatabaseMediaListViewSelection::Select(PRInt32 aIndex)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListViewSelection::SelectOnly(PRInt32 aIndex)
+{
+  NS_ENSURE_ARG_RANGE(aIndex, 0, (PRInt32) mLength - 1);
+  nsresult rv;
+
+  mCurrentIndex = aIndex;
+
+  mSelection.Clear();
+  mSelectionIsAll = PR_FALSE;
+
+  rv = AddToSelection(aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  CheckSelectAll();
+
+  NOTIFY_LISTENERS(OnSelectionChanged, ());
+
+#ifdef DEBUG
+  LogSelection();
+#endif
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::Toggle(PRInt32 aIndex)
 {
   NS_ENSURE_ARG_RANGE((PRInt32) aIndex, 0, (PRInt32) mLength - 1);

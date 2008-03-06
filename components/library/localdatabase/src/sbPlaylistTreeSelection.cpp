@@ -82,24 +82,18 @@ NS_IMETHODIMP
 sbPlaylistTreeSelection::Select(PRInt32 index)
 {
   nsresult rv;
-  sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
   mShiftSelectPivot = -1;
 
-  rv = mViewSelection->SelectNone();
-  NS_ENSURE_SUCCESS(rv, rv);
-  return mViewSelection->Select(index);
+  return mViewSelection->SelectOnly(index);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 {
   nsresult rv;
-  sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
   mShiftSelectPivot = -1;
 
-  rv = mViewSelection->SelectNone();
-  NS_ENSURE_SUCCESS(rv, rv);
-  return mViewSelection->Select(index);
+  return mViewSelection->SelectOnly(index);
 }
 
 NS_IMETHODIMP
