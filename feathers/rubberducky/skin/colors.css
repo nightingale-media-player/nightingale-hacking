@@ -1715,14 +1715,14 @@ richlistitem
 
 richlistitem[selected="true"]
 {
-  background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f !important; /** Groove */
+  background-color: #1b1d1b; /** Rubber Shadow */
+  color: #feffff !important; /** Light Color Brightest */
 }
 
 richlistbox:focus > richlistitem[selected="true"] 
 {
-  background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f; /** Groove */
+  background-color: #1b1d1b; /** Rubber Shadow */
+  color: #feffff;            /** Light Color Brightest */
 }
 
 /** This is bad bad bad, but fixing it requires making
@@ -1737,7 +1737,7 @@ richlistitem[selected="true"] > * > description,
 richlistitem[selected="true"] > * > * > description,
 richlistitem[selected="true"] > * > * > * > description
 {
-  color: #202220 !important; /** Button Shadow */ 
+  color: #feffff !important; /** Light Color Brightest */ 
 }
 
 
@@ -1885,6 +1885,7 @@ PREFERENCES
   border-bottom: 1px solid #0f100f !important; /** Groove */
   border-left: 1px solid #0f100f !important; /** Groove */
 }
+
 #extensionsView:focus > richlistitem[selected="true"]
 {
   background-image: none !important;
