@@ -1033,68 +1033,8 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     /*
      * Generate the primary sort key position query
      */
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-
-    rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
+    rv = ldq->GetPrefixSearchQuery(mPrimarySortKeyPositionQuery);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    if (SB_IsTopLevelProperty(mSorts[0].property)) {
-      rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString columnName;
-      rv = SB_GetTopLevelPropertyColumn(mSorts[0].property, columnName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->CreateMatchCriterionParameter(EmptyString(),
-                                                  columnName,
-                                                  sbISQLSelectBuilder::MATCH_LESS,
-                                                  getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      builder->AddOrder(EmptyString(),
-                        columnName,
-                        mSorts[0].ascending);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-    }
-    else {
-      rv = builder->SetBaseTableName(PROPERTIES_TABLE);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = builder->CreateMatchCriterionLong(EmptyString(),
-                                             NS_LITERAL_STRING("property_id"),
-                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                             GetPropertyId(mSorts[0].property),
-                                             getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->CreateMatchCriterionParameter(EmptyString(),
-                                                  OBJSORTABLE_COLUMN,
-                                                  sbISQLSelectBuilder::MATCH_LESS,
-                                                  getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      builder->AddOrder(EmptyString(),
-                        OBJSORTABLE_COLUMN,
-                        mSorts[0].ascending);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = builder->ToString(mPrimarySortKeyPositionQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->Reset();
-    NS_ENSURE_SUCCESS(rv, rv);
-
   }
 
  return NS_OK;
