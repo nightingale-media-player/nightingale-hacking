@@ -153,10 +153,32 @@ sbMacWindowZoomController.prototype = {
   },
   
   _onWindowDragged: function() {
+    var maxScreenRect = getCurMaxScreenRect();
+    var curX = parseInt(document.documentElement.boxObject.screenX);
+    var curY = parseInt(document.documentElement.boxObject.screenY);
+
     if (this._mIsZoomed) {
-      this._mIsZoomed = false;
+      // If the window was moved more than 10 pixels either way - this
+      // window is no longer considered "zoomed".
+      if (curX > (maxScreenRect.x + 10) || curY > (maxScreenRect.y + 10)) {
+        this._mIsZoomed = false;
+        this._saveWindowCoords();
+      }
     }
-    this._saveWindowCoords();
+    else {
+      // If the window was moved into the "zoom" zone 
+      // (10 pixel square in top-left corner) then it should be considered 
+      // "zoomed" and be set as so.
+      var curWidth = parseInt(document.documentElement.boxObject.width);
+      var curHeight = parseInt(document.documentElement.boxObject.height);
+      if (curX < (maxScreenRect.x + 10) && 
+          curY < (maxScreenRect.y + 10) &&
+          curWidth > (maxScreenRect.width - 10) && 
+          curHeight > (maxScreenRect.height - 10))
+      {
+        this._mIsZoomed = true;
+      }
+    }
   },
   
   onZoom: function() {    
