@@ -52,38 +52,63 @@
         this.setAttribute('mousethrough', 'always');
 
         this._mMouseDidDrag = false;
-
+        
         // Pay attention to if the window changes size
         var self = this;
         this._windowresize = function(evt) {
           self.onWindowResize(evt);
         };
         window.addEventListener("resize", this._windowresize, true);        
-      ]]></constructor>
+      ]]>
+      </constructor>
       <destructor><![CDATA[
         // Remove the crappycrap
         window.removeEventListener("resize", this._windowresize, true);
         this._windowresize = null;
-      ]]></destructor>
+      ]]>
+      </destructor>
+      <method name="setDraggable">
+        <parameter name="isEnabled" />
+        <body>
+          <![CDATA[
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            
+            var hiddenState = "";
+            if (isEnabled) {
+              this._mIsEnabled = true;
+              titlebar.removeAttribute("hidden");
+            }
+            else {
+              this._mIsEnabled = false;
+              titlebar.setAttribute("hidden", "true");
+            }
+          ]]>
+        </body>
+      </method>
       <method name="onWindowResize">
         <parameter name="evt"/>
         <body>
           <![CDATA[
-            // If the size changed, check the sizemode a second later
-            // (the sizemode attrib changes >500ms after the size)
-            var titlebar = document.getAnonymousElementByAttribute(this, 
-                              'sbid', 'draggable-titlebar');
-            // Immediately disable dragging, re-enable after the timer comes up                  
-            titlebar.setAttribute("hidden", "true");
-            setTimeout( function () {
-              var mode = document.documentElement.getAttribute( "sizemode" );
-              if ( mode == "maximized" )
-                // Hide the titlebar (prevent drag) if we are now maximized
-                titlebar.setAttribute("hidden", "true");
-              else
-                // Show the titlebar (allow drag) if we are not maximized
-                titlebar.removeAttribute("hidden");
-            }, 1000 );
+            if (this._mIsEnabled) {
+              // If the size changed, check the sizemode a second later
+              // (the sizemode attrib changes >500ms after the size)
+              var titlebar = document.getAnonymousElementByAttribute(this, 
+                                'sbid', 'draggable-titlebar');
+              // Immediately disable dragging, re-enable after the timer comes up                  
+              titlebar.setAttribute("hidden", "true");
+              setTimeout( function () {
+                var mode = document.documentElement.getAttribute( "sizemode" );
+                if ( mode == "maximized" ) {
+                  // Hide the titlebar (prevent drag) if we are now maximized
+                  titlebar.setAttribute("hidden", "true");
+                }
+                else {
+                  // Show the titlebar (allow drag) if we are not maximized
+                  titlebar.removeAttribute("hidden");
+                }
+              }, 1000 );
+            }
           ]]>
         </body>
       </method>
@@ -91,7 +116,9 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
-            this._mMouseIsDown = true;
+            if (this._mIsEnabled) {
+              this._mMouseIsDown = true;
+            }
           ]]>
         </body>
       </method>
@@ -99,11 +126,13 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
-            this._mMouseIsDown = false;
-            if (this._mMouseDidDrag) {
-              var event = document.createEvent("HTMLEvents");
-              event.initEvent("ondragexit", false, false);
-              document.dispatchEvent(event);
+            if (this._mIsEnabled) {
+              this._mMouseIsDown = false;
+              if (this._mMouseDidDrag) {
+                var event = document.createEvent("HTMLEvents");
+                event.initEvent("ondragexit", false, false);
+                document.dispatchEvent(event);
+              }
             }
           ]]>
         </body>
@@ -112,8 +141,11 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
-            if (this._mMouseIsDown)
-              this._mMouseDidDrag = true;
+            if (this._mIsEnabled) {
+              if (this._mMouseIsDown) {
+                this._mMouseDidDrag = true;
+              }
+            }
           ]]>
         </body>
       </method>

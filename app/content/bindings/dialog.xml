@@ -39,7 +39,7 @@
     </resources>
     <content flex="1">
       <sb-sys-outer-frame resizers="none" flex="1" id="dialog-outer-frame"
-        xbl:inherits="resizers"
+        xbl:inherits="resizers" type="dialog"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         <sb-sys-dialog-titlebar id="dialog-titlebar"/>
 
@@ -64,7 +64,9 @@
     <implementation>
       <constructor>
         // see: windowUtils::initializeDocumentPlatformAttribute();
-        document.documentElement.setAttribute("platform",getPlatformString());
+        var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+        document.documentElement.setAttribute("platform", sysInfo.getProperty("name"));
         
       </constructor>
     </implementation>

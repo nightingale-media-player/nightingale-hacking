@@ -153,6 +153,7 @@
           {
             case "dialog":
               // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
               break;
@@ -201,6 +202,7 @@
           {
             case "dialog":
               // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
               break;
@@ -375,21 +377,21 @@
     <implementation>
       <constructor>
         <![CDATA[
-          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');		
-		
+          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');   
+    
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           if ( sysInfo.getProperty("name") == "Darwin" ) {
             // Set an attribute on the feathers button so we can style it appropriately
             feathersButton.setAttribute("mac", true);
-		  
+      
             // Hidden on Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
           } else {
             // Hidden on all but Mac
-            document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
-		  }
-		  
+            document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" );
+					}
+      
           // Hide feathers button when the OS titlebar is showing
           this._feathersVisibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", feathersButton, "hidden", true );
 
@@ -440,7 +442,7 @@
               <xul:image sbid="c8" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomright"/>
           </xul:hbox>
         </xul:vbox>
-		
+    
         <xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" >
               <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
         </xul:vbox>
@@ -523,7 +525,12 @@
           }
             
           if ( this.getAttribute("overflow") == "true" )
-            document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" );
+          
+          // Mac dialogs should not be allowed to be dragged around.
+          if ( this.getAttribute("type") == "dialog" && sysInfo.getProperty("name") == "Darwin" ) {
+            document.getAnonymousElementByAttribute(this, 'sbid', 'children').setDraggable(false);
+          }
         ]]>
       </constructor>
       

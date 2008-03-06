@@ -1825,6 +1825,16 @@ dialog:not([platform=Darwin])
   padding: 10px;
 }
 
+dialog:root[platform=Darwin] .dialog-content-box
+{
+  border: none;
+  margin: 5px 0px;
+  padding-top: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #313131; /** Window */
+}
+
 
 
 /** 
