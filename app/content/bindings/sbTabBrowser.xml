@@ -391,7 +391,7 @@
            and optionally an aEvent and aMediaListView.
 
            aMediaListView will be provided to the tab and used if a
-           media page is loaded.
+           media page or web playlist is loaded.
            -->
       <method name="loadURI">
         <parameter name="aURI"/>
@@ -580,9 +580,24 @@
             
             // Not already visible.  Load and highlight.
             } else {
-              var tab = this.loadMediaList(aMediaListView.mediaList, null, 
-                                           null, aMediaListView);
-              tab._highlightViewIndexOnLoad = aHighlightIndex;
+              // If the view is for a web media list, load the origin page.
+              // Otherwise, load the media list.
+              var mediaList = aMediaListView.mediaList;
+              if (mediaList.library.equals(LibraryUtils.webLibrary) &&
+                  (mediaList.getProperty(SBProperties.isList) == "1")) {
+                aMediaListView.selection.selectOnly(aHighlightIndex);
+                var originPage = mediaList.getProperty(SBProperties.originPage);
+                this.loadURI(originPage,
+                             null,
+                             null,
+                             null,
+                             null,
+                             aMediaListView);
+              } else {
+                var tab = this.loadMediaList(aMediaListView.mediaList, null, 
+                                             null, aMediaListView);
+                tab._highlightViewIndexOnLoad = aHighlightIndex;
+              }
             }
           ]]>
         </body>
@@ -2003,17 +2018,25 @@
             return;
           }
 
-          // Now all I have to do is find something resembling a usefully unique key.
-          var browser = this.linkedBrowser;
-          var history = browser.webNavigation.sessionHistory;
-          var entry = history.getEntryAtIndex( history.index, false );
+          // Use any view that was explicitly specified.  Since this consumes
+          // the view, it is no longer a new load.
+          var view = this._viewForPage;
+          this._isNewViewForPage = false;            
 
-          // See if we're supposed to be restoring a view or making a new one
-          var viewMap =
-            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                      .getService(Components.interfaces.sbIMediaListViewMap);
-          var view = viewMap.getView(browser, entry);
+          // Try getting a view from the history.
+          if (!view) {
+            // Now all I have to do is find something resembling a usefully
+            // unique key.
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            var entry = history.getEntryAtIndex( history.index, false );
 
+            // See if we're supposed to be restoring a view or making a new one
+            var viewMap = Components
+              .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              .getService(Components.interfaces.sbIMediaListViewMap);
+            view = viewMap.getView(browser, entry);
+          }
 
           if (!view) {
             var mediaList =
@@ -2041,6 +2064,12 @@
           // If something has already been scanned into the view, show it.
           if (view.length)
               this.outerPlaylistShowing = true;
+
+          // If something is selected in the view, ensure it's visible.
+          if (view.selection.currentIndex >= 0) {
+            var tree = this.outerPlaylist.tree;
+            tree.treeBoxObject.ensureRowIsVisible(view.selection.currentIndex);
+          }
 
           // scrape the document.
           var context = {
@@ -2102,13 +2131,6 @@
       <method name="setUpMediaPage">
         <body><![CDATA[
         if (!this.mediaPage) {
-          
-          // The loaded page is not a MediaPage, so we can't
-          // do anything with the view we were given.  
-          // Throw it away.
-          this._viewForPage = null;
-          this._isNewViewForPage = false;
-          this._highlightViewIndexOnLoad = null;
           return;
         }
         
