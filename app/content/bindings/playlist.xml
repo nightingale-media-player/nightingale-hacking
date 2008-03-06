@@ -334,7 +334,10 @@
       <field name="edit_col">0;</field>
 
       <!-- Stores the last click event, to be passed to the remote API
-           (this is a sbIPlaylistClickEvent) -->
+           (this is a sbIPlaylistClickEvent) 
+           XXXeps this can be removed since click events now use
+                  "datacontainerevent", and the property and item can be read
+                  from the event using nsIDOMDataContainerEvent. -->
       <field name="_lastClickEvent">null</field>
       <property name="lastClickEvent">
         <getter>
@@ -428,9 +431,11 @@
       -->
       <field name="_columnSpecOrigin">0</field>
 
-      <!-- Track mouse down for sending mouse state to the tree view -->
+      <!-- Track mouse for sending mouse state to the tree view -->
       <field name="_lastMouseDownRow">-1</field>
       <field name="_lastMouseDownColumn">null</field>
+      <field name="_lastMouseOverRow">-1</field>
+      <field name="_lastMouseOverColumn">null</field>
 
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
@@ -1627,12 +1632,12 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
         var item = this.mediaListView.getItemByIndex(row.value);
 
         function fireEvent(aElement) {
-          var event = document.createEvent("Events");
+          var event = document.createEvent("datacontainerevent");
           event.initEvent("PlaylistCellClick", true, true);
-          event.property = property;
-          event.item     = item;
-          event.row      = row.value;
-          event.column   = col.value;
+          event.setData("property", property);
+          event.setData("item", item);
+          event.setData("row", row.value);
+          event.setData("column", col.value);
           aElement._lastClickEvent = { property: property, item: item, __proto__: evt };
           aElement.dispatchEvent(event);
           aElement._lastClickEvent = null;
@@ -1749,7 +1754,40 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
-  if (!obj.value) {
+
+  // Determine if mouse is over the same cell as the previous event.
+  var sameCell = false;
+  var lastCell = null;
+  if ((this._lastMouseOverRow >= 0) && this._lastMouseOverColumn) {
+    lastCell = { row: this._lastMouseOverRow, col: this._lastMouseOverColumn };
+  }
+  if ((evt.type != "mouseout") && lastCell &&
+      (row.value == lastCell.row) && (col.value == lastCell.col)) {
+    sameCell = true;
+  }
+
+  // If the mouse is not over the same cell, clear the last mouse over state.
+  if (!sameCell) {
+    this._lastMouseOverRow = -1;
+    this._lastMouseOverColumn = null;
+  }
+
+  // If the mouse moved out of a cell, dispatch a mouse out event.
+  if (lastCell && !sameCell) {
+    var property = lastCell.col.element.getAttribute("bind");
+    var item = this.mediaListView.getItemByIndex(lastCell.row);
+
+    var event = document.createEvent("datacontainerevent");
+    event.initEvent("PlaylistCellMouseOut", true, true);
+    event.setData("property", property);
+    event.setData("item", item);
+    event.setData("row", lastCell.row);
+    event.setData("column", lastCell.col);
+    this.dispatchEvent(event);
+  }
+
+  // If the mouse is not over any cell, do nothing more.
+  if (!obj.value || (evt.type == "mouseout")) {
     return;
   }
 
@@ -1794,6 +1832,23 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
                          this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
       this._lastMouseDownRow    = -1;
       this._lastMouseDownColumn = null;
+
+      // If mouse has moved into a different cell, dispatch a mouse over event.
+      if (!sameCell) {
+        var property = col.value.element.getAttribute("bind");
+        var item = this.mediaListView.getItemByIndex(row.value);
+
+        var event = document.createEvent("datacontainerevent");
+        event.initEvent("PlaylistCellMouseOver", true, true);
+        event.setData("property", property);
+        event.setData("item", item);
+        event.setData("row", row.value);
+        event.setData("column", col.value);
+        this.dispatchEvent(event);
+
+        this._lastMouseOverRow = row.value;
+        this._lastMouseOverColumn = col.value;
+      }
     }
   }
   else {
@@ -2797,6 +2852,47 @@ if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
           event.preventDefault();
         ]]>
       </handler>
+
+      <handler event="PlaylistCellMouseOver">
+        <![CDATA[
+          // If the mouse is over a playlist origin page image cell, set the
+          // browser over link to the origin page URI.
+          var property = event.getData("property");
+          if (property == SBProperties.originPageImage) {
+            // Get the origin page URI.
+            var item = event.getData("item");
+            var originPageURI = null;
+            if (item)
+              originPageURI = item.getProperty(SBProperties.originPage);
+
+            // Set the browser status over link.
+            if (originPageURI && this._outerWindow.XULBrowserWindow) {
+              this._outerWindow.XULBrowserWindow.setOverLink(originPageURI,
+                                                             null);
+            }
+          }
+        ]]>
+      </handler>
+
+      <handler event="PlaylistCellMouseOut">
+        <![CDATA[
+          // If the mouse has moved out of a playlist origin page image cell
+          // with a valid origin page URI, clear the browser over link.
+          var property = event.getData("property");
+          if (property == SBProperties.originPageImage) {
+            // Get the origin page URI.
+            var item = event.getData("item");
+            var originPageURI = null;
+            if (item)
+              originPageURI = item.getProperty(SBProperties.originPage);
+
+            // Clear the over link if the origin page URI is valid.
+            if (originPageURI && this._outerWindow.XULBrowserWindow)
+              this._outerWindow.XULBrowserWindow.setOverLink("", null);
+          }
+        ]]>
+      </handler>
+
     </handlers>
 
   </binding>
