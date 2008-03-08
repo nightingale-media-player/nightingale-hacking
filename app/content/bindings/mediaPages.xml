@@ -93,6 +93,9 @@
                 gBrowser.currentMediaListView, 
                 null);
             }
+            else if (item.hasAttribute("uri")) {
+              gBrowser.loadURI(item.getAttribute("uri"), null, null, null, "_blank");
+            }
           } catch (e) { 
             Components.utils.reportError(e);
           }
@@ -206,16 +209,12 @@
                  " bundle\n"+ e + "\n"); 
           }
           
+          var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
+                                    .getService(Components.interfaces.nsIURLFormatter);
+          var getMoreURL = formatter.formatURLPref("extensions.getMoreExtensionsURL");
           item.setAttribute("label", getMoreText);
           item.setAttribute("name", "menu.getmore");
-          item.onCommand = function() { 
-            gBrowser.loadURI(
-              "http://addons.songbirdnest.com/",
-              null, null, null,
-              '_blank',
-              gBrowser.currentMediaPage.mediaListView
-            ); 
-          }
+          item.setAttribute("uri", getMoreURL);
           return item;
         ]]>
         </body>
