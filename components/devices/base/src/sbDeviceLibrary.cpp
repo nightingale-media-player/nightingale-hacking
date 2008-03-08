@@ -81,24 +81,41 @@ sbDeviceLibrary::sbDeviceLibrary() : mLock(nsnull)
 
 sbDeviceLibrary::~sbDeviceLibrary()
 {
+  Finalize();
+
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
   }
   
-  UnregisterDeviceLibrary(mDeviceLibrary);
-
   TRACE(("DeviceLibrary[0x%.8x] - Destructed", this));
 }
 
-nsresult
-sbDeviceLibrary::Init(const nsAString& aDeviceIdentifier)
+NS_IMETHODIMP
+sbDeviceLibrary::Initialize(const nsAString& aLibraryId)
 {
   NS_ENSURE_FALSE(mLock, NS_ERROR_ALREADY_INITIALIZED);
   mLock = nsAutoLock::NewLock(__FILE__ "sbDeviceLibrary::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   PRBool succeeded = mListeners.Init();
   NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
-  return CreateDeviceLibrary(aDeviceIdentifier, nsnull);
+  return CreateDeviceLibrary(aLibraryId, nsnull);
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::Finalize()
+{
+  // Get and clear the device library.
+  nsCOMPtr<sbILibrary> deviceLibrary;
+  {
+    nsAutoLock lock(mLock);
+    deviceLibrary = mDeviceLibrary;
+    mDeviceLibrary = nsnull;
+  }
+
+  if (deviceLibrary)
+    UnregisterDeviceLibrary(deviceLibrary);
+
+  return NS_OK;
 }
 
 nsresult 

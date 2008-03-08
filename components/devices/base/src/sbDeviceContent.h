@@ -40,7 +40,6 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICECONTENT
 
-  nsresult Init();
   static sbDeviceContent * New();
 private:
   sbDeviceContent();

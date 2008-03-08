@@ -373,7 +373,7 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   
   nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary();
   NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv = devLib->Init(aId);
+  nsresult rv = devLib->Initialize(aId);
   NS_ENSURE_SUCCESS(rv, rv);
   
   rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),

@@ -46,7 +46,7 @@ interface sbIDeviceParameters;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(a488b859-899a-4a9c-a337-782f976c0874)]
+[scriptable, uuid(500cd0ed-d670-4013-a6bf-53e4ff0ec501)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -156,4 +156,9 @@ interface sbIDevice : nsISupports
    * Cancel all current pending requests
    */
   void cancelRequests();
+
+  /**
+   * Eject device.
+   */
+  void eject();
 };

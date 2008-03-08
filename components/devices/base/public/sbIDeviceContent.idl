@@ -36,7 +36,7 @@ interface sbILibraryFactory;
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(6ec1bd9c-e6e0-4c92-83dc-9439791a3b4b)]
+[scriptable, uuid(7386c33a-df60-4ffd-9747-ed8e218a966e)]
 interface sbIDeviceContent : nsISupports
 {
   /**
@@ -48,6 +48,16 @@ interface sbIDeviceContent : nsISupports
    * \brief Not currently implemented
    */
   readonly attribute sbILibraryFactory libraryFactory;
+
+  /**
+   * \brief Initialize the device content.
+   */
+  void initialize();
+
+  /**
+   * \brief Finalize the device content.
+   */
+  void finalize();
 
   /**
    * \brief Add a device library to the device

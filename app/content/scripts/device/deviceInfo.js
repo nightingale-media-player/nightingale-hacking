@@ -842,14 +842,7 @@ var DIW = {
    */
 
   _eject: function DIW__eject() {
-    // cause a DEVICE_REMOVED event on the device, so that everything
-    // happens just like if the device had been unplugged. the actual
-    // unloading of the device info page will be taken care of by
-    // the DEVICE_REMOVE handler in the mtpDeviceServicePaneService
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    var evt = deviceManager.createEvent(Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED, this._device);
-    deviceManager.dispatchEvent(evt);
+    this._device.eject();
   },
 
 

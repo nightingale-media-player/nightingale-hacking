@@ -315,3 +315,9 @@ NS_IMETHODIMP sbMockDevice::CancelRequests()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+NS_IMETHODIMP sbMockDevice::Eject()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+

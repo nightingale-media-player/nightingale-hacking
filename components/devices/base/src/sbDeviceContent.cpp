@@ -61,6 +61,8 @@ sbDeviceContent::sbDeviceContent()
 
 sbDeviceContent::~sbDeviceContent()
 {
+  Finalize();
+
   if(mDeviceLibrariesMonitor) {
     nsAutoMonitor::DestroyMonitor(mDeviceLibrariesMonitor);
   }
@@ -72,8 +74,8 @@ sbDeviceContent * sbDeviceContent::New()
   return new sbDeviceContent;
 }
 
-nsresult
-sbDeviceContent::Init()
+NS_IMETHODIMP
+sbDeviceContent::Initialize()
 {
   mDeviceLibrariesMonitor = nsAutoMonitor::NewMonitor("sbDeviceContent::mDeviceLibrariesMonitor");
   NS_ENSURE_TRUE(mDeviceLibrariesMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -82,6 +84,31 @@ sbDeviceContent::Init()
   mDeviceLibraries = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceContent::Finalize()
+{
+  nsresult rv;
+
+  // Finalize and remove all device libraries.
+  if (mDeviceLibraries) {
+    PRUint32 length;
+    rv = mDeviceLibraries->GetLength(&length);
+    if (NS_SUCCEEDED(rv)) {
+      for (PRUint32 i = 0; i < length; i++) {
+        nsCOMPtr<sbIDeviceLibrary> library;
+        rv = mDeviceLibraries->QueryElementAt(i,
+                                              NS_GET_IID(sbIDeviceLibrary),
+                                              getter_AddRefs(library));
+        if (NS_SUCCEEDED(rv))
+          library->Finalize();
+      }
+    }
+    mDeviceLibraries->Clear();
+  }
+
   return NS_OK;
 }
 

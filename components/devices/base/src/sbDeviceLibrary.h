@@ -109,8 +109,6 @@ public:
 
   SB_DECL_SBILIBRARY_OVERRIDES
   SB_DECL_SBIMEDIALIST_OVERRIDES
-  
-  nsresult Init(const nsAString& aDeviceIdentifier);
 
 private:
 

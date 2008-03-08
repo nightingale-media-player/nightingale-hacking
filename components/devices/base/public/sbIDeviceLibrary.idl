@@ -207,9 +207,20 @@ interface sbIDeviceLibraryListener : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(1fcdbc71-f637-45f5-b1cc-41d2e71c69c3)]
+[scriptable, uuid(c18aec1c-3a10-4cc6-a192-1510056b9716)]
 interface sbIDeviceLibrary : sbILibrary
 {
+  /**
+   * \brief Initialize the device library.
+   * \param aLibraryId Device library identifier.
+   */
+  void initialize(in AString aLibraryId);
+
+  /**
+   * \brief Finalize the device library.
+   */
+  void finalize();
+
   /**
    * \brief Add a listener to this device library.
    * \param sbIDeviceLibraryListener aListener listener to add.

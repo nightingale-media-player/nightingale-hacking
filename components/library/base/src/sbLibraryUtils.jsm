@@ -464,7 +464,7 @@ LibraryUtils.RemovalMonitor.prototype = {
   {
     //dump("RemovalMonitor: RemovalMonitor.onLibraryUnregistered()\n");
     // If the current library was unregistered, notify
-    if (aLibrary == this._library) {
+    if (this._library && this._library.equals(aLibrary)) {
       this._onMediaListRemoved(); 
     }
   },

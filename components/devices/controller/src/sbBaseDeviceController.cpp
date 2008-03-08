@@ -296,6 +296,8 @@ sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice) {
   nsresult rv = aDevice->GetId(&id);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  aDevice->Disconnect();
+
   nsAutoMonitor mon(mMonitor);
   mDevices.Remove(*id);
   mon.Exit();
