@@ -161,6 +161,9 @@ sbRemoteNotificationManager::Action(ActionType aType, sbILibrary* aLibrary)
     mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // kung fu death grip, matched in Notify. without this the manager goes
+    // away before the timer and deadlocks - bug 7970
+    NS_ADDREF_THIS();
     rv = mTimer->InitWithCallback(this,
                                   TIMER_RESOLUTION,
                                   nsITimer::TYPE_REPEATING_SLACK);
@@ -190,6 +193,10 @@ sbRemoteNotificationManager::Notify(nsITimer* aTimer)
     // keep the return value so we always return the worst one
     rv2 = mTimer->Cancel();
     mTimer = nsnull;
+
+    // kung fu death grip, matched in Notify. without this the manager goes
+    // away before the timer and deadlocks - bug7970
+    NS_RELEASE_THIS();
 
     NS_ENSURE_SUCCESS(rv, rv);
     return rv2;
