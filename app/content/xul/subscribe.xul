@@ -277,6 +277,11 @@ function doOK()
     // url is not valid
   }
 
+  // explicitly disallow "http://" as a valid URL
+  if (url == "http://) {
+    uri = null;
+  }
+
   if (!uri) {
     // TODO: localize this
     gPrompt.alert(window,
