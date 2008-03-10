@@ -134,6 +134,13 @@ ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
   }
 }
 
+ServicePaneNode.prototype.hasAttributeNS =
+  function SPN_hasAttributeNS(aNamespace, aName)
+{
+  var property = RDFSVC.GetResource(aNamespace+aName);
+  return this._dataSource.hasArcOut(this.resource, property);
+}
+
 ServicePaneNode.prototype.__defineGetter__ ('url', function () {
   return this.getAttributeNS(NC,'URL'); })
 ServicePaneNode.prototype.__defineSetter__ ('url', function (aValue) {

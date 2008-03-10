@@ -96,6 +96,8 @@ interface sbIServicePaneNode : nsISupports
   AString setAttributeNS(in AString aNamespace,
                          in AString aName,
                          in AString aValue);
+  boolean hasAttributeNS(in aString aNamespace,
+                         in AString aName);
   
   readonly attribute nsISimpleEnumerator childNodes;
   readonly attribute sbIServicePaneNode firstChild;

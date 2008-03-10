@@ -185,7 +185,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
         // for *.ico, try to get the small icon
         spec = "moz-icon://" + spec + "?size=16";
       }
-      node.setAttributeNS(NC, "Icon", spec);
+      node.image = spec;
     }
   } catch(ex) {
     /* we do not care if setting the icon fails */

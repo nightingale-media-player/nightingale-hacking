@@ -503,9 +503,6 @@ nsresult sbDeviceManager::Init()
     NS_Free(id);
     NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
     
-    rv = marshall->BeginMonitoring();
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // have the marshall load the controllers
     nsCOMPtr<sbIDeviceControllerRegistrar> registrar =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIDeviceControllerRegistrar*, this), &rv);
@@ -513,7 +510,10 @@ nsresult sbDeviceManager::Init()
     
     rv = marshall->LoadControllers(registrar);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+     
+    rv = marshall->BeginMonitoring();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = enumerator->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
   }
