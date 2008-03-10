@@ -278,7 +278,7 @@ function doOK()
   }
 
   // explicitly disallow "http://" as a valid URL
-  if (url == "http://) {
+  if (url == "http://") {
     uri = null;
   }
 
