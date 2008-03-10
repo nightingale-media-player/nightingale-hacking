@@ -202,7 +202,8 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mClearSelectionPending(PR_FALSE),
  mFakeAllRow(PR_FALSE),
  mSelectionChanging(PR_FALSE),
- mIsListeningToPlayback(PR_FALSE)
+ mIsListeningToPlayback(PR_FALSE),
+ mIsRebuilding(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -426,6 +427,9 @@ sbLocalDatabaseTreeView::Rebuild()
     mClearSelectionPending = PR_TRUE;
   }
 
+  mIsRebuilding = PR_TRUE;
+  NS_OBSERVER_ARRAY_NOTIFY_OBSERVERS(mListeners, sbILocalDatabaseTreeViewListener, OnRebuild, ());
+
   // Invalidate our cache
   rv = InvalidateCache();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -549,6 +553,17 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
     rv = mRealSelection->Select(0);
     mSelectionChanging = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If the new count is 0, OnGetGuidByIndex will not be called, so the
+  // listeners will not be notified that the rebuild is done, we need to
+  // tell them now. Note that if we have a fake 'All' row (ie, filter view)
+  // then we should check for aRowCount being 1 instead of 0.
+  if (mIsRebuilding && 
+      (aRowCount == 0 ||
+       (aRowCount == 1 && mFakeAllRow))) {
+    mIsRebuilding = PR_FALSE;
+    NS_OBSERVER_ARRAY_NOTIFY_OBSERVERS(mListeners, sbILocalDatabaseTreeViewListener, DidRebuild, ());
   }
 
   return NS_OK;
@@ -1223,6 +1238,12 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex(%d, %s)", this,
          aIndex, NS_LossyConvertUTF16toASCII(aGUID).get()));
+
+  
+  if (mIsRebuilding) {
+    mIsRebuilding = PR_FALSE;
+    NS_OBSERVER_ARRAY_NOTIFY_OBSERVERS(mListeners, sbILocalDatabaseTreeViewListener, DidRebuild, ());
+  }
 
   nsresult rv;
   sbAutoSelectEventsSuppressed autoSelectEventsSuppressed(mRealSelection);
@@ -2698,6 +2719,25 @@ sbLocalDatabaseTreeView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::AddListener(sbILocalDatabaseTreeViewListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  PRBool success = mListeners.AppendElementUnlessExists(aListener);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::RemoveListener(sbILocalDatabaseTreeViewListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  mListeners.RemoveElement(aListener);
+  return NS_OK;
+}
+
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseTreeViewState,
                    nsISerializable);

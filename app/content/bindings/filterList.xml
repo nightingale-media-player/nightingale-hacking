@@ -31,7 +31,6 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <!-- If you change the box model around, remember to fix the custom columnpicker!! -->
   <binding id="filterlist">
     <content>
       <xul:hbox id="sb-filterlist" class="filterlist" flex="1" xbl:inherits="class">
@@ -51,7 +50,7 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener">
+    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener,sbILocalDatabaseTreeViewListener">
 
       <constructor>
       </constructor>
@@ -60,6 +59,7 @@
 <![CDATA[
   if (this._isBound) {
     this.cfs.removeListener(this);
+    this.tree.view.removeListener(this);
   }
 ]]>
       </destructor>
@@ -99,6 +99,7 @@
   this.index = index;
   this._property = cfs.getProperty(index);
   this.tree.view = cfs.getTreeView(index);
+  this.tree.view.addListener(this);
 
   // Get the property info for the property
   var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
@@ -131,33 +132,34 @@
         <parameter name="property"/>
         <body>
           <![CDATA[
+            // if nothing changed, do not actually do anything
+            if (this._property == property)
+              return;
+              
+            this._property = property;
+
             this.cfs.changeFilter(this.index, property);
             this.tree.view = this.cfs.getTreeView(this.index);
-            this._property = property;
 
             // Get the property info for the property
             var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                             .getService(this._Ci.sbIPropertyManager);
             this._propertyInfo = pm.getPropertyInfo(this._property);
 
+            // get columns parent
             var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
 
             // Remove old column
-            while (treeColumns.lastChild) 
+            while (treeColumns.lastChild)
               treeColumns.removeChild(treeColumns.lastChild);
-
-            // Add the column for the property to the tree
+              
+            // create dummy column
             var treecol = document.createElementNS(this._XUL_NS, "treecol");
-            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("label", "...");
             treecol.setAttribute("flex", "1");
             treeColumns.appendChild(treecol);
-            this.treecol = treecol;
-
-            this._updateColumnLabel(this.index);
-            this._saveCascadeFilterState();
             
-            // Force sort, update the display
-            this.tree.view.cycleHeader( this.tree.treeBoxObject.columns.getColumnFor( this.treecol ) );
+            this._changingProperty = true;
           ]]>
         </body>
       </method>
@@ -266,6 +268,55 @@
         </body>
       </method>
 
+      <method name="onRebuild">
+        <body>
+          <![CDATA[
+            // do nothing
+          ]]>
+        </body>
+      </method>
+
+      <method name="didRebuild">
+        <body>
+          if (this._changingProperty) {
+            this._changingProperty = false;
+
+            var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+            // Remove dummy column
+            while (treeColumns.lastChild)
+              treeColumns.removeChild(treeColumns.lastChild);
+
+            // Add real column
+            var treecol = document.createElementNS(this._XUL_NS, "treecol");
+            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("sortDirection", "ascending");
+            treecol.setAttribute("sortActive", "true");
+            treecol.setAttribute("flex", "1");
+            treeColumns.appendChild(treecol);
+            this.treecol = treecol;
+
+            this._updateColumnLabel(this.index);
+            this._saveCascadeFilterState();
+          }
+          
+          //XXXlone - remove this when bug 8015 is closed
+
+          // When there is a selection on this filterlist, and the user removes
+          // all the resulting mediaitems from his playlist widget, all previously
+          // selected items in the filterlist disapear automatically, and we
+          // want to reselect the ALL item. This is supposed to happen automatically
+          // but does not because the check for this condition relies on testing
+          // whether the selection is empty or not (in sbFilterTreeSelection::CheckIsSelectAll)
+          // but happens before the selection is actually cleared (in 
+          // sbLocalDatabaseTreeView::OnGetGuidByIndex). The fix for now, until
+          // bug 8015 is closed, is to cause a call to CheckIsSelectAll to occur again
+          // (as soon as possible, since the selection will be cleared right when we return
+          // from here).
+          setTimeout(function(o) { o.tree.view.selection.adjustSelection(-1, 0); }, 0, this);
+        </body>
+      </method>
+
     </implementation>
 
   </binding>
@@ -350,7 +401,12 @@
             popup.showPopup(this, -1, -1, "popup", "bottomright", "topright");
           }
           else {
-            var filterlist = this.parentNode.parentNode.parentNode.parentNode;
+            // look for the filterlist that owns us
+            var node = this;
+            while (node && node.getAttribute("sbtype") != "filterlist")
+              node = node.parentNode;
+            var filterlist = node;
+
             filterlist.changeProperty(event.originalTarget.getAttribute("property"));
           }
         ]]>

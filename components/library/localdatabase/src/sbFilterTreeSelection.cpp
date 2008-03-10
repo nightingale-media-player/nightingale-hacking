@@ -183,8 +183,14 @@ sbFilterTreeSelection::InvalidateSelection()
 NS_IMETHODIMP
 sbFilterTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 {
-  nsresult rv =  mTreeSelection->AdjustSelection(index, count);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
+  
+  // if index is 0 or count is -1, there is no need to pass 
+  // the call to the selection object
+  if (index != 0 && count != -1) {
+    rv =  mTreeSelection->AdjustSelection(index, count);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = CheckIsSelectAll();
   NS_ENSURE_SUCCESS(rv, rv);

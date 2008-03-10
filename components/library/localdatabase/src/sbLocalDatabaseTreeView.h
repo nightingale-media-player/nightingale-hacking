@@ -47,6 +47,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsWeakReference.h>
+#include <nsTObserverArray.h>
 
 class nsIObjectInputStream;
 class nsIObjectOutputStream;
@@ -295,6 +296,11 @@ private:
   PRPackedBool mIsListeningToPlayback;
 
   nsString mLocalizedAll;
+  
+  PRPackedBool mIsRebuilding;
+
+  typedef nsTObserverArray<sbILocalDatabaseTreeViewListener *> sbListenerArray;
+  sbListenerArray mListeners;
 };
 
 class sbLocalDatabaseTreeViewState : public nsISerializable
