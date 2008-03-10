@@ -1145,8 +1145,12 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
   } else {
-    // other libraries store the playlists under them
-    node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
+    // other libraries store the playlists under them, but only
+    // assign the default value if they do not specifically tell
+    // us not to do so
+    
+    if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
+      node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
   // Set properties for styling purposes
   this._mergeProperties(node,
@@ -1227,22 +1231,24 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   // Save the list customType for use by metrics.
   node.setAttributeNS(LSP, "ListCustomType", customType);
 
-  if (aMediaList.library == this._libraryManager.mainLibrary) {
-    // a playlist in the main library is considered a toplevel node
-    if (customType == 'download') {
-      // unless its the download playlist
-      node.dndDragTypes = '';
-      node.dndAcceptNear = '';
+  // if auto dndAcceptIn/Near hasn't been disabled, assign it now
+  if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
+    if (aMediaList.library == this._libraryManager.mainLibrary) {
+      // a playlist in the main library is considered a toplevel node
+      if (customType == 'download') {
+        // unless its the download playlist
+        node.dndDragTypes = '';
+        node.dndAcceptNear = '';
+      } else {
+        node.dndDragTypes = 'text/x-sb-playlist';
+        node.dndAcceptNear = 'text/x-sb-playlist';
+      }
     } else {
-      node.dndDragTypes = 'text/x-sb-playlist';
-      node.dndAcceptNear = 'text/x-sb-playlist';
+      // playlists in other libraries can only go into their libraries' nodes
+      node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
+      node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
     }
-  } else {
-    // playlists in other libraries can only go into their libraries' nodes
-    node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
-    node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
   }
-
 
   if (newnode) {
     // Place the node in the tree
