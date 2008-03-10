@@ -91,10 +91,13 @@ public:
   NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
   NS_FORWARD_SAFE_SBIMEDIALIST(mRemMediaList)
   NS_FORWARD_SAFE_SBIMEDIAITEM(mRemMediaList)
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemMediaList)
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mRemMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
+
+  // sbILibraryResource
+  NS_IMETHOD SetProperty( const nsAString& aID, const nsAString& aValue );
   
   // nsIXPCScriptable
   NS_IMETHOD GetClassName(char **aClassName);

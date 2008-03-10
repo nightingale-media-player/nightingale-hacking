@@ -293,6 +293,61 @@ sbRemoteLibraryBase::~sbRemoteLibraryBase()
 
 // ---------------------------------------------------------------------------
 //
+//                          sbILibraryResource
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::SetProperty( const nsAString& aID, const nsAString& aValue )
+{
+  LOG_LIB(( "sbRemoteLibraryBase::SetProperty( %s, %s )",
+            NS_LossyConvertUTF16toASCII(aID).get(),
+            NS_LossyConvertUTF16toASCII(aValue).get() ));
+
+  nsresult rv;
+  // rules
+  // 1) Don't allow modification of http://songbird properties for the main library
+  // 2) ONLY allow modificatoin of the hidden property for site libraries
+
+  // Find out if we are trying to set properties on the main library
+  PRBool isMain;
+  nsCOMPtr<sbIMediaItem> item( do_QueryInterface( (sbIRemoteLibrary*)this, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isMain );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if (isMain) {
+    // are we trying to set a songbird property?
+    if ( StringBeginsWith( aID,
+                           NS_LITERAL_STRING("http://songbirdnest.com/") ) ) {
+      // don't allow songbird properties to be modified on main library
+      LOG_LIB(( "sbRemoteLibraryBase::SetProperty() - DENIED" ));
+      return NS_ERROR_FAILURE;
+    }
+  } else {
+    // all libraries that aren't the main library
+
+    // are we trying to set the hidden??
+    if ( aID.EqualsLiteral(SB_PROPERTY_HIDDEN) ) {
+      // see if we are a sitelib. if not, don't allow hidden to be set.
+      nsCOMPtr<sbIRemoteSiteLibrary> siteLib( do_QueryInterface((sbIRemoteLibrary*) this, &rv ) );
+      if ( NS_FAILED(rv) || !siteLib ) {
+        // don't allow the hidden property set outside of site libraries
+        LOG_LIB(( "sbRemoteLibraryBase::SetProperty() - DENIED" ));
+        return NS_ERROR_FAILURE;
+      }
+    }
+  }
+
+  // otherwise, just forward on to delegate impl.
+  LOG_LIB(( "sbRemoteLibraryBase::SetProperty() - ALLOWED" ));
+  rv = mRemMediaList->SetProperty( aID, aValue );
+  return rv;
+}
+
+// ---------------------------------------------------------------------------
+//
 //                          sbISecurityAggregator
 //
 // ---------------------------------------------------------------------------

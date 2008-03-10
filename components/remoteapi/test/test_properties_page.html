@@ -179,7 +179,7 @@ function runTest(tester) {
           }
           // these get special numbers
           else if ( booleanPropNames.indexOf(stuff) > -1 ) {
-            foo.setProperty( props[stuff], "1" );
+            foo.setProperty( props[stuff], "0" );
           }
           // these get url format strings
           else if ( uriPropNames.indexOf(stuff) > -1 ) {
@@ -189,10 +189,23 @@ function runTest(tester) {
           else {
             foo.setProperty( props[stuff], "test" );
           }
-          tester.log( "property ( w)\t" + stuff );
+
+          // main library is never writable
+          if ( obj == "library" ) {
+            tester.failNoThrow( "property (!w)\t" + stuff +
+                         " ERR: Able to write library " + stuff );
+          } else {
+            tester.log( "property ( w)\t" + stuff );
+          }
+
         } catch (e) {
-          tester.failNoThrow( "property ( w)\t" + stuff +
-                              " ERR: not writable when supposed to be" );
+          // main library is not writable at all
+          if ( obj == "library" ) {
+            tester.log( "property (!w)\t" + stuff );
+          } else {
+            tester.failNoThrow( "property ( w)\t" + stuff +
+                                " ERR: not writable when supposed to be" );
+          }
         }
       }
 
@@ -263,6 +276,25 @@ function runTest(tester) {
           continue;
         }
 
+        // main library is all readonly
+        if ( obj == "library" ) {
+          try {
+            // library has it's mediaListName set specifically
+            if ( stuff == "mediaListName" ) {
+              var val = foo.getProperty(props[stuff]);
+              tester.assertEqual( val, "&chrome://songbird/locale/songbird.properties#servicesource.library" );
+              tester.log( "property (ro)\t" + stuff + " is: " + val );
+            } else {
+              // All other properties are so varied we can't do value comparisons
+              foo.getProperty( props[stuff] );
+              tester.log( "property (ro)\t" + stuff );
+            }
+          } catch (e) {
+            tester.failNoThrow( "property (ro)\t" + stuff +
+                                " ERR: not readable when supposed to be" );
+          }
+          continue;
+        }
 
         try {
           // year has a min value
@@ -275,7 +307,7 @@ function runTest(tester) {
           }
           // these get special numbers
           else if ( booleanPropNames.indexOf(stuff) > -1 ) {
-            tester.assertEqual( foo.getProperty(props[stuff] ), "1" );
+            tester.assertEqual( foo.getProperty(props[stuff] ), "0" );
           }
           // these get url format strings
           else if ( uriPropNames.indexOf(stuff) > -1 ) {
@@ -286,6 +318,7 @@ function runTest(tester) {
           else {
             tester.assertEqual( foo.getProperty( props[stuff] ), "test" );
           }
+
           tester.log( "property ( r)\t" + stuff );
         } catch (e) {
           tester.failNoThrow( "property ( r)\t" + stuff +

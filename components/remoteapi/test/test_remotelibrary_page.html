@@ -97,11 +97,11 @@ function runTest(tester) {
               "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
 
     // property access/modification in the mainLibrary
-    var testName = "Test Name";
-    mainLib.setProperty("http://songbirdnest.com/data/1.0#mediaListName", testName);
-    var propVal = mainLib.getProperty("http://songbirdnest.com/data/1.0#mediaListName");
+    var testValue = "Test Value";
+    mainLib.setProperty("http://example.com/data/1.0#testval", testValue);
+    var propVal = mainLib.getProperty("http://example.com/data/1.0#testval");
 
-    tester.assertTrue(propVal == testName, "PropVal not equal to testName");
+    tester.assertTrue(propVal == testValue, "PropVal not equal to testValue");
 
     // access within the webLibrary
     webLib.name;
