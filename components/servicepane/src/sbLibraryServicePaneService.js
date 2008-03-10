@@ -1232,7 +1232,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.setAttributeNS(LSP, "ListCustomType", customType);
 
   // if auto dndAcceptIn/Near hasn't been disabled, assign it now
-  if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
+  if (node.getAttributeNS(SP,'dndCustomAccept') != 'true') {
     if (aMediaList.library == this._libraryManager.mainLibrary) {
       // a playlist in the main library is considered a toplevel node
       if (customType == 'download') {
