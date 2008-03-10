@@ -920,29 +920,16 @@ function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
 function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var clipboardtext = "";
   var urlCol = "url";
-  var window = unwrap(aContext.window);
   var playlist = unwrap(aContext.playlist);
-  var columnElem = playlist.ownerDocument
-                           .getAnonymousElementByAttribute(playlist,
-                                                           "bind",
-                                                           SBProperties.contentURL);
-  var columnObj = playlist.tree.columns.getColumnFor(columnElem);
-  var rangeCount = playlist.mediaListView.treeView.selection.getRangeCount();
-  for (var i=0; i < rangeCount; i++)
-  {
-    var start = {};
-    var end = {};
-    playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
-    for( var c = start.value; c <= end.value; c++ )
-    {
-      if (c >= playlist.mediaListView.treeView.rowCount)
-      {
-        continue;
-      }
 
-      var val = playlist.mediaListView.treeView.getCellText(c, columnObj);
-      if (clipboardtext != "") clipboardtext += "\n";
-      clipboardtext += val;
+  var selectedEnum = playlist.mediaListView.selection.selectedIndexedMediaItems;
+  while (selectedEnum.hasMoreElements()) {
+    var curItem = selectedEnum.getNext();
+    if (curItem) {
+      var originURL = curItem.mediaItem.getProperty(SBProperties.contentURL);
+      if (clipboardtext != "")
+        clipboardtext += "\n";
+      clipboardtext += originURL;
     }
   }
 
