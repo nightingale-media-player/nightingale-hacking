@@ -55,6 +55,7 @@ public:
   virtual ~sbRatingPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
+  NS_IMETHOD Validate(const nsAString& aValue, PRBool* _retval);
 
   nsresult Init();
 };

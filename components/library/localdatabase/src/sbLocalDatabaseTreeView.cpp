@@ -2313,7 +2313,7 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_STATE(mMediaListView);
 
-  if (IsAllRow(row) || value.IsEmpty() || value.EqualsLiteral(" ")) {
+  if (IsAllRow(row)) {
     return NS_OK;
   }
 
@@ -2326,6 +2326,16 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellText(%d, %d %s)", this,
          row, colIndex, NS_LossyConvertUTF16toASCII(value).get()));
 #endif
+
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = GetColumnPropertyInfo(col, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only allow |sbIClickablePropertyInfo|s to be set to null
+  nsCOMPtr<sbIClickablePropertyInfo> clickable = do_QueryInterface(info, &rv);
+  if (NS_FAILED(rv) && (value.IsEmpty() || value.EqualsLiteral(" "))) {
+    return NS_OK;
+  }
 
   nsAutoString bind;
   rv = GetPropertyForTreeColumn(col, bind);

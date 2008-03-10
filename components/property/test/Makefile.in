@@ -38,6 +38,7 @@ SONGBIRD_TESTS = $(srcdir)/test_simpleproperty.js \
                  $(srcdir)/test_downloadbutton.js \
                  $(srcdir)/test_simplebutton.js \
                  $(srcdir)/test_image.js \
+                 $(srcdir)/test_rating.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

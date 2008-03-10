@@ -165,7 +165,6 @@ sbRatingPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
                                        PRUint32 aMouseY,
                                        nsAString& _retval)
 {
-
   PRUint32 rating;
 
   // Magical number that allows the user to click to the left of the first
@@ -189,6 +188,10 @@ sbRatingPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
     ratingStr.AppendInt(rating - 1);
   }
 
+  if (ratingStr.EqualsLiteral("0")) {
+    ratingStr.SetIsVoid(PR_TRUE);
+  }
+
   _retval = ratingStr;
   return NS_OK;
 }
@@ -199,7 +202,33 @@ NS_IMETHODIMP
 sbRatingPropertyInfo::Format(const nsAString& aValue,
                              nsAString& _retval)
 {
-  _retval = aValue;
+  // XXXsteve Pretend that zeros are nulls.  This should be removed when
+  // bug 8033 is fixed.
+  if (aValue.EqualsLiteral("0")) {
+    _retval.SetIsVoid(PR_TRUE);
+  }
+  else {
+    _retval = aValue;
+  }
+
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbRatingPropertyInfo::Validate(const nsAString& aValue, PRBool* _retval)
+{
+  // Value can only be 1 through MAX_RATING or null
+  *_retval = PR_TRUE;
+  if (aValue.IsVoid()) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+  PRUint32 rating = aValue.ToInteger(&rv);
+  if (NS_SUCCEEDED(rv) && rating > 0 && rating <= MAX_RATING) {
+    return NS_OK;
+  }
+
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
