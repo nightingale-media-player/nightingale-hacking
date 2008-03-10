@@ -3919,6 +3919,8 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
 {
   NS_ASSERTION(aQuery, "aQuery is null");
 
+  mURIArray = aURIArray;
+
   nsresult rv = aQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4026,6 +4028,12 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
                                                  &bags);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // A map of url -> list of media items to ensure that items get notified
+    // in the same order that they appear in the original input array of URLs
+    nsClassHashtable<nsStringHashKey, nsCOMArray<sbIMediaItem> > urlToItemsMap;
+    PRBool success = urlToItemsMap.Init(count);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
     for (PRUint32 i = 0; i < length; i++) {
       // We know the GUID and the type of these new media items so preload
       // the cache with this information
@@ -4038,7 +4046,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       NS_ASSERTION(!mLibrary->mMediaItemTable.Get(mGuids[i], nsnull),
                    "Guid already exists!");
 
-      PRBool success = mLibrary->mMediaItemTable.Put(mGuids[i], newItemInfo);
+      success = mLibrary->mMediaItemTable.Put(mGuids[i], newItemInfo);
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
       newItemInfo.forget();
@@ -4058,12 +4066,55 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       rv = array->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mLibrary->mFullArray->Invalidate();
+      nsString url;
+      rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                  url);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mLibrary->NotifyListenersItemAdded(SB_IMEDIALIST_CAST(mLibrary),
-                                         mediaItem,
-                                         mLength + i);
+      nsCOMArray<sbIMediaItem>* mappedItems = nsnull;
+      urlToItemsMap.Get(url, &mappedItems);
+      if (!mappedItems) {
+        nsAutoPtr<nsCOMArray<sbIMediaItem> > array(new nsCOMArray<sbIMediaItem>);
+        NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+        success = urlToItemsMap.Put(url, array);
+        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+        mappedItems = array.forget();
+      }
+
+      success = mappedItems->AppendObject(mediaItem);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    rv = mLibrary->mFullArray->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 listLength;
+    rv = mURIArray->GetLength(&listLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 notifiedCount = 0;
+    for (PRUint32 i = 0; i < listLength; i++) {
+      nsCOMPtr<nsIURI> uri = do_QueryElementAt(mURIArray, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCString spec;
+      rv = uri->GetSpec(spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMArray<sbIMediaItem>* mappedItems = nsnull;
+      urlToItemsMap.Get(NS_ConvertUTF8toUTF16(spec), &mappedItems);
+      if (mappedItems) {
+        NS_ASSERTION(mappedItems->Count(), "No item to notify");
+        mLibrary->NotifyListenersItemAdded(SB_IMEDIALIST_CAST(mLibrary),
+                                           mappedItems->ObjectAt(0),
+                                           mLength + notifiedCount);
+        success = mappedItems->RemoveObjectAt(0);
+        NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+        notifiedCount++;
+      }
+
     }
 
     NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);

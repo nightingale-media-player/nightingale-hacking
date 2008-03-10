@@ -47,7 +47,10 @@ function runTest () {
     propertyArray.appendElement(props, false);
   }
 
-  var added = library.batchCreateMediaItems(toAdd);
+  var libraryListener = new TestMediaListListener();
+  library.addListener(libraryListener);
+
+  var added = library.batchCreateMediaItems(toAdd, propertyArray);
 
   var e = added.enumerate();
   while(e.hasMoreElements()) {
@@ -71,9 +74,38 @@ function runTest () {
                                      Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
 
     assertEqual(listener._item, item);
+
     assertEqual(listener._item.getProperty(SB_NS + "contentLength"),
                 item.getProperty(SB_NS + "contentLength"));
     assertEqual(listener._item.getProperty(SB_NS + "trackNumber"),
                 item.getProperty(SB_NS + "trackNumber"));
   }
+
+  // Check the order of the notifications
+  assertEqual(libraryListener.added.length, 100);
+  for (var i = 1; i < 101; i++) {
+    assertEqual(libraryListener.added[i - 1].item.contentSrc.spec, "file:///foo/" + i + ".mp3");
+  }
+  libraryListener.reset();
+
+  // Do it again with duplcate URLs
+  toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  for (var i = 1; i < 101; i++) {
+    toAdd.appendElement(newURI("file:///foo/duplicate.mp3"), false);
+    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Ci.sbIMutablePropertyArray);
+    props.appendProperty(SB_NS + "contentLength", i);
+    props.appendProperty(SB_NS + "trackNumber", i);
+    propertyArray.appendElement(props, false);
+  }
+
+  added = library.batchCreateMediaItems(toAdd, propertyArray, true);
+  // Check the order of the notifications
+  assertEqual(libraryListener.added.length, 100);
+  for (var i = 1; i < 101; i++) {
+    assertEqual(libraryListener.added[i - 1].item.contentSrc.spec, "file:///foo/duplicate.mp3");
+  }
+
+  library.removeListener(libraryListener);
 }

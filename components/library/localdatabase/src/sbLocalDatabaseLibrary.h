@@ -431,6 +431,7 @@ private:
   // reference to the callback
   sbLocalDatabaseLibrary* mLibrary;
   sbBatchCreateTimerCallback* mCallback;
+  nsCOMPtr<nsIArray> mURIArray;
   nsTArray<nsString> mGuids;
   PRUint32 mLength;
 };

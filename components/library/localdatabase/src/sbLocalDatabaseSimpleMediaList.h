@@ -145,18 +145,16 @@ private:
 
 class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener
 {
-  struct ArrayPointers {
-    nsIMutableArray* items;
-    nsIMutableArray* uris;
-  };
-
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
+  sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList,
+                                                PRUint32 aStartingIndex,
+                                                const nsAString& aStartingOrdinal)
   : mFriendList(aList),
-    mOldLength(0)
+    mStartingIndex(aStartingIndex),
+    mStartingOrdinal(aStartingOrdinal)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
   }
@@ -167,16 +165,12 @@ private:
   static void* operator new(size_t /*size*/) CPP_THROW_NEW { return 0; }
   static void operator delete(void* /*memory*/) { }
 
-  PR_STATIC_CALLBACK(PLDHashOperator)
-    AddURIsToArrayCallback(nsISupportsHashKey::KeyType aKey,
-                           sbIMediaItem* aEntry,
-                           void* aUserData);
-
   sbLocalDatabaseSimpleMediaList* mFriendList;
+  PRUint32 mStartingIndex;
+  nsString mStartingOrdinal;
   nsCOMArray<sbIMediaItem> mItemList;
   nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
   nsCOMPtr<sbILibrary> mListLibrary;
-  PRUint32 mOldLength;
 };
 
 class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener
