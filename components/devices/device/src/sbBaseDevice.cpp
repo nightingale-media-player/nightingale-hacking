@@ -347,7 +347,7 @@ nsresult sbBaseDevice::SetState(PRUint32 aState)
   // send state changed event.  do it outside of lock in case event handler gets
   // called immediately and tries to read the state
   if (stateChanged) {
-    nsCOMPtr<nsIWritableVariant> var = do_CreateInstance(NS_VARIANT_CONTRACTID,
+    nsCOMPtr<nsIWritableVariant> var = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1",
                                                          &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = var->SetAsUint32(aState);

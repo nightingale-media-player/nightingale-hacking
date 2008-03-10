@@ -143,7 +143,7 @@ NS_IMETHODIMP sbMockDevice::GetPreference(const nsAString & aPrefName, nsIVarian
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsIWritableVariant> result =
-    do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   switch(prefType) {
