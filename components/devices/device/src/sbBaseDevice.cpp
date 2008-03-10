@@ -172,11 +172,31 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     nsAutoLock lock(mRequestLock);
 
     /* figure out the batch count */
-    TransferRequest* last =
-      static_cast<sbBaseDevice::TransferRequest*>(mRequests.Peek());
+    nsDequeIterator begin = mRequests.Begin();
+    nsDequeIterator lastIt = mRequests.End();
+    TransferRequest* last = nsnull;
+    if (mRequests.GetSize() > 0) {
+      last = static_cast<sbBaseDevice::TransferRequest*>(lastIt.GetCurrent());
+    }
 
     if (last) {
       aRequest->itemTransferID = last->itemTransferID + 1;
+    }
+    
+    // when calculating batch counts, we skip over invalid requests and updates
+    // (since they are not presented to the user anyway)
+    if (aRequest->type != TransferRequest::REQUEST_RESERVED &&
+        aRequest->type != TransferRequest::REQUEST_UPDATE)
+    {
+      while (last && (last->type == TransferRequest::REQUEST_RESERVED ||
+                      last->type == TransferRequest::REQUEST_UPDATE))
+      {
+        --lastIt;
+        last = static_cast<sbBaseDevice::TransferRequest*>(lastIt.GetCurrent());
+        if (begin == lastIt) {
+          break;
+        }
+      }
     }
   
     if (last && last->type == aRequest->type) {
@@ -184,7 +204,6 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
       aRequest->batchCount += last->batchCount;
       aRequest->batchIndex = aRequest->batchCount;
   
-      nsDequeIterator begin = mRequests.Begin();
       nsDequeIterator it = mRequests.End(); 
 
       for(; /* see loop */; --it) {
@@ -194,8 +213,9 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
           // no request
           break;
         }
-        if (oldReq->type == TransferRequest::REQUEST_RESERVED) {
-          // invalid request, skip
+        if (oldReq->type == TransferRequest::REQUEST_RESERVED ||
+            oldReq->type == TransferRequest::REQUEST_UPDATE) {
+          // invalid request, or update only (doesn't matter to the user), skip
           if (begin == it) {
             // start of the queue, nothing left
             break;
