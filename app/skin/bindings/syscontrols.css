@@ -180,7 +180,10 @@ MAC OSX TITLE BAR
 *******************************************************************************
 */
 
-
+#sb-sys-osx-buttons
+{
+  padding-left: 2px;
+}
 
 #sb-sys-osx-buttons > sb-sys-maximize-button
 {
