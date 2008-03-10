@@ -33,7 +33,6 @@ SUBDIRS = addonmetadata \
           bundle \
           commandline \
           contenthandling \
-          controller \
           dataremote \
           dbengine \
           devices \
@@ -56,7 +55,6 @@ SUBDIRS = addonmetadata \
           remoteapi \
           search \
           servicepane \
-          state \
           sqlbuilder \
           parsererror \
           mediapages \
