@@ -206,11 +206,11 @@
         var listboxElem = document.getElementById("media_listbox");
         var itemEnum = unsupportedItems.enumerate();
         while (itemEnum.hasMoreElements()) {
-          // Get the media item.
-          var mediaItem = itemEnum.getNext().QueryInterface(Ci.sbIMediaItem);
+          // Get the URL of the item.
+          var mediaURL = itemEnum.getNext()
+	                         .QueryInterface(Ci.nsIURL);
 
           // Add the media item file name to the listbox.
-          var mediaURL = mediaItem.contentSrc.QueryInterface(Ci.nsIURL);
           listboxElem.appendItem(decodeURIComponent(mediaURL.fileName));
         }
 
