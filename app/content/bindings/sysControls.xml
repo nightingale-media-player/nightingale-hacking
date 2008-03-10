@@ -153,7 +153,6 @@
           {
             case "dialog":
               // Hidden if we only want to show the close.
-              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
               break;
