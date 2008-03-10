@@ -1257,7 +1257,8 @@ PlaylistPlayback.prototype = {
           // For now, still hardcode the playlist types.
           ( aURL.indexOf( ".pls" ) != -1 ) || 
           ( aURL.indexOf( "rss" ) != -1 ) || 
-          ( aURL.indexOf( ".m3u" ) != -1 ) 
+          ( aURL.indexOf( ".m3u" ) != -1 ) || 
+          ( aURL.indexOf( ".asx" ) != -1 )
         )
       )
     {

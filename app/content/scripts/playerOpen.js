@@ -248,6 +248,8 @@ try
           if (typeof gBrowser != 'undefined') {
             gBrowser.loadMediaList(mediaList);
           }
+        } else {
+          library.remove(mediaList);
         }
 
       }

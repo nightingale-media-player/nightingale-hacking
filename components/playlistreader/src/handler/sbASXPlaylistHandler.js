@@ -65,7 +65,9 @@ function(aFile, aMediaList, aReplace)
 
   doc = doc.documentElement;  
 
-  var entries = doc.getElementsByTagName("ENTRY");
+  // This will get all entries at this level (root)
+  // Asx is suppose to have <entry> tags at the first level.
+  var entries = doc.getElementsByTagName("*");
   
   for(var i = 0; i < entries.length; ++i) {
     
@@ -78,7 +80,8 @@ function(aFile, aMediaList, aReplace)
     
       var child = children.item(j);
       
-      switch(child.nodeName) {
+      var cNodeName = child.nodeName.toUpperCase();
+      switch(cNodeName) {
       
         case "TITLE":
           var title = child.firstChild.nodeValue;
