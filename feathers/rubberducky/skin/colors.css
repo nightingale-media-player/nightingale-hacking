@@ -200,9 +200,6 @@ FACEPLATE
 *******************************************************************************
 */
 
-sb-player-faceplate {
-}
-
 /* the seekbar slider */
 .faceplate-seekbar
 {
@@ -215,23 +212,21 @@ sb-player-faceplate {
   color: #0f100f; /** Groove */
 }
 
-.faceplate-progressmeter
+sb-player-seek-slider
 {
-  border: none;
+  -moz-border-radius:4px;
+  background-color: #B3BAAC !important; /** Light Color 1 */
 }
 
-.faceplate-progressmeter,
-progressmeter.sb-player-seek-slider
-{
-  background-color: #B3BAAC;
-  -moz-border-radius: 5px;
-}
-
-.faceplate-progressmeter > .progress-bar,
 progressmeter.sb-player-seek-slider > .progress-bar
 {
-  background-color: #313131;
-  -moz-border-radius: 5px;
+  -moz-border-radius:4px;
+  background-color: #797f76; /** Button Highlight */
+}
+
+progressmeter.sb-player-seek-slider > .progress-remainder
+{
+  background-color: transparent;
 }
 
 
