@@ -56,8 +56,10 @@ window#mainplayer
 #control_pane_box
 {
   margin-top: 7px;
-  max-height: 45px;
-  overflow: hidden;
+  height: 58px;
+  min-height: 58px;
+  max-height: 58px;
+  overflow-x: hidden;
 }
 
 #middle_pane_box

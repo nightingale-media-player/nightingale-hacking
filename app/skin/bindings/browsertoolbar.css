@@ -305,15 +305,10 @@ GENERAL RULES
 
 /* hide the overflow here so that as the window shrinks below a certain size
    the scrollbars on the browser window don't disappear.
- */  
-#navigator-toolbox
-{
-  overflow: hidden;
-}
-
-/** browser toolbar **/
+ */
 #navigator-toolbox > toolbar
 {
+  overflow: hidden;
 }
 
 
