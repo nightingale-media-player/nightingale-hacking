@@ -1,5 +1,5 @@
-<!ENTITY window.main.title  "&brandShortName; 0.4rc2pre" >
-<!ENTITY window.dev.title   "&brandShortName; 0.4rc2pre" >
+<!ENTITY window.main.title  "&brandShortName; 0.6pre" >
+<!ENTITY window.dev.title   "&brandShortName; 0.6pre" >
 <!ENTITY songbird           "&brandShortName;" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://www.songbirdnest.com/birdhouse/" >
