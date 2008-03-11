@@ -59,7 +59,16 @@
 <![CDATA[
   if (this._isBound) {
     this.cfs.removeListener(this);
+    
     this.tree.view.removeListener(this);
+
+    // Force the tree to forget about the view.  This is required in the case
+    // where we are going to immediately load a new tree using the same view.
+    // When this happens nsTreeBodyFrame will get a Destroy() call *after*
+    // the new tree is loaded, causing the view to be reset.
+    // See Bug 8001 for details.
+    this.tree.view = null;
+    this.tree = null;
   }
 ]]>
       </destructor>

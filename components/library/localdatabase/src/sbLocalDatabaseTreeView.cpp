@@ -2177,6 +2177,13 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
     // Rebuild view with the new tree
     rv = Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
+  } 
+  // If we are detaching from the tree, save
+  // the selection so that it can be
+  // restored if we are ever rebound.
+  else if (mManageSelection) {
+    nsresult rv = SaveSelectionList();
+    NS_ENSURE_SUCCESS(rv, rv);    
   }
 
   // Manage our listener to the playback service.  Attach the listener when
