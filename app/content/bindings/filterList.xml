@@ -316,13 +316,26 @@
           // selected items in the filterlist disapear automatically, and we
           // want to reselect the ALL item. This is supposed to happen automatically
           // but does not because the check for this condition relies on testing
-          // whether the selection is empty or not (in sbFilterTreeSelection::CheckIsSelectAll)
-          // but happens before the selection is actually cleared (in 
+          // whether the selection is empty or not (in sbFilterTreeSelection::CheckIsSelectAll),
+          // although that happens before the selection is actually cleared (in 
           // sbLocalDatabaseTreeView::OnGetGuidByIndex). The fix for now, until
           // bug 8015 is closed, is to cause a call to CheckIsSelectAll to occur again
-          // (as soon as possible, since the selection will be cleared right when we return
-          // from here).
-          setTimeout(function(o) { o.tree.view.selection.adjustSelection(-1, 0); }, 0, this);
+          // by calling adjustSelection with benign values (as soon as possible, since 
+          // the selection will be cleared right when we return from here). If after that call, 
+          // the selection is cleared, it's because the ALL item was reselected. 
+          // In this case, empty the filter.
+          
+          var curIndex = this.tree.view.selection.currentIndex;
+          // if we are already on ALL, there is no need for any of this.
+          if (curIndex != 0) {
+            setTimeout(function(o) {
+              o.tree.view.selection.adjustSelection(-1, 0);
+              var newIndex = o.tree.view.selection.currentIndex;
+              if (newIndex == 0) {
+                o.cfs.set(o.index, [], 0);
+              }
+            }, 0, this);
+          }
         </body>
       </method>
 
